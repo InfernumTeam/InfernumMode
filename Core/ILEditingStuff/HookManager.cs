@@ -368,5 +368,23 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator RuneOfKosCanUseItem
+        {
+            add => HookEndpointManager.Modify(typeof(RuneofKos).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(RuneofKos).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator RuneOfKosUseItem
+        {
+            add => HookEndpointManager.Modify(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator PlaceForbiddenArchive
+        {
+            add => HookEndpointManager.Modify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

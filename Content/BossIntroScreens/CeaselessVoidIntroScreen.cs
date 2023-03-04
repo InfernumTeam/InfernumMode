@@ -1,3 +1,4 @@
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using Microsoft.Xna.Framework;
 using System;
@@ -23,7 +24,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "The Never-Ending\nCeaseless Void";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<CeaselessVoid>());
+        public override bool ShouldBeActive() => CalamityGlobalNPC.voidBoss != -1 && Main.npc[CalamityGlobalNPC.voidBoss].ai[0] != 0f;
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;
     }

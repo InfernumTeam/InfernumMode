@@ -145,6 +145,18 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
+        public static bool MetSignusAtProfanedGarden
+        {
+            get;
+            set;
+        }
+
+        public static Point ForbiddenArchiveCenter
+        {
+            get;
+            set;
+        }
+
         public const int LostColosseumPortalAnimationTime = 150;
 
         public override void SaveWorldData(TagCompound tag)
@@ -174,6 +186,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("DisplayedEmodeWarningText");
             if (PerformedLacewingAnimation)
                 downed.Add("PerformedLacewingAnimation");
+            if (MetSignusAtProfanedGarden)
+                downed.Add("MetSignusAtProfanedGarden");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -191,6 +205,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             tag["DreamgateLocationX"] = WayfinderGateLocation.X;
             tag["DreamgateLocationY"] = WayfinderGateLocation.Y;
+
+            tag["ForbiddenArchiveCenterX"] = ForbiddenArchiveCenter.X;
+            tag["ForbiddenArchiveCenterY"] = ForbiddenArchiveCenter.Y;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -212,6 +229,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             DownedBereftVassal = downed.Contains("DownedBereftVassal");
             DisplayedEmodeWarningText = downed.Contains("DisplayedEmodeWarningText");
             PerformedLacewingAnimation = downed.Contains("PerformedLacewingAnimation");
+            MetSignusAtProfanedGarden = downed.Contains("MetSignusAtProfanedGarden");
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");
@@ -222,6 +240,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             EidolistWorshipPedestalCenter = new(tag.GetInt("EidolistWorshipPedestalCenterX"), tag.GetInt("EidolistWorshipPedestalCenterY"));
 
             WayfinderGateLocation = new(tag.GetFloat("DreamgateLocationX"), tag.GetFloat("DreamgateLocationY"));
+
+            ForbiddenArchiveCenter = new(tag.GetInt("ForbiddenArchiveCenterX"), tag.GetInt("ForbiddenArchiveCenterY"));
         }
 
         public override void OnWorldLoad()
@@ -237,10 +257,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             DownedBereftVassal = false;
             DisplayedEmodeWarningText = false;
             PerformedLacewingAnimation = false;
+            MetSignusAtProfanedGarden = false;
 
             ProvidenceArena = Rectangle.Empty;
             ProvidenceDoorXPosition = 0;
             WayfinderGateLocation = Vector2.Zero;
+            ForbiddenArchiveCenter = Point.Zero;
         }
     }
 }

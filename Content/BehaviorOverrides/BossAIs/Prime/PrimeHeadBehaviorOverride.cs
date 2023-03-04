@@ -127,6 +127,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             npc.damage = npc.defDamage + 24;
             npc.timeLeft = 3600;
 
+            // Someone is going to get hurt.
+            if (target.HasBuff(BuffID.Electrified))
+                target.ClearBuff(BuffID.Electrified);
+
             // Don't allow damage to happen if any arms remain or the shield is still up.
             List<Projectile> shields = Utilities.AllProjectilesByID(ModContent.ProjectileType<PrimeShield>()).ToList();
             npc.dontTakeDamage = AnyArms || shields.Count > 0;

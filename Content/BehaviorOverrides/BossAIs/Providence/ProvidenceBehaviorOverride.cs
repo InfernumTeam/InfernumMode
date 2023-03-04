@@ -293,6 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     MediaPlayer.Play(TrackedMusicManager.TrackedSong);
                 }
 
+                attackTimer = 0f;
                 initialized = 1f;
                 wasSummonedAtNight = Main.dayTime ? 0f : 1f;
                 npc.netUpdate = true;
@@ -313,11 +314,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int guardianID = ModContent.NPCType<ProvSpawnOffense>();
+                    List<int> guardianIDs = new()
+                    {
+                        ModContent.NPCType<ProvSpawnHealer>(),
+                        ModContent.NPCType<ProvSpawnOffense>()
+                    };
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         NPC n = Main.npc[i];
-                        if (n.active && n.type == guardianID)
+                        if (n.active && guardianIDs.Contains(n.type))
                             n.active = false;
                     }
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CommanderSpear2>());
@@ -1124,14 +1129,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             int chargeUpTime = 150;
             int guardianCount = 4;
             int guardiansSpinTime = GetBPMTimeMultiplier(2);
-            int guardiansTelegraphTime = GetBPMTimeMultiplier(2);
+            int guardiansTelegraphTime = GetBPMTimeMultiplier(3);
             int guardiansPostShootLiveTime = GetBPMTimeMultiplier(4);
             int guardiansDeathAnimationTime = GetBPMTimeMultiplier(4);
             int attackCycle = guardiansSpinTime + guardiansTelegraphTime + guardiansPostShootLiveTime + guardiansDeathAnimationTime;
             int attackCycleTimer = (localAttackTimer - chargeUpTime) % attackCycle;
 
             if (localAttackTimer >= localAttackDuration - guardiansDeathAnimationTime - 10)
+            {
                 attackCycleTimer = guardiansSpinTime + guardiansTelegraphTime + guardiansPostShootLiveTime + 5;
+                npc.Infernum().ExtraAI[3] = 0f;
+            }
 
             float flightSpeedFactor = MathHelper.Lerp(1f, 1.45f, 1f - lifeRatio);
             ref float healerAttackState = ref npc.Infernum().ExtraAI[0];
@@ -1640,7 +1648,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     shootTimer = 0f;
                 }
 
-                // Release cinders from the ceiling periodically.
+                // Release cinders from the ceiling and side periodically.
                 if (cycleTimer % cinderShootRate == cinderShootRate - 1f)
                 {
                     bool targetIsCloseToCeiling = MathHelper.Distance(target.Center.Y, WorldSaveSystem.ProvidenceArena.Y * 16f + 700f) < 450f;
@@ -1648,6 +1656,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        // Ceiling cinders.
                         for (float dx = -1400f; dx < 1400f; dx += Main.rand.NextFloat(108f, 136f))
                         {
                             float ySpawnPosition = WorldSaveSystem.ProvidenceArena.Y * 16f + 48f;
@@ -1659,6 +1668,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                             }
 
                             Utilities.NewProjectileBetter(new Vector2(target.Center.X + dx, ySpawnPosition), cinderVelocity, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);
+                        }
+
+                        // Side cinders.
+                        for (float dy = -1400f; dy < 1400f; dy += Main.rand.NextFloat(167f, 195f))
+                        {
+                            Vector2 cinderVelocity = Vector2.UnitX * 4f;
+                            Utilities.NewProjectileBetter(new Vector2(target.Center.X - 1400, target.Center.Y + dy), cinderVelocity, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);
                         }
                     }
                 }
@@ -1751,7 +1767,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             int ritualTime = HolyRitual.Lifetime;
             int rockCount = 13;
-            int crossShootRate = GetBPMTimeMultiplier(IsEnraged ? 2 : 4);
+            int crossShootRate = GetBPMTimeMultiplier(IsEnraged ? 2 : 3);
             int rockCycleTime = 300;
 
             ref float hasPerformedRitual = ref npc.Infernum().ExtraAI[0];

@@ -13,7 +13,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     {
         public override void PreUpdateWorld()
         {
-            if (!InfernumMode.CanUseCustomAIs || !NPC.downedMoonlord || DownedBossSystem.downedCeaselessVoid || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero)
+            if (!InfernumMode.CanUseCustomAIs || DownedBossSystem.downedCeaselessVoid || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero)
                 return;
 
             Vector2 voidSpawnPosition = WorldSaveSystem.ForbiddenArchiveCenter.ToWorldCoordinates() + Vector2.UnitY * 1332f;

@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static int GlowTime => 30;
 
-        public Vector2 PositionOffset;
+        public float PositionOffset => Owner.Infernum().ExtraAI[CommanderSpearPositionOffsetIndex];
 
         public override void SetStaticDefaults()
         {
@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.netUpdate = true;
                 Projectile.netSpam = 0;
             }
-            Vector2 offset = Projectile.rotation.ToRotationVector2() * 20f;
+            Vector2 offset = Projectile.rotation.ToRotationVector2() * 20f * PositionOffset;
             Projectile.Center = Owner.Center + offset;
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             Projectile.timeLeft = 2000;

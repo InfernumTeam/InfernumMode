@@ -8,8 +8,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class ProfanedSpearInfernum : ModProjectile
     {
-        public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/ProfanedSpearInfernum";
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Profaned Spear");

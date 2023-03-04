@@ -204,7 +204,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
                 Main.EntitySpriteDraw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
             }
-
             return false;
         }
     }

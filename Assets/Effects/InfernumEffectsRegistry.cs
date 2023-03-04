@@ -30,9 +30,8 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData FireBeamVertexShader => GameShaders.Misc["Infernum:FireBeamShader"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
-        public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
-        public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
+        public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
         public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData HologramShader => GameShaders.Misc["Infernum:Hologram"];
         public static MiscShaderData LavaVertexShader => GameShaders.Misc["Infernum:LavaShader"];

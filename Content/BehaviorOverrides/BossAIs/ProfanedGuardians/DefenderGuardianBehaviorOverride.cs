@@ -41,15 +41,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         internal PrimitiveTrailCopy DashTelegraphDrawer;
 
-        public enum DefenderAttackType
-        {
-            SpawnEffects,
-            FireWalls,
-
-            // Repeating attacks.
-            //VerticalCharges,
-        }
-
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
@@ -115,10 +106,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case GuardiansAttackType.SpearDashAndGroundSlam:
                     DoBehavior_SpearDashAndGroundSlam(npc, target, ref attackTimer, commander);
-                    break;
-
-                case GuardiansAttackType.LavaRaise:
-                    DoBehavior_LavaRaise(npc, target, ref attackTimer, commander);
                     break;
 
                 case GuardiansAttackType.CrashRam:
@@ -204,6 +191,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         Main.hideUI = false;
                         SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndFireCharge);
+                        commander.Infernum().ExtraAI[CommanderAttackCyclePositionIndex] = 1f;
                         npc.life = 0;
                         npc.NPCLoot();
                         npc.active = false;

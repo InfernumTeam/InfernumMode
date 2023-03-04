@@ -26,7 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
         public bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
         public float AttackTime => AttackerGuardian.ai[1];
-        public AttackerGuardianBehaviorOverride.AttackerGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackerGuardianAttackState)(int)AttackerGuardian.ai[0];
         public Vector2 PointerFingerPosition => NPC.Center + (NPC.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
         public Vector2? HandPositionOverride

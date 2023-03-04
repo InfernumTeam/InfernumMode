@@ -24,14 +24,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride
     {
-        public enum AttackerGuardianAttackState
-        {
-            SpawnEffects,
-            HoverAndFireDeathray,
-            SpinningHolyLightBeams,
-            DeathAnimation
-        }
-
         public static int TotalRemaininGuardians =>
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()).ToInt() +
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianDefender>()).ToInt() +
@@ -161,10 +153,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_SpearDashAndGroundSlam(npc, target, ref attackTimer, npc);
                     break;
 
-                case GuardiansAttackType.LavaRaise:
-                    DoBehavior_LavaRaise(npc, target, ref attackTimer, npc);
-                    break;
-
                 case GuardiansAttackType.CrashRam:
                     DoBehavior_CrashRam(npc, target, ref attackTimer, npc);
                     break;
@@ -177,8 +165,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_LargeGeyserAndFireCharge(npc, target, ref attackTimer);
                     break;
 
-                case GuardiansAttackType.ReleaseAimingFireballs:
-                    DoBehavior_ReleaseAimingFireballs(npc, target, ref attackTimer);
+                case GuardiansAttackType.DogmaLaserBall:
+                    DoBehavior_DogmaLaserBall(npc, target, ref attackTimer);
+                    break;
+
+                case GuardiansAttackType.BerdlySpears:
+                    DoBehavior_BerdlySpears(npc, target, ref attackTimer);
+                    break;
+
+                case GuardiansAttackType.SpearSpinThrow:
+                    DoBehavior_SpearSpinThrow(npc, target, ref attackTimer);
                     break;
 
                 case GuardiansAttackType.CommanderDeathAnimation:
@@ -282,7 +278,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Draw back afterimages, indicating that the guardian is fading away into ashes.
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             float radius = Utils.Remap(npc.Opacity, 1f, 0f, 0f, 55f);
-            if (radius > 0.5f && npc.ai[0] == (int)AttackerGuardianAttackState.DeathAnimation)
+            if (radius > 0.5f && npc.ai[0] == (int)GuardiansAttackType.CommanderDeathAnimation)
             {
                 for (int i = 0; i < 24; i++)
                 {
@@ -449,6 +445,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Main.npc[i].netUpdate = true;
                 }
             }
+
+            DespawnTransitionProjectiles();
 
             npc.life = npc.lifeMax;
             npc.netUpdate = true;

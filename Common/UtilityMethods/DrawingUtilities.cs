@@ -20,6 +20,7 @@ using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
@@ -567,6 +568,35 @@ namespace InfernumMode
                     }
                 }
             }
+        }
+
+        public static void DrawBloomLineTelegraph(Vector2 drawPosition, BloomLineDrawInfo drawInfo, Vector2? resolution = null)
+        {
+            // Claim texture and shader data in easy to use local variables.
+            Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
+            Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
+
+            // Prepare all parameters for the shader in anticipation that they will go the GPU for shader effects.
+            laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
+            laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.004f);
+            laserScopeEffect.Parameters["mainOpacity"].SetValue(drawInfo.Opacity);
+            laserScopeEffect.Parameters["Resolution"].SetValue(resolution ?? Vector2.One * 425f);
+            laserScopeEffect.Parameters["laserAngle"].SetValue(drawInfo.LineRotation);
+            laserScopeEffect.Parameters["laserWidth"].SetValue(drawInfo.WidthFactor);
+            laserScopeEffect.Parameters["laserLightStrenght"].SetValue(drawInfo.LightStrength);
+            laserScopeEffect.Parameters["color"].SetValue(drawInfo.MainColor.ToVector3());
+            laserScopeEffect.Parameters["darkerColor"].SetValue(drawInfo.DarkerColor.ToVector3());
+            laserScopeEffect.Parameters["bloomSize"].SetValue(drawInfo.BloomIntensity);
+            laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(drawInfo.BloomOpacity);
+            laserScopeEffect.Parameters["bloomFadeStrenght"].SetValue(3f);
+
+            // Prepare the sprite batch for shader drawing.
+            Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
+            laserScopeEffect.CurrentTechnique.Passes[0].Apply();
+
+            // Draw the texture with the shader and flush the results to the GPU, clearing the shader effect for any successive draw calls.
+            Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, drawInfo.Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
         }
     }
 }

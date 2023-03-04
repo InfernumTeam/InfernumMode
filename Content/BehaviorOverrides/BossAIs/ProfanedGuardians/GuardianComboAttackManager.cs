@@ -165,14 +165,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (npc.type == CommanderType)
             {
                 positionToMoveTo += new Vector2(400, 0);
-                if (attackTimer == 1 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (attackTimer == 1)
                 {
-                    Vector2 spawnPosition = new(target.Center.X + 800f, npc.Center.Y);
-                    Vector2 finalPosition = new(WorldSaveSystem.ProvidenceDoorXPosition - 7104f, target.Center.Y);
-                    float distance = (spawnPosition - finalPosition).Length();
-                    float x = distance / HolyPushbackWall.Lifetime;
-                    Vector2 velocity = new(-x, 0f);
-                    Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), 300, 0f);
+                    ScreenEffectSystem.SetFlashEffect(target.Center, 0.8f, 45);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 spawnPosition = new(target.Center.X + 800f, npc.Center.Y);
+                        Vector2 finalPosition = new(WorldSaveSystem.ProvidenceDoorXPosition - 7104f, target.Center.Y);
+                        float distance = (spawnPosition - finalPosition).Length();
+                        float x = distance / HolyPushbackWall.Lifetime;
+                        Vector2 velocity = new(-x, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), 300, 0f);
+                    }
                 }
                 if (npc.WithinRange(positionToMoveTo, 20f))
                 {
@@ -213,7 +219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
 
                         // If time to fire, the target is close enough and the pushback wall is not present.
-                        if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 6200f) && attackTimer >= initialDelay && crystal.ai[0] == 0f)
+                        if (attackTimer % deathrayFireRate == 0 && target.WithinRange(npc.Center, 7200f) && attackTimer >= initialDelay && crystal.ai[0] == 0f)
                         {
                             // Fire deathray.
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -273,7 +279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (attackTimer % wallCreationRate == 0f && Main.netMode != NetmodeID.MultiplayerClient && crystal.ai[0] == 0f)
                         {
                             Vector2 velocity = -Vector2.UnitX * 10f;
-                            Vector2 baseCenter = CrystalPosition + new Vector2(20f, 0f);
+                            Vector2 baseCenter = CrystalPosition + new Vector2(220f, 0f);
                             // Create a random offset.
                             float yRandomOffset;
                             Vector2 previousCenter = baseCenter + new Vector2(0f, lastOffsetY);
@@ -286,7 +292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 newCenter = baseCenter + new Vector2(0f, yRandomOffset);
                                 attempts++;
                             }
-                            while (newCenter.Distance(previousCenter) > 400f || attempts < 10);
+                            while (newCenter.Distance(previousCenter) > 400f || attempts < 30);
 
                             // Set the new random offset as the last one.
                             lastOffsetY = yRandomOffset;
@@ -593,6 +599,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (drawDashTelegraph == 1)
                             dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
 
+                        // Do not deal contact damage while positioning.
+                        npc.damage = 0;
 
                         if ((npc.WithinRange(position, 25f) && universalAttackTimer >= waitTime) || universalAttackTimer >= 120f)
                         {
@@ -615,6 +623,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             target.Infernum_Camera().CurrentScreenShakePower = 3f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.2f, 30);
                         }
+                        npc.damage = npc.defDamage;
                         substate++;
                         universalAttackTimer = 0;
                         break;
@@ -757,6 +766,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (drawDashTelegraph == 1)
                             dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
 
+                        // Do not deal damage.
+                        npc.damage = 0;
 
                         if ((npc.WithinRange(position, 25f) && localAttackTimer >= waitTime) || localAttackTimer >= 120f)
                         {
@@ -779,6 +790,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             target.Infernum_Camera().CurrentScreenShakePower = 3f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.2f, 30);
                         }
+                        npc.damage = npc.defDamage;
                         substate++;
                         localAttackTimer = 0;
                         break;
@@ -1872,6 +1884,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
+            // The commander will check this as well, and draw it instead if the defender is not present.
+            ref float drawDashTelegraph = ref npc.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
 
             float moveUnderAndWaitTime = 60f;
             float maxMoveUnderAndWaitTime = 120f;
@@ -1999,6 +2013,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
                     }
+
+                    // Draw an aimed telegraph.
+                    drawDashTelegraph = 1f;
 
                     // Make the spear rotation point to the player.
                     float idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();

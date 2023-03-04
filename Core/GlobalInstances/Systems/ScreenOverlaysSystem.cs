@@ -103,8 +103,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                         Color color = Color.Black * barOpacity;
                         Rectangle frame = new(0, 0, 1, 1);
                         float rotation = -0.175f;
-                        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight * 0.05f) + 4, Main.screenWidth + 4, (int)(Main.screenHeight * 0.2f) + 4), new Rectangle(0, 0, 1, 1), color, rotation, frame.Size() * 0.5f, SpriteEffects.None, 0f);
-                        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight * 0.95f) + 4, Main.screenWidth + 4, (int)(Main.screenHeight * 0.2f) + 4), new Rectangle(0, 0, 1, 1), color, rotation, frame.Size() * 0.5f, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight) + 4, Main.screenWidth * 2 + 4, (int)(Main.screenHeight * 0.25f) + 4), new Rectangle(0, 0, 1, 1), color, rotation, frame.Size() * 0.5f, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight) + 4, Main.screenWidth * 2 + 4, (int)(Main.screenHeight * 0.25f) + 4), new Rectangle(0, 0, 1, 1), color, rotation, frame.Size() * 0.5f, SpriteEffects.None, 0f);
                     }
                 }
 

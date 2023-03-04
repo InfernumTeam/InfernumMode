@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // If the healer is dead, resume taking damage.
             if (CalamityGlobalNPC.doughnutBossHealer == -1)
-                npc.Calamity().DR = 0.3f;
+                npc.Calamity().DR = 0.35f;
 
             if (commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] == 1f)
             {

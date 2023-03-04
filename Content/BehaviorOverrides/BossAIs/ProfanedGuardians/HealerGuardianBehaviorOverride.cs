@@ -56,6 +56,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.target = commander.target;
             npc.spriteDirection = (npc.velocity.X > 0).ToDirectionInt();
 
+            // Have DR.
+            npc.Calamity().DR = 0.35f;
+
             // Reset taking damage.
             npc.dontTakeDamage = false;
 

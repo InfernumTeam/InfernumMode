@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Color lineColor = Color.Lerp(Color.White, Color.Orange, MathHelper.Lerp(0.15f, 1f, i / 4f));
                 lineColor.A = 0;
 
-                Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + aimDirection * 6200f, lineColor, lineWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + aimDirection * 8200f, lineColor, lineWidth);
             }
         }
     }

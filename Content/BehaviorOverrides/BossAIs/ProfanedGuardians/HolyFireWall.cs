@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = 150f * Projectile.scale;
+            float width = 120f * Projectile.scale;
             Vector2 topStart = Projectile.Center - new Vector2(0, 100);
             Vector2 topEnd = topStart - Vector2.UnitY * (2000 - 80f);
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), topStart, topEnd, width, ref _))

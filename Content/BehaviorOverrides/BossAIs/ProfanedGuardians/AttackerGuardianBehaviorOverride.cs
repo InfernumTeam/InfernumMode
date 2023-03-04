@@ -19,17 +19,19 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.Gu
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using CalamityMod.Buffs.StatDebuffs;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Assets.Effects;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride
     {
+        internal PrimitiveTrailCopy DashTelegraphDrawer;
+
         public static int TotalRemaininGuardians =>
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()).ToInt() +
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianDefender>()).ToInt() +
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianHealer>()).ToInt();
-
-        public static float BorderPosition => WorldSaveSystem.ProvidenceArena.X * 16f + 300f;
 
         public const float ImmortalUntilPhase2LifeRatio = 0.75f;
 
@@ -289,6 +291,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
             }
 
+            if (TotalRemaininGuardians == 1 && npc.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex] == 1f)
+                DrawDashTelegraph(npc);
+
             if (shouldDrawShield)
                 DrawBackglowEffects(npc, spriteBatch, texture);
 
@@ -309,6 +314,42 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
             return false;
+        }
+
+        public void DrawDashTelegraph(NPC npc)
+        {
+            DashTelegraphDrawer ??= new PrimitiveTrailCopy(c => 65f,
+                c => DefenderGuardianBehaviorOverride.DashTelegraphColor(),
+                null, true, InfernumEffectsRegistry.SideStreakVertexShader);
+
+            InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.3f);
+
+            Vector2 startPos = npc.Center;
+            float distance = npc.Distance(Main.player[npc.target].Center);
+            Vector2 direction = npc.DirectionTo(Main.player[npc.target].Center);
+            Vector2 endPos = npc.Center + direction * distance;
+            Vector2[] drawPositions = new Vector2[8];
+            for (int i = 0; i < drawPositions.Length; i++)
+                drawPositions[i] = Vector2.Lerp(startPos, endPos, (float)i / drawPositions.Length);
+
+            DashTelegraphDrawer.Draw(drawPositions, -Main.screenPosition, 30);
+
+            // Draw arrows.
+            Texture2D arrowTexture = InfernumTextureRegistry.Arrow.Value;
+
+            Color drawColor = Color.Orange;
+            drawColor.A = 0;
+            Vector2 drawPosition = (startPos + direction * 120f) - Main.screenPosition;
+            for (int i = 1; i < distance / 125f; i++)
+            {
+                Vector2 arrowOrigin = arrowTexture.Size() * 0.5f;
+                float arrowRotation = direction.ToRotation() + MathHelper.PiOver2;
+                float sineValue = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10.5f - i)) / 2f;
+                float finalOpacity = CalamityUtils.SineInOutEasing(sineValue, 1);
+                Main.spriteBatch.Draw(arrowTexture, drawPosition, null, drawColor * finalOpacity, arrowRotation, arrowOrigin, 0.75f, SpriteEffects.None, 0f);
+                drawPosition += direction * 75f;
+            }
         }
 
         public static void DrawBackglowEffects(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

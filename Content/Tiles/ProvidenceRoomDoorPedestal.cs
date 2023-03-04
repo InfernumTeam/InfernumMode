@@ -32,6 +32,9 @@ namespace InfernumMode.Content.Tiles
             Main.tileSpelunker[Type] = true;
             Main.tileNoAttach[ModContent.TileType<ProfanedCrystal>()] = false;
 
+            // Apparently this is necessary in multiplayer for some reason???
+            MinPick = int.MaxValue;
+
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
             TileObjectData.newTile.Width = Width;
             TileObjectData.newTile.Height = Height;

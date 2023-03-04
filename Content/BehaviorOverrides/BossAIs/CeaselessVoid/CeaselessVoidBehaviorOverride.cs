@@ -221,18 +221,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 VerletSimulatedSegment segment = chain[i];
                 VerletSimulatedSegment next = chain[i + 1];
 
+                // Check to see if the entity is between two verlet segments via line/box collision checks.
+                // If they are, add the entity's velocity to the two segments relative to how close they are to each of the two.
                 float _ = 0f;
-                if (Collision.CheckAABBvLineCollision(e.TopLeft, e.Size, segment.position, next.position, 30f, ref _))
+                if (Collision.CheckAABBvLineCollision(e.TopLeft, e.Size, segment.position, next.position, 20f, ref _))
                 {
+                    // Weigh the entity's distance between the two segments.
+                    // If they are close to one point that means the strength of the movement force applied to the opposite segment is weaker, and vice versa.
                     float distanceBetweenSegments = segment.position.Distance(next.position);
                     float currentMovementOffsetInterpolant = Utils.GetLerpValue(e.Distance(segment.position), distanceBetweenSegments, distanceBetweenSegments * 0.2f, true);
                     float nextMovementOffsetInterpolant = 1f - currentMovementOffsetInterpolant;
 
+                    // Move the segments based on the weight values.
                     segment.position += entityVelocity * currentMovementOffsetInterpolant;
-
                     if (!next.locked)
                         next.position += entityVelocity * nextMovementOffsetInterpolant;
 
+                    // Play some cool chain sounds.
                     if (npc.soundDelay <= 0 && entityVelocity.Length() >= 0.1f)
                     {
                         SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidChainSound with { Volume = 0.5f }, e.Center);

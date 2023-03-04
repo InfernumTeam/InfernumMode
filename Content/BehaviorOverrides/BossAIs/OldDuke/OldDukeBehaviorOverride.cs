@@ -26,6 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         {
             SpawnAnimation,
             AttackSelectionWait,
+            ChargeIndicatorSound,
             Charge,
             AcidBelch,
             AcidBubbleFountain,
@@ -61,24 +62,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.AcidBelch,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.SharkronSpinSummon,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.ChargeIndicatorSound,
         };
 
         public static readonly List<OldDukeAttackState> Phase2AttackPattern = new()
@@ -90,23 +95,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.SharkronSpinSummon,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.AcidBelch,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -114,23 +123,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
+            OldDukeAttackState.ChargeIndicatorSound,
         };
 
         public static readonly List<OldDukeAttackState> Phase3AttackPattern = new()
         {
             OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -138,12 +151,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
             OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -151,12 +166,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -350,6 +367,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 case OldDukeAttackState.AttackSelectionWait:
                     DoBehavior_AttackSelectionWait(npc, target, inPhase4, attackTimer, ref frameType);
                     break;
+                case OldDukeAttackState.ChargeIndicatorSound:
+                    DoBehavior_ChargeIndicatorSound(npc, target, attackTimer);
+                    break;
                 case OldDukeAttackState.Charge:
                     DoBehavior_Charge(npc, target, inPhase2, inPhase3, inPhase4, attackTimer, ref frameType);
                     break;
@@ -505,11 +525,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             npc.frameCounter++;
 
             if (attackTimer >= waitDelay)
-            {
-                if (upcomingAttack is OldDukeAttackState.FastRegularCharge)
-                    SoundEngine.PlaySound(OldDukeBoss.VomitSound with { Volume = 1.5f, Pitch = -0.225f }, target.Center);
                 SelectNextAttack(npc);
-            }
+        }
+
+        public static void DoBehavior_ChargeIndicatorSound(NPC npc, Player target, float attackTimer)
+        {
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(OldDukeBoss.VomitSound with { Volume = 1.5f, Pitch = -0.225f }, target.Center);
+
+            npc.velocity *= 0.9f;
+            if (attackTimer >= 12f)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)

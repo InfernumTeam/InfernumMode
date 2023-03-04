@@ -41,6 +41,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
 
+            // Eye of Night debuffs.
+            npc.buffImmune[BuffID.CursedInferno] = true;
+
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];

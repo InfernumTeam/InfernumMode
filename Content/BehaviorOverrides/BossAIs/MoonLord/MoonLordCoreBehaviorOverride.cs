@@ -323,7 +323,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer == 30f)
                 SoundEngine.PlaySound(SoundID.Zombie92, npc.Center);
             
-            if (attackTimer >= 35f)
+            if (attackTimer >= 125f)
                 SelectNextAttack(npc);
         }
 

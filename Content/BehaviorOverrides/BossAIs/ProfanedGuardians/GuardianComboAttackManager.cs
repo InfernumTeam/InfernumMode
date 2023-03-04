@@ -419,9 +419,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float rockSpawnDelay = 30;
                 float rockAmount = 5;
 
-                // Have very high DR.
-                npc.Calamity().DR = 0.9999f;
-                npc.lifeRegen = 1000000;
                 npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
 
                 Vector2 hoverPosition = target.Center + new Vector2(500, -350);
@@ -2055,6 +2052,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Main.rand.NextFloat(25f, 35f));
                     }
 
+                    drawDashTelegraph = 0f;
+
                     // Stop the spear aiming.
                     spearStatus = (float)DefenderShieldStatus.ActiveAndStatic;
 
@@ -2070,6 +2069,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         // Hurt itself.
                         //npc.life -= (int)(npc.lifeMax * 0.002f);
+
                         npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 4.6f;
                         Vector2 impactCenter = npc.Center + new Vector2(0f, 55f);
 

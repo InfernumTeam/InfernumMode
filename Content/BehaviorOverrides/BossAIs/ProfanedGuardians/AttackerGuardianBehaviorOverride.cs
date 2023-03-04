@@ -21,6 +21,7 @@ using InfernumMode.Content.Projectiles.Wayfinder;
 using CalamityMod.Buffs.StatDebuffs;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.Buffs;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -88,7 +89,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.dontTakeDamage = true;
 
             else if (TotalRemaininGuardians == 2f)
+            {
                 npc.Calamity().DR = 0.9999f;
+                npc.chaseable = false;
+            }
             else
                 npc.Calamity().DR = 0.4f;
 
@@ -100,7 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Player player = Main.player[i];
                 if (player.active && !player.dead && player.Distance(npc.Center) <= 10000f)
+                {
                     player.wingTime = player.wingTimeMax;
+                    player.AddBuff(ModContent.BuffType<ElysianGrace>(), 2, true);
+                }
             }
 
             ref float attackState = ref npc.ai[0];

@@ -1,3 +1,4 @@
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
@@ -202,7 +203,7 @@ namespace InfernumMode.Core.TrackedMusic
                 volume = Main.musicFade[musicIndex];
 
                 // TODO -- Make this not hardcoded.
-                if (TrackedSong.Name.Contains("Providence") || TrackedSong.Name.Contains("Guardians"))
+                if ((TrackedSong.Name.Contains("Providence") || TrackedSong.Name.Contains("Guardians")) && InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.holyBoss != -1)
                 {
                     if (!PausedBecauseOfUI && Main.gamePaused)
                     {

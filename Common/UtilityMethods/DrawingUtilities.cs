@@ -570,7 +570,7 @@ namespace InfernumMode
             }
         }
 
-        public static void DrawBloomLineTelegraph(Vector2 drawPosition, BloomLineDrawInfo drawInfo, Vector2? resolution = null)
+        public static void DrawBloomLineTelegraph(Vector2 drawPosition, BloomLineDrawInfo drawInfo, bool resetSpritebatch = true, Vector2? resolution = null)
         {
             // Claim texture and shader data in easy to use local variables.
             Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
@@ -591,12 +591,14 @@ namespace InfernumMode
             laserScopeEffect.Parameters["bloomFadeStrenght"].SetValue(3f);
 
             // Prepare the sprite batch for shader drawing.
-            Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
+            if (resetSpritebatch)
+                Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
             laserScopeEffect.CurrentTechnique.Passes[0].Apply();
 
             // Draw the texture with the shader and flush the results to the GPU, clearing the shader effect for any successive draw calls.
             Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, 0f, invisible.Size() * 0.5f, drawInfo.Scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.ExitShaderRegion();
+            if (resetSpritebatch)
+                Main.spriteBatch.ExitShaderRegion();
         }
     }
 }

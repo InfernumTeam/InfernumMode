@@ -88,8 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetDefaults()
         {
-            Projectile.width = 40;
-            Projectile.height = 40;
+            Projectile.width = Projectile.height = 200;
             Projectile.hostile = true;
             Projectile.Opacity = 0;
             Projectile.scale = 0;

@@ -170,8 +170,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_DefenderDeathAnimation(npc, target, ref attackTimer, npc);
                     break;
 
-                case GuardiansAttackType.LargeGeyserAndFireCharge:
-                    DoBehavior_LargeGeyserAndFireCharge(npc, target, ref attackTimer);
+                case GuardiansAttackType.LargeGeyserAndCharge:
+                    DoBehavior_LargeGeyserAndCharge(npc, target, ref attackTimer);
                     break;
 
                 case GuardiansAttackType.DogmaLaserBall:
@@ -184,6 +184,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case GuardiansAttackType.SpearSpinThrow:
                     DoBehavior_SpearSpinThrow(npc, target, ref attackTimer);
+                    break;
+
+                case GuardiansAttackType.RiftFireCharges:
+                    DoBehavior_RiftFireCharges(npc, target, ref attackTimer);
                     break;
 
                 case GuardiansAttackType.CommanderDeathAnimation:

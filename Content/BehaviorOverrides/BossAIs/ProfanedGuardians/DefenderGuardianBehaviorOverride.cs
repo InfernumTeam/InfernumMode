@@ -198,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (localAttackTimer > 45f)
                     {
                         Main.hideUI = false;
-                        SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndFireCharge);
+                        SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndCharge);
                         commander.Infernum().ExtraAI[CommanderAttackCyclePositionIndex] = 1f;
                         npc.life = 0;
                         npc.NPCLoot();

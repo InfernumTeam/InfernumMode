@@ -46,6 +46,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
+            if (Projectile.localAI[1] == 0f)
+            {
+                Projectile.localAI[1] = 1f;
+                Projectile.timeLeft = Lifetime;
+            }
             Player target = Main.player[Owner.target];
 
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
@@ -82,9 +87,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
                 GeneralParticleHandler.SpawnParticle(rockParticle);
                 Projectile.rotation -= 0.1f;
-                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Left
-                    - Projectile.velocity * 0.5f,
-                0f, Projectile.scale * 0.8f, 15f, 170);
+                if (Main.rand.NextBool())
+                {
+                    ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center
+                        - Projectile.velocity * 0.5f,
+                    0f, Projectile.scale * 0.8f, 15f, 170);
+                }
             }
         }
 

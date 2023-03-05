@@ -207,8 +207,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             new(new(BaseTrackedMusic.TimeFormat(0, 21, 0), BaseTrackedMusic.TimeFormat(0, 32, 0)), ProvidenceAttackType.CinderAndBombBarrages),
             new(new(BaseTrackedMusic.TimeFormat(0, 32, 0), BaseTrackedMusic.TimeFormat(0, 42, 667)), ProvidenceAttackType.AcceleratingCrystalFan),
             new(new(BaseTrackedMusic.TimeFormat(0, 42, 667), BaseTrackedMusic.TimeFormat(0, 54, 333)), ProvidenceAttackType.AttackGuardiansSpearSlam),
-            new(new(BaseTrackedMusic.TimeFormat(0, 54, 333), BaseTrackedMusic.TimeFormat(1, 4, 0)), ProvidenceAttackType.HealerGuardianCrystalBarrage),
-            new(new(BaseTrackedMusic.TimeFormat(1, 4, 0), BaseTrackedMusic.TimeFormat(1, 13, 0)), ProvidenceAttackType.CinderAndBombBarrages),
+            new(new(BaseTrackedMusic.TimeFormat(0, 54, 333), BaseTrackedMusic.TimeFormat(1, 5, 0)), ProvidenceAttackType.HealerGuardianCrystalBarrage),
+            new(new(BaseTrackedMusic.TimeFormat(1, 5, 0), BaseTrackedMusic.TimeFormat(1, 13, 0)), ProvidenceAttackType.CinderAndBombBarrages),
             new(new(BaseTrackedMusic.TimeFormat(1, 13, 0), BaseTrackedMusic.TimeFormat(1, 25, 333)), ProvidenceAttackType.HealerGuardianCrystalBarrage),
             new(new(BaseTrackedMusic.TimeFormat(1, 25, 333), BaseTrackedMusic.TimeFormat(1, 46, 667)), ProvidenceAttackType.AttackGuardiansSpearSlam),
         };
@@ -653,14 +653,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float attackCompletion = localAttackTimer / (float)localAttackDuration;
             bool attackIsAboutToEnd = localAttackTimer >= localAttackDuration - 6f;
             bool canShootCircle = attackCompletion >= 0.5f;
-            float circleShootSpeed = MathHelper.Lerp(9f, 13.25f, 1f - lifeRatio);
+            float circleShootSpeed = MathHelper.Lerp(6f, 9.25f, 1f - lifeRatio);
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             ref float performedInitializations = ref npc.Infernum().ExtraAI[1];
             ref float performedEndEffects = ref npc.Infernum().ExtraAI[2];
 
             int waveReleaseRate = GetBPMTimeMultiplier(attackCompletion >= 0.5f ? 1 : 2);
             int fireballShootRate = (int)MathHelper.Lerp(14f, 8f, attackCompletion);
-            int fireballCircleShootCount = (int)MathHelper.Lerp(15f, 21f, attackCompletion);
+            int fireballCircleShootCount = (int)MathHelper.Lerp(12f, 18f, attackCompletion);
             float fireballShootSpeedBoost = (1f - lifeRatio) * 4f + attackCompletion * 4f;
 
             // Enter the cocoon.
@@ -1345,7 +1345,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (shootCycle <= 0f)
                 shootCycle = startingShootCycle;
 
-            int fireballCircleShootCount = (int)MathHelper.Lerp(14f, 24f, attackCompletion);
+            int fireballCircleShootCount = (int)MathHelper.Lerp(12f, 22f, attackCompletion);
             int shootRate = (int)MathHelper.Lerp(6f, 3f, attackCompletion);
             float spiralShootSpeed = MathHelper.Lerp(3.5f, 5.75f, attackCompletion);
             float circleShootSpeed = spiralShootSpeed * 1.36f;

@@ -835,8 +835,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 }
             }
 
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int stomp = Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitY, ProjectileID.DD2OgreSmash, 0, 0f, -1, 0f, 1f);
+                if (Main.projectile.IndexInRange(stomp))
+                    Main.projectile[stomp].Size = new(npc.width + 120, 50);
+            }
+
             // Create the particles.
-            //GeneralParticleHandler.SpawnParticle(new GroundImpactParticle(npc.Bottom, Vector2.UnitY, Color.Lerp(Color.Yellow, Color.Orange, 0.45f), 32, 1.1f));
             for (int i = 0; i < 15; i++)
             {
                 float horizontalOffsetInterpolant = Main.rand.NextFloat();

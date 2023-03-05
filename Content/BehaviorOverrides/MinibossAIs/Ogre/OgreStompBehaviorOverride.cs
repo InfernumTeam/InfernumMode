@@ -22,7 +22,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             }
             projectile.velocity = Vector2.Zero;
             projectile.position = projectile.Center;
-            projectile.Size = new Vector2(16f, 16f) * MathHelper.Lerp(1.25f, 8f, Utils.GetLerpValue(0f, 9f, projectile.ai[0]));
+
+            if (projectile.ai[1] == 0f)
+                projectile.Size = new Vector2(16f, 16f) * MathHelper.Lerp(1.25f, 8f, Utils.GetLerpValue(0f, 9f, projectile.ai[0]));
             projectile.Center = projectile.position;
             Point topLeftPoint = projectile.TopLeft.ToTileCoordinates();
             Point bottomRightPoint = projectile.BottomRight.ToTileCoordinates();

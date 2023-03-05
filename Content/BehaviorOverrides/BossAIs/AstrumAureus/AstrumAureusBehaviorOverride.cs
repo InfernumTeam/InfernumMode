@@ -336,7 +336,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                         {
                             npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
                             npc.velocity = new(Math.Sign(target.Center.X - npc.Center.X) * 8f, -23f);
-                            SoundEngine.PlaySound(AureusBoss.JumpSound, target.Center);
+                            SoundEngine.PlaySound(AureusBoss.JumpSound with { Volume = 0.4f }, target.Center);
 
                             attackState++;
                             attackTimer = 0f;
@@ -403,31 +403,38 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                         if (hitGround)
                         {
                             // Play a stomp sound.
-                            SoundEngine.PlaySound(AureusBoss.StompSound, npc.Center);
+                            SoundEngine.PlaySound(InfernumSoundRegistry.AstrumAureusStompSound with { Volume = 4f }, npc.Center);
 
-                            int missileDamage = 155;
-                            int shockwaveDamage = 200;
-                            if (enraged)
+                            // Create ground particle effects.
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                missileDamage = (int)(missileDamage * EnragedDamageFactor);
-                                shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
-                            }
-
-                            for (int i = 0; i < 5; i++)
-                            {
-                                Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.77f, 0.77f, i / 4f)) * 16f;
-                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralBlueComet>(), missileDamage, 0f);
-                            }
-                            if (lifeRatio < Phase2LifeRatio)
-                            {
-                                for (int i = 0; i < 8; i++)
+                                int missileDamage = 155;
+                                int shockwaveDamage = 200;
+                                if (enraged)
                                 {
-                                    Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(10.5f, 13f);
-                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, missileVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
+                                    missileDamage = (int)(missileDamage * EnragedDamageFactor);
+                                    shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
                                 }
-                            }
 
-                            Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.77f, 0.77f, i / 4f)) * 16f;
+                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralBlueComet>(), missileDamage, 0f);
+                                }
+                                if (lifeRatio < Phase2LifeRatio)
+                                {
+                                    for (int i = 0; i < 8; i++)
+                                    {
+                                        Vector2 missileVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.2f) * Main.rand.NextFloat(10.5f, 13f);
+                                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, missileVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
+                                    }
+                                }
+
+                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                                int stomp = Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitY, ProjectileID.DD2OgreSmash, 0, 0f, -1, 0f, 1f);
+                                if (Main.projectile.IndexInRange(stomp))
+                                    Main.projectile[stomp].Size = new(npc.width + 120, 50);
+                            }
 
                             target.Infernum_Camera().CurrentScreenShakePower = 12f;
 

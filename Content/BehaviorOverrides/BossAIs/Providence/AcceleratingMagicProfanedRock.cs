@@ -16,7 +16,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
-    public class AcceleratingMagicProfanedRock : ModProjectile
+    public class AcceleratingMagicProfanedRock : ModProjectile, ISpecializedDrawRegion
     {
         public int CurrentVarient
         { 
@@ -135,7 +135,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public Color PrimitiveColorFunction(float _) => Color.HotPink * Projectile.Opacity * 1.3f;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void DrawAfterimageTrail()
+        {
+            // Initialize the trail.
+            var trailShader = GameShaders.Misc["CalamityMod:HeavenlyGaleTrail"];
+            AfterimageTrail ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, trailShader);
+
+            float localIdentityOffset = Projectile.identity * 0.1372f;
+            Color mainColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
+            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset + 0.2f) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
+
+            mainColor = Color.Lerp(Color.White, mainColor, 0.85f);
+            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.85f);
+
+            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition;
+            trailShader.SetShaderTexture(InfernumTextureRegistry.FireNoise);
+            trailShader.UseImage2("Images/Extra_189");
+            trailShader.UseColor(mainColor);
+            trailShader.UseSecondaryColor(secondaryColor);
+            AfterimageTrail.Draw(Projectile.oldPos, trailOffset, 20);
+        }
+
+        public void SpecialDraw(SpriteBatch spriteBatch)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -163,7 +186,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     BloomOpacity = 0.4f,
                     LightStrength = 5f
                 };
-                Utilities.DrawBloomLineTelegraph(drawPosition, lineInfo);
+                Utilities.DrawBloomLineTelegraph(drawPosition, lineInfo, false);
             }
 
             float backglowCount = 12;
@@ -172,36 +195,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowCount).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }
-            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(lightColor) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             if (Timer <= MagicGlowTimer)
             {
                 backglowColor = Color.HotPink * (1 - Timer / MagicGlowTimer);
                 for (int i = 0; i < 3; i++)
                     Main.EntitySpriteDraw(texture, drawPosition, null, backglowColor * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             }
-            return false;
         }
 
-        public void DrawAfterimageTrail()
+        public void PrepareSpriteBatch(SpriteBatch spriteBatch)
         {
-            // Initialize the trail.
-            var trailShader = GameShaders.Misc["CalamityMod:HeavenlyGaleTrail"];
-            AfterimageTrail ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, trailShader);
-
-            float localIdentityOffset = Projectile.identity * 0.1372f;
-            Color mainColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
-            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset + 0.2f) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
-
-            mainColor = Color.Lerp(Color.White, mainColor, 0.85f);
-            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.85f);
-
-            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition;
-            trailShader.SetShaderTexture(InfernumTextureRegistry.FireNoise);
-            trailShader.UseImage2("Images/Extra_189");
-            trailShader.UseColor(mainColor);
-            trailShader.UseSecondaryColor(secondaryColor);
-            trailShader.Apply();
-            AfterimageTrail.Draw(Projectile.oldPos, trailOffset, 40);
+            spriteBatch.EnforceCutoffRegion(new(0, 0, Main.screenWidth, Main.screenHeight), Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
         }
     }
 }

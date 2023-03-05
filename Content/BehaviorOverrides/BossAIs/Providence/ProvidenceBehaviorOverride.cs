@@ -648,14 +648,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_FireEnergyCharge(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
         {
             int shootDelay = 60;
+            int fireballCircleShootRate = GetBPMTimeMultiplier(4);
             float attackCompletion = localAttackTimer / (float)localAttackDuration;
             bool attackIsAboutToEnd = localAttackTimer >= localAttackDuration - 6f;
+            bool canShootCircle = attackCompletion >= 0.5f;
+            float circleShootSpeed = MathHelper.Lerp(9f, 13.25f, 1f - lifeRatio);
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             ref float performedInitializations = ref npc.Infernum().ExtraAI[1];
             ref float performedEndEffects = ref npc.Infernum().ExtraAI[2];
 
             int waveReleaseRate = GetBPMTimeMultiplier(attackCompletion >= 0.5f ? 1 : 2);
             int fireballShootRate = (int)MathHelper.Lerp(14f, 8f, attackCompletion);
+            int fireballCircleShootCount = (int)MathHelper.Lerp(15f, 21f, attackCompletion);
             float fireballShootSpeedBoost = (1f - lifeRatio) * 4f + attackCompletion * 4f;
 
             // Enter the cocoon.
@@ -750,6 +754,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 ReleaseSparkles(npc.Center, 80, 75f);
 
                 npc.netUpdate = true;
+            }
+
+            // Release fireball circles if necessary.
+            if (canShootCircle && localAttackTimer % fireballCircleShootRate == 0f)
+            {
+                // Play a sizzle sound and create light effects to accompany the circle.
+                SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, fireballCircleShootRate / 3);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float shootOffsetAngle = (localAttackTimer % (fireballCircleShootRate * 2f) == 0f) ? MathHelper.Pi / fireballCircleShootCount : 0f;
+                    for (int i = 0; i < fireballCircleShootCount; i++)
+                    {
+                        Vector2 fireballCircleVelocity = (MathHelper.TwoPi * i / fireballCircleShootCount + shootOffsetAngle).ToRotationVector2() * circleShootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, fireballCircleVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+                    }
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+                }
             }
         }
 
@@ -1400,7 +1427,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            // Release fireball circles if necessary.
+            // Release fireball circles and rocks if necessary.
             if (canShootCircle && localAttackTimer % fireballCircleShootRate == 0f)
             {
                 // Play a sizzle sound and create light effects to accompany the circle.
@@ -1418,6 +1445,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         Vector2 fireballCircleVelocity = (MathHelper.TwoPi * i / fireballCircleShootCount + shootOffsetAngle).ToRotationVector2() * circleShootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, fireballCircleVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+                    }
+
+                    // Release rocks from above.
+                    for (float dx = -900f; dx < 900f; dx += Main.rand.NextFloat(237f, 300f))
+                    {
+                        Vector2 rockSpawnPosition = target.Center + new Vector2(dx, -820f);
+                        Vector2 rockVelocity = Vector2.UnitY.RotateRandom(0.06f) * 6f;
+                        int projID = Main.rand.NextBool(2) ? ModContent.ProjectileType<HolyCinder>() : ModContent.ProjectileType<AcceleratingMagicProfanedRock>();
+                        Utilities.NewProjectileBetter(rockSpawnPosition, rockVelocity, projID, MagicRockDamage, 0f);
                     }
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
                 }

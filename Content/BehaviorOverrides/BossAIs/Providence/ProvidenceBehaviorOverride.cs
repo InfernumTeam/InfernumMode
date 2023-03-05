@@ -330,6 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     hasEnteredPhase2 = 1f;
                     hasCompletedCycle = 0f;
                     attackTimer = 0f;
+                    npc.Size = new Vector2(600f, 450f);
                     npc.netUpdate = true;
                 }
 
@@ -681,6 +682,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
 
                 performedInitializations = 1f;
+                npc.Size = new Vector2(48f, 108f);
+                npc.Center = target.Center - Vector2.UnitY * 400f;
                 npc.velocity = Vector2.UnitY * -12f;
                 npc.netUpdate = true;
             }
@@ -750,6 +753,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyBasicFireball>());
 
                 performedEndEffects = 1f;
+                npc.Size = new(600f, 450f);
                 npc.Center = target.Center - Vector2.UnitY * 400f;
                 ReleaseSparkles(npc.Center, 80, 75f);
 
@@ -1018,7 +1022,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Summon the attacker guardians.
-            if (attackCycleTimer == 0)
+            if (!doneAttacking && localAttackTimer >= chargeUpTime && !NPC.AnyNPCs(ModContent.NPCType<ProvSpawnOffense>()) && guardiansShouldExplode == 0f)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
                 if (CalamityConfig.Instance.Screenshake)

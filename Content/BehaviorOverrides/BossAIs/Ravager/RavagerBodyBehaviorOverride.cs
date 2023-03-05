@@ -369,6 +369,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     attackTimer = 0f;
                     jumpSubstate = 0f;
                     jumpCounter++;
+
+                    target.Infernum_Camera().CurrentScreenShakePower = 6f;
                     if (jumpCounter >= jumpCount)
                         SelectNextAttack(npc, phaseInfo);
 
@@ -569,6 +571,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     }
                 }
 
+                target.Infernum_Camera().CurrentScreenShakePower = 10f;
                 hasDoneGroundHitEffects = 1f;
                 attackTimer = 0f;
                 npc.netUpdate = true;
@@ -652,6 +655,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 npc.velocity.X = 0f;
                 npc.netUpdate = true;
 
+                target.Infernum_Camera().CurrentScreenShakePower = 10f;
+
                 // Create flame pillar telegraphs.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -732,7 +737,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             {
                 for (int i = -1; i <= 1; i += 2)
                 {
-                    Vector2 pillarSpawnPosition = target.Center + Vector2.UnitX * i * spaceBetweenWalls;
+                    Vector2 pillarSpawnPosition = target.Center + Vector2.UnitX * (i * spaceBetweenWalls + 120f);
                     pillarSpawnPosition.Y -= 640f;
                     Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f);
                 }

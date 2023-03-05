@@ -336,6 +336,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                         {
                             npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
                             npc.velocity = new(Math.Sign(target.Center.X - npc.Center.X) * 8f, -23f);
+                            SoundEngine.PlaySound(AureusBoss.JumpSound, target.Center);
+
                             attackState++;
                             attackTimer = 0f;
                             npc.netUpdate = true;
@@ -426,6 +428,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                             }
 
                             Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+
+                            target.Infernum_Camera().CurrentScreenShakePower = 12f;
 
                             // Determine whether the attack should be repeated.
                             stompCounter++;

@@ -71,8 +71,8 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     {
         if (coords.x < 0.1)
             opacity *= pow(coords.x / 0.1, 6);
-        if (coords.x > 0.9)
-            opacity *= pow(1 - (coords.x - 0.9) / 0.05, 6);
+        if (coords.x > 0.87)
+            opacity *= pow(1 - (coords.x - 0.87) / 0.13, 12);
     }
     else
     {

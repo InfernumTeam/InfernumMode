@@ -83,6 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.alpha = 255;
             Projectile.timeLeft = 200;
             Projectile.Calamity().DealsDefenseDamage = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()
@@ -105,11 +106,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.velocity *= 1.01f;
             }
             //Release spears.
-            if (Timer % SpearReleaseRate == SpearReleaseRate - 1)
+            if (Timer % SpearReleaseRate == SpearReleaseRate - 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * SpearDirection) * 7f;
                 SpearDirection *= -1f;
-                Utilities.NewProjectileBetter(Projectile.Center + velocity.SafeNormalize(Vector2.UnitY), velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 300, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center + velocity.SafeNormalize(Vector2.UnitY), velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), GuardianComboAttackManager.HolySpearDamage, 0f);
             }
 
             Lighting.AddLight(Projectile.Center, Vector3.One);

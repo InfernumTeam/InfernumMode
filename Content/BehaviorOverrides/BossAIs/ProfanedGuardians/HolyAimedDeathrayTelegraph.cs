@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
 
             Vector2 beamDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<HolyAimedDeathray>(), 220, 0f, -1, 0f, Owner.whoAmI);
+            Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<HolyAimedDeathray>(), GuardianComboAttackManager.HolyFireBeamDamage, 0f, -1, 0f, Owner.whoAmI);
         }
 
         public void CullDraw(SpriteBatch spriteBatch)

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
@@ -22,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static Color BrightFire => new(255, 255, 150);
 
-        public const float LaserLength = 6500f;
+        public const float LaserLength = 7500f;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -38,7 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.timeLeft = 30;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
-            CooldownSlot = 1;
+            CooldownSlot = ImmunityCooldownID.Bosses;
+
         }
 
         public override void AI()
@@ -99,6 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(BrightFire);
             InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
+            InfernumEffectsRegistry.GenericLaserVertexShader.Shader.Parameters["strongerFade"].SetValue(true);
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

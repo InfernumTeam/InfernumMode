@@ -66,7 +66,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Reset taking damage.
             npc.dontTakeDamage = false;
-            npc.damage = 300;
+            // Don't deal damage by default.
+            npc.damage = 0;
 
             // If the healer is dead, resume taking damage.
             if (CalamityGlobalNPC.doughnutBossHealer == -1)

@@ -4,6 +4,7 @@ using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
@@ -12,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public PrimitiveTrailCopy FlameDrawer { get; private set; } = null;
 
-        public const int Lifetime = 570;
+        public const int Lifetime = 650;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
@@ -32,6 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.Opacity = 0;
             Projectile.scale = 0;
             Projectile.timeLeft = Lifetime;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

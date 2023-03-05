@@ -371,6 +371,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void PrepareSealocketTarget(On.Terraria.Main.orig_CheckMonoliths orig)
         {
+            orig();
             InitializeTargetIfNecessary();
 
             var device = Main.instance.GraphicsDevice;
@@ -389,7 +390,6 @@ namespace InfernumMode.Core.ILEditingStuff
             }
             Main.spriteBatch.End();
             device.SetRenderTargets(bindings);
-            orig();
         }
 
         internal static void FindSealocketItemDyeShader(On.Terraria.Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)

@@ -38,12 +38,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.timeLeft = Lifetime;
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            base.OnSpawn(source);
-            Projectile.timeLeft = Lifetime;
-        }
-
         public override void AI()
         {
             if (!Owner.active || Owner.type != ModContent.NPCType<ProfanedGuardianDefender>())

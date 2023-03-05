@@ -44,6 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.timeLeft = 7000;
             Projectile.penetrate = -1;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()
@@ -68,6 +69,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.Center = Owner.Center + offset;
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             Projectile.timeLeft = 2000;
+        }
+
+        public override bool CanHitPlayer(Player target)
+        {
+            return base.CanHitPlayer(target);
         }
 
         public override bool PreDraw(ref Color lightColor)

@@ -88,6 +88,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         // The length of the phase 3 looping music section.
         public const int LoopingMusicLength = 2560;
+
+        public const int ProfanedRockDamage = 300;
+        public const int MagicShotDamage = 320;
+        public const int HolySpearDamage = 350;
+        public const int CommanderSpearDamage = 400;
+        public const int HolyFireBeamDamage = 550;
+        public const int LavaPillarDamage = 550;
         #endregion
 
         #region Indexes
@@ -177,7 +184,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         float distance = (spawnPosition - finalPosition).Length();
                         float x = distance / HolyPushbackWall.Lifetime;
                         Vector2 velocity = new(-x, 0f);
-                        Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), 300, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), HolyFireBeamDamage, 0f);
                     }
                 }
                 if (npc.WithinRange(positionToMoveTo, 20f))
@@ -296,7 +303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             // Set the new random offset as the last one.
                             lastOffsetY = yRandomOffset;
-                            Utilities.NewProjectileBetter(newCenter, velocity, ModContent.ProjectileType<HolyFireWall>(), 300, 0);
+                            Utilities.NewProjectileBetter(newCenter, velocity, ModContent.ProjectileType<HolyFireWall>(), HolyFireBeamDamage, 0);
                             npc.netUpdate = true;
                         }
 
@@ -442,7 +449,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         int waitTimeToUse = Main.rand.Next(0, waitTimes.Count);
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock => rock.ModProjectile<ProfanedCirclingRock>().WaitTime = waitTimes[waitTimeToUse]);
-                        Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), 120, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
+                        Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), ProfanedRockDamage, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
                         waitTimes.RemoveAt(waitTimeToUse);
                     }
                 }
@@ -491,7 +498,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         for (int i = 0; i < crystalAmount; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 15f;
-                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicSpiralCrystalShot>(), 230, 0f, -1, 0f, i % 2f == 0f ? -1f : 1f);
+                            Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicSpiralCrystalShot>(), MagicShotDamage, 0f, -1, 0f, i % 2f == 0f ? -1f : 1f);
                         }
                         if (crystalsFired >= maxCrystalsFired)
                             universalAttackTimer = 0;
@@ -631,7 +638,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         drawDashTelegraph = 1;
                         dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
-
+                        npc.damage = npc.defDamage;
                         // Create particles to indicate the sudden speed.
                         if (Main.rand.NextBool(2))
                         {
@@ -684,8 +691,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         Vector2 fastShootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * crystalShotSpeed;
                         Vector2 slowShootVelocity = (MathHelper.TwoPi * (i + 0.5f) / crystalAmount).ToRotationVector2() * (crystalShotSpeed / 3f);
-                        Utilities.NewProjectileBetter(commander.Center, fastShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 200, 0f);
-                        Utilities.NewProjectileBetter(commander.Center, slowShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 200, 0f);
+                        Utilities.NewProjectileBetter(commander.Center, fastShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), MagicShotDamage, 0f);
+                        Utilities.NewProjectileBetter(commander.Center, slowShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), MagicShotDamage, 0f);
                     }
                 }
 
@@ -798,7 +805,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         drawDashTelegraph = 1;
                         dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
-
+                        npc.damage = npc.defDamage;
                         // Create particles to indicate the sudden speed.
                         if (Main.rand.NextBool(2))
                         {
@@ -850,7 +857,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         Vector2 shootVelocity = new(MathHelper.Lerp(-20f, 20f, i / (float)totalCrystalsPerLayer), -10.75f);
                         shootVelocity.X += Main.rand.NextFloatDirection() * 0.6f;
-                        Utilities.NewProjectileBetter(npc.Center + -Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<FallingCrystalShard>(), 200, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + -Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<FallingCrystalShard>(), MagicShotDamage, 0f);
                     }
                     completedCrystalLayers++;
                     if (completedCrystalLayers >= totalCrystalLayers)
@@ -1006,7 +1013,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
                         }
                         spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         substate++;
@@ -1051,7 +1058,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 float positionRotation = MathF.Tau * CalamityUtils.LinearEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
                                 Vector2 position = npc.Center + positionRotation.ToRotationVector2() * 75f;
                                 Vector2 velocity = npc.SafeDirectionTo(position) * 5f;
-                                Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), 250, 0f);
+                                Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), HolySpearDamage, 0f);
                             }
                         }
                         else
@@ -1154,7 +1161,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                                 int waitTimeToUse = Main.rand.Next(0, waitTimes.Count);
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock => rock.ModProjectile<ProfanedCirclingRock>().WaitTime = waitTimes[waitTimeToUse]);
-                                Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), 120, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
+                                Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), ProfanedRockDamage, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
                                 waitTimes.RemoveAt(waitTimeToUse);
                             }
                         }
@@ -1217,6 +1224,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 3:
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 0.9f }, target.Center);
                         npc.velocity = Vector2.UnitY * slamSpeed;
+                        npc.damage = npc.defDamage;
 
                         universalAttackTimer = 0f;
                         substate++;
@@ -1231,6 +1239,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
                             GeneralParticleHandler.SpawnParticle(energyLeak);
                         }
+
+                        npc.damage = npc.defDamage;
 
                         if ((Collision.SolidCollision(npc.Center, (int)(npc.width * 0.85f), (int)(npc.height * 0.85f)) && npc.Center.Y > target.Center.Y) || universalAttackTimer >= slamLength)
                         {
@@ -1257,7 +1267,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 for (int i = 0; i < pillarAmount; i++)
                                 {
                                     Vector2 position = Vector2.Lerp(start, end, (float)i / pillarAmount);
-                                    Utilities.NewProjectileBetter(position, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 400, 0f);
+                                    Utilities.NewProjectileBetter(position, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), LavaPillarDamage, 0f);
                                 }
                             }
                             for (int j = 0; j < 40; j++)
@@ -1385,7 +1395,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
                         }
 
                         spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
@@ -1481,7 +1491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                         direction = impactCenter + impactCenter.DirectionTo(target.Center);
                                         velocity = impactCenter.DirectionTo(direction) * 7.5f;
                                     }
-                                    Utilities.NewProjectileBetter(impactCenter, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
+                                    Utilities.NewProjectileBetter(impactCenter, velocity, ModContent.ProjectileType<ProfanedRock>(), ProfanedRockDamage, 0f, -1, 0f, npc.whoAmI);
                                 }
                             }
 
@@ -1521,6 +1531,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             else if (npc.type == DefenderType)
             {
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
+
+                npc.damage = npc.defDamage;
 
                 switch (substate)
                 {
@@ -1955,12 +1967,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
                             Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
-                            Utilities.NewProjectileBetter(center, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
+                            Utilities.NewProjectileBetter(center, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), LavaPillarDamage, 0f);
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
-                            Utilities.NewProjectileBetter(center + new Vector2(-2700f, 0f), Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
+                            Utilities.NewProjectileBetter(center + new Vector2(-2700f, 0f), Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), LavaPillarDamage, 0f);
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(pillar => pillar.ModProjectile<LavaEruptionPillar>().BigVersion = true);
-                            Utilities.NewProjectileBetter(center + new Vector2(2700f, 0f), Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), 500, 0f);
+                            Utilities.NewProjectileBetter(center + new Vector2(2700f, 0f), Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), LavaPillarDamage, 0f);
                         }
                     }
 
@@ -1984,7 +1996,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Vector2 direction = center - Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.7f, 0.7f));
                                 Vector2 velocity = center.DirectionTo(direction) * Main.rand.NextFloat(34f, 40f);
                                 velocity.Y *= 1.16f;
-                                Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), 200, 0f, -1, 0f, npc.whoAmI);
+                                Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), ProfanedRockDamage, 0f, -1, 0f, npc.whoAmI);
                             }
                         }
                         if (CalamityConfig.Instance.Screenshake)
@@ -2008,7 +2020,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
                     }
 
                     // Draw an aimed telegraph.
@@ -2114,7 +2126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                         r.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Accelerating;
                                     });
                                 }
-                                Utilities.NewProjectileBetter(impactCenter + crossVelocity, crossVelocity, type, 250, 0f);
+                                Utilities.NewProjectileBetter(impactCenter + crossVelocity, crossVelocity, type, ProfanedRockDamage, 0f);
                             }
                         }
 
@@ -2164,7 +2176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
                     }
 
                     spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
@@ -2206,7 +2218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
 
                     if (universalAttackTimer == 1)
-                        Utilities.NewProjectileBetter(spearTip, Vector2.Zero, ModContent.ProjectileType<HolyDogmaFireball>(), 500, 0f);
+                        Utilities.NewProjectileBetter(spearTip, Vector2.Zero, ModContent.ProjectileType<HolyDogmaFireball>(), HolyFireBeamDamage, 0f);
 
                     if (universalAttackTimer <= chargeUpTime)
                     {
@@ -2267,7 +2279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
             }
 
             // Make the spear rotation point to the player.
@@ -2338,7 +2350,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             {
                                 s.ModProjectile<HolySineSpear>().WaveOffset = Main.rand.NextFloat(0f, MathF.Tau);
                             });
-                            Utilities.NewProjectileBetter(spearTip, spearVelocity, ModContent.ProjectileType<HolySineSpear>(), 350, 0f, ai1: 1f);
+                            Utilities.NewProjectileBetter(spearTip, spearVelocity, ModContent.ProjectileType<HolySineSpear>(), CommanderSpearDamage, 0f, ai1: 1f);
                         }
                     }
                     if (universalAttackTimer >= totalShootLength + endOfAttackDelay)
@@ -2362,9 +2374,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float spearPosOffset = ref npc.Infernum().ExtraAI[CommanderSpearPositionOffsetIndex];
 
             float flySpeed = 19f;
-            float spearSpinTime = 60f;
-            float spearReelbackTime = spearSpinTime + 30f;
-            float spearStabTime = spearReelbackTime + 20f;
+            float spearSpinTime = 30f;
+            float spearReelbackTime = spearSpinTime + 20f;
+            float spearStabTime = spearReelbackTime + 10f;
             float spearThrowSpeed = 14f;
             float afterAttackWaitTime = 90f;
             float spearsAmount = 4f;
@@ -2387,7 +2399,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
                     }
 
                     // Make the spear rotation point to the player.
@@ -2472,7 +2484,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             {
                                 Vector2 explodyVelocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * (spearThrowSpeed * 0.8f);
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    Utilities.NewProjectileBetter(spawnPosition, explodyVelocity, ModContent.ProjectileType<CommanderSpearThrown>(), 300, 0f, -1, 1f);
+                                    Utilities.NewProjectileBetter(spawnPosition, explodyVelocity, ModContent.ProjectileType<CommanderSpearThrown>(), CommanderSpearDamage, 0f, -1, 1f);
                             }
                             else
                             {
@@ -2484,7 +2496,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Vector2 velocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * spearThrowSpeed;
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<CommanderSpearThrown>(), 300, 0f);
+                                    Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<CommanderSpearThrown>(), CommanderSpearDamage, 0f);
                             }
                         }
                         

@@ -100,6 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             CinderAndBombBarrages,
             AcceleratingCrystalFan,
             AttackGuardiansSpearSlam,
+            HealerGuardianCrystalBarrage,
 
             // Phase 2.
             EnterFireFormBulletHell,
@@ -129,6 +130,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             LookAtTarget,
             SpinInPlace,
             Charge
+        }
+
+        public enum HealerGuardianAttackState
+        {
+            SpinInPlace,
+            WaitAndReleaseTelegraph,
+            ShootCrystals
         }
         #endregion
 
@@ -178,6 +186,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static int CrystalMagicDamage => IsEnraged ? 450 : 250;
 
+        public static int CrystalSpikeDamage => IsEnraged ? 500 : 300;
+
+        public static int MagicRockDamage => IsEnraged ? 450 : 250;
+
         public static int MagicLaserbeamDamage => IsEnraged ? 1000 : 450;
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
@@ -195,9 +207,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             new(new(BaseTrackedMusic.TimeFormat(0, 21, 0), BaseTrackedMusic.TimeFormat(0, 32, 0)), ProvidenceAttackType.CinderAndBombBarrages),
             new(new(BaseTrackedMusic.TimeFormat(0, 32, 0), BaseTrackedMusic.TimeFormat(0, 42, 667)), ProvidenceAttackType.AcceleratingCrystalFan),
             new(new(BaseTrackedMusic.TimeFormat(0, 42, 667), BaseTrackedMusic.TimeFormat(0, 54, 333)), ProvidenceAttackType.AttackGuardiansSpearSlam),
-            new(new(BaseTrackedMusic.TimeFormat(0, 54, 333), BaseTrackedMusic.TimeFormat(1, 4, 0)), ProvidenceAttackType.AcceleratingCrystalFan),
+            new(new(BaseTrackedMusic.TimeFormat(0, 54, 333), BaseTrackedMusic.TimeFormat(1, 4, 0)), ProvidenceAttackType.HealerGuardianCrystalBarrage),
             new(new(BaseTrackedMusic.TimeFormat(1, 4, 0), BaseTrackedMusic.TimeFormat(1, 13, 0)), ProvidenceAttackType.CinderAndBombBarrages),
-            new(new(BaseTrackedMusic.TimeFormat(1, 13, 0), BaseTrackedMusic.TimeFormat(1, 25, 333)), ProvidenceAttackType.AcceleratingCrystalFan),
+            new(new(BaseTrackedMusic.TimeFormat(1, 13, 0), BaseTrackedMusic.TimeFormat(1, 25, 333)), ProvidenceAttackType.HealerGuardianCrystalBarrage),
             new(new(BaseTrackedMusic.TimeFormat(1, 25, 333), BaseTrackedMusic.TimeFormat(1, 46, 667)), ProvidenceAttackType.AttackGuardiansSpearSlam),
         };
 
@@ -301,11 +313,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int guardianID = ModContent.NPCType<ProvSpawnOffense>();
+                    List<int> guardianIDs = new()
+                    {
+                        ModContent.NPCType<ProvSpawnHealer>(),
+                        ModContent.NPCType<ProvSpawnOffense>()
+                    };
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         NPC n = Main.npc[i];
-                        if (n.active && n.type == guardianID)
+                        if (n.active && guardianIDs.Contains(n.type))
                             n.active = false;
                     }
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CommanderSpear2>());
@@ -313,6 +329,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
                     hasEnteredPhase2 = 1f;
                     hasCompletedCycle = 0f;
+                    attackTimer = 0f;
                     npc.netUpdate = true;
                 }
 
@@ -338,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // For a few frames Providence will play Boss 1 due to the custom music system. Don't allow this.
-            if (Main.netMode != NetmodeID.Server)
+            if (Main.netMode != NetmodeID.Server && InfernumMode.CalMusicModIsActive)
                 Main.musicFade[MusicID.Boss1] = 0f;
 
             // This screen shader kind of sucks. Please turn it off.
@@ -542,6 +559,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     break;
                 case ProvidenceAttackType.AttackGuardiansSpearSlam:
                     DoBehavior_AttackGuardiansSpearSlam(npc, target, lifeRatioP1Adjusted, localAttackTimer, localAttackDuration, ref drawState, ref flightPath);
+                    break;
+                case ProvidenceAttackType.HealerGuardianCrystalBarrage:
+                    DoBehavior_HealerGuardianCrystalBarrage(npc, target, lifeRatioP1Adjusted, localAttackTimer, localAttackDuration, ref drawState, ref flightPath);
                     break;
 
                 // Phase 2.
@@ -950,7 +970,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float guardiansVerticalOffset = ref npc.Infernum().ExtraAI[2];
             ref float guardiansShouldExplode = ref npc.Infernum().ExtraAI[3];
 
-            // Teleport above the player and charge energy at first.
+            // Teleport above the player at first.
             if (localAttackTimer == 1f)
             {
                 // Destroy any leftover crystals.
@@ -1089,7 +1109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     }
                 }
 
-                // Make the guardians slam downward and explode.
+                // Have Providence go all LTG and instruct the guardians to kill themselves NOW!
                 else
                 {
                     guardiansShouldExplode = 1f;
@@ -1100,6 +1120,180 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
+            // Fly above the target.
+            DoVanillaFlightMovement(npc, target, false, ref flightPath, flightSpeedFactor);
+        }
+
+        public static void DoBehavior_HealerGuardianCrystalBarrage(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float flightPath)
+        {
+            int chargeUpTime = 150;
+            int guardianCount = 4;
+            int guardiansSpinTime = GetBPMTimeMultiplier(2);
+            int guardiansTelegraphTime = GetBPMTimeMultiplier(3);
+            int guardiansPostShootLiveTime = GetBPMTimeMultiplier(4);
+            int guardiansDeathAnimationTime = GetBPMTimeMultiplier(4);
+            int attackCycle = guardiansSpinTime + guardiansTelegraphTime + guardiansPostShootLiveTime + guardiansDeathAnimationTime;
+            int attackCycleTimer = (localAttackTimer - chargeUpTime) % attackCycle;
+
+            if (localAttackTimer >= localAttackDuration - guardiansDeathAnimationTime - 10)
+            {
+                attackCycleTimer = guardiansSpinTime + guardiansTelegraphTime + guardiansPostShootLiveTime + 5;
+                npc.Infernum().ExtraAI[3] = 0f;
+            }
+
+            float flightSpeedFactor = MathHelper.Lerp(1f, 1.45f, 1f - lifeRatio);
+            ref float healerAttackState = ref npc.Infernum().ExtraAI[0];
+            ref float spinAngularOffset = ref npc.Infernum().ExtraAI[1];
+            ref float spinRadiusOffset = ref npc.Infernum().ExtraAI[2];
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[3];
+
+            npc.Opacity = 1f;
+
+            // Teleport above the player at first.
+            if (localAttackTimer == 1f)
+            {
+                // Destroy any leftover crystals.
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<AcceleratingCrystalShard>());
+
+                npc.Center = target.Center - Vector2.UnitY * 400f;
+                npc.velocity = Vector2.Zero;
+                ReleaseSparkles(npc.Center, 85, 67f);
+                npc.netUpdate = true;
+            }
+
+            // Enter the cocoon and wait.
+            if (localAttackTimer < chargeUpTime)
+            {
+                flightSpeedFactor = 0f;
+                drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+                npc.velocity.Y = 0f;
+            }
+
+            // Summon the healer guardians.
+            if (attackCycleTimer == 0)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound);
+                if (CalamityConfig.Instance.Screenshake)
+                {
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2.4f, 32);
+                }
+
+                // Reset things from the previous cycle.
+                spinAngularOffset = 0f;
+                spinRadiusOffset = 0f;
+                telegraphInterpolant = 0f;
+                healerAttackState = (int)HealerGuardianAttackState.SpinInPlace;
+                npc.netUpdate = true;
+
+                for (int i = 0; i < guardianCount; i++)
+                {
+                    float spawnOffsetRadius = 350f;
+                    float spawnOffsetAngle = MathHelper.TwoPi * i / guardianCount + MathHelper.PiOver4;
+                    Vector2 guardianSpawnPosition = npc.Center - Vector2.UnitY.RotatedBy(spawnOffsetAngle) * spawnOffsetRadius;
+                    for (int j = 0; j < 60; j++)
+                    {
+                        Vector2 ashSpawnPosition = guardianSpawnPosition + Main.rand.NextVector2Circular(100f, 100f);
+                        Vector2 ashVelocity = npc.SafeDirectionTo(ashSpawnPosition) * Main.rand.NextFloat(1.5f, 2f);
+                        Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
+                        GeneralParticleHandler.SpawnParticle(ash);
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int guardian = NPC.NewNPC(npc.GetSource_FromThis(), (int)guardianSpawnPosition.X, (int)guardianSpawnPosition.Y, ModContent.NPCType<ProvSpawnHealer>(), npc.whoAmI, spawnOffsetRadius, spawnOffsetAngle);
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, guardian);
+                        ReleaseSparkles(guardianSpawnPosition, 25, 36f);
+                    }
+                }
+            }
+
+            // Make the guardians spin in place.
+            if (attackCycleTimer <= guardiansSpinTime)
+            {
+                float spinCompletion = attackCycleTimer / (float)guardiansSpinTime;
+                float spinOffsetAngleInterpolant = Utilities.UltrasmoothStep(spinCompletion);
+                spinAngularOffset = MathHelper.Pi * spinOffsetAngleInterpolant;
+                healerAttackState = (int)HealerGuardianAttackState.SpinInPlace;
+            }
+
+            // Make the guardians sit and release telegraphs at the target.
+            else if (attackCycleTimer <= guardiansSpinTime + guardiansTelegraphTime)
+            {
+                float subphaseCompletion = Utils.GetLerpValue(0f, guardiansTelegraphTime, attackCycleTimer - guardiansSpinTime, true);
+                telegraphInterpolant = Utils.GetLerpValue(0f, 0.6f, subphaseCompletion, true) * Utils.GetLerpValue(1f, 0.85f, subphaseCompletion, true);
+                healerAttackState = (int)HealerGuardianAttackState.WaitAndReleaseTelegraph;
+
+                // Slow down the flying motion near the end of the telegraph casting.
+                flightSpeedFactor = Utils.GetLerpValue(0.9f, 0.65f, subphaseCompletion, true);
+            }
+
+            // Wait for the crystal spikes to be shot.
+            else if (attackCycleTimer <= guardiansSpinTime + guardiansTelegraphTime + guardiansPostShootLiveTime)
+            {
+                healerAttackState = (int)HealerGuardianAttackState.ShootCrystals;
+
+                // Have the guardians all shoot crystal spikes.
+                if (attackCycleTimer == guardiansSpinTime + guardiansTelegraphTime + 1)
+                {
+                    if (CalamityConfig.Instance.Screenshake)
+                    {
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 27);
+                    }
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item101, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int guardianID = ModContent.NPCType<ProvSpawnHealer>();
+                        for (int i = 0; i < Main.maxNPCs; i++)
+                        {
+                            NPC n = Main.npc[i];
+                            if (n.type != guardianID || !n.active)
+                                continue;
+
+                            Vector2 spikeSpawnPosition = ProvidenceHealerGuardianBehaviorOverride.GetCrystalPosition(n);
+                            Vector2 spikeDirection = n.ai[2].ToRotationVector2();
+                            Utilities.NewProjectileBetter(spikeSpawnPosition - spikeDirection * 50f, spikeDirection, ModContent.ProjectileType<HolyCrystalSpike>(), CrystalSpikeDamage, 0f);
+                        }
+                    }
+                }
+
+                // Cease any and all movement.
+                flightSpeedFactor = 0f;
+                npc.velocity.Y = 0f;
+            }
+
+            // Have Providence instruct the guardians to fly away.
+            else
+            {
+                healerAttackState = (int)HealerGuardianAttackState.ShootCrystals;
+
+                spinRadiusOffset += 25f;
+                spinAngularOffset += MathHelper.Pi * 0.02f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && spinRadiusOffset >= 1400f)
+                {
+                    int guardianID = ModContent.NPCType<ProvSpawnHealer>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC n = Main.npc[i];
+                        if (n.type != guardianID || !n.active)
+                            continue;
+
+                        for (int j = 0; j < 20; j++)
+                        {
+                            Vector2 ashSpawnPosition = n.Center + Main.rand.NextVector2Circular(100f, 100f);
+                            Vector2 ashVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(1.5f, 2f);
+                            Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
+                            GeneralParticleHandler.SpawnParticle(ash);
+                        }
+                        n.active = false;
+                    }
+                }
+            }
+
+            // Fly above the target.
             DoVanillaFlightMovement(npc, target, false, ref flightPath, flightSpeedFactor);
         }
 
@@ -1454,7 +1648,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     shootTimer = 0f;
                 }
 
-                // Release cinders from the ceiling periodically.
+                // Release cinders from the ceiling and side periodically.
                 if (cycleTimer % cinderShootRate == cinderShootRate - 1f)
                 {
                     bool targetIsCloseToCeiling = MathHelper.Distance(target.Center.Y, WorldSaveSystem.ProvidenceArena.Y * 16f + 700f) < 450f;
@@ -1462,6 +1656,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        // Ceiling cinders.
                         for (float dx = -1400f; dx < 1400f; dx += Main.rand.NextFloat(108f, 136f))
                         {
                             float ySpawnPosition = WorldSaveSystem.ProvidenceArena.Y * 16f + 48f;
@@ -1473,6 +1668,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                             }
 
                             Utilities.NewProjectileBetter(new Vector2(target.Center.X + dx, ySpawnPosition), cinderVelocity, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);
+                        }
+
+                        // Side cinders.
+                        for (float dy = -1400f; dy < 1400f; dy += Main.rand.NextFloat(167f, 195f))
+                        {
+                            Vector2 cinderVelocity = Vector2.UnitX * 4f;
+                            Utilities.NewProjectileBetter(new Vector2(target.Center.X - 1400, target.Center.Y + dy), cinderVelocity, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);
                         }
                     }
                 }
@@ -1565,7 +1767,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             int ritualTime = HolyRitual.Lifetime;
             int rockCount = 13;
-            int crossShootRate = GetBPMTimeMultiplier(IsEnraged ? 2 : 4);
+            int crossShootRate = GetBPMTimeMultiplier(IsEnraged ? 2 : 3);
             int rockCycleTime = 300;
 
             ref float hasPerformedRitual = ref npc.Infernum().ExtraAI[0];

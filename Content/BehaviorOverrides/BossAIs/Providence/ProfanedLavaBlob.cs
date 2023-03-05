@@ -3,6 +3,7 @@ using Terraria.ModLoader;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Common.Graphics.Metaballs;
 using Microsoft.Xna.Framework;
+using Terraria.ID;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -29,6 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
             Projectile.MaxUpdates = 2;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

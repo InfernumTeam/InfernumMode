@@ -12,6 +12,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
+        public bool Pink => Projectile.ai[1] == 1f;
+
         public ref float Timer => ref Projectile.ai[0];
 
         public override void SetStaticDefaults()
@@ -46,8 +48,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
 
             // Draw an orange backglow.
-            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, WayfinderSymbol.Colors[2] * Projectile.Opacity, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.26f, 0, 0f);
-            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, WayfinderSymbol.Colors[1] * Projectile.Opacity * 0.67f, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.52f, 0, 0f);
+            Color backglow1 = WayfinderSymbol.Colors[1];
+            Color backglow2 = WayfinderSymbol.Colors[2];
+            if (Pink)
+                backglow2 = Color.Lerp(backglow2, Color.HotPink, 0.6f);
+
+            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, backglow1 * Projectile.Opacity, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.26f, 0, 0f);
+            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, backglow2 * Projectile.Opacity * 0.67f, 0f, backglowTexture.Size() * 0.5f, Projectile.scale * 0.52f, 0, 0f);
 
             // Draw strong yellow lightning zaps above the ground.
             ulong lightningSeed = (ulong)Projectile.identity * 7218432uL;
@@ -57,7 +64,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 float lightningRotation = Projectile.rotation + MathHelper.Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f);
                 Color lightningColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], Utils.RandomFloat(ref lightningSeed) * 0.56f);
                 if (ProvidenceBehaviorOverride.IsEnraged)
-                    lightColor = Color.Lerp(lightningColor, Color.LightSkyBlue, 0.6f);
+                    lightningColor = Color.Lerp(lightningColor, Color.LightSkyBlue, 0.6f);
+                if (Pink)
+                    lightningColor = Color.Lerp(lightningColor, Color.HotPink, 0.85f);
 
                 Main.spriteBatch.Draw(zap, drawPosition, null, lightningColor * Projectile.Opacity, lightningRotation, zap.Size() * Vector2.UnitY * 0.5f, lightningScale, 0, 0f);
                 Main.spriteBatch.Draw(zap, drawPosition, null, lightningColor * Projectile.Opacity * 0.5f, lightningRotation, zap.Size() * Vector2.UnitY * 0.5f, lightningScale * new Vector2(1f, 1.3f), 0, 0f);

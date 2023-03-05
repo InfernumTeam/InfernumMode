@@ -43,6 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
             Projectile.timeLeft = 120;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

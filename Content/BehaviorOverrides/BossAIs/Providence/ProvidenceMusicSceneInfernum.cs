@@ -14,6 +14,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override int NPCType => ModContent.NPCType<ProvidenceBoss>();
 
+        public static bool ProvidenceIsInPhase2
+        {
+            get
+            {
+                if (CalamityGlobalNPC.holyBoss == -1)
+                    return false;
+
+                return Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax < ProvidenceBehaviorOverride.Phase2LifeRatio;
+            }
+        }
+
         public override int? MusicModMusic
         {
             get
@@ -23,12 +34,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (CalamityGlobalNPC.holyBoss == -1 || !InfernumMode.CanUseCustomAIs)
                     return defaultProviMusic;
                 
-                return (Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax < ProvidenceBehaviorOverride.Phase2LifeRatio) ? defaultProviMusic : guardiansMusic;
+                return ProvidenceIsInPhase2 ? defaultProviMusic : guardiansMusic;
             }
         }
 
-        public override int VanillaMusic => MusicID.LunarBoss;
-        
-        public override int OtherworldMusic => MusicID.OtherworldlyLunarBoss;
+        public override int VanillaMusic
+        {
+            get
+            {
+                int defaultProviMusic = MusicID.LunarBoss;
+                int guardiansMusic = MusicID.Boss1;
+                if (CalamityGlobalNPC.holyBoss == -1 || !InfernumMode.CanUseCustomAIs)
+                    return defaultProviMusic;
+
+                return ProvidenceIsInPhase2 ? defaultProviMusic : guardiansMusic;
+            }
+        }
+
+        public override int OtherworldMusic
+        {
+            get
+            {
+                int defaultProviMusic = MusicID.OtherworldlyLunarBoss;
+                int guardiansMusic = MusicID.OtherworldlyBoss1;
+                if (CalamityGlobalNPC.holyBoss == -1 || !InfernumMode.CanUseCustomAIs)
+                    return defaultProviMusic;
+
+                return ProvidenceIsInPhase2 ? defaultProviMusic : guardiansMusic;
+            }
+        }
     }
 }

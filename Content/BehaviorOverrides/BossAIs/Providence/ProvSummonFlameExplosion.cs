@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
@@ -21,6 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = Projectile.MaxUpdates * 120;
             Projectile.scale = 0.1f;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

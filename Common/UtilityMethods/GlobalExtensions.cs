@@ -30,6 +30,8 @@ namespace InfernumMode
 
         public static HatGirlTipsPlayer Infernum_HatGirl(this Player player) => player.GetModPlayer<HatGirlTipsPlayer>();
 
+        public static UIPlayer Infernum_UI(this Player player) => player.GetModPlayer<UIPlayer>();
+
         public static TooltipChangeGlobalItem Infernum_Tooltips(this Item item) => item.GetGlobalItem<TooltipChangeGlobalItem>();
 
         public static GlobalNPCOverrides Infernum(this NPC npc) => npc.GetGlobalNPC<GlobalNPCOverrides>();

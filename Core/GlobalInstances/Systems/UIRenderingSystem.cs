@@ -31,6 +31,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     AchievementsNotificationTracker.DrawInGame(Main.spriteBatch);
                     return true;
                 }, InterfaceScaleType.UI));
+                layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Guardians Plaque UI", () =>
+                {
+                    GuardiansPlaqueUIManager.Draw(Main.spriteBatch);
+                    return true;
+                }, InterfaceScaleType.UI));
             }
         }
     }

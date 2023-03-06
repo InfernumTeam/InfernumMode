@@ -17,7 +17,7 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static bool DisableProfanedTempleBreakage(Func<Tile, bool> orig, Tile tile)
         {
             bool profanedTempleTile = tile.TileType == ModContent.TileType<RunicProfanedBrick>() || tile.TileType == ModContent.TileType<ProfanedSlab>() || tile.TileType == ModContent.TileType<ProfanedRock>();
-            profanedTempleTile |= tile.TileType == ModContent.TileType<GuardiansSummoner>() || tile.TileType == ModContent.TileType<ProvidenceSummoner>() || tile.TileType == ModContent.TileType<ProvidenceRoomDoorPedestal>();
+            profanedTempleTile |= tile.TileType == ModContent.TileType<GuardiansPlaque>() || tile.TileType == ModContent.TileType<ProvidenceSummoner>() || tile.TileType == ModContent.TileType<ProvidenceRoomDoorPedestal>();
             profanedTempleTile |= tile.TileType == ModContent.TileType<ProfanedCandelabra>() || tile.WallType == ModContent.WallType<RunicProfanedBrickWall>() || tile.WallType == ModContent.WallType<ProfanedSlabWall>();
             profanedTempleTile |= tile.TileType == ModContent.TileType<LivingHolyFireBlockTile>() || tile.WallType == ModContent.WallType<ProfanedCrystalWall>() || tile.WallType == ModContent.WallType<ProfanedRockWall>();
             profanedTempleTile |= tile.TileType == ModContent.TileType<ProfanedCrystal>();

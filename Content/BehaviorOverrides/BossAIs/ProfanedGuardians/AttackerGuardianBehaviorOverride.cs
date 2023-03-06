@@ -337,6 +337,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
+
+            // DEBUG
+            spriteBatch.Draw(InfernumTextureRegistry.LaserCircle.Value, UI.GuardiansPlaqueUIManager.PlaqueWorldPosition - Main.screenPosition, null, Color.White, 0f, InfernumTextureRegistry.LaserCircle.Value.Size() * 0.5f, 0.3f, 0, 0f);
             return false;
         }
 

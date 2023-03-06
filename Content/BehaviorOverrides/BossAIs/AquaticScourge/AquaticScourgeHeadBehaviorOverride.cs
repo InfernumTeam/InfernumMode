@@ -780,12 +780,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 SoundEngine.PlaySound(Mauler.RoarSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RadiationPulse>(), 0, 0f, -1, 0f, 1200f);
@@ -1020,12 +1017,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 SoundEngine.PlaySound(Mauler.RoarSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 10f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 10f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
                 npc.netUpdate = true;
             }

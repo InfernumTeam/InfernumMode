@@ -618,11 +618,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (attackTimer == slowdownTime + chargePreparationTime / 2)
             {
                 SoundEngine.PlaySound(ScorchedEarth.ShootSound, target.Center);
-
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    target.Infernum_Camera().CurrentScreenShakePower = 6f;
-                }
+                target.Infernum_Camera().CurrentScreenShakePower = 6f;
             }
 
             // Begin the charge.
@@ -782,11 +778,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), PowerfulShotDamage, 0f, -1, 0f, lightRaySpread * 0.53f);
                 }
 
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1.7f, 45);
-                    target.Infernum_Camera().CurrentScreenShakePower = 7f;
-                }
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1.7f, 45);
+                target.Infernum_Camera().CurrentScreenShakePower = 7f;
             }
 
             // Create explosions that make sparks after the lasers are fired.

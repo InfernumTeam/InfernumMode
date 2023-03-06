@@ -165,11 +165,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.netMode != NetmodeID.Server)
                 Utilities.NewProjectileBetter(Projectile.Center + oldVelocity.SafeNormalize(Vector2.UnitY) * 60f, oldVelocity, ModContent.ProjectileType<StrongProfanedCrack>(), 0, 0f);
 
-            if (CalamityConfig.Instance.Screenshake)
-            {
-                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
-                ScreenEffectSystem.SetBlurEffect(Projectile.Center, 0.2f, 18);
-            }
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
+            ScreenEffectSystem.SetBlurEffect(Projectile.Center, 0.2f, 18);
 
             SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with { Volume = 2f }, Projectile.Center);
             Projectile.velocity *= InLava ? 0.6f : 0f;

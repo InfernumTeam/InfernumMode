@@ -313,11 +313,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Main.netMode != NetmodeID.Server && Chains is not null)
             {
                 SoundEngine.PlaySound(CeaselessVoidBoss.DeathSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 16f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.5f, 45);
-                }
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 16f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.5f, 45);
 
                 foreach (var chain in Chains)
                 {

@@ -282,8 +282,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             if (!StealthStrikeEffects)
                 return;
 
-            if (CalamityConfig.Instance.Screenshake)
-                Owner.Infernum_Camera().CurrentScreenShakePower = 6f;
+            Owner.Infernum_Camera().CurrentScreenShakePower = 6f;
 
             Color[] explosionColorPalette = (Color[])CalamityUtils.ExoPalette.Clone();
             for (int i = 0; i < explosionColorPalette.Length; i++)

@@ -2229,8 +2229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
 
                     // Create some screenshake.
-                    if (CalamityConfig.Instance.Screenshake)
-                        target.Infernum_Camera().CurrentScreenShakePower = 6;
+                    target.Infernum_Camera().CurrentScreenShakePower = 6f;
 
                     npc.Center = target.Center - Main.rand.NextVector2Unit() * Main.rand.NextFloat(180f, 455f);
                     npc.velocity = Vector2.Zero;

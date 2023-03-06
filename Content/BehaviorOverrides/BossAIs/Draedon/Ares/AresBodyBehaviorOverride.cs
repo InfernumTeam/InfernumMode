@@ -359,8 +359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
 
-            if (CalamityConfig.Instance.Screenshake)
-                ScreenEffectSystem.SetBlurEffect(npc.Center, 1.3f, 45);
+            ScreenEffectSystem.SetBlurEffect(npc.Center, 1.3f, 45);
         }
 
         public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset) { }

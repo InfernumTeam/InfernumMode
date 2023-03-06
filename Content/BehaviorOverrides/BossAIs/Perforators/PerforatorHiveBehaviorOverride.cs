@@ -214,10 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             }
 
             // Screenshake.
-            if (CalamityConfig.Instance.Screenshake)
-            {
-                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(0, 8, interpolant);
-            }
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f * interpolant;
 
             // After a second, start releasing blood everywhere.
             if (deathTimer >= 10)

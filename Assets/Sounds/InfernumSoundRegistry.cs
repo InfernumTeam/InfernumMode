@@ -71,9 +71,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ExoMechIntroSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ExoMechIntro");
 
-        public static readonly SoundStyle GolemSansSound = new("InfernumMode/Assets/Sounds/Custom/BadTime");
+        public static readonly SoundStyle GolemGroundHitSound = new("InfernumMode/Assets/Sounds/Custom/Golem/GolemGroundHit");
 
-        public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Assets/Sounds/Custom/[BIG SHOT]");
+        public static readonly SoundStyle GolemSansSound = new("InfernumMode/Assets/Sounds/Custom/Golem/BadTime");
+
+        public static readonly SoundStyle GolemSpamtonSound = new("InfernumMode/Assets/Sounds/Custom/Golem/[BIG SHOT]");
 
         public static readonly SoundStyle GreatSandSharkChargeRoarSound = new("InfernumMode/Assets/Sounds/Custom/BereftVassal/GreatSandSharkChargeRoar");
 

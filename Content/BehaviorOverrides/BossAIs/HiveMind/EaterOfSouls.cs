@@ -8,9 +8,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 {
     public class EaterOfSouls : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.EaterofSouls}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Eater of Souls");
+            Main.projFrames[Type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }

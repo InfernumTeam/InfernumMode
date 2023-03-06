@@ -10,6 +10,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 {
     public class GolemFistLeft : ModNPC
     {
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.GolemFistRight}";
+
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
@@ -74,8 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             Main.instance.LoadNPC(NPCID.GolemFistRight);
             Texture2D texture = TextureAssets.Npc[NPCID.GolemFistRight].Value;
-            Rectangle rect = new(0, 0, texture.Width, texture.Height);
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, effect, 0f);
+            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, 1f, effect, 0f);
             return false;
         }
     }

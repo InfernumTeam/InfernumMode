@@ -8,9 +8,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 {
     public class Crimera : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.Crimera}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crimera");
+            Main.projFrames[Type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }

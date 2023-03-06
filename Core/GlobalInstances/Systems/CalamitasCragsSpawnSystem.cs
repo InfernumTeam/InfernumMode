@@ -21,9 +21,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PreUpdateWorld()
         {
-            Vector2 calSpawnPosition = CragMiddle.ToWorldCoordinates() + Vector2.UnitX * 1000f;
+            Vector2 calSpawnPosition = CragMiddle.ToWorldCoordinates() + Vector2.UnitX * 1040f;
             calSpawnPosition.Y -= 30f;
-            while (calSpawnPosition.X >= 1600f && Utilities.GetGroundPositionFrom(calSpawnPosition).Distance(calSpawnPosition) >= 36f)
+            while (calSpawnPosition.X >= 1600f && Utilities.GetGroundPositionFrom(calSpawnPosition).Distance(calSpawnPosition) >= 50f)
                 calSpawnPosition.X -= 16f;
 
             if (WorldSaveSystem.MetCalamitasAtCrags || !InfernumMode.CanUseCustomAIs || !DownedBossSystem.downedBrimstoneElemental)

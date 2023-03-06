@@ -113,7 +113,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle PolterghastDashSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterDash");
 
-        public static readonly SoundStyle PolterghastDeathEchoSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/DeathAnimations/PolterghastDeath");
+        public static readonly SoundStyle PolterghastDeathEchoSound = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/PolterghastDeath");
 
         public static readonly SoundStyle PolterghastShortDashSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterDashShort");
 

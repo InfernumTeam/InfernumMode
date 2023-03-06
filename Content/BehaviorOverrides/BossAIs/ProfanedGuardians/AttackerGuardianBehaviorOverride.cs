@@ -94,7 +94,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.chaseable = false;
             }
             else
+            {
                 npc.Calamity().DR = 0.4f;
+                npc.chaseable = true;
+            }
 
             // Reset fields.
             npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0;

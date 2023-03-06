@@ -89,9 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
         public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
 
-        // The length of the phase 3 looping music section.
-        public const int LoopingMusicLength = 2560;
-
+        // Damage fields.
         public const int ProfanedRockDamage = 300;
         public const int MagicShotDamage = 320;
         public const int HolySpearDamage = 350;
@@ -2760,7 +2758,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ModContent.ProjectileType<HolyMagicLaserbeam>(),
                 ModContent.ProjectileType<HolyDogmaFireball>(),
                 ModContent.ProjectileType<CommanderSpearThrown>(),
-                ModContent.ProjectileType<HolySineSpear>()
+                ModContent.ProjectileType<HolySineSpear>(),
+                ModContent.ProjectileType<HolyFireRift>()
                 );
         }
         #endregion

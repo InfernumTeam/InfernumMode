@@ -15,10 +15,8 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class CommanderSpearThrown : ModProjectile, IPixelPrimitiveDrawer
+    public class CommanderSpearThrown : ModProjectile
     {
-        internal PrimitiveTrailCopy TrailDrawer;
-
         public const int TelegraphTime = 30;
 
         public const int PassThroughTilesTime = 15;
@@ -104,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int crossWaves = 3;
+            int crossWaves = 2;
             int crossCount = 18;
             for (int i = 0; i < crossWaves; i++)
             {
@@ -163,22 +161,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
             return false;
-        }
-
-        internal float TrailWidthFunction(float completionRatio) => Projectile.scale * 20f;
-
-        internal Color TrailColorFunction(float completionRatio) => Color.Lerp(Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.5f), Color.Transparent, completionRatio + 0.2f);
-
-        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
-        {
-            if (!ExplodeOnImpact)
-                return;
-
-            //TrailDrawer ??= new PrimitiveTrailCopy(TrailWidthFunction, TrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
-
-            //GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.HoneycombNoise);
-
-            //TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 25);
         }
     }
 }

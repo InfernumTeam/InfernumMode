@@ -10,7 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace InfernumMode.Content.Achievements.UI
+namespace InfernumMode.Content.UI
 {
     // Custom UIScrollbar that lets you change the texture easily.
     public class AchievementUIScrollbar : UIScrollbar

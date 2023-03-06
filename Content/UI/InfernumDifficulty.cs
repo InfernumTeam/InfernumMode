@@ -1,6 +1,7 @@
 using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
@@ -14,7 +15,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Systems.DifficultyModeSystem;
 
-namespace InfernumMode.Core.GlobalInstances.Systems
+namespace InfernumMode.Content.UI
 {
     public class InfernumDifficulty : DifficultyMode
     {

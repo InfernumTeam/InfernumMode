@@ -1,4 +1,5 @@
-﻿using InfernumMode.Content.Achievements.InfernumAchievements;
+﻿using InfernumMode.Content.Achievements;
+using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +13,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
-namespace InfernumMode.Content.Achievements.UI
+namespace InfernumMode.Content.UI
 {
     // Copy of Terraria.GameContent.UI.Elements made to work with our achievements instead.
     public class InfernumUIAchievementListItem : UIPanel
@@ -230,7 +231,7 @@ namespace InfernumMode.Content.Achievements.UI
         {
             base.MouseOver(evt);
             BackgroundColor = new Color(119, 46, 46);
-            BorderColor = new Color(56, 20, 20);       
+            BorderColor = new Color(56, 20, 20);
         }
 
         public override void MouseOut(UIMouseEvent evt)

@@ -1,13 +1,7 @@
-﻿using InfernumMode.Content.Achievements.UI;
-using InfernumMode.Core.ILEditingStuff;
+﻿using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -15,16 +9,12 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
-using Terraria.UI.Chat;
 
 namespace InfernumMode.Content.Achievements
 {
     public class AchievementUpdatePopup : IInGameNotification
     {
         #region Fields
-
-        private readonly string Title;
-
         private int IngameDisplayTimeLeft;
 
         private float Scale
@@ -71,7 +61,6 @@ namespace InfernumMode.Content.Achievements
         {
             Achievement = achievement;
             IngameDisplayTimeLeft = 300;
-            Title = achievement.Name;
             AchievementIconFrame = new Rectangle(66, achievement.PositionInMainList * 66, 64, 64);
             AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
             AchievementBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad);

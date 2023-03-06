@@ -1,6 +1,7 @@
 using CalamityMod.Cooldowns;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BossIntroScreens;
+using InfernumMode.Content.UI;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Systems;

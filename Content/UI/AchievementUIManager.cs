@@ -1,4 +1,5 @@
-﻿using InfernumMode.Core.GlobalInstances.Players;
+﻿using InfernumMode.Content.Achievements;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using Terraria.Localization;
 using Terraria.UI;
 using Terraria.UI.Gamepad;
 
-namespace InfernumMode.Content.Achievements.UI
+namespace InfernumMode.Content.UI
 {
     // I'd much rather use custom ui than this vanilla stuff but it would look different so :D
     public class AchievementUIManager : UIState
@@ -79,7 +80,7 @@ namespace InfernumMode.Content.Achievements.UI
             uITextPanel2.OnClick += GoBackClick;
             uITextPanel2.BackgroundColor = new Color(174, 71, 71);
             uIElement.Append(uITextPanel2);
-            
+
             // Get a copy of the ordered achievement list.
             List<Achievement> list = AchievementPlayer.GetAchievementsList();
             for (int i = 0; i < list.Count; i++)
@@ -104,7 +105,7 @@ namespace InfernumMode.Content.Achievements.UI
             next.OnClick += AchivementClick;
             next.BackgroundColor = new Color(174, 71, 71);
             uIElement.Append(next);
-           
+
             // Add a scroll bar. This is a custom one that derives from the base UIScrollbar, but with the ability
             // to have a custom background texture (WHY IS IT HARDCODED).
             AchievementUIScrollbar uIScrollbar = new();

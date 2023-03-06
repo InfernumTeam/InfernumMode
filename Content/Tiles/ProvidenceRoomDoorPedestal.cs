@@ -162,7 +162,7 @@ namespace InfernumMode.Content.Tiles
             Texture2D door = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/ProvidenceRoomDoor").Value;
             Vector2 drawOffest = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
             Vector2 drawPosition = new Vector2(i * 16 - Main.screenPosition.X, j * 16 - Main.screenPosition.Y) + drawOffest;
-            Color drawColour = Color.White;
+            Color drawColor = Color.White;
 
             int verticalOffset = 0;
             for (int k = 2; k < 200; k++)
@@ -177,7 +177,7 @@ namespace InfernumMode.Content.Tiles
             for (int dy = verticalOffset; dy >= 0; dy -= 96)
             {
                 Vector2 drawOffset = new(-12f, -dy - 48f);
-                spriteBatch.Draw(door, drawPosition + drawOffset, null, drawColour, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(door, drawPosition + drawOffset, null, drawColor, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
             }
         }
     }

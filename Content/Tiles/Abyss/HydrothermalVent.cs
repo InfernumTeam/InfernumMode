@@ -1,6 +1,6 @@
 ﻿using System;
 using CalamityMod;
-using CalamityMod.Projectiles.Environment;
+using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;

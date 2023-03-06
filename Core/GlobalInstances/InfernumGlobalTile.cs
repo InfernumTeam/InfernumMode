@@ -19,10 +19,11 @@ namespace InfernumMode.Core.GlobalInstances
         {
             int[] invincibleTiles = new int[]
             {
+                ModContent.TileType<BrimstoneRose>(),
                 ModContent.TileType<ColosseumPortal>(),
+                ModContent.TileType<IronBootsSkeleton>(),
                 ModContent.TileType<ProvidenceSummoner>(),
                 ModContent.TileType<ProvidenceRoomDoorPedestal>(),
-                ModContent.TileType<IronBootsSkeleton>(),
                 ModContent.TileType<StrangeOrbTile>(),
             };
 

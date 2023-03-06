@@ -346,6 +346,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DrawDefenseOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
+            SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             spriteBatch.EnterShaderRegion();
 
             // Initialize the shader.
@@ -354,10 +355,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             InfernumEffectsRegistry.RealityTear2Shader.Shader.Parameters["fadeOut"].SetValue(false);
 
             float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly)) / 2f;
-            float opacity = MathHelper.Lerp(0.01f, 0.12f, sine);
+            float opacity = MathHelper.Lerp(0.06f, 0.12f, sine);
 
             // Draw the overlay.
-            DrawData overlay = new(npcTexture, npc.Center - Main.screenPosition, npc.frame, Color.White * opacity, 0f, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            DrawData overlay = new(npcTexture, npc.Center - Main.screenPosition, npc.frame, Color.White * opacity, 0f, npc.frame.Size() * 0.5f, 1f, direction, 0);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(overlay);
             overlay.Draw(spriteBatch);
 

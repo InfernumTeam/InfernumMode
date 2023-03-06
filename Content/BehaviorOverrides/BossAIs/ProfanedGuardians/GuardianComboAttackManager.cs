@@ -154,6 +154,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         /// </summary>
         public const int CommanderSpearPositionOffsetIndex = 38;
 
+        public const int CommanderBlenderBackglowOpacityIndex = 39;
+
         public const int CommanderBrightnessWidthFactorIndex = 50;
 
         public const int CommanderAttackCyclePositionIndex = 51;
@@ -744,9 +746,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 0:
                         // If higher than the target.
                         if (npc.Center.Y < target.Center.Y)
-                            hoverOffsetY = -600f;
+                            hoverOffsetY = -550f;
                         else
-                            hoverOffsetY = 600f;
+                            hoverOffsetY = 550f;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             xOffset = Main.rand.NextFloat(100f, 200f) * Main.rand.NextFromList(-1f, 1f);

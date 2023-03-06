@@ -326,6 +326,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Draw(texture, drawPosition, npc.frame, Color.Lerp(npc.GetAlpha(lightColor), Color.Black * npc.Opacity, fadeToBlack), npc.rotation, origin, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Black, fadeToBlack) * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
+            // Draw a defensive overlay over the commander if the healer is dead, to help identify him from the defender.
+            if (TotalRemaininGuardians == 2)
+                DefenderGuardianBehaviorOverride.DrawDefenseOverlay(npc, spriteBatch, texture);
+
             // Draw an overlay.
             ref float glowAmount = ref npc.Infernum().ExtraAI[CommanderAngerGlowAmountIndex];
             if (glowAmount > 0f && (GuardiansAttackType)npc.ai[0] is GuardiansAttackType.HealerDeathAnimation)
@@ -374,36 +378,45 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DrawBackglowEffects(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)
         {
-            // Glow effect.
-            Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
-            Color drawColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f);
-            drawColor.A = 0;
-            Vector2 origin = glow.Size() * 0.5f;
-            spriteBatch.Draw(glow, drawPosition, null, drawColor, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+            ref float commanderHasAlreadyDoneBoom = ref npc.Infernum().ExtraAI[CommanderHasSpawnedBlenderAlreadyIndex];
+            ref float opacity = ref npc.Infernum().ExtraAI[CommanderBlenderBackglowOpacityIndex];
+            ref float spawnedLasers = ref npc.Infernum().ExtraAI[1];
+            bool initialWaitIsOver = commanderHasAlreadyDoneBoom == 0 && spawnedLasers == 1;
 
-            // Draw a glow effect at the end of the laser.
-            Texture2D glowBloom = ModContent.Request<Texture2D>("CalamityMod/UI/ModeIndicator/BloomFlare").Value;
-            Texture2D glowCircle = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
-            Vector2 glowPosition = npc.Center - Main.screenPosition;
-            Color glowColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.3f);
-            glowColor.A = 0;
-            float glowRotation = Main.GlobalTimeWrappedHourly * 3;
-            float scaleInterpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
-            float scale = MathHelper.Lerp(3.6f, 4.1f, scaleInterpolant);
-            Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor, glowRotation, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor, glowRotation * -1, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
-            // Backglow
-            int backglowAmount = 12;
-            float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
-            float backglowDistance = MathHelper.Lerp(4.5f, 6.5f, sine);
-            for (int i = 0; i < backglowAmount; i++)
+            if (commanderHasAlreadyDoneBoom == 1 || initialWaitIsOver)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * backglowDistance;
-                Color backglowColor = WayfinderSymbol.Colors[1];
-                backglowColor.A = 0;
-                SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+                opacity = MathHelper.Clamp(opacity + 0.05f, 0f, 1f);
+                // Glow effect.
+                Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
+                Vector2 drawPosition = npc.Center - Main.screenPosition;
+                Color drawColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.5f);
+                drawColor.A = 0;
+                Vector2 origin = glow.Size() * 0.5f;
+                spriteBatch.Draw(glow, drawPosition, null, drawColor, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+
+                // Draw a glow effect.
+                Texture2D glowBloom = ModContent.Request<Texture2D>("CalamityMod/UI/ModeIndicator/BloomFlare").Value;
+                Vector2 glowPosition = npc.Center - Main.screenPosition;
+                Color glowColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.3f);
+                glowColor.A = 0;
+                float glowRotation = Main.GlobalTimeWrappedHourly * 3;
+                float scaleInterpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
+                float scale = MathHelper.Lerp(3.6f, 4.1f, scaleInterpolant);
+                Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor * opacity, glowRotation, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor * opacity, glowRotation * -1, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
+
+                // Backglow
+                int backglowAmount = 12;
+                float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+                float backglowDistance = MathHelper.Lerp(4.5f, 6.5f, sine);
+                for (int i = 0; i < backglowAmount; i++)
+                {
+                    Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * backglowDistance;
+                    Color backglowColor = WayfinderSymbol.Colors[1];
+                    backglowColor.A = 0;
+                    SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                    spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
+                }
             }
         }
 

@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             NPC.width = 42;
             NPC.height = 102;
-            NPC.lifeMax = 20000;
+            NPC.lifeMax = 25000;
             NPC.knockBackResist = 0;
             NPC.defense = 50;
             NPC.DR_NERD(0.2f);
@@ -123,27 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 NPC guard = Main.npc[CalamityGlobalNPC.doughnutBoss];
                 // Tell the commander to swap attacks. The other guardians use this.
-                guard.ai[0] = (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer;
-                // Reset the first 5 extra ai slots. These are used for per attack information.
-                for (int i = 0; i < 5; i++)
-                    guard.Infernum().ExtraAI[i] = 0f;
-
-                // Reset the attack timer.
-                guard.ai[1] = 0f;
-
-                if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
-                    return;
-
-                guard = Main.npc[CalamityGlobalNPC.doughnutBossDefender];
-                for (int i = 0; i < 5; i++)
-                    guard.Infernum().ExtraAI[i] = 0f;
-
-                if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossHealer))
-                    return;
-
-                guard = Main.npc[CalamityGlobalNPC.doughnutBossHealer];
-                for (int i = 0; i < 5; i++)
-                    guard.Infernum().ExtraAI[i] = 0f;
+                GuardianComboAttackManager.SelectNewAttack(guard, ref guard.ai[1], (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer);
             }
             ShatteringTimer++;
         }

@@ -6,6 +6,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -556,6 +557,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                             break;
                         }
                         DoBehavior_FloorFire(npc, target, inPhase2, inPhase3, ref AttackTimer, ref AttackCooldown, ref jumpState, ref attackCounter, ref slamTelegraphInterpolant);
+                        leftFist.Center = Vector2.Lerp(leftFist.Center, leftHandCenterPos, 0.8f);
+                        rightFist.Center = Vector2.Lerp(rightFist.Center, rightHandCenterPos, 0.8f);
 
                         freeHead.damage = 0;
                         leftFist.damage = 0;
@@ -734,8 +737,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                     if (hitGround)
                     {
+                        target.Infernum_Camera().CurrentScreenShakePower = 12f;
+
                         // Create acoustic and visual effects to accompany the ground slam effect.
-                        SoundEngine.PlaySound(SoundID.Item14, npc.position);
+                        SoundEngine.PlaySound(SoundID.Item14, npc.Bottom);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.GolemGroundHitSound, npc.Bottom);
                         for (int i = (int)npc.position.X - 20; i < (int)npc.position.X + npc.width + 40; i += 20)
                         {
                             for (int j = 0; j < 4; j++)
@@ -749,6 +755,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                                 Gore smoke = Gore.NewGoreDirect(npc.GetSource_FromAI(), new Vector2(i - 20, npc.position.Y + npc.height - 8f), default, Main.rand.Next(61, 64), 1f);
                                 smoke.velocity *= 0.4f;
                             }
+                        }
+
+                        // Create rubble from above.
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Vector2 rockSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloatDirection() * 900f;
+                            rockSpawnPosition = Utilities.GetGroundPositionFrom(rockSpawnPosition, Searches.Chain(new Searches.Up(9000), new Conditions.IsSolid()));
+                            rockSpawnPosition.Y += 16f;
+                            if (Collision.SolidCollision(rockSpawnPosition, 1, 1))
+                                continue;
+
+                            StoneDebrisParticle2 rock = new(rockSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(5f, 8f), Color.Brown, Main.rand.NextFloat(1f, 1.4f), 90);
+                            GeneralParticleHandler.SpawnParticle(rock);
                         }
 
                         // Summon crystals on the floor that accelerate upward.
@@ -1688,15 +1707,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             // Prepare the telegraph primitive drawer.
             npc.Infernum().OptionalPrimitiveDrawer ??= new(PrimitiveWidthFunction, c => PrimitiveTrailColor(npc, c), null, true, GameShaders.Misc["CalamityMod:SideStreakTrail"]);
 
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/GolemBody").Value;
-            Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/BodyGlow").Value;
-            Rectangle rect = new(0, 0, texture.Width, texture.Height);
-            if (InfernumMode.EmodeIsActive)
-            {
-                texture = TextureAssets.Npc[npc.type].Value;
-                glowMask = InfernumTextureRegistry.Invisible.Value;
-                rect = npc.frame;
-            }
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
 
             Vector2 drawPos = npc.Center - Main.screenPosition;
             drawPos += new Vector2(4, -12);
@@ -1726,12 +1737,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     backAfterimageColor *= backAfterimageInterpolant;
                     backAfterimageColor.A /= 8;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
-                    Main.spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
 
-            Main.spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPos, npc.frame, lightColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw laser ray telegraphs.
             float laserRayTelegraphInterpolant = npc.Infernum().ExtraAI[17];

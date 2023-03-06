@@ -10,6 +10,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 {
     public class FistBullet : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.GolemFistRight}";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Fist Bullet");
 
         public override void SetDefaults()

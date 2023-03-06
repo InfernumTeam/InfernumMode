@@ -4,8 +4,10 @@ using CalamityMod.NPCs.Ravager;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -33,6 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
             Player target = Main.player[npc.target];
             ref float attackTimer = ref npc.ai[1];
+            ref float telegraphInterpolant = ref npc.ai[2];
 
             // Circle around the player slowly, releasing bolts when at the cardinal directions.
             int cinderShootRate = 270;
@@ -46,9 +49,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             bool dontFire = currentAttack is RavagerBodyBehaviorOverride.RavagerAttackType.DownwardFistSlam or RavagerBodyBehaviorOverride.RavagerAttackType.SlamAndCreateMovingFlamePillars;
 
             // Create a dust telegraph prior to releasing cinders.
+            float wrappedAttackTimer = attackTimer % cinderShootRate;
             if (currentAttack != RavagerBodyBehaviorOverride.RavagerAttackType.DetachedHeadCinderRain)
             {
-                if (attackTimer % cinderShootRate > cinderShootRate - 40f && !dontFire)
+                telegraphInterpolant = Utils.GetLerpValue(cinderShootRate - 50f, cinderShootRate, wrappedAttackTimer, true);
+                if (dontFire)
+                    telegraphInterpolant = 0f;
+
+                if (wrappedAttackTimer > cinderShootRate - 40f && !dontFire)
                 {
                     for (int i = 0; i < 3; i++)
                     {
@@ -60,12 +68,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 }
 
                 // Shoot the cinder.
-                if (attackTimer % cinderShootRate == cinderShootRate - 1f)
+                if (wrappedAttackTimer == cinderShootRate - 1f && !dontFire)
                 {
                     SoundEngine.PlaySound(SoundID.Item72, cinderShootPosition);
-                    if (Main.netMode != NetmodeID.MultiplayerClient && !dontFire)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 15f, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
+                        npc.velocity -= aimDirection * 8f;
                         npc.netUpdate = true;
                     }
                 }
@@ -74,8 +83,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             {
                 cinderShootRate = 60;
                 hoverDestination = target.Center - Vector2.UnitY * 450f;
+                wrappedAttackTimer = attackTimer % cinderShootRate;
+                telegraphInterpolant = Utils.GetLerpValue(cinderShootRate - 25f, cinderShootRate, wrappedAttackTimer, true);
 
-                if (attackTimer % cinderShootRate == cinderShootRate - 1f)
+                if (wrappedAttackTimer == cinderShootRate - 1f)
                 {
                     SoundEngine.PlaySound(SoundID.Item72, cinderShootPosition);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -85,6 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                             Vector2 cinderShootVelocity = aimDirection.RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 2f)) * 14f;
                             Utilities.NewProjectileBetter(cinderShootPosition, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
                         }
+                        npc.velocity -= aimDirection * 5f;
                         npc.netUpdate = true;
                     }
                 }
@@ -95,6 +107,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, acceleration);
 
             attackTimer++;
+            return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            // Calculate the appropriate direction.
+            SpriteEffects direction = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                direction = SpriteEffects.FlipHorizontally;
+
+            // Draw the base texture and backglow.
+            float telegraphInterpolant = npc.ai[2];
+            Texture2D baseTexture = TextureAssets.Npc[npc.type].Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            npc.DrawBackglow(Color.MediumPurple with { A = 0 } * telegraphInterpolant, 10f * telegraphInterpolant, direction, npc.frame, Main.screenPosition);
+            Main.spriteBatch.Draw(baseTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             return false;
         }
     }

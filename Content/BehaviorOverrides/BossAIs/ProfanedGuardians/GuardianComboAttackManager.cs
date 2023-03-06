@@ -2478,7 +2478,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {                                 
                                     float rotation = baseRotation * i;
-                                    Main.NewText(rotation);
                                     spawnPosition = target.Center + Main.rand.NextFloat(rotation * 0.85f, rotation * 1.15f).ToRotationVector2() * spearDistance;
                                     Vector2 velocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * spearThrowSpeed;
                                     Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<HolyFireRift>(), 0, 0f, ai0: 1f);

@@ -24,9 +24,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float MaxLength => BigVersion ? 5000f : 4000f;
 
-        public float TelegraphLength => 30;
+        public const int TelegraphLength = 30;
 
-        public float MaxTime => BigVersion? 240 : 180;
+        public float MaxTime => BigVersion? 240 : 150;
 
         public bool BigVersion;
 

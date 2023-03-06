@@ -594,7 +594,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 1:
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
-                        float distance = 625f;
+                        float distance = 700f;
                         Vector2 position = target.Center + oldHoverOffset * distance;
 
                         if (npc.velocity.Length() < 2f)
@@ -746,9 +746,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 0:
                         // If higher than the target.
                         if (npc.Center.Y < target.Center.Y)
-                            hoverOffsetY = -500f;
+                            hoverOffsetY = -600f;
                         else
-                            hoverOffsetY = 500f;
+                            hoverOffsetY = 600f;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             xOffset = Main.rand.NextFloat(100f, 200f) * Main.rand.NextFromList(-1f, 1f);
@@ -1005,7 +1005,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float recoilLength = 20f;
                 float chargeLength = 25f;
                 float chargeSpeed = 50f;
-                float totalSpearsToRelease = 13f;
+                float totalSpearsToRelease = 11f;
                 int spearReleasePoint = (int)(spinLength / totalSpearsToRelease);
 
                 drawFireAfterimages = 0f;
@@ -2266,7 +2266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float hoverDistance = 700f;
             float flySpeed = 16f;
             float shootDelay = 90f;
-            float totalSpearThrows = 4f;
+            float totalSpearThrows = 3f;
             float totalShootLength = shootDelay * totalSpearThrows;
             float spearSpeed = 20f;
 
@@ -2370,7 +2370,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float spearStabTime = spearReelbackTime + 10f;
             float spearThrowSpeed = 14f;
             float afterAttackWaitTime = 50f;
-            float spearsAmount = 4f;
+            float spearsAmount = 6f;
+            float spearDistance = 550f;
 
             npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -2452,35 +2453,41 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, target.Center);
                         SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
 
-                        ScreenEffectSystem.SetFlashEffect(spawnPosition, 0.5f, 45);
+                        ScreenEffectSystem.SetFlashEffect(target.Center, 0.5f, 45);
 
                         if (CalamityConfig.Instance.Screenshake)
                             target.Infernum_Camera().CurrentScreenShakePower = 4f;
 
                         CreateFireExplosion(spawnPosition, false);
 
+                        float baseRotation = MathHelper.TwoPi / spearsAmount;
+
+                        // Create the spears.
                         for (int i = 0; i < spearsAmount; i++)
                         {
+                            // Create the exploding one above the target.
                             if (i == 0)
                             {
                                 Vector2 explodyVelocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * (spearThrowSpeed * 0.8f);
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    Utilities.NewProjectileBetter(spawnPosition, explodyVelocity, ModContent.ProjectileType<CommanderSpearThrown>(), CommanderSpearDamage, 0f, -1, 1f);
+                                {
+                                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<HolyFireRift>(), 0, 0f, ai0: 1f);
+                                    Utilities.NewProjectileBetter(spawnPosition, explodyVelocity, ModContent.ProjectileType<CommanderSpearThrown>(), CommanderSpearDamage, 0f, -1, 0f, 1f);
+                                }
                             }
                             else
-                            {
-                                spawnPosition = target.Center + new Vector2(Main.rand.NextFloat(0f, 800f) * Main.rand.NextFromList(-1f, 1f), Main.rand.NextFloat(-350f, -400f));
-
-                                for (int j = 0; j < 50; j++)
-                                    FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(spawnPosition + Main.rand.NextVector2Circular(55f, 55f), Main.rand.NextFloat(52f, 85f));
-
-                                Vector2 velocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * spearThrowSpeed;
-
+                            {                     
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {                                 
+                                    float rotation = baseRotation * i;
+                                    Main.NewText(rotation);
+                                    spawnPosition = target.Center + Main.rand.NextFloat(rotation * 0.85f, rotation * 1.15f).ToRotationVector2() * spearDistance;
+                                    Vector2 velocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * spearThrowSpeed;
+                                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<HolyFireRift>(), 0, 0f, ai0: 1f);
                                     Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<CommanderSpearThrown>(), CommanderSpearDamage, 0f);
+                                }
                             }
                         }
-                        
                     }
                     substate++;
                     universalAttackTimer = 0;
@@ -2488,7 +2495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case 4:
                     if (universalAttackTimer >= afterAttackWaitTime)
-                        SelectNewAttack(npc, ref universalAttackTimer);
+                        SelectNewAttack(npc, ref universalAttackTimer, (float)GuardiansAttackType.SpearSpinThrow);
                     break;
             }
         }
@@ -2527,6 +2534,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     for (int i = 0; i < 50; i++)
                         FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f), 
                             Main.rand.NextFloat(52f, 85f));
+
+                    // Look at the target.
+                    npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                     if (universalAttackTimer == fadeOutTime && Main.netMode != NetmodeID.MultiplayerClient)
                     {

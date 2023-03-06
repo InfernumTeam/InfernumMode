@@ -206,6 +206,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             int secondExpansionTime = 132;
             ref float fadeOutFactor = ref npc.Infernum().ExtraAI[0];
             ref float brightnessWidthFactor = ref npc.Infernum().ExtraAI[CommanderBrightnessWidthFactorIndex];
+            ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
 
             // Slow to a screeching halt.
             npc.velocity *= 0.9f;
@@ -213,6 +214,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Disable damage.
             npc.damage = 0;
             npc.dontTakeDamage = true;
+
+            // Despawn the spear if it is active.
+            if ((DefenderShieldStatus)spearStatus != DefenderShieldStatus.Inactive || Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<CommanderSpear>()))
+                // Mark the spear for removal.
+                spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
 
             // Close the boss bar.
             npc.Calamity().ShouldCloseHPBar = true;

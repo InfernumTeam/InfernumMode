@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles.Metaballs;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -8,14 +9,23 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class CommanderSpearThrown : ModProjectile
+    public class CommanderSpearThrown : ModProjectile, IPixelPrimitiveDrawer
     {
-        public bool ExplodeOnImpact => Projectile.ai[0] == 1;
+        internal PrimitiveTrailCopy TrailDrawer;
+
+        public const int TelegraphTime = 30;
+
+        public const int PassThroughTilesTime = 15;
+
+        public ref float Timer => ref Projectile.ai[0];
+
+        public bool ExplodeOnImpact => Projectile.ai[1] == 1;
 
         public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/CommanderSpear";
 
@@ -41,14 +51,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void AI()
         {
+            // Don't do anything if the telegraphs are being drawn.
+            if (Timer < TelegraphTime)
+            {
+                Timer++;
+                return;
+            }
+
             if (ExplodeOnImpact)
-                Projectile.tileCollide = Projectile.Center.Y > Main.player[HolySineSpear.Commander.target].Center.Y;
+                Projectile.tileCollide = Timer >= TelegraphTime + PassThroughTilesTime;
+
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
 
             // Accelerate.
             if (Projectile.velocity.Length() < 36f)
-                Projectile.velocity *= 1.028f;
+                Projectile.velocity *= 1.05f;
 
             for (int i = 0; i < 40; i++)
             {
@@ -59,6 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             Lighting.AddLight(Projectile.Center, Vector3.One);
+            Timer++;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -67,11 +86,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
 
+        public override bool ShouldUpdatePosition() => Timer >= TelegraphTime;
+
         public override void Kill(int timeLeft)
         {
             if (!ExplodeOnImpact)
                 return;
-            ScreenEffectSystem.SetBlurEffect(Projectile.position, 1f, 45);   
+            ScreenEffectSystem.SetBlurEffect(Projectile.Center, 1f, 45);
+            SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, Projectile.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelHitSound with { Volume = 2f }, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.65f, Volume = 1.6f }, Projectile.Center);
+
             GuardianComboAttackManager.CreateFireExplosion(Projectile.Center, true);
             for (int i = 0; i < 100; i++)
                 FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f), Main.rand.NextFloat(52f, 85f));
@@ -80,14 +105,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
 
             int crossWaves = 3;
-            int crossCount = 20;
+            int crossCount = 18;
             for (int i = 0; i < crossWaves; i++)
             {
                 float speed = i switch
                 { 
-                    0 => 9.5f,
-                    1 => 8f,
-                    _ => 6.5f
+                    0 => 8.5f,
+                    1 => 7f,
+                    _ => 5.5f
                 };
                 
                 for (int j = 0; j < crossCount; j++)
@@ -102,23 +127,58 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Timer <= TelegraphTime)
+            {
+                float opacity = CalamityUtils.Convert01To010(Timer / TelegraphTime);
+                BloomLineDrawInfo lineInfo = new()
+                {
+                    LineRotation = -Projectile.velocity.ToRotation(),
+                    WidthFactor = 0.003f + MathF.Pow(opacity, 5f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    BloomIntensity = MathHelper.Lerp(0.06f, 0.16f, opacity),
+                    Scale = Vector2.One * 1950f,
+                    MainColor = WayfinderSymbol.Colors[1],
+                    DarkerColor = WayfinderSymbol.Colors[2],
+                    Opacity = opacity,
+                    BloomOpacity = 0.4f,
+                    LightStrength = 5f
+                };
+                Utilities.DrawBloomLineTelegraph(Projectile.Center - Main.screenPosition, lineInfo);
+                return false;
+            }
             if (ExplodeOnImpact)
             {
                 Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+
                 // Draw the spear as a white hot flame with additive blending before it converge inward to create the actual spear.
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    float rotation = Projectile.rotation + MathHelper.Lerp(-0.16f, 0.16f, i / 9f);
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 2f;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 5f;
                     Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
-                    Main.EntitySpriteDraw(texture, drawPosition, null, WayfinderSymbol.Colors[0], rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
+                    Main.EntitySpriteDraw(texture, drawPosition, null, Color.LightPink with { A = 0 }, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
                 }
+                Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, Color.White with { A = 150 }, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
                 return false;
             }
             float alpha = 1f - (float)Projectile.alpha / 255;
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
             return false;
+        }
+
+        internal float TrailWidthFunction(float completionRatio) => Projectile.scale * 20f;
+
+        internal Color TrailColorFunction(float completionRatio) => Color.Lerp(Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.5f), Color.Transparent, completionRatio + 0.2f);
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            if (!ExplodeOnImpact)
+                return;
+
+            //TrailDrawer ??= new PrimitiveTrailCopy(TrailWidthFunction, TrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+
+            //GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.HoneycombNoise);
+
+            //TrailDrawer.DrawPixelated(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 25);
         }
     }
 }

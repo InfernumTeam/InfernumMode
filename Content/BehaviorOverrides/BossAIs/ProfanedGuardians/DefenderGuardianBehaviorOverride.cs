@@ -188,8 +188,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
 
                 case 1:
-                    if (localAttackTimer < 30f)
-                        npc.Infernum().ShouldUseSaturationBlur = true;
                     if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 30f)
                         typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);//MoonlordDeathDrama.RequestLight(1f/*1f - Utils.GetLerpValue(15f, 30f, localAttackTimer, true)*/, target.Center);
                     ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];

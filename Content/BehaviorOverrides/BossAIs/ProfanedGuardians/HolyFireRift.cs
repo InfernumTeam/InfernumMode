@@ -13,12 +13,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HolyFireRift : ModProjectile
     {
+        #region Properties
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Fire Rift");
+        public bool SpearRift => Projectile.ai[0] == 1;
+
+        public Vector2 RiftSize
+        { 
+            get;
+            set;
         }
+
+        public float BallSize
+        {
+            get;
+            set;
+        } = 85f;
+        #endregion
+
+        #region Overrides
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Fire Rift");
 
         public override void SetDefaults()
         {
@@ -28,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = CommanderSpearThrown.TelegraphTime;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
@@ -44,13 +58,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Emit light.
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.45f);
 
+            // Initialization.
+            if (Projectile.localAI[0] == 0)
+            {
+                Projectile.localAI[0] = 1;
+                if (SpearRift)
+                {
+                    RiftSize = new(HolySineSpear.Commander.width * 0.25f, HolySineSpear.Commander.height * 0.25f);
+                    BallSize = 55f;
+                }
+                else
+                    RiftSize = new(HolySineSpear.Commander.width * 0.5f, HolySineSpear.Commander.height * 0.5f);
+            }
+
+            if (!SpearRift)
+                // Do not die naturally, the commander will manually kill these.
+                Projectile.timeLeft = 240;
+
             // Spawn a bunch of metaballs.
             for (int i = 0; i < 3; i++)
-                FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(HolySineSpear.Commander.Center + 
-                    Main.rand.NextVector2Circular(HolySineSpear.Commander.width * 0.5f, HolySineSpear.Commander.height * 0.5f), Main.rand.NextFloat(52f, 85f));
-
-            // Do not die naturally, the commander will manually kill these.
-            Projectile.timeLeft = 240;
+                FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center + 
+                    Main.rand.NextVector2Circular(RiftSize.X, RiftSize.Y), Main.rand.NextFloat(BallSize * 0.75f, BallSize));
         }
 
         public override bool? CanDamage() => false;
@@ -92,5 +120,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             return false;
         }
+        #endregion
     }
 }

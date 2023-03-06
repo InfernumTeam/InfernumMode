@@ -165,8 +165,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         flingSpeedScalar += MathHelper.Clamp(Utils.GetLerpValue(500f, maxDistance, distanceToTarget, false), 0f, 2.5f);
                     }
                     Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * (FlingSpeed * flingSpeedScalar);
-                    // Inform the commander that this has been launched.
-                    Commander.Infernum().ExtraAI[GuardianComboAttackManager.CommanderDogmaFireballHasBeenYeetedIndex] = 1f;
                     CurrentState++;
                     Timer = 0;
                     return;
@@ -175,6 +173,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Projectile.velocity *= 0.98f;
                     if (Projectile.velocity.Length() <= 10)
                     {
+                        // Inform the commander that this has been launched.
+                        Commander.Infernum().ExtraAI[GuardianComboAttackManager.CommanderDogmaFireballHasBeenYeetedIndex] = 1f;
                         CurrentState++;
                         Timer = 0;
                         return;

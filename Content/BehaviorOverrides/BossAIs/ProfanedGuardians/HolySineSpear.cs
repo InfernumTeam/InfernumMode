@@ -131,7 +131,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-
             TrailDrawer ??= new PrimitiveTrailCopy(TrailWidthFunction, TrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.HoneycombNoise);

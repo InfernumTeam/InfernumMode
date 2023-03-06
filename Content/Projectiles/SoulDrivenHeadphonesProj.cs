@@ -211,7 +211,7 @@ namespace InfernumMode.Content.Projectiles
             new()
             {
                 HoverText = "Warden of the Damned - Skeletron",
-                TrackName = "Boss3",
+                TrackName = "Skeletron",
                 HoverTextColor = () => CalamityUtils.ColorSwap(Color.MediumPurple, Color.HotPink, 2f),
                 UnlockCondition = () => NPC.downedBoss3,
                 BossIconTexture = TextureAssets.NpcHeadBoss[19]

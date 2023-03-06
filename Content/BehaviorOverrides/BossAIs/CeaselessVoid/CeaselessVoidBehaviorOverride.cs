@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     // Play some cool chain sounds.
                     if (npc.soundDelay <= 0 && entityVelocity.Length() >= 0.1f)
                     {
-                        SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidChainSound with { Volume = 0.5f }, e.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidChainSound with { Volume = 0.25f }, e.Center);
                         npc.soundDelay = 27;
                     }
                 }
@@ -255,7 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 Chains = new();
 
-                int segmentCount = 32;
+                int segmentCount = 21;
                 for (int i = 0; i < 4; i++)
                 {
                     Chains.Add(new());

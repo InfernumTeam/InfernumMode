@@ -1237,8 +1237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
                     SoundEngine.PlaySound(SoundID.Item101, target.Center);
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 27);
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -1312,7 +1311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             int fireballCircleShootCount = (int)MathHelper.Lerp(12f, 22f, attackCompletion);
             int shootRate = (int)MathHelper.Lerp(6f, 3f, attackCompletion);
-            float spiralShootSpeed = MathHelper.Lerp(3.5f, 5.75f, attackCompletion);
+            float spiralShootSpeed = MathHelper.Lerp(3.5f, 4.5f, attackCompletion);
             float circleShootSpeed = spiralShootSpeed * 1.36f;
             bool canShootCircle = attackCompletion >= 0.5f;
 

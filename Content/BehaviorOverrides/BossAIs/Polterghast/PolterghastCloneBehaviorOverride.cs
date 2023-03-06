@@ -49,6 +49,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             polterghast.ai[2] = 54f;
             polterghast.scale = 0.85f;
 
+            // Inherit polterghast's hit sound.
+            npc.HitSound = polterghast.HitSound;
+
             float attackTimer = polterghast.Infernum().ExtraAI[2];
 
             if (polterghast.Infernum().ExtraAI[3] == 1f)

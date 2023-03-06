@@ -99,11 +99,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ModeToggleLaugh = new("InfernumMode/Assets/Sounds/Custom/ModeToggleLaugh");
 
-        public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/MyrindaelHit") with { Volume = 1.8f };
+        public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelHit") with { Volume = 1.8f };
 
-        public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/MyrindaelSpin") with { Volume = 1.7f };
+        public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelSpin") with { Volume = 1.7f };
 
-        public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/MyrindaelThrow") with { Volume = 1.8f };
+        public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelThrow") with { Volume = 1.8f };
 
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 
@@ -111,11 +111,15 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle PerforatorDeathAnimation = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/PerforatorDeathAnimation");
 
-        public static readonly SoundStyle PolterghastDash = new("InfernumMode/Assets/Sounds/Custom/PolterDash");
+        public static readonly SoundStyle PolterghastDashSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterDash");
 
-        public static readonly SoundStyle PolterghastShortDash = new("InfernumMode/Assets/Sounds/Custom/PolterDashShort");
+        public static readonly SoundStyle PolterghastDeathEchoSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/DeathAnimations/PolterghastDeath");
 
-        public static readonly SoundStyle PoltergastDeathEcho = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/PolterghastDeath");
+        public static readonly SoundStyle PolterghastShortDashSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterDashShort");
+
+        public static readonly SoundStyle PolterghastSoulSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterSoulVortexShoot");
+
+        public static readonly SoundStyle PolterSoulVortexShootSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterSoulShoot");
 
         public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Assets/Sounds/Custom/PrimeSaw");
 

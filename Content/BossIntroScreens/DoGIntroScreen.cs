@@ -23,6 +23,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>());
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Assets/Sounds/Custom/DoGAttack");
+        public override SoundStyle? SoundToPlayWithTextCreation => DevourerofGodsHead.AttackSound;
     }
 }

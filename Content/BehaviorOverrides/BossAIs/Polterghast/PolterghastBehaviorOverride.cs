@@ -189,7 +189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             // Use a ghostly hit sound in the third phase.
             if (phase3)
-                npc.HitSound = SoundID.NPCHit36;
+                npc.HitSound = InfernumSoundRegistry.PolterghastSoulSound;
 
             // Ensure that the total released souls count does not go below zero.
             if (totalReleasedSouls < 0f)
@@ -300,7 +300,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             npc.damage = 0;
             npc.dontTakeDamage = true;
-            npc.DeathSound = InfernumSoundRegistry.PoltergastDeathEcho;
+            npc.DeathSound = InfernumSoundRegistry.PolterghastDeathEchoSound;
 
             // Clear away any clones and legs.
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -330,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (dyingTimer > slowdownTime && dyingTimer % 2f == 0f && totalReleasedSouls < 60f)
             {
                 if (dyingTimer % 8f == 0f)
-                    SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastSoulSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -387,7 +387,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                         Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 0, 0f, -1, Main.rand.NextBool().ToDirectionInt(), 1f);
                     }
 
-                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
+                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDashSound with { Volume = 2f }, npc.Center);
                     SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                     SelectNextAttack(npc);
                 }
@@ -551,9 +551,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Release vortices from the leg.
-            if (attackTimer >= swingDelay && attackTimer % vortexReleaseRate == vortexReleaseRate - 1f && swingCompletion > 0.2f && swingCompletion < 0.6f)
+            if (attackTimer >= swingDelay && attackTimer % vortexReleaseRate == 0f && swingCompletion > 0.2f && swingCompletion < 0.6f)
             {
-                SoundEngine.PlaySound(SoundID.Item104, legToControl.Center);
+                if (attackTimer % (vortexReleaseRate * 3f) == 0f)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastSoulSound, legToControl.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 vortexVelocity = npc.SafeDirectionTo(legToControl.Center) * 3.2f;
@@ -649,7 +650,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
                 if (wrappedAttackTimer == slowdownTime)
                 {
-                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
+                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDashSound with { Volume = 2f }, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     npc.netUpdate = true;
                 }
@@ -711,7 +712,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Roar and explode into many souls before creating rings.
             if (attackTimer == ringCreationDelay)
             {
-                ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
+                ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDashSound with { Volume = 2f }, npc.Center);
                 for (int i = 0; i < actualSoulsPerRing * ringCount; i++)
                 {
                     Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(26f, 40.5f);
@@ -855,7 +856,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 // Roar and initiate the charge.
                 if (attackTimer == descendTime + telegraphTime + 1f)
                 {
-                    RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDash with { Volume = 2f }, npc.Center);
+                    RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDashSound with { Volume = 2f }, npc.Center);
                     npc.velocity = telegraphDirection.ToRotationVector2() * chargeSpeed;
                     npc.netUpdate = true;
                 }
@@ -923,7 +924,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 if (attackTimer % shootRate == shootRate - 1f && attackTimer < shootTime)
                 {
-                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDash with { Volume = 2f }, npc.Center);
+                    ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDashSound with { Volume = 2f }, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int direction = -1; direction <= 1; direction += 2)
@@ -1015,8 +1016,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 ectoplasm.noGravity = true;
             }
 
-            if (attackTimer % 14f == 13f && attacking)
-                SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
+            if (attackTimer % 24f == 23f && attacking)
+                SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastSoulSound, target.Center);
 
             if (attackTimer >= attackDuration + 135f && totalReleasedSouls <= 15f)
                 SelectNextAttack(npc);
@@ -1067,7 +1068,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-                RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDash with { Volume = 2f }, npc.Center);
+                RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDashSound with { Volume = 2f }, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -1231,7 +1232,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             Main.npc[i].checkDead();
                             Main.npc[i].active = false;
                         }
-                        SoundEngine.PlaySound(SoundID.NPCHit36, Main.npc[i].Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastSoulSound, Main.npc[i].Center);
                     }
                 }
                 SelectNextAttack(npc);
@@ -1346,7 +1347,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 soulTelegraphSpawnPosition = target.Center - Vector2.UnitY.RotatedByRandom(1.15f) * Main.rand.NextBool().ToDirectionInt() * 1180f;
+                    Vector2 soulTelegraphSpawnPosition = target.Center + Vector2.UnitY.RotatedByRandom(0.98f) * 1180f;
                     Vector2 soulTelegraphDirection = (target.Center - soulTelegraphSpawnPosition + Main.rand.NextVector2Circular(450f, 450f)).SafeNormalize(Vector2.UnitY);
                     Utilities.NewProjectileBetter(soulTelegraphSpawnPosition, soulTelegraphDirection, ModContent.ProjectileType<SoulTelegraphLine>(), 0, 0f);
                 }

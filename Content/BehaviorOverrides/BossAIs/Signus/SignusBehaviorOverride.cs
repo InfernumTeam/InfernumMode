@@ -173,12 +173,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             if (spawnedAtGarden && npc.WithinRange(target.Center, 320f))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, npc.Center);
-
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 45);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 45);
 
                 npc.active = false;
             }

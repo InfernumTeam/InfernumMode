@@ -234,11 +234,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         npc.velocity = npc.SafeDirectionTo(verticalDestination) * npc.Distance(verticalDestination) / bombardTime;
 
                         SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
-                        if (CalamityConfig.Instance.Screenshake)
-                        {
-                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 3f;
-                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.7f, 35);
-                        }
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 3f;
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 0.7f, 35);
 
                         for (int i = 0; i < 20; i++)
                         {
@@ -707,13 +704,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         int laserbeamDamage = 215;
                         if (wrappedTime % 120f == 119f)
                         {
-                            if (CalamityConfig.Instance.Screenshake)
-                            {
-                                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
-                                ScreenEffectSystem.SetFlashEffect(npc.Center, 0.84f, 25);
-                            }
-
                             SoundEngine.PlaySound(InfernumSoundRegistry.BrimstoneLaser, npc.Center);
+                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.84f, 25);
+
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), laserbeamDamage, 0f, -1, 0f, npc.whoAmI);
                         }

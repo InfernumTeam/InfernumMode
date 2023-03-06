@@ -302,12 +302,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (hasEnteredPhase2 == 0f && lifeRatio < Phase2LifeRatio)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Pitch = 0.5f });
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1.2f, 25);
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 5f, 50);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1.2f, 25);
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 5f, 50);
+
                 if (InfernumConfig.Instance.FlashbangOverlays)
                     MoonlordDeathDrama.RequestLight(5f, Main.LocalPlayer.Center);
 
@@ -674,12 +672,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 // Play the burn sound universally.
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
-
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
                 performedInitializations = 1f;
                 npc.Size = new Vector2(48f, 108f);
@@ -724,11 +718,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 // Play a sizzle sound and create light effects.
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound with { MaxInstances = 1 });
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 10);
-                }
+                target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 10);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
@@ -742,11 +733,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (performedEndEffects == 0f && attackIsAboutToEnd)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    target.Infernum_Camera().CurrentScreenShakePower = 20f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 30);
-                }
+                target.Infernum_Camera().CurrentScreenShakePower = 20f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 30);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
@@ -765,11 +753,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 // Play a sizzle sound and create light effects to accompany the circle.
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, fireballCircleShootRate / 3);
-                }
+                target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, fireballCircleShootRate / 3);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -817,11 +802,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Release bombs at the target.
             if (localAttackTimer >= shootRate && localAttackTimer % bombShootRate == 0f && !doneAttacking)
             {
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 7.5f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1.2f, 35);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 7.5f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1.2f, 35);
 
                 for (int i = 0; i < 32; i++)
                 {
@@ -867,11 +849,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound);
 
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 40);
-                    }
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 40);
                     hasDonePhaseTransitionEffects = 1f;
                     npc.netUpdate = true;
                 }
@@ -1025,11 +1004,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (!doneAttacking && localAttackTimer >= chargeUpTime && !NPC.AnyNPCs(ModContent.NPCType<ProvSpawnOffense>()) && guardiansShouldExplode == 0f)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 24);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 24);
 
                 for (int i = 0; i < guardianCount; i++)
                 {
@@ -1204,11 +1180,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (attackCycleTimer == 0)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2.4f, 32);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 2.4f, 32);
 
                 // Reset things from the previous cycle.
                 spinAngularOffset = 0f;
@@ -1267,14 +1240,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 // Have the guardians all shoot crystal spikes.
                 if (attackCycleTimer == guardiansSpinTime + guardiansTelegraphTime + 1)
                 {
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
-                        ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 27);
-                    }
-
                     SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
                     SoundEngine.PlaySound(SoundID.Item101, target.Center);
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 27);
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int guardianID = ModContent.NPCType<ProvSpawnHealer>();
@@ -1374,12 +1344,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 // Play the burn sound universally.
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
-
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1436,11 +1402,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 // Play a sizzle sound and create light effects to accompany the circle.
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, fireballCircleShootRate / 3);
-                }
+                target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, fireballCircleShootRate / 3);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1527,12 +1490,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
                     SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound);
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 40);
 
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 40);
-                    }
                     hasDonePhaseTransitionEffects = 1f;
                     npc.netUpdate = true;
                 }
@@ -1620,11 +1580,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (localAttackTimer >= shootDelay && shootTimer >= shootRate && !npc.WithinRange(target.Center, 345f))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 7.5f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1.2f, 35);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 7.5f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1.2f, 35);
 
                 for (int i = 0; i < 32; i++)
                 {
@@ -1725,11 +1682,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 if (hasDoneAttackEndEffects == 0f)
                 {
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 32);
-                    }
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.9f, 32);
                     hasDoneAttackEndEffects = 1f;
                     npc.netUpdate = true;
                 }
@@ -1762,11 +1716,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                     ReleaseSparkles(npc.Center, 100, 35f);
 
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.75f, 45);
-                    }
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.75f, 45);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
@@ -1822,12 +1773,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Create the ritual.
             if (hasPerformedRitual == 0f)
             {
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 36);
-                }
-                
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 36);
+
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Volume = 1.5f });
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1854,11 +1802,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Shoot crosses at the target in bursts.
             if (crossShootCounter >= crossShootRate)
             {
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 15);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 15);
 
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1966,11 +1911,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (hasPerformedExplosion == 0f)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, npc.Center);
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.6f, 32);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.6f, 32);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
@@ -2031,11 +1973,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 0.001f, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, fieldExplosionRadius);
                     }
 
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 10f;
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.42f, 12);
-                    }
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 10f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.42f, 12);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
@@ -2256,8 +2195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (bombShootTimer >= bombShootRate)
                 {
-                    if (CalamityConfig.Instance.Screenshake)
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 4f;
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 4f;
 
                     // Release a holy bomb and a bunch of lava blobs.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

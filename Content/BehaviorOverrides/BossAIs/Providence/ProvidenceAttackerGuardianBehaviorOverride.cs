@@ -61,11 +61,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Explode if Providence permits it and colliding with tiles.
             if (providence.Infernum().ExtraAI[3] == 1f && Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
             {
-                if (CalamityConfig.Instance.Screenshake)
-                {
-                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 15);
-                }
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 18f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 15);
 
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Pitch = 0.4f, Volume = 0.8f }, npc.Center);
                 for (int j = 0; j < 100; j++)

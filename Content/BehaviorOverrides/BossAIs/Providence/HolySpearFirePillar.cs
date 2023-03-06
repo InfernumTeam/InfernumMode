@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 TelegraphDrawer ??= new PrimitiveTrailCopy(TelegraphWidthFunction, TelegraphColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
 
                 InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-                float opacityScalar = MathF.Sin(CalamityUtils.SineInOutEasing(Timer / (TelegraphTime + 10f), 0) * MathF.PI);
+                float opacityScalar = MathF.Sin(CalamityUtils.SineInOutEasing(Timer / (TelegraphTime + 10f), 0) * MathF.PI) * 3f;
                 InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.5f * opacityScalar);
 
                 Vector2 startT = Projectile.Center;

@@ -158,6 +158,12 @@ namespace InfernumMode.Core.TrackedMusic
 
         private static void PermitVolumeFadeoutForCustomTracks(On.Terraria.Audio.LegacyAudioSystem.orig_UpdateCommonTrackTowardStopping orig, Terraria.Audio.LegacyAudioSystem self, int i, float totalVolume, ref float tempFade, bool isMainTrackAudible)
         {
+            if (Main.gameMenu && MediaPlayer.State == MediaState.Playing)
+            {
+                TrackedSong = null;
+                MediaPlayer.Stop();
+            }
+
             if (TrackedSong is not null)
             {
                 if (isMainTrackAudible)

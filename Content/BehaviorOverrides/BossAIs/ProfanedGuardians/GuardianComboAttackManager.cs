@@ -85,6 +85,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #region Fields And Properties
         public static Vector2 CrystalPosition => WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(6780f, 1500f);
 
+        public static Rectangle ShardUseisAllowedArea
+        { 
+            get
+            {
+                Vector2 proviArenaPos = new(WorldSaveSystem.ProvidenceArena.X * 16f, WorldSaveSystem.ProvidenceArena.Y * 16f);
+                Vector2 leftPos = proviArenaPos + new Vector2(850f, 1125f);
+                Vector2 rightPos = proviArenaPos + new Vector2(1275f, 1735f);
+                return new Rectangle((int)leftPos.X, (int)leftPos.Y, (int)rightPos.X - (int)leftPos.X, (int)rightPos.Y - (int)leftPos.Y);
+            }
+        }
+
         public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
         public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
@@ -1295,6 +1306,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             if (slamsPerformed >= maxSlams)
                             {
                                 bool pillarsAreMostlyGone = !Main.projectile.Any(proj => proj.active && proj.type == ModContent.ProjectileType<LavaEruptionPillar>() && proj.timeLeft >= 30);
+
+                                // Fade out rapidly.
+                                if (npc.Opacity == 1f)
+                                    CreateFireExplosion(npc.Center, true);
+
+                                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+
                                 // Switch to next attack. It will stall here if the commander is mid spin/charge until it is free. This is to avoid abruptly stopping mid spin/charge.
                                 if (commander.Infernum().ExtraAI[0] is 0f or 1f && pillarsAreMostlyGone)
                                     SelectNewAttack(commander, ref universalAttackTimer);
@@ -1651,7 +1669,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 if (substate < 6f)
                 {
-                    target.Infernum_Camera().ScreenFocusInterpolant = 3f;
+                    target.Infernum_Camera().ScreenFocusInterpolant = 2f;
                     target.Infernum_Camera().ScreenFocusPosition = focusPosition;
                     target.Infernum_Camera().CurrentScreenShakePower = 1f;
                     drawBlackBars = 1f;
@@ -1731,7 +1749,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Do not deal damage either.
                 npc.damage = 0;
 
-                npc.Infernum().ShouldUseSaturationBlur = true;
                 switch (substate)
                 {
                     // Hover to the right of the target.
@@ -2161,6 +2178,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float fireballLaunchStatus = ref npc.Infernum().ExtraAI[CommanderDogmaFireballHasBeenYeetedIndex];
 
             float chargeUpTime = 45f;
+            float minDistanceToMove = 800f;
+            float flySpeed = 16f;
 
             // Face the target.
             npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
@@ -2170,6 +2189,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Move upwards.
                 case 0:
+
+                    // Aim towards the target if far enough.
+                     npc.velocity = npc.SafeDirectionTo(target.Center) * (flySpeed * npc.Distance(target.Center) / minDistanceToMove);
+
                     if (npc.Center.Y > CrystalPosition.Y)
                         npc.velocity.Y = -13f;
                     else
@@ -2540,7 +2563,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (universalAttackTimer == fadeOutTime && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Create the exit rift, and move to it.                       
-                        Vector2 riftPosition = target.Center + Main.rand.NextVector2CircularEdge(700f, 600f);
+                        Vector2 riftPosition = target.Center + Main.rand.NextVector2CircularEdge(750f, 650f);
                         npc.Center = riftPosition;
                         npc.velocity = Vector2.Zero;
                         sittingInPortalIndex = Utilities.NewProjectileBetter(riftPosition, Vector2.Zero, ModContent.ProjectileType<HolyFireRift>(), 0, 0f);

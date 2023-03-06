@@ -136,7 +136,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             switch (substate)
             {
                 case 0:
-                    npc.Infernum().ShouldUseSaturationBlur = true;
                     // Create particles to indicate the sudden speed.
                     if (Main.rand.NextBool())
                     {

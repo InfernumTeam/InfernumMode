@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using System.IO;
+using CalamityMod.NPCs;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -46,6 +47,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, 0.45f, 0.35f, 0f);
+
+            if (Projectile.ai[1] == 1f && CalamityGlobalNPC.holyBoss != -1 && Projectile.WithinRange(Main.npc[CalamityGlobalNPC.holyBoss].Center, 32f))
+                Projectile.Kill();
 
             // Release fire particles.
             for (int i = 0; i < 3; i++)

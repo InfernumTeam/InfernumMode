@@ -676,8 +676,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
                 performedInitializations = 1f;
+                npc.position = npc.Center;
                 npc.Size = new Vector2(48f, 108f);
-                npc.Center = target.Center - Vector2.UnitY * 400f;
+                npc.position -= npc.Size * 0.5f;
                 npc.velocity = Vector2.UnitY * -12f;
                 npc.netUpdate = true;
             }
@@ -690,21 +691,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer >= shootDelay && shootTimer >= fireballShootRate && !attackIsAboutToEnd)
             {
                 Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(300f, 300f) * Main.rand.NextFloat(0.85f, 1f) + target.velocity * 90f;
-                fireballSpawnPosition += npc.SafeDirectionTo(target.Center) * 850f;
+                fireballSpawnPosition += npc.SafeDirectionTo(target.Center) * 1050f;
 
                 float fireballShootSpeed = npc.Distance(fireballSpawnPosition) * 0.004f + fireballShootSpeedBoost + 4f;
                 float minSpeed = IsEnraged ? 16f : 10f;
                 if (fireballShootSpeed < minSpeed)
                     fireballShootSpeed = minSpeed;
 
-                Vector2 fireballSpiralVelocity = (npc.Center - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * fireballShootSpeed;            
-
-                // Ensure that the fireball dies exactly as it lands on Providence.
-                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball =>
-                {
-                    fireball.timeLeft = (int)(npc.Distance(fireballSpawnPosition) / fireballShootSpeed) - (IsEnraged ? -3 : 27);
-                });
-                Utilities.NewProjectileBetter(fireballSpawnPosition, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+                Vector2 fireballSpiralVelocity = (npc.Center - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * fireballShootSpeed;
+                Utilities.NewProjectileBetter(fireballSpawnPosition, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f, -1, 0f, 1f);
 
                 shootTimer = 0f;
 
@@ -1177,7 +1172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Summon the healer guardians.
-            if (attackCycleTimer == 0)
+            if (localAttackTimer >= chargeUpTime && !NPC.AnyNPCs(ModContent.NPCType<ProvSpawnHealer>()) && attackCycleTimer <= guardiansSpinTime + guardiansTelegraphTime + guardiansPostShootLiveTime)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound);
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
@@ -1419,7 +1414,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         Vector2 rockSpawnPosition = target.Center + new Vector2(dx, -820f);
                         Vector2 rockVelocity = Vector2.UnitY.RotateRandom(0.06f) * 6f;
-                        int projID = Main.rand.NextBool(2) ? ModContent.ProjectileType<HolyCinder>() : ModContent.ProjectileType<AcceleratingMagicProfanedRock>();
+                        int projID = !Main.rand.NextBool(4) ? ModContent.ProjectileType<HolyCinder>() : ModContent.ProjectileType<AcceleratingMagicProfanedRock>();
                         Utilities.NewProjectileBetter(rockSpawnPosition, rockVelocity, projID, MagicRockDamage, 0f);
                     }
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);

@@ -2492,7 +2492,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case 4:
                     if (universalAttackTimer >= afterAttackWaitTime)
-                        SelectNewAttack(npc, ref universalAttackTimer, (float)GuardiansAttackType.SpearSpinThrow);
+                        SelectNewAttack(npc, ref universalAttackTimer);
                     break;
             }
         }

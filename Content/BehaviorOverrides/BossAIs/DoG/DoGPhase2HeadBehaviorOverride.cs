@@ -1175,11 +1175,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             SoundEngine.PlaySound(YanmeisKnife.HitSound with { Volume = 1.7f }, target.Center);
                             SoundEngine.PlaySound(TeslaCannon.FireSound with { Volume = 1.7f }, target.Center);
-                            if (CalamityConfig.Instance.Screenshake)
-                            {
-                                target.Calamity().GeneralScreenShakePower = 10f;
-                                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);
-                            }
+                            target.Calamity().GeneralScreenShakePower = 10f;
+                            ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);
                         }
                     }
 

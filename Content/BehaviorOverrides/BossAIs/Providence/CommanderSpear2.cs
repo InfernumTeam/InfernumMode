@@ -117,11 +117,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            if (CalamityConfig.Instance.Screenshake)
-            {
-                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Max(Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower, 8f);
-                ScreenEffectSystem.SetFlashEffect(Projectile.Center, 1f, 13);
-            }
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Max(Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower, 8f);
+            ScreenEffectSystem.SetFlashEffect(Projectile.Center, 1f, 13);
 
             SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with { Volume = 2f }, Projectile.Center);
         }

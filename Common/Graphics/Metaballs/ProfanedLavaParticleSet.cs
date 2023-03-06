@@ -58,7 +58,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override void PrepareOptionalShaderData(Effect effect, int index)
         {
-            effect.Parameters["upscaleFactor"].SetValue(Vector2.One * 0.36f);
+            effect.Parameters["upscaleFactor"].SetValue(Vector2.One * 0.2f);
             switch (index)
             {
                 // Background 1.

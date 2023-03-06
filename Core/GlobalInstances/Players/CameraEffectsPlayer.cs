@@ -63,7 +63,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 return;
 
             if (!CalamityConfig.Instance.Screenshake)
+            {
+                CurrentScreenShakePower = 0f;
                 return;
+            }
 
             Main.screenPosition += Main.rand.NextVector2CircularEdge(CurrentScreenShakePower, CurrentScreenShakePower);
         }

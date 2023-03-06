@@ -769,11 +769,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
                     Utilities.CreateShockwave(npc.Center - npc.velocity * 4f);
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.3f, 45);
-                        target.Infernum_Camera().CurrentScreenShakePower = 3f;
-                    }
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.3f, 45);
+                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
+
                     ExoMechsSky.CreateLightningBolt(25);
 
                     SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
@@ -980,11 +978,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                         SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, npc.Center);
                         Utilities.CreateShockwave(npc.Center, 4, 15, 192f);
-                        if (CalamityConfig.Instance.Screenshake)
-                        {
-                            ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
-                            target.Infernum_Camera().CurrentScreenShakePower = 3f;
-                        }
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 45);
+                        target.Infernum_Camera().CurrentScreenShakePower = 3f;
+
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)

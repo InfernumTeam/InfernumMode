@@ -59,6 +59,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         #region AI
         public static bool AnyArms => NPC.AnyNPCs(NPCID.PrimeCannon) || NPC.AnyNPCs(NPCID.PrimeLaser) || NPC.AnyNPCs(NPCID.PrimeVice) || NPC.AnyNPCs(NPCID.PrimeSaw);
 
+        // This exists primarily for mecha mayhem compatibility.
+        public static bool CanPerformCameraEffects => !NPC.AnyNPCs(NPCID.TheDestroyer) && !NPC.AnyNPCs(NPCID.Spazmatism) && !NPC.AnyNPCs(NPCID.Retinazer);
+
         public const int CannonsShouldNotFireIndex = 0;
 
         public const int CannonCycleTimerIndex = 1;
@@ -214,7 +217,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             bool canHover = attackTimer < hoverTime;
 
             // Focus on the boss as it spawns.
-            if (npc.WithinRange(Main.LocalPlayer.Center, 3700f))
+            if (npc.WithinRange(Main.LocalPlayer.Center, 3700f) && CanPerformCameraEffects)
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);

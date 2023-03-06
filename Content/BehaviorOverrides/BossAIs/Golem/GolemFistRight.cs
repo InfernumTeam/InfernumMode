@@ -2,12 +2,15 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 {
     public class GolemFistRight : ModNPC
     {
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.GolemFistRight}";
+
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();

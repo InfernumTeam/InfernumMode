@@ -809,19 +809,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     npc.frame.Y = frameHeight * 4;
             }
         }
-
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Plantera/PlanteraTexture").Value;
-            Texture2D bulbTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Plantera/PlanteraBulbTexture").Value;
-            Color bulbColor = npc.GetAlpha(new(225, 104, 206)).MultiplyRGB(lightColor);
-            Color baseColor = npc.GetAlpha(lightColor);
-            Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, baseColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(bulbTexture, drawPosition, npc.frame, bulbColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-            return false;
-        }
         #endregion
     }
 }

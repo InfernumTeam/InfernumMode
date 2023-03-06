@@ -120,11 +120,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            if (CalamityConfig.Instance.Screenshake)
-            {
-                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                ScreenEffectSystem.SetBlurEffect(Main.LocalPlayer.Center - Vector2.UnitY * 300f, 1.45f, 30);
-            }
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+            ScreenEffectSystem.SetBlurEffect(Main.LocalPlayer.Center - Vector2.UnitY * 300f, 1.45f, 30);
 
             for (float k = 0; k < CurrentLength; k += Main.rand.NextFloat(9f, 16f))
             {

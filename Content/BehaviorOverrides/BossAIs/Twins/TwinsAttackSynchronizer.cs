@@ -997,12 +997,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 if (attackCountdown == attackCycleTime - laserChargeUpTime)
                 {
                     SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);
-                    if (CalamityConfig.Instance.Screenshake)
-                    {
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
-                        ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 20);
-                        ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
-                    }
+                    Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 20);
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -1175,12 +1172,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     {
                         if (attackTimer == laserShootDelay + 1f)
                         {
-                            if (CalamityConfig.Instance.Screenshake)
-                            {
-                                SoundEngine.PlaySound(AresTeslaCannon.TeslaOrbShootSound, Target.Center);
-                                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 4f;
-                                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.25f, 16);
-                            }
+                            SoundEngine.PlaySound(AresTeslaCannon.TeslaOrbShootSound, Target.Center);
+                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 4f;
+                            ScreenEffectSystem.SetBlurEffect(npc.Center, 0.25f, 16);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -1284,11 +1278,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     if (attackTimer == telegraphAimTime)
                     {
                         Utilities.CreateShockwave(npc.Center, 2, 5, 142f, false);
-                        if (CalamityConfig.Instance.Screenshake)
-                        {
-                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
-                            ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 20);
-                        }
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 20);
 
                         SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1367,11 +1358,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     if (attackTimer == chargeUpTime)
                     {
                         Utilities.CreateShockwave(npc.Center, 2, 8, 145f, false);
-                        if (CalamityConfig.Instance.Screenshake)
-                        {
-                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
-                            ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
-                        }
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
 
                         SoundEngine.PlaySound(Artemis.ChargeSound, Target.Center);
                         SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);

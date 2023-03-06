@@ -151,6 +151,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
+        public static bool MetCalamitasAtCrags
+        {
+            get;
+            set;
+        }
+
         public static Point ForbiddenArchiveCenter
         {
             get;
@@ -188,6 +194,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("PerformedLacewingAnimation");
             if (MetSignusAtProfanedGarden)
                 downed.Add("MetSignusAtProfanedGarden");
+            if (MetCalamitasAtCrags)
+                downed.Add("MetCalamitasAtCrags");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -230,6 +238,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             DisplayedEmodeWarningText = downed.Contains("DisplayedEmodeWarningText");
             PerformedLacewingAnimation = downed.Contains("PerformedLacewingAnimation");
             MetSignusAtProfanedGarden = downed.Contains("MetSignusAtProfanedGarden");
+            MetCalamitasAtCrags = downed.Contains("MetCalamitasAtCrags");
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");

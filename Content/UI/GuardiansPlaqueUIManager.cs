@@ -4,6 +4,7 @@ using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace InfernumMode.Content.UI
                 // Historically Calamity received errors when attempting to load fonts on Linux systems for their MGRR boss HP bar.
                 // Out of an abundance of caution, Infernum implements the same solution as them and only uses the font on windows operating systems.
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    return InfernumMode.Instance.Assets.Request<DynamicSpriteFont>("Assets/Fonts/ProfanedText").Value;
+                    return InfernumMode.Instance.Assets.Request<DynamicSpriteFont>("Assets/Fonts/ProfanedText", AssetRequestMode.ImmediateLoad).Value;
                 
                 return FontAssets.MouseText.Value;
             }

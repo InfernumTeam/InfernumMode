@@ -120,6 +120,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Perform NaN safety.
             if (NPC.velocity.HasNaNs())
                 NPC.velocity = Vector2.UnitY;
+
+            // Dont deal damage.
+            NPC.damage = 0;
         }
 
         public override void DrawBehind(int index)

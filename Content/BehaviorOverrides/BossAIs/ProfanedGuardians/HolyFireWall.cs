@@ -2,6 +2,7 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -70,7 +71,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.Opacity >= 0.75f;
+        // Only hit the player if faded in enough and the crystal wall is active.
+        public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.85f && GlobalNPCOverrides.ProfanedCrystal != -1;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

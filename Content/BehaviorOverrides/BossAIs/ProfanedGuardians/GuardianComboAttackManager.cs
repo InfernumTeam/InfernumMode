@@ -215,11 +215,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Loop through every wall to create.
                         for (int i = 0; i < wallsToSimulate; i++)
                         {
-                            // Get the base center the same way as normal, but modify the x position by the wall we are using the gap size.
+                            // Get the base center the same way as normal, but modify the x position by the wall we are using times the gap size.
                             Vector2 baseCenter = CrystalPosition + new Vector2(220f + (gapBetweenWalls * i), 0f);
 
                             // This is the same as making the normal walls.
 
+                            // -->
                             // Create a random offset.
                             float yRandomOffset;
                             Vector2 previousCenter = baseCenter + new Vector2(0f, lastOffsetY);
@@ -236,6 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             // Set the new random offset as the last one.
                             lastOffsetY = yRandomOffset;
+                            // <--
 
                             // Modify the lifetime of the walls so they all end at the same point.
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(proj =>

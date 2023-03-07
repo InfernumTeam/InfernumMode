@@ -74,7 +74,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
+
+                    // Release fireballs below the target.
+                    for (int i = 0; i < 3; i++)
+                        Utilities.NewProjectileBetter(target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(720f, 780f)), -Vector2.UnitY * 11f, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f);
+                }
 
                 npc.active = false;
             }

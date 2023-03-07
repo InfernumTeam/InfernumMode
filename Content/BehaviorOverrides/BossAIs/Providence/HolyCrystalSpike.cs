@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         for (int i = 0; i < 5; i++)
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.91f, 0.91f, i / 4f);
-                            Vector2 rockVelocity = directionToTarget.RotatedBy(shootOffsetAngle) * 4f;
+                            Vector2 rockVelocity = directionToTarget.RotatedBy(shootOffsetAngle) * 3.5f;
                             if (ProvidenceBehaviorOverride.IsEnraged)
                                 rockVelocity *= 1.4f;
 

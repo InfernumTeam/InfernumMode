@@ -83,7 +83,7 @@ namespace InfernumMode.Content.UI
             if (Player.Distance(PlaqueWorldPosition) > DistanceThresholdToDrawUI && ShouldDraw)
                 CloseUI();
 
-            Vector2 plaqueDrawCenter = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
+            Vector2 plaqueDrawCenter = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f - Vector2.UnitY * PlaqueScale * 196f;
             Vector2 plaqueDrawTopLeft = plaqueDrawCenter - BackgroundTexture.Size() * PlaqueScale * 0.5f;
             Vector2 textLeftDrawPosition = plaqueDrawTopLeft + Vector2.One * TextPadding;
             int maxTextLength = (int)Math.Round((BackgroundTexture.Width - (2f * TextPadding)) * PlaqueScale.X / TextScale);

@@ -226,7 +226,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Vector2 previousCenter = baseCenter + new Vector2(0f, lastOffsetY);
                             Vector2 newCenter;
                             int attempts = 0;
-                            // Attempt to get one within a certain distance, but give up after 10 attempts.
+                            // Attempt to get one within a certain distance, but give up after 30 attempts.
                             do
                             {
                                 yRandomOffset = Main.rand.NextFloat(-600f, 200f);
@@ -342,7 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Vector2 previousCenter = baseCenter + new Vector2(0f, lastOffsetY);
                             Vector2 newCenter;
                             int attempts = 0;
-                            // Attempt to get one within a certain distance, but give up after 10 attempts.
+                            // Attempt to get one within a certain distance, but give up after 30 attempts.
                             do
                             {
                                 yRandomOffset = Main.rand.NextFloat(-600f, 200f);

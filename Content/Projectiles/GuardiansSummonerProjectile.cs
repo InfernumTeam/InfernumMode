@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,11 @@ namespace InfernumMode.Content.Projectiles
     {
         public ref float Time => ref Projectile.ai[0];
 
-        public const int Lifetime = 300;
+        public int Lifetime => 390;
+
+        public Vector2 MainPosition => GuardianComboAttackManager.CrystalPosition + new Vector2(500f, 150f);
+
+        public static Player Player => Main.LocalPlayer;
 
         public override string Texture => "CalamityMod/Items/SummonItems/ProfanedShard";
 
@@ -34,58 +39,62 @@ namespace InfernumMode.Content.Projectiles
         }
 
         public override void AI()
-        {
+        {           
+            if (Time == 0)
+                Player.Infernum_Camera().ScreenFocusHoldInPlaceTime = Lifetime;
+
             // Play a rumble sound.
             if (Time == 75f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound, Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound, MainPosition);
             if (Time >= 75f)
-                Main.LocalPlayer.Infernum_TempleCinder().CreateALotOfHolyCinders = true;
+                Player.Infernum_TempleCinder().CreateALotOfHolyCinders = true;
+
+            if (Player.WithinRange(MainPosition, 10000))
+            {
+                Player.Infernum_Camera().ScreenFocusPosition = MainPosition;
+                Player.Infernum_Camera().ScreenFocusInterpolant = MathHelper.Clamp(Player.Infernum_Camera().ScreenFocusInterpolant + 0.05f, 0f, 1f);
+
+                // Disable input and UI during the animation.
+                Main.blockInput = true;
+                Main.hideUI = true;
+            }
 
             if (Time >= 210f)
             {
                 // Create screen shake effects.
-                Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * 8f;
+                Player.Infernum_Camera().CurrentScreenShakePower = 6;
             }
 
+            if (Time == 300)
+            {
+                Player.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * 16f;
+
+                // Make the crystal shatter.
+                SoundEngine.PlaySound(Providence.HurtSound, MainPosition);
+
+                // Create an explosion and summon the Guardian Commander.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    CalamityUtils.SpawnBossBetter(GuardianComboAttackManager.CommanderStartingHoverPosition, ModContent.NPCType<ProfanedGuardianCommander>());
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
+                    {
+                        explosion.ModProjectile<HolySunExplosion>().MaxRadius = 600f;
+                    });
+                    Utilities.NewProjectileBetter(MainPosition, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
+                }
+            }
             Time++;
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * 16f;
-
-            // Make the crystal shatter.
-            SoundEngine.PlaySound(Providence.HurtSound, Projectile.Center);
-
-            // Create an explosion and summon the Guardian Commander.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 250f, ModContent.NPCType<ProfanedGuardianCommander>());
-
-                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
-                {
-                    explosion.ModProjectile<HolySunExplosion>().MaxRadius = 600f;
-                });
-                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
-            }
+            Main.blockInput = false;
+            Main.hideUI = false;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-
-            float glowInterpolant = Utils.GetLerpValue(60f, 105f, Time, true);
-            if (glowInterpolant > 0f)
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    Color color = Color.Lerp(Color.White, Color.Yellow with { A = 0 }, glowInterpolant) * Projectile.Opacity * glowInterpolant;
-                    Vector2 drawOffset = (Time * MathHelper.TwoPi / 50f + MathHelper.TwoPi * i / 8f).ToRotationVector2() * glowInterpolant * 7.5f;
-                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
-                }
-            }
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
 
             return false;
         }

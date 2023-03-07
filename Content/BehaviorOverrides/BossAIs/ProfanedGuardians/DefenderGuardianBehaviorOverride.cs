@@ -90,7 +90,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             switch ((GuardiansAttackType)attackState)
             {
                 case GuardiansAttackType.SpawnEffects:
-                    DoBehavior_SpawnEffects(npc, target, ref attackTimer);
+                    // Go straight to this so the walls sync.
+                    DoBehavior_FlappyBird(npc, target, ref attackTimer, commander);
                     break;
 
                 case GuardiansAttackType.FlappyBird:
@@ -133,6 +134,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
             ref float substate = ref npc.Infernum().ExtraAI[1];
             npc.Calamity().ShouldCloseHPBar = true;
+            npc.damage = 0;
             switch (substate)
             {
                 case 0:

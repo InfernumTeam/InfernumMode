@@ -58,8 +58,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Summon the defender and healer guardian.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[1] == 0f)
             {
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianDefender>());
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianHealer>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)DefenderStartingHoverPosition.X, (int)DefenderStartingHoverPosition.Y, ModContent.NPCType<ProfanedGuardianDefender>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)HealerStartingHoverPosition.X, (int)HealerStartingHoverPosition.Y, ModContent.NPCType<ProfanedGuardianHealer>());
                 npc.localAI[1] = 1f;
             }
 
@@ -327,7 +327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Black, fadeToBlack) * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
             // Draw a defensive overlay over the commander if the healer is dead, to help identify him from the defender.
-            if (TotalRemaininGuardians == 2)
+            if (TotalRemaininGuardians == 2 && (GuardiansAttackType)npc.ai[0] != GuardiansAttackType.DefenderDeathAnimation)
                 DefenderGuardianBehaviorOverride.DrawDefenseOverlay(npc, spriteBatch, texture);
 
             // Draw an overlay.

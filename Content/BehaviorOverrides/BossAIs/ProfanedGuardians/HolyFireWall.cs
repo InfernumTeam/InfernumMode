@@ -1,4 +1,5 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using CalamityMod.NPCs;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
@@ -13,7 +14,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public PrimitiveTrailCopy FlameDrawer { get; private set; } = null;
 
-        public const int Lifetime = 650;
+        public int Lifetime = BaseLifetime;
+
+        public const int BaseLifetime = 650;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
@@ -38,8 +41,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void AI()
         {
+            // Do not exist if the commander does not.
+            if (CalamityGlobalNPC.doughnutBoss == -1)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            if (Projectile.localAI[0] == 0f)
+            {
+                Projectile.timeLeft = Lifetime;
+                Projectile.localAI[0] = 1f;
+            }
             // Rapidly fade in.
-            if (Projectile.timeLeft >= Lifetime - 100)
+            if (Projectile.timeLeft >= Lifetime - 60)
             {
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
                 Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);

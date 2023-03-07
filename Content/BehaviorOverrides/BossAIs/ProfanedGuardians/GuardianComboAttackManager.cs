@@ -100,6 +100,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
         public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
 
+        public static Vector2 CommanderStartingHoverPosition => CrystalPosition + new Vector2(400f, 0f);
+        public static Vector2 DefenderStartingHoverPosition => CrystalPosition + new Vector2(155f, 475f);
+        public static Vector2 HealerStartingHoverPosition => CrystalPosition + new Vector2(200f, -65f);
+
         // Damage fields.
         public const int ProfanedRockDamage = 300;
         public const int MagicShotDamage = 320;
@@ -175,18 +179,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #region Commander + Defender + Healer Attacks
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
         {
-            float inertia = 20f;
-            float flySpeed = 35f;
+            ref float lastOffsetY = ref npc.Infernum().ExtraAI[0];
+
+            float wallCreationRate = 60f;
+            int wallsToSimulate = 7;
 
             // Do not take or deal damage.
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
-            Vector2 positionToMoveTo = CrystalPosition;
-            // If we are the commander, spawn in the pushback fire wall.
+            // If we are the commander, set a flash etc. The guardians are spawned in at the correct position so will move on correctly.
             if (npc.type == CommanderType)
             {
-                positionToMoveTo += new Vector2(400, 0);
                 if (attackTimer == 1)
                 {
                     ScreenEffectSystem.SetFlashEffect(target.Center, 0.8f, 45);
@@ -198,29 +202,53 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         float pushSpeed = 45f;
                         player.velocity -= player.SafeDirectionTo(player.Center + Vector2.UnitX) * pushSpeed;
                     }
-                }
-                //    if (Main.netMode != NetmodeID.MultiplayerClient)
-                //    {
-                //        Vector2 spawnPosition = new(target.Center.X + 800f, npc.Center.Y);
-                //        Vector2 finalPosition = new(WorldSaveSystem.ProvidenceDoorXPosition - 7104f, target.Center.Y);
-                //        float distance = (spawnPosition - finalPosition).Length();
-                //        float x = distance / HolyPushbackWall.Lifetime;
-                //        Vector2 velocity = new(-x, 0f);
-                //        Utilities.NewProjectileBetter(spawnPosition, velocity, ModContent.ProjectileType<HolyPushbackWall>(), HolyFireBeamDamage, 0f);
-                //    }
-                if (npc.WithinRange(positionToMoveTo, 20f))
-                {
-                    npc.damage = npc.defDamage;
-                    npc.dontTakeDamage = false;
-                    // Go to the initial attack and reset the attack timer.
-                    SelectNewAttack(npc, ref attackTimer);
+
+                    // Create a bunch of pre-existing fire walls. This is so the player doesn't either sit around dawdling for
+                    // ages waiting for them to cover the garden, or more likely, move right and negate half the phase.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        // The base velocity of the walls.
+                        Vector2 velocity = -Vector2.UnitX * 9f;
+                        // The distance between each wall.
+                        float gapBetweenWalls = velocity.X * wallCreationRate;
+
+                        // Loop through every wall to create.
+                        for (int i = 0; i < wallsToSimulate; i++)
+                        {
+                            // Get the base center the same way as normal, but modify the x position by the wall we are using the gap size.
+                            Vector2 baseCenter = CrystalPosition + new Vector2(220f + (gapBetweenWalls * i), 0f);
+
+                            // This is the same as making the normal walls.
+
+                            // Create a random offset.
+                            float yRandomOffset;
+                            Vector2 previousCenter = baseCenter + new Vector2(0f, lastOffsetY);
+                            Vector2 newCenter;
+                            int attempts = 0;
+                            // Attempt to get one within a certain distance, but give up after 10 attempts.
+                            do
+                            {
+                                yRandomOffset = Main.rand.NextFloat(-600f, 200f);
+                                newCenter = baseCenter + new Vector2(0f, yRandomOffset);
+                                attempts++;
+                            }
+                            while (newCenter.Distance(previousCenter) > 400f || attempts < 30);
+
+                            // Set the new random offset as the last one.
+                            lastOffsetY = yRandomOffset;
+
+                            // Modify the lifetime of the walls so they all end at the same point.
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(proj =>
+                            {
+                                proj.ModProjectile<HolyFireWall>().Lifetime = HolyFireWall.BaseLifetime - (int)(wallCreationRate * i);
+                            });
+                            // Spawn the wall.
+                            Utilities.NewProjectileBetter(newCenter, velocity, ModContent.ProjectileType<HolyFireWall>(), HolyFireBeamDamage, 0);
+                        }
+                        SelectNewAttack(npc, ref attackTimer);
+                    }
                 }
             }
-
-            // This is the ideal velocity it would have
-            Vector2 idealVelocity = npc.SafeDirectionTo(positionToMoveTo) * flySpeed;
-            // And this is the actual velocity, using inertia and its existing one.
-            npc.velocity = (npc.velocity * (inertia - 1f) + idealVelocity) / inertia;
         }
 
         public static void DoBehavior_FlappyBird(NPC npc,Player target, ref float attackTimer, NPC commander)
@@ -232,7 +260,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (npc.type == CommanderType)
             {
                 float deathrayFireRate = 150;
-                float initialDelay = 460;
+                float initialDelay = 120;
                 ref float movementTimer = ref npc.Infernum().ExtraAI[0];
 
                 // Do not take damage.
@@ -290,10 +318,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
                     {
                         NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
-                        Vector2 hoverPosition = CrystalPosition + new Vector2(155f, 475f);
                         // Sit still behind and beneath the crystal.
-                        if (npc.Distance(hoverPosition) > 7f && movedToPosition == 0f)
-                            npc.velocity = npc.SafeDirectionTo(hoverPosition, Vector2.UnitY) * 5f;
+                        if (npc.Distance(DefenderStartingHoverPosition) > 7f && movedToPosition == 0f)
+                            npc.velocity = npc.SafeDirectionTo(DefenderStartingHoverPosition, Vector2.UnitY) * 5f;
                         else
                         {
                             npc.velocity.X = 0f;
@@ -360,10 +387,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         drawShieldConnections = 1f;
                         NPC crystal = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
 
-                        Vector2 hoverPosition = CrystalPosition + new Vector2(200f, -65f);
                         // Sit still behind the crystal.
-                        if (npc.Distance(hoverPosition) > 7f && crystal.ai[0] == 0)
-                            npc.velocity = npc.SafeDirectionTo(hoverPosition, Vector2.UnitY) * 5f;
+                        if (npc.Distance(HealerStartingHoverPosition) > 7f && crystal.ai[0] == 0)
+                            npc.velocity = npc.SafeDirectionTo(HealerStartingHoverPosition, Vector2.UnitY) * 5f;
                         else
                         {
                             npc.velocity *= 0.5f;
@@ -2392,7 +2418,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float spearReelbackTime = spearSpinTime + 20f;
             float spearStabTime = spearReelbackTime + 10f;
             float spearThrowSpeed = 14f;
-            float afterAttackWaitTime = 50f;
+            float afterAttackWaitTime = 65f;
             float spearsAmount = 6f;
             float spearDistance = 550f;
 
@@ -2534,7 +2560,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
 
             float maxCharges = 4f;
-            float chargeSpeed = 40f;
+            float chargeSpeed = 43f;
             float chargeLength = 45f;
             float fadeOutTime = 10f;
             float initialWaitTime = 80f;

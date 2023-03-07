@@ -386,5 +386,11 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator ProfanedShardUseItem
+        {
+            add => HookEndpointManager.Modify(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

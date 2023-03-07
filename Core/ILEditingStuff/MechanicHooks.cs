@@ -22,6 +22,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Items.Accessories;
+using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -670,5 +671,25 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => PlaceForbiddenArchive += StorePosition;
 
         public void Unload() => PlaceForbiddenArchive -= StorePosition;
+    }
+
+    public class ChangeProfanedShardUsageHook : IHookEdit
+    {
+        public void Load() => ProfanedShardUseItem += SummonGuardianSpawnerManager;
+
+        public void Unload() => ProfanedShardUseItem -= SummonGuardianSpawnerManager;
+
+        private void SummonGuardianSpawnerManager(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate((Player player) =>
+            {
+                if (Main.myPlayer == player.whoAmI && !Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
+                    Utilities.NewProjectileBetter(player.Center, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f);
+            });
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Ret);
+        }
     }
 }

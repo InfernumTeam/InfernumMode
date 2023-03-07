@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             Lighting.AddLight(Projectile.Center, 0.45f, 0.35f, 0f);
 
-            if (Projectile.ai[1] == 1f && CalamityGlobalNPC.holyBoss != -1 && Projectile.WithinRange(Main.npc[CalamityGlobalNPC.holyBoss].Center, 32f))
+            if (Projectile.ai[1] == 1f && CalamityGlobalNPC.holyBoss != -1 && Projectile.WithinRange(Main.npc[CalamityGlobalNPC.holyBoss].Center, Projectile.velocity.Length() * 1.8f + 24f))
                 Projectile.Kill();
 
             // Release fire particles.

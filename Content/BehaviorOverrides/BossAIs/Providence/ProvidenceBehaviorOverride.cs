@@ -775,12 +775,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float bombExplosionRadius = MathHelper.Lerp(1300f, 1776f, 1f - lifeRatio);
             ref float hasDonePhaseTransitionEffects = ref npc.Infernum().ExtraAI[0];
             ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
+            ref float cinderShootTimer = ref npc.Infernum().ExtraAI[2];
 
             // Fly above the target.
             DoVanillaFlightMovement(npc, target, true, ref flightPath);
 
             // Release cinders from above the target periodically.
-            if (localAttackTimer >= shootRate && localAttackTimer % cinderShootRate == 0f && !doneAttacking)
+            cinderShootTimer++;
+            if (localAttackTimer >= shootRate && cinderShootTimer % cinderShootRate == 0f && !doneAttacking)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
 
@@ -791,6 +793,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         Vector2 cinderSpawnPosition = target.Center + new Vector2(dx, -Main.rand.NextFloat(850f, 900f));
                         Utilities.NewProjectileBetter(cinderSpawnPosition, Vector2.UnitY.RotatedByRandom(0.06f) * 4f, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);
                     }
+                    cinderShootTimer = 0f;
+                    npc.netUpdate = true;
                 }
             }
             
@@ -1716,7 +1720,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvidenceWave>(), 0, 0f);
 
-                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound with { Volume = 2f });
                     hasPerformedTeleport = 1f;
                     npc.netUpdate = true;
                 }

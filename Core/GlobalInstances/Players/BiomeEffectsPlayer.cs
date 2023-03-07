@@ -56,6 +56,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
+        public bool CosmicBackgroundEffect
+        {
+            get;
+            set;
+        }
+
         public float MapObscurityInterpolant
         {
             get;
@@ -119,8 +125,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // Constantly redefine whether the player is near a profaned fountain. This influences the color of lava to be the same as in the Profaned Temple.
             // NearbyEffects and other things that rely on Terraria's natural scene system had an insufficient range, hence why it's handled in here specifically.
             ProfanedLavaFountain = false;
+            CosmicBackgroundEffect = false;
 
             int profanedFountainID = ModContent.TileType<ProfanedFountainTile>();
+            int cosmicMonolithID = ModContent.TileType<CosmicMonolithTile>();
             for (int dx = -75; dx < 75; dx++)
             {
                 for (int dy = -75; dy < 75; dy++)
@@ -131,10 +139,9 @@ namespace InfernumMode.Core.GlobalInstances.Players
                         continue;
 
                     if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == profanedFountainID && Main.tile[x, y].TileFrameX < 36)
-                    {
                         ProfanedLavaFountain = true;
-                        return;
-                    }
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == cosmicMonolithID && Main.tile[x, y].TileFrameX >= 36)
+                        CosmicBackgroundEffect = true;
                 }
             }
 

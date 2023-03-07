@@ -34,12 +34,21 @@ namespace InfernumMode.Common.Graphics
             set;
         }
 
+        public static float MonolithIntensity
+        {
+            get;
+            set;
+        }
+
         public static bool EffectIsActive
         {
             get
             {
                 if (Main.gameMenu || InfernumConfig.Instance.ReducedGraphicsConfig)
                     return false;
+
+                if (Main.LocalPlayer.Infernum_Biome().CosmicBackgroundEffect)
+                    return true;
 
                 bool dogCondition = CalamityGlobalNPC.DoGHead != -1 && InfernumMode.CanUseCustomAIs;
                 return dogCondition;
@@ -133,7 +142,7 @@ namespace InfernumMode.Common.Graphics
             else
                 ExtraIntensity *= 0.96f;
 
-            if (CalamityGlobalNPC.DoGHead == -1 && !HyperplaneMatrixTimeChangeSystem.SoughtTime.HasValue)
+            if (!EffectIsActive && MonolithIntensity <= 0f)
                 return;
 
             float intensity = ExtraIntensity + (DoGPhase2HeadBehaviorOverride.InPhase2 ? 0.55f : 0.4f);
@@ -142,6 +151,12 @@ namespace InfernumMode.Common.Graphics
             {
                 NPC dog = Main.npc[CalamityGlobalNPC.DoGHead];
                 intensity += dog.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.DeathAnimationTimerIndex] * 0.01f;
+            }
+            else
+            {
+                if (EffectIsActive)
+                    MonolithIntensity = MathHelper.Clamp(MonolithIntensity + 0.01f, 0f, 1f);
+                intensity *= MonolithIntensity;
             }
 
             Vector2 scale = new Vector2(Main.screenWidth, Main.screenWidth) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;

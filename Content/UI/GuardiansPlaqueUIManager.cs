@@ -36,7 +36,7 @@ namespace InfernumMode.Content.UI
 
         public static float TextScale => 0.8f;
 
-        // The plaque spawn position is consistent across all generated profaned temple. This means that it can simply be found via a hardcoded offset relative to the temple's position.
+        // The plaque spawn position is consistent across all generated profaned temples. This means that it can simply be found via a hardcoded offset relative to the temple's position.
         // This is a bit hack-y and does not generalize, but since players are not able to naturally place down/destroy the plaque, and the alternative to this is tile entities, it will do for now.
         public static Vector2 PlaqueWorldPosition => new(WorldSaveSystem.ProvidenceArena.X * 16f + 4360f, WorldSaveSystem.ProvidenceArena.Y * 16f + 1921f);
 

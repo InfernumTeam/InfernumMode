@@ -16,16 +16,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override Color TelegraphColor => Color.Yellow;
 
-        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, bool pissed, Vector2 cannonDirection)
+        public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection)
         {
             if (attackState == PrimeAttackType.SynchronizedMeleeArmCharges)
             {
-                PrimeViceBehaviorOverride.DoBehavior_SynchronizedMeleeArmCharges(npc, target, pissed, attackTimer);
+                PrimeViceBehaviorOverride.DoBehavior_SynchronizedMeleeArmCharges(npc, target, attackTimer);
                 return;
             }
             if (attackState == PrimeAttackType.SlowSparkShrapnelMeleeCharges)
             {
-                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target, pissed);
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, target);
                 return;
             }
 
@@ -34,18 +34,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             float chargeSpeed = 18f;
             float sawSpeed = 29f;
 
-            if (npc.life < npc.lifeMax * Phase2LifeRatio && !pissed)
+            if (npc.life < npc.lifeMax * Phase2LifeRatio)
             {
                 chargeSpeed += 2.7f;
                 sawSpeed += 3f;
-            }
-
-            if (pissed)
-            {
-                extendTime -= 2;
-                sawTime -= 66;
-                chargeSpeed += 4f;
-                sawSpeed += 6f;
             }
 
             // Do more contact damage.
@@ -65,14 +57,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             }
 
             // Quickly attempt to saw through the target if sufficiently close.
-            if (attackTimer >= extendTime && npc.velocity.Y != 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 42f && !pissed)
+            if (attackTimer >= extendTime && npc.velocity.Y != 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 42f)
             {
                 npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * sawSpeed * 0.35f;
                 npc.netUpdate = true;
             }
 
             // Acclerate the saw.
-            if (attackTimer >= extendTime && npc.velocity.Y == 0f && Math.Abs(npc.velocity.X) < sawSpeed && !pissed)
+            if (attackTimer >= extendTime && npc.velocity.Y == 0f && Math.Abs(npc.velocity.X) < sawSpeed)
                 npc.velocity *= 1.036f;
 
             // Stun the saw if it was hit.

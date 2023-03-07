@@ -4,6 +4,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.UI;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -81,7 +82,11 @@ namespace InfernumMode.Content.Tiles
 
         private void MouseOver()
         {
-            Main.LocalPlayer.cursorItemIconText = "Read";
+            if (!GuardiansPlaqueUIManager.ShouldDraw)
+            {
+                Main.LocalPlayer.cursorItemIconText = "Read";
+                Main.instance.MouseTextHackZoom(Main.LocalPlayer.cursorItemIconText);
+            }
         }
     }
 }

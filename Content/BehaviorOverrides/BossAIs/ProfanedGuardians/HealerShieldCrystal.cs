@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Do not take damage by default.
             NPC.dontTakeDamage = true;
 
-            NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.05f, 0f, 1f);
+            NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.01f, 0f, 1f);
 
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void DoBehavior_SitStill(Player target)
         {
             // If the target is close enough, take damage.
-            if (target.WithinRange(NPC.Center * NPC.Opacity, 1300))
+            if (target.WithinRange(NPC.Center * NPC.Opacity, 1000))
                 NPC.dontTakeDamage = false;
         }
 

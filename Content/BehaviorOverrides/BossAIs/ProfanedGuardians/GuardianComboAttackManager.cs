@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region Fields And Properties
-        public static Vector2 CrystalPosition => WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(6780f, 1500f);
+        public static Vector2 CrystalPosition => WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(6740f, 1500f);
 
         public static Rectangle ShardUseisAllowedArea
         { 
@@ -100,8 +100,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
         public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
 
-        public static Vector2 CommanderStartingHoverPosition => CrystalPosition + new Vector2(400f, 0f);
-        public static Vector2 DefenderStartingHoverPosition => CrystalPosition + new Vector2(155f, 475f);
+        public static Vector2 CommanderStartingHoverPosition => CrystalPosition + new Vector2(600f, -65f);
+        public static Vector2 DefenderStartingHoverPosition => CrystalPosition + new Vector2(185f, 475f);
         public static Vector2 HealerStartingHoverPosition => CrystalPosition + new Vector2(200f, -65f);
 
         // Damage fields.
@@ -196,13 +196,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     ScreenEffectSystem.SetFlashEffect(target.Center, 0.8f, 45);
                     SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, target.Center);
 
-                    for (int i = 0; i < Main.maxPlayers; i++)
-                    {
-                        Player player = Main.player[i];
-                        float pushSpeed = 45f;
-                        player.velocity -= player.SafeDirectionTo(player.Center + Vector2.UnitX) * pushSpeed;
-                    }
-
                     // Create a bunch of pre-existing fire walls. This is so the player doesn't either sit around dawdling for
                     // ages waiting for them to cover the garden, or more likely, move right and negate half the phase.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -289,7 +282,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     }
                 }
 
-                if (!Main.projectile.Any((Projectile p) => (p.type == ModContent.ProjectileType<HolyAimedDeathrayTelegraph>() || p.type == ModContent.ProjectileType<HolyAimedDeathray>()) && p.active))
+                if (attackTimer >= initialDelay && !Main.projectile.Any((Projectile p) => (p.type == ModContent.ProjectileType<HolyAimedDeathrayTelegraph>() || p.type == ModContent.ProjectileType<HolyAimedDeathray>()) && p.active))
                 {
                     float sine = MathF.Sin(movementTimer * 0.05f);
                     npc.velocity.Y = sine * 1.5f;
@@ -1116,7 +1109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // The commander recoils backwards before launching.
                     case 3:
 
-                        npc.velocity = CalamityUtils.MoveTowards(Vector2.UnitX * -2.3f, npc.DirectionTo(target.Center) * -2.3f, 6f);
+                        npc.velocity = CalamityUtils.MoveTowards(Vector2.UnitX * -2.3f, npc.DirectionTo(target.Center) * -2.3f, 4.5f);
 
                         // Make the spear rotation point to the player.
                         idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
@@ -1340,13 +1333,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                     CreateFireExplosion(npc.Center, true);
 
                                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
-
+                                npc.dontTakeDamage = true;
                                 // Switch to next attack. It will stall here if the commander is mid spin/charge until it is free. This is to avoid abruptly stopping mid spin/charge.
                                 if (commander.Infernum().ExtraAI[0] is 0f or 1f && pillarsAreMostlyGone)
                                     SelectNewAttack(commander, ref universalAttackTimer);
                             }
                             else
                             {
+                                npc.dontTakeDamage = false;
                                 substate = 0f;
                                 universalAttackTimer = 0f;
                             }
@@ -1433,7 +1427,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (universalAttackTimer <= fadeInTime)
                             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.0625f, 0f, 1f);
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        if (universalAttackTimer <= hoverWaitTime * 0.9f)
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        else
+                            npc.velocity *= 0.93f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 150f))
@@ -1445,7 +1442,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.CreateSpearAndAimAtTarget(ref spearStatus, ref spearRotation, target);
 
                         // If close enough, and the defender is ready.
-                        if (npc.WithinRange(hoverDestination, 50f) && universalAttackTimer >= hoverWaitTime && defenderIsReady == 1f)
+                        if (/*npc.WithinRange(hoverDestination, 50f) &&*/ universalAttackTimer >= hoverWaitTime && defenderIsReady == 1f)
                         {
                             substate++;
                             universalAttackTimer = 0;
@@ -1601,7 +1598,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (universalAttackTimer <= (int)(fadeInTime))
                             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.0625f, 0f, 1f);
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        if (universalAttackTimer <= hoverWaitTime * 0.5f)
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        else
+                            npc.velocity *= 0.93f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 150f))
@@ -1620,10 +1620,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
 
                         // If close enough, mark us as ready.
-                        if (npc.WithinRange(hoverDestination, 50f))
                             defenderIsReady = 1f;
-                        else
-                            defenderIsReady = 0f;
                         break;
 
                     // Mark the shield as static.

@@ -85,7 +85,6 @@ namespace InfernumMode.Assets.Effects
             var assets = InfernumMode.Instance.Assets;
 
             LoadRegularShaders(assets);
-
             LoadScreenShaders(assets);
 
             // Significantly dampen the effects of Boss Rush's color-muting shader.
@@ -240,7 +239,7 @@ namespace InfernumMode.Assets.Effects
             Ref<Effect> screenBorderShader = new(assets.Request<Effect>("Assets/Effects/ScreenBorderShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenBorder"] = new Filter(new ScreenShaderData(screenBorderShader, "ScreenPass"), EffectPriority.VeryHigh);
 
-            Filters.Scene["InfernumMode:GuardianCommander"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0.4f, 0.1f, 1.0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
+            Filters.Scene["InfernumMode:GuardianCommander"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:GuardianCommander"] = new ProfanedGuardiansSky();
 
             // Ares (ultimate attack).

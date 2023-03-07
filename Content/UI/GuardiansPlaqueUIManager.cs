@@ -41,7 +41,8 @@ namespace InfernumMode.Content.UI
         // This is a bit hack-y and does not generalize, but since players are not able to naturally place down/destroy the plaque, and the alternative to this is tile entities, it will do for now.
         public static Vector2 PlaqueWorldPosition => new(WorldSaveSystem.ProvidenceArena.X * 16f + 4360f, WorldSaveSystem.ProvidenceArena.Y * 16f + 1921f);
 
-        public static Texture2D BackgroundTexture => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/UI/ProfanedPlaqueBackground").Value;
+        // This not being immediate causes issues with getting it for initial sizings.
+        public static Texture2D BackgroundTexture => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/UI/ProfanedPlaqueBackground", AssetRequestMode.ImmediateLoad).Value;
 
         public static Player Player => Main.LocalPlayer;
 

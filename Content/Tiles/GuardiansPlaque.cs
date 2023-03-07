@@ -1,9 +1,4 @@
-using CalamityMod;
-using CalamityMod.Events;
-using CalamityMod.Items.SummonItems;
-using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.NPCs.Providence;
-using InfernumMode.Content.Projectiles;
+using CalamityMod.CalPlayer;
 using InfernumMode.Content.UI;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
@@ -61,6 +56,10 @@ namespace InfernumMode.Content.Tiles
 
         public override bool RightClick(int i, int j)
         {
+            // Don't open if a boss is active, to avoid popping up in the guards fight.
+            if (CalamityPlayer.areThereAnyDamnBosses)
+                return false;
+
             UIPlayer player = Main.LocalPlayer.Infernum_UI();
             player.DrawPlaqueUI = !player.DrawPlaqueUI;
             if (player.DrawPlaqueUI)
@@ -82,6 +81,10 @@ namespace InfernumMode.Content.Tiles
 
         private void MouseOver()
         {
+            // Don't show if a boss is active, to avoid popping up in the guards fight.
+            if (CalamityPlayer.areThereAnyDamnBosses)
+                return;
+
             if (!GuardiansPlaqueUIManager.ShouldDraw)
             {
                 Main.LocalPlayer.cursorItemIconText = "Read";

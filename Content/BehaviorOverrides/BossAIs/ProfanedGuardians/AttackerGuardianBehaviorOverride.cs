@@ -58,8 +58,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Summon the defender and healer guardian.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[1] == 0f)
             {
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)DefenderStartingHoverPosition.X, (int)DefenderStartingHoverPosition.Y, ModContent.NPCType<ProfanedGuardianDefender>());
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)HealerStartingHoverPosition.X, (int)HealerStartingHoverPosition.Y, ModContent.NPCType<ProfanedGuardianHealer>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)DefenderStartingHoverPosition.X + 20, (int)DefenderStartingHoverPosition.Y + 90, ModContent.NPCType<ProfanedGuardianDefender>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)HealerStartingHoverPosition.X + 20, (int)HealerStartingHoverPosition.Y + 90, ModContent.NPCType<ProfanedGuardianHealer>());
                 npc.localAI[1] = 1f;
             }
 

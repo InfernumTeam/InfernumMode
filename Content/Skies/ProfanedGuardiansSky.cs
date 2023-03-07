@@ -31,10 +31,7 @@ namespace InfernumMode.Content.Skies
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
-            return;
             player.ManageSpecialBiomeVisuals("InfernumMode:GuardianCommander", isActive);
-            // GO AWAY.
-            SkyManager.Instance["CalamityMod:DevourerofGodsHead"].Deactivate();
         }
     }
 
@@ -103,7 +100,7 @@ namespace InfernumMode.Content.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 Texture2D skyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/ProfanedGuardiansSky").Value;
-                //spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White with { A = 0 } * intensity * 0.2f);
+                spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White with { A = 0 } * intensity * 0.15f);
             }
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 
@@ -115,10 +112,11 @@ namespace InfernumMode.Content.Skies
             // Randomly spawn symbols.
             if (Main.rand.NextBool(10) && Symbols.Count < maxSymbols)
             {
+
                 Symbols.Add(new Symbol()
                 {
                     DrawPosition = Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloatDirection() * 7500f, Main.rand.NextFloat(-Main.screenHeight / 2f, Main.screenHeight / 2f)),
-                    Lifetime = Main.rand.Next(1450, 2100),
+                    Lifetime = Main.rand.Next(1500, 2100),
                     ColorLerpAmount = Main.rand.NextFloat(),
                     Depth = Main.rand.NextFloat(1.3f, 3f),
                     Varient = Main.rand.Next(0, 9)

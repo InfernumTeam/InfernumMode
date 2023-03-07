@@ -468,7 +468,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int chargeDelay = 30;
             int attackDuration = (int)MathHelper.Lerp(105f, 75f, 1f - CombinedLifeRatio);
             float reelbackSpeed = 7f;
-            float chargeSpeed = MathHelper.Lerp(16.5f, 23f, 1f - CombinedLifeRatio);
+            float chargeSpeed = MathHelper.Lerp(19.5f, 24f, 1f - CombinedLifeRatio);
             if (BossRushEvent.BossRushActive)
                 chargeSpeed *= 1.8f;
 
@@ -501,7 +501,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public static void DoBehavior_SwitchCharges(NPC npc, bool isSpazmatism, bool isRetinazer, ref float chargingFlag)
         {
-            int redirectTime = 50;
+            int redirectTime = 72;
             int chargeTime = 55;
             int attackDuration = 360;
             bool willCharge = isSpazmatism;
@@ -678,7 +678,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int redirectTime = 90;
             int attackTelegraphTime = 36;
             int chargeTime = 104;
-            int totalCharges = 4;
+            int totalCharges = 2;
             int totalLaserBurstsUntilExhaustion = 5;
             int baseExhaustCountdown = 90;
             int telegraphTime = (int)MathHelper.Lerp(42f, 28f, 1f - CombinedLifeRatio);
@@ -952,7 +952,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // Spazmatism circles in place and releases accelerating fireballs outward when attacking.
             if (isSpazmatism && isAttacking)
             {
-                npc.rotation += maxSpinAngularVelocity * Main.rand.NextFloat(1.3f, 1.5f);
+                npc.rotation += maxSpinAngularVelocity;
                 if (UniversalAttackTimer % fireballReleaseRate == 0f)
                 {
                     if (UniversalAttackTimer % (fireballReleaseRate * 3f) == 0f)
@@ -960,7 +960,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2 + Main.rand.NextFloatDirection() * 0.096f).ToRotationVector2() * fireballShootSpeed;
+                        Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2 + Main.rand.NextFloatDirection() * 0.026f).ToRotationVector2() * fireballShootSpeed;
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<CursedFireballBomb>(), 145, 0f);
                     }
                 }

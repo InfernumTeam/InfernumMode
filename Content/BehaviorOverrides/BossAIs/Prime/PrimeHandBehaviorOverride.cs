@@ -23,18 +23,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             {
                 npc.active = false;
                 if (npc.type == NPCID.PrimeSaw)
-                    PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
+                    PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target]);
 
                 return false;
             }
 
             NPC head = Main.npc[headIndex];
-            bool pissed = head.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f;
             PrimeAttackType attackState = (PrimeAttackType)head.ai[0];
             GetCannonAttributesByAttack(attackState, head, out int telegraphTime, out _, out _);
-
-            if (pissed && npc.life > 10000)
-                npc.life = 10000;
 
             float wrappedAttackTimer = head.Infernum().ExtraAI[CannonCycleTimerIndex] - telegraphTime;
             ref float telegraphIntensity = ref npc.localAI[0];
@@ -114,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     npc.ai[2] = 0f;
 
                 Vector2 cannonDirection = (npc.rotation + MathHelper.PiOver2).ToRotationVector2();
-                PerformAttackBehaviors(npc, attackState, target, wrappedAttackTimer, pissed, cannonDirection);
+                PerformAttackBehaviors(npc, attackState, target, wrappedAttackTimer, cannonDirection);
             }
 
             return false;
@@ -171,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public abstract Color TelegraphColor { get; }
 
-        public abstract void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, bool pissed, Vector2 cannonDirection);
+        public abstract void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection);
 
         public virtual void PerformTelegraphBehaviors(NPC npc, PrimeAttackType attackState, float telegraphIntensity, Vector2 cannonDirection) { }
     }

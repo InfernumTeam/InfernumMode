@@ -68,9 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public const int HasCreatedShieldIndex = 6;
 
-        public const int HasPerformedDeathAnimationIndex = 7;
-
-        public const int HasPerformedLaserRayAttackIndex = 8;
+        public const int HasPerformedLaserRayAttackIndex = 7;
 
         public const int BaseCollectiveCannonHP = 22000;
 
@@ -82,11 +80,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public const int GenericCannonTelegraphTime = 54;
 
         public const int GenericCannonShootTime = 146;
-
-        // These two constants should together add up to a clean integer dividend from CannonAttackCycleTime.
-        public const int EnragedCannonTelegraphTime = 65;
-
-        public const int EnragedCannonShootTime = 135;
 
         public const float Phase2LifeRatio = 0.4f;
 
@@ -144,9 +137,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, -1, npc.whoAmI);
                 hasCreatedShield = 1f;
             }
-
-            // Close the HP bar if the final death animation was performed.
-            npc.Calamity().ShouldCloseHPBar = npc.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f;
 
             if (!target.active || target.dead || Main.dayTime)
             {
@@ -319,6 +309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             npc.damage = 0;
 
             Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 550f : 435f);
+            npc.Center = npc.Center.MoveTowards(destination, 5f);
             if (!npc.WithinRange(destination, 40f))
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 37f);
             else
@@ -366,7 +357,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             float wrappedTime = attackTimer % cycleTime;
 
+            // Rotate and stop doing damage.
             npc.rotation = npc.velocity.X * 0.04f;
+            npc.damage = 0;
 
             frameType = (int)PrimeFrameType.ClosedMouth;
             if (wrappedTime > cycleTime - rocketCountPerCycle * 2f && attackTimer > rocketShootDelay)
@@ -379,13 +372,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 SoundEngine.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
-                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.825f : 1f);
+                    float rocketSpeed = Main.rand.NextFloat(12.5f, 14f) * (AnyArms ? 0.825f : 1f);
                     if (!AnyArms)
                         rocketSpeed += (1f - lifeRatio) * 5.6f;
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
                     if (rocketVelocity.Y < -1f)
                         rocketVelocity.Y = -1f;
-                    rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * rocketVelocity.Length(), 0.9f);
+                    rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * rocketVelocity.Length(), 0.96f);
                     rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), 150, 0f);
                 }
@@ -818,9 +811,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             {
                 attackSelector.Add(PrimeAttackType.GenericCannonAttacking);
                 attackSelector.Add(PrimeAttackType.SynchronizedMeleeArmCharges);
-
-                if (npc.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 0f)
-                    attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
+                attackSelector.Add(PrimeAttackType.SlowSparkShrapnelMeleeCharges);
             }
 
             // Reduce old velocity so that Prime doesn't fly off somewhere after an attack concludes.
@@ -873,12 +864,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         {
             telegraphTime = GenericCannonTelegraphTime;
             totalShootTime = GenericCannonShootTime;
-            if (head.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f)
-            {
-                telegraphTime = EnragedCannonTelegraphTime;
-                totalShootTime = EnragedCannonShootTime;
-            }
-
             shootCycleTime = telegraphTime + totalShootTime;
 
             // The synchronized arm charges happen only once, and last throughout the duration of the overall cycle.
@@ -905,7 +890,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             bool meleeCannon = cannon.type is NPCID.PrimeVice or NPCID.PrimeSaw;
             bool rangedCannon = cannon.type is NPCID.PrimeLaser or NPCID.PrimeCannon;
             bool onlyRangedCannons = head.ai[1] % (shootCycleTime * 2f) < shootCycleTime;
-            bool allCannonsCanFire = head.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] == 1f;
+            bool allCannonsCanFire = false;
             bool useTelegraphs = true;
             if (attackState is PrimeAttackType.SynchronizedMeleeArmCharges or PrimeAttackType.SlowSparkShrapnelMeleeCharges)
                 onlyRangedCannons = false;
@@ -1066,22 +1051,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             return false;
         }
         #endregion Frames and Drawcode
-
-        #region Death Effects
-        public override bool CheckDead(NPC npc)
-        {
-            if (npc.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] != 1f)
-            {
-                SelectNextAttack(npc);
-
-                npc.life = npc.lifeMax;
-                npc.ai[0] = (int)PrimeAttackType.FakeDeathAnimation;
-                npc.Infernum().ExtraAI[HasPerformedDeathAnimationIndex] = 1f;
-                return false;
-            }
-
-            return npc.ai[0] != (int)PrimeAttackType.FakeDeathAnimation;
-        }
-        #endregion
     }
 }

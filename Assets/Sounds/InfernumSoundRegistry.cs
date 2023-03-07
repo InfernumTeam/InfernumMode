@@ -59,6 +59,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle DesertScourgeShortRoar = new("InfernumMode/Assets/Sounds/Custom/DesertScourgeShortRoar");
 
+        public static readonly SoundStyle DestroyerBombExplodeSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerBombExplode");
+
         public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/DevilfishRoar");
 
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DoGLaugh");

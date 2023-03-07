@@ -338,7 +338,7 @@ namespace InfernumMode.GlobalInstances
 
             // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
             if (npc.type == NPCID.PrimeSaw && npc.life <= 0)
-                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target], false);
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target]);
 
             // Ensure that the Aquatic Scourge stops the hissing sound if it's unexpectedly killed.
             bool aquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();

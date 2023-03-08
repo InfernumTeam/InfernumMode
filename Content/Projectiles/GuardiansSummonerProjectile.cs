@@ -33,6 +33,8 @@ namespace InfernumMode.Content.Projectiles
 
         public const int MoveTime = 30;
 
+        public static int DustTime => 50;
+
         public const int FireballCreateTime = 75;
 
         public const int SpawnTime = 300;
@@ -106,32 +108,35 @@ namespace InfernumMode.Content.Projectiles
                         var fire = new MediumMistParticle(position, Vector2.Zero, WayfinderSymbol.Colors[1], Color.Gray, Main.rand.NextFloat(0.8f, 1.2f), 210f);
                         GeneralParticleHandler.SpawnParticle(fire);
                     }
-                    Color energyColor = Color.Lerp(Color.Yellow, WayfinderSymbol.Colors[1], Main.rand.NextFloat(0.7f));
-                    Vector2 energySpawnPosition = basePos + Main.rand.NextVector2Unit() * Main.rand.NextFloat(116f, 166f);
-                    Vector2 energyVelocity = (basePos - energySpawnPosition) * 0.032f;
-                    SquishyLightParticle laserEnergy = new(energySpawnPosition, energyVelocity, 0.5f, energyColor, 32, 1f, 5f);
-                    GeneralParticleHandler.SpawnParticle(laserEnergy);
 
-                    // Connect the temple to the guardian positions via dust.
-                    float sineValue = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
-                    float completion = CalamityUtils.SineInOutEasing(sineValue, 1);
-                    Dust dust = Dust.NewDustPerfect(ProviLightPosition, 264);
-                    dust.velocity = Vector2.UnitY.RotatedByRandom(0.17000000178813934) * (0f - Main.rand.NextFloat(2.7f, 4.1f));
-                    dust.color = WayfinderSymbol.Colors[2];
-                    dust.noLight = true;
-                    dust.fadeIn = 0.6f;
-                    dust.noGravity = true;
-                    for (int j = 1; j <= 10; j++)
+                    if (Time <= DustTime)
                     {
-                        float actualCompletion = completion * (1f / j);
-                        Dust dust2 = Dust.NewDustPerfect(Vector2.CatmullRom(ProviLightPosition + Vector2.UnitY * 500f, ProviLightPosition, basePos, basePos + Vector2.UnitY * 500f, actualCompletion), 267);
-                        dust2.scale = 1.67f;
-                        dust2.velocity = Main.rand.NextVector2CircularEdge(0.2f, 0.2f);
-                        dust2.fadeIn = 0.67f;
-                        dust2.color = WayfinderSymbol.Colors[1];
-                        dust2.noGravity = true;
+                        Color energyColor = Color.Lerp(Color.Yellow, WayfinderSymbol.Colors[1], Main.rand.NextFloat(0.7f));
+                        Vector2 energySpawnPosition = basePos + Main.rand.NextVector2Unit() * Main.rand.NextFloat(116f, 166f);
+                        Vector2 energyVelocity = (basePos - energySpawnPosition) * 0.032f;
+                        SquishyLightParticle laserEnergy = new(energySpawnPosition, energyVelocity, 0.5f, energyColor, 32, 1f, 5f);
+                        GeneralParticleHandler.SpawnParticle(laserEnergy);
+
+                        // Connect the temple to the guardian positions via dust.
+                        float sineValue = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
+                        float completion = CalamityUtils.SineInOutEasing(sineValue, 1);
+                        Dust dust = Dust.NewDustPerfect(ProviLightPosition, 264);
+                        dust.velocity = Vector2.UnitY.RotatedByRandom(0.17000000178813934) * (0f - Main.rand.NextFloat(2.7f, 4.1f));
+                        dust.color = WayfinderSymbol.Colors[2];
+                        dust.noLight = true;
+                        dust.fadeIn = 0.6f;
+                        dust.noGravity = true;
+                        for (int j = 1; j <= 10; j++)
+                        {
+                            float actualCompletion = completion * (1f / j);
+                            Dust dust2 = Dust.NewDustPerfect(Vector2.CatmullRom(ProviLightPosition + Vector2.UnitY * 500f, ProviLightPosition, basePos, basePos + Vector2.UnitY * 500f, actualCompletion), 267);
+                            dust2.scale = 1.67f;
+                            dust2.velocity = Main.rand.NextVector2CircularEdge(0.2f, 0.2f);
+                            dust2.fadeIn = 0.67f;
+                            dust2.color = WayfinderSymbol.Colors[1];
+                            dust2.noGravity = true;
+                        }
                     }
-                    
                 }
             }
 
@@ -311,7 +316,6 @@ namespace InfernumMode.Content.Projectiles
                     }
                 }
             }
-            // Main.spriteBatch.Draw(CommanderTexture, CommanderStartingHoverPosition - Main.screenPosition, null, Color.White, 0f, CommanderTexture.Size() * 0.5f, GuardiansScale, SpriteEffects.None, 0f);
         }
     }
 }

@@ -13,51 +13,42 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class EtherealHand : ModNPC
     {
+        #region Enumerations
+        public enum HandSides
+        {
+            Left = -1,
+            Right = 1
+        }
+        #endregion
+
+        #region Fields/Properties
+        public HandSides HandSide => NPC.ai[0] == 1 ? HandSides.Left : HandSides.Right;
+
         public Player Target => Main.player[NPC.target];
-        public ref float HandSide => ref NPC.ai[0];
+
         public ref float FingerOutwardness => ref NPC.localAI[0];
+
         public ref float FingerSpacingOffset => ref NPC.localAI[1];
+
         public bool UsingPointerFinger
         {
             get => NPC.localAI[2] != 0f;
             set => NPC.localAI[2] = value.ToInt();
         }
 
-        public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
-        public bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
-        public float AttackTime => AttackerGuardian.ai[1];
-        public Vector2 PointerFingerPosition => NPC.Center + (NPC.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
+        public static bool ShouldEditDestination => AttackerGuardian.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex] == 1f;
 
-        public Vector2? HandPositionOverride
-        {
-            get
-            {
-                // Left
-                if (HandSide == -1)
-                {
-                    Vector2 leftHandPos;
-                    leftHandPos.X = AttackerGuardian.Infernum().ExtraAI[LeftHandXIndex];
-                    leftHandPos.Y = AttackerGuardian.Infernum().ExtraAI[LeftHandYIndex];
-                    if (leftHandPos != Vector2.Zero)
-                        return leftHandPos;
-                    else
-                        return null;
-                }
-                else
-                {
-                    Vector2 rightHandPos;
-                    rightHandPos.X = AttackerGuardian.Infernum().ExtraAI[RightHandXIndex];
-                    rightHandPos.Y = AttackerGuardian.Infernum().ExtraAI[RightHandYIndex];
-                    if (rightHandPos != Vector2.Zero)
-                        return rightHandPos;
-                    else
-                        return null;
-                }
-            }
-        }
+        public static NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
+
+        public static bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
+
+        public Vector2 PointerFingerPosition => NPC.Center + (NPC.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
         public const float HandSize = 56f;
 
+        #endregion
+
+        #region Overrides
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
@@ -102,8 +93,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reset hand attributes and the hover destination.
             UsingPointerFinger = false;
             FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
+
             Vector2 destination = AttackerGuardian.Center;
-            destination += new Vector2(HandSide * 110f, (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f) * 30f - 120f);
+            destination += new Vector2((float)HandSide * 120f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f + (float)HandSide * 2.1f) * 30f - 80f);
 
             FingerOutwardness = MathHelper.Lerp(FingerOutwardness, 35f, 0.2f);
 
@@ -111,10 +103,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (ShouldBeInvisible)
                 destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(NPC.Center);
 
-            if (HandPositionOverride is not null)
-                destination = HandPositionOverride.Value + AttackerGuardian.Center;
+            // Edit the move position if told to.
+            if (ShouldEditDestination)
+                destination = (HandSide == HandSides.Left ? LeftHandPosition : RightHandPosition) + AttackerGuardian.Center;
+
+            AttackerGuardian.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex] = 0f;
 
             float hoverSpeed = MathHelper.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, NPC.Distance(destination));
+
+            // GLUE to the position.
+            if (ShouldEditDestination)
+                hoverSpeed = 2000f;
             NPC.velocity = NPC.SafeDirectionTo(destination) * hoverSpeed;
 
             // Perform NaN safety.
@@ -134,7 +133,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;
-            SpriteEffects direction = HandSide == 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects direction = HandSide == HandSides.Right ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Color handColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
             handColor = Color.Lerp(handColor, Color.LightGoldenrodYellow, 0.5f);
@@ -201,5 +200,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         public override bool CheckActive() => false;
+        #endregion
     }
 }

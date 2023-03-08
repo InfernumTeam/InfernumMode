@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case StateType.InitialFiring:
                     if (Timer == 0)
                     {
-                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, Projectile.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 0.8f, PitchVariance = 0.3f}, Projectile.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (Timer == 0)
                     {
 
-                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, Projectile.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 1.3f, PitchVariance = 0.3f }, Projectile.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

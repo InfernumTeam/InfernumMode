@@ -79,7 +79,6 @@ namespace InfernumMode.GlobalInstances
         internal static int Cryogen = -1;
         internal static int AstrumAureus = -1;
         internal static int ProfanedCrystal = -1;
-        internal static int CommanderSolo = -1;
         internal static int Yharon = -1;
 
         #endregion
@@ -87,23 +86,27 @@ namespace InfernumMode.GlobalInstances
         #region Reset Effects
         public override void ResetEffects(NPC npc)
         {
-            static void ResetSavedIndex(ref int type, int type1, int type2 = -1)
+            static void ResetSavedIndex(ref int index, int type, int type2 = -1)
             {
-                if (type >= 0)
+
+                if (index >= 0)
                 {
-                    if (!Main.npc[type].active)
+                    // If the index npc is not active, reset the index.
+                    if (!Main.npc[index].active)
                     {
-                        type = -1;
+                        index = -1;
                     }
+                    // Else, if this is -1, 
                     else if (type2 == -1)
                     {
-                        if (Main.npc[type].type != type1)
-                            type = -1;
+                        // If the index is not the correct type, reset the index.
+                        if (Main.npc[index].type != type)
+                            index = -1;
                     }
                     else
                     {
-                        if (Main.npc[type].type != type1 && Main.npc[type].type != type2)
-                            type = -1;
+                        if (Main.npc[type].type != type && Main.npc[index].type != type2)
+                            index = -1;
                     }
                 }
             }
@@ -112,7 +115,6 @@ namespace InfernumMode.GlobalInstances
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
             ResetSavedIndex(ref ProfanedCrystal, ModContent.NPCType<HealerShieldCrystal>());
             ResetSavedIndex(ref Yharon, ModContent.NPCType<Yharon>());
-            CommanderSolo = -1;
         }
         #endregion Reset Effects
 

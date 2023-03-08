@@ -96,6 +96,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
+        private static Vector2 leftHandPosition = Vector2.Zero;
+        private static Vector2 rightHandPosition = Vector2.Zero;
+
+        /// <summary>
+        /// Set this as an offset vector from the commander center.
+        /// </summary>
+        public static Vector2 LeftHandPosition
+        {
+            get => leftHandPosition;
+            set => leftHandPosition = value;
+        }
+
+        /// <summary>
+        /// Set this as an offset vector from the commander center.
+        /// </summary>
+        public static Vector2 RightHandPosition
+        {
+            get => rightHandPosition;
+            set => rightHandPosition = value;
+        }
+
         public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
         public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
         public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
@@ -146,30 +167,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         /// Reset by the commander every frame based on the draw index.
         /// </summary>
         public const int CommanderBlackBarsOpacityIndex = 27;
-        public const int CommanderHandsSpawnedIndex = 28;
 
         // Hand stuff
-        public const int LeftHandIndex = 29;
-        public const int RightHandIndex = 30;
-        public const int LeftHandXIndex = 31;
-        public const int LeftHandYIndex = 32;
-        public const int RightHandXIndex = 33;
-        public const int RightHandYIndex = 34;
+        public const int LeftHandIndex = 28;
+        public const int RightHandIndex = 29;
+        public const int LeftHandXIndex = 30;
+        public const int LeftHandYIndex = 31;
+        public const int RightHandXIndex = 32;
+        public const int RightHandYIndex = 33;
 
-        public const int DefenderHasBeenYeetedIndex = 35;
+        public const int DefenderHasBeenYeetedIndex = 34;
 
-        public const int CommanderHasSpawnedBlenderAlreadyIndex = 36;
+        public const int CommanderHasSpawnedBlenderAlreadyIndex = 35;
 
         /// <summary>
         /// Set by the dogma fireball once, then reset once read by the commander.
         /// </summary>
-        public const int CommanderDogmaFireballHasBeenYeetedIndex = 37;
+        public const int CommanderDogmaFireballHasBeenYeetedIndex = 36;
         /// <summary>
         /// This does not reset automatically, it must be end up at 0
         /// </summary>
-        public const int CommanderSpearPositionOffsetIndex = 38;
+        public const int CommanderSpearPositionOffsetIndex = 37;
 
-        public const int CommanderBlenderBackglowOpacityIndex = 39;
+        public const int CommanderBlenderBackglowOpacityIndex = 38;
+
+        /// <summary>
+        /// Reset by the commander every frame.
+        /// </summary>
+        public const int HandsShouldUseNotDefaultPositionIndex = 39;
 
         public const int CommanderBrightnessWidthFactorIndex = 50;
 
@@ -1656,23 +1681,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
             ref float drawBlackRotation = ref commander.Infernum().ExtraAI[CommanderBlackBarsRotationIndex];
-            ref float handsSpawned = ref commander.Infernum().ExtraAI[CommanderHandsSpawnedIndex];
             ref float leftHandIndex = ref commander.Infernum().ExtraAI[LeftHandIndex];
             ref float rightHandIndex = ref commander.Infernum().ExtraAI[RightHandIndex];
-            ref float leftHandX = ref commander.Infernum().ExtraAI[LeftHandXIndex];
-            ref float leftHandY = ref commander.Infernum().ExtraAI[LeftHandYIndex];
-            ref float rightHandX = ref commander.Infernum().ExtraAI[RightHandXIndex];
-            ref float rightHandY = ref commander.Infernum().ExtraAI[RightHandYIndex];
+            ref float moveHands = ref commander.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex];
 
-            NPC leftHand = null;
-            NPC rightHand = null;
-
-            if (Main.npc.IndexInRange((int)leftHandIndex) && Main.npc.IndexInRange((int)rightHandIndex) && (rightHandIndex != 0 && leftHandIndex != 0))
-            {
-                leftHand = Main.npc[(int)leftHandIndex];
-                rightHand = Main.npc[(int)rightHandIndex];
-            }
-            else
+            if ((rightHandIndex == 0 && leftHandIndex == 0))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1825,22 +1838,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Gets pulled back to the hand by the commander.
                     case 3:
-                        Vector2 recievingHandPos = new(-150f, -75f);
-                        Vector2 aimingHandPos = new(-40f, 25f);
+                        moveHands = 1f;
 
-                        // Right hand. This hurts to try and read.
-                        rightHandX = recievingHandPos.X;
-                        catchingRightHandXOG = recievingHandPos.X;
-                        rightHandY = recievingHandPos.Y;
-                        catchingRightHandYOG = recievingHandPos.Y;
+                        RightHandPosition = new(-150f, -75f);
+                        LeftHandPosition = new(-40f, 25f);
 
-                        leftHandX = aimingHandPos.X;
-                        catchingLeftHandXOG = aimingHandPos.X;
-                        leftHandY = aimingHandPos.Y;
-                        catchingLeftHandYOG = aimingHandPos.Y;
+                        catchingRightHandXOG = RightHandPosition.X;
+                        catchingRightHandYOG = RightHandPosition.Y;
+
+                        catchingLeftHandXOG = LeftHandPosition.X;
+                        catchingLeftHandYOG = LeftHandPosition.Y;
 
                         if (localAttackTimer == 1)
-                            npc.velocity = npc.SafeDirectionTo(new Vector2(rightHandX, rightHandY) + commander.Center) * (npc.Distance(new Vector2(rightHandX, rightHandY) + commander.Center) / pullBackTime);
+                            npc.velocity = npc.SafeDirectionTo(RightHandPosition + commander.Center) * (npc.Distance(RightHandPosition + commander.Center) / pullBackTime);
 
                         if (localAttackTimer >= pullBackTime)
                         {
@@ -1854,28 +1864,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 4:
                         float rightHandMoveInterpolant = Utilities.EaseInOutCubic(localAttackTimer / reelbackTime);
                         float leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / reelbackTime, 0);
+                        moveHands = 1f;
 
                         npc.velocity = Vector2.Zero;
-                        npc.Center = rightHand.Center;
+                        npc.Center = RightHandPosition + commander.Center;
 
                         // Right hand.
-                        recievingHandPos = originalRightHandPos.RotatedBy(3f * rightHandMoveInterpolant);
+                        RightHandPosition = originalRightHandPos.RotatedBy(3f * rightHandMoveInterpolant);
                         // Left hand.
-                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new Vector2(-125f, 70f), leftHandMoveInterpolant);
-
-                        leftHandX = aimingHandPos.X;
-                        leftHandY = aimingHandPos.Y;
-                        rightHandX = recievingHandPos.X;
-                        rightHandY = recievingHandPos.Y;
+                        LeftHandPosition = Vector2.Lerp(originalLeftHandPos, new Vector2(-125f, 70f), leftHandMoveInterpolant);
 
                         if (localAttackTimer >= reelbackTime)
                         {
                             // Reset the default positions for the next attack.
-                            catchingRightHandXOG = recievingHandPos.X;
-                            catchingRightHandYOG = recievingHandPos.Y;
+                            catchingRightHandXOG = RightHandPosition.X;
+                            catchingRightHandYOG = RightHandPosition.Y;
 
-                            catchingLeftHandXOG = aimingHandPos.X;
-                            catchingLeftHandYOG = aimingHandPos.Y;
+                            catchingLeftHandXOG = LeftHandPosition.X;
+                            catchingLeftHandYOG = LeftHandPosition.Y;
 
                             localAttackTimer = 0;
                             substate++;
@@ -1887,23 +1893,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 5:
                         rightHandMoveInterpolant = CalamityUtils.ExpInEasing(localAttackTimer / launchTime, 0);
                         leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / launchTime, 0);
+                        moveHands = 1f;
 
-                        recievingHandPos = originalRightHandPos.RotatedBy(-4f * rightHandMoveInterpolant);
-                        aimingHandPos = Vector2.Lerp(originalLeftHandPos, new Vector2(-55f, 40f), leftHandMoveInterpolant);
+                        RightHandPosition = originalRightHandPos.RotatedBy(-4f * rightHandMoveInterpolant);
+                        LeftHandPosition = Vector2.Lerp(originalLeftHandPos, new Vector2(-55f, 40f), leftHandMoveInterpolant);
 
-                        leftHandX = aimingHandPos.X;
-                        leftHandY = aimingHandPos.Y;
-                        rightHandX = recievingHandPos.X;
-                        rightHandY = recievingHandPos.Y;
-
-                        npc.Center = rightHand.Center;
+                        npc.Center = RightHandPosition + commander.Center;
 
                         if (localAttackTimer >= launchTime)
                         {
-                            leftHandX = 0f;
-                            leftHandY = 0f;
-                            rightHandX = 0f;
-                            rightHandY = 0f;
+                            RightHandPosition = Vector2.Zero;
+                            LeftHandPosition = Vector2.Zero;
 
                             // Launch at the target.
                             npc.velocity = npc.DirectionTo(target.Center) * yeetSpeed;
@@ -1945,8 +1945,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float maxChargeLength = 85f;
             float afterImpactWaitLength = 20f;
 
-            npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
-
             switch (substate)
             {
                 // Move under the target and telegraph where the geyser will spawn.
@@ -1955,6 +1953,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Vector2 hoverDestination = target.Center + new Vector2(0, 400f);
 
                     npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+
+                    npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                     // Move out of the way of the target if going around them.
                     if (npc.WithinRange(target.Center, 150f))
@@ -1993,6 +1993,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Prepare to launch upwards alongside a huge lava geyser.
                 case 1:
+                    npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
                     if (universalAttackTimer < recoilDownwardsTime)
                     {
                         npc.velocity.X *= 0.85f;
@@ -2024,6 +2026,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     if (universalAttackTimer >= recoilDownwardsTime + flyUpwardsDelay)
                     {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 1.4f }, target.Center);
                         float lerpValue = MathHelper.Clamp(Utils.GetLerpValue(300, 500, npc.Center.Y - target.Center.Y, false), 0f, 0.35f);
                         npc.velocity = -Vector2.UnitY * flyUpwardsSpeed * (1 + lerpValue);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -2063,6 +2066,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Create the spear, and make it aim upwards.
                     // Spawn the spear if it does not exist.
                     npc.CreateSpearAndAimAtTarget(ref spearStatus, ref spearRotation, target);
+
+                    npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                     // Draw an aimed telegraph.
                     drawDashTelegraph = 1f;
@@ -2153,10 +2158,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             GeneralParticleHandler.SpawnParticle(fireExplosion);
                         }
 
+                        for (int i = 0; i < 70; i++)
+                            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + Main.rand.NextVector2Circular(150f, 150f), Main.rand.NextFloat(52f, 85f));
+
                         // Spawn a large crack.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<ProfanedCrack>(), 0, 0f);
+                            //Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<ProfanedCrack>(), 0, 0f);
                             float crossCount = 24f;
                             for (int j = 0; j < crossCount; j++)
                             {
@@ -2208,7 +2216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Face the target.
             npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
-            Vector2 spearTip = npc.Center + spearRotation.ToRotationVector2() * 120f;
+            Vector2 spearTip = npc.Center + spearRotation.ToRotationVector2() * 195f;
 
             switch (substate)
             {
@@ -2325,7 +2333,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Spawn the spear if it does not exist.
             npc.CreateSpearAndAimAtTarget(ref spearStatus, ref spearRotation, target);
 
-            Vector2 spearTip = npc.Center + spearRotation.ToRotationVector2() * 120f;
+            Vector2 spearTip = npc.Center + spearRotation.ToRotationVector2() * 195f;
 
             switch (substate)
             {
@@ -2358,7 +2366,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     if (universalAttackTimer % shootDelay == shootDelay - 1f && universalAttackTimer <= totalShootLength)
                     {
-                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with { PitchVariance = 0.4f }, target.Center);
                         SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
 
                         ScreenEffectSystem.SetFlashEffect(spearTip, 0.5f, 45);
@@ -2409,14 +2417,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
-            ref float drawSpearSmear = ref npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex];
             ref float spearPosOffset = ref npc.Infernum().ExtraAI[CommanderSpearPositionOffsetIndex];
 
             float flySpeed = 19f;
             float spearSpinTime = 30f;
             float spearReelbackTime = spearSpinTime + 20f;
             float spearStabTime = spearReelbackTime + 10f;
-            float spearThrowSpeed = 14f;
+            float spearThrowSpeed = 12f;
             float afterAttackWaitTime = 65f;
             float spearsAmount = 6f;
             float spearDistance = 550f;
@@ -2465,18 +2472,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (universalAttackTimer <= spearSpinTime)
                     {
                         spearRotation = angleToStab * CalamityUtils.SineInOutEasing(universalAttackTimer / spearSpinTime, 0) + spearRotationStartingOffset;
-                        drawSpearSmear = 1f;
                     }
                     else if (universalAttackTimer <= spearReelbackTime)
                     {
                         // Move the spear backwards.
                         float interpolant = (universalAttackTimer - spearSpinTime) / (spearReelbackTime - spearSpinTime);
-                        spearPosOffset = MathHelper.Lerp(0f, -3f, CalamityUtils.SineInOutEasing(interpolant, 0));
+                        spearPosOffset = MathHelper.Lerp(0f, -50f, CalamityUtils.SineInOutEasing(interpolant, 0));
                     }
                     else if (universalAttackTimer <= spearStabTime)
                     {
                         float interpolant = (universalAttackTimer - spearReelbackTime) / (spearStabTime - spearReelbackTime);
-                        spearPosOffset = MathHelper.Lerp(-3f, 5f, CalamityUtils.SineInOutEasing(interpolant, 0));
+                        spearPosOffset = MathHelper.Lerp(-50f, 30f, CalamityUtils.SineInOutEasing(interpolant, 0));
                     }
                     else
                     {
@@ -2625,7 +2631,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         drawDashTelegraph = 0f;
 
                         CreateFireExplosion(npc.Center, true);
-                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound, target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 1.2f }, target.Center);
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 1.4f }, target.Center);
                         if (CalamityConfig.Instance.Screenshake)
                         {

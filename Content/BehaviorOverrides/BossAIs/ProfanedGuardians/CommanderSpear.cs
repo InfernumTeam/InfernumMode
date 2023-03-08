@@ -57,6 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.Kill();
                 return;
             }
+            Vector2 offset = Projectile.rotation.ToRotationVector2() * ((AttackerGuardianBehaviorOverride.TotalRemaininGuardians == 1 ? 100f : 20f) + PositionOffset);
 
             // Move where the commander tells it to.
             if (Status is DefenderShieldStatus.ActiveAndAiming)
@@ -64,9 +65,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.rotation = SpearRotation;
                 Projectile.netUpdate = true;
                 Projectile.netSpam = 0;
+
+                if (AttackerGuardianBehaviorOverride.TotalRemaininGuardians == 1)
+                    // Move the aiming hand while being stuck to it.
+                    RightHandPosition = offset;
             }
-            Vector2 offset = Projectile.rotation.ToRotationVector2() * 20f * PositionOffset;
-            Projectile.Center = Owner.Center + offset;
+            if (AttackerGuardianBehaviorOverride.TotalRemaininGuardians > 1)
+                Projectile.Center = Owner.Center + offset;
+            else
+            {
+                Owner.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex] = 1f;
+                Projectile.Center = Owner.Center + offset;
+            }
+
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             Projectile.timeLeft = 2000;
         }

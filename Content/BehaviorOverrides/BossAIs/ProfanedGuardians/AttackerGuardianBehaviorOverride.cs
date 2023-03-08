@@ -118,18 +118,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Reset opacities depending on whether they are being drawn or not.
             ref float smearOpacity = ref npc.Infernum().ExtraAI[CommanderSpearSmearOpacityIndex];
-            if (npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] == 1)
+            if (npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] == 1f)
                 smearOpacity = MathHelper.Clamp(smearOpacity + 0.1f, 0f, 1f);
             else
                 smearOpacity = MathHelper.Clamp(smearOpacity - 0.1f, 0f, 1f);
 
             ref float blackBarOpacity = ref npc.Infernum().ExtraAI[CommanderBlackBarsOpacityIndex];
-            if (npc.Infernum().ExtraAI[CommanderDrawBlackBarsIndex] == 1)
+            if (npc.Infernum().ExtraAI[CommanderDrawBlackBarsIndex] == 1f)
                 blackBarOpacity = MathHelper.Clamp(blackBarOpacity + 0.1f, 0f, 1f);
             else
                 blackBarOpacity = MathHelper.Clamp(blackBarOpacity - 0.1f, 0f, 1f);
 
-            npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0;
+            npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0f;
 
             //if (attackState >= (float)GuardiansAttackType.DefenderDeathAnimation)
             //    npc.Infernum().ShouldUseSaturationBlur = true;

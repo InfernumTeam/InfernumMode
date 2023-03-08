@@ -19,7 +19,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override int VanillaMusic => MusicID.Boss1;
 
-        public override int OtherworldMusic => MusicID.OtherworldlyBoss1;
-        
+        public override int OtherworldMusic => MusicID.OtherworldlyBoss1;        
     }
 }

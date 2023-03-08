@@ -164,9 +164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Play a sound if the telegraph is over.
             if (Time == LaserTelegraphTime)
-            {
                 SoundEngine.PlaySound(new SoundStyle("InfernumMode/Assets/Sounds/Custom/Providence/DogmaLasersFire") with { PitchVariance = 0.5f}, Projectile.Center);
-            }
         }
 
         public override void DetermineScale()

@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -84,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 npc.knockBackResist = 0f;
                 if (Collision.SolidCollision(npc.position, npc.width, npc.height) && !Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerBombExplodeSound, npc.Center);
                     for (int i = 0; i < 36; i++)
                     {
                         Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 182);

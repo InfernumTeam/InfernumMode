@@ -530,6 +530,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (phase2)
             {
+                pulseReleaseRate -= 10;
                 acidReleaseRate -= 5;
                 pulseMaxRadius += 56f;
             }
@@ -907,13 +908,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 attackTime += 60;
                 rubbleReleaseRate -= 30;
-                turnAngularVelocity += 0.0048f;
+                turnAngularVelocity += 0.0041f;
                 movementSpeed += 2.4f;
             }
             if (phase3)
             {
                 rubbleReleaseRate -= 8;
-                turnAngularVelocity += 0.0098f;
+                turnAngularVelocity += 0.0105f;
                 movementSpeed += 5.6f;
             }
             if (enraged)
@@ -924,6 +925,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[0];
+
+            // Clear acid projectiles from old attacks on the first few frames in the final phase.
+            if (attackTimer <= 5f && phase3)
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<FallingAcid>());
 
             // Fly more aggressively if the target is close to the safety bubble.
             Projectile closestBubble = null;

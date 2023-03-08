@@ -1,3 +1,4 @@
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -31,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (Projectile.timeLeft == 330)
-                SoundEngine.PlaySound(SoundID.Item12, Projectile.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound with { Volume = 0.5f }, Projectile.Center);
         }
 
         public override Color? GetAlpha(Color lightColor)

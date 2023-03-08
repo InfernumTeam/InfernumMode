@@ -986,21 +986,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Release rubble from the ceiling.
-            if (attackTimer % rubbleReleaseRate == rubbleReleaseRate - 1f)
+            if (attackTimer % rubbleReleaseRate == rubbleReleaseRate - 1f && !phase3)
             {
-                if (!phase3)
-                    SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack, target.Center);
+                SoundEngine.PlaySound(SoundID.DeerclopsRubbleAttack, target.Center);
                 for (int i = 0; i < 5; i++)
                 {
                     int projID = ModContent.ProjectileType<SulphurousRockRubble>();
                     Vector2 rubbleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 800f, -30f), new Searches.Up(50));
-                    if (MathHelper.Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f || phase3)
+                    if (MathHelper.Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f)
                         rubbleSpawnPosition.Y = target.Center.Y - 980f + Main.rand.NextFloatDirection() * 40f;
-                    if (phase3)
-                        projID = ModContent.ProjectileType<FallingAcid>();
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && !target.WithinRange(rubbleSpawnPosition, 300f))
-                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, projID, 135, 0f, -1, 0f, phase3 ? 1f :0f);
+                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, projID, 135, 0f);
                 }
             }
 

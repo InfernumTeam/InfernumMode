@@ -270,7 +270,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CloneAttackType.BrimstoneFireBurst:
                     npc.damage = 0;
-                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, inFinalPhase, ref attackTimer);
+                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case CloneAttackType.DiagonalCharge:
                     DoBehavior_DiagonalCharge(npc, target, lifeRatio, ref attackTimer);
@@ -291,7 +291,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void DoBehavior_HorizontalDartRelease(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int attackCycleCount = 3;
+            int attackCycleCount = 2;
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 20f;
@@ -310,7 +310,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (BossRushEvent.BossRushActive)
             {
-                attackCycleCount--;
                 hoverSpeed += 8f;
                 initialFlameSpeed *= 1.72f;
             }
@@ -357,7 +356,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     attackSubstate = 0f;
                     attackCycleCounter++;
 
-                    if (attackCycleCounter > attackCycleCount)
+                    if (attackCycleCounter >= attackCycleCount)
                         SelectNewAttack(npc);
                     npc.netUpdate = true;
                 }
@@ -474,7 +473,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool inFinalPhase, ref float attackTimer)
+        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
@@ -486,13 +485,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int fireballReleaseRate = 36;
             int fireballReleaseTime = 150;
             float fireballSpread = 0.7f;
-
-            if (inFinalPhase)
-            {
-                fireballCount = 3;
-                fireballReleaseRate -= 10;
-                fireballSpeed *= 1.15f;
-            }
 
             if (BossRushEvent.BossRushActive)
             {
@@ -775,7 +767,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (npc.ai[2] == 4f)
             {
                 possibleAttacks.Clear();
-                possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);
                 possibleAttacks.Add(CloneAttackType.RisingBrimstoneFireBursts);
                 possibleAttacks.Add(CloneAttackType.HorizontalBurstCharge);
 

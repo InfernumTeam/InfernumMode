@@ -79,19 +79,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (npc.ai[0] == 2f)
             {
                 npc.knockBackResist = 0f;
-                if (Collision.SolidCollision(npc.position, npc.width, npc.height) && !Main.dedServ)
-                {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerBombExplodeSound, npc.Center);
-                    for (int i = 0; i < 36; i++)
-                    {
-                        Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 182);
-                        energy.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 7f);
-                        energy.noGravity = true;
-                    }
+                if (Collision.SolidCollision(npc.position, npc.width, npc.height))
+                    BlowUpEffects(npc);
 
-                    npc.active = false;
-                    npc.netUpdate = true;
-                }
                 npc.rotation = npc.velocity.ToRotation();
                 npc.damage = 95;
             }
@@ -99,6 +89,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             npc.rotation += MathHelper.Pi;
             generalTimer++;
             return false;
+        }
+
+        public static void BlowUpEffects(NPC npc)
+        {
+            SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerBombExplodeSound, npc.Center);
+            for (int i = 0; i < 36; i++)
+            {
+                Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 182);
+                energy.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 7f);
+                energy.noGravity = true;
+            }
+
+            npc.active = false;
+            npc.netUpdate = true;
+        }
+
+        public static void KillAllProbes()
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC npc = Main.npc[i];
+                if (npc.active && npc.type == NPCID.Probe)
+                    BlowUpEffects(npc);
+            }
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

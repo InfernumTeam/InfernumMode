@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
-    public class HolyCrystalSpike : ModProjectile
+    public class HolyCrystalSpike : ModProjectile, IScreenCullDrawer
     {
         public bool HasHitTile
         {
@@ -150,7 +150,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.width, ref _);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+        
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             Texture2D crystalSegment = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/ProvidenceRoomDoor").Value;
             Vector2 start = Projectile.Center - Main.screenPosition;
@@ -164,10 +166,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (drawPosition.WithinRange(start, 35f))
                     break;
 
-                Main.spriteBatch.Draw(crystalSegment, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, crystalSegment.Size() * new Vector2(0.5f, 1f), scale, 0, 0f);
+                spriteBatch.Draw(crystalSegment, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, crystalSegment.Size() * new Vector2(0.5f, 1f), scale, 0, 0f);
             }
-
-            return false;
         }
 
         public override bool ShouldUpdatePosition() => false;

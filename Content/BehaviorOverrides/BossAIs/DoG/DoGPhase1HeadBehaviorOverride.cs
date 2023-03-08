@@ -4,7 +4,6 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core.GlobalInstances.Systems;

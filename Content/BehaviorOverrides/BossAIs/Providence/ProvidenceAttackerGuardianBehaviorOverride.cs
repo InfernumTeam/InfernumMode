@@ -7,7 +7,6 @@ using InfernumMode.Core.OverridingSystem;
 using Terraria.ID;
 using Terraria.Audio;
 using CalamityMod.Sounds;
-using System;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Providence.ProvidenceBehaviorOverride;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;

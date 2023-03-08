@@ -1,13 +1,9 @@
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
-using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;

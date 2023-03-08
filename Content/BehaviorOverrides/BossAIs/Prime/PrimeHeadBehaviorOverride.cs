@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;

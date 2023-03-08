@@ -1,6 +1,5 @@
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;

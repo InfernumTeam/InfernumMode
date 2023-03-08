@@ -1,4 +1,3 @@
-using CalamityMod;
 using System;
 using System.Collections.Generic;
 

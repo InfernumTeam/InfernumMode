@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

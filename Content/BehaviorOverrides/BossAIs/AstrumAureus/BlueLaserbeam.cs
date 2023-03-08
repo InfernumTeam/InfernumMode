@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
-using InfernumMode;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;

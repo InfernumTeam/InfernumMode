@@ -1,4 +1,5 @@
-﻿using InfernumMode.Content.Backgrounds;
+﻿using InfernumMode.Common.Graphics;
+using InfernumMode.Content.Backgrounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -175,6 +176,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 drawPosition.X += horizontalStep;
             }
+
+            SignusBackgroundSystem.Draw();
         }
 
         public override void UpdateUI(GameTime gameTime)

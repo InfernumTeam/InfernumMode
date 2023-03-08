@@ -3,7 +3,6 @@ using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles;
-using InfernumMode.Core.Netcode;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

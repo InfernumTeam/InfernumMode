@@ -2,7 +2,6 @@ using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Content.Tiles;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items

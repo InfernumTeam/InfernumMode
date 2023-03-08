@@ -1,5 +1,4 @@
 using Terraria.ModLoader;
-using CalamityMod.UI.DraedonSummoning;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
 {

@@ -17,7 +17,6 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechManag
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks

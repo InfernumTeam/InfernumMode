@@ -2,12 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 using Terraria.Audio;
 using CalamityMod;
-using CalamityMod.Projectiles.Magic;
 using CalamityMod.Events;
 
 namespace InfernumMode.Content.Projectiles.Magic

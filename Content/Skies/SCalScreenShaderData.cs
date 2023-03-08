@@ -1,6 +1,5 @@
 ﻿using CalamityMod.NPCs;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

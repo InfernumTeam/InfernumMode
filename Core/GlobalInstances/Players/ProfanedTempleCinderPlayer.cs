@@ -1,4 +1,5 @@
 using CalamityMod.CalPlayer;
+using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
@@ -25,6 +26,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 return;
 
             bool inProfanedTemple = Player.GetModPlayer<BiomeEffectsPlayer>().ZoneProfaned;
+
+            // Don't create cinders if Signus is present.
+            if (CalamityGlobalNPC.signus != -1)
+                return;
 
             // This hook is called for all players. As such, a Main.myPlayer check is necessary to ensure that only one client sends packets to
             // spawn the cinder projectiles.

@@ -1,8 +1,10 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -63,6 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float backglowInterpolant = ref npc.localAI[0];
 
             // Reset things.
             npc.damage = npc.defDamage;
@@ -75,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CataclysmAttackType.BrimstoneFireBurst:
                     npc.damage = 0;
-                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer);
+                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer, ref backglowInterpolant);
                     break;
             }
 
@@ -161,13 +164,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer)
+        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer, ref float backglowInterpolant)
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 15f;
-            float fireballSpeed = MathHelper.Lerp(14.75f, 20f, 1f - lifeRatio);
+            float fireballSpeed = 15.75f;
             int fireballReleaseRate = 65;
             int fireballReleaseTime = 135;
 
@@ -185,6 +188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 fireballSpeed += 11f;
             }
 
+            float wrappedAttackTimer = attackTimer % fireballReleaseRate;
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
@@ -205,7 +209,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Release fireballs.
             if (attackSubstate == 1f)
             {
-                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
+                backglowInterpolant = Utils.GetLerpValue(fireballReleaseRate - 32f, fireballReleaseRate - 1f, wrappedAttackTimer, true);
+                if (wrappedAttackTimer == fireballReleaseRate - 1f)
                 {
                     SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
@@ -224,6 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 if (attackTimer > fireballReleaseTime)
                 {
+                    backglowInterpolant = 0f;
                     attackTimer = 0f;
                     attackSubstate = 0f;
                     attackCycleCounter++;
@@ -254,5 +260,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.netUpdate = true;
         }
         #endregion AI
+
+        #region Drawcode
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            if (npc.localAI[0] > 0f)
+                npc.DrawBackglow(Color.Red, npc.localAI[0] * 8f, 0, npc.frame, Main.screenPosition);
+            return true;
+        }
+        #endregion Drawcode
     }
 }

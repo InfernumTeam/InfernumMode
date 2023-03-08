@@ -1,11 +1,8 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.Abyss;
+﻿using CalamityMod.NPCs.Abyss;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;

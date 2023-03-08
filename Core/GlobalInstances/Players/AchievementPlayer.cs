@@ -1,7 +1,4 @@
-﻿using CalamityMod.CalPlayer;
-using InfernumMode.Content.Achievements;
-using InfernumMode.Content.Achievements.InfernumAchievements;
-using InfernumMode.Core.GlobalInstances.Systems;
+﻿using InfernumMode.Content.Achievements;
 using System;
 using System.Collections.Generic;
 using System.Linq;

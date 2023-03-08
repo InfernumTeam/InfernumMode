@@ -5,7 +5,6 @@ using CalamityMod.World;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
-using InfernumMode.Content.Tiles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;

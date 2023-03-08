@@ -1,10 +1,8 @@
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.CeaselessVoid;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BossIntroScreens
 {

@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.CalPlayer;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Terraria;

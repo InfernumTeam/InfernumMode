@@ -2,7 +2,6 @@ using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Core;
-using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

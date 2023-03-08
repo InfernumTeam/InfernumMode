@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Dusts;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

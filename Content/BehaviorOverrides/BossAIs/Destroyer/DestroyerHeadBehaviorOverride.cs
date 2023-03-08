@@ -300,7 +300,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
-            // Fall into the ground if the first charge started off with the scourge far in the air.
+            // Fall into the ground if the first charge started off with the destroyer far in the air.
             if (lungeCounter <= 0f && attackTimer == 1f && npc.Center.Y < target.Center.Y - upwardLungeDistance - 500f)
             {
                 attackSubstate = 2f;
@@ -375,7 +375,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     }
                     break;
 
-                // Fall into the ground in anticipation of the next rise. The scourge does not do damage during this subphase.
+                // Fall into the ground in anticipation of the next rise. The destroyer does not do damage during this subphase.
                 case 2:
                     // Disable damage.
                     npc.damage = 0;

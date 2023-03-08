@@ -48,6 +48,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData RealityTear2Shader => GameShaders.Misc["Infernum:RealityTear2"];
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
         public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
+        public static MiscShaderData SignusBackgroundShader => GameShaders.Misc["Infernum:SignusBackground"];
         public static MiscShaderData ScrollingCodePrimShader => GameShaders.Misc["Infernum:ScrollingCode"];
         public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
         public static MiscShaderData WaterVertexShader => InfernumConfig.Instance.ReducedGraphicsConfig ? DukeTornadoVertexShader : GameShaders.Misc["Infernum:WaterShader"];
@@ -201,6 +202,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> streakShader = new(assets.Request<Effect>("Assets/Effects/SideStreakTrail", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:SideStreak"] = new MiscShaderData(streakShader, "TrailPass");
+
+            Ref<Effect> signusBGShader = new(assets.Request<Effect>("Assets/Effects/SignusBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:SignusBackground"] = new MiscShaderData(signusBGShader, "ScreenPass");
 
             Ref<Effect> codeScrollShader = new(assets.Request<Effect>("Assets/Effects/ScrollingCodePrimShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:ScrollingCode"] = new MiscShaderData(codeScrollShader, "TrailPass");

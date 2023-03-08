@@ -4,6 +4,7 @@ using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
@@ -163,7 +164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     DoAttack_EnergyBlasts(npc, target, ref attackTimer);
                     break;
                 case DestroyerAttackType.LaserSpin:
-                    DoAttack_LaserSpin(npc, target, lifeRatio, ref attackTimer);
+                    DoAttack_LaserSpin(npc, target, ref attackTimer);
                     break;
             }
 
@@ -259,10 +260,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (attackTimer > hoverRedirectTime + chargeRedirectTime + chargeTime)
                 npc.velocity *= 0.9f;
 
-            // Release lightning from behind the worm once the charge has begun.
+            // Release probes and create an impact sound once the charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
-                SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeImpactSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = 2;
@@ -498,6 +499,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
                 if (npc.WithinRange(flyDestination, 70f))
                 {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeImpactSound, target.Center);
+
                     npc.Center = flyDestination;
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
                     attackTimer = 0f;
@@ -515,7 +518,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
                 if (attackTimer > 115f)
                 {
-                    if (slamCounter < slamCount)
+                    if (slamCounter < slamCount - 1f)
                     {
                         attackTimer = 0f;
                         attackState = 0f;
@@ -534,35 +537,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackState == 0f)
             {
-                // Move away from the target.
-                if (attackTimer < 80f)
-                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -16f, 0.3f);
-                else
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 23.5f, 0.15f);
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
+
+                if (attackTimer < 140f)
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 20.5f, 0.15f);
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
+                    Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), 182);
+                    energy.velocity = (npc.Center - energy.position) * 0.08f;
+                    energy.noGravity = true;
+                    energy.scale *= 1.1f;
+                }
 
-                    if (attackTimer < 140f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 140f)
+                    Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+
+                if (attackTimer > 140f && attackTimer <= 185f && attackTimer % 45f == 44f)
+                {
+                    SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), 182);
-                        energy.velocity = (npc.Center - energy.position) * 0.08f;
-                        energy.noGravity = true;
-                        energy.scale *= 1.1f;
-                    }
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 140f)
-                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
-
-                    if (attackTimer > 140f && attackTimer <= 185f && attackTimer % 45f == 44f)
-                    {
-                        SoundEngine.PlaySound(PlasmaCaster.FireSound, npc.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
-                            if (BossRushEvent.BossRushActive)
-                                shootVelocity *= 1.56f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 165, 0f);
-                        }
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
+                        if (BossRushEvent.BossRushActive)
+                            shootVelocity *= 1.56f;
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 165, 0f);
                     }
                 }
 
@@ -580,6 +577,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
                 npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
+
+                if (attackTimer == 1f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeUpSound with { Pitch = 0.25f, Volume = 1.67f }, target.Center);
+                    target.Infernum_Camera().CurrentScreenShakePower = 9f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.5f, 16);
+                }
 
                 if (npc.WithinRange(flyDestination, 70f))
                 {
@@ -608,6 +612,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             movementSpeed *= BossRushEvent.BossRushActive ? 2.1f : 1f;
             acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
             acceleration *= MathHelper.Lerp(1f, 0.5f, slowdownInterpolant);
+
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeUpSound with { Volume = 2f }, target.Center);
 
             if (!npc.WithinRange(target.Center, 240f))
             {
@@ -645,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 SelectNewAttack(npc);
         }
 
-        public static void DoAttack_LaserSpin(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoAttack_LaserSpin(NPC npc, Player target, ref float attackTimer)
         {
             ref float segmentToFire = ref npc.Infernum().ExtraAI[0];
 
@@ -702,7 +709,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (phase4)
                 patternToUse = Phase4AttackPattern;
             DestroyerAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
-            nextAttackType = DestroyerAttackType.EnergyBlasts;
             if (nextAttackType == DestroyerAttackType.LaserSpin)
                 HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!");
 

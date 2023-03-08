@@ -1,5 +1,4 @@
 using CalamityMod.DataStructures;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;

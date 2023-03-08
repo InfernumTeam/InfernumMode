@@ -9,11 +9,9 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 

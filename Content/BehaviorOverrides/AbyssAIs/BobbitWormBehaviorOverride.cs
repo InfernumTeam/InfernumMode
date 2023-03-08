@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.Particles;
-using CalamityMod.Projectiles.Melee;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;

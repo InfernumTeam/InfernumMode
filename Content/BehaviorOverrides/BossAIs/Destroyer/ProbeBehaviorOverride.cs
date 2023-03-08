@@ -1,6 +1,4 @@
-using CalamityMod;
 using CalamityMod.Events;
-using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
@@ -10,9 +8,7 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 {

@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;

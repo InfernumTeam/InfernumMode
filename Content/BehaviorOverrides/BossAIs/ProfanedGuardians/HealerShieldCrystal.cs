@@ -29,6 +29,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public ref float ShatteringTimer => ref NPC.ai[1];
 
+        public Texture2D WallTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/HealerShieldWall").Value;
+
         public Vector2 InitialPosition;
 
         public override void SetStaticDefaults()
@@ -115,6 +117,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Die
                 NPC.active = false;
 
+                Vector2 wallBottom = NPC.Center + new Vector2(21f, WallTexture.Height * 0.5f);
+                Vector2 wallTop = NPC.Center + new Vector2(21f, -WallTexture.Height * 0.5f);
+
+                float crystalAmount = 50f;
+                for (int i = 0; i < crystalAmount; i++)
+                {
+                    Vector2 crystalSpawnPosition = Vector2.Lerp(wallBottom, wallTop, (float)i / crystalAmount) + Main.rand.NextVector2Circular(24f, 24f);
+                    Vector2 crystalVelocity = -Vector2.UnitX.RotatedByRandom(1.06f) * Main.rand.NextFloat(2f, 4f);
+
+                    if (!Collision.SolidCollision(crystalSpawnPosition, 1, 1))
+                        Gore.NewGore(new EntitySource_WorldEvent(), crystalSpawnPosition, crystalVelocity, Mod.Find<ModGore>($"ProvidenceDoor{Main.rand.Next(1, 3)}").Type, 1.16f);
+                }
+
                 // Despawn all the fire walls.
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<HolyFireWall>());
 
@@ -146,13 +161,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void DrawWall(SpriteBatch spriteBatch, Vector2 centerPosition)
         {
             // Draw variables.
-            Texture2D wallTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/HealerShieldWall").Value;
             Vector2 drawPosition = centerPosition + new Vector2(21, 0);
-            Rectangle frame = new(0, 0, wallTexture.Width, wallTexture.Height);
+            Rectangle frame = new(0, 0, WallTexture.Width, WallTexture.Height);
 
             // Draw the initial wall.
-            DrawBackglow(spriteBatch, wallTexture, drawPosition, frame);
-            spriteBatch.Draw(wallTexture, drawPosition, frame, Color.White * NPC.Opacity, 0f, wallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            DrawBackglow(spriteBatch, WallTexture, drawPosition, frame);
+            spriteBatch.Draw(WallTexture, drawPosition, frame, Color.White * NPC.Opacity, 0f, WallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // More variables
             spriteBatch.EnterShaderRegion();
@@ -175,7 +189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             overlay.Draw(spriteBatch);
 
             // Draw the wall overlay.
-            DrawData wall = new(wallTexture, drawPosition, frame, Color.White * opacity * 0.5f * NPC.Opacity, 0f, wallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            DrawData wall = new(WallTexture, drawPosition, frame, Color.White * opacity * 0.5f * NPC.Opacity, 0f, WallTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(wall);
             wall.Draw(spriteBatch);
 

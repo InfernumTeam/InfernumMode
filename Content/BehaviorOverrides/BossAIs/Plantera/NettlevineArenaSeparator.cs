@@ -32,6 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Projectile.timeLeft = 660;
             Projectile.penetrate = -1;
             Projectile.Calamity().DealsDefenseDamage = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
         }
 
         public override void AI()
@@ -73,6 +74,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             float _ = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, 8f, ref _);
         }
+
+        public override bool? CanDamage() => !Projectile.WithinRange(StartingPosition, 720f);
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
     }

@@ -266,7 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             if (npc.localAI[0] > 0f)
-                npc.DrawBackglow(Color.Red, npc.localAI[0] * 8f, 0, npc.frame, Main.screenPosition);
+                npc.DrawBackglow(Color.Red with { A = 0 }, npc.localAI[0] * 12f, 0, npc.frame, Main.screenPosition);
             return true;
         }
         #endregion Drawcode

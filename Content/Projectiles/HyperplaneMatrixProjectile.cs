@@ -198,9 +198,9 @@ namespace InfernumMode.Content.Projectiles
 
         public ref float HologramRayBrightness => ref Projectile.localAI[1];
 
-        public const float MaxHologramWidth = 226f;
+        public const float MaxHologramWidth = 264f;
 
-        public const float MaxHologramHeight = 272f;
+        public const float MaxHologramHeight = 304f;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperplane Matrix");
 

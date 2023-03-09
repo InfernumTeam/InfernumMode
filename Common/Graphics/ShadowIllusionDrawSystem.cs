@@ -1,13 +1,9 @@
 using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.Content.Projectiles.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics

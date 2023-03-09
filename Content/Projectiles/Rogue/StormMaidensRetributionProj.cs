@@ -7,7 +7,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.Projectiles.Melee;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using InfernumMode.Core.GlobalInstances.Systems;

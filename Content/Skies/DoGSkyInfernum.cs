@@ -1,4 +1,3 @@
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;

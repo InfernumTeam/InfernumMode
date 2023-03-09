@@ -1,5 +1,4 @@
 ﻿using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

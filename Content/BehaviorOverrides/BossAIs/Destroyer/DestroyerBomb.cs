@@ -41,17 +41,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 Projectile.frame = Projectile.frame == 0 ? Projectile.timeLeft < 60 ? 2 : 1 : 0;
 
             if (Projectile.velocity.Y < 20f)
-                Projectile.velocity.Y += 0.2f;
+                Projectile.velocity.Y += 0.25f;
 
+            // Rotate.
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
+            // Collide with tiles after enough time has passed.
             Projectile.tileCollide = Projectile.timeLeft < 540;
 
             Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (TileID.Sets.Platforms[tileAtPosition.TileType] && tileAtPosition.HasTile && Projectile.tileCollide || Projectile.WithinRange(closestPlayer.Center, 60f) && Projectile.timeLeft < 580)
+            if (((TileID.Sets.Platforms[tileAtPosition.TileType] && tileAtPosition.HasTile && Projectile.tileCollide) || Projectile.WithinRange(closestPlayer.Center, 60f)) && Projectile.timeLeft < 580)
                 Projectile.Kill();
-
+            
             Lighting.AddLight(Projectile.Center, Vector3.One * 0.85f);
         }
 
@@ -90,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 LineRotation = laserRotation,
                 WidthFactor = 0.0035f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
                 BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
-                Scale = Vector2.One * telegraphInterpolant * 600f,
+                Scale = Vector2.One * telegraphInterpolant * 200f,
                 MainColor = Color.Lerp(Color.Orange, Color.Red, telegraphInterpolant * 0.6f + 0.4f),
                 DarkerColor = Color.Orange,
                 Opacity = MathF.Sqrt(telegraphInterpolant),

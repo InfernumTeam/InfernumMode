@@ -5,7 +5,6 @@ using CalamityMod.Events;
 using CalamityMod.ILEditing;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.Providence;

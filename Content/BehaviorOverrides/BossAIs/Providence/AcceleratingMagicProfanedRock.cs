@@ -155,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             trailShader.UseImage2("Images/Extra_189");
             trailShader.UseColor(mainColor);
             trailShader.UseSecondaryColor(secondaryColor);
-            AfterimageTrail.Draw(Projectile.oldPos, trailOffset, 20);
+            AfterimageTrail.Draw(Projectile.oldPos, trailOffset, 10);
         }
 
         public void SpecialDraw(SpriteBatch spriteBatch)

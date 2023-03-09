@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;

@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.Items;
 using CalamityMod.Rarities;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
@@ -12,7 +11,6 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
-using Terraria.Graphics.Shaders;
 using InfernumMode.Assets.Effects;
 
 namespace InfernumMode.Content.Items.Weapons.Magic

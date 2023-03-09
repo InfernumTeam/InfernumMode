@@ -2,7 +2,6 @@
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Accessories

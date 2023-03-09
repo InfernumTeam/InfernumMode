@@ -30,9 +30,9 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
                     string[] possibleEdgyShitToSay = new string[]
                     {
-                    "YOU CANNOT EVADE ME SO EASILY!",
-                    "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
-                    "NOT SO FAST!"
+                        "YOU CANNOT EVADE ME SO EASILY!",
+                        "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
+                        "NOT SO FAST!"
                     };
                     Utilities.DisplayText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
                     HatGirl.SayThingWhileOwnerIsAlive(player, "It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!");

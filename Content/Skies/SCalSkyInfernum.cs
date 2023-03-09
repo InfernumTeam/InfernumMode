@@ -4,7 +4,6 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;

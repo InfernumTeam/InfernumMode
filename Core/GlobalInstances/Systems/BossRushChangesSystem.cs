@@ -46,7 +46,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

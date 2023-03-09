@@ -1,13 +1,9 @@
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
-using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;
@@ -29,8 +25,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         public enum DestroyerAttackType
         {
             RegularCharge,
-            DivingAttack,
-            LaserBarrage,
+            UpwardBombLunge,
+            LaserWalls,
             ProbeBombing,
             SuperchargedProbeBombing,
             DiveBombing,
@@ -49,21 +45,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         public static readonly DestroyerAttackType[] Phase2AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
-            DestroyerAttackType.LaserBarrage,
+            DestroyerAttackType.LaserWalls,
             DestroyerAttackType.ProbeBombing,
-            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.UpwardBombLunge,
         };
 
         public static readonly DestroyerAttackType[] Phase3AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
-            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.EnergyBlasts,
-            DestroyerAttackType.LaserBarrage,
+            DestroyerAttackType.LaserWalls,
             DestroyerAttackType.DiveBombing,
-            DestroyerAttackType.LaserBarrage,
+            DestroyerAttackType.LaserWalls,
             DestroyerAttackType.EnergyBlasts,
-            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
         };
@@ -71,13 +67,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         public static readonly DestroyerAttackType[] Phase4AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
-            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.LaserSpin,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.LaserSpin,
             DestroyerAttackType.EnergyBlasts,
-            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
         };
@@ -148,11 +144,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 case DestroyerAttackType.RegularCharge:
                     DoAttack_RegularCharge(npc, target, lifeRatio, ref attackTimer);
                     break;
-                case DestroyerAttackType.DivingAttack:
-                    DoAttack_DivingAttack(npc, target, ref attackTimer);
+                case DestroyerAttackType.UpwardBombLunge:
+                    DoAttack_UpwardBombLunge(npc, target, ref attackTimer);
                     break;
-                case DestroyerAttackType.LaserBarrage:
-                    DoAttack_LaserBarrage(npc, target, lifeRatio, ref attackTimer);
+                case DestroyerAttackType.LaserWalls:
+                    DoAttack_LaserWalls(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case DestroyerAttackType.ProbeBombing:
                     DoAttack_ProbeBombing(npc, target, lifeRatio, ref attackTimer);
@@ -291,16 +287,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void DoAttack_DivingAttack(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_UpwardBombLunge(NPC npc, Player target, ref float attackTimer)
         {
             int lungeCount = 2;
-            int bombReleaseDelay = 22;
-            int bombCount = 77;
+            int bombReleaseDelay = 23;
+            int postBombReleaseRiseTime = 15;
+            int bombCount = 70;
             float upwardLungeDistance = 450f;
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
-            // Fall into the ground if the first charge started off with the scourge far in the air.
+            // Fall into the ground if the first charge started off with the destroyer far in the air.
             if (lungeCounter <= 0f && attackTimer == 1f && npc.Center.Y < target.Center.Y - upwardLungeDistance - 500f)
             {
                 attackSubstate = 2f;
@@ -351,7 +348,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 12f, 0.064f);
 
                     // Release the bombs.
-                    if (attackTimer >= bombReleaseDelay)
+                    if (attackTimer == bombReleaseDelay)
                     {
                         SoundEngine.PlaySound(Apollo.MissileLaunchSound, target.Center);
 
@@ -362,12 +359,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                         {
                             for (int i = 0; i < bombCount; i++)
                             {
-                                Vector2 bombVelocity = -Vector2.UnitY.RotatedByRandom(1.23f) * Main.rand.NextFloat(9f, 20f) + Main.rand.NextVector2Circular(0.3f, 0.3f);
+                                Vector2 bombVelocity = -Vector2.UnitY.RotatedByRandom(1.23f) * Main.rand.NextFloat(13f, 24.5f) + Main.rand.NextVector2Circular(0.4f, 0.4f);
                                 bombVelocity.X += target.velocity.X * 0.5f;
                                 Utilities.NewProjectileBetter(npc.Center + bombVelocity, bombVelocity, ModContent.ProjectileType<DestroyerBomb>(), 0, 0f);
                             }
                         }
+                    }
 
+                    if (attackTimer >= bombReleaseDelay + postBombReleaseRiseTime)
+                    {
                         attackTimer = 0f;
                         attackSubstate = 2f;
                         npc.velocity.Y += 3f;
@@ -375,7 +375,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     }
                     break;
 
-                // Fall into the ground in anticipation of the next rise. The scourge does not do damage during this subphase.
+                // Fall into the ground in anticipation of the next rise. The destroyer does not do damage during this subphase.
                 case 2:
                     // Disable damage.
                     npc.damage = 0;
@@ -399,11 +399,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void DoAttack_LaserBarrage(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoAttack_LaserWalls(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             Vector2 destination;
             if (attackTimer <= 90f)
             {
+                // Move below the target.
                 destination = target.Center + Vector2.UnitY * 400f;
                 destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 2300f;
                 if (npc.WithinRange(destination, 23f))
@@ -417,6 +418,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 20f, 0.05f);
                     attackTimer--;
                 }
+
+                // Destroy all probes.
+                ProbeBehaviorOverride.KillAllProbes();
             }
             else
             {

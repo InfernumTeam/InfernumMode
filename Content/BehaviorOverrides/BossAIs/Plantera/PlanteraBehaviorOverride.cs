@@ -1,9 +1,9 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -17,9 +17,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
     {
         public override int NPCOverrideType => NPCID.Plantera;
 
-        public const float Phase2LifeRatio = 0.65f;
+        public const float Phase2LifeRatio = 0.8f;
 
-        public const float Phase3LifeRatio = 0.3f;
+        public const float Phase3LifeRatio = 0.35f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -127,6 +127,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     HatGirl.SayThingWhileOwnerIsAlive(target, "Plantera isn't keeping anything back, watch out!");
                 return false;
             }
+
+            // Disable extra damage from the poisoned debuff. The attacks themselves hit hard enough.
+            if (target.HasBuff(BuffID.Poisoned))
+                target.ClearBuff(BuffID.Poisoned);
 
             switch ((PlanteraAttackState)(int)attackType)
             {
@@ -604,13 +608,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             int chargeTime = 30;
             int chargeTimer = (int)(attackTimer - 60) % (chargeTime + chargeSlowdownDelay);
             int chargeCount = 5;
-            float chargeSpeed = (enraged ? 21f : 15.5f) + (1f - lifeRatio) * 3.2f;
+            float chargeSpeed = (enraged ? 25f : 18.5f) + (1f - lifeRatio) * 3.2f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             if (BossRushEvent.BossRushActive)
-            {
                 chargeSpeed *= 1.6f;
-            }
 
             if (attackTimer < 60f)
             {
@@ -632,24 +634,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     SelectNextAttack(npc);
             }
 
-            // Do the charge and release a burst of petals.
+            // Do the charge.
             else if (chargeTimer == chargeSlowdownDelay)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 chargeCounter++;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        float shootOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / 4f);
-                        Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
-                        Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * (chargeSpeed * 0.67f);
-
-                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 160, 0f);
-                    }
-                }
 
                 SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
 

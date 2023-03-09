@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;

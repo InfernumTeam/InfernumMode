@@ -1,4 +1,3 @@
-using CalamityMod;
 using System.Collections.Generic;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechAIUtilities;
 

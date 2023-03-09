@@ -4,10 +4,8 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
@@ -26,7 +24,6 @@ using Terraria.Audio;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Common.Graphics.PrimitiveTrailCopy;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.DoG.DoGPhase1HeadBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG

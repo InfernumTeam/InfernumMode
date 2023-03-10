@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.UI.CalamitasEnchants;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -121,6 +122,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CloneAttackType.DarkOverheadFireball:
                     DoBehavior_DarkOverheadFireball(npc, target, ref attackTimer, ref armRotation);
+                    break;
+                case CloneAttackType.ConvergingBookEnergy:
+                    DoBehavior_ConvergingBookEnergy(npc, target, ref attackTimer, ref armRotation);
                     break;
             }
 
@@ -418,7 +422,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         GeneralParticleHandler.SpawnParticle(fireCloud);
                     }
 
-                    ScreenEffectSystem.SetBlurEffect(staffEnd, 1.6f, 45);
+                    ScreenEffectSystem.SetBlurEffect(staffEnd, 0.7f, 45);
                     target.Infernum_Camera().CurrentScreenShakePower = 10f;
 
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
@@ -453,7 +457,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Fire the laser.
                 if (attackTimer == redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
                 {
-                    ScreenEffectSystem.SetBlurEffect(staffEnd, 1.6f, 45);
+                    ScreenEffectSystem.SetBlurEffect(staffEnd, 0.7f, 45);
                     target.Infernum_Camera().CurrentScreenShakePower = 10f;
                     SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayFireSound, target.Center);
 
@@ -479,12 +483,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Perform animation effects.
             npc.frameCounter += 0.2f;
-
-            if (attackTimer >= 800f)
-            {
-                npc.Center = target.Center - Vector2.UnitY * 300f;
-                attackTimer = 0f;
-            }
         }
 
         public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant)
@@ -612,6 +610,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.06f;
                     npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.12f);
 
+                    // Look in the direction of the player if not extremely close to them horizontally.
                     if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 50f)
                         npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 }
@@ -703,7 +702,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         {
                             Vector2 meteorSpawnPosition = target.Center + new Vector2(dx - 60f, Math.Abs(dx) * -0.35f - 600f);
                             Vector2 meteorShootVelocity = Vector2.UnitY * 15f;
-                            Utilities.NewProjectileBetter(meteorSpawnPosition, meteorShootVelocity, ModContent.ProjectileType<BrimstoneMeteor>(), 160, 0f);
+                            Utilities.NewProjectileBetter(meteorSpawnPosition, meteorShootVelocity, ModContent.ProjectileType<BrimstoneMeteor>(), 160, 0f, -1, 0f, target.Bottom.Y);
                         }
                     }
                 }
@@ -713,14 +712,139 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
+        public static void DoBehavior_ConvergingBookEnergy(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            int bookAppearTime = 30;
+            int sparkSpiralCount = 7;
+            int sparkReleaseRate = 10;
+            int sparkReleaseTime = 240;
+            int bookExplodeDelay = 180;
+            int dartShootCount = 24;
+            float sparkShootSpeed = 4.5f;
+            float dartShootSpeed = 4.5f;
+            float dartAngularVelocity = MathHelper.ToRadians(0.6f);
+            Vector2 bookCenter = npc.Center - Vector2.UnitX * npc.scale * npc.spriteDirection * 12f;
+            ref float bookAppearInterpolant = ref npc.Infernum().ExtraAI[0];
+            ref float sparkShootOffsetAngle = ref npc.Infernum().ExtraAI[1];
+            ref float bookJitterInterpolant = ref npc.Infernum().ExtraAI[2];
+            ref float bookHasExploded = ref npc.Infernum().ExtraAI[3];
+
+            if (bookHasExploded == 0f)
+            {
+                // Hover to the side of the target and create the book.
+                if (attackTimer <= bookAppearTime)
+                {
+                    if (attackTimer == 1f)
+                        SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch, target.Center);
+                    bookAppearInterpolant = Utils.GetLerpValue(0f, bookAppearTime, attackTimer, true);
+                    armRotation = armRotation.AngleLerp(MathHelper.PiOver2 * npc.spriteDirection, 0.37f * bookAppearInterpolant);
+
+                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 350f, -120f);
+                    Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.067f;
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.13f);
+
+                    // Look in the direction of the player if not extremely close to them horizontally.
+                    if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 50f)
+                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                }
+                else
+                {
+                    // Emit particles off the book.
+                    Color magicColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                    GlowyLightParticle magic = new(bookCenter + Main.rand.NextVector2Circular(8f, 2f), -Vector2.UnitY.RotatedByRandom(0.54f) * Main.rand.NextFloat(0.4f, 3f), magicColor, 20, Main.rand.NextFloat(0.09f, 0.15f), 0.87f, false);
+                    GeneralParticleHandler.SpawnParticle(magic);
+
+                    npc.velocity *= 0.7f;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                    // Don't get stuck in blocks.
+                    if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    {
+                        npc.Center = npc.Center.MoveTowards(target.Center, 8f);
+                        npc.position.Y -= 4f;
+                    }
+                }
+            }
+            else
+            {
+                Vector2 hoverDestination = Vector2.Lerp(npc.Center, target.Center, 0.5f);
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.067f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                if (attackTimer >= 90f)
+                    SelectNextAttack(npc);
+            }
+
+            // Emit energy spirals.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= bookAppearTime && attackTimer <= bookAppearTime + sparkReleaseTime && attackTimer % sparkReleaseRate == sparkReleaseRate - 1f && bookHasExploded == 0f)
+            {
+                for (int i = 0; i < sparkSpiralCount; i++)
+                {
+                    Vector2 sparkSpawnPosition = npc.Center + (MathHelper.TwoPi * i / sparkSpiralCount + sparkShootOffsetAngle).ToRotationVector2() * 1800f;
+                    Vector2 sparkVelocity = (npc.Center - sparkSpawnPosition).SafeNormalize(Vector2.UnitY) * sparkShootSpeed;
+                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ConvergingShadowSpark>(), 0, 0f);
+                }
+                sparkShootOffsetAngle += MathHelper.ToRadians(12f);
+            }
+
+            // Make the book jitter before exploding.
+            if (bookHasExploded == 0f)
+                bookJitterInterpolant = Utils.GetLerpValue(bookAppearTime + sparkReleaseTime, bookAppearTime + sparkReleaseTime + bookExplodeDelay, attackTimer, true);
+
+            // Make the book explode.
+            if (bookJitterInterpolant >= 1f && bookHasExploded == 0f)
+            {
+                // Do funny screen stuff.
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 45);
+
+                SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSmallSound, npc.Center);
+
+                // Create explosion particles.
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    for (int i = 0; i < 35; i++)
+                    {
+                        Color explosionFireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.7f));
+                        SmallSmokeParticle explosion = new(bookCenter + Main.rand.NextVector2Circular(64f, 64f), Main.rand.NextVector2Circular(10f, 10f) - Vector2.UnitY * 11f, explosionFireColor, Color.DarkGray, Main.rand.NextFloat(1f, 1.15f), 255f, Main.rand.NextFloatDirection() * 0.015f);
+                        GeneralParticleHandler.SpawnParticle(explosion);
+                    }
+
+                    for (int i = 0; i < 13; i++)
+                    {
+                        Gore page = Gore.NewGorePerfect(npc.GetSource_FromAI(), bookCenter + Main.rand.NextVector2Circular(30f, 30f), Main.rand.NextVector2Circular(7.5f, 7.5f) - Vector2.UnitY * 11f, 1007);
+                        page.timeLeft = 60;
+                        page.alpha = 50;
+                    }
+                }
+
+                // Explode into a barrage of arcing darts.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < dartShootCount; i++)
+                    {
+                        Vector2 dartVelocity = (MathHelper.TwoPi * i / dartShootCount).ToRotationVector2() * dartShootSpeed;
+                        Utilities.NewProjectileBetter(bookCenter, dartVelocity * 0.5f, ModContent.ProjectileType<ArcingBrimstoneDart>(), 160, 0f, -1, -dartAngularVelocity, 0f);
+                        Utilities.NewProjectileBetter(bookCenter, dartVelocity, ModContent.ProjectileType<ArcingBrimstoneDart>(), 160, 0f, -1, dartAngularVelocity, 0f);
+                    }
+                }
+
+                attackTimer = 0f;
+                bookHasExploded = 1f;
+                npc.netUpdate = true;
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             CloneAttackType currentAttack = (CloneAttackType)npc.ai[0];
-            CloneAttackType nextAttack = CloneAttackType.DarkOverheadFireball;
+            CloneAttackType nextAttack = CloneAttackType.ConvergingBookEnergy;
             if (currentAttack == CloneAttackType.SpawnAnimation)
                 nextAttack = CloneAttackType.SoulSeekerResurrection;
-            if (currentAttack == CloneAttackType.DarkOverheadFireball)
+            if (currentAttack == CloneAttackType.ConvergingBookEnergy)
                 nextAttack = CloneAttackType.WandFireballs;
 
             for (int i = 0; i < 5; i++)
@@ -750,9 +874,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            SpriteEffects spriteEffects = SpriteEffects.None;
+            SpriteEffects direction = SpriteEffects.None;
             if (npc.spriteDirection == 1)
-                spriteEffects = SpriteEffects.FlipHorizontally;
+                direction = SpriteEffects.FlipHorizontally;
 
             int afterimageCount = 8;
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasClone").Value;
@@ -772,7 +896,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     Color afterimageColor = lightColor * ((afterimageCount - i) / 15f) * npc.Opacity;
                     Vector2 afterimageDrawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 0.55f);
                     afterimageDrawPosition += -Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
 
@@ -784,7 +908,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * shadowBackglowOffset;
-                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, lightColor with { A = 0 } * (1f - npc.localAI[2]), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, lightColor with { A = 0 } * (1f - npc.localAI[2]), npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
 
@@ -801,12 +925,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 4f;
                 Color backglowColor = Color.Purple with { A = 0 };
-                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backglowColor * npc.Opacity * 0.45f, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backglowColor * npc.Opacity * 0.45f, npc.rotation, origin, npc.scale, direction, 0f);
             }
 
             // Draw the body and arms.
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            Main.spriteBatch.Draw(armTexture, armDrawPosition, null, lightColor * npc.Opacity, armRotation, armTexture.Size() * new Vector2(0.4f, 0.1f), npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(armTexture, armDrawPosition, null, lightColor * npc.Opacity, armRotation, armTexture.Size() * new Vector2(0.4f, 0.1f), npc.scale, direction, 0f);
 
             // Draw the wand if it's being used.
             if (npc.ai[0] == (int)CloneAttackType.WandFireballs && npc.Infernum().ExtraAI[2] == 0f)
@@ -852,6 +976,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 Utilities.DrawBloomLineTelegraph(staffEnd, lineInfo);
 
                 Main.spriteBatch.Draw(staffTexture, staffDrawPosition, null, Color.White * npc.Opacity, staffRotation, staffTexture.Size() * Vector2.UnitY, npc.scale * 0.85f, 0, 0f);
+            }
+
+            // Draw the book if it's being used.
+            if (npc.ai[0] == (int)CloneAttackType.ConvergingBookEnergy && npc.Infernum().ExtraAI[3] == 0f)
+            {
+                Texture2D bookTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/LashesOfChaosHeld").Value;
+                Color bookColor = Color.Lerp(Color.HotPink with { A = 0 }, Color.White, MathF.Sqrt(npc.Infernum().ExtraAI[0])) * npc.Infernum().ExtraAI[0];
+                Vector2 bookDrawPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * npc.scale * 6f - Main.screenPosition + Main.rand.NextVector2Unit() * npc.Infernum().ExtraAI[2] * 3f;
+                bookDrawPosition.Y += 6f;
+
+                Rectangle bookFrame = bookTexture.Frame(1, 8, 0, (int)(Main.GlobalTimeWrappedHourly * 15f) % 8);
+                Main.spriteBatch.Draw(bookTexture, bookDrawPosition, bookFrame, bookColor * npc.Opacity, 0f, bookFrame.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
             }
 
             // Draw the eye gleam.

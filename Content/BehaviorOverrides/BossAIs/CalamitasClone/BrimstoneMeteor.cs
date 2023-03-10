@@ -1,4 +1,7 @@
 using CalamityMod;
+using CalamityMod.Particles;
+using CalamityMod.Projectiles.Boss;
+using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -15,8 +18,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         {
             DisplayName.SetDefault("Brimstone Meteor");
             Main.projFrames[Projectile.type] = 4;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
@@ -38,6 +41,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
+            // Explode once past the tile collision line.
+            Projectile.tileCollide = Projectile.Top.Y >= Projectile.ai[1];
+
             Time++;
         }
 
@@ -47,9 +53,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(ref Color lightColor)
         {
-            lightColor.R = (byte)(255 * Projectile.Opacity);
+            lightColor = Color.Lerp(lightColor, Color.White, 0.5f);
+            lightColor.A /= 3;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
+
+            for (int i = 0; i < 6; i++)
+            {
+                Color fireColor = Main.rand.NextBool() ? Color.HotPink : Color.Red;
+                CloudParticle fireCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), fireColor, Color.DarkGray, 33, Main.rand.NextFloat(1.8f, 2f))
+                {
+                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                };
+                GeneralParticleHandler.SpawnParticle(fireCloud);
+            }
         }
 
         public override bool ShouldUpdatePosition() => true;

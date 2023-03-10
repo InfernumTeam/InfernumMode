@@ -109,7 +109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Do funny screen stuff.
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
-                ScreenEffectSystem.SetBlurEffect(Destination, 2f, 45);
+                ScreenEffectSystem.SetBlurEffect(Destination, 0.8f, 45);
 
                 Projectile.velocity = Vector2.Zero;
                 HasReachedDestination = true;

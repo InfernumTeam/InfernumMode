@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Skies
             int ID = GuardianComboAttackManager.CommanderType;
             int npcIndex = NPC.FindFirstNPC(ID);
             NPC npc = npcIndex >= 0 ? Main.npc[npcIndex] : null;
-            return npc != null && AttackerGuardianBehaviorOverride.TotalRemaininGuardians == 1;
+            return npc != null;
         }
 
         public override void SpecialVisuals(Player player, bool isActive)
@@ -64,6 +64,19 @@ namespace InfernumMode.Content.Skies
 
         private float intensity = 0f;
 
+        private static float MaxIntensity
+        {
+            get
+            {
+                return AttackerGuardianBehaviorOverride.TotalRemaininGuardians switch
+                {
+                    3 => 0.05f,
+                    2 => 0.1f,
+                    _ => 0.15f
+                };
+            }
+        }
+
         public override void Activate(Vector2 position, params object[] args) => isActive = true;
 
         public override void Deactivate(params object[] args) => isActive = false;
@@ -73,9 +86,9 @@ namespace InfernumMode.Content.Skies
         public override void Update(GameTime gameTime)
         {
             if (isActive && intensity < 1f)
-                intensity += 0.01f;
+                intensity = MathHelper.Clamp(intensity + 0.01f, 0f, MaxIntensity);
             else if (!isActive && intensity > 0f)
-                intensity -= 0.01f;
+                intensity = MathHelper.Clamp(intensity - 0.01f, 0f, MaxIntensity);
 
             if (NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianCommander>()) == -1)
                 Deactivate();
@@ -90,18 +103,23 @@ namespace InfernumMode.Content.Skies
 
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !InfernumMode.CanUseCustomAIs || AttackerGuardianBehaviorOverride.TotalRemaininGuardians > 1)
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !InfernumMode.CanUseCustomAIs)
             {
                 Symbols.Clear();
                 Deactivate();
                 return;
-            }
+            }            
 
             if (maxDepth >= 0 && minDepth < 0)
             {
                 Texture2D skyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/ProfanedGuardiansSky").Value;
-                spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White with { A = 0 } * intensity * 0.15f);
+                spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White with { A = 0 } * intensity);
             }
+
+            // Only draw the symbols in phase3.
+            if (AttackerGuardianBehaviorOverride.TotalRemaininGuardians > 1)
+                return;
+
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 
             // Remove all things that should die.

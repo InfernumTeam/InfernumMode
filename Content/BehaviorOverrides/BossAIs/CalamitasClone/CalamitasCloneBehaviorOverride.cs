@@ -1,57 +1,59 @@
 using CalamityMod;
-using CalamityMod.Events;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
-using InfernumMode.Content.Projectiles;
+using CalamityMod.Particles;
+using CalamityMod.Particles.Metaballs;
+using CalamityMod.UI.CalamitasEnchants;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
-using CalamitasCloneNPC = CalamityMod.NPCs.CalClone.CalamitasClone;
+using CalamitasCloneBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
+using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 {
     public class CalamitasCloneBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneNPC>();
+        public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneBoss>();
 
         #region Enumerations
         public enum CloneAttackType
         {
-            HorizontalDartRelease,
-            BrimstoneMeteors,
-            BrimstoneVolcano,
-            BrimstoneFireBurst,
-            DiagonalCharge,
-            RisingBrimstoneFireBursts,
-            HorizontalBurstCharge
+            SpawnAnimation,
+            WandFireballs,
+            SoulSeekerResurrection,
+            ShadowTeleports,
+            DarkOverheadFireball,
+            ConvergingBookEnergy // Nerd emoji.
         }
         #endregion
 
         #region AI
 
-        public const float Phase2LifeRatio = 0.7f;
+        public const float Phase2LifeRatio = 0.667f;
 
-        public const float Phase3LifeRatio = 0.3f;
+        public const float Phase3LifeRatio = 0.25f;
 
-        public const float Phase4LifeRatio = 0.15f;
-
-        public const int FinalPhaseTransitionTime = 180;
+        public const int ArmRotationIndex = 5;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
-            Phase3LifeRatio,
-            Phase4LifeRatio
+            Phase3LifeRatio
         };
 
         public override bool PreAI(NPC npc)
@@ -59,19 +61,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
             if (npc.scale != 1f)
             {
-                npc.width = 120;
-                npc.height = 120;
+                npc.width = 52;
+                npc.height = 52;
                 npc.scale = 1f;
             }
 
             // Do targeting.
-            npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            // Set the whoAmI variable globally.
             CalamityGlobalNPC.calamitas = npc.whoAmI;
 
-            npc.defense = npc.defDefense = 0;
-
+            // Handle despawn behaviors.
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -28f, 0.08f);
@@ -84,705 +86,666 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 return false;
             }
 
-            float lifeRatio = npc.life / (float)npc.lifeMax;
             int brotherCount = NPC.CountNPCS(ModContent.NPCType<Cataclysm>()) + NPC.CountNPCS(ModContent.NPCType<Catastrophe>());
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackType = ref npc.ai[0];
-            ref float attackTimer = ref npc.Infernum().ExtraAI[7];
-            ref float transitionState = ref npc.ai[2];
-            ref float brotherFadeoutTime = ref npc.ai[3];
-            ref float finalPhaseTransitionCountdown = ref npc.Infernum().ExtraAI[8];
-            ref float finalPhaseFireTimer = ref npc.Infernum().ExtraAI[9];
+            ref float attackTimer = ref npc.ai[1];
+            ref float backgroundEffectIntensity = ref npc.localAI[1];
+            ref float blackFormInterpolant = ref npc.localAI[2];
+            ref float eyeGleamInterpolant = ref npc.localAI[3];
+            ref float armRotation = ref npc.Infernum().ExtraAI[ArmRotationIndex];
 
-            bool brotherIsPresent = brotherCount > 0 || brotherFadeoutTime > 0f && brotherFadeoutTime < 50f && transitionState < 2f;
+            // Use a custom hitsound.
+            npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f };
 
-            bool inFinalPhase = transitionState == 4f;
-
-            // Reset things.
+            // Reset things every frame.
             npc.damage = npc.defDamage;
-            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>());
-
-            // Prepare to fade out and summon brothers.
-            if (Main.netMode != NetmodeID.MultiplayerClient && transitionState == 0f && lifeRatio < Phase2LifeRatio)
-            {
-                // Clear away projectiles.
-                int[] projectilesToDelete = new int[]
-                {
-                    ModContent.ProjectileType<AdjustingCinder>(),
-                    ModContent.ProjectileType<BrimstoneBomb>(),
-                    ModContent.ProjectileType<BrimstoneBurst>(),
-                    ModContent.ProjectileType<HomingBrimstoneBurst>(),
-                    ModContent.ProjectileType<BrimstoneGeyser>(),
-                    ModContent.ProjectileType<BrimstoneMeteor>(),
-                    ModContent.ProjectileType<ExplodingBrimstoneFireball>(),
-                };
-                for (int i = 0; i < Main.maxProjectiles; i++)
-                {
-                    if (projectilesToDelete.Contains(Main.projectile[i].type))
-                        Main.projectile[i].active = false;
-                }
-
-                transitionState = 1f;
-                brotherFadeoutTime = 1f;
-                attackTimer = 0f;
-
-                Utilities.DisplayText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", Color.Orange);
-
-                // Set the ring radius and create a soul seeker ring.
-                npc.Infernum().ExtraAI[6] = 750f;
-                for (int i = 0; i < 50; i++)
-                {
-                    float seekerAngle = MathHelper.TwoPi * i / 50f;
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>(), npc.whoAmI, seekerAngle);
-                }
-
-                npc.netUpdate = true;
-                return false;
-            }
-
-            if (transitionState == 1f && brotherCount <= 0 && brotherFadeoutTime > 40f)
-            {
-                transitionState = 2f;
-                npc.netUpdate = true;
-            }
-
-            // Create a seeker ring once at a low enough life.
-            if (transitionState == 2f && lifeRatio < Phase3LifeRatio)
-            {
-                Utilities.DisplayText("You will suffer.", Color.Orange);
-
-                int seekerCount = 7;
-                for (int i = 0; i < seekerCount; i++)
-                {
-                    int spawn = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
-                    Main.npc[spawn].ai[0] = MathHelper.TwoPi / seekerCount * i;
-                }
-                SelectNewAttack(npc);
-
-                transitionState = 3f;
-                npc.netUpdate = true;
-            }
-
-            // Begin transitioning to the final phase once the seekers have been spawned and then killed.
-            if (transitionState == 3f && !NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-            {
-                transitionState = 4f;
-                attackTimer = 0f;
-                finalPhaseTransitionCountdown = FinalPhaseTransitionTime;
-                npc.netUpdate = true;
-                return false;
-            }
-
-            // Do phase transitions.
-            if (finalPhaseTransitionCountdown > 0f)
-            {
-                npc.dontTakeDamage = true;
-
-                finalPhaseTransitionCountdown--;
-                npc.velocity *= 0.97f;
-                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-                if (finalPhaseTransitionCountdown == 60f)
-                {
-                    Utilities.DisplayText("I will not be defeated so easily.", Color.Orange);
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "It seems like she's going to give it all she has! Brace yourself!");
-                }
-
-                if (finalPhaseTransitionCountdown == 0f)
-                {
-                    attackTimer = 0f;
-                    SelectNewAttack(npc);
-
-                    int explosion = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
-                    Main.projectile[explosion].ai[0] = NPCID.Retinazer;
-                }
-
-                return false;
-            }
-
-            // Periodically release fire in the final phase.
-            if (inFinalPhase)
-                finalPhaseFireTimer++;
-
-            if (finalPhaseFireTimer % 170f == 169f)
-            {
-                SoundEngine.PlaySound(SoundID.Item74, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 6; i++)
-                    {
-                        Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 1300f;
-                        Vector2 burstVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 11f;
-                        Utilities.NewProjectileBetter(spawnPosition, burstVelocity, ModContent.ProjectileType<BrimstoneBurstTelegraph>(), 0, 0f);
-                    }
-                }
-            }
-
-            // Fade away and don't do damage if brothers are present.
-            if (brotherFadeoutTime > 0f)
-            {
-                // Reset the attack state for when the attack concludes.
-                attackType = (int)CloneAttackType.HorizontalDartRelease;
-
-                npc.damage = 0;
-                npc.dontTakeDamage = true;
-                brotherFadeoutTime = MathHelper.Clamp(brotherFadeoutTime + brotherIsPresent.ToDirectionInt(), 0f, 90f);
-                npc.Opacity = 1f - brotherFadeoutTime / 90f;
-
-                if (brotherFadeoutTime == 30f && transitionState == 1f)
-                {
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Try and move as precisely as possible here; you don't want to waste arena space!");
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        // Summon Catatrophe and Cataclysm.
-                        int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Cataclysm>());
-                        CalamityUtils.BossAwakenMessage(cataclysm);
-
-                        int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
-                        CalamityUtils.BossAwakenMessage(catastrophe);
-                    }
-                }
-
-                Vector2 hoverDestination = target.Center;
-                if (!brotherIsPresent)
-                    hoverDestination.Y -= 350f;
-
-                // Move the ring towards the target.
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 4.5f, 0.2f);
-
-                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-                return false;
-            }
-
+            npc.dontTakeDamage = false;
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+            npc.gfxOffY = 10f;
+            
             switch ((CloneAttackType)(int)attackType)
             {
-                case CloneAttackType.HorizontalDartRelease:
-                    npc.damage = 0;
-                    DoBehavior_HorizontalDartRelease(npc, target, lifeRatio, ref attackTimer);
+                case CloneAttackType.SpawnAnimation:
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation);
                     break;
-                case CloneAttackType.BrimstoneMeteors:
-                    npc.damage = 0;
-                    DoBehavior_BrimstoneMeteors(npc, target, lifeRatio, inFinalPhase, ref attackTimer);
+                case CloneAttackType.WandFireballs:
+                    DoBehavior_WandFireballs(npc, target, ref attackTimer, ref armRotation);
                     break;
-                case CloneAttackType.BrimstoneVolcano:
-                    npc.damage = 0;
-                    DoBehavior_BrimstoneVolcano(npc, target, lifeRatio, ref attackTimer);
+                case CloneAttackType.SoulSeekerResurrection:
+                    DoBehavior_SoulSeekerResurrection(npc, target, ref attackTimer, ref armRotation);
                     break;
-                case CloneAttackType.BrimstoneFireBurst:
-                    npc.damage = 0;
-                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, ref attackTimer);
+                case CloneAttackType.ShadowTeleports:
+                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant);
                     break;
-                case CloneAttackType.DiagonalCharge:
-                    DoBehavior_DiagonalCharge(npc, target, lifeRatio, ref attackTimer);
-                    break;
-                case CloneAttackType.RisingBrimstoneFireBursts:
-                    npc.damage = 0;
-                    DoBehavior_RisingBrimstoneFireBursts(npc, target, ref attackTimer);
-                    break;
-                case CloneAttackType.HorizontalBurstCharge:
-                    npc.damage = 0;
-                    DoBehavior_HorizontalBurstCharge(npc, target, ref attackTimer);
+                case CloneAttackType.DarkOverheadFireball:
+                    DoBehavior_DarkOverheadFireball(npc, target, ref attackTimer, ref armRotation);
                     break;
             }
+
+            // Disable the base Calamity screen shader and background.
+            if (Main.netMode != NetmodeID.Server)
+                Filters.Scene["CalamityMod:CalamitasRun3"].Deactivate();
 
             attackTimer++;
             return false;
         }
 
-        public static void DoBehavior_HorizontalDartRelease(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation)
         {
-            int attackCycleCount = 2;
-            int hoverTime = 210;
-            float hoverHorizontalOffset = 530f;
-            float hoverSpeed = 20f;
-            float initialFlameSpeed = 10.75f;
-            float flameAngularVariance = 0.84f;
-            int flameReleaseRate = 8;
-            int flameReleaseTime = 180;
-            if (lifeRatio < Phase2LifeRatio)
+            int blackFadeoutTime = 30;
+            int blackFadeinTime = 6;
+            int maximumDarknessTime = 50;
+            int eyeGleamTime = 44;
+
+            // Calculate the black fade intensity. This is used to give an illusion that CalClone emerged from the shadows.
+            InfernumMode.BlackFade = Utils.GetLerpValue(0f, blackFadeoutTime, attackTimer, true) * Utils.GetLerpValue(blackFadeoutTime + blackFadeinTime + maximumDarknessTime, blackFadeoutTime + maximumDarknessTime, attackTimer, true);
+
+            // Respond the gravity and natural tile collision for the duration of the attack.
+            npc.noGravity = false;
+            npc.noTileCollide = false;
+
+            // Don't exist yet if the fade effects are ongoing.
+            if (attackTimer < blackFadeoutTime)
             {
-                attackCycleCount--;
-                hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 2.8f;
-                flameAngularVariance *= 1.35f;
-                flameReleaseRate -= 2;
+                blackFormInterpolant = 1f;
+                npc.Opacity = 0f;
+                npc.dontTakeDamage = true;
+                npc.ShowNameOnHover = false;
+                npc.Center = target.Center + Vector2.UnitX * target.direction * 450f;
+                while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    npc.position.Y -= 2f;
+                npc.Calamity().ShouldCloseHPBar = true;
+                npc.Calamity().ProvidesProximityRage = false;
+
+                armRotation = 0f;
             }
 
-            if (BossRushEvent.BossRushActive)
+            // Appear once they're done.
+            else if (InfernumMode.BlackFade < 1f)
             {
-                hoverSpeed += 8f;
-                initialFlameSpeed *= 1.72f;
-            }
+                blackFormInterpolant = MathHelper.Clamp(blackFormInterpolant - 0.018f, 0f, 1f);
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.06f, 0f, 1f);
+                npc.ShowNameOnHover = true;
 
-            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
-
-            // Attempt to hover to the side of the target.
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
-            // This is done to ensure that the attack begins once the boss is close to the target.
-            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 110f)))
-            {
-                attackSubstate = 1f;
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            // Release fireballs.
-            if (attackSubstate == 1f)
-            {
-                if (attackTimer % flameReleaseRate == flameReleaseRate - 1f && attackTimer % 90f > 35f)
+                // Do an eye gleam effect.
+                float gleamAnimationCompletion = Utils.GetLerpValue(blackFadeoutTime + blackFadeinTime + maximumDarknessTime, blackFadeoutTime + blackFadeinTime + maximumDarknessTime + eyeGleamTime, attackTimer, true);
+                eyeGleamInterpolant = CalamityUtils.Convert01To010(gleamAnimationCompletion);
+                if (attackTimer == blackFadeoutTime + blackFadeinTime + maximumDarknessTime)
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int dartDamage = 155;
-                        float idealDirection = npc.AngleTo(target.Center);
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 32f, -Vector2.UnitY).RotatedByRandom(flameAngularVariance) * initialFlameSpeed;
-
-                        int cinder = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AdjustingCinder>(), dartDamage, 0f);
-                        if (Main.projectile.IndexInRange(cinder))
-                            Main.projectile[cinder].ai[0] = idealDirection;
-                    }
+                    bool feelingLikeABigShot = Main.rand.NextBool(100) || Utilities.IsAprilFirst();
+                    SoundEngine.PlaySound(feelingLikeABigShot ? InfernumSoundRegistry.GolemSpamtonSound : HeavenlyGale.LightningStrikeSound, target.Center);
                 }
 
-                if (attackTimer > flameReleaseTime)
-                {
-                    attackTimer = 0f;
-                    attackSubstate = 0f;
-                    attackCycleCounter++;
+                // Look at the target.
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
-                    if (attackCycleCounter >= attackCycleCount)
-                        SelectNewAttack(npc);
+                backgroundEffectIntensity = MathHelper.Clamp(backgroundEffectIntensity + 0.011f, 0f, 1f);
+
+                // Fly into the air and transition to the first attack after the background is fully dark.
+                if (backgroundEffectIntensity >= 1f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.4f, Volume = 1.6f }, target.Center);
+                    SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
+
+                    npc.velocity.Y -= 23f;
+                    Collision.HitTiles(npc.TopLeft, Vector2.UnitY * -12f, npc.width, npc.height + 100);
+                    SelectNextAttack(npc);
+                }
+            }
+
+            // Perform animation effects.
+            npc.frameCounter += 0.2f;
+        }
+
+        public static void DoBehavior_WandFireballs(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            int wandChargeUpTime = 45;
+            int wandAimDelay = 32;
+            int wandAimTime = 30;
+            int wandWaveTime = 45;
+            int wandCycleTime = wandAimTime + wandWaveTime;
+            int totalWandCycles = 2;
+            int flameReleaseRate = 3;
+            int wandAttackCycle = (int)(attackTimer - wandChargeUpTime - wandAimDelay) % wandCycleTime;
+
+            int wandReelBackTime = 40;
+
+            float fireShootSpeed = 16.75f;
+            Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+            Vector2 wandEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 45f;
+            wandEnd += (armRotation + MathHelper.Pi).ToRotationVector2() * npc.scale * npc.spriteDirection * -8f;
+            ref float wandGlowInterpolant = ref npc.Infernum().ExtraAI[0];
+            ref float throwingWand = ref npc.Infernum().ExtraAI[1];
+            ref float wandWasThrown = ref npc.Infernum().ExtraAI[2];
+
+            // Aim the wand at the sky.
+            if (attackTimer < wandChargeUpTime && throwingWand == 0f)
+            {
+                armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.06f).AngleTowards(MathHelper.Pi, 0.016f);
+                npc.velocity *= 0.93f;
+            }
+
+            // Release lightning at the wand.
+            if (attackTimer == wandChargeUpTime && throwingWand == 0f)
+            {
+                SoundEngine.PlaySound(HeavenlyGale.LightningStrikeSound, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 7; i++)
+                    {
+                        Vector2 lightningSpawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(0.51f) * Main.rand.NextFloat(900f, 1000f);
+                        Vector2 lightningVelocity = (wandEnd - lightningSpawnPosition).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(6.4f, 6.7f);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lightning =>
+                        {
+                            lightning.ModProjectile<BrimstoneLightning>().Destination = wandEnd;
+                        });
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<BrimstoneLightning>(), 0, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                    }
+
+                    npc.velocity = Vector2.Zero;
                     npc.netUpdate = true;
                 }
             }
-        }
 
-        public static void DoBehavior_BrimstoneMeteors(NPC npc, Player target, float lifeRatio, bool inFinalPhase, ref float attackTimer)
-        {
-            int attackDelay = 90;
-            int attackTime = 480;
-            int meteorShootRate = 8;
-            float meteorShootSpeed = 18.5f;
-            float hoverSpeed = 20f;
-            if (BossRushEvent.BossRushActive)
+            // Aim the wand at the target and hover near them.
+            if (attackTimer >= wandChargeUpTime + wandAimDelay && throwingWand == 0f)
             {
-                attackTime -= 45;
-                hoverSpeed += 8f;
-                meteorShootSpeed *= 1.4f;
-            }
-            if (inFinalPhase)
-            {
-                attackTime -= 50;
-                meteorShootRate--;
-            }
+                float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
-            meteorShootSpeed *= MathHelper.Lerp(1f, 1.35f, 1f - lifeRatio);
-
-            ref float meteorAngle = ref npc.Infernum().ExtraAI[0];
-
-            // Attempt to hover above the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 380f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-            // Create an explosion sound and decide the meteor angle right before the meteors fall.
-            if (attackTimer == attackDelay - 25f)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
-                meteorAngle = Main.rand.NextFloatDirection() * MathHelper.Pi / 9f;
-                npc.netUpdate = true;
-            }
-
-            bool canFire = attackTimer > attackDelay && attackTimer < attackTime + attackDelay;
-
-            // Rain meteors from the sky. This has a delay at the start and end of the attack.
-            if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % meteorShootRate == meteorShootRate - 1f)
-            {
-                int meteorDamage = 160;
-                float horizontalOffsetMax = MathHelper.Lerp(450f, 1050f, Utils.GetLerpValue(0f, 8f, target.velocity.Length(), true));
-                Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-horizontalOffsetMax, horizontalOffsetMax), -780f);
-                Vector2 shootDirection = Vector2.UnitY.RotatedBy(meteorAngle);
-                Vector2 shootVelocity = shootDirection * meteorShootSpeed;
-
-                int meteorType = ModContent.ProjectileType<BrimstoneMeteor>();
-                Utilities.NewProjectileBetter(meteorSpawnPosition, shootVelocity, meteorType, meteorDamage, 0f);
-            }
-
-            if (attackTimer > attackTime + attackDelay * 2f)
-                SelectNewAttack(npc);
-        }
-
-        public static void DoBehavior_BrimstoneVolcano(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-        {
-            int attackDelay = 45;
-            int attackTime = 300;
-            int lavaShootRate = 24;
-            float hoverSpeed = 20f;
-
-            if (lifeRatio < Phase2LifeRatio)
-            {
-                attackTime += 25;
-                lavaShootRate -= 9;
-            }
-
-            if (BossRushEvent.BossRushActive)
-            {
-                attackTime -= 45;
-                hoverSpeed += 8f;
-                lavaShootRate -= 7;
-            }
-
-            // Attempt to hover above the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-            // Create an flame burst sound and before the lava comes up.
-            if (attackTimer == attackDelay - 25f)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, target.Center);
-                npc.netUpdate = true;
-            }
-
-            bool canFire = attackTimer > attackDelay && attackTimer < attackTime + attackDelay;
-
-            // Create lava from the ground. This has a delay at the start and end of the attack.
-            if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
-            {
-                int lavaDamage = 160;
-                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 420f);
-                if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
+                // Wave the wand and release flame projectiles.
+                if (wandAttackCycle >= wandAimTime)
                 {
-                    lavaSpawnPosition = result.ToWorldCoordinates();
-                    int lavaType = ModContent.ProjectileType<BrimstoneGeyser>();
-                    Utilities.NewProjectileBetter(lavaSpawnPosition, Vector2.Zero, lavaType, lavaDamage, 0f);
+                    // Shoot fire.
+                    if (wandAttackCycle % flameReleaseRate == 0f)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item73, wandEnd);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            if (npc.velocity.Length() < 10f)
+                                npc.velocity -= npc.SafeDirectionTo(target.Center) * 1.3f;
+                            Vector2 fireShootVelocity = npc.SafeDirectionTo(wandEnd) * fireShootSpeed;
+                            Utilities.NewProjectileBetter(wandEnd, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                        }
+
+                        // Do funny screen effects.
+                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 4f;
+                    }
+
+                    float aimCompletion = Utils.GetLerpValue(0f, wandWaveTime, wandAttackCycle - wandAimTime, true);
+                    float aimAngularOffset = MathF.Sin(3f * MathHelper.Pi * aimCompletion) * 1.09f;
+                    idealRotation += aimAngularOffset;
+                }
+                else
+                    npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.024f);
+
+                armRotation = armRotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.017f);
+
+                // Fly near the target.
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 400f) * 16f;
+                npc.SimpleFlyMovement(idealVelocity, 0.22f);
+
+                // Emit cinders at the end of the wand.
+                Dust cinder = Dust.NewDustPerfect(wandEnd, Main.rand.NextBool() ? 169 : 60, -Vector2.UnitY.RotatedByRandom(0.56f) * Main.rand.NextFloat(2f));
+                cinder.scale *= 1.4f;
+                cinder.color = Color.Lerp(Color.White, Color.Orange, Main.rand.NextFloat());
+                cinder.noLight = true;
+                cinder.noLightEmittence = true;
+                cinder.noGravity = true;
+            }
+
+            // After the cycles have completed, move the arm back in anticipation before throwing it.
+            if (throwingWand == 1f)
+            {
+                npc.velocity *= 0.94f;
+
+                // Move the arm back.
+                if (attackTimer >= wandReelBackTime)
+                {
+                    float idealRotation = MathHelper.Pi - 2.44f * npc.spriteDirection;
+                    if (MathHelper.Distance(MathHelper.WrapAngle(idealRotation), MathHelper.WrapAngle(armRotation)) > 0.2f)
+                        armRotation -= npc.spriteDirection * 0.18f;
+                }
+                else
+                {
+                    float idealRotation = (-MathHelper.PiOver2 - 0.72f) * npc.spriteDirection;
+                    armRotation = armRotation.AngleLerp(idealRotation, 0.075f).AngleTowards(idealRotation, 0.019f);
                 }
 
-                // Use a different attack if a bottom could not be located.
-                else
-                    SelectNewAttack(npc);
-            }
-
-            if (attackTimer > attackTime + attackDelay * 2f)
-                SelectNewAttack(npc);
-        }
-
-        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-        {
-            int attackCycleCount = 2;
-            int hoverTime = 210;
-            float hoverHorizontalOffset = 600f;
-            float hoverSpeed = 19f;
-            float fireballSpeed = MathHelper.Lerp(13.5f, 17.5f, 1f - lifeRatio);
-
-            int fireballCount = 5;
-            int fireballReleaseRate = 36;
-            int fireballReleaseTime = 150;
-            float fireballSpread = 0.7f;
-
-            if (BossRushEvent.BossRushActive)
-            {
-                hoverSpeed += 8f;
-                fireballReleaseRate = (int)(fireballReleaseRate * 0.6f);
-                fireballSpeed *= 1.5f;
-            }
-
-            if (Math.Abs(Vector2.Dot(target.velocity, Vector2.UnitX)) > 0.91f)
-            {
-                hoverSpeed += 8f;
-                fireballReleaseRate = (int)(fireballReleaseRate * 0.65f);
-                fireballSpeed *= 1.3f;
-            }
-
-            if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-            {
-                fireballSpeed *= 0.915f;
-                fireballCount = 4;
-                fireballSpread *= 1.225f;
-            }
-
-            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
-
-            // Attempt to hover to the side of the target.
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
-            // This is done to ensure that the attack begins once the boss is close to the target.
-            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 60f)))
-            {
-                attackSubstate = 1f;
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            // Release fireballs.
-            if (attackSubstate == 1f)
-            {
-                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
+                // Throw the wand.
+                if (attackTimer == wandReelBackTime)
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item117 with { Pitch = 0.3f }, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballDamage = 160;
-                        for (int i = 0; i < fireballCount; i++)
+                        Utilities.NewProjectileBetter(armStart, (target.Center - armStart).SafeNormalize(Vector2.UnitY) * 18f, ModContent.ProjectileType<CharredWand>(), 0, 0f);
+                        wandWasThrown = 1f;
+                        npc.netUpdate = true;
+                    }
+                }
+
+                if (attackTimer >= wandReelBackTime + 132f)
+                    SelectNextAttack(npc);
+            }
+
+            // Look at the target.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Perform animation effects.
+            npc.frameCounter += 0.2f;
+
+            if (attackTimer >= wandChargeUpTime + wandAimDelay + wandCycleTime * totalWandCycles && throwingWand == 0f)
+            {
+                throwingWand = 1f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_SoulSeekerResurrection(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            int redirectTime = 45;
+            int seekerSummonTime = 30;
+            int seekerShootTime = 240;
+            int laserTelegraphTime = 120;
+            int laserShootTime = EntropyBeam.Lifetime;
+            Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+            Vector2 staffEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 66f;
+            ref float totalSummonedSoulSeekers = ref npc.Infernum().ExtraAI[0];
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
+            ref float beamDirection = ref npc.Infernum().ExtraAI[2];
+
+            // Hover to the side of the target.
+            if (attackTimer <= redirectTime)
+            {
+                Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 400f;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.03f).MoveTowards(hoverDestination, 2.4f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 18f, 0.32f);
+
+                if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 800))
+                    npc.position.Y -= 10f;
+            }
+
+            // Aim Entropy's Vigil downwards and use it to raise soul seekers from the dead.
+            else if (attackTimer <= redirectTime + seekerSummonTime)
+            {
+                npc.velocity *= 0.9f;
+
+                float idealRotation = Utils.Remap(attackTimer - redirectTime, 0f, seekerSummonTime, -0.54f, 0.54f);
+                armRotation = armRotation.AngleLerp(idealRotation, 0.2f).AngleTowards(idealRotation, 0.03f);
+                if (attackTimer % 5f == 4f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item74, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(staffEnd, npc.SafeDirectionTo(staffEnd), ModContent.ProjectileType<SoulSeekerResurrectionBeam>(), 0, 0f);
+                }
+            }
+
+            // Hover near the target.
+            else
+            {
+                if (attackTimer <= redirectTime + seekerSummonTime + seekerShootTime)
+                {
+                    Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 300f;
+                    hoverDestination.Y -= 60f;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 18f, 0.32f);
+
+                    float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    armRotation = armRotation.AngleTowards(idealRotation, 0.05f);
+                }
+
+                // Make all seekers go away.
+                if (attackTimer == redirectTime + seekerSummonTime + seekerShootTime)
+                {
+                    SoundEngine.PlaySound(CalamitasEnchantUI.EXSound with { Pitch = -0.5f }, target.Center);
+
+                    // Teleport above the player and make all seekers leave.
+                    npc.Center = target.Center - Vector2.UnitY * 350f;
+                    npc.velocity = Vector2.Zero;
+                    armRotation = MathHelper.Pi;
+
+                    armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+                    staffEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 66f;
+                    for (int i = 0; i < 35; i++)
+                    {
+                        Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
+                        CloudParticle fireCloud = new(staffEnd, (MathHelper.TwoPi * i / 35f).ToRotationVector2() * 20f, fireColor, Color.DarkGray, 50, Main.rand.NextFloat(2.6f, 3.4f));
+                        GeneralParticleHandler.SpawnParticle(fireCloud);
+                    }
+
+                    ScreenEffectSystem.SetBlurEffect(staffEnd, 1.6f, 45);
+                    target.Infernum_Camera().CurrentScreenShakePower = 10f;
+
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
+
+                    int seekerID = ModContent.NPCType<SoulSeeker>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC n = Main.npc[i];
+
+                        if (n.active && n.type == seekerID)
                         {
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
-                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-fireballSpread, fireballSpread, i / (float)(fireballCount - 1f)) + Main.rand.NextFloatDirection() * 0.13f);
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                            n.Infernum().ExtraAI[0] = 1f;
+                            n.netUpdate = true;
                         }
                     }
                 }
 
-                if (attackTimer > fireballReleaseTime)
+                // Aim the staff at the target in anticipation of the laser.
+                if (attackTimer <= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
                 {
-                    attackTimer = 0f;
-                    attackSubstate = 0f;
-                    attackCycleCounter++;
+                    // Play a charge telegraph sound.
+                    if (attackTimer == redirectTime + seekerSummonTime + seekerShootTime)
+                        SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayChargeSound, target.Center);
 
-                    if (attackCycleCounter > attackCycleCount)
-                        SelectNewAttack(npc);
-                    npc.netUpdate = true;
+                    float telegraphCompletion = Utils.GetLerpValue(0f, laserTelegraphTime, attackTimer - redirectTime - seekerSummonTime - seekerShootTime, true);
+                    telegraphInterpolant = Utils.GetLerpValue(0f, 0.67f, telegraphCompletion, true) * Utils.GetLerpValue(1f, 0.84f, telegraphCompletion, true);
+
+                    float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    armRotation = armRotation.AngleLerp(idealRotation, 0.04f).AngleTowards(idealRotation, 0.01f);
                 }
-            }
-        }
 
-        public static void DoBehavior_DiagonalCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-        {
-            float chargeOffset = 395f;
-            float redirectSpeed = 33f;
-            float chargeSpeed = MathHelper.Lerp(26.75f, 30.25f, 1f - lifeRatio);
-            int chargeTime = 50;
-            int chargeSlowdownTime = 15;
-            int chargeCount = 5;
+                // Fire the laser.
+                if (attackTimer == redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
+                {
+                    ScreenEffectSystem.SetBlurEffect(staffEnd, 1.6f, 45);
+                    target.Infernum_Camera().CurrentScreenShakePower = 10f;
+                    SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayFireSound, target.Center);
 
-            if (BossRushEvent.BossRushActive)
-            {
-                chargeSpeed *= 1.72f;
-                redirectSpeed += 6f;
-            }
-
-            if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-                chargeSpeed *= 0.825f;
-
-            ref float attackState = ref npc.Infernum().ExtraAI[0];
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
-
-            switch ((int)attackState)
-            {
-                // Hover into position.
-                case 0:
-                    Vector2 hoverDestination = target.Center;
-                    hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * chargeOffset;
-                    hoverDestination.Y += (target.Center.Y < npc.Center.Y).ToDirectionInt() * chargeOffset;
-
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 120f) && attackTimer > 80f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
-                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;
-                        attackTimer = 0f;
-                        attackState = 1f;
-                    }
-                    break;
-
-                // Do the charge.
-                case 1:
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
-
-                    // Slow down after the charge has ended and look at the target.
-                    if (attackTimer > chargeTime)
-                    {
-                        npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.1f) * 0.96f;
-                        float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-                        npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
-                    }
-
-                    // Go to the next attack once done slowing down.
-                    if (attackTimer > chargeTime + chargeSlowdownTime)
-                    {
-                        chargeCounter++;
-                        attackTimer = 0f;
-                        attackState = 0f;
-                        if (chargeCounter >= chargeCount)
-                            SelectNewAttack(npc);
+                        Utilities.NewProjectileBetter(npc.Center, armRotation.ToRotationVector2(), ModContent.ProjectileType<EntropyBeam>(), 240, 0f);
+                        beamDirection = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - armRotation - MathHelper.PiOver2) > 0f).ToDirectionInt();
                         npc.netUpdate = true;
                     }
-                    break;
+                }
+
+                // Spin the laser after it appears.
+                if (attackTimer >= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
+                    armRotation += beamDirection * 0.023f;
+
+                if (attackTimer >= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime + laserShootTime)
+                    SelectNextAttack(npc);
+            }
+
+            // Look at the target.
+            if (attackTimer < redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Perform animation effects.
+            npc.frameCounter += 0.2f;
+
+            if (attackTimer >= 800f)
+            {
+                npc.Center = target.Center - Vector2.UnitY * 300f;
+                attackTimer = 0f;
             }
         }
 
-        public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant)
         {
-            int attackCycleCount = 2;
-            int hoverTime = 90;
-            float hoverHorizontalOffset = 485f;
-            float hoverSpeed = 19f;
-            float fireballSpeed = 13.5f;
-            int fireballReleaseRate = 22;
-            int fireballReleaseTime = 225;
+            int jitterTime = 45;
+            int disappearTime = 20;
+            int sitTime = 14;
+            int fadeOutTime = 25;
+            int teleportCount = 6;
+            int wrappedAttackTimer = (int)(attackTimer - jitterTime) % (disappearTime + sitTime + fadeOutTime);
+            ref float teleportOffsetAngle = ref npc.Infernum().ExtraAI[0];
+            ref float teleportCounter = ref npc.Infernum().ExtraAI[1];
 
-            if (BossRushEvent.BossRushActive)
+            armRotation = 0f;
+
+            // Jitter in place and become transluscent.
+            if (attackTimer <= jitterTime)
             {
-                fireballReleaseRate -= 10;
-                hoverSpeed += 10f;
-                fireballSpeed *= 1.65f;
+                float jitterInterpolant = Utils.GetLerpValue(0f, jitterTime, attackTimer, true);
+                npc.Center += Main.rand.NextVector2Circular(3f, 3f) * jitterInterpolant;
+                npc.Opacity = MathHelper.Lerp(1f, 0.5f, jitterInterpolant);
             }
 
-            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
-
-            // Attempt to hover to the side of the target.
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
-            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
-            // This is done to ensure that the attack begins once the boss is close to the target.
-            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 110f)))
+            if (attackTimer >= jitterTime)
             {
-                attackSubstate = 1f;
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            // Release fireballs.
-            if (attackSubstate == 1f)
-            {
-                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 180f < 60f)
+                // Dissipate into shadow particles.
+                if (wrappedAttackTimer == 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (attackTimer == jitterTime)
+                        teleportOffsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
+                    else
                     {
-                        int fireballDamage = 150;
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
+                        teleportOffsetAngle += MathHelper.TwoPi / teleportCount;
+                        teleportCounter++;
+                    }
+
+                    npc.velocity = Vector2.Zero;
+                    npc.Opacity = 0f;
+                    npc.dontTakeDamage = true;
+                    npc.netUpdate = true;
+                    if (teleportCounter >= teleportCount - 1f)
+                    {
+                        npc.Opacity = 1f;
+                        SelectNextAttack(npc);
+                        return;
+                    }
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
+
+                    var cloneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneSingleFrame", AssetRequestMode.ImmediateLoad).Value;
+                    cloneTexture.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>().Particles, npc.Center, npc.rotation, npc.scale, 28f, 10);
+
+                    if (Main.netMode != NetmodeID.Server)
+                    {
+                        for (int i = 0; i < 12; i++)
+                            Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(9f, 14f), ModContent.ProjectileType<ShadowBlob>(), 0, 0f);
                     }
                 }
 
-                if (attackTimer > fireballReleaseTime)
+                // Hover above the target.
+                if (wrappedAttackTimer <= disappearTime)
                 {
-                    attackTimer = 0f;
-                    attackSubstate = 0f;
-                    attackCycleCounter++;
+                    npc.Center = target.Center + teleportOffsetAngle.ToRotationVector2() * 396f;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
-                    if (attackCycleCounter > attackCycleCount)
-                        SelectNewAttack(npc);
-                    npc.netUpdate = true;
+                    // Create shadow particles shortly before fully appearing.
+                    if (wrappedAttackTimer >= disappearTime - 15f)
+                    {
+                        npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.07f, 0f, 1f);
+                        npc.dontTakeDamage = true;
+                        for (int i = 0; i < (1f - npc.Opacity) * 24f; i++)
+                        {
+                            Color shadowMistColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0.66f));
+                            var mist = new MediumMistParticle(npc.Center + npc.Opacity * Main.rand.NextVector2Circular(90f, 90f), Main.rand.NextVector2Circular(5f, 5f), shadowMistColor, Color.DarkGray, Main.rand.NextFloat(0.55f, 0.7f), 172f, Main.rand.NextFloatDirection() * 0.012f);
+                            GeneralParticleHandler.SpawnParticle(mist);
+                        }
+                    }
+                    else
+                        npc.Opacity = 0f;
+                }
+
+                if (wrappedAttackTimer == disappearTime)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.CalCloneTeleportSound, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 7; i++)
+                        {
+                            float shootOffsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 6f);
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 12f;
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                        }
+                    }
                 }
             }
+
+            blackFormInterpolant = MathF.Pow(1f - npc.Opacity, 0.2f) * 3f;
         }
 
-        public static void DoBehavior_HorizontalBurstCharge(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_DarkOverheadFireball(NPC npc, Player target, ref float attackTimer, ref float armRotation)
         {
-            int redirectTime = 60;
-            int chargeTime = 130;
-            float chargeSpeed = 21.5f;
-            float fireballSpeed = 10.5f;
+            int redirectTime = 45;
+            int fireOrbReleaseDelay = 15;
+            int boltReleaseDelay = 60;
+            int boltCircleReleaseRate = 25;
+            int boltShootCycleTime = 90;
+            int wrappedAttackTimer = (int)(attackTimer - redirectTime - fireOrbReleaseDelay - boltReleaseDelay) % boltShootCycleTime;
+            int fireShootTime = 240;
+            var fireOrbs = Utilities.AllProjectilesByID(ModContent.ProjectileType<LargeDarkFireOrb>());
+            bool readyToBlowUpFireOrb = attackTimer >= redirectTime + fireOrbReleaseDelay + boltReleaseDelay + fireShootTime;
+            bool canShootFire = attackTimer >= redirectTime + fireOrbReleaseDelay + boltReleaseDelay && !readyToBlowUpFireOrb;
+            Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+            Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+            ref float fireShootCounter = ref npc.Infernum().ExtraAI[0];
+            ref float isSlammingFireballDown = ref npc.Infernum().ExtraAI[1];
+            ref float fireballHasExploded = ref npc.Infernum().ExtraAI[2];
 
-            if (BossRushEvent.BossRushActive)
+            if (fireballHasExploded == 0f)
             {
-                chargeSpeed *= 1.56f;
-                fireballSpeed *= 1.7f;
+                // Hover above the target at first.
+                if (attackTimer < redirectTime)
+                {
+                    Vector2 hoverDestination = target.Center - Vector2.UnitY * 200f;
+                    Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.06f;
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.12f);
+
+                    if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 50f)
+                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                }
+
+                // Afterwards have CalClone raise her arm up towards the fire orb and slow down.
+                else
+                {
+                    if (npc.velocity.Length() > 0.001f)
+                        npc.velocity = npc.velocity.ClampMagnitude(0f, 9f) * 0.8f;
+                    armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.05f).AngleTowards(MathHelper.Pi, 0.015f);
+
+                    if (!readyToBlowUpFireOrb)
+                    {
+                        Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
+                        magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                        magic.noGravity = true;
+                        magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
+                        magic.scale = Main.rand.NextFloat(1f, 1.3f);
+                    }
+                }
+
+                // Prepare the fire orb.
+                if (attackTimer == redirectTime + fireOrbReleaseDelay)
+                {
+                    SoundEngine.PlaySound(SoundID.Item163 with { Pitch = 0.08f }, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 fireOrbSpawnPosition = npc.Top - Vector2.UnitY * (LargeDarkFireOrb.MaxFireOrbRadius - 75f);
+                        Utilities.NewProjectileBetter(fireOrbSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LargeDarkFireOrb>(), 0, 0f);
+                    }
+                }
+
+                // Release fire from the orb.
+                if (canShootFire && wrappedAttackTimer <= boltShootCycleTime - 30f && wrappedAttackTimer % boltCircleReleaseRate == boltCircleReleaseRate - 1f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && fireOrbs.Any())
+                    {
+                        int fireShootCount = (int)Utils.Remap(npc.Distance(target.Center), 800f, 3000f, 24f, 48f);
+                        if (fireShootCount % 2 != 0)
+                            fireShootCount++;
+
+                        float fireShootSpeed = Utils.Remap(npc.Distance(target.Center), 600f, 3000f, 8.5f, 70f);
+                        Vector2 fireOrbCenter = fireOrbs.First().Center;
+                        for (int i = 0; i < fireShootCount; i++)
+                        {
+                            Vector2 fireShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + (fireShootCounter % 2f == 0f ? 0.5f : 0f)) / fireShootCount) * fireShootSpeed;
+                            Utilities.NewProjectileBetter(fireOrbCenter + fireShootVelocity * 5f, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                        }
+
+                        fireShootCounter++;
+                        npc.netUpdate = true;
+                    }
+                }
+
+                // Blow up the fire orb.
+                if (readyToBlowUpFireOrb && fireOrbs.Any())
+                {
+                    Projectile fireOrb = fireOrbs.First();
+                    float idealHoverDestinationY = npc.Center.Y - LargeDarkFireOrb.MaxFireOrbRadius - 120f;
+                    if (fireOrb.Center.Y >= idealHoverDestinationY + 10f && fireOrb.velocity.Length() < 2f && fireOrb.timeLeft >= 40)
+                        fireOrb.Center = new Vector2(fireOrb.Center.X, MathHelper.Lerp(fireOrb.Center.Y, idealHoverDestinationY, 0.12f));
+
+                    // Make the orb slam down.
+                    else if (isSlammingFireballDown == 0f)
+                    {
+                        fireOrb.velocity = Vector2.UnitY * 8f;
+                        fireOrb.netUpdate = true;
+                        isSlammingFireballDown = 1f;
+                        npc.netUpdate = true;
+                    }
+                }
             }
 
-            if (attackTimer < redirectTime)
-            {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 1500f, -350f);
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13f;
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
-                if (npc.WithinRange(hoverDestination, 20f))
-                    attackTimer = redirectTime - 1f;
-            }
-            else if (attackTimer == redirectTime)
-            {
-                Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center);
-                chargeVelocity.Y *= 0.25f;
-                chargeVelocity = chargeVelocity.SafeNormalize(Vector2.UnitX);
-                npc.rotation = chargeVelocity.ToRotation() - MathHelper.PiOver2;
-                npc.velocity = chargeVelocity * chargeSpeed;
-            }
+            // Create meteors from above.
             else
             {
-                npc.position.X += npc.SafeDirectionTo(target.Center).X * 9f;
-                npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
-                if (attackTimer % 30f == 29f)
+                if (attackTimer == 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSmallSound, target.Center);
+                    ScreenEffectSystem.SetFlashEffect(target.Center - Vector2.UnitY * 500f, 4f, 35);
+                    target.Infernum_Camera().CurrentScreenShakePower = 10f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballDamage = 150;
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY);
-                        shootVelocity = Vector2.Lerp(shootVelocity, npc.velocity.SafeNormalize(Vector2.Zero), 0.6f).SafeNormalize(Vector2.UnitY) * fireballSpeed;
-
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
+                        for (float dx = -1300f; dx < 1300f; dx += 150f)
+                        {
+                            Vector2 meteorSpawnPosition = target.Center + new Vector2(dx - 60f, Math.Abs(dx) * -0.35f - 600f);
+                            Vector2 meteorShootVelocity = Vector2.UnitY * 15f;
+                            Utilities.NewProjectileBetter(meteorSpawnPosition, meteorShootVelocity, ModContent.ProjectileType<BrimstoneMeteor>(), 160, 0f);
+                        }
                     }
                 }
-            }
 
-            if (attackTimer >= redirectTime + chargeTime)
-                SelectNewAttack(npc);
+                if (attackTimer >= 90f)
+                    SelectNextAttack(npc);
+            }
         }
 
-        public static void SelectNewAttack(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            List<CloneAttackType> possibleAttacks = new()
-            {
-                CloneAttackType.HorizontalDartRelease,
-                CloneAttackType.BrimstoneMeteors,
-                CloneAttackType.BrimstoneVolcano
-            };
-
-            for (int i = 0; i < 3; i++)
-            {
-                if (lifeRatio < Phase2LifeRatio)
-                    possibleAttacks.Remove(CloneAttackType.HorizontalDartRelease);
-                possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
-                possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);
-            }
-
-            // If seekers are present.
-            if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-            {
-                possibleAttacks.Clear();
-                possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);
-                possibleAttacks.Add(CloneAttackType.DiagonalCharge);
-            }
-
-            // Final phase.
-            if (npc.ai[2] == 4f)
-            {
-                possibleAttacks.Clear();
-                possibleAttacks.Add(CloneAttackType.RisingBrimstoneFireBursts);
-                possibleAttacks.Add(CloneAttackType.HorizontalBurstCharge);
-
-                if (lifeRatio < Phase4LifeRatio)
-                    possibleAttacks.Add(CloneAttackType.BrimstoneMeteors);
-            }
-
-            if (possibleAttacks.Count > 1)
-                possibleAttacks.RemoveAll(a => a == (CloneAttackType)(int)npc.ai[0]);
+            CloneAttackType currentAttack = (CloneAttackType)npc.ai[0];
+            CloneAttackType nextAttack = CloneAttackType.DarkOverheadFireball;
+            if (currentAttack == CloneAttackType.SpawnAnimation)
+                nextAttack = CloneAttackType.SoulSeekerResurrection;
+            if (currentAttack == CloneAttackType.DarkOverheadFireball)
+                nextAttack = CloneAttackType.WandFireballs;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
-            npc.Infernum().ExtraAI[7] = 0f;
+            npc.ai[0] = (int)nextAttack;
+            npc.ai[1] = 0f;
             npc.netUpdate = true;
+        }
+        #endregion AI
+
+        #region Frames and Drawcode
+
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            // Redefine the frame size to be in line with the SCal sheet.
+            npc.frame.Width = 52;
+            npc.frame.Height = 52;
+
+            npc.frameCounter += npc.localAI[0];
+            int frameOffset = (int)npc.frameCounter % 6;
+            int frame = frameOffset;
+
+            npc.frame.X = npc.frame.Width * (frame / 21);
+            npc.frame.Y = npc.frame.Height * (frame % 21);
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -791,45 +754,129 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            // Kill me.
-            npc.frameCounter += 0.15f;
-            npc.frameCounter %= Main.npcFrameCount[npc.type];
-            int frame = (int)npc.frameCounter;
-            npc.frame.Y = frame * npc.frame.Height;
-
-            int afterimageCount = 7;
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            int afterimageCount = 8;
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasClone").Value;
+            Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneArm").Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
+            // Incorporate the black shadow form effects.
+            lightColor = Color.Lerp(lightColor, Color.Black, MathF.Pow(npc.localAI[2], 0.33f));
+            float shadowBackglowOffset = 25f * MathF.Pow(npc.localAI[2], 2.8f) * npc.scale;
+            float eyeGleamInterpolant = npc.localAI[3];
+
+            // Draw afterimages.
             if (CalamityConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {
-                    Color afterimageColor = Color.Lerp(lightColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f) * npc.Opacity;
-                    Vector2 afterimageDrawPosition = npc.oldPos[i] + origin - Main.screenPosition;
+                    Color afterimageColor = lightColor * ((afterimageCount - i) / 15f) * npc.Opacity;
+                    Vector2 afterimageDrawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 0.55f);
+                    afterimageDrawPosition += -Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            Vector2 drawPosition = npc.position + origin - Main.screenPosition;
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
-
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/CalClone/CalamitasCloneGlow").Value;
-            Color afterimageBaseColor = Color.Lerp(Color.White, Color.Red, 0.5f);
-
-            if (CalamityConfig.Instance.Afterimages)
+            // Draw a shadow backglow.
+            Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+            Vector2 armDrawPosition = drawPosition + new Vector2(npc.spriteDirection * 9.6f, -2f);
+            if (shadowBackglowOffset > 0f)
             {
-                for (int i = 1; i < afterimageCount; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    Color afterimageColor = Color.Lerp(afterimageBaseColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f) * npc.Opacity;
-                    Vector2 afterimageDrawPosition = npc.oldPos[i] + origin - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * shadowBackglowOffset;
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, lightColor with { A = 0 } * (1f - npc.localAI[2]), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Color shadowColor = CalamityUtils.ColorSwap(Color.Purple, Color.Blue, 10f);
+            lightColor = Color.Lerp(lightColor, shadowColor, 0.7f);
+            lightColor = Color.Lerp(lightColor, Color.Black, 0.32f);
+            lightColor.A = 232;
+
+            // Draw the body and arm.
+            float armRotation = npc.Infernum().ExtraAI[ArmRotationIndex];
+
+            // Draw a backglow.
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 4f;
+                Color backglowColor = Color.Purple with { A = 0 };
+                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backglowColor * npc.Opacity * 0.45f, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            }
+
+            // Draw the body and arms.
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(armTexture, armDrawPosition, null, lightColor * npc.Opacity, armRotation, armTexture.Size() * new Vector2(0.4f, 0.1f), npc.scale, spriteEffects, 0f);
+
+            // Draw the wand if it's being used.
+            if (npc.ai[0] == (int)CloneAttackType.WandFireballs && npc.Infernum().ExtraAI[2] == 0f)
+            {
+                float wandBrightness = npc.Infernum().ExtraAI[0];
+                float wandRotation = armRotation + MathHelper.Pi - MathHelper.PiOver4;
+                Texture2D wandTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CharredWand").Value;
+                Vector2 wandDrawPosition = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 12f;
+
+                if (wandBrightness > 0f)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        Color wandMagicBackglowColor = Color.HotPink with { A = 0 } * wandBrightness * npc.Opacity * 0.6f;
+                        Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * wandBrightness * 3f;
+                        Main.spriteBatch.Draw(wandTexture, wandDrawPosition + drawOffset, null, wandMagicBackglowColor, wandRotation, wandTexture.Size() * Vector2.UnitY, npc.scale * 0.7f, 0, 0f);
+                    }
+                }
+                Main.spriteBatch.Draw(wandTexture, wandDrawPosition, null, Color.LightGray * npc.Opacity, wandRotation, wandTexture.Size() * Vector2.UnitY, npc.scale * 0.7f, 0, 0f);
+            }
+
+            // Draw the staff if it's being used.
+            if (npc.ai[0] == (int)CloneAttackType.SoulSeekerResurrection)
+            {
+                float staffRotation = armRotation + MathHelper.Pi - MathHelper.PiOver4;
+                float telegraphInterpolant = npc.Infernum().ExtraAI[1];
+                Texture2D staffTexture = ModContent.Request<Texture2D>("CalamityMod/Items/Weapons/Summon/EntropysVigil").Value;
+                Vector2 staffDrawPosition = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 12f;
+                Vector2 staffEnd = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 48f;
+
+                BloomLineDrawInfo lineInfo = new()
+                {
+                    LineRotation = -armRotation - MathHelper.PiOver2,
+                    WidthFactor = 0.004f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
+                    Scale = Vector2.One * telegraphInterpolant * MathHelper.Clamp(npc.Distance(Main.player[npc.target].Center) * 3f, 10f, 3600f),
+                    MainColor = Color.Lerp(Color.HotPink, Color.Red, telegraphInterpolant * 0.9f + 0.1f),
+                    DarkerColor = Color.Orange,
+                    Opacity = MathF.Sqrt(telegraphInterpolant),
+                    BloomOpacity = 0.5f,
+                    LightStrength = 5f
+                };
+                Utilities.DrawBloomLineTelegraph(staffEnd, lineInfo);
+
+                Main.spriteBatch.Draw(staffTexture, staffDrawPosition, null, Color.White * npc.Opacity, staffRotation, staffTexture.Size() * Vector2.UnitY, npc.scale * 0.85f, 0, 0f);
+            }
+
+            // Draw the eye gleam.
+            if (eyeGleamInterpolant > 0f)
+            {
+                float eyePulse = Main.GlobalTimeWrappedHourly * 0.84f % 1f;
+                Texture2D eyeGleam = InfernumTextureRegistry.Gleam.Value;
+                Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -6f);
+                Vector2 horizontalGleamScaleSmall = new Vector2(eyeGleamInterpolant * 3f, 1f) * 0.55f;
+                Vector2 verticalGleamScaleSmall = new Vector2(1f, eyeGleamInterpolant * 2f) * 0.55f;
+                Vector2 horizontalGleamScaleBig = horizontalGleamScaleSmall * (1f + eyePulse * 2f);
+                Vector2 verticalGleamScaleBig = verticalGleamScaleSmall * (1f + eyePulse * 2f);
+                Color eyeGleamColorSmall = Color.Violet * eyeGleamInterpolant;
+                eyeGleamColorSmall.A = 0;
+                Color eyeGleamColorBig = eyeGleamColorSmall * (1f - eyePulse);
+
+                // Draw a pulsating red eye.
+                Main.spriteBatch.Draw(eyeGleam, eyePosition - Main.screenPosition, null, eyeGleamColorSmall, 0f, eyeGleam.Size() * 0.5f, horizontalGleamScaleSmall, 0, 0f);
+                Main.spriteBatch.Draw(eyeGleam, eyePosition - Main.screenPosition, null, eyeGleamColorSmall, 0f, eyeGleam.Size() * 0.5f, verticalGleamScaleSmall, 0, 0f);
+                Main.spriteBatch.Draw(eyeGleam, eyePosition - Main.screenPosition, null, eyeGleamColorBig, 0f, eyeGleam.Size() * 0.5f, horizontalGleamScaleBig, 0, 0f);
+                Main.spriteBatch.Draw(eyeGleam, eyePosition - Main.screenPosition, null, eyeGleamColorBig, 0f, eyeGleam.Size() * 0.5f, verticalGleamScaleBig, 0, 0f);
+            }
+
             return false;
         }
-        #endregion AI
+        #endregion Frames and Drawcode
     }
 }

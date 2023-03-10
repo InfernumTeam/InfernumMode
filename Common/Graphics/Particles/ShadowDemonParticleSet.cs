@@ -13,8 +13,8 @@ namespace InfernumMode.Common.Graphics.Particles
 {
     public class ShadowDemonParticleSet : BaseFusableParticleSet
     {
-        public override float BorderSize => 3f;
-        public override bool BorderShouldBeSolid => false;
+        public override float BorderSize => 2f;
+        public override bool BorderShouldBeSolid => true;
         public override Color BorderColor => Color.Lerp(Color.Fuchsia, Color.Black, 0.7f) * 0.85f;
 
         public override List<Effect> BackgroundShaders => new()
@@ -37,7 +37,7 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override void UpdateBehavior(FusableParticle particle)
         {
-            particle.Size = MathHelper.Clamp(particle.Size - 2.5f, 0f, 400f) * 0.97f;
+            particle.Size = MathHelper.Clamp(particle.Size - 0.9f, 0f, 400f) * 0.98f;
         }
 
         public override void PrepareOptionalShaderData(Effect effect, int index)

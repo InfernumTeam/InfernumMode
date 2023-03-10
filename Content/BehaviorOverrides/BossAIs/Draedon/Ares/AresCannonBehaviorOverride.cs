@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             int shootTime = ShootTime;
             int shootRate = ShootRate;
-            bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
+            bool currentlyDisabled = ArmIsDisabled(npc);
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
             ref float currentDirection = ref npc.ai[3];
@@ -81,14 +81,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Initialize delays and other timers.
             shouldPrepareToFire = 0f;
             if (chargeDelay == 0f)
-                chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
+                chargeDelay = Phase1ArmChargeupTime;
 
             // Don't do anything if this arm should be disabled.
             if (currentlyDisabled)
                 attackTimer = 1f;
 
             // Inherit the attack timer from Ares if he's performing the ultimate attack.
-            bool doingUltimateAttack = Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PrecisionBlasts && Ares.Infernum().ExtraAI[9] >= 1f;
+            bool doingUltimateAttack = Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts && Ares.Infernum().ExtraAI[9] >= 1f;
             if (doingUltimateAttack)
             {
                 chargeDelay = (int)Ares.Infernum().ExtraAI[2];
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Hover near Ares.
-            bool performingCharge = Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge && !performingDeathAnimation;
+            bool performingCharge = Ares.ai[0] == (int)AresBodyAttackType.HoverCharge && !performingDeathAnimation;
             Vector2 hoverOffset = PerformHoverMovement(npc, performingCharge);
 
             // Update the telegraph outline intensity timer.
@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Check to see if Ares is in the middle of a death animation. If he is, participate in the death animation.
             if (performingDeathAnimation)
             {
-                AresBodyBehaviorOverride.HaveArmPerformDeathAnimation(npc, hoverOffset);
+                HaveArmPerformDeathAnimation(npc, hoverOffset);
                 return false;
             }
 
@@ -260,15 +260,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            bool enraged = AresBodyBehaviorOverride.Enraged || ExoMechComboAttackContent.EnrageTimer > 0f;
+            bool enraged = Enraged || ExoMechComboAttackContent.EnrageTimer > 0f;
             Color glowmaskColor = enraged ? Color.Red : Color.White;
 
             // Use the heat effect, just like the body.
-            lightColor = Color.Lerp(lightColor, Color.Red with { A = 100 }, Ares.localAI[3] * 0.48f);
+            if (CalamityGlobalNPC.draedonExoMechPrime != -1)
+                lightColor = Color.Lerp(lightColor, Color.Red with { A = 100 }, Ares.localAI[3] * 0.48f);
 
             // Draw telegraphs if necessary during the ultimate attack.
             float telegraphIntensity = 0f;
-            if (Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PrecisionBlasts)
+            if (CalamityGlobalNPC.draedonExoMechPrime != -1 && Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
                 telegraphIntensity = Ares.Infernum().ExtraAI[4] / Ares.Infernum().ExtraAI[2];
 
             if (telegraphIntensity > 0f)

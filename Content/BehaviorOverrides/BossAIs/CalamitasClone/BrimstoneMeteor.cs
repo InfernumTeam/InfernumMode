@@ -10,6 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
     public class BrimstoneMeteor : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Meteor");
@@ -34,11 +35,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
-            Projectile.Opacity = Utils.GetLerpValue(30f, 42f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-
-            if (Time == 30f)
-                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.Center);
 
             Time++;
         }
@@ -49,24 +47,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Time < 30f)
-            {
-                Vector2 lineDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-                float lineWidth = CalamityUtils.Convert01To010(Time / 30f) * 4f + 1f;
-                Main.spriteBatch.DrawLineBetter(Projectile.Center - lineDirection * 3400f, Projectile.Center + lineDirection * 3400f, Color.Red, lineWidth);
-                return false;
-            }
-
             lightColor.R = (byte)(255 * Projectile.Opacity);
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }
 
-        public override bool ShouldUpdatePosition() => Time >= 30f;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
-        }
+        public override bool ShouldUpdatePosition() => true;
     }
 }

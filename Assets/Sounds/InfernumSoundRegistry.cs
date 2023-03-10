@@ -49,6 +49,10 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
+        public static readonly SoundStyle CalCloneDissipateSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/CalamitasCloneDissipate");
+
+        public static readonly SoundStyle CalCloneTeleportSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/CalamitasCloneTeleport");
+
         public static readonly SoundStyle CeaselessVoidChainSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidChain", 2);
 
         public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Assets/Sounds/Custom/CloudElementalWind");
@@ -70,6 +74,10 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DoGLaugh");
 
         public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
+
+        public static readonly SoundStyle EntropyRayChargeSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/EntropyRayCharge");
+
+        public static readonly SoundStyle EntropyRayFireSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/EntropyRayFire");
 
         public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ExoMechFinalPhaseChargeup");
 

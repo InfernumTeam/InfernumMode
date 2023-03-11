@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             NPC.lifeMax = 25000;
             NPC.knockBackResist = 0;
             NPC.defense = 50;
-            NPC.DR_NERD(0.2f);
+            NPC.DR_NERD(0.15f);
             NPC.canGhostHeal = false;
             NPC.noGravity = true;
             NPC.HitSound = SoundID.NPCHit52;

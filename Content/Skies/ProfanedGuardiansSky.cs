@@ -71,8 +71,8 @@ namespace InfernumMode.Content.Skies
                 return AttackerGuardianBehaviorOverride.TotalRemaininGuardians switch
                 {
                     3 => 0.05f,
-                    2 => 0.1f,
-                    _ => 0.15f
+                    2 => 0.13f,
+                    _ => 0.21f
                 };
             }
         }

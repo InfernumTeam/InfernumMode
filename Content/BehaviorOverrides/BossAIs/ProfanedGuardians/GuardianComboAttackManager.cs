@@ -610,7 +610,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float waitTime = dashesCompleted == 0f ? 90f : 60f;
                 float telegraphWaitTime = 20f;
                 float dashTime = 30f;
-                float dashSpeed = 35f;
+                float dashSpeed = 24f;
+                float dashAcceleration = 1.35f;
                 Vector2 oldHoverOffset = new(hoverOffsetX, hoverOffsetY);
 
                 // Generate the shield if it is inactive.
@@ -707,6 +708,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         npc.damage = npc.defDamage;
+
+                        // Accelerate after charging.
+                        if (universalAttackTimer < dashTime && npc.velocity.Length() <= 60f)
+                            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + dashAcceleration);
+
                         // Create particles to indicate the sudden speed.
                         if (Main.rand.NextBool(2))
                         {
@@ -794,8 +800,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 float waitTime = dashesCompleted == 0f ? 60f : 30;
                 float telegraphWaitTime = 20f;
-                float dashTime = 25f;
-                float dashSpeed = 35f;
+                float dashTime = 35f;
+                float dashSpeed = 25f;
+                float dashAcceleration = 1.55f;
 
                 switch (substate)
                 {
@@ -882,6 +889,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             GeneralParticleHandler.SpawnParticle(energyLeak);
                         }
 
+                        // Accelerate after charging.
+                        if (localAttackTimer < dashTime && npc.velocity.Length() <= 60f)
+                            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + dashAcceleration);
+
                         if (localAttackTimer >= dashTime)
                         {
                             drawFireAfterimages = 0;
@@ -903,6 +914,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float crystalLayerFireRate = 45f;
                 float endOfAttackDelay = 60f;
                 Vector2 hoverPosition = new(commander.Center.X, CrystalPosition.Y - 550);
+
                 // Sit still above the commander
                 if (npc.Distance(hoverPosition) > 10f && movedToPosition == 0f)
                     npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
@@ -1061,7 +1073,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float spinLength = 20f;
                 float recoilLength = 20f;
                 float chargeLength = 25f;
-                float chargeSpeed = 50f;
+                float chargeSpeed = 30f;
+                float chargeAcceleration = 1.55f;
                 float totalSpearsToRelease = 11f;
                 int spearReleasePoint = (int)(spinLength / totalSpearsToRelease);
 
@@ -1167,6 +1180,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
                             GeneralParticleHandler.SpawnParticle(energyLeak);
                         }
+
+                        // Accelerate after charging.
+                        if (localAttackTimer < chargeLength && npc.velocity.Length() <= 120f)
+                            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
 
                         drawFireAfterimages = 1f;
                         if (localAttackTimer >= chargeLength)
@@ -1695,6 +1712,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
             }
 
+            // Ensure they are fully faded in.
+            npc.Opacity = 1f;
+
             // The commander spawns in the hands, moves towards your top right, pulls the defender into its hands, spins it around itself twice then lobs it at the player at mach 10.
             if (npc.type == CommanderType)
             {
@@ -1933,17 +1953,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // The commander will check this as well, and draw it instead if the defender is not present.
             ref float drawDashTelegraph = ref npc.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
 
-            float moveUnderAndWaitTime = 60f;
-            float maxMoveUnderAndWaitTime = 120f;
-            float recoilDownwardsTime = 30f;
+            float moveUnderAndWaitTime = 20f;
+            float maxMoveUnderAndWaitTime = 90f;
+            float recoilDownwardsTime = 20f;
             float flyUpwardsDelay = 60f;
             float flyUpwardsSpeed = 60f;
-            float curveTowardsTargetDelay = 40f;
-            float completeSlowdownLength = 20f + curveTowardsTargetDelay;
-            float aimTime = 60f + completeSlowdownLength;
-            float aimedChargeSpeed = 70f;
+            int rockAmount = 23;
+            float curveTowardsTargetDelay = 30f;
+            float completeSlowdownLength = 25f + curveTowardsTargetDelay;
+            float aimTime = 30f + completeSlowdownLength;
+            float aimedChargeSpeed = 40f;
+            float chargeAcceleration = 1.5f;
             float maxChargeLength = 85f;
-            float afterImpactWaitLength = 20f;
+            float afterImpactWaitLength = 10f;
 
             switch (substate)
             {
@@ -2032,7 +2054,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 center = new(npc.Center.X, (Main.maxTilesY * 16f) - 50f);
-                            int rockAmount = 33;
                             // Also spawn a bunch of rocks with slightly random direction and speed.
                             for (int i = 0; i < rockAmount; i++)
                             {
@@ -2111,6 +2132,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     drawDashTelegraph = 0f;
 
+                    // Accelerate after charging.
+                    if (universalAttackTimer < maxChargeLength && npc.velocity.Length() <= 180f)
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
+
                     // Stop the spear aiming.
                     spearStatus = (float)DefenderShieldStatus.ActiveAndStatic;
 
@@ -2185,8 +2210,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Recoil backwards.
                         npc.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * 3.5f;
 
+                        universalAttackTimer = 0;
                         substate++;
-                        universalAttackTimer = 0f;
                     }
                     break;
 
@@ -2210,7 +2235,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
             ref float fireballLaunchStatus = ref npc.Infernum().ExtraAI[CommanderDogmaFireballHasBeenYeetedIndex];
 
-            float chargeUpTime = 45f;
+            float chargeUpTime = 25f;
             float minDistanceToMove = 800f;
             float flySpeed = 16f;
 
@@ -2243,7 +2268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Slow down and point the spear upwards.
                 case 1:
                     // Slow down.
-                    npc.velocity *= 0.98f;
+                    npc.velocity *= 0.94f;
 
                     // Make the spear rotation point upwards.
                     float idealRotation = -MathHelper.PiOver2;
@@ -2321,10 +2346,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             float hoverDistance = 700f;
             float flySpeed = 16f;
-            float shootDelay = 90f;
+            float shootDelay = 80f;
             float totalSpearThrows = 3f;
             float totalShootLength = shootDelay * totalSpearThrows;
             float spearSpeed = 20f;
+            float minDistanceToSpeedUpAt = 1000f;
 
             float endOfAttackDelay = 45f;
 
@@ -2338,11 +2364,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             switch (substate)
             {
                 case 0:
-                    // Hover to the side.
+                    // Speed up if far enough away.
+                    if (!npc.WithinRange(target.Center, minDistanceToSpeedUpAt))
+                        flySpeed = MathHelper.Clamp(MathHelper.SmoothStep(flySpeed, flySpeed * 2f, npc.Distance(target.Center) / minDistanceToSpeedUpAt * 2f), 0f, flySpeed * 2f);
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * (hoverDistance * Math.Sign(npc.Center.X - target.Center.X));
                     npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
-                    if (npc.WithinRange(hoverDestination, 50f) || universalAttackTimer >= 60)
+                    if (npc.WithinRange(hoverDestination, 50f) || universalAttackTimer >= 45f)
                     {
                         substate++;
                         universalAttackTimer = 0;
@@ -2364,7 +2392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         GeneralParticleHandler.SpawnParticle(laserEnergy);
                     }
 
-                    if (universalAttackTimer % shootDelay == shootDelay - 1f && universalAttackTimer <= totalShootLength)
+                    if (universalAttackTimer % shootDelay == 0f && universalAttackTimer <= totalShootLength)
                     {
                         SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with { PitchVariance = 0.4f }, target.Center);
                         SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
@@ -2419,14 +2447,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
             ref float spearPosOffset = ref npc.Infernum().ExtraAI[CommanderSpearPositionOffsetIndex];
 
-            float flySpeed = 19f;
+            float flySpeed = 26f;
             float spearSpinTime = 30f;
             float spearReelbackTime = spearSpinTime + 20f;
             float spearStabTime = spearReelbackTime + 10f;
             float spearThrowSpeed = 12f;
             float afterAttackWaitTime = 65f;
-            float spearsAmount = 6f;
+            float spearsAmount = 8f;
             float spearDistance = 550f;
+            float minDistanceToSpeedUpAt = 1000f;
 
             npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -2449,6 +2478,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Move to the offset.
                 case 1:
+                    // Speed up if far enough away.
+                    if (!npc.WithinRange(target.Center, minDistanceToSpeedUpAt))
+                        flySpeed = MathHelper.Clamp(MathHelper.SmoothStep(flySpeed, flySpeed * 2f, npc.Distance(target.Center) / minDistanceToSpeedUpAt * 2f), 0f, flySpeed * 2f);
+
                     // Hover to the side.
                     Vector2 hoverDestination = target.Center + new Vector2(hoverXOffset, -350f);
                     npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
@@ -2456,7 +2489,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Make the spear rotation point to the player.
                     float idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
                     spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
-                    if (npc.WithinRange(hoverDestination, 30f))
+
+                    if (npc.WithinRange(hoverDestination, 30f) || universalAttackTimer >= 60f)
                     {
                         SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelSpinSound with { Pitch = -0.1f, Volume = 1.4f }, target.Center);
                         ScreenEffectSystem.SetFlashEffect(target.Center, 0.4f, 30);
@@ -2565,11 +2599,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
 
             float maxCharges = 4f;
-            float chargeSpeed = 43f;
+            float chargeSpeed = 21f;
+            float chargeAcceleration = 1.5f;
             float chargeLength = 45f;
             float fadeOutTime = 10f;
-            float initialWaitTime = 80f;
-            float normalWaitTime = 50f;
+            float initialWaitTime = 75f;
+            float normalWaitTime = 40f;
             float spearSpeed = 9f;
             float spearAmount = 4f;
             switch (substate)
@@ -2663,6 +2698,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Fade in.
                     if (universalAttackTimer <= fadeOutTime)
                         npc.Opacity = MathHelper.Clamp(npc.Opacity + 1f / fadeOutTime, 0f, 1f);
+
+                    // Accelerate after charging.
+                    if (universalAttackTimer < chargeLength && npc.velocity.Length() <= 140f)
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
 
                     // Leave a trail of fire.
                     if (Main.netMode != NetmodeID.MultiplayerClient)

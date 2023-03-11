@@ -71,9 +71,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float GrowTime = 30f;
 
-        public int InitialLaserTelegraphTime = 70;
+        public int InitialLaserTelegraphTime = 60;
 
-        public int InitialLaserShootTime = 45;
+        public int InitialLaserShootTime = 35;
 
         public float FlingSpeed = 15f;
 

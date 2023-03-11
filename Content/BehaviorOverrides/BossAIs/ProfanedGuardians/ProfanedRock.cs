@@ -146,10 +146,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
 
                 case RockType.Gravity:
-                    if (Projectile.velocity.Y < 14f)
+                    if (Projectile.velocity.Y < 16f)
                     {
                         Projectile.velocity.X *= 0.995f;
-                        Projectile.velocity.Y += 0.3f;
+                        Projectile.velocity.Y += 0.35f;
                     }
                     break;
             }

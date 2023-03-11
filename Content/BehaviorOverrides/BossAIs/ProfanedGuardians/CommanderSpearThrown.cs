@@ -102,15 +102,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int crossWaves = 2;
+            int crossWaves = 3;
             int crossCount = 18;
             for (int i = 0; i < crossWaves; i++)
             {
                 float speed = i switch
                 { 
                     0 => 8.5f,
-                    1 => 7f,
-                    _ => 5.5f
+                    1 => 5f,
+                    _ => 2.5f
                 };
                 
                 for (int j = 0; j < crossCount; j++)

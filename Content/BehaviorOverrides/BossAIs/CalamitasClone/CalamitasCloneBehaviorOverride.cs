@@ -5,6 +5,7 @@ using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Projectiles.Environment;
 using CalamityMod.UI.CalamitasEnchants;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -36,18 +37,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public enum CloneAttackType
         {
             SpawnAnimation,
+
             WandFireballs,
             SoulSeekerResurrection,
             ShadowTeleports,
             DarkOverheadFireball,
             ConvergingBookEnergy, // Nerd emoji.
-            FireburstDashes
+            FireburstDashes,
+
+            BrothersPhase,
         }
         #endregion
 
         #region AI
 
-        public const float Phase2LifeRatio = 0.667f;
+        public const float Phase2LifeRatio = 0.55f;
 
         public const float Phase3LifeRatio = 0.25f;
 
@@ -56,6 +60,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public const int HexTypeIndex = 6;
 
         public const int HexType2Index = 7;
+
+        public const int HasEnteredPhase2Index = 8;
 
         public static Primitive3DStrip HexStripDrawer
         {
@@ -120,8 +126,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 return false;
             }
 
-            int brotherCount = NPC.CountNPCS(ModContent.NPCType<Cataclysm>()) + NPC.CountNPCS(ModContent.NPCType<Catastrophe>());
             int catharsisSoulReleaseRate = 90;
+            bool anyBrothers = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -132,13 +138,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float armRotation = ref npc.Infernum().ExtraAI[ArmRotationIndex];
             ref float hexType = ref npc.Infernum().ExtraAI[HexTypeIndex];
             ref float hexType2 = ref npc.Infernum().ExtraAI[HexType2Index];
+            ref float hasEnteredPhase2 = ref npc.Infernum().ExtraAI[HasEnteredPhase2Index];
 
             // Apply hexes to the target.
             string hexName = Hexes[(int)hexType];
             string hex2Name = Hexes[(int)hexType2];
-            target.Infernum_CalCloneHex().ActivateHex(hexName);
-            if (lifeRatio < Phase2LifeRatio)
-                target.Infernum_CalCloneHex().ActivateHex(hex2Name);
+
+            if (!anyBrothers && attackType != (int)CloneAttackType.BrothersPhase)
+            {
+                target.Infernum_CalCloneHex().ActivateHex(hexName);
+                if (lifeRatio < Phase2LifeRatio)
+                    target.Infernum_CalCloneHex().ActivateHex(hex2Name);
+            }
 
             // Use a custom hitsound.
             npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f };
@@ -171,6 +182,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.gfxOffY = 10f;
+
+            if (hasEnteredPhase2 == 0f && lifeRatio < Phase2LifeRatio)
+            {
+                SelectNextAttack(npc);
+                hasEnteredPhase2 = 1f;
+                attackType = (int)CloneAttackType.BrothersPhase;
+            }
             
             switch ((CloneAttackType)(int)attackType)
             {
@@ -194,6 +212,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CloneAttackType.FireburstDashes:
                     DoBehavior_FireburstDashes(npc, target, ref attackTimer, ref armRotation);
+                    break;
+
+                case CloneAttackType.BrothersPhase:
+                    DoBehavior_BrothersPhase(npc, target, anyBrothers, ref attackTimer, ref armRotation);
                     break;
             }
 
@@ -602,10 +624,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
 
-                    var cloneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneSingleFrame", AssetRequestMode.ImmediateLoad).Value;
-                    cloneTexture.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>().Particles, npc.Center, npc.rotation, npc.scale, 28f, 10);
-
                     if (Main.netMode != NetmodeID.Server)
+                    {
+                        var cloneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneSingleFrame", AssetRequestMode.ImmediateLoad).Value;
+                        cloneTexture.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>().Particles, npc.Center, npc.rotation, npc.scale, 28f, 10);
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)
                             Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(9f, 14f), ModContent.ProjectileType<ShadowBlob>(), 0, 0f);
@@ -946,6 +971,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.velocity = npc.SafeDirectionTo(target.Center) * baseChargeSpeed;
             }
             
+            // Accelerate after charging.
             if (wrappedAttackTimer >= hoverTime + 1f && wrappedAttackTimer <= hoverTime + chargeTime)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
 
@@ -984,6 +1010,97 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
+        public static void DoBehavior_BrothersPhase(NPC npc, Player target, bool anyBrothers, ref float attackTimer, ref float armRotation)
+        {
+            int rumbleTime = 240;
+
+            // Aim the arm downward.
+            armRotation = armRotation.AngleTowards(0f, 0.02f);
+
+            // Clear away projectiles from old attacks at first.
+            if (attackTimer <= 2f)
+            {
+                if (attackTimer <= 1f)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound);
+
+                int[] projectilesToDelete = new int[]
+                {
+                    ModContent.ProjectileType<ArcingBrimstoneDart>(),
+                    ModContent.ProjectileType<BrimstoneMeteor>(),
+                    ModContent.ProjectileType<CatharsisSoul>(),
+                    ModContent.ProjectileType<CharredWand>(),
+                    ModContent.ProjectileType<ConvergingShadowSpark>(),
+                    ModContent.ProjectileType<DarkMagicFlame>()
+                };
+                Utilities.DeleteAllProjectiles(false, projectilesToDelete);
+            }
+
+            // Fall to the ground and stop taking damage in anticipation of the summoning.
+            if (attackTimer <= rumbleTime)
+            {
+                npc.noGravity = false;
+                npc.noTileCollide = false;
+                npc.dontTakeDamage = true;
+                npc.velocity.X *= 0.75f;
+                npc.Opacity = 1f;
+                target.Infernum_Camera().CurrentScreenShakePower = attackTimer / rumbleTime * 6f;
+            }
+
+            if (attackTimer == rumbleTime - 5f)
+                Utilities.DisplayText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", Color.Orange);
+
+            // Have CalClone teleport away and summon the brothers.
+            if (attackTimer == rumbleTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalCloneTeleportSound);
+
+                // Have Calclone explode into shadow blobs.
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    var cloneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneSingleFrame", AssetRequestMode.ImmediateLoad).Value;
+                    cloneTexture.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>().Particles, npc.Center, npc.rotation, npc.scale, 18f, 10);
+                }
+                
+                // Summon Catatrophe and Cataclysm.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int cataclysm = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Cataclysm>());
+                    CalamityUtils.BossAwakenMessage(cataclysm);
+
+                    int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
+                    CalamityUtils.BossAwakenMessage(catastrophe);
+                   
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, cataclysm);
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, catastrophe);
+
+                    for (int i = 0; i < 50; i++)
+                    {
+                        float seekerAngle = MathHelper.TwoPi * i / 50f;
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>(), npc.whoAmI, seekerAngle);
+                    }
+                }
+            }
+
+            if (attackTimer >= rumbleTime)
+            {
+                // Move the ring towards the target.
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 350f) * 4.5f, 0.2f);
+
+                npc.ShowNameOnHover = false;
+                npc.dontTakeDamage = true;
+                npc.Opacity = 0f;
+            }
+
+            if (attackTimer >= rumbleTime + 5f && !anyBrothers)
+            {
+                npc.Opacity = 1f;
+                npc.Center = target.Center - Vector2.UnitY * 560f;
+                npc.velocity = Vector2.Zero;
+                npc.noGravity = true;
+                SelectNextAttack(npc);
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -993,6 +1110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             switch (currentAttack)
             {
                 case CloneAttackType.SpawnAnimation:
+                case CloneAttackType.BrothersPhase:
                     nextAttack = CloneAttackType.WandFireballs;
                     break;
                 case CloneAttackType.WandFireballs:

@@ -38,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 42;
+            Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;

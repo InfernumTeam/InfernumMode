@@ -132,6 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float generalTimer = ref npc.ai[2];
+            ref float hexApplicationPauseDelay = ref npc.ai[3];
             ref float backgroundEffectIntensity = ref npc.localAI[1];
             ref float blackFormInterpolant = ref npc.localAI[2];
             ref float eyeGleamInterpolant = ref npc.localAI[3];
@@ -153,6 +154,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Use a custom hitsound.
             npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f };
+            // Reset things every frame.
+            npc.defDamage = 0;
+            npc.damage = npc.defDamage;
+            npc.dontTakeDamage = false;
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+            npc.gfxOffY = 10f;
+
+            if (hexApplicationPauseDelay >= 1f)
+            {
+                armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.09f).AngleTowards(MathHelper.Pi, 0.045f);
+                hexApplicationPauseDelay--;
+
+                // Create magic on CalClone's hand.
+                Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+                Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+                Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
+                magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                magic.noGravity = true;
+                magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
+                magic.scale = Main.rand.NextFloat(1f, 1.3f);
+
+                // Create fire on the player.
+                Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.25f, 0.85f));
+                var mist = new MediumMistParticle(target.Center + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(4.5f, 4.5f), fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 198 - Main.rand.Next(50), 0.02f);
+                GeneralParticleHandler.SpawnParticle(mist);
+
+                return false;
+            }
 
             // Give the target a soul seeker if they're in need of one because of their current hex.
             if (Main.netMode != NetmodeID.MultiplayerClient && target.Infernum_CalCloneHex().HexIsActive("Indignation") && target.ownedProjectileCounts[ModContent.ProjectileType<HauntingSoulSeeker>()] <= 0)
@@ -174,14 +204,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(target.Center, soulShootDirection * 12f, ModContent.ProjectileType<CatharsisSoul>(), 155, 0f);
             }
-
-            // Reset things every frame.
-            npc.defDamage = 0;
-            npc.damage = npc.defDamage;
-            npc.dontTakeDamage = false;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.gfxOffY = 10f;
 
             if (hasEnteredPhase2 == 0f && lifeRatio < Phase2LifeRatio)
             {
@@ -308,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             int wandReelBackTime = 40;
 
-            float fireShootSpeed = 16.75f;
+            float fireShootSpeed = npc.Distance(target.Center) * 0.027f + 16.75f;
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
             Vector2 wandEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 45f;
             wandEnd += (armRotation + MathHelper.Pi).ToRotationVector2() * npc.scale * npc.spriteDirection * -8f;
@@ -364,7 +386,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         {
                             if (npc.velocity.Length() < 10f)
                                 npc.velocity -= npc.SafeDirectionTo(target.Center) * 1.3f;
-                            Vector2 fireShootVelocity = npc.SafeDirectionTo(wandEnd) * fireShootSpeed;
+                            Vector2 fireShootVelocity = Vector2.Lerp(npc.SafeDirectionTo(wandEnd), npc.SafeDirectionTo(target.Center), 0.24f) * fireShootSpeed;
                             Utilities.NewProjectileBetter(wandEnd, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
                         }
 
@@ -880,7 +902,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     Vector2 sparkSpawnPosition = npc.Center + (MathHelper.TwoPi * i / sparkSpiralCount + sparkShootOffsetAngle).ToRotationVector2() * 1800f;
                     Vector2 sparkVelocity = (npc.Center - sparkSpawnPosition).SafeNormalize(Vector2.UnitY) * sparkShootSpeed;
-                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ConvergingShadowSpark>(), 0, 0f);
+                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ConvergingShadowSpark>(), 160, 0f);
                 }
                 sparkShootOffsetAngle += MathHelper.ToRadians(12f);
             }
@@ -1158,6 +1180,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;
+            npc.ai[3] = 36f;
             npc.netUpdate = true;
         }
         #endregion AI
@@ -1343,8 +1366,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void DrawHexOnTarget(Player target, Color hexColor, float verticalOffset, float fadeInInterpolant)
         {
-            Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
-
             HexFadeInInterpolant = fadeInInterpolant;
             HexColor = hexColor;
 
@@ -1355,8 +1376,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Main.instance.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             HexStripDrawer.Draw(left, right, 0.15f, 2f, Main.GlobalTimeWrappedHourly * 2f);
-
-            Main.spriteBatch.ExitShaderRegion();
         }
         #endregion Frames and Drawcode
     }

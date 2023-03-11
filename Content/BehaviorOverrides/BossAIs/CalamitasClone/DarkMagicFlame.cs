@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
                 Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
-                if (Projectile.velocity.Length() > 14f)
+                if (Projectile.velocity.Length() > 17f)
                     Projectile.velocity *= 0.97f;
             }
 

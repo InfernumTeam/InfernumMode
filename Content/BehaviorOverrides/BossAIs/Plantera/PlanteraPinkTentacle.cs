@@ -1,6 +1,7 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -55,6 +56,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             float attachAngle = NPC.ai[0];
             ref float attachOffset = ref NPC.ai[1];
+            ref float wiggleSineAngle = ref NPC.Infernum().ExtraAI[0];
+
+            wiggleSineAngle += Utils.Remap(Time, -85, 10f, 0f, MathHelper.Pi / 8.5f + NPC.whoAmI * 0.1f);
+            float wingleOffset = MathF.Sin(wiggleSineAngle) * 0.016f;
 
             // Reel inward prior to snapping.
             if (Time > 0f && Time < 45f)
@@ -62,7 +67,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             // Reach outward swiftly in hopes of hitting a target.
             if (Time > 180f)
+            {
                 attachOffset = MathHelper.Lerp(attachOffset, 3900f, 0.021f);
+                wingleOffset = 0f;
+            }
 
             if (Time == 180f)
                 SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
@@ -82,7 +90,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 }
             }
 
-            NPC.Center = Main.npc[NPC.plantBoss].Center + attachAngle.ToRotationVector2() * attachOffset;
+            attachAngle += wingleOffset;
+            NPC.Center = Main.npc[NPC.plantBoss].Center + attachAngle.ToRotationVector2() * (attachOffset + wingleOffset * 150f);
             NPC.rotation = attachAngle + MathHelper.Pi;
             NPC.dontTakeDamage = true;
 

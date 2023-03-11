@@ -269,7 +269,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     int laserCount = 16;
                     int laserDamage = 165;
-                    float laserSpread = 0.78f;
+                    float laserSpread = 0.85f;
                     if (enraged)
                     {
                         laserCount += 8;

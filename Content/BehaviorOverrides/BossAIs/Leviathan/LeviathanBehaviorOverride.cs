@@ -204,6 +204,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 npc.damage = 0;
 
                 Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
+
+                npc.Center = Vector2.Lerp(npc.Center, new Vector2(npc.Center.X, destination.Y), 0.075f);
+
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 14f, 0.27f);
                 npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, npc.SafeDirectionTo(destination).Y * 30f, 0.18f);
                 npc.spriteDirection = npc.direction;
@@ -219,6 +222,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 if (BossRushEvent.BossRushActive)
                     chargeSpeed *= 1.3f;
                 npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
+                if (!npc.WithinRange(target.Center, 1100f))
+                    npc.velocity *= 1.45f;
             }
 
             // Slow down after charging.

@@ -317,7 +317,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public static void DoBehavior_PlaySinusoidalSong(NPC npc, Player target, bool enraged, Vector2 headPosition, ref float attackTimer)
         {
             int shootDelay = 72;
-            int shootTime = 270;
+            int shootTime = 250;
             int shootRate = 10;
             float bobAmplitude = 325f;
             float bobPeriod = 30f;

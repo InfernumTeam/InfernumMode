@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
@@ -34,13 +35,40 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.tileCollide = false;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 210;
+            Projectile.timeLeft = 150;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = 1;
         }
 
         public override void AI()
         {
+            float acceleration = 1f;
+            float maxSpeed = 36f;
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Zeal"))
+            {
+                // Start out slower if acceleration is expected.
+                if (Projectile.ai[1] == 0f)
+                {
+                    Projectile.velocity *= 0.6f;
+                    Projectile.ai[1] = 1f;
+                    Projectile.netUpdate = true;
+                }
+
+                acceleration = 1.037f;
+            }
+            
+            // Home in weakly if CalClone's target has the appropriate hex.
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Accentuation"))
+            {
+                float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
+                Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
+                if (Projectile.velocity.Length() > 14f)
+                    Projectile.velocity *= 0.97f;
+            }
+
+            if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)
+                Projectile.velocity *= acceleration;
+
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 

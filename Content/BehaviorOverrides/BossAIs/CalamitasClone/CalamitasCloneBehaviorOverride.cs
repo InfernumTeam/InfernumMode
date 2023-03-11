@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -39,7 +40,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             SoulSeekerResurrection,
             ShadowTeleports,
             DarkOverheadFireball,
-            ConvergingBookEnergy // Nerd emoji.
+            ConvergingBookEnergy, // Nerd emoji.
+            FireburstDashes
         }
         #endregion
 
@@ -50,6 +52,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public const float Phase3LifeRatio = 0.25f;
 
         public const int ArmRotationIndex = 5;
+
+        public const int HexTypeIndex = 6;
+
+        public const int HexType2Index = 7;
+
+        public static Primitive3DStrip HexStripDrawer
+        {
+            get;
+            set;
+        }
+
+        public static float HexFadeInInterpolant
+        {
+            get;
+            set;
+        } = 1f;
+
+        public static Color HexColor
+        {
+            get;
+            set;
+        }
+
+        public static List<string> Hexes => new()
+        {
+            "Zeal",
+            "Accentuation",
+            "Catharsis",
+            "Weakness",
+            "Indignation"
+        };
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -88,18 +121,51 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             int brotherCount = NPC.CountNPCS(ModContent.NPCType<Cataclysm>()) + NPC.CountNPCS(ModContent.NPCType<Catastrophe>());
+            int catharsisSoulReleaseRate = 90;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float generalTimer = ref npc.ai[2];
             ref float backgroundEffectIntensity = ref npc.localAI[1];
             ref float blackFormInterpolant = ref npc.localAI[2];
             ref float eyeGleamInterpolant = ref npc.localAI[3];
             ref float armRotation = ref npc.Infernum().ExtraAI[ArmRotationIndex];
+            ref float hexType = ref npc.Infernum().ExtraAI[HexTypeIndex];
+            ref float hexType2 = ref npc.Infernum().ExtraAI[HexType2Index];
+
+            // Apply hexes to the target.
+            string hexName = Hexes[(int)hexType];
+            string hex2Name = Hexes[(int)hexType2];
+            target.Infernum_CalCloneHex().ActivateHex(hexName);
+            if (lifeRatio < Phase2LifeRatio)
+                target.Infernum_CalCloneHex().ActivateHex(hex2Name);
 
             // Use a custom hitsound.
             npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f };
 
+            // Give the target a soul seeker if they're in need of one because of their current hex.
+            if (Main.netMode != NetmodeID.MultiplayerClient && target.Infernum_CalCloneHex().HexIsActive("Indignation") && target.ownedProjectileCounts[ModContent.ProjectileType<HauntingSoulSeeker>()] <= 0)
+                Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 640f, Vector2.Zero, ModContent.ProjectileType<HauntingSoulSeeker>(), 0, 0f, npc.target);
+
+            // Have the target release redirecting souls from out of them if they have the catharsis hex.
+            if (generalTimer % catharsisSoulReleaseRate == 0f && target.Infernum_CalCloneHex().HexIsActive("Catharsis"))
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath39 with { Pitch = -0.8f, Volume = 0.15f }, target.Center);
+
+                Vector2 soulShootDirection = (-target.velocity).RotatedByRandom(0.45f).SafeNormalize(Main.rand.NextVector2Unit());
+                for (int i = 0; i < 8; i++)
+                {
+                    Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.25f, 0.85f));
+                    var mist = new MediumMistParticle(target.Center + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(4.5f, 4.5f) + soulShootDirection * 8f, fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 192 - Main.rand.Next(50), 0.02f);
+                    GeneralParticleHandler.SpawnParticle(mist);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(target.Center, soulShootDirection * 12f, ModContent.ProjectileType<CatharsisSoul>(), 155, 0f);
+            }
+
             // Reset things every frame.
+            npc.defDamage = 0;
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
             npc.noGravity = true;
@@ -126,6 +192,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 case CloneAttackType.ConvergingBookEnergy:
                     DoBehavior_ConvergingBookEnergy(npc, target, ref attackTimer, ref armRotation);
                     break;
+                case CloneAttackType.FireburstDashes:
+                    DoBehavior_FireburstDashes(npc, target, ref attackTimer, ref armRotation);
+                    break;
             }
 
             // Disable the base Calamity screen shader and background.
@@ -133,6 +202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 Filters.Scene["CalamityMod:CalamitasRun3"].Deactivate();
 
             attackTimer++;
+            generalTimer++;
             return false;
         }
 
@@ -651,11 +721,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && fireOrbs.Any())
                     {
-                        int fireShootCount = (int)Utils.Remap(npc.Distance(target.Center), 800f, 3000f, 24f, 48f);
+                        int fireShootCount = (int)Utils.Remap(npc.Distance(target.Center), 950f, 3000f, 24f, 48f);
                         if (fireShootCount % 2 != 0)
                             fireShootCount++;
+                        if (target.Infernum_CalCloneHex().HexIsActive("Accentuation"))
+                            fireShootCount -= 8;
 
-                        float fireShootSpeed = Utils.Remap(npc.Distance(target.Center), 600f, 3000f, 8.5f, 70f);
+                        float fireShootSpeed = Utils.Remap(npc.Distance(target.Center), 800f, 3000f, 8.5f, 70f);
                         Vector2 fireOrbCenter = fireOrbs.First().Center;
                         for (int i = 0; i < fireShootCount; i++)
                         {
@@ -758,10 +830,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
                     // Don't get stuck in blocks.
-                    if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 300))
                     {
-                        npc.Center = npc.Center.MoveTowards(target.Center, 8f);
-                        npc.position.Y -= 4f;
+                        npc.Center = npc.Center.MoveTowards(target.Center, 4f);
+                        npc.position.Y -= 10f;
                     }
                 }
             }
@@ -837,18 +909,134 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
+        public static void DoBehavior_FireburstDashes(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            int hoverTime = 30;
+            int chargeTime = 26;
+            int chargeCount = 4;
+            int flameShootCount = 19;
+            int chargeSlowdowntime = 12;
+            int wrappedAttackTimer = (int)attackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
+            float baseChargeSpeed = 12f;
+            float flameShootSpeed = 8f;
+            float chargeAcceleration = 1.75f;
+            ref float shieldScale = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Hover to the side of the target in anticipation of the charge.
+            if (wrappedAttackTimer <= hoverTime)
+            {
+                Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 400f;
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.07f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                armRotation = armRotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
+
+                // Make the shield appear.
+                shieldScale = MathHelper.Clamp(shieldScale + 0.04f, 0f, 1f);
+            }
+            else if (npc.velocity.Length() >= 10f)
+                npc.damage = 155;
+
+            // Charge at the target.
+            if (wrappedAttackTimer == hoverTime + 1f)
+            {
+                SoundEngine.PlaySound(SCalBoss.DashSound, npc.Center);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * baseChargeSpeed;
+            }
+            
+            if (wrappedAttackTimer >= hoverTime + 1f && wrappedAttackTimer <= hoverTime + chargeTime)
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
+
+            // Slow down in anticipation of the next charge.
+            if (wrappedAttackTimer >= hoverTime + chargeTime)
+            {
+                // Release a burst of flames in all directions.
+                if (wrappedAttackTimer == hoverTime + chargeTime + 11f)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        chargeCounter++;
+                        if (chargeCounter >= chargeCount)
+                        {
+                            npc.velocity *= 0.5f;
+                            SelectNextAttack(npc);
+                            return;
+                        }
+
+                        for (int i = 0; i < flameShootCount; i++)
+                        {
+                            Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / flameShootCount) * flameShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 2f, flameShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 160, 0f);
+                        }
+                        npc.netUpdate = true;
+                    }
+                }
+
+                npc.velocity *= 0.85f;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                armRotation = armRotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
+                if (chargeCounter >= chargeCount - 1f)
+                    shieldScale *= 0.85f;
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
             CloneAttackType currentAttack = (CloneAttackType)npc.ai[0];
-            CloneAttackType nextAttack = CloneAttackType.ConvergingBookEnergy;
-            if (currentAttack == CloneAttackType.SpawnAnimation)
-                nextAttack = CloneAttackType.SoulSeekerResurrection;
-            if (currentAttack == CloneAttackType.ConvergingBookEnergy)
-                nextAttack = CloneAttackType.WandFireballs;
+            CloneAttackType nextAttack = CloneAttackType.DarkOverheadFireball;
+            switch (currentAttack)
+            {
+                case CloneAttackType.SpawnAnimation:
+                    nextAttack = CloneAttackType.WandFireballs;
+                    break;
+                case CloneAttackType.WandFireballs:
+                    nextAttack = CloneAttackType.SoulSeekerResurrection;
+                    break;
+                case CloneAttackType.SoulSeekerResurrection:
+                    nextAttack = CloneAttackType.ShadowTeleports;
+                    break;
+                case CloneAttackType.ShadowTeleports:
+                    nextAttack = CloneAttackType.DarkOverheadFireball;
+                    break;
+                case CloneAttackType.DarkOverheadFireball:
+                    nextAttack = CloneAttackType.ConvergingBookEnergy;
+                    break;
+                case CloneAttackType.ConvergingBookEnergy:
+                    nextAttack = phase2 ? CloneAttackType.FireburstDashes : CloneAttackType.WandFireballs;
+                    break;
+                case CloneAttackType.FireburstDashes:
+                    nextAttack = CloneAttackType.WandFireballs;
+                    break;
+            }
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+
+            // Reroll hex indices.
+            ref float hexType = ref npc.Infernum().ExtraAI[HexTypeIndex];
+            ref float hexType2 = ref npc.Infernum().ExtraAI[HexType2Index];
+            float oldHexType = hexType;
+            float oldHexType2 = hexType2;
+            do
+                hexType = Main.rand.Next(5);
+            while (hexType == oldHexType || hexType == oldHexType2);
+            do
+                hexType2 = Main.rand.Next(5);
+            while (hexType2 == oldHexType || hexType2 == oldHexType2 || hexType2 == hexType);
+
+            // Ensure that homing and acceleration hexes do not combine, since that would be stupid.
+            string hexName = Hexes[(int)hexType];
+            string hex2Name = Hexes[(int)hexType2];
+            if ((hexName == "Zeal" && hex2Name == "Accentuation") || (hexName == "Accentuation" && hex2Name == "Zeal"))
+                hexType2 = 2f;
+
+            SoundEngine.PlaySound(CalamitasEnchantUI.EnchSound, npc.Center);
 
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;
@@ -981,13 +1169,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Draw the book if it's being used.
             if (npc.ai[0] == (int)CloneAttackType.ConvergingBookEnergy && npc.Infernum().ExtraAI[3] == 0f)
             {
-                Texture2D bookTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/LashesOfChaosHeld").Value;
                 Color bookColor = Color.Lerp(Color.HotPink with { A = 0 }, Color.White, MathF.Sqrt(npc.Infernum().ExtraAI[0])) * npc.Infernum().ExtraAI[0];
                 Vector2 bookDrawPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * npc.scale * 6f - Main.screenPosition + Main.rand.NextVector2Unit() * npc.Infernum().ExtraAI[2] * 3f;
                 bookDrawPosition.Y += 6f;
 
+                Texture2D bookTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/LashesOfChaosHeld").Value;
                 Rectangle bookFrame = bookTexture.Frame(1, 8, 0, (int)(Main.GlobalTimeWrappedHourly * 15f) % 8);
                 Main.spriteBatch.Draw(bookTexture, bookDrawPosition, bookFrame, bookColor * npc.Opacity, 0f, bookFrame.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
+            }
+
+            // Draw the shield if it's being used.
+            if (npc.ai[0] == (int)CloneAttackType.FireburstDashes)
+            {
+                float shieldScale = npc.Infernum().ExtraAI[0];
+                float shieldRotation = armRotation - MathHelper.PiOver2;
+                Texture2D shieldTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasShield").Value;
+                Vector2 shieldOrigin = shieldTexture.Size() * new Vector2(0f, 0.5f);
+                if (npc.spriteDirection == -1)
+                {
+                    shieldOrigin.X = shieldTexture.Width - shieldOrigin.X;
+                    shieldRotation += MathHelper.Pi;
+                }
+
+                Vector2 shieldDrawPosition = armDrawPosition + (armRotation + MathHelper.PiOver2).ToRotationVector2() * 30f;
+                Main.spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, Color.White * npc.Opacity, shieldRotation, shieldTexture.Size() * 0.5f, npc.scale * shieldScale * 0.8f, direction, 0f);
             }
 
             // Draw the eye gleam.
@@ -1012,6 +1217,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             return false;
+        }
+
+        public static float HexHeightFunction(float _) => HexFadeInInterpolant * 10f + 0.01f;
+
+        public static Color HexColorFunction(float _) => HexColor * HexFadeInInterpolant * 0.8f;
+
+        public static void DrawHexOnTarget(Player target, Color hexColor, float verticalOffset, float fadeInInterpolant)
+        {
+            Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
+
+            HexFadeInInterpolant = fadeInInterpolant;
+            HexColor = hexColor;
+
+            Vector2 left = target.Center + new Vector2(-40f, verticalOffset) - Main.screenPosition;
+            Vector2 right = target.Center + new Vector2(40f, verticalOffset) - Main.screenPosition;
+            HexStripDrawer ??= new(HexHeightFunction, HexColorFunction);
+            HexStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/ZealHexSymbols"));
+
+            Main.instance.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            HexStripDrawer.Draw(left, right, 0.15f, 2f, Main.GlobalTimeWrappedHourly * 2f);
+
+            Main.spriteBatch.ExitShaderRegion();
         }
         #endregion Frames and Drawcode
     }

@@ -26,6 +26,8 @@ namespace InfernumMode
 
         public static DebuffEffectsPlayer Infernum_Debuff(this Player player) => player.GetModPlayer<DebuffEffectsPlayer>();
 
+        public static CalCloneHexesPlayer Infernum_CalCloneHex(this Player player) => player.GetModPlayer<CalCloneHexesPlayer>();
+
         public static EelSwallowEffectPlayer Infernum_Eel(this Player player) => player.GetModPlayer<EelSwallowEffectPlayer>();
 
         public static HatGirlTipsPlayer Infernum_HatGirl(this Player player) => player.GetModPlayer<HatGirlTipsPlayer>();

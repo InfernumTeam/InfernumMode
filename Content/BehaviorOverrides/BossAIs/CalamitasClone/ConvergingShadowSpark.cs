@@ -39,8 +39,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         {
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
 
-            if (Projectile.velocity.Length() < 14f)
-                Projectile.velocity *= 1.023f;
+            float maxSpeed = 14f;
+            float acceleration = 1.023f;
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Zeal"))
+            {
+                maxSpeed = 18f;
+                acceleration = 1.029f;
+            }
+
+            if (Projectile.velocity.Length() < maxSpeed)
+                Projectile.velocity *= acceleration;
 
             // Explode if on top of Cal Clone.
             if (CalamityGlobalNPC.calamitas != -1 && Projectile.WithinRange(Main.npc[CalamityGlobalNPC.calamitas].Center, 30f))

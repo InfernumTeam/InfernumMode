@@ -1,4 +1,4 @@
-using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Common.Graphics.Particles;
@@ -40,6 +40,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+
+            float acceleration = 1.01f;
+            float maxSpeed = 17f;
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Zeal"))
+            {
+                // Start out slower if acceleration is expected.
+                if (Projectile.ai[1] == 0f)
+                {
+                    Projectile.velocity *= 0.3f;
+                    Projectile.ai[1] = 1f;
+                    Projectile.netUpdate = true;
+                }
+
+                acceleration = 1.02f;
+            }
+
+            if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)
+                Projectile.velocity *= acceleration;
 
             // Explode once past the tile collision line.
             Projectile.tileCollide = Projectile.Top.Y >= Projectile.ai[1];

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -23,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 360;
+            Projectile.timeLeft = 240;
             Projectile.Opacity = 0f;
             CooldownSlot = 1;
         }
@@ -33,8 +34,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
 
             Projectile.velocity = Projectile.velocity.RotatedBy(Projectile.ai[0]);
-            if (Projectile.velocity.Length() < 16f)
-                Projectile.velocity *= 1.04f;
+
+            float maxSpeed = 16f;
+            float acceleration = 1.034f;
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Zeal"))
+            {
+                maxSpeed = 23.5f;
+                acceleration = 1.031f;
+            }
+
+            // Home in weakly if CalClone's target has the appropriate hex.
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Accentuation"))
+            {
+                float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
+                Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.006f);
+            }
+
+            if (Projectile.velocity.Length() < maxSpeed)
+                Projectile.velocity *= acceleration;
 
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];

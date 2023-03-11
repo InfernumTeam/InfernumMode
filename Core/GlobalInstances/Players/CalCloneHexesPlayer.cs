@@ -1,6 +1,7 @@
 ﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.Content.Buffs;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -113,15 +114,20 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             // Update hex visual intensities.
             float offset = -20f;
+
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             foreach (HexStatus status in HexStatuses.Values)
             {
                 if (status.IsActive)
                 {
                     status.Intensity = MathHelper.Clamp(status.Intensity + 0.1f, 0f, 1f);
+                    Main.spriteBatch.Draw(backglowTexture, Player.Center + Vector2.UnitY * (offset + 4f) - Main.screenPosition, null, status.HexColor * status.Intensity * 0.8f, 0f, backglowTexture.Size() * 0.5f, new Vector2(0.27f, 0.15f) * status.Intensity, 0, 0f);
                     CalamitasCloneBehaviorOverride.DrawHexOnTarget(Player, status.HexColor, offset * hoverOffsetFactor, status.Intensity);
                     offset += 40f;
                 }
             }
+            Main.spriteBatch.ExitShaderRegion();
         }
         #endregion Draw Effects
     }

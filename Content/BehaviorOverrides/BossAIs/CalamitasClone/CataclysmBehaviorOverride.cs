@@ -120,8 +120,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int chargeTime = 19;
             int chargeSlowdownTime = 8;
             int chargeCount = 3;
-            float baseChargeSpeed = 8f;
-            float chargeAcceleration = 2.3f;
+            float baseChargeSpeed = 9.75f;
+            float chargeAcceleration = 2.5f;
 
             if (BossRushEvent.BossRushActive)
             {
@@ -137,7 +137,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float attackState = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[0];
             ref float chargeCounter = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[1];
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
-            float horizontalChargeOffset = isCataclysm.ToDirectionInt() * (chargeCounter % 2f == 0f).ToDirectionInt() * 400f;
+            float horizontalChargeOffset = isCataclysm.ToDirectionInt() * (chargeCounter % 2f == 0f).ToDirectionInt() * 480f;
 
             switch ((int)attackState)
             {
@@ -153,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Make Catastrophe anticipate with his blade.
                     catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (((attackTimer > 120f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > 30f) || attackState == 1f)
+                    if (((attackTimer > 120f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 75f : 30f)) || attackState == 1f)
                     {
                         npc.velocity *= 0.3f;
                         attackTimer = 0f;

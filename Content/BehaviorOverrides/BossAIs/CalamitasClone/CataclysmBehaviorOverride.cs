@@ -2,273 +2,426 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
+using CalamityMod.Particles;
+using CalamityMod.Sounds;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using CalCloneNPC = CalamityMod.NPCs.CalClone.CalamitasClone;
+using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
+
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 {
     public class CataclysmBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<Cataclysm>();
-
-        #region Enumerations
-        public enum CataclysmAttackType
+        public enum SCalBrotherAttackType
         {
             HorizontalCharges,
-            BrimstoneFireBurst
+            FireAndSwordSlashes
         }
-        #endregion
+
+        public override int? NPCIDToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
+
+        public override int NPCOverrideType => ModContent.NPCType<Cataclysm>();
 
         #region AI
-
         public override bool PreAI(NPC npc)
         {
-            if (CalamityGlobalNPC.calamitas == -1 || !Main.npc[CalamityGlobalNPC.calamitas].active)
-            {
-                npc.active = false;
-                return false;
-            }
-
-            // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
-            if (npc.scale != 1f)
-            {
-                npc.width = 120;
-                npc.height = 120;
-                npc.scale = 1f;
-            }
-
-            // Do targeting.
-            npc.target = Main.npc[CalamityGlobalNPC.calamitas].target;
-            Player target = Main.player[npc.target];
-
-            CalamityGlobalNPC.cataclysm = npc.whoAmI;
-
-            if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
-            {
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -28f, 0.08f);
-                if (!npc.WithinRange(target.Center, 1450f) || CalamityGlobalNPC.calamitas == -1 || !Main.npc[CalamityGlobalNPC.calamitas].active)
-                {
-                    npc.life = 0;
-                    npc.active = false;
-                    npc.netUpdate = true;
-                }
-                return false;
-            }
-
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
-            ref float attackType = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
-            ref float backglowInterpolant = ref npc.localAI[0];
-
-            // Reset things.
-            npc.damage = npc.defDamage;
-            npc.dontTakeDamage = false;
-
-            switch ((CataclysmAttackType)(int)attackType)
-            {
-                case CataclysmAttackType.HorizontalCharges:
-                    DoBehavior_HorizontalCharges(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer);
-                    break;
-                case CataclysmAttackType.BrimstoneFireBurst:
-                    npc.damage = 0;
-                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, otherBrotherIsPresent, ref attackTimer, ref backglowInterpolant);
-                    break;
-            }
-
-            attackTimer++;
+            DoAI(npc);
             return false;
         }
 
-        public static void DoBehavior_HorizontalCharges(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer)
+        public static void DoAI(NPC npc)
         {
-            float horizontalChargeOffset = 450f;
-            float redirectSpeed = 19f;
-            float chargeSpeed = MathHelper.Lerp(19.75f, 25f, 1f - lifeRatio);
-            int chargeTime = 40;
-            int chargeSlowdownTime = 15;
-            int chargeCount = 3;
+            int cataclysmIndex = NPC.FindFirstNPC(ModContent.NPCType<Cataclysm>());
+            int catastropheIndex = NPC.FindFirstNPC(ModContent.NPCType<Catastrophe>());
+            bool isCataclysm = npc.type == ModContent.NPCType<Cataclysm>();
+            bool isCatastrophe = npc.type == ModContent.NPCType<Catastrophe>();
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            ref float attackState = ref npc.ai[0];
+            ref float attackTimer = ref npc.ai[1];
+            ref float attackSpecificTimer = ref npc.Infernum().ExtraAI[5];
 
-            if (otherBrotherIsPresent)
-                chargeSpeed *= 0.85f;
+            // Reset hit sounds.
+            npc.HitSound = SoundID.NPCHit1;
+            npc.DeathSound = null;
+
+            // Die if the either brother is missing.
+            if (cataclysmIndex == -1 || catastropheIndex == -1 || !NPC.AnyNPCs(ModContent.NPCType<CalCloneNPC>()))
+            {
+                npc.life = 0;
+                npc.HitEffect();
+                npc.netUpdate = true;
+                return;
+            }
+
+            // No.
+            if (npc.scale != 1f)
+            {
+                npc.scale = 1f;
+                npc.Size /= npc.scale;
+            }
+
+            if (isCatastrophe)
+            {
+                // Shamelessly steal variables from Cataclysm.
+                NPC cataclysm = Main.npc[cataclysmIndex];
+
+                // Sync if Catastrophe changed attack states or there's a noticeable discrepancy between attack timers.
+                if (attackState != cataclysm.ai[0] || MathHelper.Distance(attackTimer, cataclysm.ai[1]) > 20f)
+                    npc.netUpdate = true;
+
+                npc.ai = cataclysm.ai;
+                npc.target = cataclysm.target;
+                npc.life = cataclysm.life;
+                npc.lifeMax = cataclysm.lifeMax;
+                npc.realLife = cataclysm.whoAmI;
+                attackState = ref cataclysm.ai[0];
+                attackTimer = ref cataclysm.ai[1];
+
+                CalamityGlobalNPC.catastrophe = npc.whoAmI;
+
+                // Use a fallback target if Cataclysm doesn't have one at the moment. This will not care about large distances.
+                npc.TargetClosestIfTargetIsInvalid(1000000f);
+            }
+
+            // Have Cataclysm increment the attack timer and handle targeting.
+            else if (isCataclysm)
+            {
+                CalamityGlobalNPC.cataclysm = npc.whoAmI;
+                npc.TargetClosestIfTargetIsInvalid();
+                attackTimer++;
+            }
+
+            Player target = Main.player[npc.target];
+
+            // Perform attacks.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.damage = npc.defDamage;
+            switch ((SCalBrotherAttackType)attackState)
+            {
+                case SCalBrotherAttackType.HorizontalCharges:
+                    DoBehavior_HorizontalCharges(npc, target, isCataclysm, ref attackTimer);
+                    break;
+                case SCalBrotherAttackType.FireAndSwordSlashes:
+                    DoBehavior_FireAndSwordSlashes(npc, target, isCataclysm, ref attackTimer);
+                    break;
+            }
+        }
+
+        public static void DoBehavior_HorizontalCharges(NPC npc, Player target, bool isCataclysm, ref float attackTimer)
+        {
+            int chargeTime = 19;
+            int chargeSlowdownTime = 8;
+            int chargeCount = 3;
+            float baseChargeSpeed = 8f;
+            float chargeAcceleration = 2.3f;
 
             if (BossRushEvent.BossRushActive)
             {
-                chargeSpeed *= 1.6f;
-                redirectSpeed += 8f;
+                baseChargeSpeed *= 1.4f;
                 chargeCount--;
             }
 
-            ref float attackState = ref npc.Infernum().ExtraAI[0];
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+            if (CalamityGlobalNPC.cataclysm == -1)
+                CalamityGlobalNPC.cataclysm = NPC.FindFirstNPC(ModContent.NPCType<Cataclysm>());
+            if (CalamityGlobalNPC.catastrophe == -1)
+                CalamityGlobalNPC.catastrophe = NPC.FindFirstNPC(ModContent.NPCType<Catastrophe>());
+
+            ref float attackState = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[0];
+            ref float chargeCounter = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[1];
+            ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
+            float horizontalChargeOffset = isCataclysm.ToDirectionInt() * (chargeCounter % 2f == 0f).ToDirectionInt() * 400f;
 
             switch ((int)attackState)
             {
                 // Hover into position.
                 case 0:
-                    Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * horizontalChargeOffset;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
-                    npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
+                    Vector2 hoverDestination = target.Center + Vector2.UnitX * horizontalChargeOffset;
+                    Vector2 idealVelocity = ((hoverDestination - npc.Center) * 0.15f).ClampMagnitude(4f, 50f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.25f);
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.rotation = 0f;
+                    npc.damage = 0;
 
-                    float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-                    npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
+                    // Make Catastrophe anticipate with his blade.
+                    catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f)
+                    if (((attackTimer > 120f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > 30f) || attackState == 1f)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center);
-                        npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
+                        npc.velocity *= 0.3f;
                         attackTimer = 0f;
                         attackState = 1f;
-
-                        if (!otherBrotherIsPresent)
-                        {
-                            int fireballDamage = 150;
-                            for (int i = 0; i < 12; i++)
-                            {
-                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 8f;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
-                            }
-                        }
                     }
                     break;
 
                 // Do the charge.
                 case 1:
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.X * 0.01f;
+
+                    // Make Catastrophe swing his blade.
+                    catastropheArmRotation = Utils.Remap(attackTimer, 0f, 9f, -1.8f, 1.1f) * Utils.GetLerpValue(chargeTime + chargeSlowdownTime, chargeTime, attackTimer, true);
+
+                    if (attackTimer == 1f)
+                    {
+                        SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, npc.Center);
+                        npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * baseChargeSpeed;
+                    }
+
+                    // Accelerate during the charge.
+                    if (attackTimer <= chargeTime)
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
 
                     // Slow down after the charge has ended and look at the target.
                     if (attackTimer > chargeTime)
                     {
-                        npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.1f) * 0.96f;
-                        idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-                        npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
+                        npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.25f) * 0.8f;
+                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                     }
 
                     // Go to the next attack once done slowing down.
                     if (attackTimer > chargeTime + chargeSlowdownTime)
                     {
-                        chargeCounter++;
+                        if (isCataclysm)
+                            chargeCounter++;
+
+                        if (isCataclysm && chargeCounter >= chargeCount)
+                            SelectNextAttack(npc);
+
                         attackTimer = 0f;
                         attackState = 0f;
-                        if (chargeCounter >= chargeCount)
-                            SelectNewAttack(npc);
                         npc.netUpdate = true;
                     }
                     break;
             }
         }
 
-        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, ref float attackTimer, ref float backglowInterpolant)
+        public static void DoBehavior_FireAndSwordSlashes(NPC npc, Player target, bool isCataclysm, ref float attackTimer)
         {
-            int attackCycleCount = 2;
-            int hoverTime = 210;
-            float hoverHorizontalOffset = 600f;
-            float hoverSpeed = 15f;
-            float fireballSpeed = 15.75f;
-            int fireballReleaseRate = 65;
-            int fireballReleaseTime = 135;
-
-            if (otherBrotherIsPresent)
-            {
-                hoverHorizontalOffset += 60f;
-                fireballReleaseRate += 40;
-            }
+            // Define attack values when the other brother is alive.
+            int attackShiftDelay = 0;
+            int hoverTime = 45;
+            int fireReleaseRate = 45;
+            float fireShootSpeed = 9f;
+            float slashShootSpeed = 14f;
+            ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
 
             if (BossRushEvent.BossRushActive)
             {
-                attackCycleCount--;
-                fireballReleaseRate /= 2;
-                hoverSpeed += 12f;
-                fireballSpeed += 11f;
+                fireShootSpeed *= 1.4f;
+                slashShootSpeed *= 1.5f;
             }
 
-            float wrappedAttackTimer = attackTimer % fireballReleaseRate;
-            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+            int attackCycleTime = hoverTime + 360;
+            int attackTime = attackCycleTime - 120;
+            float wrappedTimer = attackTimer % attackCycleTime;
 
-            // Attempt to hover to the side of the target.
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            // Disable contact damage.
+            npc.damage = 0;
 
-            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
-            // This is done to ensure that the attack begins once the boss is close to the target.
-            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 60f)))
+            if (attackTimer >= attackTime + attackShiftDelay)
             {
-                attackSubstate = 1f;
-                attackTimer = 0f;
-                npc.netUpdate = true;
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<BrimstoneSlash>(), ModContent.ProjectileType<DarkMagicFlame>());
+                SelectNextAttack(npc);
             }
 
-            // Release fireballs.
-            if (attackSubstate == 1f)
+            // Slow down and do nothing prior to the attack ending.
+            if (attackTimer >= attackTime)
             {
-                backglowInterpolant = Utils.GetLerpValue(fireballReleaseRate - 32f, fireballReleaseRate - 1f, wrappedAttackTimer, true);
-                if (wrappedAttackTimer == fireballReleaseRate - 1f)
+                npc.velocity *= 0.92f;
+                npc.rotation *= 0.92f;
+                catastropheArmRotation = catastropheArmRotation.AngleTowards(0f, 0.06f);
+                return;
+            }
+
+            if (wrappedTimer < hoverTime)
+            {
+                // Slow down right before firing.
+                if (wrappedTimer > hoverTime * 0.5f)
+                    npc.velocity *= 0.9f;
+
+                // Otherwise, do typical hover behavior, towards the upper right of the target.
+                else
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
+                    Vector2 idealVelocity = ((target.Center + new Vector2(isCataclysm.ToDirectionInt() * 400f, -255f) - npc.Center) * 0.15f).ClampMagnitude(4f, 50f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.25f);
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
+                }
+            }
+            else
+            {
+                // Cease all movement when firing.
+                npc.velocity = Vector2.Zero;
 
+                // Rapidly approach a 0 rotation.
+                npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
+
+                // Make catastrophe swing his blade.
+                float bladeSwingOffset = MathF.Sin((wrappedTimer - hoverTime) * MathHelper.TwoPi / fireReleaseRate);
+                catastropheArmRotation = MathF.Cbrt(bladeSwingOffset) * 1.87f;
+
+                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 1f)
+                {
+                    // Play a firing sound.
+                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.6f }, npc.Center);
+                    SoundEngine.PlaySound(SCalNPC.BrimstoneShotSound, npc.Center);
+
+                    // And shoot the projectile serverside.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballCount = otherBrotherIsPresent ? 5 : 6;
-                        for (int i = 0; i < fireballCount; i++)
+                        if (isCataclysm)
                         {
-                            int fireballDamage = 150;
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
-                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.8f, 0.8f, i / (fireballCount - 1f)));
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                            Vector2 fireSpawnPosition = npc.Center - Vector2.UnitY.RotatedBy(npc.rotation * npc.spriteDirection) * 64f;
+                            for (int i = 0; i < 5; i++)
+                            {
+                                float shootOffsetAngle = MathHelper.Lerp(-0.6f, 0.6f, i / 4f);
+                                Vector2 fireShootVelocity = (target.Center - fireSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * fireShootSpeed;
+                                Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                            }
+
+                            for (int i = 0; i < 15; i++)
+                            {
+                                Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.25f, 0.85f));
+                                var mist = new MediumMistParticle(fireSpawnPosition + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(4.5f, 4.5f) - Vector2.UnitY * 10f, fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 192 - Main.rand.Next(50), 0.02f);
+                                GeneralParticleHandler.SpawnParticle(mist);
+                            }
+                        }
+                        else
+                        {
+                            Vector2 slashSpawnPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * 30f;
+                            for (int i = 0; i < 3; i++)
+                            {
+                                float shootOffsetAngle = MathHelper.Lerp(-0.46f, 0.46f, i / 2f);
+                                Vector2 slashShootVelocity = (target.Center - slashSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * slashShootSpeed;
+                                Utilities.NewProjectileBetter(slashSpawnPosition, slashShootVelocity, ModContent.ProjectileType<BrimstoneSlash>(), 155, 0f);
+                            }
+
+                            for (int i = 0; i < 25; i++)
+                            {
+                                Color fireMistColor = Color.Lerp(Color.Cyan, Color.Orange, Main.rand.NextBool() ? 0.2f : 0.9f);
+                                var mist = new MediumMistParticle(slashSpawnPosition + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(3.5f, 3.5f) + Vector2.UnitX * -npc.spriteDirection * 16f, fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 192 - Main.rand.Next(50), 0.02f);
+                                GeneralParticleHandler.SpawnParticle(mist);
+                            }
                         }
                     }
                 }
-
-                if (attackTimer > fireballReleaseTime)
-                {
-                    backglowInterpolant = 0f;
-                    attackTimer = 0f;
-                    attackSubstate = 0f;
-                    attackCycleCounter++;
-
-                    if (attackCycleCounter > attackCycleCount)
-                        SelectNewAttack(npc);
-                    npc.netUpdate = true;
-                }
             }
         }
 
-        public static void SelectNewAttack(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
-            List<CataclysmAttackType> possibleAttacks = new()
-            {
-                CataclysmAttackType.BrimstoneFireBurst,
-                CataclysmAttackType.HorizontalCharges
-            };
+            // Catastrophe does not have control over when attack switches happen.
+            bool isCatastrophe = npc.type == ModContent.NPCType<Catastrophe>();
+            if (isCatastrophe)
+                return;
 
-            if (possibleAttacks.Count > 1)
-                possibleAttacks.Remove((CataclysmAttackType)(int)npc.ai[0]);
+            // The 6 instead of 5 is intentional in the loop below. The fifth index is reserved for the attack specific timer, which should be cleared alongside everything else.
+            if (npc.ai[0] == (int)SCalBrotherAttackType.HorizontalCharges)
+                npc.ai[0] = (int)SCalBrotherAttackType.FireAndSwordSlashes;
+            else if (npc.ai[0] == (int)SCalBrotherAttackType.FireAndSwordSlashes)
+                npc.ai[0] = (int)SCalBrotherAttackType.HorizontalCharges;
 
-            for (int i = 0; i < 5; i++)
+            npc.ai[1] = 0f;
+            for (int i = 0; i < 6; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
-            npc.ai[1] = 0f;
             npc.netUpdate = true;
         }
+
         #endregion AI
 
-        #region Drawcode
-
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        #region Frames and Drawcode
+        public override void FindFrame(NPC npc, int frameHeight)
         {
-            if (npc.localAI[0] > 0f)
-                npc.DrawBackglow(Color.Red, npc.localAI[0] * 8f, 0, npc.frame, Main.screenPosition);
-            return true;
+            ref float currentFrame = ref npc.localAI[1];
+            npc.frameCounter += 0.15;
+            if (npc.frameCounter >= 1D)
+            {
+                currentFrame = (currentFrame + 1f) % 4f;
+                npc.frameCounter = 0D;
+            }
+
+            npc.frame.Width = 118;
+            npc.frame.Height = 178;
+            npc.frame.X = 0;
+            npc.frame.Y = (int)currentFrame * npc.frame.Height;
         }
-        #endregion Drawcode
+
+        public static bool DrawBrother(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            bool isCatastrophe = npc.type == ModContent.NPCType<Catastrophe>();
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/Cataclysm").Value;
+            if (isCatastrophe)
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/Catastrophe").Value;
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            int afterimageCount = 4;
+
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i += 2)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
+                    Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                    spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            Vector2 mainDrawPosition = npc.Center - Main.screenPosition;
+
+            // Draw backglow afterimages.
+            if (npc.localAI[2] > 0f)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * npc.localAI[2] * npc.scale * 5f;
+                    Color backglowColor = Color.Red * npc.Opacity * npc.localAI[2];
+                    backglowColor.A = 0;
+                    spriteBatch.Draw(texture, mainDrawPosition + drawOffset, npc.frame, backglowColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+            spriteBatch.Draw(texture, mainDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            // Draw catastrophe's arm.
+            if (isCatastrophe)
+            {
+                float armRotation = npc.localAI[0] * npc.spriteDirection - MathHelper.PiOver4;
+                Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CatastropheArm").Value;
+                Vector2 armTextureDrawPosition = mainDrawPosition + new Vector2(npc.spriteDirection * -6f, -33f).RotatedBy(npc.rotation) * npc.scale;
+                Vector2 armOrigin = armTexture.Size() * 0f;
+                if (npc.spriteDirection == -1)
+                {
+                    armOrigin.X = armTexture.Width - armOrigin.X;
+                    armTextureDrawPosition.X -= armTexture.Width * npc.scale * 0.5f;
+                }
+                else
+                {
+                    armRotation += MathHelper.PiOver2;
+                    armTextureDrawPosition.X += armTexture.Width * npc.scale * 0.5f;
+                }
+
+                spriteBatch.Draw(armTexture, armTextureDrawPosition, null, npc.GetAlpha(lightColor), armRotation, armOrigin, npc.scale, spriteEffects, 0f);
+            }
+            else
+            {
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CataclysmGlowmask").Value;
+                spriteBatch.Draw(texture, mainDrawPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 12f, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            }
+
+            return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => DrawBrother(npc, spriteBatch, lightColor);
+        #endregion Frames and Drawcode
     }
 }

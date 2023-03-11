@@ -57,7 +57,7 @@ namespace InfernumMode.Content.Projectiles
             else
             {
                 float progress = Utils.Remap(Projectile.timeLeft, Lifetime, 0f, 0f, 1f);
-                InfernumEffectsRegistry.ScreenShakeScreenShader.GetShader().UseProgress(progress).UseOpacity((1f - progress) * 150f);
+                InfernumEffectsRegistry.ScreenShakeScreenShader.GetShader().UseProgress(progress).UseOpacity((1f - progress) * 30f);
             }
         }
 

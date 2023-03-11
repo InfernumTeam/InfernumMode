@@ -62,6 +62,7 @@ namespace InfernumMode.Assets.Effects
 
         #region Screen Shaders
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
+        public static Filter CalCloneScreenShader => Filters.Scene["InfernumMode:CalClone"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
@@ -253,6 +254,10 @@ namespace InfernumMode.Assets.Effects
             // Astrum Deus.
             Filters.Scene["InfernumMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Deus"] = new DeusSky();
+
+            // Calamitas Clone.
+            Filters.Scene["InfernumMode:CalClone"] = new Filter(new CalCloneScreenShaderData("FilterMiniTower").UseOpacity(0f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:CalClone"] = new CalCloneSky();
 
             // Dragonfolly.
             Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);

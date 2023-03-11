@@ -1,3 +1,5 @@
+using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -20,11 +22,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public override void AI()
         {
-            Projectile.scale = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(150f, 130f, Projectile.timeLeft, true);
+            Projectile.scale = Utils.GetLerpValue(150f, 130f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
         }
 
         public override void Kill(int timeLeft)
         {
+            for (int i = 0; i < 10; i++)
+            {
+                CloudParticle sporeGas = new(Projectile.Center, Main.rand.NextVector2Circular(3f, 3f), Color.Pink, Color.Lime, 36, Main.rand.NextFloat(0.6f, 0.85f));
+                GeneralParticleHandler.SpawnParticle(sporeGas);
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
@@ -32,11 +41,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             for (int i = 0; i < 3; i++)
             {
                 float offsetAngle = MathHelper.Lerp(-0.38f, 0.38f, i / 2f);
-                Vector2 petalShootVelocity = Projectile.SafeDirectionTo(closestPlayer.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 6.5f;
+                Vector2 petalShootVelocity = Projectile.SafeDirectionTo(closestPlayer.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 7.5f;
                 Utilities.NewProjectileBetter(Projectile.Center, petalShootVelocity, ModContent.ProjectileType<Petal>(), 150, 0f);
             }
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White;
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
     }
 }

@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 125;
+            Projectile.timeLeft = 105;
             Projectile.Opacity = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
         }

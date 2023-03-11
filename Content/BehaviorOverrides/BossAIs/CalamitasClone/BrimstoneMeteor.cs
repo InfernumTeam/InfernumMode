@@ -1,4 +1,7 @@
-using CalamityMod;
+using CalamityMod.NPCs;
+using CalamityMod.Particles;
+using CalamityMod.Projectiles.Boss;
+using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -10,12 +13,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
     public class BrimstoneMeteor : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Meteor");
             Main.projFrames[Projectile.type] = 4;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
@@ -34,11 +38,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
-            Projectile.Opacity = Utils.GetLerpValue(30f, 42f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            if (Time == 30f)
-                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.Center);
+            float acceleration = 1.01f;
+            float maxSpeed = 17f;
+            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Zeal"))
+            {
+                // Start out slower if acceleration is expected.
+                if (Projectile.ai[1] == 0f)
+                {
+                    Projectile.velocity *= 0.3f;
+                    Projectile.ai[1] = 1f;
+                    Projectile.netUpdate = true;
+                }
+
+                acceleration = 1.02f;
+            }
+
+            if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)
+                Projectile.velocity *= acceleration;
+
+            // Explode once past the tile collision line.
+            Projectile.tileCollide = Projectile.Top.Y >= Projectile.ai[1];
 
             Time++;
         }
@@ -49,24 +71,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Time < 30f)
-            {
-                Vector2 lineDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-                float lineWidth = CalamityUtils.Convert01To010(Time / 30f) * 4f + 1f;
-                Main.spriteBatch.DrawLineBetter(Projectile.Center - lineDirection * 3400f, Projectile.Center + lineDirection * 3400f, Color.Red, lineWidth);
-                return false;
-            }
-
-            lightColor.R = (byte)(255 * Projectile.Opacity);
+            lightColor = Color.Lerp(lightColor, Color.White, 0.5f);
+            lightColor.A /= 3;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }
 
-        public override bool ShouldUpdatePosition() => Time >= 30f;
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        public override void Kill(int timeLeft)
         {
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
 
+            for (int i = 0; i < 6; i++)
+            {
+                Color fireColor = Main.rand.NextBool() ? Color.HotPink : Color.Red;
+                CloudParticle fireCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), fireColor, Color.DarkGray, 33, Main.rand.NextFloat(1.8f, 2f))
+                {
+                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                };
+                GeneralParticleHandler.SpawnParticle(fireCloud);
+            }
         }
+
+        public override bool ShouldUpdatePosition() => true;
     }
 }

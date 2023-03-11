@@ -11,10 +11,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
     public class SoulSeeker2 : ModNPC
     {
         public Player Target => Main.player[NPC.target];
+
         public ref float RingAngle => ref NPC.ai[0];
+
         public ref float AngerTimer => ref NPC.ai[1];
+
         public ref float AttackTimer => ref NPC.ai[2];
-        public static float RingRadius => Main.npc[CalamityGlobalNPC.calamitas].Infernum().ExtraAI[6];
+
+        public override string Texture => "CalamityMod/NPCs/CalClone/SoulSeeker";
 
         public override void SetStaticDefaults()
         {
@@ -42,7 +46,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void AI()
         {
             bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
-            brotherIsPresent |= Main.npc.IndexInRange(CalamityGlobalNPC.calamitas) && Main.npc[CalamityGlobalNPC.calamitas].ai[3] > 0f && Main.npc[CalamityGlobalNPC.calamitas].ai[3] < 50f;
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.calamitas) || !brotherIsPresent)
             {
                 NPC.active = false;
@@ -51,23 +54,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             NPC calamitas = Main.npc[CalamityGlobalNPC.calamitas];
             NPC.target = calamitas.target;
-            NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * RingRadius;
+            NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * 750f;
             NPC.Opacity = 1f - calamitas.Opacity;
-            float idealRotation = RingAngle;
-            if (!Target.WithinRange(calamitas.Center, RingRadius + 60f))
+            float idealRotation = RingAngle + MathHelper.Pi;
+            if (!Target.WithinRange(calamitas.Center, 820f))
             {
-                idealRotation = NPC.AngleTo(Target.Center);
+                idealRotation = NPC.AngleTo(Target.Center) + MathHelper.Pi;
 
                 AngerTimer++;
                 AttackTimer++;
                 if (AttackTimer >= MathHelper.Lerp(90f, 30f, Utils.GetLerpValue(30f, 520f, AngerTimer, true)))
                 {
-                    int dartDamage = 150;
+                    int dartDamage = 180;
                     Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 15f) * 21f;
-                    int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
+                    int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f, -1, 1f);
                     if (Main.projectile.IndexInRange(dart))
                     {
-                        Main.projectile[dart].ai[0] = 1f;
                         Main.projectile[dart].tileCollide = false;
                         Main.projectile[dart].netUpdate = true;
                     }

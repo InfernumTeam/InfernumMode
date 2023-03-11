@@ -395,11 +395,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
-                    for (int i = 0; i < 55; i++)
+                    for (int i = 0; i < 42; i++)
                     {
                         Vector2 gasSporeVelocity;
                         do
-                            gasSporeVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 33f);
+                            gasSporeVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 41f);
                         while (gasSporeVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.23f);
 
                         if (enraged)
@@ -616,6 +616,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             if (attackTimer < 60f)
             {
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ExplodingFlower>(), ModContent.ProjectileType<Petal>());
+
                 if (!npc.WithinRange(target.Center, 85f))
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 3f, 0.15f);
                 else
@@ -640,6 +642,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 chargeCounter++;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        float shootOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / 4f);
+                        Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
+                        Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * (chargeSpeed * 0.67f);
+
+                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 160, 0f);
+                    }
+                }
 
                 SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
 

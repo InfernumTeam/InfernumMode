@@ -182,7 +182,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void Kill(int timeLeft)
         {
             // Burst into lava metaballs on death.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.Server)
                 ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center, Projectile.rotation, Projectile.scale, 20f, 30);
         }
 

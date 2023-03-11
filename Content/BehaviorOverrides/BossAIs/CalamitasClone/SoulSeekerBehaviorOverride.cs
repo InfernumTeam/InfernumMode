@@ -1,10 +1,10 @@
-using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
-using CalamityMod.Projectiles.Boss;
+using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,42 +16,75 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreAI(NPC npc)
         {
-            // Setting this in SetDefaults will disable expert mode scaling, so put it here instead
-            npc.damage = 0;
-
-            if (CalamityGlobalNPC.calamitas < 0 || !Main.npc[CalamityGlobalNPC.calamitas].active)
+            // Disappear if CalClone is not present.
+            if (CalamityGlobalNPC.calamitas == -1)
             {
                 npc.active = false;
-                npc.netUpdate = true;
                 return false;
             }
 
-            NPC parent = Main.npc[CalamityGlobalNPC.calamitas];
-            if (npc.localAI[0] == 0f)
-            {
-                for (int d = 0; d < 15; d++)
-                    Dust.NewDust(npc.position, npc.width, npc.height, (int)CalamityDusts.Brimstone, 0f, 0f, 100, default, 2f);
+            int shootRate = 30;
+            ref float hasLockedIntoPosition = ref npc.ai[2];
+            ref float attackTimer = ref npc.ai[3];
+            ref float flyingAway = ref npc.Infernum().ExtraAI[0];
+            ref float spinRadius = ref npc.Infernum().ExtraAI[1];
 
-                npc.localAI[0] = 1f;
+            NPC calClone = Main.npc[CalamityGlobalNPC.calamitas];
+
+            // Hover near CalClone if applicable. Otherwise fly away from her.
+            if (flyingAway == 0f)
+            {
+                // Spin outward.
+                spinRadius = MathHelper.Lerp(spinRadius, 840f, 0.05f);
+
+                Vector2 hoverDestination = calClone.Center + (npc.ai[0] + npc.ai[1]).ToRotationVector2() * spinRadius;
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.034f).MoveTowards(hoverDestination, 6f);
+                if (hasLockedIntoPosition == 0f && npc.WithinRange(hoverDestination, 20f))
+                {
+                    hasLockedIntoPosition = 1f;
+                    npc.netUpdate = true;
+                }
+                if (hasLockedIntoPosition == 1f)
+                    npc.Center = hoverDestination;
+            }
+            else
+            {
+                npc.rotation = npc.AngleFrom(calClone.Center) + MathHelper.Pi;
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(calClone.Center) * -30f, 0.06f);
+                if (!npc.WithinRange(calClone.Center, 3000f))
+                    npc.active = false;
             }
 
-            npc.TargetClosest();
+            // Inherit the target from CalClone.
+            npc.target = calClone.target;
+            Player target = Main.player[npc.target];
 
-            Vector2 velocity = npc.SafeDirectionTo(Main.player[npc.target].Center) * 9f;
-            npc.rotation = velocity.ToRotation() + MathHelper.Pi;
+            if (flyingAway == 0f)
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
 
-            npc.ai[2]++;
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[2] % 180f == 179f)
+            npc.ai[1] += MathHelper.ToRadians(0.6f);
+
+            // Periodically release dark magic bolts.
+            if (attackTimer % shootRate == shootRate - 1f && !npc.WithinRange(target.Center, 400f) && flyingAway == 0f)
             {
-                for (int d = 0; d < 3; d++)
-                    Dust.NewDust(npc.position, npc.width, npc.height, (int)CalamityDusts.Brimstone, 0f, 0f, 100, default, 2f);
+                // Release some fire mist.
+                Vector2 magicVelocity = npc.SafeDirectionTo(target.Center) * Main.rand.NextFloat(8f, 9f);
+                for (int i = 0; i < 8; i++)
+                {
+                    Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.66f));
+                    var mist = new MediumMistParticle(npc.Center + magicVelocity * 2f + Main.rand.NextVector2Circular(10f, 10f), Vector2.Zero, fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 195 - Main.rand.Next(50), 0.02f)
+                    {
+                        Velocity = magicVelocity.RotatedByRandom(0.2f) * Main.rand.NextFloat(0.9f, 2.4f)
+                    };
+                    GeneralParticleHandler.SpawnParticle(mist);
+                }
 
-                int type = ModContent.ProjectileType<BrimstoneBarrage>();
-                Utilities.NewProjectileBetter(npc.Center, velocity, type, 155, 1f, npc.target, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.Item72, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center + magicVelocity * 2f, magicVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
             }
+            attackTimer++;
 
-            npc.position = parent.Center - npc.ai[0].ToRotationVector2() * 180f - npc.Size * 0.5f;
-            npc.ai[0] += MathHelper.ToRadians(0.5f);
             return false;
         }
     }

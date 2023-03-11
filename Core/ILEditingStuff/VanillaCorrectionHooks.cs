@@ -975,15 +975,25 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
             SCalSkyDraw += ChangeSCalSkyRequirements;
+            CalCloneSkyDraw += ChangeCalCloneSkyRequirements;
         }
 
         public void Unload()
         {
             On.Terraria.Graphics.Effects.FilterManager.CanCapture -= NoScreenShader;
             SCalSkyDraw -= ChangeSCalSkyRequirements;
+            CalCloneSkyDraw -= ChangeCalCloneSkyRequirements;
         }
 
         private void ChangeSCalSkyRequirements(Action<SCalBackgroundScene, Player, bool> orig, SCalBackgroundScene instance, Player player, bool isActive)
+        {
+            if (InfernumMode.CanUseCustomAIs)
+                return;
+
+            orig(instance, player, isActive);
+        }
+
+        private void ChangeCalCloneSkyRequirements(Action<CalamitasCloneBackgroundScene, Player, bool> orig, CalamitasCloneBackgroundScene instance, Player player, bool isActive)
         {
             if (InfernumMode.CanUseCustomAIs)
                 return;

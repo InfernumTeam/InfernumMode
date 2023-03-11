@@ -252,7 +252,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
 
                 new Boss(ModContent.NPCType<CalamitasClone>(), TimeChangeContext.Night, specialSpawnCountdown: 420, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<Cataclysm>(), ModContent.NPCType<Catastrophe>(),
-                         ModContent.NPCType<SoulSeeker>(), ModContent.NPCType<SoulSeeker2>() }),
+                         ModContent.NPCType<SoulSeeker>() }),
                 
                 // Tier 5.
                 new Boss(ModContent.NPCType<DevourerofGodsHead>(), TimeChangeContext.Day, type =>

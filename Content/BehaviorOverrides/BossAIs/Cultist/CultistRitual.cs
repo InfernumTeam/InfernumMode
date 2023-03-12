@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.hide = true;
             Projectile.timeLeft = 325;
             Projectile.penetrate = -1;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public static int GetWaitTime(bool phase2) => phase2 ? 290 : 250;

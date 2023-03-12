@@ -28,6 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 240;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

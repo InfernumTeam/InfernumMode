@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.timeLeft = 300;
             Projectile.Opacity = 0f;
             Projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

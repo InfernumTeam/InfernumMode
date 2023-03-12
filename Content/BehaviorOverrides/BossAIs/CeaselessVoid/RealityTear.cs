@@ -37,6 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = Projectile.MaxUpdates * 135;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

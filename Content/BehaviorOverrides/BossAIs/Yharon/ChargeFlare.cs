@@ -27,6 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.penetrate = -1;
             Projectile.timeLeft = 180;
             Projectile.scale = 0.15f;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

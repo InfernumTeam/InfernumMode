@@ -30,6 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

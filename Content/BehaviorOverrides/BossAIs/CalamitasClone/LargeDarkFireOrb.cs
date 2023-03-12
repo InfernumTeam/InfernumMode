@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
@@ -33,6 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.timeLeft = 7200;
             Projectile.Opacity = 0f;
             Projectile.netImportant = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

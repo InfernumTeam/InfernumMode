@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
@@ -19,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Sulphuric Rubble");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Red Flame Telegraph");
 
         public override void SetDefaults()
         {
@@ -29,6 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = TelegraphTime;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;

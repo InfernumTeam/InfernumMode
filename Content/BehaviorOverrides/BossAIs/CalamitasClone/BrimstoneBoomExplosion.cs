@@ -3,6 +3,7 @@ using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
@@ -23,6 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.MaxUpdates = 3;
             Projectile.scale = 0.2f;
             Projectile.hide = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

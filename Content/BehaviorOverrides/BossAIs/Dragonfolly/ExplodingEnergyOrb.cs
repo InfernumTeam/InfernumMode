@@ -22,6 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.tileCollide = true;
             Projectile.scale = 0.96f;
             Projectile.timeLeft = 90;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

@@ -40,6 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.hostile = true;
             Projectile.timeLeft = Projectile.MaxUpdates * 540;
             Projectile.hide = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

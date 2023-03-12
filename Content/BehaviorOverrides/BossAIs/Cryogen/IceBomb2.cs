@@ -20,6 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 180;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

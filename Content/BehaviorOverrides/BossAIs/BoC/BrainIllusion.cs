@@ -12,9 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
     {
         public Player Target => Main.player[NPC.target];
 
-        public NPC Owner => Main.npc[NPC.crimsonBoss];
-
-        public float OwnerAttackTime => Owner.ai[1];
+        public static NPC Owner => Main.npc[NPC.crimsonBoss];
 
         public ref float ConvergeOffsetAngle => ref NPC.ai[1];
 
@@ -73,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             NPC.dontTakeDamage = Owner.dontTakeDamage;
         }
 
-        public override Color? GetAlpha(Color drawColor) => NPC.crimsonBoss == -1 ? null : Owner.GetAlpha(drawColor);
+        public override Color? GetAlpha(Color drawColor) => NPC.crimsonBoss == -1 ? null : global::InfernumMode.Content.BehaviorOverrides.BossAIs.BoC.BrainIllusion.Owner.GetAlpha(drawColor);
 
         public override bool CheckActive() => false;
     }

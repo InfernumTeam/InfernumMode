@@ -3,6 +3,7 @@ using CalamityMod.Particles.Metaballs;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
@@ -24,6 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 250;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

@@ -22,6 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 120;
             Projectile.penetrate = -1;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

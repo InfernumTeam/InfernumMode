@@ -47,6 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             Projectile.hostile = true;
             Projectile.extraUpdates = 4;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

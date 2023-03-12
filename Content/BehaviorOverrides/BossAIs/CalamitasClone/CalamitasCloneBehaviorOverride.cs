@@ -1,11 +1,10 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
-using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.Environment;
 using CalamityMod.UI.CalamitasEnchants;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -49,6 +48,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             FireburstDashes,
 
             BrothersPhase,
+
+            TransitionToFinalPhase,
+
+            BarrageOfArcingDarts,
+            FireSlashes,
+            RisingBrimstoneFireBursts
         }
         #endregion
 
@@ -56,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public const float Phase2LifeRatio = 0.55f;
 
-        public const float Phase3LifeRatio = 0.25f;
+        public const float Phase3LifeRatio = 0.2f;
 
         public const int ArmRotationIndex = 5;
 
@@ -65,6 +70,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public const int HexType2Index = 7;
 
         public const int HasEnteredPhase2Index = 8;
+
+        public const int HasEnteredPhase3Index = 9;
 
         public static Primitive3DStrip HexStripDrawer
         {
@@ -132,6 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int catharsisSoulReleaseRate = 90;
             bool anyBrothers = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float generalTimer = ref npc.ai[2];
@@ -143,12 +151,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float hexType = ref npc.Infernum().ExtraAI[HexTypeIndex];
             ref float hexType2 = ref npc.Infernum().ExtraAI[HexType2Index];
             ref float hasEnteredPhase2 = ref npc.Infernum().ExtraAI[HasEnteredPhase2Index];
+            ref float hasEnteredPhase3 = ref npc.Infernum().ExtraAI[HasEnteredPhase3Index];
 
             // Apply hexes to the target.
             string hexName = Hexes[(int)hexType];
             string hex2Name = Hexes[(int)hexType2];
 
-            if (!anyBrothers && attackType != (int)CloneAttackType.BrothersPhase && attackType != (int)CloneAttackType.SpawnAnimation)
+            if (!anyBrothers && attackType != (int)CloneAttackType.BrothersPhase && attackType != (int)CloneAttackType.SpawnAnimation && !phase3)
             {
                 target.Infernum_CalCloneHex().ActivateHex(hexName);
                 if (lifeRatio < Phase2LifeRatio)
@@ -157,6 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Use a custom hitsound.
             npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f };
+
             // Reset things every frame.
             npc.defDamage = 0;
             npc.damage = npc.defDamage;
@@ -165,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.noTileCollide = true;
             npc.gfxOffY = 10f;
 
-            if (hexApplicationPauseDelay >= 1f)
+            if (hexApplicationPauseDelay >= 1f && !phase3)
             {
                 armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.09f).AngleTowards(MathHelper.Pi, 0.045f);
                 hexApplicationPauseDelay--;
@@ -208,13 +218,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     Utilities.NewProjectileBetter(target.Center, soulShootDirection * 12f, ModContent.ProjectileType<CatharsisSoul>(), 155, 0f);
             }
 
+            // Handle phase transitions.
             if (hasEnteredPhase2 == 0f && lifeRatio < Phase2LifeRatio)
             {
                 SelectNextAttack(npc);
                 hasEnteredPhase2 = 1f;
                 attackType = (int)CloneAttackType.BrothersPhase;
             }
-            
+            if (hasEnteredPhase3 == 0f && phase3)
+            {
+                SelectNextAttack(npc);
+                hasEnteredPhase3 = 1f;
+                attackType = (int)CloneAttackType.TransitionToFinalPhase;
+            }
+
             switch ((CloneAttackType)(int)attackType)
             {
                 case CloneAttackType.SpawnAnimation:
@@ -241,6 +258,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 case CloneAttackType.BrothersPhase:
                     DoBehavior_BrothersPhase(npc, target, anyBrothers, ref attackTimer, ref armRotation);
+                    break;
+                case CloneAttackType.TransitionToFinalPhase:
+                    DoBehavior_TransitionToFinalPhase(npc, target, ref attackTimer, ref armRotation, ref eyeGleamInterpolant);
+                    break;
+
+                case CloneAttackType.BarrageOfArcingDarts:
+                    DoBehavior_BarrageOfArcingDarts(npc, target, ref attackTimer, ref armRotation);
+                    break;
+                case CloneAttackType.FireSlashes:
+                    DoBehavior_FireSlashes(npc, target, ref attackTimer, ref armRotation);
+                    break;
+                case CloneAttackType.RisingBrimstoneFireBursts:
+                    DoBehavior_RisingBrimstoneFireBursts(npc, target, ref attackTimer, ref armRotation);
                     break;
             }
 
@@ -310,7 +340,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.4f, Volume = 1.6f }, target.Center);
                     SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
 
-                    npc.velocity.Y -= 23f;
+                    npc.velocity.Y -= 14f;
                     Collision.HitTiles(npc.TopLeft, Vector2.UnitY * -12f, npc.width, npc.height + 100);
                     SelectNextAttack(npc);
                 }
@@ -1050,7 +1080,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int rumbleTime = 240;
 
             // Aim the arm downward.
-            armRotation = armRotation.AngleTowards(0f, 0.02f);
+            armRotation = armRotation.AngleTowards(0f, 0.046f);
 
             // Clear away projectiles from old attacks at first.
             if (attackTimer <= 2f)
@@ -1125,6 +1155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.ShowNameOnHover = false;
                 npc.dontTakeDamage = true;
                 npc.Opacity = 0f;
+                npc.Calamity().ShouldCloseHPBar = true;
             }
 
             if (attackTimer >= rumbleTime + 5f && !anyBrothers)
@@ -1134,6 +1165,227 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.velocity = Vector2.Zero;
                 npc.noGravity = true;
                 SelectNextAttack(npc);
+            }
+        }
+
+        public static void DoBehavior_TransitionToFinalPhase(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float eyeGleamInterpolant)
+        {
+            int teleportDelay = 90;
+            int blackFadeTime = 12;
+
+            float blackFadeCompletion = Utils.GetLerpValue(teleportDelay - blackFadeTime, teleportDelay + blackFadeTime, attackTimer, true);
+            float blackFadeSpike = CalamityUtils.Convert01To010(blackFadeCompletion);
+            InfernumMode.BlackFade = MathF.Sqrt(blackFadeSpike);
+
+            // Disable damage.
+            npc.dontTakeDamage = true;
+
+            // Aim the arm upward.
+            armRotation = armRotation.AngleTowards(MathHelper.Pi, 0.046f);
+
+            // Clear away projectiles from old attacks at first.
+            if (attackTimer <= 2f)
+            {
+                if (attackTimer <= 0f)
+                {
+                    SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
+                    Utilities.DisplayText("I'm just getting started!", Color.Orange);
+                }
+
+                int[] projectilesToDelete = new int[]
+                {
+                    ModContent.ProjectileType<ArcingBrimstoneDart>(),
+                    ModContent.ProjectileType<BrimstoneMeteor>(),
+                    ModContent.ProjectileType<CatharsisSoul>(),
+                    ModContent.ProjectileType<CharredWand>(),
+                    ModContent.ProjectileType<ConvergingShadowSpark>(),
+                    ModContent.ProjectileType<DarkMagicFlame>(),
+                    ModContent.ProjectileType<LargeDarkFireOrb>(),
+                };
+                Utilities.DeleteAllProjectiles(false, projectilesToDelete);
+            }
+
+            // Teleport to the side of the player.
+            if (attackTimer == teleportDelay)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalCloneTeleportSound);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Pitch = -0.3f });
+                npc.Center = target.Center - Vector2.UnitX * target.direction * 450f;
+                npc.velocity = Vector2.Zero;
+
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
+                target.Infernum_Camera().CurrentScreenShakePower = 15f;
+            }
+
+            // Look at the target and slow down.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.velocity *= 0.9f;
+
+            // Make the eye gleam effect happen.
+            eyeGleamInterpolant = blackFadeCompletion * 0.67f;
+
+            if (attackTimer >= teleportDelay + blackFadeTime + 8f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_BarrageOfArcingDarts(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            // Have Cal holder her hand up.
+            armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.2f).AngleTowards(MathHelper.Pi, 0.04f);
+
+            int shootDelay = 30;
+            int shootTime = 90;
+            int attackTransitionDelay = 48;
+            int dartBurstReleaseRate = 8;
+            int dartShootCount = 13;
+            float dartShootSpeed = 2.5f;
+            float dartAngularVelocity = MathHelper.ToRadians(0.7f);
+            float flySlowdownInterpolant = Utils.GetLerpValue(attackTransitionDelay, 0f, attackTimer - shootDelay - shootTime, true);
+            Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+            Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+
+            // Hover near the target.
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 250f, -190f);
+            Vector2 idealVelocity = (hoverDestination - npc.Center) * flySlowdownInterpolant * 0.0145f;
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            if (attackTimer == shootDelay)
+                SoundEngine.PlaySound(SoundID.Item164 with { Pitch = -0.04f }, target.Center);
+
+            // Release bursts of darts.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootDelay && attackTimer <= shootDelay + shootTime && attackTimer % dartBurstReleaseRate == dartBurstReleaseRate - 1f)
+            {
+                float shootOffsetAngle = 3f * MathHelper.Pi * (attackTimer - shootDelay) / shootTime;
+                for (int i = 0; i < dartShootCount; i++)
+                {
+                    Vector2 dartVelocity = (MathHelper.TwoPi * i / dartShootCount + shootOffsetAngle).ToRotationVector2() * dartShootSpeed;
+                    Utilities.NewProjectileBetter(armEnd, dartVelocity * 0.5f, ModContent.ProjectileType<ArcingBrimstoneDart>(), 160, 0f, -1, -dartAngularVelocity, 0f);
+                }
+            }
+
+            if (flySlowdownInterpolant <= 0f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_FireSlashes(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            int hoverTime = 30;
+            int chargeTime = 26;
+            int chargeSlowdowntime = 12;
+            int chargeCount = 4;
+            int wrappedAttackTimer = (int)attackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
+            float baseChargeSpeed = 16f;
+            float chargeAcceleration = 2.6f;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Hover to the side of the target in anticipation of the charge.
+            if (wrappedAttackTimer <= hoverTime)
+            {
+                Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 400f;
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.07f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                armRotation = armRotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
+            }
+            else if (npc.velocity.Length() >= 10f)
+                npc.damage = 165;
+
+            // Charge at the target.
+            if (wrappedAttackTimer == hoverTime + 1f)
+            {
+                SoundEngine.PlaySound(SCalBoss.DashSound, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireEndSound with { Pitch = 0.125f }, target.Center);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * baseChargeSpeed;
+            }
+
+            // Accelerate and release fire after charging.
+            if (wrappedAttackTimer >= hoverTime + 1f && wrappedAttackTimer <= hoverTime + chargeTime)
+            {
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.1f, ModContent.ProjectileType<LingeringBrimstoneFlames>(), 165, 0f);
+            }
+
+            // Slow down in anticipation of the next charge.
+            if (wrappedAttackTimer >= hoverTime + chargeTime)
+            {
+                // Release a burst of flames in all directions.
+                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == hoverTime + chargeTime + 11f)
+                {
+                    chargeCounter++;
+                    if (chargeCounter >= chargeCount)
+                    {
+                        npc.velocity *= 0.5f;
+                        SelectNextAttack(npc);
+                        return;
+                    }
+                    npc.netUpdate = true;
+                }
+
+                npc.velocity *= 0.85f;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                armRotation = armRotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
+            }
+        }
+
+        public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        {
+            int attackCycleCount = 2;
+            int hoverTime = 90;
+            float hoverHorizontalOffset = 485f;
+            float hoverSpeed = 19f;
+            float fireballSpeed = 13.5f;
+            int fireballReleaseRate = 20;
+            int fireballReleaseTime = 150;
+
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+
+            // Attempt to hover to the side of the target.
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Aim the arm at the player.
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            armRotation = armRotation.AngleTowards(idealRotation, 0.096f);
+
+            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
+            // This is done to ensure that the attack begins once the boss is close to the target.
+            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 110f)))
+            {
+                attackSubstate = 1f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Release fireballs.
+            if (attackSubstate == 1f)
+            {
+                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 180f < 60f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int fireballDamage = 155;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
+                    }
+                }
+
+                if (attackTimer > fireballReleaseTime)
+                {
+                    attackTimer = 0f;
+                    attackSubstate = 0f;
+                    attackCycleCounter++;
+
+                    if (attackCycleCounter >= attackCycleCount)
+                        SelectNextAttack(npc);
+                    npc.netUpdate = true;
+                }
             }
         }
 
@@ -1166,6 +1418,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CloneAttackType.FireburstDashes:
                     nextAttack = CloneAttackType.WandFireballs;
+                    break;
+
+                case CloneAttackType.BarrageOfArcingDarts:
+                    nextAttack = CloneAttackType.FireSlashes;
+                    break;
+                case CloneAttackType.FireSlashes:
+                    nextAttack = CloneAttackType.RisingBrimstoneFireBursts;
+                    break;
+                case CloneAttackType.RisingBrimstoneFireBursts:
+                case CloneAttackType.TransitionToFinalPhase:
+                    nextAttack = CloneAttackType.BarrageOfArcingDarts;
                     break;
             }
 

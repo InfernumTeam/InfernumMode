@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)
                 Projectile.velocity *= acceleration;
 
-            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Time, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 8f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             Time++;

@@ -80,6 +80,14 @@ namespace InfernumMode.Core.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type))
                 return Main.maxDust;
 
+            if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type || 
+                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas2").Type ||
+                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type || 
+                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas4").Type ||
+                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas5").Type ||
+                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas6").Type))
+                return Main.maxDust;
+
             return orig(source, Position, Velocity, Type, Scale);
         }
 

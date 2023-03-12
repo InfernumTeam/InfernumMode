@@ -79,7 +79,18 @@ namespace InfernumMode.Content.Projectiles
         public override void AI()
         {
             if (Time == 0)
+            {
                 Player.Infernum_Camera().ScreenFocusHoldInPlaceTime = Lifetime;
+
+                // If infernum is not enabled, just spawn the guardians.
+                if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.InfernumMode)
+                {
+                    NPC.SpawnOnPlayer(Main.player[Projectile.owner].whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
+                    Projectile.Kill();
+                    return;
+                }
+
+            }
 
             float particleCircleSize = MathHelper.Lerp(500f, 200f, Time / SpawnTime);
             int rockSpawnRate = (int)MathHelper.Lerp(3f, 1f, Time / SpawnTime);
@@ -180,9 +191,7 @@ namespace InfernumMode.Content.Projectiles
 
                 // Create an explosion and summon the Guardian Commander.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
                     CalamityUtils.SpawnBossBetter(CommanderStartingHoverPosition + new Vector2(20f, 90f), ModContent.NPCType<ProfanedGuardianCommander>());
-                }
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 basePos = i switch

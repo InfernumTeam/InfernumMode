@@ -86,9 +86,9 @@ namespace InfernumMode.Content.Skies
         public override void Update(GameTime gameTime)
         {
             if (isActive && intensity < 1f)
-                intensity = MathHelper.Clamp(intensity + 0.01f, 0f, MaxIntensity);
+                intensity = MathHelper.Clamp(intensity + 0.025f, 0f, MaxIntensity);
             else if (!isActive && intensity > 0f)
-                intensity = MathHelper.Clamp(intensity - 0.01f, 0f, MaxIntensity);
+                intensity = MathHelper.Clamp(intensity - 0.025f, 0f, MaxIntensity);
 
             if (NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianCommander>()) == -1)
                 Deactivate();

@@ -800,7 +800,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 float waitTime = dashesCompleted == 0f ? 60f : 30;
                 float telegraphWaitTime = 20f;
-                float dashTime = 35f;
+                float dashTime = 25f;
                 float dashSpeed = 25f;
                 float dashAcceleration = 1.55f;
 
@@ -1724,12 +1724,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float symbolSpawnRate = 15f;
 
                 Vector2 focusPosition = target.Center + new Vector2(0f, target.gfxOffY) + (-0.4f).ToRotationVector2() * 70f;
-
+                target.Infernum_Camera().ScreenFocusInterpolant = 1f;
+                target.Infernum_Camera().ScreenFocusPosition = focusPosition;
                 if (substate < 6f)
                 {
-                    target.Infernum_Camera().ScreenFocusInterpolant = 2f;
-                    target.Infernum_Camera().ScreenFocusPosition = focusPosition;
-                    target.Infernum_Camera().CurrentScreenShakePower = 1f;
+                    target.Infernum_Camera().CurrentScreenShakePower = 2f;
                     drawBlackBars = 1f;
 
                     // Do not take damage.
@@ -1981,6 +1980,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Move out of the way of the target if going around them.
                     if (npc.WithinRange(target.Center, 150f))
                         npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
+
+                    // Do not deal contact damage.
+                    npc.damage = 0;
 
                     // Despawn the spear if it is active.
                     if ((DefenderShieldStatus)spearStatus != DefenderShieldStatus.Inactive || Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<CommanderSpear>()))

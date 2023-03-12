@@ -99,17 +99,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.chaseable = true;
             }
 
+            // Deal damage.
+            npc.damage = npc.defDamage;
+
             // Reset fields.
             npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0;
 
-            // Give the player infinite flight time.
+            // Give the player infinite flight time, and keep them in the bounds.
             for (int i = 0; i < Main.player.Length; i++)
             {
                 Player player = Main.player[i];
-                if (player.active && !player.dead && player.Distance(npc.Center) <= 10000f)
+                if (player.active && !player.dead)
                 {
-                    player.wingTime = player.wingTimeMax;
-                    player.AddBuff(ModContent.BuffType<ElysianGrace>(), 2, true);
+                    if (player.WithinRange(npc.Center, 10000f))
+                    {
+                        player.wingTime = player.wingTimeMax;
+                        player.AddBuff(ModContent.BuffType<ElysianGrace>(), 2, true);
+                    }
+
+                    if (player.WithinRange(new Vector2(WorldSaveSystem.ProvidenceDoorXPosition, (WorldSaveSystem.ProvidenceArena.Y + WorldSaveSystem.ProvidenceArena.Height * 0.5f) * 16f), 10000f))
+                    {
+                        if (player.Center.X > WorldSaveSystem.ProvidenceDoorXPosition)
+                            player.Center = new(WorldSaveSystem.ProvidenceDoorXPosition, player.Center.Y);
+                    }
                 }
             }
 

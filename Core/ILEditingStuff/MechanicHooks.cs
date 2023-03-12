@@ -7,6 +7,7 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Schematics;
@@ -685,7 +686,20 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate((Player player) =>
             {
-                if (Main.myPlayer == player.whoAmI && !Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
+                // Normal spawning stuff
+                if (!WorldSaveSystem.InfernumMode)
+                {
+                    // This runs like 6 times without this check for some fucking reason.
+                    if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))
+                    {
+                        SoundEngine.PlaySound(in SoundID.Roar, player.Center);
+                        if (Main.netMode != 1)
+                            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
+                        else
+                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
+                    }
+                }
+                else if (Main.myPlayer == player.whoAmI && !Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
                     Utilities.NewProjectileBetter(player.Center, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f);
             });
             cursor.Emit(OpCodes.Ldc_I4_1);

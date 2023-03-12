@@ -11,6 +11,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -24,6 +25,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CalamitasCloneBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
@@ -53,7 +55,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             BarrageOfArcingDarts,
             FireSlashes,
-            RisingBrimstoneFireBursts
+            RisingBrimstoneFireBursts,
+
+            DeathAnimation
         }
         #endregion
 
@@ -72,6 +76,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public const int HasEnteredPhase2Index = 8;
 
         public const int HasEnteredPhase3Index = 9;
+
+        public const int ForcefieldScaleIndex = 10;
+
+        public const int DrawCharredFormIndex = 11;
 
         public static Primitive3DStrip HexStripDrawer
         {
@@ -111,8 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
             if (npc.scale != 1f)
             {
-                npc.width = 52;
-                npc.height = 52;
+                npc.Size = Vector2.One * 56f;
                 npc.scale = 1f;
             }
 
@@ -152,6 +159,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float hexType2 = ref npc.Infernum().ExtraAI[HexType2Index];
             ref float hasEnteredPhase2 = ref npc.Infernum().ExtraAI[HasEnteredPhase2Index];
             ref float hasEnteredPhase3 = ref npc.Infernum().ExtraAI[HasEnteredPhase3Index];
+            ref float forcefieldScale = ref npc.Infernum().ExtraAI[ForcefieldScaleIndex];
+            ref float drawCharredForm = ref npc.Infernum().ExtraAI[DrawCharredFormIndex];
 
             // Apply hexes to the target.
             string hexName = Hexes[(int)hexType];
@@ -235,7 +244,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             switch ((CloneAttackType)(int)attackType)
             {
                 case CloneAttackType.SpawnAnimation:
-                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation);
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation, ref forcefieldScale);
                     break;
                 case CloneAttackType.WandFireballs:
                     DoBehavior_WandFireballs(npc, target, ref attackTimer, ref armRotation);
@@ -244,7 +253,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     DoBehavior_SoulSeekerResurrection(npc, target, ref attackTimer, ref armRotation);
                     break;
                 case CloneAttackType.ShadowTeleports:
-                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant);
+                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant, ref forcefieldScale);
                     break;
                 case CloneAttackType.DarkOverheadFireball:
                     DoBehavior_DarkOverheadFireball(npc, target, ref attackTimer, ref armRotation);
@@ -253,7 +262,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     DoBehavior_ConvergingBookEnergy(npc, target, ref attackTimer, ref armRotation);
                     break;
                 case CloneAttackType.FireburstDashes:
-                    DoBehavior_FireburstDashes(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_FireburstDashes(npc, target, ref attackTimer, ref armRotation, ref forcefieldScale);
                     break;
 
                 case CloneAttackType.BrothersPhase:
@@ -267,10 +276,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     DoBehavior_BarrageOfArcingDarts(npc, target, ref attackTimer, ref armRotation);
                     break;
                 case CloneAttackType.FireSlashes:
-                    DoBehavior_FireSlashes(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_FireSlashes(npc, target, ref attackTimer, ref armRotation, ref forcefieldScale);
                     break;
                 case CloneAttackType.RisingBrimstoneFireBursts:
                     DoBehavior_RisingBrimstoneFireBursts(npc, target, ref attackTimer, ref armRotation);
+                    break;
+
+                case CloneAttackType.DeathAnimation:
+                    DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref armRotation, ref eyeGleamInterpolant, ref forcefieldScale, ref drawCharredForm);
                     break;
             }
 
@@ -283,7 +296,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             return false;
         }
 
-        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation)
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation, ref float forcefieldScale)
         {
             int blackFadeoutTime = 30;
             int blackFadeinTime = 6;
@@ -296,6 +309,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Respond the gravity and natural tile collision for the duration of the attack.
             npc.noGravity = false;
             npc.noTileCollide = false;
+
+            // Make the forcefield appear.
+            forcefieldScale = MathHelper.Clamp(forcefieldScale + 0.1f, 0f, 1f);
 
             // Don't exist yet if the fade effects are ongoing.
             if (attackTimer < blackFadeoutTime)
@@ -480,8 +496,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     }
                 }
 
-                if (attackTimer >= wandReelBackTime + 132f)
+                if (attackTimer >= wandReelBackTime + 156f)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
                     SelectNextAttack(npc);
+                }
             }
 
             // Look at the target.
@@ -632,7 +651,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.frameCounter += 0.2f;
         }
 
-        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant)
+        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant, ref float forcefieldScale)
         {
             int jitterTime = 45;
             int disappearTime = 20;
@@ -673,6 +692,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     if (teleportCounter >= teleportCount - 1f)
                     {
                         npc.Opacity = 1f;
+                        Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ConvergingShadowSpark>());
                         SelectNextAttack(npc);
                         return;
                     }
@@ -722,7 +742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     {
                         for (int i = 0; i < 7; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 6f);
+                            float shootOffsetAngle = MathHelper.Lerp(-0.72f, 0.72f, i / 6f);
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 12f;
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
                         }
@@ -859,8 +879,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     }
                 }
 
-                if (attackTimer >= 90f)
+                if (attackTimer >= 120f)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
                     SelectNextAttack(npc);
+                }
             }
         }
 
@@ -923,15 +946,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             else
             {
                 // Make the circle go away.
-                blackCutoutRadius += 15f;
+                blackCutoutRadius += 24f;
 
                 Vector2 hoverDestination = Vector2.Lerp(npc.Center, target.Center, 0.5f);
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.067f;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
-                if (attackTimer >= 90f)
+                if (attackTimer >= 128f)
+                {
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ArcingBrimstoneDart>());
                     SelectNextAttack(npc);
+                }
             }
 
             // Emit energy spirals.
@@ -999,7 +1025,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 target.AddBuff(ModContent.BuffType<Madness>(), 8);
         }
 
-        public static void DoBehavior_FireburstDashes(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_FireburstDashes(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float forcefieldScale)
         {
             int hoverTime = 30;
             int chargeTime = 26;
@@ -1016,6 +1042,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Hover to the side of the target in anticipation of the charge.
             if (wrappedAttackTimer <= hoverTime)
             {
+                forcefieldScale = MathHelper.Clamp(forcefieldScale - 0.06f, 0f, 1f);
+
                 Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 400f;
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.07f;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
@@ -1043,6 +1071,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Slow down in anticipation of the next charge.
             if (wrappedAttackTimer >= hoverTime + chargeTime)
             {
+                if (chargeCounter >= chargeCount - 1f)
+                    forcefieldScale = MathHelper.Clamp(forcefieldScale + 0.11f, 0f, 1f);
+
                 // Release a burst of flames in all directions.
                 if (wrappedAttackTimer == hoverTime + chargeTime + 11f)
                 {
@@ -1054,6 +1085,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         if (chargeCounter >= chargeCount)
                         {
                             npc.velocity *= 0.5f;
+                            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
                             SelectNextAttack(npc);
                             return;
                         }
@@ -1220,6 +1252,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Look at the target and slow down.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.velocity *= 0.9f;
+            npc.Opacity = 1f;
 
             // Make the eye gleam effect happen.
             eyeGleamInterpolant = blackFadeCompletion * 0.67f;
@@ -1268,9 +1301,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_FireSlashes(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_FireSlashes(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float forcefieldScale)
         {
-            int hoverTime = 30;
+            int hoverTime = 42;
             int chargeTime = 26;
             int chargeSlowdowntime = 12;
             int chargeCount = 4;
@@ -1287,6 +1320,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
+                forcefieldScale = MathHelper.Clamp(forcefieldScale - 0.06f, 0f, 1f);
                 armRotation = armRotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
             }
             else if (npc.velocity.Length() >= 10f)
@@ -1311,6 +1345,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Slow down in anticipation of the next charge.
             if (wrappedAttackTimer >= hoverTime + chargeTime)
             {
+                if (chargeCounter >= chargeCount - 1f)
+                    forcefieldScale = MathHelper.Clamp(forcefieldScale + 0.11f, 0f, 1f);
+
                 // Release a burst of flames in all directions.
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == hoverTime + chargeTime + 11f)
                 {
@@ -1386,6 +1423,131 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         SelectNextAttack(npc);
                     npc.netUpdate = true;
                 }
+            }
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float eyeGleamInterpolant, ref float forcefieldScale, ref float drawCharredForm)
+        {
+            int textDelay = 45;
+            int chargeUpTime = 150;
+
+            // Fall to the ground and stop taking damage.
+            npc.noGravity = false;
+            npc.noTileCollide = false;
+            npc.dontTakeDamage = true;
+            npc.velocity.X *= 0.75f;
+            npc.Opacity = 1f;
+            npc.gfxOffY = 36f;
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Make the eye gleam and shield effect go away.
+            eyeGleamInterpolant = MathHelper.Clamp(eyeGleamInterpolant - 0.1f, 0f, 1f);
+            forcefieldScale = MathHelper.Clamp(forcefieldScale - 0.1f, 0f, 1f);
+
+            if (attackTimer == 1f)
+            {
+                npc.Center = target.Center + Vector2.UnitX * target.direction * 450f;
+                while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                    npc.position.Y -= 2f;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer == textDelay)
+            {
+                Utilities.DisplayText("I'm not done yet! Brace yourself for my strongest hex!", Color.Orange);
+                SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayChargeSound);
+            }
+
+            // Create hex visual effects.
+            if (attackTimer >= textDelay && attackTimer < textDelay + chargeUpTime)
+            {
+                armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.09f).AngleTowards(MathHelper.Pi, 0.045f);
+
+                // Create magic on CalClone's hand.
+                Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
+                Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+                Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
+                magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                magic.noGravity = true;
+                magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
+                magic.scale = Main.rand.NextFloat(1f, 1.3f);
+
+                // Create fire on the player.
+                Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.25f, 0.85f));
+                var mist = new MediumMistParticle(target.Center + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(4.5f, 4.5f), fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 198 - Main.rand.Next(50), 0.02f);
+                GeneralParticleHandler.SpawnParticle(mist);
+
+                // Spawn energy particles.
+                Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 228f);
+                Color energyColor = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.8f));
+                SquishyLightParticle energy = new(energySpawnPosition, (npc.Center - energySpawnPosition) * 0.045f, 1.18f, energyColor, 48, 1f, 1.9f, 3f, 0.003f);
+                GeneralParticleHandler.SpawnParticle(energy);
+            }
+
+            // Strike CalClone with lightning.
+            if (attackTimer == textDelay + chargeUpTime)
+            {
+                SoundEngine.PlaySound(HeavenlyGale.LightningStrikeSound, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 7; i++)
+                    {
+                        Vector2 lightningSpawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(0.51f) * Main.rand.NextFloat(900f, 1000f);
+                        Vector2 lightningVelocity = (npc.Top - lightningSpawnPosition).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(6.4f, 6.6f);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lightning =>
+                        {
+                            lightning.ModProjectile<BrimstoneLightning>().Destination = npc.Top;
+                        });
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<BrimstoneLightning>(), 0, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                    }
+
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer == textDelay + chargeUpTime + 32f)
+            {
+                Utilities.DisplayText("Oh.", Color.Orange);
+                drawCharredForm = 1f;
+                npc.netUpdate = true;
+            }
+
+            // Emit a bunch of smoke after being charred.
+            if (drawCharredForm == 1f)
+            {
+                Color fireMistColor = Color.Lerp(Color.Red, Color.Gray, Main.rand.NextFloat(0.5f, 0.85f));
+                var smoke = new MediumMistParticle(npc.Center + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(4.5f, 4.5f) - Vector2.UnitY * 3f, fireMistColor, Color.Gray, Main.rand.NextFloat(0.5f, 0.8f), 198 - Main.rand.Next(50), 0.02f);
+                GeneralParticleHandler.SpawnParticle(smoke);
+
+                npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
+                npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Nothing");
+                Main.musicFade[CalamityMod.CalamityMod.Instance.GetMusicFromMusicMod("CalamitasClone") ?? 0] = 0f;
+            }
+            else
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            if (attackTimer == textDelay + chargeUpTime + 196f)
+            {
+                // Have Calclone explode into shadow blobs.
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    var cloneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneSingleFrame", AssetRequestMode.ImmediateLoad).Value;
+                    cloneTexture.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>().Particles, npc.Center, npc.rotation, npc.scale, 40f, 10);
+                }
+                for (int i = 0; i < 35; i++)
+                {
+                    Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
+                    CloudParticle fireCloud = new(npc.Center, (MathHelper.TwoPi * i / 35f).ToRotationVector2() * 20f, fireColor, Color.DarkGray, 50, Main.rand.NextFloat(2.6f, 3.4f));
+                    GeneralParticleHandler.SpawnParticle(fireCloud);
+                }
+
+                npc.life = 0;
+                npc.StrikeNPCNoInteraction(9999, 0f, 0);
+                npc.NPCLoot();
+                npc.active = false;
             }
         }
 
@@ -1491,6 +1653,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Incorporate the black shadow form effects.
             lightColor = Color.Lerp(lightColor, Color.Black, MathF.Pow(npc.localAI[2], 0.33f));
+            bool drawCharredForm = npc.Infernum().ExtraAI[DrawCharredFormIndex] == 1f;
             float shadowBackglowOffset = 25f * MathF.Pow(npc.localAI[2], 2.8f) * npc.scale;
             float eyeGleamInterpolant = npc.localAI[3];
 
@@ -1509,7 +1672,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Draw a shadow backglow.
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
             Vector2 armDrawPosition = drawPosition + new Vector2(npc.spriteDirection * 9.6f, -2f);
-            if (shadowBackglowOffset > 0f)
+            if (shadowBackglowOffset > 0f && !drawCharredForm && npc.Opacity > 0f)
             {
                 for (int i = 0; i < 10; i++)
                 {
@@ -1523,15 +1686,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             lightColor = Color.Lerp(lightColor, Color.Black, 0.32f);
             lightColor.A = 232;
 
+            if (drawCharredForm)
+                lightColor = Color.Lerp(Color.DarkGray, Color.Black, 0.85f);
+
             // Draw the body and arm.
             float armRotation = npc.Infernum().ExtraAI[ArmRotationIndex];
 
             // Draw a backglow.
-            for (int i = 0; i < 5; i++)
+            if (!drawCharredForm)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 4f;
-                Color backglowColor = Color.Purple with { A = 0 };
-                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backglowColor * npc.Opacity * 0.45f, npc.rotation, origin, npc.scale, direction, 0f);
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 4f;
+                    Color backglowColor = Color.Purple with { A = 0 };
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backglowColor * npc.Opacity * 0.45f, npc.rotation, origin, npc.scale, direction, 0f);
+                }
             }
 
             // Draw the body and arms.
@@ -1629,6 +1798,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 Main.spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, Color.White * npc.Opacity, shieldRotation, shieldTexture.Size() * 0.5f, npc.scale * shieldScale * 0.8f, direction, 0f);
             }
 
+            // Draw the forcefield.
+            DrawForcefield(npc);
+
             // Draw the eye gleam.
             if (eyeGleamInterpolant > 0f)
             {
@@ -1653,6 +1825,59 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             return false;
         }
 
+        public static void DrawForcefield(NPC npc)
+        {
+            Main.spriteBatch.EnterShaderRegion();
+
+            float intensity = 1f;
+            var forcefieldShader = GameShaders.Misc["CalamityMod:SupremeShield"];
+
+            // Make the forcefield weaker in the second phase as a means of showing desparation.
+            if (npc.ai[0] >= 3f)
+                intensity *= 0.6f;
+
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float flickerPower = 0f;
+            if (lifeRatio < 0.6f)
+                flickerPower += 0.1f;
+            if (lifeRatio < 0.3f)
+                flickerPower += 0.15f;
+            if (lifeRatio < 0.1f)
+                flickerPower += 0.2f;
+            if (lifeRatio < 0.05f)
+                flickerPower += 0.1f;
+            float opacity = MathHelper.Lerp(1f, MathHelper.Max(1f - flickerPower, 0.56f), (float)Math.Pow(Math.Cos(Main.GlobalTimeWrappedHourly * MathHelper.Lerp(3f, 5f, flickerPower)), 24D));
+
+            // Dampen the opacity and intensity slightly, to allow CalClone to be more easily visible inside of the forcefield.
+            intensity *= 0.85f;
+            opacity *= 0.85f;
+
+            Texture2D forcefieldTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/ForcefieldTexture").Value;
+            forcefieldShader.UseImage1("Images/Misc/Perlin");
+
+            Color forcefieldColor = Color.DarkViolet;
+            Color secondaryForcefieldColor = Color.Red * 1.4f;
+
+            if (!npc.dontTakeDamage)
+            {
+                forcefieldColor *= 0.25f;
+                secondaryForcefieldColor = Color.Lerp(secondaryForcefieldColor, Color.Black, 0.7f);
+            }
+
+            forcefieldColor *= opacity;
+            secondaryForcefieldColor *= opacity;
+
+            forcefieldShader.UseSecondaryColor(secondaryForcefieldColor);
+            forcefieldShader.UseColor(forcefieldColor);
+            forcefieldShader.UseSaturation(intensity);
+            forcefieldShader.UseOpacity(opacity);
+            forcefieldShader.Apply();
+
+            Main.spriteBatch.Draw(forcefieldTexture, npc.Center - Main.screenPosition, null, Color.White * opacity * npc.Opacity, 0f, forcefieldTexture.Size() * 0.5f, npc.Infernum().ExtraAI[ForcefieldScaleIndex] * npc.Opacity * 3f, SpriteEffects.None, 0f);
+
+            Main.spriteBatch.ExitShaderRegion();
+        }
+
         public static float HexHeightFunction(float _) => HexFadeInInterpolant * 10f + 0.01f;
 
         public static Color HexColorFunction(float _) => HexColor * HexFadeInInterpolant * 0.8f;
@@ -1671,5 +1896,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             HexStripDrawer.Draw(left, right, 0.15f, 2f, Main.GlobalTimeWrappedHourly * 2f);
         }
         #endregion Frames and Drawcode
+
+        #region Death Effects
+
+        public override bool CheckDead(NPC npc)
+        {
+            if (npc.ai[0] != (int)CloneAttackType.DeathAnimation)
+            {
+                // Delete all old projectiles.
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ArcingBrimstoneDart>(), ModContent.ProjectileType<DarkMagicFlame>());
+
+                SelectNextAttack(npc);
+                npc.ai[0] = (int)CloneAttackType.DeathAnimation;
+                npc.life = 1;
+                npc.dontTakeDamage = true;
+                npc.active = true;
+                npc.netUpdate = true;
+            }
+            return false;
+        }
+        #endregion Death Effects
     }
 }

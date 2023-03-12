@@ -7,11 +7,13 @@ using CalamityMod.Particles.Metaballs;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Environment;
 using CalamityMod.UI.CalamitasEnchants;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Buffs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -22,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -146,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             string hexName = Hexes[(int)hexType];
             string hex2Name = Hexes[(int)hexType2];
 
-            if (!anyBrothers && attackType != (int)CloneAttackType.BrothersPhase)
+            if (!anyBrothers && attackType != (int)CloneAttackType.BrothersPhase && attackType != (int)CloneAttackType.SpawnAnimation)
             {
                 target.Infernum_CalCloneHex().ActivateHex(hexName);
                 if (lifeRatio < Phase2LifeRatio)
@@ -331,7 +334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             int wandReelBackTime = 40;
 
-            float fireShootSpeed = npc.Distance(target.Center) * 0.027f + 16.75f;
+            float fireShootSpeed = npc.Distance(target.Center) * 0.026f + 14.5f;
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
             Vector2 wandEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 45f;
             wandEnd += (armRotation + MathHelper.Pi).ToRotationVector2() * npc.scale * npc.spriteDirection * -8f;
@@ -840,6 +843,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int sparkReleaseTime = 240;
             int bookExplodeDelay = 180;
             int dartShootCount = 24;
+            int bookAttackDuration = bookAppearTime + sparkReleaseTime + bookExplodeDelay;
             float sparkShootSpeed = 4.5f;
             float dartShootSpeed = 4.5f;
             float dartAngularVelocity = MathHelper.ToRadians(0.6f);
@@ -848,6 +852,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float sparkShootOffsetAngle = ref npc.Infernum().ExtraAI[1];
             ref float bookJitterInterpolant = ref npc.Infernum().ExtraAI[2];
             ref float bookHasExploded = ref npc.Infernum().ExtraAI[3];
+            ref float blackCutoutRadius = ref npc.Infernum().ExtraAI[4];
 
             if (bookHasExploded == 0f)
             {
@@ -884,9 +889,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         npc.position.Y -= 10f;
                     }
                 }
+                blackCutoutRadius = Utils.Remap(attackTimer, bookAppearTime, bookAttackDuration, 1500f, 750f);
             }
             else
             {
+                // Make the circle go away.
+                blackCutoutRadius += 15f;
+
                 Vector2 hoverDestination = Vector2.Lerp(npc.Center, target.Center, 0.5f);
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.067f;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
@@ -955,15 +964,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 bookHasExploded = 1f;
                 npc.netUpdate = true;
             }
+
+            // Give the player the madness effect if they leave the circle.
+            if (!target.WithinRange(npc.Center, blackCutoutRadius + 12f))
+                target.AddBuff(ModContent.BuffType<Madness>(), 8);
         }
 
         public static void DoBehavior_FireburstDashes(NPC npc, Player target, ref float attackTimer, ref float armRotation)
         {
             int hoverTime = 30;
             int chargeTime = 26;
+            int chargeSlowdowntime = 12;
             int chargeCount = 4;
             int flameShootCount = 19;
-            int chargeSlowdowntime = 12;
             int wrappedAttackTimer = (int)attackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
             float baseChargeSpeed = 12f;
             float flameShootSpeed = 8f;
@@ -1053,7 +1066,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     ModContent.ProjectileType<CatharsisSoul>(),
                     ModContent.ProjectileType<CharredWand>(),
                     ModContent.ProjectileType<ConvergingShadowSpark>(),
-                    ModContent.ProjectileType<DarkMagicFlame>()
+                    ModContent.ProjectileType<DarkMagicFlame>(),
+                    ModContent.ProjectileType<LargeDarkFireOrb>(),
                 };
                 Utilities.DeleteAllProjectiles(false, projectilesToDelete);
             }
@@ -1308,9 +1322,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 Main.spriteBatch.Draw(staffTexture, staffDrawPosition, null, Color.White * npc.Opacity, staffRotation, staffTexture.Size() * Vector2.UnitY, npc.scale * 0.85f, 0, 0f);
             }
 
-            // Draw the book if it's being used.
+            // Draw the book and the black circle cutout effect if it's being used.
             if (npc.ai[0] == (int)CloneAttackType.ConvergingBookEnergy && npc.Infernum().ExtraAI[3] == 0f)
             {
+                // Draw the black radius.
+                float blackCutoutRadius = npc.Infernum().ExtraAI[4];
+                if (blackCutoutRadius is >= 10f and <= 3200f)
+                {
+                    Texture2D blackCircle = TextureAssets.MagicPixel.Value;
+                    Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
+                    Main.spriteBatch.EnterShaderRegion();
+
+                    var circleCutoutShader = InfernumEffectsRegistry.CircleCutoutShader;
+                    circleCutoutShader.Shader.Parameters["uImageSize0"].SetValue(circleScale);
+                    circleCutoutShader.Shader.Parameters["uCircleRadius"].SetValue(blackCutoutRadius * 1.414f);
+                    circleCutoutShader.Apply();
+                    Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.DarkRed, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);
+                    Main.spriteBatch.ExitShaderRegion();
+                }
+
                 Color bookColor = Color.Lerp(Color.HotPink with { A = 0 }, Color.White, MathF.Sqrt(npc.Infernum().ExtraAI[0])) * npc.Infernum().ExtraAI[0];
                 Vector2 bookDrawPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * npc.scale * 6f - Main.screenPosition + Main.rand.NextVector2Unit() * npc.Infernum().ExtraAI[2] * 3f;
                 bookDrawPosition.Y += 6f;

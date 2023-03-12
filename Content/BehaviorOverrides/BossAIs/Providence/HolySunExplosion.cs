@@ -62,6 +62,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(targetHitbox.Center.ToVector2(), projHitbox, Radius * 0.725f) && Time <= 30f;
 
+        public override bool? CanDamage() => Projectile.Opacity >= 0.67f;
+
         public float SunWidthFunction(float completionRatio) => Radius * (float)Math.Sin(MathHelper.Pi * completionRatio);
 
         public Color SunColorFunction(float completionRatio)

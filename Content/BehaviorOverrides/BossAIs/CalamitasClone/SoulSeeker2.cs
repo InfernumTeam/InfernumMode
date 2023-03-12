@@ -54,10 +54,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             NPC calamitas = Main.npc[CalamityGlobalNPC.calamitas];
             NPC.target = calamitas.target;
-            NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * 750f;
+            NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * 950f;
             NPC.Opacity = 1f - calamitas.Opacity;
             float idealRotation = RingAngle + MathHelper.Pi;
-            if (!Target.WithinRange(calamitas.Center, 820f))
+            if (!Target.WithinRange(calamitas.Center, 1000f))
             {
                 idealRotation = NPC.AngleTo(Target.Center) + MathHelper.Pi;
 

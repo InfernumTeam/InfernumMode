@@ -33,9 +33,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float spinRadius = ref npc.Infernum().ExtraAI[1];
 
             NPC calClone = Main.npc[CalamityGlobalNPC.calamitas];
+            bool phase3 = calClone.life / (float)calClone.lifeMax < CalamitasCloneBehaviorOverride.Phase3LifeRatio;
 
             // Hover near CalClone if applicable. Otherwise fly away from her.
-            if (flyingAway == 0f && calClone.ai[0] != (int)CalamitasCloneBehaviorOverride.CloneAttackType.BrothersPhase)
+            if (flyingAway == 0f && calClone.ai[0] != (int)CalamitasCloneBehaviorOverride.CloneAttackType.BrothersPhase && !phase3)
             {
                 // Spin outward.
                 spinRadius = MathHelper.Lerp(spinRadius, 840f, 0.05f);
@@ -52,6 +53,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
             else
             {
+                // Once a flyer, always a flyer...
+                flyingAway = 1f;
+
                 npc.rotation = npc.AngleFrom(calClone.Center) + MathHelper.Pi;
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(calClone.Center) * -30f, 0.06f);
                 if (!npc.WithinRange(calClone.Center, 3000f))

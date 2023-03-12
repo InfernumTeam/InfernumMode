@@ -108,6 +108,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             "Indignation"
         };
 
+        public static Dictionary<string, int> HexNameToProj => new()
+        {
+            ["Zeal"] = ModContent.ProjectileType<ZealHexProj>(),
+            ["Accentuation"] = ModContent.ProjectileType<AccentuationHexProj>(),
+            ["Catharsis"] = ModContent.ProjectileType<CatharsisHexProj>(),
+            ["Weakness"] = ModContent.ProjectileType<WeaknessHexProj>(),
+            ["Indignation"] = ModContent.ProjectileType<IndignationHexProj>(),
+        };
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -146,6 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int catharsisSoulReleaseRate = 90;
             bool anyBrothers = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -174,7 +184,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             // Use a custom hitsound.
-            npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f };
+            npc.HitSound = SoundID.NPCHit49 with { Pitch = -0.56f, Volume = 1.3f };
 
             // Reset things every frame.
             npc.defDamage = 0;
@@ -188,6 +198,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.09f).AngleTowards(MathHelper.Pi, 0.045f);
                 hexApplicationPauseDelay--;
+
+                // Spawn Peng's cool hex projectile animations.
+                if (Main.netMode != NetmodeID.MultiplayerClient && hexApplicationPauseDelay == 34f)
+                {
+                    List<string> hexesToSpawn = new()
+                    {
+                        hexName
+                    };
+                    if (phase2 && npc.ai[0] != (int)CloneAttackType.BrothersPhase)
+                        hexesToSpawn.Add(hex2Name);
+
+                    for (int i = 0; i < hexesToSpawn.Count; i++)
+                    {
+                        float horizontalOffset = 0f;
+                        if (hexesToSpawn.Count >= 2)
+                            horizontalOffset = MathHelper.Lerp(-25f, 25f, i / (float)(hexesToSpawn.Count - 1f));
+
+                        Utilities.NewProjectileBetter(target.Top, Vector2.Zero, HexNameToProj[hexesToSpawn[i]], 0, 0f, npc.target, horizontalOffset);
+                    }
+                }
 
                 // Create magic on CalClone's hand.
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
@@ -253,7 +283,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     DoBehavior_SoulSeekerResurrection(npc, target, ref attackTimer, ref armRotation);
                     break;
                 case CloneAttackType.ShadowTeleports:
-                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant, ref forcefieldScale);
+                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant);
                     break;
                 case CloneAttackType.DarkOverheadFireball:
                     DoBehavior_DarkOverheadFireball(npc, target, ref attackTimer, ref armRotation);
@@ -341,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 eyeGleamInterpolant = CalamityUtils.Convert01To010(gleamAnimationCompletion);
                 if (attackTimer == blackFadeoutTime + blackFadeinTime + maximumDarknessTime)
                 {
-                    bool feelingLikeABigShot = Main.rand.NextBool(100) || Utilities.IsAprilFirst();
+                    bool feelingLikeABigShot = Main.rand.NextBool(25) || Utilities.IsAprilFirst();
                     SoundEngine.PlaySound(feelingLikeABigShot ? InfernumSoundRegistry.GolemSpamtonSound : HeavenlyGale.LightningStrikeSound, target.Center);
                 }
 
@@ -379,7 +409,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             int wandReelBackTime = 40;
 
-            float fireShootSpeed = npc.Distance(target.Center) * 0.026f + 14.5f;
+            float fireShootSpeed = npc.Distance(target.Center) * 0.026f + 7.5f;
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
             Vector2 wandEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 45f;
             wandEnd += (armRotation + MathHelper.Pi).ToRotationVector2() * npc.scale * npc.spriteDirection * -8f;
@@ -496,7 +526,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     }
                 }
 
-                if (attackTimer >= wandReelBackTime + 156f)
+                if (attackTimer >= wandReelBackTime + 198f)
                 {
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkMagicFlame>());
                     SelectNextAttack(npc);
@@ -607,6 +637,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 }
 
                 // Aim the staff at the target in anticipation of the laser.
+                float staffAimDirection = npc.AngleTo(target.Center) - 0.12f * target.direction;
                 if (attackTimer <= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
                 {
                     // Play a charge telegraph sound.
@@ -616,7 +647,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     float telegraphCompletion = Utils.GetLerpValue(0f, laserTelegraphTime, attackTimer - redirectTime - seekerSummonTime - seekerShootTime, true);
                     telegraphInterpolant = Utils.GetLerpValue(0f, 0.67f, telegraphCompletion, true) * Utils.GetLerpValue(1f, 0.84f, telegraphCompletion, true);
 
-                    float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    float idealRotation = staffAimDirection - MathHelper.PiOver2;
                     armRotation = armRotation.AngleLerp(idealRotation, 0.04f).AngleTowards(idealRotation, 0.01f);
                 }
 
@@ -651,7 +682,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.frameCounter += 0.2f;
         }
 
-        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant, ref float forcefieldScale)
+        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant)
         {
             int jitterTime = 45;
             int disappearTime = 20;
@@ -827,11 +858,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         if (target.Infernum_CalCloneHex().HexIsActive("Accentuation"))
                             fireShootCount -= 8;
 
+                        bool kindlyGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1100f);
                         float fireShootSpeed = Utils.Remap(npc.Distance(target.Center), 800f, 3000f, 8.5f, 70f);
                         Vector2 fireOrbCenter = fireOrbs.First().Center;
                         for (int i = 0; i < fireShootCount; i++)
                         {
                             Vector2 fireShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + (fireShootCounter % 2f == 0f ? 0.5f : 0f)) / fireShootCount) * fireShootSpeed;
+                            if (kindlyGoFuckYourselfDueToDistance)
+                                fireShootVelocity = (target.Center - fireOrbCenter).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.4f) * fireShootSpeed * Main.rand.NextFloat(0.95f, 1.05f);
+
                             Utilities.NewProjectileBetter(fireOrbCenter + fireShootVelocity * 5f, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
                         }
 
@@ -942,6 +977,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     }
                 }
                 blackCutoutRadius = Utils.Remap(attackTimer, bookAppearTime, bookAttackDuration, 1500f, 750f);
+                if (attackTimer <= bookAppearTime)
+                    blackCutoutRadius += (1f - attackTimer / bookAppearTime) * 1500f;
             }
             else
             {
@@ -1021,7 +1058,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             // Give the player the madness effect if they leave the circle.
-            if (!target.WithinRange(npc.Center, blackCutoutRadius + 12f))
+            if (!target.WithinRange(npc.Center, blackCutoutRadius + 12f) && attackTimer >= bookAppearTime)
                 target.AddBuff(ModContent.BuffType<Madness>(), 8);
         }
 
@@ -1170,6 +1207,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                    
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, cataclysm);
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, catastrophe);
+
+                    npc.Center = target.Center;
+                    npc.netUpdate = true;
 
                     for (int i = 0; i < 50; i++)
                     {
@@ -1555,6 +1595,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
+            Player target = Main.player[npc.target];
             CloneAttackType currentAttack = (CloneAttackType)npc.ai[0];
             CloneAttackType nextAttack = CloneAttackType.DarkOverheadFireball;
             switch (currentAttack)
@@ -1620,6 +1661,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;
             npc.ai[3] = 36f;
+
             npc.netUpdate = true;
         }
         #endregion AI
@@ -1754,7 +1796,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             // Draw the book and the black circle cutout effect if it's being used.
-            if (npc.ai[0] == (int)CloneAttackType.ConvergingBookEnergy && npc.Infernum().ExtraAI[3] == 0f)
+            if (npc.ai[0] == (int)CloneAttackType.ConvergingBookEnergy)
             {
                 // Draw the black radius.
                 float blackCutoutRadius = npc.Infernum().ExtraAI[4];
@@ -1772,13 +1814,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     Main.spriteBatch.ExitShaderRegion();
                 }
 
-                Color bookColor = Color.Lerp(Color.HotPink with { A = 0 }, Color.White, MathF.Sqrt(npc.Infernum().ExtraAI[0])) * npc.Infernum().ExtraAI[0];
-                Vector2 bookDrawPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * npc.scale * 6f - Main.screenPosition + Main.rand.NextVector2Unit() * npc.Infernum().ExtraAI[2] * 3f;
-                bookDrawPosition.Y += 6f;
+                if (npc.Infernum().ExtraAI[3] == 0f)
+                {
+                    Color bookColor = Color.Lerp(Color.HotPink with { A = 0 }, Color.White, MathF.Sqrt(npc.Infernum().ExtraAI[0])) * npc.Infernum().ExtraAI[0];
+                    Vector2 bookDrawPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * npc.scale * 6f - Main.screenPosition + Main.rand.NextVector2Unit() * npc.Infernum().ExtraAI[2] * 3f;
+                    bookDrawPosition.Y += 6f;
 
-                Texture2D bookTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/LashesOfChaosHeld").Value;
-                Rectangle bookFrame = bookTexture.Frame(1, 8, 0, (int)(Main.GlobalTimeWrappedHourly * 15f) % 8);
-                Main.spriteBatch.Draw(bookTexture, bookDrawPosition, bookFrame, bookColor * npc.Opacity, 0f, bookFrame.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
+                    Texture2D bookTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/LashesOfChaosHeld").Value;
+                    Rectangle bookFrame = bookTexture.Frame(1, 8, 0, (int)(Main.GlobalTimeWrappedHourly * 15f) % 8);
+                    Main.spriteBatch.Draw(bookTexture, bookDrawPosition, bookFrame, bookColor * npc.Opacity, 0f, bookFrame.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
+                }
             }
 
             // Draw the shield if it's being used.

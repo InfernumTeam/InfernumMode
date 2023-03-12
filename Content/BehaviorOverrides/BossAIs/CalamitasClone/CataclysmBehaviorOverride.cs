@@ -146,8 +146,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             ref float attackState = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[0];
             ref float chargeCounter = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[1];
+            ref float resetDesperationThing = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[2];
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
             float horizontalChargeOffset = isCataclysm.ToDirectionInt() * (chargeCounter % 2f == 0f).ToDirectionInt() * 480f;
+
+            if (resetDesperationThing == 0f)
+            {
+                attackState = 0f;
+                chargeCounter = 0f;
+                attackTimer = 0f;
+                resetDesperationThing = 1f;
+                npc.netUpdate = true;
+            }
 
             switch ((int)attackState)
             {
@@ -163,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Make Catastrophe anticipate with his blade.
                     catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 148f : 30f)) || attackState == 1f)
+                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > 45f) || attackState == 1f)
                     {
                         npc.velocity *= 0.3f;
                         attackTimer = 0f;
@@ -332,7 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Catastrophe does undercut charges from below.
             if (!isCataclysm)
             {
-                int attackDelay = 28;
+                int attackDelay = 48;
                 int uppercutTime = 35;
                 int attackRepeatDelay = 38;
                 int wrappedAttackTimer = (int)localAttackTimer % (attackDelay + uppercutTime + attackRepeatDelay);
@@ -429,7 +439,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
             else
             {
-                int hoverTime = 39;
+                int hoverTime = 49;
                 int chargeTime = 45;
                 int chargeSlowdowntime = 12;
                 int wrappedAttackTimer = (int)localAttackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
@@ -468,7 +478,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 }
 
                 if (localAttackTimer >= (hoverTime + chargeTime + chargeSlowdowntime) * chargeCount)
+                {
                     SelectNextAttack(npc);
+                    Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[0] = 0f;
+                    Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[1] = 0f;
+                }
             }
             localAttackTimer++;
         }

@@ -163,7 +163,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Make Catastrophe anticipate with his blade.
                     catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (((attackTimer > 180f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 127f : 30f)) || attackState == 1f)
+                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 148f : 30f)) || attackState == 1f)
                     {
                         npc.velocity *= 0.3f;
                         attackTimer = 0f;

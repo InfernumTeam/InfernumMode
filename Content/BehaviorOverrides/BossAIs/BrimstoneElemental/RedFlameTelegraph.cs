@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Red Flame Telegraph");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Fuck you nobody is going to ever see this name");
 
         public override void SetDefaults()
         {

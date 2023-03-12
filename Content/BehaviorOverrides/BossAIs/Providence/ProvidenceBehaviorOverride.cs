@@ -164,6 +164,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int HasEnteredPhase2Index = 11;
 
+        public const int StartedWithMusicDisabledIndex = 12;
+
         public const float DefaultLavaHeight = 1400f;
 
         public const float HighestLavaHeight = 2284f;
@@ -621,7 +623,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 attackCycle = Phase2AttackStates;
 
             ref float attackTimer = ref npc.ai[1];
-            if (SyncAttacksWithMusic)
+            ref float startedWithMusicDisabled = ref npc.Infernum().ExtraAI[StartedWithMusicDisabledIndex];
+            if (SyncAttacksWithMusic && startedWithMusicDisabled == 0f)
                 attackTimer = (int)Math.Round(TrackedMusicManager.SongElapsedTime.TotalMilliseconds * 0.06f);
 
             // Increment the attack timer manually if it shouldn't sync with the music.
@@ -630,6 +633,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 attackTimer++;
                 if (attackTimer >= attackCycle.Last().EndingTime)
                     attackTimer = 0f;
+                startedWithMusicDisabled = 1f;
             }
 
             // Split the attack timer into sections, and then calculate the local attack timer and current attack based on that.
@@ -2198,7 +2202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 holyBombShootVelocity = -Vector2.UnitY.RotatedByRandom(0.13f) * 18f;
-                        Vector2 holyBombSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 510f + target.velocity.X * 60f, npc.Center.Y + 860f);
+                        Vector2 holyBombSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 510f + target.velocity.X * 60f, arenaTopCenter.Y + 2200f - lavaHeight);
 
                         Utilities.NewProjectileBetter(holyBombSpawnPosition, holyBombShootVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f, -1, holyBombRadius);
                         for (int i = 0; i < 12; i++)

@@ -89,9 +89,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         // Release rocks.
                         Vector2 directionToTarget = (Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center - nextPosition).SafeNormalize(Vector2.UnitY);
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < 3; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.91f, 0.91f, i / 4f);
+                            float shootOffsetAngle = MathHelper.Lerp(-0.91f, 0.91f, i / 2f);
                             Vector2 rockVelocity = directionToTarget.RotatedBy(shootOffsetAngle) * 3.5f;
                             if (ProvidenceBehaviorOverride.IsEnraged)
                                 rockVelocity *= 1.4f;

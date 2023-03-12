@@ -23,6 +23,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 return false;
             }
 
+            // Why were these things ever doing damage?
+            npc.damage = 0;
+
             int shootRate = 30;
             ref float hasLockedIntoPosition = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[3];
@@ -32,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             NPC calClone = Main.npc[CalamityGlobalNPC.calamitas];
 
             // Hover near CalClone if applicable. Otherwise fly away from her.
-            if (flyingAway == 0f)
+            if (flyingAway == 0f && calClone.ai[0] != (int)CalamitasCloneBehaviorOverride.CloneAttackType.BrothersPhase)
             {
                 // Spin outward.
                 spinRadius = MathHelper.Lerp(spinRadius, 840f, 0.05f);

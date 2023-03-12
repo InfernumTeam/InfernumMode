@@ -65,6 +65,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             behindNPCs.Add(index);
         }
 
+        public override bool? CanDamage() => Projectile.Opacity >= 0.67f;
+
         public override bool PreDraw(ref Color lightColor)
         {
             FireDrawer ??= new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);

@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Time++;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 0.67f;
+        public override bool? CanDamage() => Projectile.Opacity >= 0.37f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(targetHitbox.Center.ToVector2(), projHitbox, Radius * 0.8f);
 

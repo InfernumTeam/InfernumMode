@@ -1652,7 +1652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Ceiling cinders.
-                        for (float dx = -1400f; dx < 1400f; dx += Main.rand.NextFloat(108f, 136f))
+                        for (float dx = -1400f; dx < 1400f; dx += Main.rand.NextFloat(108f, 145f))
                         {
                             float ySpawnPosition = WorldSaveSystem.ProvidenceArena.Y * 16f + 48f;
                             Vector2 cinderVelocity = Vector2.UnitY * 4f;
@@ -1666,7 +1666,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         }
 
                         // Side cinders.
-                        for (float dy = -1400f; dy < 1400f; dy += Main.rand.NextFloat(167f, 195f))
+                        for (float dy = -1400f; dy < 1400f; dy += Main.rand.NextFloat(167f, 208f))
                         {
                             Vector2 cinderVelocity = Vector2.UnitX * 4f;
                             Utilities.NewProjectileBetter(new Vector2(target.Center.X - 1400, target.Center.Y + dy), cinderVelocity, ModContent.ProjectileType<HolyCinder>(), CinderDamage, 0f);

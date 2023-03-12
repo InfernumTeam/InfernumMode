@@ -24,6 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 360;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

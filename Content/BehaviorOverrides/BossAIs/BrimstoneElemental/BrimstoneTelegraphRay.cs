@@ -5,6 +5,7 @@ using ReLogic.Content;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
@@ -31,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = (int)Lifetime;
-            CooldownSlot = 1;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

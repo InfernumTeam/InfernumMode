@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
@@ -18,6 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

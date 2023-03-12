@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -14,13 +15,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
     public class AresSpinningRedDeathray : ModProjectile, IPixelPrimitiveDrawer
     {
         public float InitialDirection = -100f;
+
         public PrimitiveTrailCopy BeamDrawer;
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float OwnerIndex => ref Projectile.ai[1];
+
         public NPC Owner => Main.npc[(int)OwnerIndex];
+
         public const float LaserLength = 7000f;
+
         public const int Lifetime = 480;
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Exothermal Disintegration Deathray");
 
         public override void SetDefaults()
@@ -33,6 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.timeLeft = Lifetime;
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

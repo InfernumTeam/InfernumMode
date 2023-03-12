@@ -30,6 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
             Projectile.Calamity().DealsDefenseDamage = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -122,14 +123,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawVine(Main.spriteBatch, scale, aimDirection, tipTexture, ref tipBottom);
+            DrawVine(scale, aimDirection, tipTexture, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
             Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawVine(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
+        public void DrawVine(Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
         {
             Texture2D thornBodyPiece = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/EoW/CorruptThornPiece").Value;
 
@@ -157,9 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             }
         }
 
-
-
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
+        public override bool? CanDamage() => Time >= 70f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

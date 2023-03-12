@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Projectile.tileCollide = false;
             Projectile.hide = true;
             Projectile.timeLeft = 900;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

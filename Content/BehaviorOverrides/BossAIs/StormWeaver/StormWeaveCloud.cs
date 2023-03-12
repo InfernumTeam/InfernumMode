@@ -24,6 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.timeLeft = 600;
             Projectile.Opacity = 0f;
             Projectile.scale = 0.01f;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

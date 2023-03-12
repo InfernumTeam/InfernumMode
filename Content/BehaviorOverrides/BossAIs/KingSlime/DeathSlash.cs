@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
@@ -13,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
     {
         internal PrimitiveTrail SlashDrawer;
 
-        public List<Vector2> TrailCache = new();
+        private List<Vector2> TrailCache = new();
 
         public float ScaleFactorDelta => Projectile.localAI[0];
 
@@ -37,7 +38,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
+
         public override void AI()
         {
             // Disappear if the ninja is not present.
@@ -92,9 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             for (int i = 0; i < TrailCache.Count; i++)
             {
                 if (Utils.CenteredRectangle(TrailCache[i], Vector2.One * WidthFunction(i / (float)(TrailCache.Count - 1f) * 0.7f)).Intersects(targetHitbox))
-                {
                     return true;
-                }
 
             }
             return false;
@@ -114,6 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             opacity *= Projectile.Opacity * 0.18f;
             return Color.White * opacity;
         }
+
         public override bool PreDraw(ref Color lightColor)
         {
             SlashDrawer ??= new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);

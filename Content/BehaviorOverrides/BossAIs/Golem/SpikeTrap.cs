@@ -26,6 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Projectile.hostile = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 600;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

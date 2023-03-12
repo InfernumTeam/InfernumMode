@@ -6,6 +6,8 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 {
+    // This is completely useless as it no longer spawns an enemy. However, it remains as a testimant to how useless EoW
+    // is to try to make any sort of decent fight from.
     public class ShadowOrb : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Orb");
@@ -18,6 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 120;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()
@@ -29,10 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(120f, 90f, Projectile.timeLeft, true);
         }
 
-        // Summon a random enemy after disappearing.
-        public override void Kill(int timeLeft)
-        {
-            SoundEngine.PlaySound(SoundID.Item8, Projectile.Center);
-        }
+        // Summon a random enemy after disappearing. Nah, get trolled play a sound instead lol
+        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item8, Projectile.Center);
     }
 }

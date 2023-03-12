@@ -30,6 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
             Projectile.timeLeft = 450;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

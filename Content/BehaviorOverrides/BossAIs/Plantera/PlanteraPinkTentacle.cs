@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             float wingleOffset = MathF.Sin(wiggleSineAngle) * 0.016f;
 
             // Reel inward prior to snapping.
-            if (Time > 0f && Time < 45f)
+            if (Time is > 0f and < 45f)
                 attachOffset = MathHelper.Lerp(attachOffset, 108f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.

@@ -22,6 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 3600;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

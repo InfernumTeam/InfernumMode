@@ -12,6 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
     public class CosmicMine : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cosmic Mine");
@@ -28,8 +29,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Projectile.timeLeft = 60;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
-            CooldownSlot = 1;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
+
         public override void AI()
         {
             if (CalamityGlobalNPC.signus == -1)

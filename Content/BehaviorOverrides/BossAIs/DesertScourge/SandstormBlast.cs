@@ -26,6 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             Projectile.timeLeft = 360;
             Projectile.alpha = 255;
             Projectile.scale = 1.5f;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

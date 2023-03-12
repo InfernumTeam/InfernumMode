@@ -51,6 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.hostile = true;
             Projectile.Opacity = 0f;
             Projectile.timeLeft = AttackDuration + 45;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

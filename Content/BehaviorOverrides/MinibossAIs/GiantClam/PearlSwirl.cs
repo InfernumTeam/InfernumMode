@@ -1,12 +1,15 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
 {
     public class PearlSwirl : ModProjectile
     {
+        public Vector2 InitialVelocity;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pearl Swirl");
@@ -21,21 +24,20 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             Projectile.tileCollide = false;
             Projectile.timeLeft = 840;
             Projectile.penetrate = -1;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
-
-        Vector2 initialVelocity = new(0f, 0f);
 
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, 0f, Projectile.Opacity * 0.5f, Projectile.Opacity * 0.5f);
             if (Projectile.frameCounter == 0f)
-                initialVelocity = Projectile.velocity;
+                InitialVelocity = Projectile.velocity;
 
             Projectile.frameCounter++;
             if (Projectile.ai[0] == 1f)
-                Projectile.velocity = initialVelocity.RotatedBy(-(MathHelper.TwoPi - (Math.Log(Projectile.frameCounter) * MathHelper.TwoPi + 1)));
+                Projectile.velocity = InitialVelocity.RotatedBy(-(MathHelper.TwoPi - (Math.Log(Projectile.frameCounter) * MathHelper.TwoPi + 1)));
             else
-                Projectile.velocity = initialVelocity.RotatedBy(MathHelper.TwoPi - (Math.Log(Projectile.frameCounter) * MathHelper.TwoPi + 1));
+                Projectile.velocity = InitialVelocity.RotatedBy(MathHelper.TwoPi - (Math.Log(Projectile.frameCounter) * MathHelper.TwoPi + 1));
 
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 

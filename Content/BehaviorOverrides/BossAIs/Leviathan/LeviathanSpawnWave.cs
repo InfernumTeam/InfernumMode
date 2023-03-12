@@ -32,6 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.penetrate = -1;
             Projectile.alpha = 255;
             Projectile.timeLeft = 360;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()
@@ -80,11 +81,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
             for (int i = 0; i < 3; i++)
                 TornadoDrawer.DrawPixelated(Projectile.oldPos, Vector2.UnitY * WaveHeight * 0.5f - Main.screenPosition, 35, 0f);
-        }
-
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
-        {
-
         }
     }
 }

@@ -1,8 +1,13 @@
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -47,6 +52,33 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         
         public override bool PreDraw(ref Color lightColor)
         {
+            float explosionInterpolant = Utils.GetLerpValue(50f, 18f, Projectile.timeLeft, true);
+            if (explosionInterpolant > 0f)
+            {
+                Main.spriteBatch.EnterShaderRegion();
+                Color explosionTelegraphColor = Color.Lerp(Color.Red, Color.White, 0.4f) * MathF.Sqrt(explosionInterpolant);
+
+                Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
+                Texture2D noise = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes2").Value;
+                Effect fireballShader = InfernumEffectsRegistry.FireballShader.GetShader().Shader;
+
+                Vector2 scale = Vector2.One * 950f / invisible.Size() * explosionInterpolant * Projectile.Opacity;
+                fireballShader.Parameters["sampleTexture2"].SetValue(noise);
+                fireballShader.Parameters["mainColor"].SetValue(explosionTelegraphColor.ToVector3());
+                fireballShader.Parameters["resolution"].SetValue(Vector2.One * 250f);
+                fireballShader.Parameters["speed"].SetValue(0.76f);
+                fireballShader.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+                fireballShader.Parameters["zoom"].SetValue(0.0004f);
+                fireballShader.Parameters["dist"].SetValue(60f);
+                fireballShader.Parameters["opacity"].SetValue(explosionInterpolant * Projectile.Opacity * 0.335f);
+                fireballShader.CurrentTechnique.Passes[0].Apply();
+
+                Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.5f, 0, 0f);
+                Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.32f, 0, 0f);
+                Main.spriteBatch.ExitShaderRegion();
+            }
             Projectile.DrawProjectileWithBackglowTemp(Color.Red with { A = 0 }, lightColor, (1f - Projectile.Opacity) * 10f);
             return false;
         }

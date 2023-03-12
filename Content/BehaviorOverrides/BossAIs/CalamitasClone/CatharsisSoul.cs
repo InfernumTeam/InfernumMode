@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.Opacity = 0f;
-            Projectile.timeLeft = 180;
+            Projectile.timeLeft = 160;
         }
 
         public override void AI()
@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             else
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 32f + Projectile.SafeDirectionTo(target.Center) * 15f) / 33f;
+                Projectile.velocity = (Projectile.velocity * 37f + Projectile.SafeDirectionTo(target.Center) * 11f) / 38f;
             }
 
             Time++;

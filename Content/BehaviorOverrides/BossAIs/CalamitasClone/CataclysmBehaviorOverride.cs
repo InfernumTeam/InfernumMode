@@ -1,9 +1,12 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Armor.Vanity;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,7 +26,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public enum SCalBrotherAttackType
         {
             HorizontalCharges,
-            FireAndSwordSlashes
+            FireAndSwordSlashes,
+            BladeUppercutAndDashes
         }
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
@@ -101,6 +105,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Player target = Main.player[npc.target];
 
+            // Reset hitbox widths.
+            npc.width = 90;
+
             // Perform attacks.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
             npc.damage = npc.defDamage;
@@ -112,6 +119,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 case SCalBrotherAttackType.FireAndSwordSlashes:
                     DoBehavior_FireAndSwordSlashes(npc, target, isCataclysm, ref attackTimer);
                     break;
+                case SCalBrotherAttackType.BladeUppercutAndDashes:
+                    DoBehavior_BladeUppercutAndDashes(npc, target, isCataclysm);
+                    break;
             }
         }
 
@@ -120,8 +130,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int chargeTime = 19;
             int chargeSlowdownTime = 8;
             int chargeCount = 3;
-            float baseChargeSpeed = 8f;
-            float chargeAcceleration = 2.3f;
+            float baseChargeSpeed = 9.75f;
+            float chargeAcceleration = 2.5f;
 
             if (BossRushEvent.BossRushActive)
             {
@@ -137,7 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float attackState = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[0];
             ref float chargeCounter = ref Main.npc[CalamityGlobalNPC.cataclysm].Infernum().ExtraAI[1];
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
-            float horizontalChargeOffset = isCataclysm.ToDirectionInt() * (chargeCounter % 2f == 0f).ToDirectionInt() * 400f;
+            float horizontalChargeOffset = isCataclysm.ToDirectionInt() * (chargeCounter % 2f == 0f).ToDirectionInt() * 480f;
 
             switch ((int)attackState)
             {
@@ -153,7 +163,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Make Catastrophe anticipate with his blade.
                     catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (((attackTimer > 120f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > 30f) || attackState == 1f)
+                    if (((attackTimer > 180f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 127f : 30f)) || attackState == 1f)
                     {
                         npc.velocity *= 0.3f;
                         attackTimer = 0f;
@@ -315,6 +325,154 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
+        public static void DoBehavior_BladeUppercutAndDashes(NPC npc, Player target, bool isCataclysm)
+        {
+            ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
+
+            // Catastrophe does undercut charges from below.
+            if (!isCataclysm)
+            {
+                int attackDelay = 28;
+                int uppercutTime = 35;
+                int attackRepeatDelay = 38;
+                int wrappedAttackTimer = (int)localAttackTimer % (attackDelay + uppercutTime + attackRepeatDelay);
+                float baseUppercutSpeed = 12f;
+                float uppercutAcceleration = 1.04f;
+                ref float armRotation = ref npc.localAI[0];
+
+                // Fly into position.
+                if (wrappedAttackTimer <= attackDelay)
+                {
+                    // Look at the target at first.
+                    if (wrappedAttackTimer <= 2f)
+                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                    Vector2 hoverDestination = target.Center + Vector2.UnitY * 425f;
+                    if (wrappedAttackTimer >= attackDelay - 4f)
+                        npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.3f);
+
+                    float flyInterpolant = Utils.Remap(wrappedAttackTimer, 0f, attackDelay, 0.03f, 0.27f);
+                    Vector2 idealVelocity = ((hoverDestination - npc.Center) * flyInterpolant * 2f).ClampMagnitude(3f, 80f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, flyInterpolant);
+
+                    // Swing the arm back in anticipation.
+                    float idealArmRotation = Utils.Remap(wrappedAttackTimer, 0f, attackDelay, 0.1f, -1.76f);
+                    armRotation = armRotation.AngleLerp(idealArmRotation, 0.27f).AngleTowards(idealArmRotation, 0.04f);
+
+                    // Disable contact damage.
+                    npc.damage = 0;
+                }
+
+                // Fly upward.
+                if (wrappedAttackTimer == attackDelay)
+                {
+                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.7f }, npc.Center);
+                    npc.velocity = Vector2.UnitY * -baseUppercutSpeed;
+                    npc.netUpdate = true;
+                }
+
+                // Accelerate and aim the sword upward.
+                if (wrappedAttackTimer > attackDelay && wrappedAttackTimer <= attackDelay + uppercutTime)
+                {
+                    npc.velocity.Y -= uppercutAcceleration;
+
+                    if (MathHelper.Distance(MathHelper.WrapAngle(armRotation), MathHelper.Pi) > 0.3f)
+                        armRotation += 0.29f;
+
+                    // Creation motion blur particles.
+                    if (Main.rand.NextBool(4) && npc.velocity.Length() > 8.5f)
+                    {
+                        Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(56f, 56f) + npc.velocity * 3.5f;
+                        Vector2 energyVelocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(6f, 10f);
+                        Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.OrangeRed, 30, 3.4f, 4.5f, hueShift: 0.002f);
+                        GeneralParticleHandler.SpawnParticle(energyLeak);
+                    }
+
+                    // Release falling brimstone bombs after the uppercut is over.
+                    if (wrappedAttackTimer == attackDelay + uppercutTime && !npc.WithinRange(target.Center, 300f))
+                    {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound with { Pitch = -0.5f }, target.Center);
+                        target.Infernum_Camera().CurrentScreenShakePower = 5f;
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 20);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            npc.velocity *= 0.3f;
+                            npc.netUpdate = true;
+
+                            for (int i = 0; i < 5; i++)
+                            {
+                                float offsetAngle = MathHelper.Lerp(-0.96f, 0.96f, i / 4f) + Main.rand.NextFloatDirection() * 0.04f;
+                                Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(9f, 12f);
+                                shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
+                                Utilities.NewProjectileBetter(npc.Top, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 155, 0f);
+                            }
+                        }
+                    }
+                }
+
+                // Reposition after the uppercut is done.
+                if (wrappedAttackTimer >= attackDelay + uppercutTime)
+                {
+                    Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 436f;
+                    Vector2 idealVelocity = ((hoverDestination - npc.Center) * 0.2f).ClampMagnitude(3f, 50f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.12f);
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                    // Disable contact damage.
+                    npc.damage = 0;
+
+                    armRotation = armRotation.AngleTowards(0f, 0.256f);
+                }
+
+                npc.rotation = npc.velocity.X * 0.01f;
+            }
+            else
+            {
+                int hoverTime = 39;
+                int chargeTime = 45;
+                int chargeSlowdowntime = 12;
+                int wrappedAttackTimer = (int)localAttackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
+                int chargeCount = 3;
+                float baseChargeSpeed = 5f;
+                float chargeAcceleration = 0.82f;
+
+                // Hover to the side of the target in anticipation of the charge.
+                if (wrappedAttackTimer <= hoverTime)
+                {
+                    Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 400f;
+                    Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.07f;
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.damage = 0;
+                }
+
+                // Charge at the target.
+                if (wrappedAttackTimer == hoverTime + 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item73, npc.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * baseChargeSpeed;
+                }
+
+                // Accelerate after charging.
+                if (wrappedAttackTimer >= hoverTime + 1f && wrappedAttackTimer <= hoverTime + chargeTime)
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
+
+                // Slow down in anticipation of the next charge.
+                if (wrappedAttackTimer >= hoverTime + chargeTime)
+                {
+                    npc.damage = 0;
+                    npc.velocity *= 0.92f;
+                    npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.02f);
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                }
+
+                if (localAttackTimer >= (hoverTime + chargeTime + chargeSlowdowntime) * chargeCount)
+                    SelectNextAttack(npc);
+            }
+            localAttackTimer++;
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             // Catastrophe does not have control over when attack switches happen.
@@ -326,6 +484,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (npc.ai[0] == (int)SCalBrotherAttackType.HorizontalCharges)
                 npc.ai[0] = (int)SCalBrotherAttackType.FireAndSwordSlashes;
             else if (npc.ai[0] == (int)SCalBrotherAttackType.FireAndSwordSlashes)
+                npc.ai[0] = (int)SCalBrotherAttackType.BladeUppercutAndDashes;
+            else if (npc.ai[0] == (int)SCalBrotherAttackType.BladeUppercutAndDashes)
                 npc.ai[0] = (int)SCalBrotherAttackType.HorizontalCharges;
 
             npc.ai[1] = 0f;
@@ -365,14 +525,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (isCatastrophe)
                 texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/Catastrophe").Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
-            int afterimageCount = 4;
+            int afterimageCount = 9;
 
             if (CalamityConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
-                    Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                    Vector2 drawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 0.75f) - Main.screenPosition;
                     spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }

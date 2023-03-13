@@ -1747,8 +1747,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Color shadowColor = CalamityUtils.ColorSwap(Color.Purple, Color.Blue, 10f);
             lightColor = Color.Lerp(lightColor, shadowColor, 0.7f);
-            lightColor = Color.Lerp(lightColor, Color.White, 0.45f);
-            lightColor = Color.Lerp(lightColor, Color.Black, 0.32f);
+            lightColor = Color.Lerp(lightColor, Color.White, 0.87f);
+            lightColor = Color.Lerp(lightColor, Color.Black, 0.17f);
             lightColor.A = 232;
 
             if (drawCharredForm)

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
@@ -95,6 +96,10 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == NPCID.BloodNautilus)
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
 
+            // Have CalClone use a custom map icon.
+            if (npc.type == ModContent.NPCType<CalamitasClone>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalCloneMapIcon");
+
             // Have Sepulcher use a custom map icon.
             if (npc.type == ModContent.NPCType<SepulcherHead>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon");
@@ -111,6 +116,15 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Polterghast>())
                 rotation = npc.rotation;
+        }
+
+        public override void BossHeadSpriteEffects(NPC npc, ref SpriteEffects spriteEffects)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            if (npc.type == ModContent.NPCType<CalamitasClone>())
+                spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }
 
         #endregion

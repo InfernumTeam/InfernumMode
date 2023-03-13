@@ -102,6 +102,7 @@ namespace InfernumMode
             {
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalCloneMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
                 InfernumEffectsRegistry.LoadEffects();

@@ -190,7 +190,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.dontTakeDamage = false;
             npc.noGravity = true;
             npc.noTileCollide = true;
-            npc.gfxOffY = 10f;
+            npc.gfxOffY = 4f;
 
             if (hexApplicationPauseDelay >= 1f && !phase3)
             {
@@ -1500,7 +1500,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.dontTakeDamage = true;
             npc.velocity.X *= 0.75f;
             npc.Opacity = 1f;
-            npc.gfxOffY = 36f;
+            npc.gfxOffY = 30f;
             npc.Calamity().ShouldCloseHPBar = true;
 
             // Make the eye gleam and shield effect go away.
@@ -1694,11 +1694,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void FindFrame(NPC npc, int frameHeight)
         {
             // Redefine the frame size to be in line with the SCal sheet.
-            npc.frame.Width = 52;
-            npc.frame.Height = 52;
+            npc.frame.Width = 32;
+            npc.frame.Height = 64;
 
             npc.frameCounter += npc.localAI[0];
-            int frameOffset = (int)npc.frameCounter % 6;
+            int frameOffset = (int)npc.frameCounter % 1;
             int frame = frameOffset;
 
             npc.frame.X = npc.frame.Width * (frame / 21);
@@ -1748,7 +1748,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Color shadowColor = CalamityUtils.ColorSwap(Color.Purple, Color.Blue, 10f);
             lightColor = Color.Lerp(lightColor, shadowColor, 0.7f);
-            lightColor = Color.Lerp(lightColor, Color.Black, 0.32f);
+            lightColor = Color.Lerp(lightColor, Color.White, 0.87f);
+            lightColor = Color.Lerp(lightColor, Color.Black, 0.17f);
             lightColor.A = 232;
 
             if (drawCharredForm)

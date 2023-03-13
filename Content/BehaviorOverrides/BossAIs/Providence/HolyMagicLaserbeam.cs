@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (telegraphCompletion < 1f)
             {
                 if (SetAngleToMoveTo == 0)
-                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 8f));
+                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 15f));
                 else
                     Projectile.velocity = InitialVelocity.ToRotation().AngleLerp(SetAngleToMoveTo, telegraphCompletion).ToRotationVector2();
             }

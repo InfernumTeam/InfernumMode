@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
-        
+
         public void AdditiveDraw(SpriteBatch spriteBatch)
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SuicideBomberRitual").Value;

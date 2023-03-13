@@ -10,9 +10,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     public class EidolistRitual : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
-        
+
         public int MainEidolistIndex => (int)Projectile.ai[1];
-        
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
         }
-        
+
         public override void AI()
         {
             // Die if the main boss is not present.
@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 Projectile.Kill();
                 return;
             }
-            
+
             // Fade in and release some light dust inward.
             Projectile.Opacity = Utils.GetLerpValue(0f, 22f, Time, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
             if (Projectile.Opacity >= 1f)
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
             Projectile.scale = Projectile.Opacity;
             Projectile.rotation += 0.018f;
-            
+
             Time++;
         }
 

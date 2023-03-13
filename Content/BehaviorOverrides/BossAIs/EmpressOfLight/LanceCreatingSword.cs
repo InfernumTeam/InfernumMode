@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             TelegraphInterpolant = 0f;
             AttackTarget();
         }
-        
+
         public void AttackTarget()
         {
             int lungeDelay = 35;

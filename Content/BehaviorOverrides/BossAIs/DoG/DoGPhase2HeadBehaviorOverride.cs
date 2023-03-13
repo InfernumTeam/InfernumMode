@@ -313,7 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         specialAttackTimer = 0f;
                         performingSpecialAttack = 1f;
-                        
+
                         // Select a special attack type.
                         do
                             npc.Infernum().ExtraAI[SpecialAttackTypeIndex] = (int)Utils.SelectRandom(Main.rand, SpecialAttackType.LaserWalls, SpecialAttackType.CircularLaserBurst);
@@ -750,7 +750,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
             else
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!");
-            
+
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
             // charge.
@@ -1251,7 +1251,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = false;
                             portal.netUpdate = true;
                         }
-                        
+
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
                         {
                             portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
@@ -1290,7 +1290,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                     if (!finalPhase)
                         npc.Infernum().ExtraAI[AnimationMoveDelayIndex] = 0f;
-                    
+
                     performingSpecialAttack = 0f;
                     specialAttackTimer = 0f;
                     damageImmunityCountdown = 60f;

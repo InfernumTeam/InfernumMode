@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * spinRadius;
                 npc.Center = npc.Center.MoveTowards(hoverDestination, Utils.Remap(circleTimer, chargeDelay - 25f, chargeDelay, 16f, 1f));
                 npc.velocity *= 0.9f;
-                
+
                 if (isDecentlyCircular)
                     circleTimer++;
                 if (circleTimer >= chargeDelay)

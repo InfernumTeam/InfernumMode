@@ -12,7 +12,7 @@ namespace InfernumMode
         public static Point GetGroundPositionFrom(Point p, GenSearch search = null)
         {
             search ??= new Searches.Down(9001);
-            
+
             if (!WorldUtils.Find(p, Searches.Chain(search, new Conditions.IsSolid(), new CustomTileConditions.ActiveAndNotActuated()), out Point result))
                 return result;
             return result;

@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static float MaxLaserbeamCoverage => 0.21f;
 
         public static int Lifetime => 120;
-        
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Prism");

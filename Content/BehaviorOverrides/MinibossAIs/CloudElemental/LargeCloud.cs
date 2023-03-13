@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
         }
 
         public override bool? CanDamage() => false;
-        
+
         public float WidthFunction(float _) => Projectile.width * Projectile.scale * 0.3f;
 
         public Color ColorFunction(float _)

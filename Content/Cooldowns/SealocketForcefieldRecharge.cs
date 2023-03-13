@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using CalamityMod.Cooldowns;
+﻿using CalamityMod.Cooldowns;
+using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Content.Cooldowns
 {

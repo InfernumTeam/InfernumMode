@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public const int Lifetime = 75;
 
-        public const float LightningSpread = 0.98f; 
+        public const float LightningSpread = 0.98f;
 
         public override void SetStaticDefaults()
         {

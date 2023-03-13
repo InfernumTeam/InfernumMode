@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
     public class EoCTooth2 : ModProjectile
     {
         public Player Target => Main.player[(int)Projectile.ai[0]];
-        
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Tooth");

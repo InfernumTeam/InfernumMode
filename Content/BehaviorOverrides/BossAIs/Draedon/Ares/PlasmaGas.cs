@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.rotation += Projectile.velocity.X * 0.004f;
             Projectile.velocity *= 0.985f;
         }
-        
+
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
 
         public override bool PreDraw(ref Color lightColor) => false;

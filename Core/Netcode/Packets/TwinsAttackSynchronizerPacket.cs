@@ -16,7 +16,7 @@ namespace InfernumMode.Core.Netcode.Packets
             packet.Write(UniversalAttackTimer);
             packet.Write((int)CurrentAttackState);
         }
-        
+
         public override void Read(BinaryReader reader)
         {
             _targetIndex = reader.ReadInt32();

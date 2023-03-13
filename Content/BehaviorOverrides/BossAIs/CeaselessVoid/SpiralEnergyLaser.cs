@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         // Do not change these unless you are absolutely sure you know how to fix the wave math.
         private const float WaveTheta = 0.038f;
-        
+
         private const int WaveTwistFrames = 9;
 
         private ref float WaveFrameState => ref Projectile.localAI[1];

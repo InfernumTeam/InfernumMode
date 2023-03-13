@@ -505,7 +505,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     npc.netUpdate = true;
                 }
             }
-            
+
             // Emit acid mist while charging.
             if (Main.netMode != NetmodeID.MultiplayerClient && charging && attackTimer % 2f == 0f)
             {
@@ -711,7 +711,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                             Vector2 rubbleVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(rubbleOffsetAngle) * rubbleShootSpeed;
                             Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 3f, rubbleVelocity, ModContent.ProjectileType<SulphurousRockRubble>(), 135, 0f);
                         }
-                        
+
                         for (float dx = -bubbleAreaCoverage; dx < bubbleAreaCoverage; dx += bubbleSpacing)
                         {
                             float bubbleSpeed = Main.rand.NextFloat(7f, 9f);
@@ -1403,7 +1403,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Projectile p = Main.projectile[i];
                 if (!p.active || !bubbles.Contains(p.type))
                     continue;
-                
+
                 for (int j = 0; j < 45; j++)
                 {
                     Dust bubble = Dust.NewDustPerfect(p.Center + Main.rand.NextVector2Circular(32f, 32f), 256);

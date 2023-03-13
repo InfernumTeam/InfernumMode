@@ -1,8 +1,9 @@
 using CalamityMod;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.NormalNPCs;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -15,7 +16,6 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.AdultEidolonWyrm;
 
 namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 {
@@ -176,7 +176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // When there are only three eidolists, the charges are faster, and two can exist at once.
             // When there are only two eidolists, they both charge together.
             // When there is only one eidolist, they release exploding ice bombs.
-            
+
             // Decide the angular offset for all Eidolists. They should be evenly spread.
             float adjustedAttackTimer = attackTimer - initalFadeOutTime;
             if (adjustedAttackTimer == 1f)

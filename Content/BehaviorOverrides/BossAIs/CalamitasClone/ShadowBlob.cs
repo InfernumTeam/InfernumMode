@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Die if touching CalClone.
                 if (Projectile.WithinRange(CalClone.Center, 45f))
                     Projectile.Kill();
-                
+
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, idealVelocity, 0.18f);
             }
             else

@@ -2164,7 +2164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                             if (dartBulletHellCounter % 2f == 1f)
                                 dartSpawnPosition.X += dartBulletHellWallArea;
-                            
+
                             int dart = Utilities.NewProjectileBetter(dartSpawnPosition, Vector2.UnitY * 5f, brimstoneDartID, 500, 0f);
                             if (Main.projectile.IndexInRange(dart))
                                 Main.projectile[dart].timeLeft -= 210;

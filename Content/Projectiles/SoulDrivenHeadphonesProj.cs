@@ -438,7 +438,7 @@ namespace InfernumMode.Content.Projectiles
 
         public void AdjustPlayerValues()
         {
-            Projectile.timeLeft = 2;            
+            Projectile.timeLeft = 2;
             Projectile.spriteDirection = Owner.direction;
             Projectile.Center = Owner.Center;
             Owner.heldProj = Projectile.whoAmI;

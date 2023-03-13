@@ -155,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                         }
                     }
                 }
-                
+
                 switch (frameIncrement)
                 {
                     case 0:

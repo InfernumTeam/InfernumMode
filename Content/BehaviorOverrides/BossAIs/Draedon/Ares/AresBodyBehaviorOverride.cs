@@ -7,28 +7,28 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode.Core;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
-using Terraria.GameContent.Events;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Core.GlobalInstances.Systems;
-using System.IO;
-using InfernumMode.Core;
-using InfernumMode.Common.Graphics;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {

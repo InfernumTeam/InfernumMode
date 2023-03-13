@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
     public static partial class ExoMechComboAttackContent
     {
-        
+
         public enum ExoMechComboAttackType
         {
             AresTwins_DualLaserCharges = 100,

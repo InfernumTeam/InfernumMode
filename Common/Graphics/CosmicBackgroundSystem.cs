@@ -159,7 +159,7 @@ namespace InfernumMode.Common.Graphics
             }
 
             Vector2 scale = new Vector2(Main.screenWidth, Main.screenWidth) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;
-            
+
             Main.instance.GraphicsDevice.Textures[1] = KalisetFractal;
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["zoom"].SetValue(0.5f);

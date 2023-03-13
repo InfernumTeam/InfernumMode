@@ -453,7 +453,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 npc.Opacity = 1f;
                 npc.velocity = Vector2.Zero;
                 npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
-                
+
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < teleportDelay + MaxSlowdownTime)
                 {
                     Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 2.1f;

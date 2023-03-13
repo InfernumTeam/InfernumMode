@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;

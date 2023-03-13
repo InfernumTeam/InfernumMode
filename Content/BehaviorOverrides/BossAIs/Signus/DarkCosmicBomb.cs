@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 });
 
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 400, 0f);
-                
+
                 for (int i = 0; i < 2; i++)
                 {
                     Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(12f, 12f);

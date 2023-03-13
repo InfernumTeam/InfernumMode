@@ -1,16 +1,16 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using System.Linq;
-using System.Collections.Generic;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
-using Terraria.Utilities;
 using Microsoft.Xna.Framework;
-using System;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.ID;
-using CalamityMod;
-using System.Diagnostics;
 using ReLogic.Content;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.Utilities;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 {
@@ -408,7 +408,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         {
             // Redefine the perspective matrices of the shader.
             CalamityUtils.CalculatePerspectiveMatricies(out Matrix effectView, out Matrix effectProjection);
-            
+
             BasicShader.Texture = IcicleTexture;
             BasicShader.View = effectView;
             BasicShader.Projection = effectProjection;

@@ -52,7 +52,7 @@ namespace InfernumMode.Common.BaseEntities
 
             Time++;
         }
-        
+
         /// <summary>
         /// Initialize fields in here. 
         /// Runs on the first frame the cinder is alive.

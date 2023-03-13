@@ -4,16 +4,23 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Drawing.Drawing2D;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone.CalamitasCloneBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 {
     public class DarkMagicFlame : ModProjectile, IPixelPrimitiveDrawer
     {
+        public string HexType;
+
+        public string HexType2;
+
         public PrimitiveTrailCopy TrailDrawer = null;
 
         public ref float Time => ref Projectile.ai[0];
@@ -40,11 +47,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(HexType);
+            writer.Write(HexType2);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            HexType = reader.ReadString();
+            HexType2 = reader.ReadString();
+        }
+
+        public bool ImbuedWithHex(string hexName)
+        {
+            return HexType == hexName || HexType2 == hexName;
+        }
+
         public override void AI()
         {
+            // Initialize the hex type(s).
+            if (string.IsNullOrEmpty(HexType) && GetHexNames(out HexType, out HexType2))
+                Projectile.netUpdate = true;
+
             float acceleration = 1f;
             float maxSpeed = 36f;
-            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Zeal"))
+            if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Zeal"))
             {
                 // Start out slower if acceleration is expected.
                 if (Projectile.ai[1] == 0f)
@@ -56,9 +84,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 acceleration = 1.037f;
             }
-            
+
             // Home in weakly if CalClone's target has the appropriate hex.
-            if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Accentuation"))
+            if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Accentuation"))
             {
                 float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
                 Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
@@ -74,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Time++;
         }
-        
+
         public float FlameTrailWidthFunction(float completionRatio)
         {
             return MathHelper.SmoothStep(24f, 5f, completionRatio) * Projectile.Opacity;

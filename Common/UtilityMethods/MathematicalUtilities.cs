@@ -28,7 +28,7 @@ namespace InfernumMode
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
         public static float AngularSmoothstep(float angle, float min, float max) => ((max - min) * ((float)Math.Cos(angle) * 0.5f)) + min + ((max - min) * 0.5f);
-        
+
         /// <summary>
         /// Determines the angular distance between two vectors based on dot product comparisons. This method ensures underlying normalization is performed safely.
         /// </summary>
@@ -123,7 +123,7 @@ namespace InfernumMode
             Vector2 result = v.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(v.Length(), min, max);
             if (result.HasNaNs())
                 return Vector2.UnitY * -min;
-            
+
             return result;
         }
 

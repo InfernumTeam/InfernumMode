@@ -1,8 +1,8 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs.Abyss;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override int NPCOverrideType => ModContent.NPCType<GulperEelHead>();
 
         public const int SegmentCount = 20;
-        
+
         public override bool PreAI(NPC npc)
         {
             // Pick a target if a valid one isn't already decided.
@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 result.Sound.SetReverb(0.9f);
                 result.Position = target.Center;
             }
-            
+
             // Try to snap at and swallow the player.
             snapAnticipation = MathHelper.Clamp(snapAnticipation + canSnapAtPlayer.ToDirectionInt(), 0f, 30f);
             if (snapAnticipation >= 30f)
@@ -238,7 +238,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Initialize the segment drawer.
             npc.Infernum().OptionalPrimitiveDrawer ??= new(c => SegmentWidthFunction(npc, c), _ => Color.Gray * npc.Opacity, null, true, GameShaders.Misc["CalamityMod:PrimitiveTexture"]);
-            
+
             Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/GulperEelHead").Value;
             Texture2D mouthTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/GulperEelMouth").Value;
             Texture2D tailTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/GulperEelTail").Value;

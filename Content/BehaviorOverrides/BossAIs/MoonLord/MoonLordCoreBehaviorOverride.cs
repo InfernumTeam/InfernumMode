@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             despawnTimer = 0f;
 
             MoonLordAttackState currentAttack = (MoonLordAttackState)(int)attackState;
-            
+
             switch (currentAttack)
             {
                 case MoonLordAttackState.SpawnEffects:
@@ -321,7 +321,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Roar after a bit of time has passed.
             if (attackTimer == 30f)
                 SoundEngine.PlaySound(SoundID.Zombie92, npc.Center);
-            
+
             if (attackTimer >= 125f)
                 SelectNextAttack(npc);
         }

@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 }
             }
         }
-        
+
         public override bool PreAI(NPC npc)
         {
             SegmentAI(npc);

@@ -1,24 +1,24 @@
 using CalamityMod;
+using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
-using InfernumMode.Assets.Effects;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
-using System.Diagnostics;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
-using CalamityMod.NPCs.AdultEidolonWyrm;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
 namespace InfernumMode.Common.Graphics
@@ -114,7 +114,7 @@ namespace InfernumMode.Common.Graphics
         {
             while (DrawActionQueue is not null && DrawActionQueue.TryDequeue(out Action a))
                 a();
-            
+
             orig(self, gameTime);
         }
 

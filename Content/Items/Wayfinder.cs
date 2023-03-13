@@ -1,18 +1,18 @@
 ﻿using CalamityMod;
 using CalamityMod.CalPlayer;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Content.Projectiles.Wayfinder;
+using InfernumMode.Content.Rarities.InfernumRarities;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using System.Collections.Generic;
-using InfernumMode.Content.Projectiles.Wayfinder;
-using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Content.Rarities.InfernumRarities;
 
 namespace InfernumMode.Content.Items
 {

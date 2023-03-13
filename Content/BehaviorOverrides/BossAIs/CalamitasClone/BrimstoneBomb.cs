@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            
+
             if (Projectile.velocity.Y < 10f)
                 Projectile.velocity.Y += 0.27f;
             Projectile.velocity.X *= 0.985f;

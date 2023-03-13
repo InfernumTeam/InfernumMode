@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 spark.noGravity = true;
             }
         }
-        
+
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
 
         public override bool PreDraw(ref Color lightColor) => false;

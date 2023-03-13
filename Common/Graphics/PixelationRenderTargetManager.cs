@@ -16,7 +16,7 @@ namespace InfernumMode.Common.Graphics
 
         private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
         #endregion
-        
+
         #region Overrides
         public override void Load()
         {
@@ -36,7 +36,7 @@ namespace InfernumMode.Common.Graphics
 
         #region Methods
         private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
-        {         
+        {
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Draw the RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.
@@ -54,7 +54,7 @@ namespace InfernumMode.Common.Graphics
             for (int i = 0; i < Main.projectile.Length; i++)
             {
                 Projectile projectile = Main.projectile[i];
-                
+
                 // If the projectile is active, a mod projectile, and uses the interface, add it to the list of prims to draw this frame.
                 if (projectile.active && projectile.ModProjectile != null && projectile.ModProjectile is IPixelPrimitiveDrawer pixelPrimitiveProjectile)
                     pixelPrimDrawersList.Add(pixelPrimitiveProjectile);
@@ -64,7 +64,7 @@ namespace InfernumMode.Common.Graphics
             for (int i = 0; i < Main.npc.Length; i++)
             {
                 NPC npc = Main.npc[i];
-                
+
                 // If the NPC is active, a mod NPC, and uses our interface add it to the list of prims to draw this frame.
                 if (npc.active && npc.ModNPC != null && npc.ModNPC is IPixelPrimitiveDrawer pixelPrimitiveNPC)
                     pixelPrimDrawersList.Add(pixelPrimitiveNPC);
@@ -84,7 +84,7 @@ namespace InfernumMode.Common.Graphics
         {
             // Swap to the custom render target to prepare things to pixelation.
             renderTarget.SwapToRenderTarget();
-            
+
             if (pixelPrimitives.Any())
             {
                 // Start a spritebatch, as one does not exist before the method we're detouring.
@@ -97,7 +97,7 @@ namespace InfernumMode.Common.Graphics
                 // Prepare the sprite batch for the next draw cycle.
                 Main.spriteBatch.End();
             }
-        }     
+        }
 
         private void ResizePixelRenderTarget(bool load)
         {
@@ -106,7 +106,7 @@ namespace InfernumMode.Common.Graphics
             {
                 // Get the current screen size.
                 Vector2 currentScreenSize = new(Main.screenWidth, Main.screenHeight);
-                
+
                 // If it does not match the previous one, update it.
                 if (currentScreenSize != previousScreenSize)
                 {
@@ -122,7 +122,7 @@ namespace InfernumMode.Common.Graphics
                         pixelRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
                     });
                 }
-                
+
                 // Set the current one to the previous one for next frame.
                 previousScreenSize = currentScreenSize;
             }

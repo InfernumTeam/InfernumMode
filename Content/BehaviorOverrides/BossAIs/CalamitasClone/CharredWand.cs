@@ -4,7 +4,6 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -49,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Time++;
         }
-        
+
         public override bool PreDraw(ref Color lightColor)
         {
             float explosionInterpolant = Utils.GetLerpValue(50f, 18f, Projectile.timeLeft, true);

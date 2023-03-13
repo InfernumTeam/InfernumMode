@@ -134,7 +134,7 @@ namespace InfernumMode
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
-        
+
         public override object Call(params object[] args)
         {
             return InfernumModCalls.Call(args);

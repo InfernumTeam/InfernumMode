@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Common.Graphics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ModLoader;
-using InfernumMode.Common.Graphics;
-using System;
 using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm

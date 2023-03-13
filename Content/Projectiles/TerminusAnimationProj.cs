@@ -1,16 +1,16 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
+using CalamityMod.NPCs.AdultEidolonWyrm;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.ID;
-using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
-using InfernumMode.Common.Graphics;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles
 {
@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Projectiles
         public SlotId ChargeSound = SlotId.Invalid;
 
         public PrimitiveTrailCopy LightDrawer = null;
-        
+
         public Player Owner => Main.player[Projectile.owner];
 
         public ref float Time => ref Projectile.ai[0];
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.Projectiles
             if (Main.netMode != NetmodeID.MultiplayerClient && Time == AEWSpawnDelay)
                 CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 1000f, ModContent.NPCType<AdultEidolonWyrmHead>());
         }
-        
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Terraria.ModLoader.Core;
 
@@ -32,7 +32,7 @@ namespace InfernumMode
 
         /// <summary>
         /// Converts a <see cref="MethodInfo"/> to a generic <see cref="Delegate"/> type.
-         /// </summary>
+        /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="instance">The instance to create the delegate around.</param>
         public static Delegate ConvertToDelegate(this MethodInfo method, object instance)

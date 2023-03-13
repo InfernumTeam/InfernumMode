@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.AquaticScourge;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.BrimstoneElemental;
@@ -9,6 +10,7 @@ using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.OldDuke;
@@ -23,16 +25,14 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
-using Terraria;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.Events;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 
 namespace InfernumMode.Content.Achievements.InfernumAchievements
 {

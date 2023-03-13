@@ -1,8 +1,8 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using CalamityMod.Items.Placeables.FurnitureProfaned;
 using InfernumMode.Content.Tiles;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Placeables
 {

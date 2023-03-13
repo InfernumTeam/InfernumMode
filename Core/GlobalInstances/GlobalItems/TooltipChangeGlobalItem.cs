@@ -156,7 +156,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             // Find where the current line terminates following the instance of the word 'enrage'.
             while (enrageTextEnd < enrageTooltip.Text.Length && enrageTooltip.Text[enrageTextEnd] != '\n')
                 enrageTextEnd++;
-            
+
             enrageTooltip.Text = enrageTooltip.Text.Remove(enrageTextStart, Math.Min(enrageTextEnd - enrageTextStart + 1, enrageTooltip.Text.Length));
 
             // If a replacement exists, insert it into the enrage text instead.

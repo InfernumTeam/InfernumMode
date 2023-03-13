@@ -138,7 +138,7 @@ namespace InfernumMode.GlobalInstances
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
             }
         }
-        
+
         public override void SetStaticDefaults()
         {
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
@@ -183,7 +183,7 @@ namespace InfernumMode.GlobalInstances
                 TotalPlayersAtStart = activePlayerCount;
                 npc.netUpdate = true;
             }
-            
+
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
@@ -256,7 +256,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
-            
+
             bool bigSlimeGod = npc.type == ModContent.NPCType<EbonianSlimeGod>() || npc.type == ModContent.NPCType<CrimulanSlimeGod>();
             if (bigSlimeGod && OverridingListManager.Registered(npc.type))
             {
@@ -400,7 +400,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumCheckDeadOverrideList.ContainsKey(npc.type))
                 return (bool)OverridingListManager.InfernumCheckDeadOverrideList[npc.type].DynamicInvoke(npc);
-            
+
             return base.CheckDead(npc);
         }
 

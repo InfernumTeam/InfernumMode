@@ -1,6 +1,6 @@
 ﻿using CalamityMod.Particles;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

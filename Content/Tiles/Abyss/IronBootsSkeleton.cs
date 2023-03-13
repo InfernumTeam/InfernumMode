@@ -29,7 +29,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileObjectData.addTile(Type);
 
             DustType = 1;
-            
+
             AddMapEntry(new Color(168, 188, 192));
 
             if (Main.netMode != NetmodeID.Server)
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             Tile t = Main.tile[i, j];
             int frameX = t.TileFrameX;
             int frameY = t.TileFrameY;
-            
+
             Texture2D mainTexture = TextureAssets.Tile[Type].Value;
             Texture2D glowmask = Glowmask.Value;
             Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);

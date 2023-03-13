@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (Projectile.velocity.Length() < maxSpeed)
                 Projectile.velocity *= 1.01f;
         }
-        
+
         public override bool PreDraw(ref Color lightColor)
         {
             Color drawColor = Color.Lerp(Color.Cyan, Color.Red, 0.35f) * Projectile.Opacity * 0.45f;

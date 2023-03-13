@@ -333,7 +333,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
             DukeAttackType[] patternToUse = SubphaseTable.First(table => table.Value(npc)).Key;
             DukeAttackType nextAttackType = patternToUse[(int)(npc.ai[1] % patternToUse.Length)];
-            
+
             // Go to the next attack state.
             npc.Infernum().ExtraAI[5] = (int)nextAttackType;
 

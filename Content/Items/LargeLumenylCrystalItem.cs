@@ -1,6 +1,6 @@
-﻿using Terraria.ModLoader;
+﻿using InfernumMode.Content.Tiles.Abyss;
 using Terraria.ID;
-using InfernumMode.Content.Tiles.Abyss;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items
 {

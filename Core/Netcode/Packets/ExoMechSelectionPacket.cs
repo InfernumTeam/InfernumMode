@@ -18,7 +18,7 @@ namespace InfernumMode.Core.Netcode.Packets
             packet.Write((int)(CustomExoMechSelectionSystem.PrimaryMechToSummon ?? 0));
             packet.Write((int)(CustomExoMechSelectionSystem.DestroyerTypeToSummon ?? 0));
         }
-        
+
         public override void Read(BinaryReader reader)
         {
             Player player = Main.player[reader.ReadInt16()];

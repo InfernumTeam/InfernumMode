@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Fade in.
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
-            
+
             Time++;
         }
 

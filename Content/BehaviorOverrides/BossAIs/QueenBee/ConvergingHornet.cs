@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 return null;
             }
         }
-        
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Hornet");

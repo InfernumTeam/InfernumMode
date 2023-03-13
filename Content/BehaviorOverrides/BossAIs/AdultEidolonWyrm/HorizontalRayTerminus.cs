@@ -1,17 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
+﻿using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using InfernumMode.Common.Graphics;
-using System;
 using CalamityMod.Particles;
-using InfernumMode.Core.GlobalInstances.Systems;
-using Terraria.Audio;
-using CalamityMod.Items.Tools;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.WorldGeneration;
 using CalamityMod.World;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Content.WorldGeneration;
+using InfernumMode.Core.GlobalInstances.Systems;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ModLoader;
 using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 return Main.npc[aewIndex];
             }
         }
-        
+
         public override void AI()
         {
             // Disappear if the AEW is not present.
@@ -207,7 +207,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Stay above the target to prevent just flying away from the laser.
             Projectile.position.Y = MathHelper.Lerp(Projectile.position.Y, Target.Center.Y - 250f, 0.16f);
         }
-        
+
         public override bool PreDraw(ref Color lightColor) => false;
 
         public void DrawAboveWater(SpriteBatch spriteBatch) => DrawSelf(spriteBatch);

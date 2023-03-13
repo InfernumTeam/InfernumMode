@@ -199,7 +199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 talkTimer = TalkDelay * 4f - 25f;
                 npc.netUpdate = true;
             }
-            
+
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay)
             {
                 CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText1", TextColor);
@@ -380,7 +380,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                         // Get the section(s) where the current elapsed time is in.
                         var section = songInfo.SongSections.Keys.Where(s => s.WithinRange(TrackedMusicManager.SongElapsedTime));
-                        
+
                         // Get the type of section we are in from the first (as it could potentially be more than one) key found above in the Dictonary.
                         int mechType = 0;
                         if (songInfo.SongSections.TryGetValue(section.FirstOrDefault(), out int mech))

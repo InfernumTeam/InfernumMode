@@ -1,11 +1,11 @@
+using CalamityMod;
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.ProfanedGuardians;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
-using InfernumMode.Core.OverridingSystem;
-using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.NPCs;
-using Microsoft.Xna.Framework.Graphics;
-using CalamityMod;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (offsetRadius >= 1200f)
                     npc.active = false;
             }
-            
+
             // Converge in on Providence.
             else
             {

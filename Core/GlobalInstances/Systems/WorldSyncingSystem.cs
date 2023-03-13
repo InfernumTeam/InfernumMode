@@ -27,7 +27,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             writer.Write(flags);
             writer.Write(flags2);
-            
+
             writer.Write(AbyssLayer1ForestSeed);
             writer.Write(AbyssLayer3CavernSeed);
             writer.Write(SquidDenCenter.X);

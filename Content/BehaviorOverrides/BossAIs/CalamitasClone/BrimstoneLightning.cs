@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;

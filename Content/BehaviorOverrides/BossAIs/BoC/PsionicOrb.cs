@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             spriteBatch.EnterShaderRegion();
 
             List<Vector2> drawPoints = new();
-            
+
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
             {

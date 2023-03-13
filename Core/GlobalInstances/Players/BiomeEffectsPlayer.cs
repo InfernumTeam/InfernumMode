@@ -148,7 +148,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // Make the map turn black if in the final layer of the abyss.
             bool obscureMap = Player.Calamity().ZoneAbyssLayer4 && !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
             MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + obscureMap.ToDirectionInt() * 0.008f, 0f, 1f);
-            
+
             // Disable Acid Rain in the Lost Colosseum.
             if (SubworldSystem.IsActive<LostColosseum>())
                 Player.Calamity().noStupidNaturalARSpawns = true;
@@ -207,7 +207,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             // Reset the screen distortion shader for the next frame.
             if (Main.netMode != NetmodeID.Server)
-            { 
+            {
                 if (InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive())
                     InfernumEffectsRegistry.ScreenDistortionScreenShader.Deactivate();
                 if (InfernumEffectsRegistry.ScreenBorderShader.IsActive())

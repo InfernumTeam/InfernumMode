@@ -123,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 drawInstance(npc.Center + drawOffset, color, npc.rotation);
             }
 
-            ref float telegraphDirection =  ref npc.Infernum().ExtraAI[RetinazerTelegraphDirectionIndex];
+            ref float telegraphDirection = ref npc.Infernum().ExtraAI[RetinazerTelegraphDirectionIndex];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[RetinazerTelegraphOpacityIndex];
             bool validTelegraphAttack = InFinalPhase || CurrentAttackState == TwinsAttackState.FlamethrowerBurst;
             if (CurrentAttackState == TwinsAttackState.DeathAnimation && !InFinalPhase)

@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileObjectData.addTile(Type);
 
             DustType = 73;
-            
+
             AddMapEntry(new Color(164, 72, 158));
 
             base.SetStaticDefaults();

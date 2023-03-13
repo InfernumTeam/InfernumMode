@@ -315,7 +315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
-            Main.spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, 0, 0f);            
+            Main.spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, 0, 0f);
             return false;
         }
 
@@ -334,7 +334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 float totalDrawDistance = drawOffset.Length();
                 if (totalDrawDistance < maxSegmentOffset)
                     break;
-                
+
                 // Increment the draw position for the next segment.
                 currentSegmentPosition += drawOffset.ClampMagnitude(0f, maxSegmentOffset);
                 drawOffset = drawBottom - currentSegmentPosition;

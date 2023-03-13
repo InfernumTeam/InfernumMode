@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (((TileID.Sets.Platforms[tileAtPosition.TileType] && tileAtPosition.HasTile && Projectile.tileCollide) || Projectile.WithinRange(closestPlayer.Center, 60f)) && Projectile.timeLeft < 580)
                 Projectile.Kill();
-            
+
             Lighting.AddLight(Projectile.Center, Vector3.One * 0.85f);
         }
 

@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4).ToRotationVector2() * 8f;
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), fireDamage - 5, 0f);
 
-                shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4 + MathHelper.Pi / 6f).ToRotationVector2() * 11.75f;
+                shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4 + MathHelper.Pi / 6f).ToRotationVector2() * 11.5f;
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), fireDamage - 5, 0f);
             }
         }

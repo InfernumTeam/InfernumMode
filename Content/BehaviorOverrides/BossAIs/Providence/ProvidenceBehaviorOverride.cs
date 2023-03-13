@@ -671,6 +671,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Be fully opaque from the start.
             npc.Opacity = 1f;
 
+            if (localAttackTimer <= 5f)
+                performedEndEffects = 0f;
+
             // Rise on the first frame.
             if (performedInitializations == 0f && !Utilities.AnyProjectiles(ModContent.ProjectileType<ProfanedLava>()))
             {
@@ -694,7 +697,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             shootTimer++;
             if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer >= shootDelay && shootTimer >= fireballShootRate && !attackIsAboutToEnd)
             {
-                Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(300f, 300f) * Main.rand.NextFloat(0.85f, 1f) + target.velocity * 90f;
+                Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(150f, 150f) * Main.rand.NextFloat(0.9f, 1f) + target.velocity * 90f;
                 fireballSpawnPosition += npc.SafeDirectionTo(target.Center) * 1050f;
 
                 float fireballShootSpeed = npc.Distance(fireballSpawnPosition) * 0.004f + fireballShootSpeedBoost + 4f;
@@ -703,6 +706,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     fireballShootSpeed = minSpeed;
 
                 Vector2 fireballSpiralVelocity = (npc.Center - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * fireballShootSpeed;
+                while (target.WithinRange(fireballSpawnPosition, 750f))
+                    fireballSpawnPosition -= fireballSpiralVelocity;
+
                 Utilities.NewProjectileBetter(fireballSpawnPosition, fireballSpiralVelocity, ModContent.ProjectileType<HolyBasicFireball>(), BasicFireballDamage, 0f, -1, 0f, 1f);
 
                 shootTimer = 0f;

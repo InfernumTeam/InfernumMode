@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 float afterimageColor = 1f - i / 4f;
                 ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, afterimageDrawPosition, frame, soulColor * Projectile.Opacity * afterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0));
             }
-            
+
             return false;
         }
     }

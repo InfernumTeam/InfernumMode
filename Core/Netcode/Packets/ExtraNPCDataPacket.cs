@@ -37,11 +37,11 @@ namespace InfernumMode.Core.Netcode.Packets
                 packet.Write(i);
                 packet.Write(npc.Infernum().ExtraAI[i]);
             }
-            
+
             if (InfernumMode.CanUseCustomAIs)
                 npc.BehaviorOverride<NPCBehaviorOverride>()?.SendExtraData(npc, packet);
         }
-        
+
         public override void Read(BinaryReader reader)
         {
             int npcIndex = reader.ReadInt32();

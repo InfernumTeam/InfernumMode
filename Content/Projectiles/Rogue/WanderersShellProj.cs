@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using CalamityMod;
 
 namespace InfernumMode.Content.Projectiles.Rogue
 {

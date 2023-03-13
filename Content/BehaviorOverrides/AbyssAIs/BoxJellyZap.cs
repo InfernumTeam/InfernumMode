@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Fade in.
-            if(Projectile.timeLeft > 20)
+            if (Projectile.timeLeft > 20)
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0, 1);
             else
                 Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.05f, 0, 1);

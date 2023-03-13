@@ -1,7 +1,9 @@
 using CalamityMod;
 using CalamityMod.Balancing;
 using CalamityMod.BiomeManagers;
+using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.ExoMechs;
@@ -9,11 +11,15 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
+using CalamityMod.Systems;
+using CalamityMod.TileEntities;
 using CalamityMod.World;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,15 +36,9 @@ using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Content.WorldGeneration;
-using CalamityMod.Systems;
-using CalamityMod.CalPlayer;
-using CalamityMod.NPCs.AquaticScourge;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
-using CalamityMod.TileEntities;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -80,9 +80,9 @@ namespace InfernumMode.Core.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type))
                 return Main.maxDust;
 
-            if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type || 
+            if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type ||
                 Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas2").Type ||
-                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type || 
+                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type ||
                 Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas4").Type ||
                 Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas5").Type ||
                 Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas6").Type))
@@ -761,7 +761,7 @@ namespace InfernumMode.Core.ILEditingStuff
             // Subworlds do not count as the abyss.
             if (WeakReferenceSupport.InAnySubworld())
                 return false;
-            
+
             // Check if the player is in the generous abyss area and has abyss walls behind them to determine if they are in the abyss.
             bool horizontalCheck;
             bool verticalCheck = point.Y <= Main.UnderworldLayer - 42 && point.Y > SulphurousSea.YStart + SulphurousSea.BlockDepth - 78;
@@ -771,7 +771,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 horizontalCheck = point.X < abyssWidth;
             else
                 horizontalCheck = point.X > Main.maxTilesX - abyssWidth;
-            
+
             return !player.lavaWet && !player.honeyWet && verticalCheck && horizontalCheck;
         }
 
@@ -815,7 +815,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 return AbyssLayer1Biome.MeetsBaseAbyssRequirement(player, out int playerYTileCoords) &&
                     playerYTileCoords > CustomAbyss.Layer4Top && playerYTileCoords <= CustomAbyss.AbyssBottom;
             }
-            
+
             return orig(self, player);
         }
 

@@ -612,7 +612,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(vortex => vortex.localAI[0] = cyan.ToInt());
-                        
+
                         int vortex = Utilities.NewProjectileBetter(focus, Vector2.Zero, ModContent.ProjectileType<AstralVortex>(), 300, 0f);
                         if (Main.projectile.IndexInRange(vortex))
                         {
@@ -1019,7 +1019,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                         Utilities.NewProjectileBetter(starPosition, Vector2.Zero, ModContent.ProjectileType<DarkStar>(), 0, 0f, -1, i, (i + 1f) % starsInConstellation);
                     }
                     Utilities.NewProjectileBetter(new(blackHoleCenterX, blackHoleCenterY), Vector2.Zero, ModContent.ProjectileType<AstralBlackHole>(), 300, 0f);
-                    
+
                     npc.netUpdate = true;
                 }
 

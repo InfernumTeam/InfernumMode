@@ -5,20 +5,20 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Sounds;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ArtemisLaserInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
-using InfernumMode.Core.GlobalInstances.Systems;
+using ArtemisLaserInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
@@ -443,7 +443,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         int type = ModContent.ProjectileType<AresSpinningRedDeathray>();
                         for (int i = 0; i < aresLaserbeamCount; i++)
                             Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / aresLaserbeamCount), type, PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
-                        
+
                         npc.netUpdate = true;
                     }
                 }

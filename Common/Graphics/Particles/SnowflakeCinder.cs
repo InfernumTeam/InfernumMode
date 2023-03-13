@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Projectiles
             DrawColor = PossibleColors[Main.rand.Next(PossibleColors.Length)];
             RotationPerFrame = Main.rand.NextFloat(0, 0.25f);
         }
-        
+
         public override void Update()
         {
             Rotation += RotationPerFrame;

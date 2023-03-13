@@ -212,7 +212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
             if (attackTimer < 75f)
                 flySpeed *= 0.6f;
-            
+
             if (BossRushEvent.BossRushActive)
                 flySpeed *= 2.15f;
 

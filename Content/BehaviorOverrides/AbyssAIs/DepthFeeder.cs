@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.9f;
             NPC.chaseable = false;
-            SpawnModBiomes = new int[3] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type , ModContent.GetInstance<AbyssLayer3Biome>().Type };
+            SpawnModBiomes = new int[3] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type, ModContent.GetInstance<AbyssLayer3Biome>().Type };
             NPC.RemoveWaterSlowness();
             NPC.Infernum().IsAbyssPrey = true;
         }

@@ -23,7 +23,7 @@ namespace InfernumMode.Core.Netcode
         public float[] ExtraAIValues;
 
         public Rectangle ArenaRectangle;
-        
+
         public bool ShouldBeDiscarded => NPCIndex <= -1 || TimeSinceReceived >= LifetimeBeforeDiscardation;
 
         public const int LifetimeBeforeDiscardation = 600;

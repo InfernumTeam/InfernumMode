@@ -30,7 +30,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             DustType = (int)CalamityDusts.SulfurousSeaAcid;
 
             HitSound = SoundID.Grass;
-            
+
             AddMapEntry(new Color(43, 66, 18));
         }
 

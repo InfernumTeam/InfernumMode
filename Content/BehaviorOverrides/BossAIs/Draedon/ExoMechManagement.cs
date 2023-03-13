@@ -4,20 +4,20 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
 using AresPlasmaFireballInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using AresTeslaOrbInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresTeslaOrb;
 using ArtemisLaserInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ArtemisLaser;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 {
@@ -318,7 +318,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             Vector2 mechSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1500f;
             int complementMechIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)mechSpawnPosition.X, (int)mechSpawnPosition.Y, complementMechType, 1);
             NPC complementMech = Main.npc[complementMechIndex];
-            
+
             // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
             complementMech.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
             complementMech.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;

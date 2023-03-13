@@ -34,7 +34,6 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.BoC;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;

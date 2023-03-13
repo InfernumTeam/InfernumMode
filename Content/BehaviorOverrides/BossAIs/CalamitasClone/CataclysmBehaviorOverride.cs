@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.Items.Armor.Vanity;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;

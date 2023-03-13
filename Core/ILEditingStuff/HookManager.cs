@@ -252,7 +252,7 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Add(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Remove(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), value);
         }
-        
+
         public static event ILContext.Manipulator ExoMechTileTileColor
         {
             add => HookEndpointManager.Modify(typeof(ExoMechsSky).GetMethod("OnTileColor", Utilities.UniversalBindingFlags), value);

@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Use a random color between blue and cyan. The variance from this leads to a pseudo-gradient look.
             Color iceColor = Color.Lerp(Color.Blue, Color.DeepSkyBlue, Main.rand.NextFloat(0.25f, 0.8f));
-            
+
             // Emit light.
             Lighting.AddLight(Projectile.Center, iceColor.ToVector3() * opacity);
 

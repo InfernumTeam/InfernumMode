@@ -1,9 +1,9 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using CalamityMod.Particles.Metaballs;
+﻿using CalamityMod.Particles.Metaballs;
 using InfernumMode.Common.Graphics.Metaballs;
 using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {

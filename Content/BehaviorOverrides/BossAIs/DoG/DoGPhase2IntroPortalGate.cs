@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
             Time++;
         }
-        
+
         public override bool PreDraw(ref Color lightColor)
         {
             float leftCleaveAngularOffset = MathHelper.Pi * -0.18f;

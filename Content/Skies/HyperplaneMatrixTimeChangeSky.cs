@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Skies
         public override bool IsSceneEffectActive(Player player) => HyperplaneMatrixTimeChangeSystem.BackgroundChangeInterpolant > 0f;
 
         public override SceneEffectPriority Priority => (SceneEffectPriority)20;
-        
+
         public override void SpecialVisuals(Player player, bool isActive)
         {
             player.ManageSpecialBiomeVisuals("InfernumMode:HyperplaneMatrixTimeChange", isActive);
@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Skies
                     drawOffset.X %= techyNoise.Width;
                     drawOffset.Y %= techyNoise.Height;
                     Vector2 drawPosition = new Vector2(i, j) + drawOffset;
-                    Main.spriteBatch.Draw(techyNoise,  drawPosition, null, techyNoiseColor, 0f, Vector2.Zero, 1f, 0, 0f);
+                    Main.spriteBatch.Draw(techyNoise, drawPosition, null, techyNoiseColor, 0f, Vector2.Zero, 1f, 0, 0f);
 
                     drawOffset = Main.GlobalTimeWrappedHourly * new Vector2(-45f, -19f);
                     drawOffset.X %= techyNoise.Width;

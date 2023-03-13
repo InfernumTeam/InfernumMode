@@ -174,7 +174,7 @@ namespace InfernumMode
                 burstSpeed += 3f;
             }
         }
-        
+
         public static List<Vector2> CorrectBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, IEnumerable<float> _ = null)
         {
             List<Vector2> controlPoints = new();
@@ -197,7 +197,7 @@ namespace InfernumMode
             // Instead, an integer-based loop is used to mitigate such problems.
             for (int i = 0; i < totalTrailPoints; i++)
                 points.Add(bezierCurve.Evaluate(i / (float)(totalTrailPoints - 1f)));
-            
+
             return points;
         }
 

@@ -4,14 +4,14 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.SupremeCalamitasBehaviorOverride;
-using InfernumMode.Core.OverridingSystem;
+using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
                 return false;
             }
-            
+
             npc.target = SCal.target;
             Player Target = Main.player[npc.target];
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection == -1 ? 40f : -36f, 16f);

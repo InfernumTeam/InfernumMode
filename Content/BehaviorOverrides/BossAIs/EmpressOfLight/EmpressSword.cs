@@ -167,11 +167,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
             float hoverSpeed = MathHelper.Lerp(40f, 95f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
-            
+
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, hoverSpeed), 0.32f);
             Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.03f);
         }
-        
+
         public void PerformAttackBehaviors()
         {
             int hoverRedirectTime = 20;
@@ -222,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 DontDealDamage = true;
                 return;
             }
-            
+
             // Move backwards in anticipation.
             if (Time < hoverRedirectTime + chargeAnticipationTime)
             {

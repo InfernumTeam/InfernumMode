@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
-            
+
             if (Time >= Lifetime)
                 Projectile.Kill();
 

@@ -2,9 +2,9 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -191,7 +191,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     DoBehavior_BloodShots(npc, target, enraged, phase4, ref attackTimer);
                     break;
             }
-            
+
             // Store whether to use afterimages, accessed in PreDraw().
             npc.Infernum().ExtraAI[5] = drawAfterimages.ToInt();
             attackTimer++;
@@ -478,7 +478,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                             Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * teethSpeed;
                             if (BossRushEvent.BossRushActive)
                                 toothShootVelocity *= 1.6f;
-                            
+
                             for (int j = 0; j < 3; j++)
                                 CreateBloodParticles(npc, Color.Red * 0.8f, toothShootVelocity, spawnPosition);
 

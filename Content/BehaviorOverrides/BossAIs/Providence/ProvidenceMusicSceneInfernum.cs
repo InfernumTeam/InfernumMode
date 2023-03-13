@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 int? guardiansMusic = Calamity.Instance.GetMusicFromMusicMod("ProfanedGuardians");
                 if (CalamityGlobalNPC.holyBoss == -1 || !InfernumMode.CanUseCustomAIs)
                     return defaultProviMusic;
-                
+
                 return ProvidenceIsInPhase2 ? defaultProviMusic : guardiansMusic;
             }
         }

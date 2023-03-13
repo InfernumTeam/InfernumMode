@@ -1,16 +1,16 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ModLoader;
-using CalamityMod;
-using System;
-using Terraria.Audio;
-using Terraria.ID;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
-using Microsoft.Xna.Framework.Graphics;
-using System.IO;
-using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Content.Items.Weapons.Rogue;
+using InfernumMode.Core.GlobalInstances.Systems;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.IO;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Rogue
 {
@@ -289,7 +289,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
             for (int i = 0; i < 6; i++)
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(target.Center + Main.rand.NextVector2Circular(60f, 60f), Vector2.Zero, explosionColorPalette, 1.45f, 78, 0.3f));
-            
+
             CreateCrackleWithSparks(false);
             for (int i = 0; i < 6; i++)
                 ShootLightningInDirection(target.Center - Vector2.UnitY * 1100f + Main.rand.NextVector2Circular(60f, 60f), Vector2.UnitY);

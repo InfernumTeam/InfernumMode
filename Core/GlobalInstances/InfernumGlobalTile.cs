@@ -1,15 +1,15 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
-using Microsoft.Xna.Framework.Graphics;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Content.Tiles.Abyss;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -58,7 +58,7 @@ namespace InfernumMode.Core.GlobalInstances
 
             return base.CanKillTile(i, j, type, ref blockDamaged);
         }
-        
+
         public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
         {
             if (type == ModContent.TileType<LumenylCrystals>())

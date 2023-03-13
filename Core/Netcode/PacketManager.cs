@@ -27,7 +27,7 @@ namespace InfernumMode.Core.Netcode
                 RegisteredPackets[t.FullName] = packet;
             }
         }
-        
+
         internal static void PreparePacket(BaseInfernumPacket packet, object[] context, short? sender = null)
         {
             // Don't try to send packets in singleplayer.
@@ -84,7 +84,7 @@ namespace InfernumMode.Core.Netcode
 
             // If this packet was received server-side and the packet needs to be re-sent, send it back to all the clients, with the
             // exception of the one that originally brought this packet to the server.
-            
+
             // TODO -- Through this the original context is destroyed. How would this be best addressed? By forcing packets to glue the context back together
             // in the Read hook? That seems a bit stupid, but I don't know what options there are that are actually reasonable.
             if (Main.netMode == NetmodeID.Server && packet.ResendFromServer)

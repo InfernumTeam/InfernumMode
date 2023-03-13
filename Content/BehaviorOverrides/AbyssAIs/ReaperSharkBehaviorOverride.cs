@@ -1,10 +1,10 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
                 return false;
             }
-            
+
             switch (currentAttack)
             {
                 case ReaperSharkAttackState.StalkTarget:
@@ -158,7 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 npc.velocity = right;
 
             // Update played sounds.
-            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(soundSlotID), out ActiveSound result)) 
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(soundSlotID), out ActiveSound result))
             {
                 float lowPassFilter = Utils.GetLerpValue(1400f, 460f, teleportOffset, true) * 0.8f + 0.05f;
                 result.Sound.SetLowPassFilter(lowPassFilter);
@@ -302,7 +302,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     npc.velocity = left;
                 else
                     npc.velocity = right;
-                
+
                 if (hasReachedTarget != 1f)
                 {
                     hasReachedTarget = 1f;
@@ -354,7 +354,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             else if (attackTimer == riseTime)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ReaperSharkIceBreathSound, npc.Center);
-                
+
                 Vector2 moveDirection = (npc.SafeDirectionTo(target.Center) * new Vector2(1f, 0.2f)).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
                 npc.velocity = moveDirection * horizontalHoverSpeed;
                 npc.netUpdate = true;

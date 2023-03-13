@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 return Projectile.oldPos[index] + Projectile.Size * 0.5f - Main.screenPosition;
             }
-            
+
             static Texture2D decideSegmentTexture(int index)
             {
                 // By default, segments are heads.
@@ -89,14 +89,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                     texture = ModContent.Request<Texture2D>(bodyTexturePath).Value;
                 }
-                
+
                 // The last segment should be a tail.
                 if (index == SegmentCount - 1)
                     texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Abyss/EidolonWyrmTail").Value;
 
                 return texture;
             }
-            
+
             // Draw the main body.
             for (int i = 0; i < SegmentCount; i++)
             {

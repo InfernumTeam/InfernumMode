@@ -159,11 +159,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Draw the afterimage trail.
             Rectangle cutoffRegion = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
             Main.spriteBatch.EnforceCutoffRegion(cutoffRegion, Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
-            
+
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 11);
 
             Main.spriteBatch.ExitShaderRegion();
-            
+
             return false;
         }
 

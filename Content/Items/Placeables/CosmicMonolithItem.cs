@@ -1,10 +1,10 @@
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
-using InfernumMode.Content.Tiles;
-using CalamityMod.Rarities;
 using CalamityMod.Items.Materials;
+using CalamityMod.Rarities;
 using CalamityMod.Tiles.Furniture.CraftingStations;
+using InfernumMode.Content.Tiles;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Placeables
 {

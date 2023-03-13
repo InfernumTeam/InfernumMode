@@ -1,24 +1,24 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
+using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
+using ReLogic.Utilities;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using InfernumMode.Core.GlobalInstances.Systems;
-using CalamityMod.Sounds;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using InfernumMode.Common.Graphics;
-using CalamityMod.NPCs.ProfanedGuardians;
-using ReLogic.Utilities;
-using System.Linq;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     }
 
                     for (int i = 0; i < 20; i++)
-                        Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 0, default, 1f);
+                        Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 0, default, 1f);
 
                     SoundEngine.PlaySound(Apollo.MissileLaunchSound, Target.Center);
                 }
@@ -1299,7 +1299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                             laserbeamShootCounter++;
                         else
                         {
-                            SoundEngine.PlaySound(Artemis.AttackSelectionSound with { Volume = 2f}, Target.Center);
+                            SoundEngine.PlaySound(Artemis.AttackSelectionSound with { Volume = 2f }, Target.Center);
                             attackState = (int)RetinazerAttackState.AgileLaserbeamSweeps;
                             laserbeamShootCounter = 0f;
                         }
@@ -1702,7 +1702,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion
 
         #endregion
-        
+
         #region Helper Methods
         public static bool PersonallyInPhase2(NPC npc)
         {

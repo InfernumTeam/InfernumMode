@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public enum AttackType
         {
             SwimAimlessly,
-            Attack  
+            Attack
         }
 
         public const int MinimumSchoolSize = 2;
@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Define rotation.
             npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
-            npc.rotation = npc.velocity.ToRotation()  + (npc.spriteDirection *  MathHelper.PiOver2);
+            npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection * MathHelper.PiOver2);
             if (npc.spriteDirection == -1)
                 npc.rotation += MathHelper.Pi;
 

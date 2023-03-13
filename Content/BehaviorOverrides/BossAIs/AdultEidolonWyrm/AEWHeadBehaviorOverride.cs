@@ -8,11 +8,11 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
+using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -22,9 +22,9 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -689,7 +689,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.Center = npc.Center.MoveTowards(target.Center, 12f);
                 attackTimer = 1f;
             }
-            
+
             // Don't do damage if the laser hasn't been cast.
             if (!Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusDeathray>()))
                 npc.damage = 0;
@@ -1050,7 +1050,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 verticalSwimDirection = 1f;
                 if (target.Center.Y >= CustomAbyss.AbyssBottom * 16f - 2400f)
                     verticalSwimDirection = -1f;
-                
+
                 npc.netUpdate = true;
             }
             else if (!shouldStopAttacking)

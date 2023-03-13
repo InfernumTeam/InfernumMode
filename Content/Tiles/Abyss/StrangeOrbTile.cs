@@ -33,7 +33,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             g = 0.36f;
             b = 0.46f;
         }
-        
+
         public override bool CanExplode(int i, int j) => false;
 
         public override bool CanKillTile(int i, int j, ref bool blockDamaged) => NPC.downedBoss3;

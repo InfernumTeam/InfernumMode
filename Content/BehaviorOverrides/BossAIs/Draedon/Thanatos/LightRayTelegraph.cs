@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public ref float CurrentSpread => ref Projectile.localAI[0];
 
         public ref float Time => ref Projectile.localAI[1];
-        
+
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
         public override void SetStaticDefaults()

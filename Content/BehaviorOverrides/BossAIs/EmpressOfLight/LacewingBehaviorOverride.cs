@@ -1,10 +1,10 @@
-﻿using Terraria;
-using Terraria.ID;
+﻿using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using Terraria.Audio;
-using InfernumMode.Core.GlobalInstances.Systems;
+using Terraria.ID;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 speedX = idealVelocity.X;
                 speedY = idealVelocity.Y;
             }
-            
+
             else if (Main.rand.NextBool(120))
             {
                 speedX = Main.rand.NextFloat(-2f, 2f);
@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Rebound on colliding horizontal walls.
             if (npc.collideX)
                 npc.velocity.X *= -0.2f;
-            
+
             npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
             npc.ai[0] = speedX;
             npc.ai[1] = speedY;
@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             int wingFlapRate = 7;
-            
+
             npc.frameCounter += (Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) * 0.5f + 1D;
             if (npc.frameCounter < wingFlapRate)
                 npc.frame.Y = 0;
@@ -189,7 +189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
         }
         #endregion Drawing and Frames
-        
+
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {

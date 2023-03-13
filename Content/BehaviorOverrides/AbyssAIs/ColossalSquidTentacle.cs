@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/ColossalSquidTentacleHead").Value;
             Vector2[] segmentPositions = SegmentPositions;
-            
+
             Vector2 segmentAreaTopLeft = Vector2.One * 999999f;
             Vector2 segmentAreaTopRight = Vector2.Zero;
 

@@ -1,16 +1,16 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ModLoader;
-using InfernumMode.Core.OverridingSystem;
-using System;
-using CalamityMod;
-using InfernumMode.Common.Graphics;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
 using CalamityMod.Particles.Metaballs;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Core.OverridingSystem;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.GameContent;
+using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Providence.ProvidenceBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence

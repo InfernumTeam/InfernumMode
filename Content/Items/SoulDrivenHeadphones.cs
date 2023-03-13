@@ -20,7 +20,7 @@ namespace InfernumMode.Content.Items
                 "You can also hear the sounds of instruments passionately playing");
             SacrificeTotal = 1;
         }
-        
+
         public override void SetDefaults()
         {
             Item.width = 50;

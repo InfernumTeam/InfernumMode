@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[0]) ? Main.npc[(int)Projectile.ai[0]] : null;
-        
+
         public float ConvergenceRatio => MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(Lifetime * 0.2f, Lifetime * 0.66f, Time, true));
 
         public ref float StartingRotationalOffset => ref Projectile.ai[1];

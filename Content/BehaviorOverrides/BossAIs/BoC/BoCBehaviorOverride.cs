@@ -426,7 +426,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                             orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
                         });
                         Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(-0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
-                        
+
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(orb =>
                         {
                             orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;

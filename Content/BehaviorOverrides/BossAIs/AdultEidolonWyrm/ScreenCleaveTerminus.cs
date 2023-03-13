@@ -1,16 +1,16 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
+﻿using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using InfernumMode.Common.Graphics;
-using System;
 using CalamityMod.Particles;
-using Terraria.Audio;
-using CalamityMod.Items.Tools;
-using InfernumMode.Content.WorldGeneration;
-using CalamityMod.World;
 using CalamityMod.Sounds;
+using CalamityMod.World;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Content.WorldGeneration;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -167,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             float animationCompletion = time / wingFlapRate % 1f;
             UpdateWings(WingMotionState.Flap, animationCompletion);
         }
-        
+
         public override bool PreDraw(ref Color lightColor) => false;
 
         public void DrawAboveWater(SpriteBatch spriteBatch) => DrawSelf(spriteBatch);

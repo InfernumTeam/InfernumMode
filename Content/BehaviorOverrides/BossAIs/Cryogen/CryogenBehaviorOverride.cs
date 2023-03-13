@@ -1,10 +1,11 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.GlobalInstances;
-using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -13,9 +14,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using CryogenBoss = CalamityMod.NPCs.Cryogen.Cryogen;
-using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 {

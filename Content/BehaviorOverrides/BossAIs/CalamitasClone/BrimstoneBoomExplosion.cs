@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 Projectile.frame++;
             if (Projectile.frame >= 18)
                 Projectile.Kill();
-            
+
             // Exponentially expand.
             Projectile.scale *= 1.013f;
             Projectile.Opacity = Utils.GetLerpValue(5f, 36f, Projectile.timeLeft, true);

@@ -44,7 +44,7 @@ namespace InfernumMode.Content.Items
         public override void AddRecipes()
         {
             IncreaseBossSummonerYields();
-            
+
             // Make the sandstorm's core post-Cultist.
             AddRecipeIngredient(ModContent.ItemType<SandstormsCore>(), ItemID.FragmentSolar);
 

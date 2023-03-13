@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     public class AcceleratingMagicProfanedRock : ModProjectile, ISpecializedDrawRegion
     {
         public int CurrentVarient
-        { 
+        {
             get;
             set;
         } = 1;

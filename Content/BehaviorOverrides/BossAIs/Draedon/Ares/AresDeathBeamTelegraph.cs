@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public ref float TelegraphLifetime => ref Projectile.localAI[0];
 
         public Vector2 OldVelocity;
-        
+
         public const float TelegraphFadeTime = 8f;
 
         public const float TelegraphWidth = 4000f;

@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
     public class SulphuricTornado : ModProjectile
     {
         public SlotId WindSlot
-        { 
+        {
             get;
             set;
         }
@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Vector2 drawPosition = Projectile.Bottom - Main.screenPosition - Vector2.UnitY * dy;
                 Color tornadoColor = Color.White * opacity;
                 tornadoColor.A /= 3;
-                
+
                 Main.EntitySpriteDraw(texture, drawPosition, null, tornadoColor, rotation, texture.Size() * 0.5f, TornadoPieceScale(dy), 0, 0);
             }
             return false;

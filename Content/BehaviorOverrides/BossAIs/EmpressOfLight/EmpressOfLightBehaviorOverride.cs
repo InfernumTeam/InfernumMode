@@ -1,25 +1,25 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Content.Buffs;
+using InfernumMode.Core;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Content.Buffs;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
-using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using CalamityMod.Buffs.DamageOverTime;
-using InfernumMode.Core;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -894,7 +894,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float idleHoverSpeed = 7f;
             float idleHoverAcceleration = 0.36f;
             float maxPerpendicularOffset = 450f;
-            
+
             if (InPhase2(npc))
             {
                 barrageCount++;
@@ -1334,7 +1334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % prismReleaseRate == prismReleaseRate - 1f)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f, -1, -prismFireDelay);
-                    
+
                     if (attackTimer == prismFireDelay)
                         SoundEngine.PlaySound(SoundID.Item163, target.Center);
 

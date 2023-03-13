@@ -1,7 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Tiles.Abyss;
-using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Content.Items.Placeables;
+using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

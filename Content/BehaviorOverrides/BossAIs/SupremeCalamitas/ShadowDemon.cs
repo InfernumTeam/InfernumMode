@@ -106,12 +106,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             int headCount = reader.ReadInt32();
-            
+
             Heads ??= new DemonHead[headCount];
             for (int i = 0; i < headCount; i++)
             {
                 Heads[i] ??= new();
-                
+
                 Heads[i].HoverOffset = reader.ReadSingle();
                 Heads[i].HoverOffsetAngle = reader.ReadSingle();
                 Heads[i].Center = reader.ReadVector2();

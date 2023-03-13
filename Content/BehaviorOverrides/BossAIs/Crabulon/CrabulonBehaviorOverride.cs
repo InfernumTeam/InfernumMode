@@ -2,23 +2,23 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Common;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using System.Collections.Generic;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.Crabulon;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Common;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Common.Graphics;
-using Terraria.DataStructures;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 {

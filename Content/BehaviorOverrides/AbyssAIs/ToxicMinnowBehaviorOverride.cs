@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Content.Tiles.Abyss;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                         npc.velocity *= 0.95f;
                 }
             }
-            
+
             // Swim around idly.
             npc.velocity = npc.velocity.RotatedBy(MathHelper.Pi * (npc.whoAmI % 2f == 0f).ToDirectionInt() * 0.004f);
         }

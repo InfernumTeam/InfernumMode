@@ -13,7 +13,6 @@ using CalamityMod.Schematics;
 using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Common.UtilityMethods;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;

@@ -522,7 +522,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (oldSubphase != currentSubphase)
             {
                 subphaseTransitionTimer = TransitionDRBoostTime;
-                
+
                 // Clear away projectiles in subphase 9.
                 if (Main.netMode != NetmodeID.MultiplayerClient && currentSubphase == 8f)
                 {

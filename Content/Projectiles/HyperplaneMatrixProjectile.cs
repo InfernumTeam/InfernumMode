@@ -324,7 +324,7 @@ namespace InfernumMode.Content.Projectiles
                 var particle = new HeavySmokeParticle(firePosition, Vector2.Zero, fireColor, 54, fireScale, 1f, fireRotationSpeed, true, 0f, true);
                 GeneralParticleHandler.SpawnParticle(particle);
             }
-            
+
             // Hurt the player.
             var hurtReason = PlayerDeathReason.ByCustomReason($"{Owner.name} was blown up.");
             Owner.Hurt(hurtReason, HyperplaneMatrix.UnableToBeUsedHurtDamage, 0);
@@ -366,7 +366,7 @@ namespace InfernumMode.Content.Projectiles
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
             Owner.itemRotation = 0f;
-            
+
             Projectile.spriteDirection = Owner.direction;
             Projectile.velocity = Vector2.UnitX * Owner.direction;
             Projectile.Center += Projectile.velocity * 10f;

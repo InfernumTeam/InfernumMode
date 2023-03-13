@@ -1,3 +1,5 @@
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -6,10 +8,8 @@ using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 using Terraria.WorldBuilding;
-using InfernumMode.Common;
-using InfernumMode.Assets.Sounds;
+using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 {

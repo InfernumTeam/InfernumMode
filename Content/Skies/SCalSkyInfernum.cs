@@ -1,14 +1,14 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
-using Terraria.GameContent;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 
 namespace InfernumMode.Content.Skies
 {

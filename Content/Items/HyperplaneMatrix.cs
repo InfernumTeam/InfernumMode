@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Items
                 "All same");
             SacrificeTotal = 1;
         }
-        
+
         public override void SetDefaults()
         {
             Item.width = 56;

@@ -17,7 +17,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             "While I personally think it isn't worth it, I won't be spiteful about it or work against people who know what they're doing. The boolean property can simply be set to false and" +
             "the effects will be disabled, no annoying label IL needed. -Dominic";
 #pragma warning restore IDE0051 // Remove unused private members
-        
+
         public static bool DisableDifficultyModes
         {
             get;

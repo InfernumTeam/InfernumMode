@@ -16,7 +16,7 @@ namespace InfernumMode.Common.Graphics
 
         private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
         #endregion
-        
+
         #region Overrides
         public override void Load()
         {
@@ -54,7 +54,7 @@ namespace InfernumMode.Common.Graphics
             for (int i = 0; i < Main.projectile.Length; i++)
             {
                 Projectile projectile = Main.projectile[i];
-                
+
                 // If the projectile is active, a mod projectile, and uses the interface, add it to the list of prims to draw this frame.
                 if (projectile.active && projectile.ModProjectile != null && projectile.ModProjectile is IPixelPrimitiveDrawer pixelPrimitiveProjectile)
                     pixelPrimDrawersList.Add(pixelPrimitiveProjectile);
@@ -64,7 +64,7 @@ namespace InfernumMode.Common.Graphics
             for (int i = 0; i < Main.npc.Length; i++)
             {
                 NPC npc = Main.npc[i];
-                
+
                 // If the NPC is active, a mod NPC, and uses our interface add it to the list of prims to draw this frame.
                 if (npc.active && npc.ModNPC != null && npc.ModNPC is IPixelPrimitiveDrawer pixelPrimitiveNPC)
                     pixelPrimDrawersList.Add(pixelPrimitiveNPC);
@@ -84,7 +84,7 @@ namespace InfernumMode.Common.Graphics
         {
             // Swap to the custom render target to prepare things to pixelation.
             SwapToRenderTarget(renderTarget);
-            
+
             if (pixelPrimitives.Any())
             {
                 // Start a spritebatch, as one does not exist before the method we're detouring.
@@ -111,7 +111,7 @@ namespace InfernumMode.Common.Graphics
 
             // Otherwise set the render target.
             graphicsDevice.SetRenderTarget(renderTarget);
-            
+
             // "Flush" the screen, removing any previous things drawn to it.
             graphicsDevice.Clear(Color.Transparent);
         }
@@ -123,7 +123,7 @@ namespace InfernumMode.Common.Graphics
             {
                 // Get the current screen size.
                 Vector2 currentScreenSize = new(Main.screenWidth, Main.screenHeight);
-                
+
                 // If it does not match the previous one, update it.
                 if (currentScreenSize != previousScreenSize)
                 {
@@ -139,7 +139,7 @@ namespace InfernumMode.Common.Graphics
                         pixelRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
                     });
                 }
-                
+
                 // Set the current one to the previous one for next frame.
                 previousScreenSize = currentScreenSize;
             }

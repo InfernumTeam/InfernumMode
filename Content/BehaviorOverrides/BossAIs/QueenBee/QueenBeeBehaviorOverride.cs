@@ -429,7 +429,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             int beeShootRate = 23;
             int beeShootTime = 480;
             float coneSpread = 0.37f;
-            
+
             if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
             {
                 hoverTime -= 30;

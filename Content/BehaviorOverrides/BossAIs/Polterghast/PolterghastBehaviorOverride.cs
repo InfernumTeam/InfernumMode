@@ -623,7 +623,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitAngularVelocity = spinAngularVelocity * clockwise.ToDirectionInt();
                             ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitOffsetAngle = MathHelper.TwoPi * i / ectoplasmPerRing;
                         });
-                        
+
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CirclingEctoplasm>(), 300, 0f);
                     }
                     clockwise = !clockwise;

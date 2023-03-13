@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 acceleration = 1.037f;
             }
-            
+
             // Home in weakly if CalClone's target has the appropriate hex.
             if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalCloneHex().HexIsActive("Accentuation"))
             {
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             Time++;
         }
-        
+
         public float FlameTrailWidthFunction(float completionRatio)
         {
             return MathHelper.SmoothStep(24f, 5f, completionRatio) * Projectile.Opacity;

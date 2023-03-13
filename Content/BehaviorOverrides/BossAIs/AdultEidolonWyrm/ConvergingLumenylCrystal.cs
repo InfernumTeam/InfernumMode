@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, drawPosition, frame, Color.White with { A = 100 } * Projectile.Opacity * 3f, Projectile.rotation, origin, Projectile.scale, 0, 0));
-            
+
             return false;
         }
     }

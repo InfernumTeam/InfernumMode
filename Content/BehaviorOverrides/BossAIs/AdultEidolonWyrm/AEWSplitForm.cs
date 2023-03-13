@@ -158,7 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 return Projectile.Center - Main.screenPosition - Projectile.velocity.SafeNormalize(Vector2.UnitY) * OffsetPerSegment * Projectile.scale * index;
             }
-            
+
             static Texture2D decideSegmentTexture(int index)
             {
                 // By default, segments are heads.
@@ -173,14 +173,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                     texture = ModContent.Request<Texture2D>(bodyTexturePath).Value;
                 }
-                
+
                 // The last segment should be a tail.
                 if (index == SegmentCount)
                     texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/AdultEidolonWyrmTail").Value;
 
                 return texture;
             }
-            
+
             // Draw shadow afterimages. This cannot be performed in the main loop due to layering problems, specifically with new segments overlapping the afterimages.
             for (int i = 0; i < SegmentCount + 1; i++)
             {

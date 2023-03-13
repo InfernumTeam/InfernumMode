@@ -167,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float opacity = (float)Math.Pow(Time / LaserTelegraphTime, 0.4);
             Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            
+
             Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
             float width = (0.002f + (float)Math.Pow(opacity, 4D) * ((float)Math.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
             laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);

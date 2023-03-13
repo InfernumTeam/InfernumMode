@@ -573,7 +573,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                             Vector2 linePosition = TelegraphedCelestialBarrage.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
                             telegraphPoints.Add(linePosition);
                         }
-                        
+
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
                             telegraph.ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();

@@ -1,17 +1,17 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
+using CalamityMod.Particles;
+using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
-using InfernumMode.Core.OverridingSystem;
-using Terraria.ID;
 using Terraria.Audio;
-using CalamityMod.Sounds;
+using Terraria.ID;
+using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Providence.ProvidenceBehaviorOverride;
-using CalamityMod.Particles;
-using InfernumMode.Assets.Sounds;
-using CalamityMod;
-using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {

@@ -122,7 +122,7 @@ namespace InfernumMode.Common.Graphics
             int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
             if (aewIndex == -1)
                 return;
-            
+
             NPC aew = Main.npc[aewIndex];
             float lightFormInterpolant = aew.Infernum().ExtraAI[AEWHeadBehaviorOverride.LightFormInterpolantIndex];
             float darkFormInterpolant = aew.Infernum().ExtraAI[AEWHeadBehaviorOverride.DarkFormInterpolantIndex];

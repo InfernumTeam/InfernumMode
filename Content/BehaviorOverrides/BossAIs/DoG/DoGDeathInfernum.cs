@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         }
 
         public override bool CanHitPlayer(Player target) => TelegraphDelay > TelegraphTotalTime;
-        
+
         public override Color? GetAlpha(Color lightColor)
         {
             return new Color(255, 255, 255, Projectile.alpha);

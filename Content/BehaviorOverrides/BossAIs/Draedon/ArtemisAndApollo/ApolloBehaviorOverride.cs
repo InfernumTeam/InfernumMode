@@ -8,12 +8,19 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -21,16 +28,9 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Assets.ExtraTextures;
-using InfernumMode;
-using InfernumMode.Core.GlobalInstances.Systems;
-using System.IO;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using AresPlasmaFireballInfernum = InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
-using InfernumMode.Common.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ExoMechManagement.Phase3LifeRatio,
             ExoMechManagement.Phase4LifeRatio
         };
-        
+
         #region Netcode Syncs
 
         public override void SendExtraData(NPC npc, ModPacket writer) => writer.Write(npc.Opacity);

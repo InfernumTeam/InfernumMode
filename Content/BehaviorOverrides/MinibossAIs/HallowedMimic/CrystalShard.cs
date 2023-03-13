@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
+namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
 {
     public class CrystalShard : ModProjectile
     {

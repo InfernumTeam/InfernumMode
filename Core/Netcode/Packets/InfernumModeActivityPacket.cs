@@ -11,11 +11,11 @@ namespace InfernumMode.Core.Netcode.Packets
         {
             BitsByte containmentFlagWrapper = new()
             {
-                [0] = WorldSaveSystem.InfernumMode  
+                [0] = WorldSaveSystem.InfernumMode
             };
             packet.Write(containmentFlagWrapper);
         }
-        
+
         public override void Read(BinaryReader reader)
         {
             BitsByte containmentFlagWrapper = reader.ReadByte();

@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Tiles
     public class TerminusTile : ModTile
     {
         public const int Width = 3;
-        
+
         public const int Height = 2;
 
         public static bool TerminusIsNotAttached => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()) || DownedBossSystem.downedAdultEidolonWyrm || !InfernumMode.CanUseCustomAIs;
@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Tiles
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
-            
+
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
             TileObjectData.newTile.Width = Width;
             TileObjectData.newTile.Height = Height;

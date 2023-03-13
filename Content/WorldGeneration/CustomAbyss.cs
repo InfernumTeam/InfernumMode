@@ -1,12 +1,13 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
+using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
 using CalamityMod.World;
-using InfernumMode.Miscellaneous;
-using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Miscellaneous;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,10 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static CalamityMod.World.SulphurousSea;
-using CalamityMod.Tiles.Abyss.AbyssAmbient;
-using Terraria.ObjectData;
 
 namespace InfernumMode.Content.WorldGeneration
 {
@@ -578,7 +578,7 @@ namespace InfernumMode.Content.WorldGeneration
             {
                 // Calculate the horizontal offset of the current trench.
                 int currentOffset = (int)(FractalBrownianMotion(currentPoint.X * TrenchOffsetNoiseMagnificationFactor * 3f, currentPoint.Y * TrenchOffsetNoiseMagnificationFactor * 3f, offsetSeed, 5) * MaxTrenchOffset * 0.67f);
-                
+
                 for (int dx = -width / 2; dx < width / 2; dx++)
                 {
                     for (int dy = 0; dy < 3; dy++)
@@ -1277,7 +1277,7 @@ namespace InfernumMode.Content.WorldGeneration
                 width = tileData.CoordinateFullWidth / 18;
                 height = tileData.CoordinateFullHeight / 18;
             }
-            
+
             for (int i = 0; i < width; i++)
             {
                 if (!WorldGen.SolidTile(x + i, y + 1))

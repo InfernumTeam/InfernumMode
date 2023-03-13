@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 color = Color.Lerp(color, endColor * (4f / totalInstancesToDraw), fadeCompletion);
                 color.A = 0;
             }
-            
+
             for (int i = 0; i < totalInstancesToDraw; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;

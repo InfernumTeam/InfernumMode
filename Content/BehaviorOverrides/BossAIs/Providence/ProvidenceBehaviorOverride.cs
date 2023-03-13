@@ -6,19 +6,19 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Content.Buffs;
-using InfernumMode.Core.GlobalInstances.Players;
-using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Core;
-using InfernumMode.Core.TrackedMusic;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using InfernumMode.Core;
+using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
+using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -27,9 +27,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
@@ -171,7 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public const float HighestLavaHeight = 2284f;
 
         public const float Phase2LifeRatio = 0.7f;
-        
+
         public static int CrystalShardDamage => IsEnraged ? 450 : 250;
 
         public static int CinderDamage => IsEnraged ? 420 : 225;
@@ -670,7 +670,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Be fully opaque from the start.
             npc.Opacity = 1f;
-            
+
             // Rise on the first frame.
             if (performedInitializations == 0f && !Utilities.AnyProjectiles(ModContent.ProjectileType<ProfanedLava>()))
             {
@@ -801,7 +801,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     npc.netUpdate = true;
                 }
             }
-            
+
             // Release bombs at the target.
             if (localAttackTimer >= shootRate && localAttackTimer % bombShootRate == 0f && !doneAttacking)
             {

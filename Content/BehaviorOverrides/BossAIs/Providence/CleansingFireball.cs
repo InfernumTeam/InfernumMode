@@ -109,7 +109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                             Vector2 lavaVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(4f, 5f);
                             Utilities.NewProjectileBetter(Projectile.Center + Main.rand.NextVector2Circular(40f, 40f), lavaVelocity, ModContent.ProjectileType<ProfanedLavaBlob>(), ProvidenceBehaviorOverride.SmallLavaBlobDamage, 0f, -1, lavaLifetime, blobSize);
                         }
-                        
+
                         // Release four cinders up from below as well.
                         for (int i = 0; i < 4; i++)
                         {

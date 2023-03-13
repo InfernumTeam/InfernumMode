@@ -88,7 +88,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 .AddIngredient(ModContent.ItemType<LifeAlloy>(), 5)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
-                
+
         }
     }
 }

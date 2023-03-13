@@ -32,6 +32,6 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
             if (ItemDamageValues.DamageValues.TryGetValue(item.type, out int newDamage))
                 item.damage = newDamage;
-        }        
+        }
     }
 }

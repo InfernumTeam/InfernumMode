@@ -1,17 +1,17 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
-using CalamityMod.NPCs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
-using System.IO;
-using CalamityMod.NPCs;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {

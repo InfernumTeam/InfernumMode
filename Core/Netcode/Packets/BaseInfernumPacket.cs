@@ -24,11 +24,11 @@ namespace InfernumMode.Core.Netcode.Packets
         // 1.2: Never use reader.ReadInt32() or similar things inside of a loop directly. If you need to keep a counter for a loop, store it as a separate local variable.
         // Using the Read methods inside of a loop check will involve going through 4 bytes *for every loop iteration*, which is pretty much never
         // the behavior you want (and if it is, you'd best leave a comment to ensure that readers know why).
-        
+
         // 2: Do your best to ensure that ALL data is read, even in failure cases. If you can, try to collect all BinaryReader information in local variables at the top
         // of the Read hook, and then once that's complete perform any necessary early returns/failure cases if said data is garbage.
         public abstract void Write(ModPacket packet, params object[] context);
-        
+
         public abstract void Read(BinaryReader reader);
     }
 }

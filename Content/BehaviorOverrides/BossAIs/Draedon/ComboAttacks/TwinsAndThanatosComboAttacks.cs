@@ -1,23 +1,23 @@
 using CalamityMod;
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
-using CalamityMod.Projectiles.Boss;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 {
@@ -149,10 +149,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             // This attack is very timing sensitive and resetting it if the twins suddenly need to enter their second phase is untenable.
             // As a result, if that happens, the attack is simply terminated early and laser beams/telegraphs are all destroyed.
             if (ExoTwinsAreEnteringSecondPhase)
-			{
+            {
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ArtemisDeathrayTelegraph>(), ModContent.ProjectileType<ArtemisSweepLaserbeam>());
                 return true;
-			}
+            }
 
             if (ExoTwinsAreInSecondPhase)
             {

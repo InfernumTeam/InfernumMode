@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
@@ -11,7 +10,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -1100,7 +1098,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 SoundEngine.PlaySound(SCalBoss.DashSound, npc.Center);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * baseChargeSpeed;
             }
-            
+
             // Accelerate after charging.
             if (wrappedAttackTimer >= hoverTime + 1f && wrappedAttackTimer <= hoverTime + chargeTime)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
@@ -1195,7 +1193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     var cloneTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneSingleFrame", AssetRequestMode.ImmediateLoad).Value;
                     cloneTexture.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>().Particles, npc.Center, npc.rotation, npc.scale, 18f, 10);
                 }
-                
+
                 // Summon Catatrophe and Cataclysm.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1204,7 +1202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     int catastrophe = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<Catastrophe>());
                     CalamityUtils.BossAwakenMessage(catastrophe);
-                   
+
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, cataclysm);
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, catastrophe);
 

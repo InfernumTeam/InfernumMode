@@ -151,7 +151,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
-        
+
         public void CullDraw(SpriteBatch spriteBatch)
         {
             Texture2D crystalSegment = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/ProvidenceRoomDoor").Value;

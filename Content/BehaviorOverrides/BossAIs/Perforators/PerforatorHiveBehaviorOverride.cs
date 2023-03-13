@@ -276,7 +276,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     {
                         Vector2 goreVelocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 3;
                         Gore.NewGore(npc.GetSource_FromAI(), npc.position, goreVelocity, InfernumMode.Instance.Find<ModGore>("Perf" + i).Type, 1f);
-
                     }
                 }
 

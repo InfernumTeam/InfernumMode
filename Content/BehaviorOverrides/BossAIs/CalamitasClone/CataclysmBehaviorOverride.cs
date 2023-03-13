@@ -227,7 +227,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int attackShiftDelay = 0;
             int hoverTime = 45;
             int fireReleaseRate = 45;
-            float fireShootSpeed = 9f;
+            float fireShootSpeed = 11f;
             float slashShootSpeed = 14f;
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
 
@@ -438,9 +438,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
             else
             {
-                int hoverTime = 49;
+                int hoverTime = 48;
                 int chargeTime = 45;
-                int chargeSlowdowntime = 12;
+                int chargeSlowdowntime = 24;
                 int wrappedAttackTimer = (int)localAttackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
                 int chargeCount = 3;
                 float baseChargeSpeed = 5f;

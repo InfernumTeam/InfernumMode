@@ -124,7 +124,7 @@ namespace InfernumMode.Core.Physics
             Vector2 accelerationSubstitute = (position + K3 * velocity.Value - PreviousOutputPosition - K1 * PreviousOutputVelocity) / K2;
 
             // All of this is well and good, but you may notice that this a feedback loop, which means that the state can easily "explode" due to
-            // accumulated errors and quickly shot off to NaNs, supposedly due to some "magnitude" being too high (similar to how repeatedly multiply numbers greater than one results in explosions).
+            // accumulated errors and quickly shot off to NaNs, supposedly due to some "magnitude" being too high (similar to how repeatedly multiplying numbers greater than one results in explosions).
             // Fortunately, we can represent all of this in the form of a matrix, and use the eigenvalues from it as a way of intuitively extracting this "magnitude" and determining if
             // stability checks are necessary.
             // The precise math of why this works can be found in the video at the top of this cs file; writing it out mathematically in this comment would be a serious headache.

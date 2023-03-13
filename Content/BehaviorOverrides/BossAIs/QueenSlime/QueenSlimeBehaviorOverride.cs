@@ -1,9 +1,13 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
@@ -41,19 +45,69 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 return false;
             }
 
+            // Reset things every frame.
             npc.damage = npc.defDamage;
+            npc.noTileCollide = true;
+            npc.noGravity = true;
+
             switch ((QueenSlimeAttackType)attackType)
             {
                 case QueenSlimeAttackType.SpawnAnimation:
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer);
                     break;
             }
             attackTimer++;
             return false;
         }
 
-        public static void DoBehavior_SpawnAnimation(NPC npc, Player player, ref float attackTimer)
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer)
         {
+            int slimeChargeTime = 108;
+            float verticalSpawnOffset = 3000f;
+            float startingFallSpeed = 8f;
+            float endingFallSpeed = 38.5f;
+            float fallAcceleration = 0.95f;
+            ref float groundCollisionY = ref npc.Infernum().ExtraAI[0];
+            ref float hasHitGround = ref npc.Infernum().ExtraAI[1];
 
+            // Teleport above the player on the first frame.
+            if (attackTimer <= 1f && hasHitGround == 0f)
+            {
+                npc.velocity = Vector2.UnitY * startingFallSpeed;
+                npc.Center = target.Center - Vector2.UnitY * verticalSpawnOffset;
+                if (npc.position.Y <= 400f)
+                    npc.position.Y = 400f;
+
+                groundCollisionY = target.Bottom.Y;
+                npc.netUpdate = true;
+            }
+
+            // Interact with tiles again once past a certain point.
+            npc.noTileCollide = npc.Bottom.Y < groundCollisionY;
+
+            // Accelerate downward.
+            if (hasHitGround == 0f)
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + fallAcceleration, startingFallSpeed, endingFallSpeed);
+            else
+                npc.velocity.Y = 0f;
+
+            // Handle ground hit effects when ready.
+            if (npc.collideY && attackTimer >= 5f && hasHitGround == 0f)
+            {
+                for (int i = 0; i < 60; i++)
+                {
+                    Color gelColor = Color.Lerp(Color.Pink, Color.HotPink, Main.rand.NextFloat());
+                    Particle gelParticle = new EoCBloodParticle(npc.Center + Main.rand.NextVector2Circular(60f, 60f), -Vector2.UnitY.RotatedByRandom(0.98f) * Main.rand.NextFloat(4f, 20f), 120, Main.rand.NextFloat(0.9f, 1.2f), gelColor * 0.75f, 5f);
+                    GeneralParticleHandler.SpawnParticle(gelParticle);
+                }
+
+                Utilities.CreateShockwave(npc.Center, 40, 4, 40f, false);
+                SoundEngine.PlaySound(SlimeGodCore.ExitSound, target.Center);
+
+                hasHitGround = 1f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
         }
 
         public static void SelectNextAttack(NPC npc)

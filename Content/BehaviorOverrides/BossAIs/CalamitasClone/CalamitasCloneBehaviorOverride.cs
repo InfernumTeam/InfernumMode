@@ -18,6 +18,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -26,6 +27,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.AbyssAIs.BoxJellyfishBehaviorOverride;
 using CalamitasCloneBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
@@ -171,14 +173,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float drawCharredForm = ref npc.Infernum().ExtraAI[DrawCharredFormIndex];
 
             // Apply hexes to the target.
-            string hexName = Hexes[(int)hexType];
-            string hex2Name = Hexes[(int)hexType2];
-
-            if (!anyBrothers && attackType != (int)CloneAttackType.BrothersPhase && attackType != (int)CloneAttackType.SpawnAnimation && !phase3)
+            if (GetHexNames(out string hexName, out string hexName2))
             {
                 target.Infernum_CalCloneHex().ActivateHex(hexName);
                 if (lifeRatio < Phase2LifeRatio)
-                    target.Infernum_CalCloneHex().ActivateHex(hex2Name);
+                    target.Infernum_CalCloneHex().ActivateHex(hexName2);
             }
 
             // Use a custom hitsound.
@@ -200,12 +199,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Spawn Peng's cool hex projectile animations.
                 if (Main.netMode != NetmodeID.MultiplayerClient && hexApplicationPauseDelay == 34f)
                 {
-                    List<string> hexesToSpawn = new()
-                    {
-                        hexName
-                    };
-                    if (phase2 && npc.ai[0] != (int)CloneAttackType.BrothersPhase)
-                        hexesToSpawn.Add(hex2Name);
+                    List<string> hexesToSpawn = new();
+                    if (!string.IsNullOrEmpty(hexName))
+                        hexesToSpawn.Add(hexName);
+                    if (!string.IsNullOrEmpty(hexName2))
+                        hexesToSpawn.Add(hexName2);
 
                     for (int i = 0; i < hexesToSpawn.Count; i++)
                     {
@@ -322,6 +320,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             attackTimer++;
             generalTimer++;
             return false;
+        }
+
+        public static bool GetHexNames(out string hexName, out string hexName2)
+        {
+            hexName = string.Empty;
+            hexName2 = string.Empty;
+            if (CalamityGlobalNPC.calamitas == -1)
+                return false;
+
+            // Verify that the hex can be applied.
+            NPC calClone = Main.npc[CalamityGlobalNPC.calamitas];
+            bool anyBrothers = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
+            float lifeRatio = calClone.life / (float)calClone.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
+            if (anyBrothers || calClone.ai[0] == (int)CloneAttackType.BrothersPhase || calClone.ai[0] == (int)CloneAttackType.SpawnAnimation || phase3)
+                return false;
+
+            // Return the hex.
+            hexName = Hexes[(int)calClone.Infernum().ExtraAI[HexTypeIndex]];
+            if (phase2)
+                hexName2 = Hexes[(int)calClone.Infernum().ExtraAI[HexType2Index]];
+
+            return true;
         }
 
         public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation, ref float forcefieldScale)
@@ -856,7 +878,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         if (target.Infernum_CalCloneHex().HexIsActive("Accentuation"))
                             fireShootCount -= 8;
 
-                        bool kindlyGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1100f);
+                        bool kindlyGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1450f);
                         float fireShootSpeed = Utils.Remap(npc.Distance(target.Center), 800f, 3000f, 8.5f, 70f);
                         Vector2 fireOrbCenter = fireOrbs.First().Center;
                         for (int i = 0; i < fireShootCount; i++)
@@ -1369,6 +1391,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 SoundEngine.PlaySound(SCalBoss.DashSound, npc.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.GlassmakerFireEndSound with { Pitch = 0.125f }, target.Center);
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 15);
+                target.Infernum_Camera().CurrentScreenShakePower = 6f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * baseChargeSpeed;
             }
 

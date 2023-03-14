@@ -243,7 +243,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public static void DoBehavior_MeteorBelch(NPC npc, Player target, bool enraged, Vector2 mouthPosition, ref float attackTimer)
         {
             int shootDelay = 75;
-            int shootRate = 60;
+            int shootRate = 67;
             int shootTime = 185;
             int attackTransitionDelay = 60;
             float meteorShootSpeed = 16f;

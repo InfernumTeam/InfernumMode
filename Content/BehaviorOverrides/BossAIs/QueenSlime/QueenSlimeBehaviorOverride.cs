@@ -35,7 +35,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public enum QueenSlimeAttackType
         {
             SpawnAnimation,
-            BasicHops
+            BasicHops,
+            GeliticArmyStomp
         }
 
         public enum WingMotionState
@@ -139,6 +140,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     break;
                 case QueenSlimeAttackType.BasicHops:
                     DoBehavior_BasicHops(npc, target, ref attackTimer, ref wingMotionState);
+                    break;
+                case QueenSlimeAttackType.GeliticArmyStomp:
+                    DoBehavior_GeliticArmyStomp(npc, target, ref attackTimer, ref wingAnimationTimer, ref wingMotionState);
                     break;
             }
 
@@ -345,7 +349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, crystalID, 140, 0f);
             }
-            
+
             // Begin the slam.
             if (jumpState == 1f && attackTimer >= slamDelay + 45f && Math.Abs(npc.velocity.Y) <= 0.9f)
             {
@@ -405,10 +409,33 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_GeliticArmyStomp(NPC npc, Player target, ref float attackTimer, ref float wingAnimationTimer, ref float wingMotionState)
+        {
+            int slamHoverTime = 12;
+            int slamFlyTime = WingUpdateCycleTime - slamHoverTime;
+
+            // Hover into position before slamming downward.
+            if (attackTimer <= slamFlyTime)
+            {
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * Utils.Remap(attackTimer, 0f, slamFlyTime, 0.002f, 0.18f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
+            }
+
+            // Slow down in anticipation of the slam.
+            else if (attackTimer <= slamFlyTime + slamHoverTime)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 6f, 0.24f);
+                npc.velocity.X *= 0.5f;
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             QueenSlimeAttackType previousAttack = (QueenSlimeAttackType)npc.ai[0];
             QueenSlimeAttackType nextAttack = QueenSlimeAttackType.BasicHops;
+            if (previousAttack == QueenSlimeAttackType.BasicHops)
+                nextAttack = QueenSlimeAttackType.BasicHops;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

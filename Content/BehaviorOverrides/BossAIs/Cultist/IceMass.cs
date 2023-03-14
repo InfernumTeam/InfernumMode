@@ -14,6 +14,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public const int ShardBurstCount = 9;
 
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.CultistBossIceMist}";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Mass");
 
         public override void SetDefaults()

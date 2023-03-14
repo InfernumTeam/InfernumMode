@@ -20,7 +20,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -1700,9 +1699,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Ensure that homing and acceleration hexes do not combine, since that would be stupid.
             string hexName = Hexes[(int)hexType];
-            string hex2Name = Hexes[(int)hexType2];
-            if ((hexName == "Zeal" && hex2Name == "Accentuation") || (hexName == "Accentuation" && hex2Name == "Zeal"))
+            string hexName2 = Hexes[(int)hexType2];
+            if ((hexName == "Zeal" && hexName2 == "Accentuation") || (hexName == "Accentuation" && hexName2 == "Zeal"))
                 hexType2 = 2f;
+
+            // Prevent Accentuation from happening during the big fire orb attack in favor of Zeal.
+            if (nextAttack == CloneAttackType.DarkOverheadFireball)
+            {
+                if (hexName == "Accentuation")
+                {
+                    hexType = 0f;
+                    if (hexType2 == 0f)
+                        hexType2 = 2f;
+                }
+                if (hexName2 == "Accentuation")
+                {
+                    hexType2 = 0f;
+                    if (hexType == 0f)
+                        hexType = 2f;
+                }
+            }
 
             SoundEngine.PlaySound(CalamitasEnchantUI.EnchSound, npc.Center);
 

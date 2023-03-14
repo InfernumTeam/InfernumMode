@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void AI()
         {
             // Initialize the hex type(s).
-            if (string.IsNullOrEmpty(HexType) && GetHexNames(out HexType, out HexType2))
+            if (string.IsNullOrEmpty(HexType) && Projectile.velocity.Length() < 27f && GetHexNames(out HexType, out HexType2))
                 Projectile.netUpdate = true;
 
             float acceleration = 1f;
@@ -90,8 +90,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
                 Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
-                if (Projectile.velocity.Length() > 17f)
-                    Projectile.velocity *= 0.97f;
+                if (Projectile.velocity.Length() > 18.75f)
+                    Projectile.velocity *= 0.98f;
             }
 
             if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
@@ -28,7 +29,6 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Content.BehaviorOverrides.AbyssAIs.BoxJellyfishBehaviorOverride;
 using CalamitasCloneBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
@@ -191,6 +191,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.gfxOffY = 4f;
+
+            // Disable extra damage from the brimstone flames debuff. The attacks themselves hit hard enough.
+            if (target.HasBuff(ModContent.BuffType<BrimstoneFlames>()))
+                target.ClearBuff(ModContent.BuffType<BrimstoneFlames>());
 
             if (hexApplicationPauseDelay >= 1f && !phase3)
             {
@@ -711,17 +715,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int fadeOutTime = 25;
             int teleportCount = 6;
             int wrappedAttackTimer = (int)(attackTimer - jitterTime) % (disappearTime + sitTime + fadeOutTime);
+            float teleportOffset = 396f;
             ref float teleportOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float teleportCounter = ref npc.Infernum().ExtraAI[1];
 
             armRotation = 0f;
 
-            // Jitter in place and become transluscent.
+            // Inititalize the teleport offset direction.
+            if (attackTimer == 1f)
+            {
+                teleportOffsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
+                npc.netUpdate = true;
+            }
+
+            // Jitter in place and become transluscent while casting a shadow void telegraph near the player.
             if (attackTimer <= jitterTime)
             {
                 float jitterInterpolant = Utils.GetLerpValue(0f, jitterTime, attackTimer, true);
                 npc.Center += Main.rand.NextVector2Circular(3f, 3f) * jitterInterpolant;
                 npc.Opacity = MathHelper.Lerp(1f, 0.5f, jitterInterpolant);
+
+                FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.SpawnParticle(target.Center + teleportOffsetAngle.ToRotationVector2() * teleportOffset + Main.rand.NextVector2Circular(20f, 20f), Main.rand.NextFloat(96f, 105f));
             }
 
             if (attackTimer >= jitterTime)
@@ -729,9 +743,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Dissipate into shadow particles.
                 if (wrappedAttackTimer == 0f)
                 {
-                    if (attackTimer == jitterTime)
-                        teleportOffsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
-                    else
+                    if (attackTimer > jitterTime)
                     {
                         teleportOffsetAngle += MathHelper.TwoPi / teleportCount;
                         teleportCounter++;
@@ -767,7 +779,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Hover above the target.
                 if (wrappedAttackTimer <= disappearTime)
                 {
-                    npc.Center = target.Center + teleportOffsetAngle.ToRotationVector2() * 396f;
+                    npc.Center = target.Center + teleportOffsetAngle.ToRotationVector2() * teleportOffset;
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
                     // Create shadow particles shortly before fully appearing.
@@ -817,6 +829,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             var fireOrbs = Utilities.AllProjectilesByID(ModContent.ProjectileType<LargeDarkFireOrb>());
             bool readyToBlowUpFireOrb = attackTimer >= redirectTime + fireOrbReleaseDelay + boltReleaseDelay + fireShootTime;
             bool canShootFire = attackTimer >= redirectTime + fireOrbReleaseDelay + boltReleaseDelay && !readyToBlowUpFireOrb;
+            bool kindlyGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1450f);
+            bool almostGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1080f);
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
             Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
             ref float fireShootCounter = ref npc.Infernum().ExtraAI[0];
@@ -835,6 +849,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Look in the direction of the player if not extremely close to them horizontally.
                     if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 50f)
                         npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                    // Delete any potentially old fireballs.
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<LargeDarkFireOrb>());
                 }
 
                 // Afterwards have CalClone raise her arm up towards the fire orb and slow down.
@@ -879,7 +896,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         if (target.Infernum_CalCloneHex().HexIsActive("Accentuation"))
                             fireShootCount -= 8;
 
-                        bool kindlyGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1450f);
                         float fireShootSpeed = Utils.Remap(npc.Distance(target.Center), 800f, 3000f, 8.5f, 70f);
                         Vector2 fireOrbCenter = fireOrbs.First().Center;
                         for (int i = 0; i < fireShootCount; i++)
@@ -912,6 +928,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         isSlammingFireballDown = 1f;
                         npc.netUpdate = true;
                     }
+                }
+
+                // Make the player emit a lot of smoke if they're far away.
+                if (almostGoFuckYourselfDueToDistance)
+                {
+                    Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.25f, 0.85f));
+                    var mist = new MediumMistParticle(target.Center + Main.rand.NextVector2Circular(24f, 24f), Main.rand.NextVector2Circular(4.5f, 4.5f), fireMistColor, Color.Gray, Main.rand.NextFloat(0.6f, 1.3f), 230 - Main.rand.Next(40), 0.02f);
+                    GeneralParticleHandler.SpawnParticle(mist);
                 }
             }
 
@@ -1176,7 +1200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (attackTimer <= 2f)
             {
                 if (attackTimer <= 1f)
-                    SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound with { Volume = 0.7f });
 
                 int[] projectilesToDelete = new int[]
                 {
@@ -1254,7 +1278,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (attackTimer >= rumbleTime + 5f && !anyBrothers)
             {
                 npc.Opacity = 1f;
-                npc.Center = target.Center - Vector2.UnitY * 560f;
+                npc.Center = target.Center - Vector2.UnitY * 270f;
                 npc.velocity = Vector2.Zero;
                 npc.noGravity = true;
                 SelectNextAttack(npc);
@@ -1303,7 +1327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalCloneTeleportSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Pitch = -0.3f });
-                npc.Center = target.Center - Vector2.UnitX * target.direction * 450f;
+                npc.Center = target.Center - Vector2.UnitX * target.direction * 360f;
                 npc.velocity = Vector2.Zero;
 
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
@@ -1432,7 +1456,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, ref float attackTimer, ref float armRotation)
         {
-            int attackCycleCount = 2;
+            int attackCycleCount = 3;
             int hoverTime = 90;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
@@ -1464,7 +1488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Release fireballs.
             if (attackSubstate == 1f)
             {
-                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 180f < 60f)
+                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 150f < 60f)
                 {
                     SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
@@ -1587,7 +1611,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
                 npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Nothing");
-                Main.musicFade[CalamityMod.CalamityMod.Instance.GetMusicFromMusicMod("CalamitasClone") ?? 0] = 0f;
+                Main.musicFade[CalamityMod.CalamityMod.Instance.GetMusicFromMusicMod("CalamitasClone") ?? 0] = -0.1f;
             }
             else
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -1618,7 +1642,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
-            Player target = Main.player[npc.target];
             CloneAttackType currentAttack = (CloneAttackType)npc.ai[0];
             CloneAttackType nextAttack = CloneAttackType.DarkOverheadFireball;
             switch (currentAttack)

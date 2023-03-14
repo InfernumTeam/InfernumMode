@@ -14,7 +14,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using static CalamityMod.CalamityUtils;
 using CalCloneNPC = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
@@ -172,7 +172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Make Catastrophe anticipate with his blade.
                     catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > 45f) || attackState == 1f)
+                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 120f : 45f)) || attackState == 1f)
                     {
                         npc.velocity *= 0.3f;
                         attackTimer = 0f;
@@ -226,7 +226,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Define attack values when the other brother is alive.
             int attackShiftDelay = 0;
             int hoverTime = 45;
-            int fireReleaseRate = 45;
+            int fireReleaseRate = 60;
             float fireShootSpeed = 11f;
             float slashShootSpeed = 14f;
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
@@ -283,10 +283,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
 
                 // Make catastrophe swing his blade.
-                float bladeSwingOffset = MathF.Sin((wrappedTimer - hoverTime) * MathHelper.TwoPi / fireReleaseRate);
-                catastropheArmRotation = MathF.Cbrt(bladeSwingOffset) * 1.87f;
+                CurveSegment anticipation = new(EasingType.PolyOut, 0f, 0f, -2.4f, 4);
+                CurveSegment slash = new(EasingType.SineInOut, 0.34f, anticipation.EndingHeight, 5.8f, 3);
+                CurveSegment recovery = new(EasingType.PolyIn, 0.8f, slash.EndingHeight, -slash.EndingHeight, 3);
+                float swingCompletion = Utils.GetLerpValue(0f, fireReleaseRate, wrappedTimer % fireReleaseRate, true);
+                catastropheArmRotation = PiecewiseAnimation(swingCompletion, anticipation, slash, recovery);
 
-                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 1f)
+                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 55f)
                 {
                     // Play a firing sound.
                     SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.6f }, npc.Center);
@@ -569,9 +572,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (isCatastrophe)
             {
                 float armRotation = npc.localAI[0] * npc.spriteDirection - MathHelper.PiOver4;
+                float armSquishFactor = 1f - Utils.GetLerpValue(0.3f, 0.9f, npc.localAI[0], true) * Utils.GetLerpValue(MathHelper.Pi - 0.3f, MathHelper.Pi - 0.9f, npc.localAI[0], true) * 0.33f;
                 Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CatastropheArm").Value;
                 Vector2 armTextureDrawPosition = mainDrawPosition + new Vector2(npc.spriteDirection * -6f, -33f).RotatedBy(npc.rotation) * npc.scale;
                 Vector2 armOrigin = armTexture.Size() * 0f;
+                Vector2 armScale = new Vector2(armSquishFactor, 1f + (1f - armSquishFactor) * 1.45f) * npc.scale;
                 if (npc.spriteDirection == -1)
                 {
                     armOrigin.X = armTexture.Width - armOrigin.X;
@@ -583,7 +588,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     armTextureDrawPosition.X += armTexture.Width * npc.scale * 0.5f;
                 }
 
-                spriteBatch.Draw(armTexture, armTextureDrawPosition, null, npc.GetAlpha(lightColor), armRotation, armOrigin, npc.scale, spriteEffects, 0f);
+                spriteBatch.Draw(armTexture, armTextureDrawPosition, null, npc.GetAlpha(lightColor), armRotation, armOrigin, armScale, spriteEffects, 0f);
             }
             else
             {

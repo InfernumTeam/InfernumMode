@@ -278,7 +278,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             int jumpTime = 24;
             int slamDelay = 30;
-            int slamHoverTime = 27;
+            int slamHoverTime = 35;
             int crystalID = ModContent.ProjectileType<FalllingCrystal>();
             float horizontalJumpSpeed = MathHelper.Distance(target.Center.X, npc.Center.X) * 0.012f + 16f;
             float baseVerticalJumpSpeed = 23f;
@@ -339,7 +339,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Release crystals while jumping.
-            if (jumpState == 1f && !Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && attackTimer % 4f == 3f && npc.velocity.Y != 0f)
+            if (jumpState == 1f && !Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && attackTimer % 5f == 0f && npc.velocity.Y != 0f)
             {
                 SoundEngine.PlaySound(SoundID.Item28, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -359,8 +359,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             if (jumpState == 2f)
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
-                Vector2 idealVelocity = (hoverDestination - npc.Center) * Utils.Remap(attackTimer, 0f, slamHoverTime, 0.002f, 0.3f);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.125f);
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * Utils.Remap(attackTimer, 0f, slamHoverTime, 0.002f, 0.18f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
             }
 
             // Slam downward.
@@ -369,11 +369,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 jumpState = 3f;
                 attackTimer = 0f;
                 groundCollisionY = target.Top.Y;
-                npc.velocity = Vector2.UnitY * 10f;
+                npc.velocity = Vector2.UnitY * 3f;
+
+                while (npc.WithinRange(target.Center, 270f))
+                    npc.position.Y -= 10f;
             }
 
             if (jumpState == 3f)
             {
+                if (didSlamGroundHitEffects == 0f && npc.velocity.Y < 27f)
+                    npc.velocity.Y += 0.45f * fallAcceleration;
+
                 npc.noTileCollide = npc.Bottom.Y < groundCollisionY;
                 if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 16) && didSlamGroundHitEffects == 0f)
                 {

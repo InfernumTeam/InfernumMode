@@ -29,6 +29,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             BladeUppercutAndDashes
         }
 
+        public static AresCannonChargeParticleSet CataclysmEnergyDrawer
+        {
+            get;
+            set;
+        } = new(-1, 12, 85f, Color.Red);
+
+        public static AresCannonChargeParticleSet CatastropheEnergyDrawer
+        {
+            get;
+            set;
+        } = new(-1, 12, 85f, Color.DeepSkyBlue);
+
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
 
         public override int NPCOverrideType => ModContent.NPCType<Cataclysm>();
@@ -88,6 +100,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 attackState = ref cataclysm.ai[0];
                 attackTimer = ref cataclysm.ai[1];
 
+                CatastropheEnergyDrawer.Update();
+                CatastropheEnergyDrawer.ParticleSpawnRate = int.MaxValue;
+
                 CalamityGlobalNPC.catastrophe = npc.whoAmI;
 
                 // Use a fallback target if Cataclysm doesn't have one at the moment. This will not care about large distances.
@@ -100,6 +115,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 CalamityGlobalNPC.cataclysm = npc.whoAmI;
                 npc.TargetClosestIfTargetIsInvalid();
                 attackTimer++;
+
+                CataclysmEnergyDrawer.Update();
+                CataclysmEnergyDrawer.ParticleSpawnRate = int.MaxValue;
             }
 
             Player target = Main.player[npc.target];
@@ -121,6 +139,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 case SCalBrotherAttackType.BladeUppercutAndDashes:
                     DoBehavior_BladeUppercutAndDashes(npc, target, isCataclysm);
                     break;
+            }
+        }
+        
+        public static void UpdateEnergyDrawer(float attackTimer, float chargeDelay, AresCannonChargeParticleSet energyDrawer)
+        {
+            // Decide the state of the particle drawers.
+            if (attackTimer > chargeDelay * 0.45f)
+            {
+                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                energyDrawer.ParticleSpawnRate = 2;
+                energyDrawer.SpawnAreaCompactness = 100f;
+                energyDrawer.chargeProgress = chargeCompletion;
+
+                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
+                    energyDrawer.AddPulse(chargeCompletion * 6f);
             }
         }
 
@@ -162,6 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 // Hover into position.
                 case 0:
+                    int chargeDelay = chargeCounter <= 0f ? 88 : 45;
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * horizontalChargeOffset;
                     Vector2 idealVelocity = ((hoverDestination - npc.Center) * 0.15f).ClampMagnitude(4f, 50f);
                     npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.25f);
@@ -172,7 +206,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     // Make Catastrophe anticipate with his blade.
                     catastropheArmRotation = Utils.Remap(attackTimer, 0f, 24f, 0f, -1.8f);
 
-                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > (chargeCounter <= 0f ? 120f : 45f)) || attackState == 1f)
+                    UpdateEnergyDrawer(attackTimer, chargeDelay, isCataclysm ? CataclysmEnergyDrawer : CatastropheEnergyDrawer);
+                    if (((attackTimer > 210f || npc.WithinRange(hoverDestination, 80f)) && attackTimer > chargeDelay) || attackState == 1f)
                     {
                         npc.velocity *= 0.3f;
                         attackTimer = 0f;
@@ -589,11 +624,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 }
 
                 spriteBatch.Draw(armTexture, armTextureDrawPosition, null, npc.GetAlpha(lightColor), armRotation, armOrigin, armScale, spriteEffects, 0f);
+
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                CatastropheEnergyDrawer.DrawBloom(npc.Center);
+                CatastropheEnergyDrawer.DrawPulses(npc.Center);
+                CatastropheEnergyDrawer.DrawSet(npc.Center);
+                Main.spriteBatch.ResetBlendState();
             }
             else
             {
                 texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CataclysmGlowmask").Value;
                 spriteBatch.Draw(texture, mainDrawPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 12f, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                CataclysmEnergyDrawer.DrawBloom(npc.Center);
+                CataclysmEnergyDrawer.DrawPulses(npc.Center);
+                CataclysmEnergyDrawer.DrawSet(npc.Center);
+                Main.spriteBatch.ResetBlendState();
             }
 
             return false;

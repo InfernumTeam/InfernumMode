@@ -720,6 +720,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             armRotation = 0f;
 
+            // Inititalize the teleport offset direction.
+            if (attackTimer == 1f)
+            {
+                teleportOffsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
+                npc.netUpdate = true;
+            }
+
             // Jitter in place and become transluscent while casting a shadow void telegraph near the player.
             if (attackTimer <= jitterTime)
             {
@@ -727,7 +734,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.Center += Main.rand.NextVector2Circular(3f, 3f) * jitterInterpolant;
                 npc.Opacity = MathHelper.Lerp(1f, 0.5f, jitterInterpolant);
 
-                FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.SpawnParticle(target.Center + teleportOffsetAngle.ToRotationVector2() * teleportOffset + Main.rand.NextVector2Circular(15f, 15f), Main.rand.NextFloat(96f, 105f));
+                FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.SpawnParticle(target.Center + teleportOffsetAngle.ToRotationVector2() * teleportOffset + Main.rand.NextVector2Circular(20f, 20f), Main.rand.NextFloat(96f, 105f));
             }
 
             if (attackTimer >= jitterTime)
@@ -735,9 +742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Dissipate into shadow particles.
                 if (wrappedAttackTimer == 0f)
                 {
-                    if (attackTimer == jitterTime)
-                        teleportOffsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
-                    else
+                    if (attackTimer > jitterTime)
                     {
                         teleportOffsetAngle += MathHelper.TwoPi / teleportCount;
                         teleportCounter++;

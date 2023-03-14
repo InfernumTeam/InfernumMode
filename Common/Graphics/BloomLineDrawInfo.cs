@@ -62,7 +62,7 @@ namespace InfernumMode.Common.Graphics
             set;
         } = 5f;
 
-        public BloomLineDrawInfo(float rotation, float width, float opacity, float bloom, Color main, Color darker, float bloomOpacity = 0.425f, float lightStrength = 5f)
+        public BloomLineDrawInfo(float rotation, float width, float opacity, float bloom, Color main, Color darker, Vector2 scale, float bloomOpacity = 0.425f, float lightStrength = 5f)
         {
             LineRotation = rotation;
             WidthFactor = width;
@@ -70,6 +70,7 @@ namespace InfernumMode.Common.Graphics
             BloomIntensity = bloom;
             MainColor = main;
             DarkerColor = darker;
+            Scale = scale;
             LightStrength = lightStrength;
             BloomOpacity = bloomOpacity;
         }

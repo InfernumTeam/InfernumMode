@@ -41,6 +41,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle AstrumAureusStompSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AstrumAureus/AureusStomp") with { Volume = 1.5f };
 
+        public static readonly SoundStyle AstrumAureusLaserSound = new("InfernumMode/Assets/Sounds/Custom/AstrumAureus/AureusLaser");
+
         public static readonly SoundStyle BrimstoneLaser = new("InfernumMode/Assets/Sounds/Custom/BrimstoneElemental/BrimstoneLaser");
 
         public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/BrimstoneElementalShellGroundHit");

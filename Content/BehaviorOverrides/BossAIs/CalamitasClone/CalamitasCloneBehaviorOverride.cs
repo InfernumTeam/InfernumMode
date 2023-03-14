@@ -1617,6 +1617,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (attackTimer == textDelay + chargeUpTime + 196f)
             {
+                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+
                 // Have Calclone explode into shadow blobs.
                 if (Main.netMode != NetmodeID.Server)
                 {

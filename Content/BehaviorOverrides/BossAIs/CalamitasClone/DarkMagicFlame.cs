@@ -4,7 +4,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Drawing.Drawing2D;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;

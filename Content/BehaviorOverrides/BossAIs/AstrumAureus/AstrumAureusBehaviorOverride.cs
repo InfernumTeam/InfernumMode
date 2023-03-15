@@ -263,8 +263,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             else
                 npc.velocity.X = (npc.velocity.X * 15f + walkSpeed) / 16f;
 
-            // Shoot bursts of lasers periodically.
-            laserShootCounter++;
+            // Shoot bursts of lasers periodically. This has a short delay to give the player some time to reposition.
+            if (attackTimer >= 54f)
+                laserShootCounter++;
             if (laserShootCounter >= laserShootRate)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.AstrumAureusLaserSound, npc.Center);
@@ -744,7 +745,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < 20; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 20f).ToRotationVector2() * 8f;
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 20f).ToRotationVector2() * 9.5f;
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaserInfernum>(), 165, 0f);
                     }
 

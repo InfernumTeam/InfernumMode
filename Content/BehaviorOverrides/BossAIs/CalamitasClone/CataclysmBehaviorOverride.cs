@@ -261,7 +261,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Define attack values when the other brother is alive.
             int attackShiftDelay = 0;
             int hoverTime = 45;
-            int fireReleaseRate = 60;
+            int fireReleaseRate = 48;
             float fireShootSpeed = 11f;
             float slashShootSpeed = 14f;
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];

@@ -615,8 +615,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             if (attackTimer < 60f)
             {
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ExplodingFlower>(), ModContent.ProjectileType<Petal>());
-
                 if (!npc.WithinRange(target.Center, 85f))
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 3f, 0.15f);
                 else
@@ -732,12 +730,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     newAttackType = lifeRatio < Phase3LifeRatio ? PlanteraAttackState.PoisonousGasRelease : PlanteraAttackState.RedBlossom;
                     break;
                 case PlanteraAttackState.PoisonousGasRelease:
-                    newAttackType = PlanteraAttackState.TentacleSnap;
-                    break;
-                case PlanteraAttackState.TentacleSnap:
                     newAttackType = PlanteraAttackState.RoseGrowth;
                     break;
                 case PlanteraAttackState.RoseGrowth:
+                    newAttackType = PlanteraAttackState.TentacleSnap;
+                    break;
+                case PlanteraAttackState.TentacleSnap:
                     newAttackType = PlanteraAttackState.NettleBorders;
                     break;
                 case PlanteraAttackState.NettleBorders:

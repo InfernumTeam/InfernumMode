@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 // Determine direction.
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                float flySpeedInterpolant = 0f;
+                float flySpeedInterpolant = 0.04f;
                 Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(target.Center.X - npc.Center.X) * -1000f, -100f);
                 if (npc.type == ModContent.NPCType<Anahita>())
                 {
@@ -189,6 +189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             }
         }
 
+        // Well this method name didn't age well, huh!
         public static void DoBehavior_ExoTwinsBasicShotsPrecursor(NPC npc, Player target, ref float attackTimer)
         {
             int redirectTime = 96;

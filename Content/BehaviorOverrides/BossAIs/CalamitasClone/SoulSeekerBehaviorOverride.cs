@@ -26,6 +26,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Why were these things ever doing damage?
             npc.damage = 0;
 
+            // Don't get attacked by homing things.
+            npc.chaseable = false;
+
             int shootRate = 30;
             ref float hasLockedIntoPosition = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[3];

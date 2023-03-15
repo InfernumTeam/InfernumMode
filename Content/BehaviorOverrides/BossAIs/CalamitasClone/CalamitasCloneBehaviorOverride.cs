@@ -578,6 +578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int seekerShootTime = 240;
             int laserTelegraphTime = 120;
             int laserShootTime = EntropyBeam.Lifetime;
+            float laserAngularVelocity = target.Infernum_CalCloneHex().HexIsActive("Zeal") ? 0.033f : 0.024f;
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
             Vector2 staffEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 66f;
             ref float totalSummonedSoulSeekers = ref npc.Infernum().ExtraAI[0];
@@ -692,7 +693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Spin the laser after it appears.
                 if (attackTimer >= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
-                    armRotation += beamDirection * 0.023f;
+                    armRotation += beamDirection * laserAngularVelocity;
 
                 if (attackTimer >= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime + laserShootTime)
                     SelectNextAttack(npc);

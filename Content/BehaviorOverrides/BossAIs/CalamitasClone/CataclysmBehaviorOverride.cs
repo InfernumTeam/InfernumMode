@@ -324,7 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 float swingCompletion = Utils.GetLerpValue(0f, fireReleaseRate, wrappedTimer % fireReleaseRate, true);
                 catastropheArmRotation = PiecewiseAnimation(swingCompletion, anticipation, slash, recovery);
 
-                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 55f)
+                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 42f)
                 {
                     // Play a firing sound.
                     SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.6f }, npc.Center);

@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void AI()
         {
             // Initialize the hex type(s).
-            if (string.IsNullOrEmpty(HexType) && Projectile.velocity.Length() < 27f && GetHexNames(out HexType, out HexType2))
+            if (string.IsNullOrEmpty(HexType) && Projectile.velocity.Length() < 35f && GetHexNames(out HexType, out HexType2))
                 Projectile.netUpdate = true;
 
             float acceleration = 1f;

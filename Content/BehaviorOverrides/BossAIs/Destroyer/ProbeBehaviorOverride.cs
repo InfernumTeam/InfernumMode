@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 if (attackTimer >= ReelBackTime)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * hoverSpeed;
-
+                    npc.oldPos = new Vector2[npc.oldPos.Length];
                     npc.ai[0] = 2f;
                     npc.netUpdate = true;
                 }
@@ -117,6 +117,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            // Allow afterimages.
+            NPCID.Sets.TrailingMode[npc.type] = 2;
+            NPCID.Sets.TrailCacheLength[npc.type] = 5;
+
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
 
             float telegraphInterpolant = 0f;
@@ -158,6 +162,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * backglowOffset;
                     Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, npc.GetAlpha(backglowColor), npc.rotation, origin, npc.scale, direction, 0f);
+                }
+            }
+
+            // Draw afterimages when charging.
+            if (npc.ai[0] == 2f)
+            {
+                for (int i = 0; i < npc.oldPos.Length; ++i)
+                {
+                    float afterimageRot = npc.oldRot[i];
+                    Vector2 drawPos = Vector2.Lerp(npc.oldPos[i], npc.position, 0.6f) + npc.Size * 0.5f - Main.screenPosition;
+                    Color color = npc.GetAlpha(Color.Red with { A = 0 }) * ((float)(npc.oldPos.Length - i) / npc.oldPos.Length);
+                    Main.spriteBatch.Draw(texture, drawPos, null, color, afterimageRot, origin, npc.scale, direction, 0f);
                 }
             }
 

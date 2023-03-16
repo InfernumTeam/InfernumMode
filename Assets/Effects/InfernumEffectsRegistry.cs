@@ -101,6 +101,7 @@ namespace InfernumMode.Assets.Effects
             FluidSimulatorShader = new(assets.Request<Effect>("Assets/Effects/FluidSimulator", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:DrawFluidResult"] = new MiscShaderData(FluidSimulatorShader, "DrawResultPass");
             GameShaders.Misc["Infernum:FluidUpdateVelocity"] = new MiscShaderData(FluidSimulatorShader, "VelocityUpdatePass");
+            GameShaders.Misc["Infernum:FluidUpdateVelocityVorticity"] = new MiscShaderData(FluidSimulatorShader, "VelocityUpdateVorticityPass");
             GameShaders.Misc["Infernum:FluidAdvect"] = new MiscShaderData(FluidSimulatorShader, "AdvectPass");
 
             Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);

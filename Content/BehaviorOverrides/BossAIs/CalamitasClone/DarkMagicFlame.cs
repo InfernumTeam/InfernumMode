@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Start out slower if acceleration is expected.
                 if (Projectile.ai[1] == 0f)
                 {
-                    Projectile.velocity *= 0.6f;
+                    Projectile.velocity *= 0.37f;
                     Projectile.ai[1] = 1f;
                     Projectile.netUpdate = true;
                 }

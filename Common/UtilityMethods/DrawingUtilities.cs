@@ -206,7 +206,7 @@ namespace InfernumMode
             // Sparks and such
             for (int i = 0; i < 40; i++)
             {
-                int idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, 31, 0f, 0f, 100, default, 2f);
+                int idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, DustID.Smoke, 0f, 0f, 100, default, 2f);
                 Main.dust[idx].velocity *= 3f;
                 if (Main.rand.NextBool(2))
                 {
@@ -217,12 +217,12 @@ namespace InfernumMode
             }
             for (int i = 0; i < 70; i++)
             {
-                int idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, 6, 0f, 0f, 100, default, 3f);
+                int idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, DustID.Torch, 0f, 0f, 100, default, 3f);
                 Main.dust[idx].noGravity = true;
                 Main.dust[idx].velocity *= 5f;
                 Main.dust[idx].velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
 
-                idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, 6, 0f, 0f, 100, default, 2f);
+                idx = Dust.NewDust(topLeft, (int)area.X, (int)area.Y, DustID.Torch, 0f, 0f, 100, default, 2f);
                 Main.dust[idx].velocity *= 2f;
                 Main.dust[idx].velocity += force.RotatedByRandom(0.4f) * Main.rand.NextFloat(0.8f, 1.2f);
             }

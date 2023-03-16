@@ -9,6 +9,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Fluids;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core;
@@ -66,6 +67,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             OutwardHandCast,
             PunchHandCast,
             Count
+        }
+
+        public FluidFieldInfernum FireDrawer
+        {
+            get;
+            set;
         }
 
         public static NPC SCal
@@ -2350,6 +2357,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            // Create the fire drawer.
+            FireDrawer ??= new FluidFieldInfernum(375, 375, new(0.0001f, 2.9f, 0.99f, 1.69f, 0.08f, 0.9f, 0.984f));
+            FireDrawer.MovementUpdateSteps = 3;
+
+            // Emit and draw fire behind everything else in phase 4.
+            FireDrawer.ShouldUpdate = true;
+            if (ForcefieldScale > 0f && npc.life < npc.lifeMax * Phase4LifeRatio)
+            {
+                int instanceCount = 11;
+                float interpolant = Main.GlobalTimeWrappedHourly % 2f;
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    var color = CalamityUtils.MulticolorLerp(interpolant, Color.Red, Color.Orange, Color.OrangeRed);
+                    float speedFactor = Main.rand.NextFloat(2f, 10f) * FireDrawer.Width * ForcefieldScale * 0.95f / (i * 0.04f + 1f);
+                    Vector2 angularSpawnOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2();
+                    angularSpawnOffset = Vector2.Lerp(angularSpawnOffset, -Vector2.UnitY, 0.3f) * 2.96f;
+
+                    FireDrawer.CreateSource(new Vector2(FireDrawer.Width / 2 + angularSpawnOffset.X, FireDrawer.Height / 2 + angularSpawnOffset.Y).ToPoint(), Vector2.One * 2f, angularSpawnOffset.RotatedByRandom(0.3f) * speedFactor, color, ForcefieldScale);
+                }
+
+                FireDrawer.Draw(npc.Center - Main.screenPosition);
+            }
+
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;

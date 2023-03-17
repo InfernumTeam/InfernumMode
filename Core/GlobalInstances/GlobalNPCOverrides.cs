@@ -389,6 +389,7 @@ namespace InfernumMode.GlobalInstances
             BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
         }
 
+
         public override bool CheckDead(NPC npc)
         {
             if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumCheckDeadOverrideList.ContainsKey(npc.type))
@@ -417,7 +418,6 @@ namespace InfernumMode.GlobalInstances
 
             return base.CheckActive(npc);
         }
-
         #endregion
     }
 }

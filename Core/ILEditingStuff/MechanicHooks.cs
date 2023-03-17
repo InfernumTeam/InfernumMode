@@ -670,4 +670,28 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Unload() => PlaceForbiddenArchive -= StorePosition;
     }
+
+    public class StopCultistShieldDrawingHook : IHookEdit
+    {
+        public void Load() => CalGlobalNPCPostDraw += StopShieldDrawing;
+        public void Unload() => CalGlobalNPCPostDraw -= StopShieldDrawing;
+
+        private void StopShieldDrawing(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            // Make the type checks check a negative number, which they will never match.
+            if (cursor.TryGotoNext(MoveType.After, c => c.MatchLdcI4(439)))
+            {
+                cursor.Emit(OpCodes.Pop);
+                cursor.Emit(OpCodes.Ldc_I4, -1);
+            }
+
+            if (cursor.TryGotoNext(MoveType.After, c => c.MatchLdcI4(440)))
+            {
+                cursor.Emit(OpCodes.Pop);
+                cursor.Emit(OpCodes.Ldc_I4, -1);
+            }
+        }
+    }
 }

@@ -119,7 +119,7 @@ namespace InfernumMode.Common.Graphics.Fluids
             graphics.SetRenderTarget(null);
         }
 
-        public void Draw(Vector2 drawCenter)
+        public void Draw(Vector2 drawCenter, float scale = 1f, float colorInterpolateSharpness = 0f, params Vector4[] fadeColors)
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
@@ -130,18 +130,12 @@ namespace InfernumMode.Common.Graphics.Fluids
             graphics.Textures[1] = VelocityTarget;
             graphics.Textures[2] = ColorTarget;
             GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["simulationArea"].SetValue(new Vector2(Width, Height));
-            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["colorInterpolateSharpness"].SetValue(85f);
-            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeStops"].SetValue(4f);
-            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeColors"].SetValue(new Vector4[]
-            {
-                Color.Transparent.ToVector4() with { W = 0f },
-                Color.Orange.ToVector4(),
-                Color.SandyBrown.ToVector4(),
-                Color.SaddleBrown.ToVector4(),
-            });
+            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["colorInterpolateSharpness"].SetValue(colorInterpolateSharpness);
+            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeStops"].SetValue(fadeColors.Length);
+            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeColors"].SetValue(fadeColors);
             GameShaders.Misc["Infernum:DrawFluidResult"].Apply();
 
-            Main.spriteBatch.Draw(pixel, drawCenter, null, Color.White, 0f, pixel.Size() * 0.5f, new Vector2(Width, Height) * 1.5f, 0, 0f);
+            Main.spriteBatch.Draw(pixel, drawCenter, null, Color.White, 0f, pixel.Size() * 0.5f, new Vector2(Width, Height) * scale, 0, 0f);
             Main.spriteBatch.ExitShaderRegion();
         }
 

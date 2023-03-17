@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerBombExplodeSound, npc.Center);
             for (int i = 0; i < 36; i++)
             {
-                Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 182);
+                Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.TheDestroyer);
                 energy.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 7f);
                 energy.noGravity = true;
             }

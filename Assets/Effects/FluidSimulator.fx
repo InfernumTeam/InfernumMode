@@ -79,16 +79,15 @@ float4 UpdateVelocity(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : 
     float3 ddy = (bottom - top).xyz * 0.5;
     float2 densityDifference = float2(ddx.z, ddy.z);
     
-    // Make the density dissipate over time. The underlying dot product clears away the divergence of the field (thus satisfying the Continuity Navier-Stokes equation) due to the underlying
-    // math for the dot product. If the result is not than zero than it will be gradually subtracted off until it is.
+    // Make the density dissipate over time. The underlying dot product makes it relative to the current velocity of the fluid.
     fluidData.z -= dt * dot(float3(densityDifference, ddx.x + ddy.y), fluidData.xyz);
     fluidData.z *= densityDecayFactor;
     
     // Perform advection to keep the velocity moving based on the density of the surrounding pixels and the Laplacian.
-    float2 coordsHistory = saturate(coords - dt * fluidData.xy * stepSize);
+    float2 fluidSource = saturate(coords - dt * fluidData.xy * stepSize);
     float2 laplacian = right.xy + left.xy + top.xy + top.xy - 4 * fluidData.xy;
     float2 viscosityForce = velocityPersistence * laplacian;
-    fluidData.xyw = tex2D(velocityField, coordsHistory).xyw;
+    fluidData.xyw = tex2D(velocityField, fluidSource).xyw;
     fluidData.xy += dt * (viscosityForce - densityClumpingFactor / dt * densityDifference);
     
     // Make the velocity incrementally decay.
@@ -153,7 +152,7 @@ float4 DrawResult(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLO
     float bottom = tex2D(velocityField, coords - float2(0, stepSize.y)).z;
     
     // Correct for density "gaps" in cases where there's small areas where there's no density surrounding by lots of density.
-    float densityCorrectionThresold = 1.4;
+    float densityCorrectionThresold = 1.8;
     if (density < densityCorrectionThresold)
     {
         if (left > density && left > densityCorrectionThresold)

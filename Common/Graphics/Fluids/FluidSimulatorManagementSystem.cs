@@ -21,12 +21,16 @@ namespace InfernumMode.Common.Graphics.Fluids
         public override void OnModLoad()
         {
             Main.OnPreDraw += UpdateFields;
-            On.Terraria.Main.DrawInfernoRings += DrawTestField;
+            //On.Terraria.Main.DrawInfernoRings += DrawTestField;
         }
 
         private void DrawTestField(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
-            //TestField.Draw(new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f - Vector2.UnitY * 36f);
+            TestField.Draw(new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f - Vector2.UnitY * 36f, 1f, 85f, new Vector4[]
+            {
+                Color.Transparent.ToVector4() with { W = 0f },
+                Color.SaddleBrown.ToVector4()
+            });
         }
 
         public override void OnModUnload()
@@ -72,14 +76,14 @@ namespace InfernumMode.Common.Graphics.Fluids
             // Flame jet.
             else
             {
-                TestField.Properties = new(0.01f, 2.9f, 0.981f, 1.19f, 0.5f, 0.77f, 0.98f);
+                TestField.Properties = new(0.01f, 2.9f, 0.986f, 1.19f, 0.5f, 0.77f, 0.98f);
                 TestField.MovementUpdateSteps = 5;
 
                 float interpolant = Main.GlobalTimeWrappedHourly % 1f;
                 for (int i = 0; i < instanceCount; i++)
                 {
-                    var color = CalamityUtils.MulticolorLerp(MathF.Pow(interpolant, 3.9f), Color.Wheat, Color.Yellow, Color.Orange, Color.OrangeRed, Color.Brown);
-                    float speedFactor = Main.rand.NextFloat(9f, 10f) * TestField.Width * 1.04f / (i * 0.04f + 1f) * 7f;
+                    var color = CalamityUtils.MulticolorLerp(MathF.Pow(interpolant, 0.2f), Color.Wheat, Color.Orange, Color.Red, Color.Black);
+                    float speedFactor = Main.rand.NextFloat(9f, 10f) * TestField.Width * 1.04f / (i * 0.04f + 1f) * 9f;
                     Vector2 angularSpawnOffset = (MathHelper.TwoPi * i / instanceCount).ToRotationVector2() * 6f;
                     Vector2 velocity = -Vector2.UnitY.RotatedBy(MathF.Sin(Main.GlobalTimeWrappedHourly * 4f) * 0.2f) * speedFactor;
 

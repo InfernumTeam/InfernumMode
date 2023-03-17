@@ -134,8 +134,8 @@ namespace InfernumMode.GlobalInstances
 
             if (InfernumMode.CanUseCustomAIs)
             {
-                if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
-                    OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
+                if (OverridingListManager.InfernumSetDefaultsOverrideList.TryGetValue(npc.type, out Delegate value))
+                    value.DynamicInvoke(npc);
             }
         }
 
@@ -202,7 +202,7 @@ namespace InfernumMode.GlobalInstances
                 }
                 HasResetHP = true;
 
-                if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))
+                if (OverridingListManager.InfernumNPCPreAIOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCPreAIDelegate value))
                 {
                     // Disable the effects of timed DR.
                     if (npc.Calamity().KillTime > 0 && npc.Calamity().AITimer < npc.Calamity().KillTime)
@@ -225,7 +225,7 @@ namespace InfernumMode.GlobalInstances
                     // Disable netOffset effects.
                     npc.netOffset = Vector2.Zero;
 
-                    bool result = OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
+                    bool result = value.Invoke(npc);
                     if (ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
                         ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
 
@@ -308,6 +308,9 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
+            if (npc.type == NPCID.Plantera)
+                cooldownSlot = ImmunityCooldownID.Bosses;
+
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())
             {
                 cooldownSlot = 0;
@@ -398,8 +401,8 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CheckDead(NPC npc)
         {
-            if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumCheckDeadOverrideList.ContainsKey(npc.type))
-                return (bool)OverridingListManager.InfernumCheckDeadOverrideList[npc.type].DynamicInvoke(npc);
+            if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumCheckDeadOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCCheckDeadDelegate value))
+                return (bool)value.DynamicInvoke(npc);
 
             return base.CheckDead(npc);
         }

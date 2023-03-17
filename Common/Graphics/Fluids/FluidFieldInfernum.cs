@@ -23,7 +23,19 @@ namespace InfernumMode.Common.Graphics.Fluids
             private set;
         }
 
+        public int MovementUpdateSteps
+        {
+            get;
+            set;
+        } = 1;
+
         public bool ShouldUpdate
+        {
+            get;
+            set;
+        }
+
+        public FluidFieldProperties Properties
         {
             get;
             set;
@@ -33,13 +45,14 @@ namespace InfernumMode.Common.Graphics.Fluids
 
         public readonly int Height;
 
-        public FluidFieldInfernum(int width, int height)
+        public FluidFieldInfernum(int width, int height, FluidFieldProperties properties)
         {
             if (Main.netMode == NetmodeID.Server)
                 return;
 
             Width = width;
             Height = height;
+            Properties = properties;
 
             // Initialize targets.
             var graphics = Main.instance.GraphicsDevice;
@@ -53,10 +66,12 @@ namespace InfernumMode.Common.Graphics.Fluids
 
         internal void PerformUpdateStep()
         {
-            PerformPassToTarget("VelocityUpdatePass", VelocityTarget);
-            PerformPassToTarget("DiffusePass", VelocityTarget, 0.015f);
+            for (int i = 0; i < MovementUpdateSteps; i++)
+                PerformPassToTarget("VelocityUpdatePass", VelocityTarget);
+            PerformPassToTarget("VelocityUpdateVorticityPass", VelocityTarget);
+            PerformPassToTarget("DiffusePass", VelocityTarget, Properties.VelocityDiffusion);
 
-            PerformPassToTarget("DiffusePass", ColorTarget, 1.7f);
+            PerformPassToTarget("DiffusePass", ColorTarget, Properties.ColorDiffusion);
             PerformPassToTarget("AdvectPass", ColorTarget);
         }
 
@@ -77,14 +92,18 @@ namespace InfernumMode.Common.Graphics.Fluids
             graphics.Textures[2] = ColorTarget;
             fluidShader.Parameters["simulationArea"].SetValue(new Vector2(Width, Height));
             fluidShader.Parameters["viscosity"].SetValue(viscosity);
-            fluidShader.Parameters["vorticityAmount"].SetValue(0.07f);
-            fluidShader.Parameters["densityClumpingFactor"].SetValue(0.2f);
-            fluidShader.Parameters["densityDecayFactor"].SetValue(0.99984f);
+            fluidShader.Parameters["vorticityAmount"].SetValue(Properties.VorticityAmount);
+            fluidShader.Parameters["densityClumpingFactor"].SetValue(Properties.DensityClumpingFactor);
+            fluidShader.Parameters["densityDecayFactor"].SetValue(Properties.DensityDecayFactor);
+            fluidShader.Parameters["velocityPersistence"].SetValue(Properties.VelocityPersistence);
+            fluidShader.Parameters["decelerationFactor"].SetValue(Properties.DecelerationFactor);
 
             if (passName == "AdvectPass")
                 GameShaders.Misc["Infernum:FluidAdvect"].Apply();
             else if (passName == "VelocityUpdatePass")
                 GameShaders.Misc["Infernum:FluidUpdateVelocity"].Apply();
+            else if (passName == "VelocityUpdateVorticityPass")
+                GameShaders.Misc["Infernum:FluidUpdateVelocityVorticity"].Apply();
             else
                 fluidShader.CurrentTechnique.Passes[passName].Apply();
             Main.spriteBatch.Draw(target, Vector2.Zero, Color.White);
@@ -100,9 +119,10 @@ namespace InfernumMode.Common.Graphics.Fluids
             graphics.SetRenderTarget(null);
         }
 
-        public void Draw(Vector2 drawCenter)
+        public void Draw(Vector2 drawCenter, float scale = 1f, float colorInterpolateSharpness = 0f, params Vector4[] fadeColors)
         {
-            Main.spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             var graphics = Main.instance.GraphicsDevice;
             Texture2D pixel = InfernumTextureRegistry.Pixel.Value;
@@ -110,9 +130,12 @@ namespace InfernumMode.Common.Graphics.Fluids
             graphics.Textures[1] = VelocityTarget;
             graphics.Textures[2] = ColorTarget;
             GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["simulationArea"].SetValue(new Vector2(Width, Height));
+            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["colorInterpolateSharpness"].SetValue(colorInterpolateSharpness);
+            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeStops"].SetValue(fadeColors.Length);
+            GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeColors"].SetValue(fadeColors);
             GameShaders.Misc["Infernum:DrawFluidResult"].Apply();
 
-            Main.spriteBatch.Draw(pixel, drawCenter, null, Color.White, 0f, pixel.Size() * 0.5f, new Vector2(Width, Height), 0, 0f);
+            Main.spriteBatch.Draw(pixel, drawCenter, null, Color.White, 0f, pixel.Size() * 0.5f, new Vector2(Width, Height) * scale, 0, 0f);
             Main.spriteBatch.ExitShaderRegion();
         }
 
@@ -127,7 +150,7 @@ namespace InfernumMode.Common.Graphics.Fluids
             for (int i = 0; i < totalElements; i++)
             {
                 velocities[i] = new(velocity.X, velocity.Y, density, 1f);
-                colors[i] = color.ToVector4();
+                colors[i] = color.ToVector4() with { W = 0f };
             }
 
             Rectangle areaRect = new(sourceCenter.X + (int)area.X / 2, sourceCenter.Y + (int)area.Y / 2, (int)area.X, (int)area.Y);
@@ -140,10 +163,17 @@ namespace InfernumMode.Common.Graphics.Fluids
             if (IsDisposing)
                 return;
 
+            // Disallow disposing the render targets twice.
+            IsDisposing = true;
+
             // Clear the render targets.
+            ColorTarget?.Dispose();
+            VelocityTarget?.Dispose();
+            TempTarget?.Dispose();
+
+            // Remove this field from the list.
             GC.SuppressFinalize(this);
             FluidSimulatorManagementSystem.CreatedFields.Remove(this);
-            IsDisposing = true;
         }
     }
 }

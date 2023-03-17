@@ -321,6 +321,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.Server)
                 Filters.Scene["CalamityMod:CalamitasRun3"].Deactivate();
 
+            // Rain? What is rain?
+            CalamityMod.CalamityMod.StopRain();
+
             attackTimer++;
             generalTimer++;
             return false;

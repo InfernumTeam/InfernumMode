@@ -461,7 +461,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                         freeAreaAngle2 += MathHelper.TwoPi;
                     tries++;
                 }
-                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 500f, 1, 1) && tries < 100);
+                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 500f, 1, 1) && freeAreaAngle2.ToRotationVector2().AngleBetween(freeAreaAngle.ToRotationVector2()) < 2.26f && tries < 100);
 
                 npc.netUpdate = true;
             }
@@ -727,12 +727,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     newAttackType = PlanteraAttackState.PetalBurst;
                     break;
                 case PlanteraAttackState.PetalBurst:
-                    newAttackType = lifeRatio < Phase3LifeRatio ? PlanteraAttackState.PoisonousGasRelease : PlanteraAttackState.RedBlossom;
-                    break;
-                case PlanteraAttackState.PoisonousGasRelease:
-                    newAttackType = PlanteraAttackState.RoseGrowth;
+                    newAttackType = lifeRatio < Phase3LifeRatio ? PlanteraAttackState.RoseGrowth : PlanteraAttackState.RedBlossom;
                     break;
                 case PlanteraAttackState.RoseGrowth:
+                    newAttackType = PlanteraAttackState.PoisonousGasRelease;
+                    break;
+                case PlanteraAttackState.PoisonousGasRelease:
                     newAttackType = PlanteraAttackState.TentacleSnap;
                     break;
                 case PlanteraAttackState.TentacleSnap:

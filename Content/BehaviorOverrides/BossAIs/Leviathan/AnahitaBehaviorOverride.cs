@@ -361,8 +361,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             int teleportChargeTime = 60;
             int teleportCount = 5;
             int mistReleaseRate = 10;
-            float mistMaxSpeed = 7.75f;
-            float horizontalTeleportOffset = 240f;
+            float mistMaxSpeed = 8.5f;
+            float horizontalTeleportOffset = 360f;
             float verticalTeleportOffset = 540f;
             if (enraged)
             {
@@ -565,7 +565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                         Vector2 dustVelocity = Main.rand.NextFloat(-MathHelper.PiOver2, MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(6f, 16f);
                         dustSpawnOffset += dustVelocity * 0.5f;
 
-                        Dust water = Dust.NewDustDirect(npc.Center + dustSpawnOffset, 0, 0, 172, dustVelocity.X, dustVelocity.Y, 100, default, 1.4f);
+                        Dust water = Dust.NewDustDirect(npc.Center + dustSpawnOffset, 0, 0, DustID.DungeonWater, dustVelocity.X, dustVelocity.Y, 100, default, 1.4f);
                         water.velocity /= 4f;
                         water.velocity -= npc.velocity;
                         water.noGravity = true;

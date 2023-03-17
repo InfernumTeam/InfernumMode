@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             // Collide with tiles after enough time has passed.
-            Projectile.tileCollide = Projectile.timeLeft < 540;
+            Projectile.tileCollide = Projectile.timeLeft < 420;
 
             Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

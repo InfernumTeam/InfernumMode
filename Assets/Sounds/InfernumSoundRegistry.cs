@@ -71,6 +71,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle DestroyerChargeUpSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerChargeUp");
 
+        public static readonly SoundStyle DestroyerLaserTelegraphSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerLaserTelegraph");
+
         public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/DevilfishRoar");
 
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DoGLaugh");

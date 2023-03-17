@@ -1705,7 +1705,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 float dustPersistence = MathHelper.Lerp(1.3f, 0.7f, npc.Opacity);
                 Color newColor = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
-                Dust rainbowMagic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 267, 0f, 0f, 0, newColor, 1f);
+                Dust rainbowMagic = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.RainbowMk2, 0f, 0f, 0, newColor, 1f);
                 rainbowMagic.position = npc.Center + Main.rand.NextVector2Circular(npc.width * 12f, npc.height * 12f) + new Vector2(0f, -150f);
                 rainbowMagic.velocity *= Main.rand.NextFloat(0.8f);
                 rainbowMagic.noGravity = true;

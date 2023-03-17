@@ -501,7 +501,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public static void DoBehavior_SwitchCharges(NPC npc, bool isSpazmatism, bool isRetinazer, ref float chargingFlag)
         {
-            int redirectTime = 72;
+            int redirectTime = 48;
             int chargeTime = 55;
             int attackDuration = 360;
             bool willCharge = isSpazmatism;
@@ -576,7 +576,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int chargeTime = 55;
             int attackDuration = 400;
             float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
-            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(4.64f), 1f - CombinedLifeRatio);
+            float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.84f), MathHelper.ToRadians(4.44f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
 
@@ -906,7 +906,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     slowdownFactor = 1f;
 
                 // Update the spin.
-                spinRotation += Utils.GetLerpValue(0f, shootDelay * 0.5f, UniversalAttackTimer, true) * slowdownFactor * maxSpinAngularVelocity;
+                spinRotation += Utils.GetLerpValue(0f, shootDelay * 0.5f, UniversalAttackTimer, true) * slowdownFactor * maxSpinAngularVelocity * (Target.Center.X > npc.Center.X).ToDirectionInt();
 
                 // Update the center of mass. It starts at the top left/right of the target before transitioning to above them.
                 nextCenterOfMass = Vector2.Lerp(nextCenterOfMass, hoverDestination, slowdownFactor * 0.04f).MoveTowards(hoverDestination, slowdownFactor * 10f);

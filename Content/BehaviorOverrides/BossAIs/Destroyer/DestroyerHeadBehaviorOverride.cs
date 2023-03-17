@@ -292,7 +292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             int lungeCount = 2;
             int bombReleaseDelay = 23;
             int postBombReleaseRiseTime = 15;
-            int bombCount = 70;
+            int bombCount = 32;
             float upwardLungeDistance = 450f;
             ref float lungeCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
@@ -421,6 +421,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
                 // Destroy all probes.
                 ProbeBehaviorOverride.KillAllProbes();
+
+                if (attackTimer == 1f)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerLaserTelegraphSound, target.Center);
             }
             else
             {
@@ -541,8 +544,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackState == 0f)
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 23.5f, 0.15f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
+                if (!npc.WithinRange(target.Center, 300f))
+                {
+                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 23.5f, 0.15f);
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
+                }
 
                 if (attackTimer < 140f)
                 {

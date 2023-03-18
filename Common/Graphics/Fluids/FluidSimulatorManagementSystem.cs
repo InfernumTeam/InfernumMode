@@ -36,11 +36,14 @@ namespace InfernumMode.Common.Graphics.Fluids
         public override void OnModUnload()
         {
             // Clear all GPU memory that was used by the created fields when the mod is unloaded.
-            while (CreatedFields.Any())
+            Main.RunOnMainThread(() =>
             {
-                CreatedFields[0].Dispose();
-                CreatedFields.RemoveAt(0);
-            }
+                while (CreatedFields.Any())
+                {
+                    CreatedFields[0].Dispose();
+                    CreatedFields.RemoveAt(0);
+                }
+            });
         }
 
         internal static void UpdateFields(GameTime obj)

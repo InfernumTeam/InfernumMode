@@ -41,6 +41,8 @@ namespace InfernumMode.Common.Graphics.Fluids
             set;
         }
 
+        public Point Center => new(Width / 2, Height / 2);
+
         public readonly int Width;
 
         public readonly int Height;
@@ -154,8 +156,12 @@ namespace InfernumMode.Common.Graphics.Fluids
             }
 
             Rectangle areaRect = new(sourceCenter.X + (int)area.X / 2, sourceCenter.Y + (int)area.Y / 2, (int)area.X, (int)area.Y);
-            VelocityTarget.SetData(0, areaRect, velocities, 0, totalElements);
-            ColorTarget.SetData(0, areaRect, colors, 0, totalElements);
+
+            Main.RunOnMainThread(() =>
+            {
+                VelocityTarget.SetData(0, areaRect, velocities, 0, totalElements);
+                ColorTarget.SetData(0, areaRect, colors, 0, totalElements);
+            });
         }
 
         public void Dispose()
@@ -171,7 +177,7 @@ namespace InfernumMode.Common.Graphics.Fluids
             VelocityTarget?.Dispose();
             TempTarget?.Dispose();
 
-            // Remove this field from the list.
+            // Remove this instance from the list.
             GC.SuppressFinalize(this);
             FluidSimulatorManagementSystem.CreatedFields.Remove(this);
         }

@@ -1277,12 +1277,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.Calamity().ShouldCloseHPBar = true;
             }
 
+            // Teleport above the target and delete stray projectiles in anticipation of the next attack once the brothers are dead.
             if (attackTimer >= rumbleTime + 5f && !anyBrothers)
             {
                 npc.Opacity = 1f;
                 npc.Center = target.Center - Vector2.UnitY * 270f;
                 npc.velocity = Vector2.Zero;
                 npc.noGravity = true;
+
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<BrimstoneSlash>(), ModContent.ProjectileType<DarkMagicFlame>(), ModContent.ProjectileType<BrimstoneBomb>());
+
                 SelectNextAttack(npc);
             }
         }

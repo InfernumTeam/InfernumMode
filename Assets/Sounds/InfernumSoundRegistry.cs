@@ -161,6 +161,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ProvidenceSpearHitSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceSpearHit");
 
+        public static readonly SoundStyle QueenSlimeExplosionSound = new("InfernumMode/Assets/Sounds/Custom/QueenSlime/QueenSlimeExplosion");
+
         public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/ReaperSharkIceBreath");
 
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/SCalBrothersSpawn");

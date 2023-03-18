@@ -29,12 +29,12 @@ namespace InfernumMode
         /// <summary>
         /// Returns all projectiles present of a specific type.
         /// </summary>
-        /// <param name="desiredType">The projectile type to check for.</param>
-        public static IEnumerable<Projectile> AllProjectilesByID(int desiredType)
+        /// <param name="desiredTypes">The projectile type to check for.</param>
+        public static IEnumerable<Projectile> AllProjectilesByID(params int[] desiredTypes)
         {
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].active && Main.projectile[i].type == desiredType)
+                if (Main.projectile[i].active && desiredTypes.Contains(Main.projectile[i].type))
                     yield return Main.projectile[i];
             }
         }

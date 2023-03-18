@@ -411,7 +411,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int redirectTime = 75;
             int spinTime = 270;
             int bubbleReleaseRate = 22;
-            int chargeRedirectTime = 16;
+            int chargeRedirectTime = 33;
             int chargeTime = 56;
             float spinSpeed = 23f;
             float chargeSpeed = 30.5f;

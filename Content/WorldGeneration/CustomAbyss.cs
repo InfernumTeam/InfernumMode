@@ -29,7 +29,7 @@ namespace InfernumMode.Content.WorldGeneration
         // Loop variables that are accessed via getter methods should be stored externally in local variables for performance reasons.
         public static int MinAbyssWidth => MaxAbyssWidth / 5;
 
-        public static int MaxAbyssWidth => BiomeWidth + 176;
+        public static int MaxAbyssWidth => BiomeWidth + 145;
 
         public static int AbyssTop => YStart + BlockDepth - 44;
 

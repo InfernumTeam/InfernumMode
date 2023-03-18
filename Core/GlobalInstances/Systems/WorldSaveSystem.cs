@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -167,6 +168,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void SaveWorldData(TagCompound tag)
         {
+            if (WorldGen.generatingWorld)
+                return;
+
             var downed = new List<string>();
             if (InfernumMode)
                 downed.Add("InfernumModeActive");

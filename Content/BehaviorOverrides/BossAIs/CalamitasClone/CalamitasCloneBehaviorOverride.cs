@@ -20,7 +20,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -322,6 +321,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.Server)
                 Filters.Scene["CalamityMod:CalamitasRun3"].Deactivate();
 
+            // Rain? What is rain?
+            CalamityMod.CalamityMod.StopRain();
+
             attackTimer++;
             generalTimer++;
             return false;
@@ -579,6 +581,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int seekerShootTime = 240;
             int laserTelegraphTime = 120;
             int laserShootTime = EntropyBeam.Lifetime;
+            float laserAngularVelocity = target.Infernum_CalCloneHex().HexIsActive("Zeal") ? 0.033f : 0.024f;
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
             Vector2 staffEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 66f;
             ref float totalSummonedSoulSeekers = ref npc.Infernum().ExtraAI[0];
@@ -693,7 +696,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Spin the laser after it appears.
                 if (attackTimer >= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
-                    armRotation += beamDirection * 0.023f;
+                    armRotation += beamDirection * laserAngularVelocity;
 
                 if (attackTimer >= redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime + laserShootTime)
                     SelectNextAttack(npc);
@@ -1275,12 +1278,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.Calamity().ShouldCloseHPBar = true;
             }
 
+            // Teleport above the target and delete stray projectiles in anticipation of the next attack once the brothers are dead.
             if (attackTimer >= rumbleTime + 5f && !anyBrothers)
             {
                 npc.Opacity = 1f;
                 npc.Center = target.Center - Vector2.UnitY * 270f;
                 npc.velocity = Vector2.Zero;
                 npc.noGravity = true;
+
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<BrimstoneSlash>(), ModContent.ProjectileType<DarkMagicFlame>(), ModContent.ProjectileType<BrimstoneBomb>());
+
                 SelectNextAttack(npc);
             }
         }
@@ -1700,9 +1707,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Ensure that homing and acceleration hexes do not combine, since that would be stupid.
             string hexName = Hexes[(int)hexType];
-            string hex2Name = Hexes[(int)hexType2];
-            if ((hexName == "Zeal" && hex2Name == "Accentuation") || (hexName == "Accentuation" && hex2Name == "Zeal"))
+            string hexName2 = Hexes[(int)hexType2];
+            if ((hexName == "Zeal" && hexName2 == "Accentuation") || (hexName == "Accentuation" && hexName2 == "Zeal"))
                 hexType2 = 2f;
+
+            // Prevent Accentuation from happening during the big fire orb attack in favor of Zeal.
+            if (nextAttack == CloneAttackType.DarkOverheadFireball)
+            {
+                if (hexName == "Accentuation")
+                {
+                    hexType = 0f;
+                    if (hexType2 == 0f)
+                        hexType2 = 2f;
+                }
+                if (hexName2 == "Accentuation")
+                {
+                    hexType2 = 0f;
+                    if (hexType == 0f)
+                        hexType = 2f;
+                }
+            }
 
             SoundEngine.PlaySound(CalamitasEnchantUI.EnchSound, npc.Center);
 

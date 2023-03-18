@@ -71,6 +71,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle DestroyerChargeUpSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerChargeUp");
 
+        public static readonly SoundStyle DestroyerLaserTelegraphSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerLaserTelegraph");
+
         public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/DevilfishRoar");
 
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DoGLaugh");
@@ -161,6 +163,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ProvidenceSpearHitSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceSpearHit");
 
+        public static readonly SoundStyle QueenSlimeExplosionSound = new("InfernumMode/Assets/Sounds/Custom/QueenSlime/QueenSlimeExplosion");
+
         public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/ReaperSharkIceBreath");
 
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/SCalBrothersSpawn");
@@ -209,6 +213,8 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle GlassmakerFireSound = new("InfernumMode/Assets/Sounds/Item/GlassmakerFire");
 
         public static readonly SoundStyle GlassmakerFireEndSound = new("InfernumMode/Assets/Sounds/Item/GlassmakerOutro");
+
+        public static readonly SoundStyle HalibutSpotlight = new("InfernumMode/Assets/Sounds/Item/HalibutSpotlight");
 
         public static readonly SoundStyle HyperplaneMatrixActivateSound = new("InfernumMode/Assets/Sounds/Item/HyperplaneMatrixActivate");
 

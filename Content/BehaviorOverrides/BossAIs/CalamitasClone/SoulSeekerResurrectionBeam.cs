@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             LaserLength = distanceSamples.Average();
 
             // Summon a seeker if necessary.
-            if (Time >= 10f && !HasSummonedSeeker && LaserLength < MaxLaserLength - 200f)
+            if (Time >= 10f && !HasSummonedSeeker && (LaserLength < MaxLaserLength - 200f || Time >= Lifetime - 1f))
             {
                 Vector2 seekerSpawnPosition = Projectile.Center + Projectile.velocity * LaserLength;
                 SoundEngine.PlaySound(BrimstoneMonster.SpawnSound, seekerSpawnPosition);

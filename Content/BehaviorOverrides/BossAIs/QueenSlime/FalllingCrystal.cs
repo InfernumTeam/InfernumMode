@@ -41,8 +41,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 Projectile.tileCollide = true;
             }
 
-            // Jitter in place slightly.
-            Projectile.Center += Main.rand.NextVector2Circular(0.65f, 0.65f);
+            // Jitter in place slightly if not accelerating.
+            else
+                Projectile.Center += Main.rand.NextVector2Circular(0.65f, 0.65f);
 
             Time++;
         }
@@ -68,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 Gore.NewGore(Projectile.GetSource_Death(), Projectile.Center, Main.rand.NextVector2CircularEdge(4f, 4f), Mod.Find<ModGore>($"QSCrystal{i}").Type, Projectile.scale);
         }
 
-        public override bool? CanDamage() => Time >= 45f;
+        public override bool? CanDamage() => Time >= 27f;
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.HotPink with { A = 0 }, Color.White, Utils.GetLerpValue(0f, 35f, Time, true)) * Projectile.Opacity;
     }

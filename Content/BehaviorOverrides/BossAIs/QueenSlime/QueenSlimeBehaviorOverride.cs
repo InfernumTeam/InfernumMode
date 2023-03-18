@@ -1,10 +1,12 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Particles;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -35,7 +37,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public enum QueenSlimeAttackType
         {
             SpawnAnimation,
-            BasicHops
+            BasicHops,
+            GeliticArmyStomp,
+            FourThousandBlades // :4000blades:
         }
 
         public enum WingMotionState
@@ -69,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Negative rotations = downward flaps.
             public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, -0.4f, 0.78f, 3);
 
-            public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight(), -2.09f, 4);
+            public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight(), -1.85f, 4);
 
             public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight(), 0.59f, 3);
 
@@ -113,7 +117,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             ref float wingAnimationTimer = ref npc.ai[2];
             ref float usingWings = ref npc.localAI[0];
             ref float wingMotionState = ref npc.localAI[1];
+            ref float vibranceInterpolant = ref npc.localAI[2];
 
+            // Initialize the wings.
             if (npc.localAI[3] == 0f)
             {
                 Wings = new QueenSlimeWing[1];
@@ -139,6 +145,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     break;
                 case QueenSlimeAttackType.BasicHops:
                     DoBehavior_BasicHops(npc, target, ref attackTimer, ref wingMotionState);
+                    break;
+                case QueenSlimeAttackType.GeliticArmyStomp:
+                    DoBehavior_GeliticArmyStomp(npc, target, ref attackTimer, ref wingMotionState);
+                    break;
+                case QueenSlimeAttackType.FourThousandBlades:
+                    DoBehavior_FourThousandBlades(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
                     break;
             }
 
@@ -345,7 +357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, crystalID, 140, 0f);
             }
-            
+
             // Begin the slam.
             if (jumpState == 1f && attackTimer >= slamDelay + 45f && Math.Abs(npc.velocity.Y) <= 0.9f)
             {
@@ -405,10 +417,235 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_GeliticArmyStomp(NPC npc, Player target, ref float attackTimer, ref float wingMotionState)
+        {
+            int jumpCount = 2;
+            int slamHoverTime = 14;
+            int slamFlyTime = WingUpdateCycleTime - slamHoverTime;
+            int fallingSlimeID = ModContent.ProjectileType<FallingSpikeSlimeProj>();
+            int bouncingSlimeID = ModContent.ProjectileType<BouncingSlimeProj>();
+            ref float slimeSpawnAttackType = ref npc.Infernum().ExtraAI[0];
+            ref float hasHitGround = ref npc.Infernum().ExtraAI[1];
+            ref float jumpCounter = ref npc.Infernum().ExtraAI[2];
+
+            // Decide wing stuff.
+            wingMotionState = (int)WingMotionState.Flap;
+
+            // Decide which slimes should be spawned.
+            if (slimeSpawnAttackType == 0f)
+            {
+                slimeSpawnAttackType = Main.rand.NextFromList(fallingSlimeID, bouncingSlimeID);
+                npc.netUpdate = true;
+            }
+
+            // Hover into position before slamming downward.
+            if (attackTimer <= slamFlyTime)
+            {
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * Utils.Remap(attackTimer, 0f, slamFlyTime, 0.002f, 0.18f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
+
+                // Disable cheap hits from redirecting.
+                npc.damage = 0;
+            }
+
+            // Slow down and rise up in anticipation of the slam.
+            else if (attackTimer <= slamFlyTime + slamHoverTime)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 6f, 0.24f);
+                npc.velocity.X *= 0.5f;
+
+                // Summon slimes as the anticipation begins.
+                bool spawnSlimesHorizontally = slimeSpawnAttackType == fallingSlimeID || slimeSpawnAttackType == bouncingSlimeID;
+                if (Main.netMode != NetmodeID.MultiplayerClient && spawnSlimesHorizontally)
+                {
+                    float horizontalOffset = Utils.GetLerpValue(slamFlyTime, slamFlyTime + slamHoverTime, attackTimer, true) * 3443f;
+                    if (slimeSpawnAttackType == bouncingSlimeID)
+                        horizontalOffset *= 0.6f;
+
+                    Utilities.NewProjectileBetter(npc.Top - Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
+                    Utilities.NewProjectileBetter(npc.Top + Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
+                }
+            }
+
+            // Slow downward and make the summoned slimes to things.
+            if (attackTimer == slamFlyTime + slamHoverTime)
+            {
+                foreach (Projectile spikeSlime in Utilities.AllProjectilesByID(fallingSlimeID, bouncingSlimeID))
+                {
+                    spikeSlime.velocity = Vector2.UnitY * 2.5f;
+                    spikeSlime.netUpdate = true;
+                }
+            }
+
+            // Slam and accelerate.
+            if (attackTimer >= slamFlyTime + slamHoverTime + 8f)
+            {
+                if (hasHitGround == 0f && npc.velocity.Y == 0f && attackTimer >= slamFlyTime + slamHoverTime + 16f)
+                {
+                    SoundEngine.PlaySound(SlimeGodCore.ExitSound, target.Center);
+                    npc.velocity = Vector2.UnitY * -16f;
+                    hasHitGround = 1f;
+                    npc.netUpdate = true;
+                }
+
+                if (hasHitGround == 0f)
+                    npc.velocity = Vector2.UnitY * MathHelper.Clamp(npc.velocity.Y * 1.1f + 2f, 0f, 40f);
+                else
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.3f, -10f, 16f);
+
+                npc.noTileCollide = false;
+            }
+
+            if (attackTimer >= slamFlyTime + slamHoverTime + 180f)
+            {
+                slimeSpawnAttackType = 0f;
+                attackTimer = 0f;
+                hasHitGround = 0f;
+                npc.netUpdate = true;
+
+                jumpCounter++;
+                if (jumpCounter >= jumpCount)
+                    SelectNextAttack(npc);
+            }
+        }
+
+        public static void DoBehavior_FourThousandBlades(NPC npc, Player target, ref float attackTimer, ref float wingMotionState, ref float vibranceInterpolant)
+        {
+            int redirectTime = 24;
+            int upwardRiseTime = 16;
+            int attackDuration = HallowBladeLaserbeam.Lifetime;
+            int bladeReleaseTime = 66;
+            int laserChargeupTime = attackDuration - bladeReleaseTime;
+            int outwardLaserShootRate = 7;
+            float maxRiseSpeed = 10f;
+            float bladeOffsetSpacing = 180f;
+            float maxVerticalBladeOffset = 2000f;
+            bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime + laserChargeupTime + 25f;
+            bool currentlyCharging = attackTimer >= redirectTime + upwardRiseTime && attackTimer < redirectTime + upwardRiseTime + laserChargeupTime;
+            ref float bladeVerticalOffset = ref npc.Infernum().ExtraAI[0];
+            ref float outwardLaserShootCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Disable contact damage universally. It is not relevant for this attack.
+            npc.damage = 0;
+
+            // Decide wing stuff.
+            wingMotionState = (int)WingMotionState.Flap;
+
+            // Move to the top left/right of the player.
+            if (attackTimer <= redirectTime)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -180f);
+                Vector2 idealVelocity = (hoverDestination - npc.Center).ClampMagnitude(0f, 80f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.3f);
+            }
+
+            // Rise upward and become increasingly vibrant.
+            else if (attackTimer <= redirectTime + upwardRiseTime)
+            {
+                vibranceInterpolant = Utils.GetLerpValue(redirectTime, redirectTime + upwardRiseTime, attackTimer, true);
+                npc.Opacity = MathHelper.Lerp(1f, 0.5f, vibranceInterpolant);
+                npc.velocity = Vector2.UnitY * MathHelper.Lerp(npc.velocity.Y, -maxRiseSpeed, 0.2f);
+            }
+
+            else
+            {
+                npc.velocity *= 0.85f;
+
+                if (target.Infernum_Camera().CurrentScreenShakePower < 1.85f)
+                    target.Infernum_Camera().CurrentScreenShakePower = 3f;
+            }
+
+            // Release the blade spawning laser thing.
+            if (attackTimer == redirectTime + upwardRiseTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.QueenSlimeExplosionSound, target.Center);
+
+                target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.4f, 36);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HallowBladeLaserbeam>(), 220, 0f);
+                    bladeVerticalOffset = -maxVerticalBladeOffset;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Release blades towards the laser.
+            if (Main.netMode != NetmodeID.MultiplayerClient && currentlyCharging && attackTimer % 3f == 2f)
+            {
+                bladeVerticalOffset += bladeOffsetSpacing;
+                if (bladeVerticalOffset >= maxVerticalBladeOffset)
+                {
+                    bladeVerticalOffset *= -1f;
+                    npc.netUpdate = true;
+                }
+
+                float hue = Utils.GetLerpValue(-maxVerticalBladeOffset, maxVerticalBladeOffset, bladeVerticalOffset) * 4f % 1f;
+                Vector2 leftSpawnPosition = new(target.Center.X - 900f, npc.Center.Y + bladeVerticalOffset);
+                Vector2 rightSpawnPosition = new(target.Center.X + 900f, npc.Center.Y + bladeVerticalOffset);
+
+                if (target.Center.X < npc.Center.X + 900f)
+                    Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, 0f, hue);
+
+                if (target.Center.X > npc.Center.X - 900f)
+                    Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, MathHelper.Pi, 1f - hue);
+            }
+
+            // Create an explosion and make the blades go outward.
+            if (attackTimer == redirectTime + upwardRiseTime + laserChargeupTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.QueenSlimeExplosionSound, target.Center);
+
+                target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.4f, 36);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<QueenSlimeLightWave>(), 0, 0f);
+            }
+
+            // Release lasers outward.
+            if (currentlyAttacking && (attackTimer - redirectTime + upwardRiseTime + laserChargeupTime) % outwardLaserShootRate == outwardLaserShootRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item163, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (float dy = -1500f; dy < 1500f; dy += bladeOffsetSpacing * 2.8f)
+                    {
+                        float hue = ((dy + 1500f) / 1000f + attackTimer * 0.0817f) % 1f;
+                        Vector2 bladeSpawnPosition = new(npc.Center.X, target.Center.Y + dy);
+                        if (outwardLaserShootCounter % 2f == 1f)
+                            bladeSpawnPosition.Y -= bladeOffsetSpacing * 1.4f;
+
+                        int bitch = Utilities.NewProjectileBetter(bladeSpawnPosition + Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, 0f, hue);
+                        Main.projectile[bitch].localAI[1] = 3000f;
+
+                        bitch = Utilities.NewProjectileBetter(bladeSpawnPosition - Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, MathHelper.Pi, 1f - hue);
+                        Main.projectile[bitch].localAI[1] = 3000f;
+                    }
+
+                    outwardLaserShootCounter++;
+                }
+            }
+
+            if (currentlyCharging && attackTimer % 105f == 0f)
+                SoundEngine.PlaySound(SoundID.Item164 with { Volume = 0.6f }, target.Center);
+
+            if (attackTimer >= redirectTime + upwardRiseTime + attackDuration - 12f)
+                vibranceInterpolant = MathHelper.Clamp(vibranceInterpolant - 0.2f, 0f, 1f);
+
+            if (attackTimer >= redirectTime + upwardRiseTime + attackDuration)
+                SelectNextAttack(npc);
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             QueenSlimeAttackType previousAttack = (QueenSlimeAttackType)npc.ai[0];
             QueenSlimeAttackType nextAttack = QueenSlimeAttackType.BasicHops;
+            if (previousAttack == QueenSlimeAttackType.BasicHops)
+                nextAttack = QueenSlimeAttackType.FourThousandBlades;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -481,24 +718,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Vector2 drawBottom = npc.Bottom - Main.screenPosition;
-            drawBottom.Y += 2f;
+
             int frame = npc.frame.Y / npc.frame.Height;
+            float vibranceInterpolant = npc.localAI[2];
             Rectangle frameThing = texture.Frame(2, Main.npcFrameCount[npc.type], frame / Main.npcFrameCount[npc.type], frame % Main.npcFrameCount[npc.type]);
             frameThing.Inflate(0, -2);
             Vector2 origin = frameThing.Size() * new Vector2(0.5f, 1f);
-            Color color = Color.Lerp(Color.White, lightColor, 0.5f);
+            Color color = Color.Lerp(lightColor, Color.White, 0.5f);
+
+            // Incorporate vibrancy into the colors.
+            color.A = (byte)(color.A * (1f - vibranceInterpolant));
+
+            // Draw individual wings.
             if (npc.localAI[0] == 1f)
             {
                 for (int i = 0; i < Wings.Length; i++)
                     DrawWings(npc.Center - Main.screenPosition, Wings[i].WingRotation, Wings[i].WingRotationDifferenceMovingAverage, npc.rotation, 1f);
             }
 
+            float crystalDrawOffset = 0f;
             Texture2D crystalTexture = TextureAssets.Extra[186].Value;
             Rectangle crystalFrame = crystalTexture.Frame();
             Vector2 crystalOrigin = crystalFrame.Size() * 0.5f;
             Vector2 crystalDrawPosition = npc.Center;
-            float crystalDrawOffset = 0f;
             switch (frame)
             {
                 case 1:
@@ -545,18 +787,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             if (npc.rotation != 0f)
                 crystalDrawPosition = crystalDrawPosition.RotatedBy(npc.rotation, npc.Bottom);
 
-            crystalDrawPosition -= Main.screenPosition;
-
-            spriteBatch.Draw(crystalTexture, crystalDrawPosition, crystalFrame, color, npc.rotation, crystalOrigin, 1f, SpriteEffects.FlipHorizontally, 0f);
+            spriteBatch.Draw(crystalTexture, crystalDrawPosition - Main.screenPosition, crystalFrame, color, npc.rotation, crystalOrigin, 1f, SpriteEffects.FlipHorizontally, 0f);
             GameShaders.Misc["QueenSlime"].Apply();
 
             spriteBatch.EnterShaderRegion();
 
-            DrawData drawData = new(texture, drawBottom, frameThing, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.FlipHorizontally, 0);
-            GameShaders.Misc["QueenSlime"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            // Draw afterimages.
+            int afterimageCount = 9;
+            for (int i = afterimageCount - 1; i >= 0; i--)
+            {
+                // The shader can be a bit weird when many afterimages are applied on top of each other, so a fade-out effect is applied based on how clumped together they are.
+                float opacity = Utils.Remap(npc.position.Distance(npc.oldPos[1]), 3f, 18f, 0.3f, 0.67f);
+                Color localColor = npc.GetAlpha(color) * (1f - i / (float)afterimageCount) * opacity;
+
+                Vector2 drawBottom = Vector2.Lerp(npc.oldPos[i], npc.position, 0.6f) + new Vector2(npc.width * 0.5f, npc.height) - Main.screenPosition;
+                drawBottom.Y += 2f;
+
+                DrawData drawData = new(texture, drawBottom, frameThing, localColor, npc.rotation, origin, npc.scale, SpriteEffects.FlipHorizontally, 0);
+                GameShaders.Misc["QueenSlime"].Apply(drawData);
+                drawData.Draw(spriteBatch);
+            }
             spriteBatch.ExitShaderRegion();
 
+            // Draw the crown.
             Texture2D crownTexture = TextureAssets.Extra[177].Value;
             frameThing = crownTexture.Frame();
             origin = frameThing.Size() * 0.5f;

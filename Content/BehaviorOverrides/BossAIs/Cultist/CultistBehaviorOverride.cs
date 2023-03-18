@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -90,6 +91,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             // Universally disable contact damage.
             npc.damage = 0;
+
+            // Have an increased hitbox due to the shield. The hurtbox is set in GlobalNPCOverrides.
+            npc.width = npc.height = 150;
 
             ref float attackTimer = ref npc.ai[1];
             ref float phaseState = ref npc.ai[2];
@@ -280,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             if (deathTimer > 100f)
             {
-                Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 223);
+                Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.FireworkFountain_Pink);
                 magic.velocity = -Vector2.UnitY.RotatedByRandom(0.29f) * Main.rand.NextFloat(2.8f, 3.5f);
                 magic.scale = Main.rand.NextFloat(1.2f, 1.3f);
                 magic.fadeIn = 0.7f;
@@ -409,7 +413,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         int totalDust = (int)MathHelper.Lerp(1f, 4f, Utils.GetLerpValue(0.5f, 0.1f, npc.Opacity, true));
                         for (int i = 0; i < totalDust; i++)
                         {
-                            Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 264);
+                            Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.PortalBoltTrail);
                             magic.color = Color.Lerp(Color.LightPink, Color.Magenta, Main.rand.NextFloat());
                             magic.velocity = -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(2.8f, 3.5f);
                             magic.scale = Main.rand.NextFloat(1.2f, 1.3f);
@@ -1585,7 +1589,39 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             if (deathTimer > 120f)
                 Main.spriteBatch.ExitShaderRegion();
+
+            if (!dying)
+                DrawShield(npc);
             return false;
+        }
+
+        public static void DrawShield(NPC npc, bool clone = false)
+        {
+            Texture2D invis = InfernumTextureRegistry.Invisible.Value;
+            Texture2D noise = InfernumTextureRegistry.WavyNoise.Value;
+            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+            float eased = CalamityUtils.PolyInOutEasing(interpolant, 1);
+            float scale = MathHelper.Lerp(0.95f, 1.05f, eased);
+            float noiseScale = MathHelper.Lerp(1.55f, 1.45f, eased);
+            float fresnelScale = MathHelper.Lerp(0.85f, 1.15f, eased);
+            ref float angle = ref npc.Infernum().ExtraAI[10];
+            Vector2 noiseDirection = -Vector2.UnitX;
+
+            Effect shield = InfernumEffectsRegistry.CultistShieldShader.Shader;
+            shield.Parameters["sampleTexture2"].SetValue(noise);
+            shield.Parameters["mainColor"].SetValue(Color.DeepSkyBlue.ToVector3());
+            shield.Parameters["noiseScale"].SetValue(noiseScale);
+            shield.Parameters["noiseDirection"].SetValue(noiseDirection);
+            shield.Parameters["resolution"].SetValue(new Vector2(130f));
+            shield.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            shield.Parameters["fresnelPower"].SetValue(9f * fresnelScale);
+            shield.Parameters["scrollSpeed"].SetValue(0.345f);
+            shield.Parameters["fill"].SetValue(0.1f);
+            shield.Parameters["opacity"].SetValue(npc.Opacity * (clone ? 0.55f : 1f));
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, Main.Rasterizer, shield, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Draw(invis, npc.Center - Main.screenPosition, null, Color.White, 0f, invis.Size() * 0.5f, npc.scale * 150f * scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
         }
 
         #endregion Drawing and Frames

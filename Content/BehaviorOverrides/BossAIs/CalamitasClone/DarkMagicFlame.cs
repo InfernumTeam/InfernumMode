@@ -4,7 +4,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Drawing.Drawing2D;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;
@@ -67,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void AI()
         {
             // Initialize the hex type(s).
-            if (string.IsNullOrEmpty(HexType) && GetHexNames(out HexType, out HexType2))
+            if (string.IsNullOrEmpty(HexType) && Projectile.velocity.Length() < 35f && GetHexNames(out HexType, out HexType2))
                 Projectile.netUpdate = true;
 
             float acceleration = 1f;
@@ -77,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Start out slower if acceleration is expected.
                 if (Projectile.ai[1] == 0f)
                 {
-                    Projectile.velocity *= 0.6f;
+                    Projectile.velocity *= 0.37f;
                     Projectile.ai[1] = 1f;
                     Projectile.netUpdate = true;
                 }
@@ -90,8 +89,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
                 Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
-                if (Projectile.velocity.Length() > 17f)
-                    Projectile.velocity *= 0.97f;
+                if (Projectile.velocity.Length() > 18.75f)
+                    Projectile.velocity *= 0.98f;
             }
 
             if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)

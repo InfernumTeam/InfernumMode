@@ -399,5 +399,11 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator CalGlobalNPCPostDraw
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

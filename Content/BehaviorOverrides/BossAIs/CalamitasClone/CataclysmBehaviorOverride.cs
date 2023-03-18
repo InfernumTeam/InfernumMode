@@ -261,7 +261,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Define attack values when the other brother is alive.
             int attackShiftDelay = 0;
             int hoverTime = 45;
-            int fireReleaseRate = 60;
+            int fireReleaseRate = 48;
             float fireShootSpeed = 11f;
             float slashShootSpeed = 14f;
             ref float catastropheArmRotation = ref Main.npc[CalamityGlobalNPC.catastrophe].localAI[0];
@@ -324,7 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 float swingCompletion = Utils.GetLerpValue(0f, fireReleaseRate, wrappedTimer % fireReleaseRate, true);
                 catastropheArmRotation = PiecewiseAnimation(swingCompletion, anticipation, slash, recovery);
 
-                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 55f)
+                if (wrappedTimer % fireReleaseRate == fireReleaseRate - 42f)
                 {
                     // Play a firing sound.
                     SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound with { Volume = 0.6f }, npc.Center);

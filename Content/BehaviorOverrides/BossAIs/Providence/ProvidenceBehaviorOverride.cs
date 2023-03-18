@@ -550,7 +550,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 // Phase 1.
                 case ProvidenceAttackType.FireEnergyCharge:
-                    DoBehavior_FireEnergyCharge(npc, target, lifeRatioP1Adjusted, localAttackTimer, localAttackDuration, ref drawState);
+                    DoBehavior_FireEnergyCharge(npc, target, lifeRatioP1Adjusted, localAttackTimer, localAttackDuration, ref drawState, ref burnIntensity);
                     break;
                 case ProvidenceAttackType.CinderAndBombBarrages:
                     DoBehavior_CinderAndBombBarrages(npc, target, lifeRatioP1Adjusted, localAttackTimer, localAttackDuration, ref flightPath);
@@ -648,7 +648,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return new(localAttackTimer, localAttackDuration, currentAttack);
         }
 
-        public static void DoBehavior_FireEnergyCharge(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState)
+        public static void DoBehavior_FireEnergyCharge(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float burnIntensity)
         {
             int shootDelay = 60;
             int fireballCircleShootRate = GetBPMTimeMultiplier(4);
@@ -668,8 +668,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Enter the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
 
-            // Be fully opaque from the start.
+            // Become fully opaque.
             npc.Opacity = 1f;
+            burnIntensity = 0.96f * MathF.Pow(Utils.GetLerpValue(90f, 0f, localAttackTimer, true), 0.12f);
 
             if (localAttackTimer <= 5f)
                 performedEndEffects = 0f;

@@ -4,6 +4,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -39,7 +40,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             SpawnAnimation,
             BasicHops,
             GeliticArmyStomp,
-            FourThousandBlades // :4000blades:
+            FourThousandBlades, // :4000blades:
+            CrystalMaze
         }
 
         public enum WingMotionState
@@ -105,6 +107,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static int WingUpdateCycleTime => 40;
 
+#pragma warning disable IDE0051 // Remove unused private members
+        private const string lassitude = "Truly, the greatest lament of a creator is the acknowledgement of one's inability to work creatively enough." +
+            "There was no joy in creating this C# file." +
+            "This AI was not a product of passion, but of necessity. My old rendition was utterly horrific in its design and execution." +
+            "Now, I am tasked with correcting that wrong." +
+            "There were no intriguing technical discoveries. There was no innovative boss design tricks." +
+            "There was no central theme or mechanic that made me excited to finish this. There was no true challenge that elicited a flow state." +
+            "I got distracted many times before it was ready to be tested, because I did not have a noticeable desire to do what I had to." +
+            "I hope someone will derive value from this boss, because I unfortunately cannot say that I have." +
+            "If not, then I am truly sorry, for my boss design aptitude is insufficient to make it good enough. -Dominic";
+#pragma warning restore IDE0051 // Remove unused private members
+
         #endregion Fields, Properties, and Enumerations
 
         #region AI and Behaviors
@@ -137,6 +151,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             npc.damage = npc.defDamage;
             npc.noTileCollide = true;
             npc.noGravity = true;
+            npc.dontTakeDamage = false;
+            npc.Calamity().DR = 0f;
+
+            // Get rid of the fart death sound.
+            npc.DeathSound = SoundID.NPCDeath1;
 
             switch ((QueenSlimeAttackType)attackType)
             {
@@ -151,6 +170,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     break;
                 case QueenSlimeAttackType.FourThousandBlades:
                     DoBehavior_FourThousandBlades(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
+                    break;
+                case QueenSlimeAttackType.CrystalMaze:
+                    DoBehavior_CrystalMaze(npc, target, ref attackTimer, ref wingMotionState, ref wingAnimationTimer);
                     break;
             }
 
@@ -291,7 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int jumpTime = 24;
             int slamDelay = 30;
             int slamHoverTime = 35;
-            int crystalID = ModContent.ProjectileType<FalllingCrystal>();
+            int crystalID = ModContent.ProjectileType<FallingCrystal>();
             float horizontalJumpSpeed = MathHelper.Distance(target.Center.X, npc.Center.X) * 0.012f + 16f;
             float baseVerticalJumpSpeed = 23f;
             float fallAcceleration = 0.9f;
@@ -529,6 +551,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Disable contact damage universally. It is not relevant for this attack.
             npc.damage = 0;
 
+            // Increase DR due to being still.
+            npc.Calamity().DR = 0.8f;
+
             // Decide wing stuff.
             wingMotionState = (int)WingMotionState.Flap;
 
@@ -640,12 +665,71 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_CrystalMaze(NPC npc, Player target, ref float attackTimer, ref float wingMotionState, ref float wingAnimationTimer)
+        {
+            int mazeSummonDelay = 60;
+            int spinningCrystalReleaseRate = 90;
+            int spinningCrystalCount = 4;
+
+            // Disable contact damage universally. It is not relevant for this attack.
+            npc.damage = 0;
+
+            // Increase DR due to being still.
+            npc.Calamity().DR = 0.8f;
+
+            // Decide wing stuff.
+            wingMotionState = (int)WingMotionState.RiseUpward;
+
+            if (wingAnimationTimer >= WingUpdateCycleTime - 1f)
+                wingAnimationTimer = WingUpdateCycleTime - 1f;
+
+            // Create the maze of crystals.
+            if (attackTimer == mazeSummonDelay)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 96; i++)
+                    {
+                        Vector2 crystalSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(100f, 1750f);
+                        if (crystalSpawnPosition.WithinRange(target.Center, 300f) || Collision.SolidCollision(crystalSpawnPosition, 1, 1))
+                            continue;
+
+                        Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<FallingCrystal>(), 0, 0f);
+                    }
+                }
+            }
+
+            // Create the spinning lasers.
+            if (attackTimer >= mazeSummonDelay && (attackTimer - mazeSummonDelay) % spinningCrystalReleaseRate == 0f)
+            {
+                SoundEngine.PlaySound(SoundID.Item28, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(crystal =>
+                        {
+                            crystal.ModProjectile<SpinningLaserCrystal>().SpinningCenter = target.Center;
+                        });
+                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<SpinningLaserCrystal>(), 0, 0f, -1, MathHelper.TwoPi * i / 4f);
+                    }
+                }
+            }
+
+            if (attackTimer >= mazeSummonDelay + spinningCrystalReleaseRate * spinningCrystalCount - 1f)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<FallingCrystal>());
+                SelectNextAttack(npc);
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             QueenSlimeAttackType previousAttack = (QueenSlimeAttackType)npc.ai[0];
             QueenSlimeAttackType nextAttack = QueenSlimeAttackType.BasicHops;
             if (previousAttack == QueenSlimeAttackType.BasicHops)
-                nextAttack = QueenSlimeAttackType.FourThousandBlades;
+                nextAttack = QueenSlimeAttackType.CrystalMaze;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

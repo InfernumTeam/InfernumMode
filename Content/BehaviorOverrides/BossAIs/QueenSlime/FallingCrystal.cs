@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 {
-    public class FalllingCrystal : ModProjectile
+    public class FallingCrystal : ModProjectile
     {
         public ref float Time => ref Projectile.ai[1];
 
@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.penetrate = -1;
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.timeLeft = 480;
+            Projectile.timeLeft = 720;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
@@ -44,6 +44,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Jitter in place slightly if not accelerating.
             else
                 Projectile.Center += Main.rand.NextVector2Circular(0.65f, 0.65f);
+
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
 
             Time++;
         }

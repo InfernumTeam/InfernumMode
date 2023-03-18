@@ -159,6 +159,10 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ProvidenceLavaEruptionSmallSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceLavaEruptionSmall");
 
+        public static readonly SoundStyle ProvidenceScreamSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceScream");
+
+        public static readonly SoundStyle ProvidenceSpawnSuspenseSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceSpawnSuspense");
+
         public static readonly SoundStyle ProvidenceSpearHitSound = new("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceSpearHit");
 
         public static readonly SoundStyle QueenSlimeExplosionSound = new("InfernumMode/Assets/Sounds/Custom/QueenSlime/QueenSlimeExplosion");

@@ -50,6 +50,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
         public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
         public static MiscShaderData ProfanedLavaVertexShader => GameShaders.Misc["Infernum:ProfanedLava"];
+        public static MiscShaderData ProfanedPortalShader => GameShaders.Misc["Infernum:ProfanedPortal"];
         public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
         public static MiscShaderData PulsatingLaserVertexShader => GameShaders.Misc["Infernum:PulsatingLaserShader"];
         public static MiscShaderData RealityTearVertexShader => GameShaders.Misc["Infernum:RealityTear"];
@@ -101,6 +102,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> profanedPortal = new(assets.Request<Effect>("Assets/Effects/ProfanedPortalShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ProfanedPortal"] = new MiscShaderData(profanedPortal, "PortalPass");
+
             Ref<Effect> cultistShield = new(assets.Request<Effect>("Assets/Effects/CultistForcefield", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CultistShield"] = new MiscShaderData(cultistShield, "ShieldPass");
 

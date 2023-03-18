@@ -2620,10 +2620,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Slow down rapidly.
                     npc.velocity *= 0.92f;
 
-                    // Create metaballs at the location to indicate that the commander has entered a rift.
-                    for (int i = 0; i < 50; i++)
-                        FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f), 
-                            Main.rand.NextFloat(52f, 85f));
+                    //// Create metaballs at the location to indicate that the commander has entered a rift.
+                    //for (int i = 0; i < 50; i++)
+                    //    FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f), 
+                    //        Main.rand.NextFloat(52f, 85f));
 
                     // Look at the target.
                     npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
@@ -2678,9 +2678,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         spearStatus = (float)DefenderShieldStatus.ActiveAndStatic;
 
-                        // Failsafe check, shouldn't ever be the case, kill the portal the commander just left.
+                        // Failsafe check, shouldn't ever be the case, mark the portal for death that the commander has just left.
                         if (Main.projectile.IndexInRange((int)sittingInPortalIndex))
-                            Main.projectile[(int)sittingInPortalIndex].Kill();
+                            Main.projectile[(int)sittingInPortalIndex].ai[1] = 1f;
 
                         // Spawn two spears.
                         if (Main.netMode != NetmodeID.MultiplayerClient)

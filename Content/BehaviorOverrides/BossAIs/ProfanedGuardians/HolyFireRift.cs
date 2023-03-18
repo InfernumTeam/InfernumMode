@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Particles.Metaballs;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -18,17 +19,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public bool SpearRift => Projectile.ai[0] == 1;
 
+        public bool MarkedAsDead => Projectile.ai[1] == 1;
+
         public Vector2 RiftSize
         { 
             get;
             set;
-        }
+        } = new(50f, 50f);
 
         public float BallSize
         {
             get;
             set;
-        } = 85f;
+        } = 55f;
         #endregion
 
         #region Overrides
@@ -43,6 +46,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = CommanderSpearThrown.TelegraphTime;
+            Projectile.Opacity = 0;
+            Projectile.scale = 0;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
@@ -58,35 +63,67 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Emit light.
             Lighting.AddLight(Projectile.Center, Color.Gold.ToVector3() * 0.45f);
 
-            // Initialization.
-            if (Projectile.localAI[0] == 0)
-            {
-                Projectile.localAI[0] = 1;
-                if (SpearRift)
-                {
-                    RiftSize = new(HolySineSpear.Commander.width * 0.25f, HolySineSpear.Commander.height * 0.25f);
-                    BallSize = 55f;
-                }
-                else
-                    RiftSize = new(HolySineSpear.Commander.width * 0.5f, HolySineSpear.Commander.height * 0.5f);
-            }
-
             if (!SpearRift)
+            {
                 // Do not die naturally, the commander will manually kill these.
                 Projectile.timeLeft = 240;
+                if (!MarkedAsDead)
+                {
+                    Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+                    Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.1f, 0f, 1f);
+                }
+                else
+                {
+                    Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.05f, 0f, 1f);
+                    Projectile.scale = MathHelper.Clamp(Projectile.scale - 0.1f, 0f, 1f);
+
+                    if (Projectile.scale == 0f || Projectile.Opacity == 0f)
+                        Projectile.Kill();
+                }
+            }
 
             // Spawn a bunch of metaballs.
-            for (int i = 0; i < 3; i++)
-                FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center + 
-                    Main.rand.NextVector2Circular(RiftSize.X, RiftSize.Y), Main.rand.NextFloat(BallSize * 0.75f, BallSize));
+            if (SpearRift)
+            {
+                for (int i = 0; i < 3; i++)
+                    FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center +
+                        Main.rand.NextVector2Circular(RiftSize.X, RiftSize.Y), Main.rand.NextFloat(BallSize * 0.75f, BallSize));
+            }
         }
 
         public override bool? CanDamage() => false;
 
         public override bool ShouldUpdatePosition() => false;
 
+        public void DrawPortal(SpriteBatch spriteBatch)
+        {
+            Texture2D fireNoise = InfernumTextureRegistry.WavyNoise.Value;
+            Texture2D miscNoise = InfernumTextureRegistry.FireNoise.Value;
+
+            Effect portal = InfernumEffectsRegistry.ProfanedPortalShader.Shader;
+            portal.Parameters["sampleTexture"].SetValue(fireNoise);
+            portal.Parameters["sampleTexture2"].SetValue(miscNoise);
+            portal.Parameters["mainColor"].SetValue(WayfinderSymbol.Colors[1].ToVector3());
+            portal.Parameters["secondaryColor"].SetValue(WayfinderSymbol.Colors[2].ToVector3());
+            portal.Parameters["resolution"].SetValue(new Vector2(120f));
+            portal.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            portal.Parameters["opacity"].SetValue(Projectile.Opacity);
+            portal.Parameters["innerGlowAmount"].SetValue(0.8f);
+            portal.Parameters["innerGlowDistance"].SetValue(0.15f);
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, portal, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Draw(fireNoise, Projectile.Center - Main.screenPosition, null, Color.White, 0f, fireNoise.Size() * 0.5f, 2f * Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.ExitShaderRegion();
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
+            if (!SpearRift)
+            {
+                DrawPortal(Main.spriteBatch);
+                return false;
+            }
             float scaleInterpolant = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) * (1f + 0.1f * 
                 (float)Math.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (MathHelper.Pi * 2f) * 3f)) * 0.225f;
 

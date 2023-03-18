@@ -6,6 +6,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -514,21 +515,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int redirectTime = 24;
             int upwardRiseTime = 16;
             int attackDuration = HallowBladeLaserbeam.Lifetime;
-            int bladeReleaseTime = 90;
+            int bladeReleaseTime = 66;
             int laserChargeupTime = attackDuration - bladeReleaseTime;
+            int outwardLaserShootRate = 7;
             float maxRiseSpeed = 10f;
-            float bladeOffsetSpacing = 150f;
+            float bladeOffsetSpacing = 180f;
             float maxVerticalBladeOffset = 2000f;
-            bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime;
+            bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime + laserChargeupTime + 25f;
+            bool currentlyCharging = attackTimer >= redirectTime + upwardRiseTime && attackTimer < redirectTime + upwardRiseTime + laserChargeupTime;
             ref float bladeVerticalOffset = ref npc.Infernum().ExtraAI[0];
+            ref float outwardLaserShootCounter = ref npc.Infernum().ExtraAI[1];
 
             // Disable contact damage universally. It is not relevant for this attack.
             npc.damage = 0;
 
+            // Decide wing stuff.
+            wingMotionState = (int)WingMotionState.Flap;
+
             // Move to the top left/right of the player.
             if (attackTimer <= redirectTime)
             {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 200f, -180f);
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -180f);
                 Vector2 idealVelocity = (hoverDestination - npc.Center).ClampMagnitude(0f, 80f);
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.3f);
             }
@@ -564,9 +571,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     npc.netUpdate = true;
                 }
             }
-            
+
             // Release blades towards the laser.
-            if (Main.netMode != NetmodeID.MultiplayerClient && currentlyAttacking && attackTimer % 2f == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && currentlyCharging && attackTimer % 3f == 2f)
             {
                 bladeVerticalOffset += bladeOffsetSpacing;
                 if (bladeVerticalOffset >= maxVerticalBladeOffset)
@@ -577,7 +584,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
                 float hue = Utils.GetLerpValue(-maxVerticalBladeOffset, maxVerticalBladeOffset, bladeVerticalOffset) * 4f % 1f;
                 Vector2 leftSpawnPosition = new(target.Center.X - 900f, npc.Center.Y + bladeVerticalOffset);
-                Vector2 rightSpawnPosition = new(target.Center.X + 900f, npc.Center.Y + bladeVerticalOffset + 8f);
+                Vector2 rightSpawnPosition = new(target.Center.X + 900f, npc.Center.Y + bladeVerticalOffset);
 
                 if (target.Center.X < npc.Center.X + 900f)
                     Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, 0f, hue);
@@ -586,14 +593,51 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, MathHelper.Pi, 1f - hue);
             }
 
-            if (currentlyAttacking && attackTimer % 105f == 0f)
+            // Create an explosion and make the blades go outward.
+            if (attackTimer == redirectTime + upwardRiseTime + laserChargeupTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.QueenSlimeExplosionSound, target.Center);
+
+                target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.4f, 36);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<QueenSlimeLightWave>(), 0, 0f);
+            }
+
+            // Release lasers outward.
+            if (currentlyAttacking && (attackTimer - redirectTime + upwardRiseTime + laserChargeupTime) % outwardLaserShootRate == outwardLaserShootRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item163, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (float dy = -1500f; dy < 1500f; dy += bladeOffsetSpacing * 2.8f)
+                    {
+                        float hue = ((dy + 1500f) / 1000f + attackTimer * 0.0817f) % 1f;
+                        Vector2 bladeSpawnPosition = new(npc.Center.X, target.Center.Y + dy);
+                        if (outwardLaserShootCounter % 2f == 1f)
+                            bladeSpawnPosition.Y -= bladeOffsetSpacing * 1.4f;
+
+                        int bitch = Utilities.NewProjectileBetter(bladeSpawnPosition + Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, 0f, hue);
+                        Main.projectile[bitch].localAI[1] = 3000f;
+
+                        bitch = Utilities.NewProjectileBetter(bladeSpawnPosition - Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, MathHelper.Pi, 1f - hue);
+                        Main.projectile[bitch].localAI[1] = 3000f;
+                    }
+
+                    outwardLaserShootCounter++;
+                }
+            }
+
+            if (currentlyCharging && attackTimer % 105f == 0f)
                 SoundEngine.PlaySound(SoundID.Item164 with { Volume = 0.6f }, target.Center);
 
-            // Decide wing stuff.
-            wingMotionState = (int)WingMotionState.Flap;
+            if (attackTimer >= redirectTime + upwardRiseTime + attackDuration - 12f)
+                vibranceInterpolant = MathHelper.Clamp(vibranceInterpolant - 0.2f, 0f, 1f);
 
             if (attackTimer >= redirectTime + upwardRiseTime + attackDuration)
-                attackTimer = 0f;
+                SelectNextAttack(npc);
         }
 
         public static void SelectNextAttack(NPC npc)

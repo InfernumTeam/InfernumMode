@@ -51,14 +51,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public ref float Time => ref Projectile.localAI[0];
 
-        public static int FireDelay => 26;
+        public static int FireDelay => 24;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Hallow Blade");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 3000;
         }
 
         public override void SetDefaults()
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.MaxUpdates = 4;
-            Projectile.timeLeft = Projectile.MaxUpdates * 240;
+            Projectile.timeLeft = Projectile.MaxUpdates * 120;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.hide = true;
@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     Projectile.velocity *= 0.9f;
                 else
                 {
-                    Projectile.velocity = Projectile.ai[0].ToRotationVector2() * FlySpeedFactor * 32f;
+                    Projectile.velocity = Projectile.ai[0].ToRotationVector2() * FlySpeedFactor * 16f;
                     if (Main.rand.NextBool(3))
                     {
                         Dust magic = Dust.NewDustPerfect(Projectile.Center, 267);
@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Immediately fade away if intersecting the big laser.
-            if (!fadeOut)
+            if (!fadeOut && Projectile.localAI[1] == 0f)
             {
                 foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<HallowBladeLaserbeam>()))
                 {
@@ -196,9 +196,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             float telegraphInterpolant = Utils.GetLerpValue(10f, FireDelay, Time, false) * Projectile.Opacity;
             if (telegraphInterpolant > 0f)
             {
-                for (float i = 1f; i > 0f; i -= 1f / 32f)
+                for (float i = 1f; i > 0f; i -= 1f / 12f)
                 {
-                    Vector2 lineOffset = Projectile.rotation.ToRotationVector2() * Utils.GetLerpValue(0f, 1f, Projectile.velocity.Length(), true) * i * -160f;
+                    Vector2 lineOffset = Projectile.rotation.ToRotationVector2() * Utils.GetLerpValue(0f, 1f, Projectile.velocity.Length(), true) * i * -110f;
                     spriteBatch.Draw(tex, drawPos + lineOffset, null, lanceColor * telegraphInterpolant * (1f - i), Projectile.rotation, origin, scale, 0, 0f);
                     spriteBatch.Draw(tex, drawPos + lineOffset, null, new Color(255, 255, 255, 0) * telegraphInterpolant * (1f - i) * 0.15f, Projectile.rotation, origin, scale * 0.85f, 0, 0f);
                 }

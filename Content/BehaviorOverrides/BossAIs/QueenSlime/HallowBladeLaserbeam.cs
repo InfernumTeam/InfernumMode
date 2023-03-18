@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public Vector2 LaserEnd => Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
 
-        public static int Lifetime => 240;
+        public static int Lifetime => 300;
 
         public static float MaxLaserLength => 5000f;
 

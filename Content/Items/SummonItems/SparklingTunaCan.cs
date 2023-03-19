@@ -17,6 +17,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Tooltip.SetDefault("Summons the Giant Clam\n" +
                 "Can only be used in the sunken sea\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 2; // King Slime
         }
 
         public override void SetDefaults()

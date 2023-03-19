@@ -28,6 +28,7 @@ using MonoMod.Cil;
 using ReLogic.Content;
 using SubworldLibrary;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
 using Terraria.Audio;
@@ -44,6 +45,37 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public class ReplaceGoresHook : IHookEdit
     {
+        internal static List<int> InvalidGoreIDs => new()
+        {
+            // AdulT Eidolon Wyrm
+            InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type,
+
+            // Calamitas Clone.
+            InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Calamitas2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Calamitas4").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Calamitas5").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Calamitas6").Type,
+
+            // Cataclysm.
+            InfernumMode.CalamityMod.Find<ModGore>("Cataclysm").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Cataclysm2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Cataclysm3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Cataclysm4").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Cataclysm5").Type,
+
+            // Catastrophe.
+            InfernumMode.CalamityMod.Find<ModGore>("Catastrophe").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Catastrophe2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Catastrophe3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Catastrophe4").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("Catastrophe5").Type,
+        };
+
         internal static int AlterGores(On.Terraria.Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             // Do not spawn gores on the server.
@@ -77,16 +109,8 @@ namespace InfernumMode.Core.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type == 576)
                 Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type;
 
-            if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type || Type == InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type))
-                return Main.maxDust;
-
-            if (InfernumMode.CanUseCustomAIs && (Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type ||
-                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas2").Type ||
-                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type ||
-                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas4").Type ||
-                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas5").Type ||
-                Type == InfernumMode.CalamityMod.Find<ModGore>("Calamitas6").Type))
-                return Main.maxDust;
+            if (InfernumMode.CanUseCustomAIs && InvalidGoreIDs.Contains(Type))
+                return Main.maxGore;
 
             return orig(source, Position, Velocity, Type, Scale);
         }

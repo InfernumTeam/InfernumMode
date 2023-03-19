@@ -136,7 +136,7 @@ namespace InfernumMode.Core.Balancing
             [ModContent.NPCType<Apollo>()] = 2400000,
             [ModContent.NPCType<SupremeCataclysm>()] = 537200,
             [ModContent.NPCType<SupremeCatastrophe>()] = 537200,
-            [ModContent.NPCType<SupremeCalamitas>()] = 3564400,
+            [ModContent.NPCType<SupremeCalamitas>()] = 3141592,
         };
 
         public static int CalculateMechHP(int baseHP)

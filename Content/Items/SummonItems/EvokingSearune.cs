@@ -14,8 +14,9 @@ namespace InfernumMode.Content.Items.SummonItems
             SacrificeTotal = 1;
             DisplayName.SetDefault("Evoking Searune");
             Tooltip.SetDefault("Summons the Adult Eidolon Wyrm in the deepest layer of the Abyss\n" +
-                "A primordial artifact said to have been crafted by the Creator, it is capable of summoning a guarding apparition\n" +
+                "A primordial artifact said to have been formed by the First God, it is capable of summoning a guarding apparition\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 17; // Celestial Sigil
         }
 
         public override void SetDefaults()

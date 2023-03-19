@@ -1263,7 +1263,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 CreateCartoonAngerParticles(npc);
 
             // Do a cast animation after enough time has passed.
-            if (attackTimer >= tPoseDelay)
+            if (attackTimer >= tPoseDelay && npc.Opacity > 0f)
             {
                 frameVariant = (int)CloneFrameType.TPosingCastAnimation;
                 CreateCastAnimationParticles(npc);

@@ -41,7 +41,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             GeliticArmyStomp,
             FourThousandBlades, // :4000blades:
             CrystalMaze,
-            SlimeCongregations
+            SlimeCongregations,
+            CrownLasers
         }
 
         public enum WingMotionState
@@ -114,9 +115,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+            bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float wingAnimationTimer = ref npc.ai[2];
+            ref float crownIsAttached = ref npc.ai[3];
             ref float usingWings = ref npc.localAI[0];
             ref float wingMotionState = ref npc.localAI[1];
             ref float vibranceInterpolant = ref npc.localAI[2];
@@ -126,6 +129,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 Wings = new QueenSlimeWing[1];
                 npc.localAI[3] = 1f;
+                crownIsAttached = 1f;
+                npc.netUpdate = true;
             }
 
             // Despawn if the target is gone.
@@ -151,19 +156,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref usingWings, ref wingMotionState);
                     break;
                 case QueenSlimeAttackType.BasicHops:
-                    DoBehavior_BasicHops(npc, target, ref attackTimer, ref wingMotionState);
+                    DoBehavior_BasicHops(npc, target, phase2, ref attackTimer, ref wingMotionState);
                     break;
                 case QueenSlimeAttackType.GeliticArmyStomp:
-                    DoBehavior_GeliticArmyStomp(npc, target, ref attackTimer, ref wingMotionState);
+                    DoBehavior_GeliticArmyStomp(npc, target, phase2, ref attackTimer, ref wingMotionState);
                     break;
                 case QueenSlimeAttackType.FourThousandBlades:
                     DoBehavior_FourThousandBlades(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
                     break;
                 case QueenSlimeAttackType.CrystalMaze:
-                    DoBehavior_CrystalMaze(npc, target, ref attackTimer, ref wingMotionState, ref wingAnimationTimer);
+                    DoBehavior_CrystalMaze(npc, target, phase2, ref attackTimer, ref wingMotionState, ref wingAnimationTimer);
                     break;
                 case QueenSlimeAttackType.SlimeCongregations:
                     DoBehavior_SlimeCongregations(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
+                    break;
+                case QueenSlimeAttackType.CrownLasers:
+                    DoBehavior_CrownLasers(npc, target, phase2, ref attackTimer, ref wingMotionState, ref crownIsAttached);
                     break;
             }
 
@@ -299,7 +307,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
         }
 
-        public static void DoBehavior_BasicHops(NPC npc, Player target, ref float attackTimer, ref float wingMotionState)
+        public static void DoBehavior_BasicHops(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState)
         {
             int jumpTime = 24;
             int slamDelay = 30;
@@ -308,6 +316,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             float horizontalJumpSpeed = MathHelper.Distance(target.Center.X, npc.Center.X) * 0.012f + 16f;
             float baseVerticalJumpSpeed = 23f;
             float fallAcceleration = 0.9f;
+
+            if (phase2)
+            {
+                baseVerticalJumpSpeed += 2f;
+                slamDelay -= 6;
+            }
+
             ref float jumpState = ref npc.Infernum().ExtraAI[0];
             ref float groundCollisionY = ref npc.Infernum().ExtraAI[1];
             ref float didSlamGroundHitEffects = ref npc.Infernum().ExtraAI[2];
@@ -430,13 +445,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_GeliticArmyStomp(NPC npc, Player target, ref float attackTimer, ref float wingMotionState)
+        public static void DoBehavior_GeliticArmyStomp(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState)
         {
             int jumpCount = 2;
             int slamHoverTime = 14;
-            int slamFlyTime = WingUpdateCycleTime - slamHoverTime;
+            int slamFlyTime = WingUpdateCycleTime * 2 - slamHoverTime;
             int fallingSlimeID = ModContent.ProjectileType<FallingSpikeSlimeProj>();
             int bouncingSlimeID = ModContent.ProjectileType<BouncingSlimeProj>();
+            float maxSlimeOffset = 3443f;
+            if (phase2)
+                maxSlimeOffset -= 500f;
+
             ref float slimeSpawnAttackType = ref npc.Infernum().ExtraAI[0];
             ref float hasHitGround = ref npc.Infernum().ExtraAI[1];
             ref float jumpCounter = ref npc.Infernum().ExtraAI[2];
@@ -472,7 +491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 bool spawnSlimesHorizontally = slimeSpawnAttackType == fallingSlimeID || slimeSpawnAttackType == bouncingSlimeID;
                 if (Main.netMode != NetmodeID.MultiplayerClient && spawnSlimesHorizontally)
                 {
-                    float horizontalOffset = Utils.GetLerpValue(slamFlyTime, slamFlyTime + slamHoverTime, attackTimer, true) * 3443f;
+                    float horizontalOffset = Utils.GetLerpValue(slamFlyTime, slamFlyTime + slamHoverTime, attackTimer, true) * maxSlimeOffset;
                     if (slimeSpawnAttackType == bouncingSlimeID)
                         horizontalOffset *= 0.6f;
 
@@ -534,6 +553,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             float maxRiseSpeed = 10f;
             float bladeOffsetSpacing = 180f;
             float maxVerticalBladeOffset = 2000f;
+
             bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime + laserChargeupTime + 25f;
             bool currentlyCharging = attackTimer >= redirectTime + upwardRiseTime && attackTimer < redirectTime + upwardRiseTime + laserChargeupTime;
             ref float bladeVerticalOffset = ref npc.Infernum().ExtraAI[0];
@@ -656,11 +676,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_CrystalMaze(NPC npc, Player target, ref float attackTimer, ref float wingMotionState, ref float wingAnimationTimer)
+        public static void DoBehavior_CrystalMaze(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState, ref float wingAnimationTimer)
         {
             int mazeSummonDelay = 60;
             int spinningCrystalReleaseRate = 90;
             int spinningCrystalCount = 4;
+            int attackCycleCount = 4;
+
+            if (phase2)
+            {
+                spinningCrystalReleaseRate -= 6;
+                spinningCrystalCount += 3;
+            }
 
             // Disable contact damage universally. It is not relevant for this attack.
             npc.damage = 0;
@@ -697,18 +724,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < spinningCrystalCount; i++)
                     {
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(crystal =>
                         {
                             crystal.ModProjectile<SpinningLaserCrystal>().SpinningCenter = target.Center;
                         });
-                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<SpinningLaserCrystal>(), 0, 0f, -1, MathHelper.TwoPi * i / 4f);
+                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<SpinningLaserCrystal>(), 0, 0f, -1, MathHelper.TwoPi * i / spinningCrystalCount);
                     }
                 }
             }
 
-            if (attackTimer >= mazeSummonDelay + spinningCrystalReleaseRate * spinningCrystalCount - 1f)
+            if (attackTimer >= mazeSummonDelay + spinningCrystalReleaseRate * attackCycleCount - 1f)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<FallingCrystal>());
                 SelectNextAttack(npc);
@@ -819,15 +846,108 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
         }
 
+        public static void DoBehavior_CrownLasers(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState, ref float crownIsAttached)
+        {
+            int gelReleaseCount = 8;
+            ref float crownShouldReturn = ref npc.Infernum().ExtraAI[0];
+            ref float hasSummonedCrown = ref npc.Infernum().ExtraAI[1];
+            ref float projectileReleaseRate = ref npc.Infernum().ExtraAI[2];
+
+            if (projectileReleaseRate <= 0f)
+            {
+                projectileReleaseRate = phase2 ? 60f : 90f;
+                npc.netUpdate = true;
+            }
+
+            // Decide wing stuff.
+            wingMotionState = (int)WingMotionState.Flap;
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedCrown == 0f)
+            {
+                Utilities.NewProjectileBetter(CrownPosition(npc), -Vector2.UnitY * 3f, ModContent.ProjectileType<QueenSlimeCrown>(), 0, 0f);
+
+                hasSummonedCrown = 1f;
+                crownIsAttached = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Hover above the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 325f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 24f;
+            float distanceFromDestination = npc.Distance(hoverDestination);
+
+            // Slow down before firing.
+            if (distanceFromDestination < 80f)
+                idealVelocity *= 0.65f;
+            if (distanceFromDestination < 40f)
+                idealVelocity = npc.velocity;
+            npc.SimpleFlyMovement(idealVelocity, 0.65f);
+
+            // Release bursts of gel that fall downward.
+            if (attackTimer % projectileReleaseRate == projectileReleaseRate - 1f && attackTimer < projectileReleaseRate * gelReleaseCount)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = 6f;
+                SoundEngine.PlaySound(SoundID.NPCHit1, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.9f, 3.2f))
+                    {
+                        Vector2 gelVelocity = new(i, Main.rand.NextFloat(-12f, -10f));
+                        Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), 125, 0f);
+                    }
+                }
+            }
+
+            npc.rotation = npc.velocity.X * 0.025f;
+
+            if (attackTimer >= projectileReleaseRate * (gelReleaseCount - 1f) - 36f)
+                crownShouldReturn = 1f;
+
+            if (attackTimer >= projectileReleaseRate * (gelReleaseCount + 3.6f))
+            {
+                npc.rotation = 0f;
+                SelectNextAttack(npc);
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
+            bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             QueenSlimeAttackType previousAttack = (QueenSlimeAttackType)npc.ai[0];
             QueenSlimeAttackType nextAttack = QueenSlimeAttackType.BasicHops;
-            if (previousAttack == QueenSlimeAttackType.BasicHops)
-                nextAttack = QueenSlimeAttackType.SlimeCongregations;
+
+            switch (previousAttack)
+            {
+                case QueenSlimeAttackType.SpawnAnimation:
+                    nextAttack = QueenSlimeAttackType.BasicHops;
+                    break;
+                case QueenSlimeAttackType.BasicHops:
+                    nextAttack = QueenSlimeAttackType.CrystalMaze;
+                    break;
+                case QueenSlimeAttackType.CrystalMaze:
+                    nextAttack = QueenSlimeAttackType.CrownLasers;
+                    break;
+                case QueenSlimeAttackType.CrownLasers:
+                    nextAttack = QueenSlimeAttackType.GeliticArmyStomp;
+                    break;
+                case QueenSlimeAttackType.GeliticArmyStomp:
+                    nextAttack = phase2 ? QueenSlimeAttackType.FourThousandBlades : QueenSlimeAttackType.BasicHops;
+                    break;
+                case QueenSlimeAttackType.FourThousandBlades:
+                    nextAttack = QueenSlimeAttackType.SlimeCongregations;
+                    break;
+                case QueenSlimeAttackType.SlimeCongregations:
+                    nextAttack = QueenSlimeAttackType.BasicHops;
+                    break;
+            }
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+            npc.Opacity = 1f;
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
@@ -1017,7 +1137,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             frameThing = crownTexture.Frame();
             origin = frameThing.Size() * 0.5f;
 
-            spriteBatch.Draw(crownTexture, CrownPosition(npc) - Main.screenPosition, frameThing, color * npc.Opacity, npc.rotation, origin, 1f, SpriteEffects.FlipHorizontally, 0f);
+            if (npc.ai[3] == 1f)
+                spriteBatch.Draw(crownTexture, CrownPosition(npc) - Main.screenPosition, frameThing, color * npc.Opacity, npc.rotation, origin, 1f, SpriteEffects.FlipHorizontally, 0f);
             return false;
         }
 

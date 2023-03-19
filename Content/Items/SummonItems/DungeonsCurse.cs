@@ -20,6 +20,7 @@ namespace InfernumMode.Content.Items.SummonItems
                 "Skeletron enrages during daytime\n" +
                 "It becomes nighttime if this item is used during daytime\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 5; // Abeemination / Deer Thing
         }
 
         public override void SetDefaults()

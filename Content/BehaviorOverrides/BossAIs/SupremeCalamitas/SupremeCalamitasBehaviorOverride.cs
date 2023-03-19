@@ -7,6 +7,7 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
+using CalamityMod.World;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Fluids;
@@ -257,31 +258,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle initializations.
             if (npc.localAI[0] == 0f)
             {
-                // Define the arena.
-                Vector2 arenaArea = new(145f, 145f);
+                // Define the arena. This is finely picked to be the same as in death mode.
+                Vector2 arenaArea = new(125f, 125f);
                 npc.Infernum().Arena = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
-                int left = (int)(npc.Infernum().Arena.Center().X / 16 - arenaArea.X * 0.5f);
-                int right = (int)(npc.Infernum().Arena.Center().X / 16 + arenaArea.X * 0.5f);
-                int top = (int)(npc.Infernum().Arena.Center().Y / 16 - arenaArea.Y * 0.5f);
-                int bottom = (int)(npc.Infernum().Arena.Center().Y / 16 + arenaArea.Y * 0.5f);
-                int arenaTileType = ModContent.TileType<ArenaTile>();
+                ushort arenaTileType = (ushort)ModContent.TileType<ArenaTile>();
 
-                for (int i = left; i <= right; i++)
+                Point arenaCenter = npc.Infernum().Arena.Center().ToTileCoordinates();
+                arenaCenter.X += 3;
+                arenaCenter.Y += 4;
+                int width = npc.Infernum().Arena.Width / 2 / 16 + 1;
+                int height = npc.Infernum().Arena.Height / 2 / 16 + 1;
+                for (int x = arenaCenter.X - width; x <= arenaCenter.X + width; x++)
                 {
-                    for (int j = top; j <= bottom; j++)
+                    for (int y = arenaCenter.Y - height; y <= arenaCenter.Y + height; y++)
                     {
-                        if (!WorldGen.InWorld(i, j))
+                        if (!WorldGen.InWorld(x, y, 2))
                             continue;
 
-                        // Create arena tiles.
-                        if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].HasTile)
+                        if ((x == arenaCenter.X - width || x == arenaCenter.X + width || y == arenaCenter.Y - height || y == arenaCenter.Y + height) && !Main.tile[x, y].HasTile)
                         {
-                            Main.tile[i, j].TileType = (ushort)arenaTileType;
-                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
-                            if (Main.netMode == NetmodeID.Server)
-                                NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
-                            else
-                                WorldGen.SquareTileFrame(i, j, true);
+                            Main.tile[x, y].TileType = arenaTileType;
+                            Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
+                        }
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendTileSquare(-1, x, y, 1, TileChangeType.None);
+                        }
+                        else
+                        {
+                            WorldGen.SquareTileFrame(x, y, true);
                         }
                     }
                 }

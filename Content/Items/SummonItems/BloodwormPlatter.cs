@@ -17,6 +17,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Tooltip.SetDefault("Summons the Old Duke\n" +
                 "Can only be used in the Sulphurous Sea\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 17; // Celestial Sigil
         }
 
         public override void SetDefaults()

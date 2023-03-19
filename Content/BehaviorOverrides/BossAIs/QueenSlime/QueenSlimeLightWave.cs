@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 {
     public class QueenSlimeLightWave : BaseWaveExplosionProjectile
     {
-        public override int Lifetime => 60;
+        public override int Lifetime => 54;
 
         public override float MaxRadius => 3000f;
 
@@ -27,8 +27,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            Color color = Color.Lerp(Color.HotPink, Color.Cyan, lifetimeCompletionRatio);
-            return Color.Lerp(color, new Color(1f, 1f, 1f, 0f), MathHelper.Clamp(lifetimeCompletionRatio * 1.35f, 0f, 1f));
+            Color color = Color.Lerp(Color.HotPink, Color.Cyan, lifetimeCompletionRatio) * Utils.GetLerpValue(1f, 0.75f, lifetimeCompletionRatio, true);
+            return Color.Lerp(color, new Color(1f, 1f, 1f, 0f), MathHelper.Clamp(lifetimeCompletionRatio * 1.35f, 0f, 1f)) * 0.7f;
         }
 
         public override void PostAI()

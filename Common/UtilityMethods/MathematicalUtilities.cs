@@ -34,7 +34,7 @@ namespace InfernumMode
         /// </summary>
         /// <param name="v1">The first vector.</param>
         /// <param name="v2">The second vector.</param>
-        public static float AngleBetween(this Vector2 v1, Vector2 v2) => (float)Math.Acos(Vector2.Dot(v1.SafeNormalize(Vector2.Zero), v2.SafeNormalize(Vector2.Zero)));
+        public static float AngleBetween(this Vector2 v1, Vector2 v2) => MathF.Acos(Vector2.Dot(v1.SafeNormalize(Vector2.Zero), v2.SafeNormalize(Vector2.Zero)));
 
         /// <summary>
         /// Uses a rewritten horizontal range formula to determine the direction to fire a projectile in order for it to hit a destination. Falls back on a certain value if no such direction can exist. If no fallback is provided, a clamp is used.

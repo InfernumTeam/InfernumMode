@@ -32,7 +32,7 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
             {
                 if (InfernumMode.CanUseCustomAIs)
-                    return MoonLordCoreBehaviorOverride.OverallTint;
+                    return Color.Lerp(drawColor, MoonLordCoreBehaviorOverride.OverallTint with { A = 187 } * 1.35f, 0.75f) * npc.Opacity;
             }
 
             if (npc.type == ModContent.NPCType<ThanatosHead>() ||

@@ -151,8 +151,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     npc.velocity = npc.SafeDirectionTo(target.Center) * patrolDistance / patrolTime;
                 }
 
-                if (true)
-                    useFreddy = 1;
+                if (Utilities.IsAprilFirst())
+                    useFreddy = 1f;
 
                 npc.netUpdate = true;
                 verticalRepositionDelay = 180f;

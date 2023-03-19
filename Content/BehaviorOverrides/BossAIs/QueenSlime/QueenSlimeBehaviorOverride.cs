@@ -7,7 +7,6 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -41,7 +40,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             BasicHops,
             GeliticArmyStomp,
             FourThousandBlades, // :4000blades:
-            CrystalMaze
+            CrystalMaze,
+            SlimeCongregations
         }
 
         public enum WingMotionState
@@ -107,18 +107,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static int WingUpdateCycleTime => 40;
 
-#pragma warning disable IDE0051 // Remove unused private members
-        private const string lassitude = "Truly, the greatest lament of a creator is the acknowledgement of one's inability to work creatively enough." +
-            "There was no joy in creating this C# file." +
-            "This AI was not a product of passion, but of necessity. My old rendition was utterly horrific in its design and execution." +
-            "Now, I am tasked with correcting that wrong." +
-            "There were no intriguing technical discoveries. There was no innovative boss design tricks." +
-            "There was no central theme or mechanic that made me excited to finish this. There was no true challenge that elicited a flow state." +
-            "I got distracted many times before it was ready to be tested, because I did not have a noticeable desire to do what I had to." +
-            "I hope someone will derive value from this boss, because I unfortunately cannot say that I have." +
-            "If not, then I am truly sorry, for my boss design aptitude is insufficient to make it good enough. -Dominic";
-#pragma warning restore IDE0051 // Remove unused private members
-
         #endregion Fields, Properties, and Enumerations
 
         #region AI and Behaviors
@@ -173,6 +161,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     break;
                 case QueenSlimeAttackType.CrystalMaze:
                     DoBehavior_CrystalMaze(npc, target, ref attackTimer, ref wingMotionState, ref wingAnimationTimer);
+                    break;
+                case QueenSlimeAttackType.SlimeCongregations:
+                    DoBehavior_SlimeCongregations(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
                     break;
             }
 
@@ -724,12 +715,116 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
         }
 
+        public static void DoBehavior_SlimeCongregations(NPC npc, Player target, ref float attackTimer, ref float wingMotionState, ref float vibranceInterpolant)
+        {
+            int jitterTime = 90;
+            int splitCount = 7;
+            int postSplitEffectsTime = 72;
+            int explodeCount = 3;
+            ref float convergencePointX = ref npc.Infernum().ExtraAI[0];
+            ref float convergencePointY = ref npc.Infernum().ExtraAI[1];
+            ref float canReform = ref npc.Infernum().ExtraAI[2];
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[3];
+            ref float explodeCounter = ref npc.Infernum().ExtraAI[4];
+
+            // Decide wing stuff.
+            wingMotionState = (int)WingMotionState.Flap;
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Jitter in place.
+            if (attackTimer <= jitterTime)
+            {
+                vibranceInterpolant = Utils.GetLerpValue(0f, jitterTime - 30f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(jitterTime - 3f, jitterTime - 30f, attackTimer, true);
+                npc.Center += Main.rand.NextVector2Circular(3f, 3f);
+            }
+
+            // Split into flying slimes.
+            if (attackTimer == jitterTime)
+            {
+                SoundEngine.PlaySound(SlimeGodCore.PossessionSound, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 convergencePoint = target.Center + target.velocity * 50f - Vector2.UnitY * 300f;
+                    while (Collision.SolidCollision(convergencePoint - Vector2.One * 200f, 400, 400))
+                        convergencePoint.Y -= 30f;
+
+                    for (int i = 0; i < splitCount; i++)
+                    {
+                        Vector2 splitVelocity = (MathHelper.TwoPi * i / splitCount + Main.rand.NextFloat(0.25f)).ToRotationVector2() * Main.rand.NextFloat(9f, 10.5f) + Main.rand.NextVector2Circular(0.8f, 0.8f);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(splitSlime =>
+                        {
+                            splitSlime.ModProjectile<QueenSlimeSplitFormProj>().ConvergencePoint = convergencePoint;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center + splitVelocity, splitVelocity, ModContent.ProjectileType<QueenSlimeSplitFormProj>(), 140, 0f);
+                    }
+
+                    telegraphInterpolant = 0f;
+                    convergencePointX = convergencePoint.X;
+                    convergencePointY = convergencePoint.Y;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Prevent the attack timer from incrementing if in the split form.
+            if (canReform == 0f && attackTimer >= jitterTime + 1f)
+            {
+                attackTimer = jitterTime + 1f;
+                npc.Center = new(convergencePointX, convergencePointY);
+                npc.Opacity = 0f;
+            }
+
+            // Aim the crystal telegraphs once ready to reform.
+            if (canReform == 1f)
+            {
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.06f, 0f, 1f);
+                npc.scale = npc.Opacity + 0.001f;
+                telegraphInterpolant = Utils.GetLerpValue(jitterTime, jitterTime + postSplitEffectsTime - 3f, attackTimer, true);
+                if (attackTimer >= jitterTime + postSplitEffectsTime)
+                {
+                    target.Infernum_Camera().CurrentScreenShakePower = 8f;
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.2f, 20);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<QueenSlimeLightWave>(), 0, 0f);
+
+                        for (int i = 0; i < 9; i++)
+                        {
+                            Vector2 crystalDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
+                            Utilities.NewProjectileBetter(npc.Center - crystalDirection * 70f, crystalDirection, ModContent.ProjectileType<HallowCrystalSpike>(), 200, 0f);
+                        }
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 crystalSpikeVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.43f, 0.43f, i / 4f)) * 8f;
+                            Utilities.NewProjectileBetter(npc.Center, crystalSpikeVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), 140, 0f);
+                        }
+                    }
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.QueenSlimeExplosionSound with { Pitch = 0.25f }, target.Center);
+                    attackTimer = jitterTime - 1f;
+                    canReform = 0f;
+                    explodeCounter++;
+                    npc.netUpdate = true;
+
+                    if (explodeCounter >= explodeCount)
+                        SelectNextAttack(npc);
+                }
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             QueenSlimeAttackType previousAttack = (QueenSlimeAttackType)npc.ai[0];
             QueenSlimeAttackType nextAttack = QueenSlimeAttackType.BasicHops;
             if (previousAttack == QueenSlimeAttackType.BasicHops)
-                nextAttack = QueenSlimeAttackType.CrystalMaze;
+                nextAttack = QueenSlimeAttackType.SlimeCongregations;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -805,6 +900,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             int frame = npc.frame.Y / npc.frame.Height;
             float vibranceInterpolant = npc.localAI[2];
+            QueenSlimeAttackType currentAttack = (QueenSlimeAttackType)npc.ai[0];
             Rectangle frameThing = texture.Frame(2, Main.npcFrameCount[npc.type], frame / Main.npcFrameCount[npc.type], frame % Main.npcFrameCount[npc.type]);
             frameThing.Inflate(0, -2);
             Vector2 origin = frameThing.Size() * new Vector2(0.5f, 1f);
@@ -813,11 +909,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Incorporate vibrancy into the colors.
             color.A = (byte)(color.A * (1f - vibranceInterpolant));
 
+            // Draw the telegraph lines if necessary.
+            if (currentAttack == QueenSlimeAttackType.SlimeCongregations && npc.Infernum().ExtraAI[3] > 0f)
+            {
+                float telegraphInterpolant = npc.Infernum().ExtraAI[3];
+                for (int i = 0; i < 9; i++)
+                {
+                    float laserRotation = -MathHelper.TwoPi * i / 9f;
+                    BloomLineDrawInfo lineInfo = new()
+                    {
+                        LineRotation = laserRotation,
+                        WidthFactor = 0.002f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                        BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
+                        Scale = Vector2.One * telegraphInterpolant * 3600f,
+                        MainColor = Color.Lerp(Color.HotPink, Color.SkyBlue, telegraphInterpolant * 0.3f),
+                        DarkerColor = Color.Purple,
+                        Opacity = MathF.Sqrt(telegraphInterpolant),
+                        BloomOpacity = 0.45f,
+                        LightStrength = 6.67f
+                    };
+                    Utilities.DrawBloomLineTelegraph(npc.Center - Main.screenPosition, lineInfo, true, Vector2.One * 750f);
+                }
+            }
+
             // Draw individual wings.
             if (npc.localAI[0] == 1f)
             {
                 for (int i = 0; i < Wings.Length; i++)
-                    DrawWings(npc.Center - Main.screenPosition, Wings[i].WingRotation, Wings[i].WingRotationDifferenceMovingAverage, npc.rotation, 1f);
+                    DrawWings(npc.Center - Main.screenPosition, Wings[i].WingRotation, Wings[i].WingRotationDifferenceMovingAverage, npc.rotation, 1f, npc.Opacity);
             }
 
             float crystalDrawOffset = 0f;
@@ -898,11 +1017,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             frameThing = crownTexture.Frame();
             origin = frameThing.Size() * 0.5f;
 
-            spriteBatch.Draw(crownTexture, CrownPosition(npc) - Main.screenPosition, frameThing, color, npc.rotation, origin, 1f, SpriteEffects.FlipHorizontally, 0f);
+            spriteBatch.Draw(crownTexture, CrownPosition(npc) - Main.screenPosition, frameThing, color * npc.Opacity, npc.rotation, origin, 1f, SpriteEffects.FlipHorizontally, 0f);
             return false;
         }
 
-        public static void DrawWings(Vector2 drawPosition, float wingRotation, float rotationDifferenceMovingAverage, float generalRotation, float fadeInterpolant)
+        public static void DrawWings(Vector2 drawPosition, float wingRotation, float rotationDifferenceMovingAverage, float generalRotation, float fadeInterpolant, float opacity)
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
@@ -921,7 +1040,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             for (int i = 4; i >= 0; i--)
             {
                 // Make wings slightly brighter when they're moving at a fast angular pace.
-                Color wingColor = Color.Lerp(wingsDrawColor, wingsDrawColorWeak, i / 4f) * Utils.Remap(rotationDifferenceMovingAverage, 0f, 0.04f, 0.66f, 0.75f);
+                Color wingColor = Color.Lerp(wingsDrawColor, wingsDrawColorWeak, i / 4f) * Utils.Remap(rotationDifferenceMovingAverage, 0f, 0.04f, 0.66f, 0.75f) * opacity;
 
                 float rotationOffset = i * MathHelper.Min(rotationDifferenceMovingAverage, 0.16f) * (1f - squishOffset) * 0.5f;
                 float currentWingRotation = wingRotation + rotationOffset;

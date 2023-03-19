@@ -125,6 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             float patrolDistance = 4800f;
             bool spawnedAtGarden = npc.ai[3] == 1f;
             ref float verticalRepositionDelay = ref npc.Infernum().ExtraAI[0];
+            ref float useFreddy = ref npc.Infernum().ExtraAI[10];
 
             // Disable boss effects.
             npc.boss = false;
@@ -149,6 +150,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     npc.position.Y -= 120f;
                     npc.velocity = npc.SafeDirectionTo(target.Center) * patrolDistance / patrolTime;
                 }
+
+                if (true)
+                    useFreddy = 1;
+
                 npc.netUpdate = true;
                 verticalRepositionDelay = 180f;
             }
@@ -829,6 +834,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 Texture2D glowMaskTexture;
 
                 Rectangle frame = npc.frame;
+                Rectangle? glowmaskFrame = frame;
                 int frameCount = Main.npcFrameCount[npc.type];
 
                 if (npc.ai[0] == 4f)
@@ -859,6 +865,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 {
                     scale *= 1.5f;
 
+                    if (npc.Infernum().ExtraAI[10] == 1)
+                    {
+                        glowMaskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Signus/Freddy").Value;
+                        glowmaskFrame = null;
+                    }
+
                     // Draw an lantern backglow.
                     Texture2D lanternTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/CosmicLantern").Value;
                     Rectangle lanternFrame = lanternTexture.Frame(1, 4, 0, (int)(Main.GlobalTimeWrappedHourly * 10f) % 4);
@@ -884,7 +896,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 Color glowmaskColor = Color.Lerp(Color.White, Color.Fuchsia, 0.3f) * opacity;
 
                 if (npc.ai[1] != (int)SignusAttackType.ShadowDash)
-                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(glowMaskTexture, drawPosition, frame, glowmaskColor, rotation, origin, scale, direction, 0));
+                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(glowMaskTexture, drawPosition, glowmaskFrame, glowmaskColor, rotation, origin, scale, direction, 0));
             }
 
             Player target = Main.player[npc.target];

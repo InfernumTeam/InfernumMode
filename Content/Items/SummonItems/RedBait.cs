@@ -16,6 +16,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Tooltip.SetDefault("Summons the Dreadnautilus\n" +
                 "Can only be used at night\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 6; // Queen Slime
         }
 
         public override void SetDefaults()

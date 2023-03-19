@@ -32,6 +32,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             [ItemID.MechanicalSkull] = null,
             [ItemID.MechanicalWorm] = null,
             [ItemID.ClothierVoodooDoll] = null,
+            [ModContent.ItemType<Abombination>()] = "Enrages outside of the Underground Jungle",
             [ModContent.ItemType<ExoticPheromones>()] = null,
             [ModContent.ItemType<NecroplasmicBeacon>()] = "Enrages outside of the Underground",
         };

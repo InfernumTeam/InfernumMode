@@ -96,9 +96,13 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == NPCID.BloodNautilus)
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
 
-            // Have CalClone use a custom map icon.
+            // Have CalClone and her brothers use a custom map icon.
             if (npc.type == ModContent.NPCType<CalamitasClone>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalCloneMapIcon");
+            if (npc.type == ModContent.NPCType<Cataclysm>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CataclysmMapIcon");
+            if (npc.type == ModContent.NPCType<Catastrophe>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CatastropheMapIcon");
 
             // Have Sepulcher use a custom map icon.
             if (npc.type == ModContent.NPCType<SepulcherHead>())
@@ -123,7 +127,7 @@ namespace InfernumMode.Core.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            if (npc.type == ModContent.NPCType<CalamitasClone>())
+            if (npc.type == ModContent.NPCType<CalamitasClone>() || npc.type == ModContent.NPCType<Cataclysm>() || npc.type == ModContent.NPCType<Catastrophe>())
                 spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }
 

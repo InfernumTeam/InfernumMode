@@ -15,6 +15,7 @@ namespace InfernumMode.Content.Items.SummonItems
                 "Does not need to be used in the Hallow\n" +
                 "The Empress enrages during daytime\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
         }
 
         public override void SetDefaults()

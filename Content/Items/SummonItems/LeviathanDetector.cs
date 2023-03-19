@@ -21,6 +21,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Tooltip.SetDefault("Summons Anahita\n" +
                 "Does not need to be used at the ocean\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
         }
 
         public override void SetDefaults()

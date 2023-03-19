@@ -154,7 +154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
                 if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
                 {
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonsAmbience");
                     InfernumMode.DraedonThemeTimer = 0f;
                 }
                 else

@@ -14,6 +14,7 @@ namespace InfernumMode.Content.Items.SummonItems
             Tooltip.SetDefault("Summons Duke Fishron\n" +
                 "Can only be used at the Ocean\n" +
                 "Not consumable");
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 12; // Duke Fishron
         }
 
         public override void SetDefaults()

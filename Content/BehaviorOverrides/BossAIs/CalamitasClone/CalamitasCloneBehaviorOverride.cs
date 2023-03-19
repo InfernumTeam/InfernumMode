@@ -59,6 +59,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             DeathAnimation
         }
+
+        // These enum values are in an order that corresponds with the horizontal frame on the sprite.
+        // If the sprite is changed, this will also need to be changed.
+        public enum CloneFrameType
+        {
+            IdleAnimation = 0 ,
+            FreeArm = 1,
+            TPosingCastAnimation = 2
+        }
         #endregion
 
         #region AI
@@ -80,6 +89,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public const int ForcefieldScaleIndex = 10;
 
         public const int DrawCharredFormIndex = 11;
+
+        public const int FrameVariantIndex = 12;
 
         public static Primitive3DStrip HexStripDrawer
         {
@@ -123,12 +134,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Phase3LifeRatio
         };
 
+        public static float ArmLength => 12f;
+
         public override bool PreAI(NPC npc)
         {
             // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
             if (npc.scale != 1f)
             {
-                npc.Size = Vector2.One * 56f;
+                npc.Size = new Vector2(52f, 70f);
                 npc.scale = 1f;
             }
 
@@ -155,7 +168,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int catharsisSoulReleaseRate = 90;
             bool anyBrothers = NPC.AnyNPCs(ModContent.NPCType<Cataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<Catastrophe>());
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -171,6 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float hasEnteredPhase3 = ref npc.Infernum().ExtraAI[HasEnteredPhase3Index];
             ref float forcefieldScale = ref npc.Infernum().ExtraAI[ForcefieldScaleIndex];
             ref float drawCharredForm = ref npc.Infernum().ExtraAI[DrawCharredFormIndex];
+            ref float frameVariant = ref npc.Infernum().ExtraAI[FrameVariantIndex];
 
             // Apply hexes to the target.
             if (GetHexNames(out string hexName, out string hexName2))
@@ -221,7 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Create magic on CalClone's hand.
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
-                Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+                Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * ArmLength;
                 Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
                 magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                 magic.noGravity = true;
@@ -274,46 +287,46 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             switch ((CloneAttackType)(int)attackType)
             {
                 case CloneAttackType.SpawnAnimation:
-                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation, ref forcefieldScale);
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation, ref forcefieldScale, ref frameVariant);
                     break;
                 case CloneAttackType.WandFireballs:
-                    DoBehavior_WandFireballs(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_WandFireballs(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
                     break;
                 case CloneAttackType.SoulSeekerResurrection:
-                    DoBehavior_SoulSeekerResurrection(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_SoulSeekerResurrection(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
                     break;
                 case CloneAttackType.ShadowTeleports:
-                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant);
+                    DoBehavior_ShadowTeleports(npc, target, ref attackTimer, ref armRotation, ref blackFormInterpolant, ref frameVariant);
                     break;
                 case CloneAttackType.DarkOverheadFireball:
-                    DoBehavior_DarkOverheadFireball(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_DarkOverheadFireball(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
                     break;
                 case CloneAttackType.ConvergingBookEnergy:
-                    DoBehavior_ConvergingBookEnergy(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_ConvergingBookEnergy(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
                     break;
                 case CloneAttackType.FireburstDashes:
-                    DoBehavior_FireburstDashes(npc, target, ref attackTimer, ref armRotation, ref forcefieldScale);
+                    DoBehavior_FireburstDashes(npc, target, ref attackTimer, ref armRotation, ref forcefieldScale, ref frameVariant);
                     break;
 
                 case CloneAttackType.BrothersPhase:
-                    DoBehavior_BrothersPhase(npc, target, anyBrothers, ref attackTimer, ref armRotation);
+                    DoBehavior_BrothersPhase(npc, target, anyBrothers, ref attackTimer, ref armRotation, ref frameVariant, ref forcefieldScale);
                     break;
                 case CloneAttackType.TransitionToFinalPhase:
-                    DoBehavior_TransitionToFinalPhase(npc, target, ref attackTimer, ref armRotation, ref eyeGleamInterpolant);
+                    DoBehavior_TransitionToFinalPhase(npc, target, ref attackTimer, ref armRotation, ref eyeGleamInterpolant, ref frameVariant);
                     break;
 
                 case CloneAttackType.BarrageOfArcingDarts:
-                    DoBehavior_BarrageOfArcingDarts(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_BarrageOfArcingDarts(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
                     break;
                 case CloneAttackType.FireSlashes:
-                    DoBehavior_FireSlashes(npc, target, ref attackTimer, ref armRotation, ref forcefieldScale);
+                    DoBehavior_FireSlashes(npc, target, ref attackTimer, ref armRotation, ref forcefieldScale, ref frameVariant);
                     break;
                 case CloneAttackType.RisingBrimstoneFireBursts:
-                    DoBehavior_RisingBrimstoneFireBursts(npc, target, ref attackTimer, ref armRotation);
+                    DoBehavior_RisingBrimstoneFireBursts(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
                     break;
 
                 case CloneAttackType.DeathAnimation:
-                    DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref armRotation, ref eyeGleamInterpolant, ref forcefieldScale, ref drawCharredForm);
+                    DoBehavior_DeathAnimation(npc, target, ref attackTimer, ref armRotation, ref eyeGleamInterpolant, ref forcefieldScale, ref drawCharredForm, ref frameVariant);
                     break;
             }
 
@@ -353,7 +366,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             return true;
         }
 
-        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation, ref float forcefieldScale)
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation, ref float forcefieldScale, ref float frameVariant)
         {
             int blackFadeoutTime = 30;
             int blackFadeinTime = 6;
@@ -369,6 +382,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Make the forcefield appear.
             forcefieldScale = MathHelper.Clamp(forcefieldScale + 0.1f, 0f, 1f);
+
+            // Do the idle animation.
+            frameVariant = (int)CloneFrameType.IdleAnimation;
 
             // Don't exist yet if the fade effects are ongoing.
             if (attackTimer < blackFadeoutTime)
@@ -418,12 +434,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     SelectNextAttack(npc);
                 }
             }
-
-            // Perform animation effects.
-            npc.frameCounter += 0.2f;
         }
 
-        public static void DoBehavior_WandFireballs(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_WandFireballs(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)
         {
             int wandChargeUpTime = 45;
             int wandAimDelay = 32;
@@ -433,7 +446,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int totalWandCycles = 2;
             int flameReleaseRate = 3;
             int wandAttackCycle = (int)(attackTimer - wandChargeUpTime - wandAimDelay) % wandCycleTime;
-
             int wandReelBackTime = 40;
 
             float fireShootSpeed = npc.Distance(target.Center) * 0.026f + 7.5f;
@@ -443,6 +455,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float wandGlowInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float throwingWand = ref npc.Infernum().ExtraAI[1];
             ref float wandWasThrown = ref npc.Infernum().ExtraAI[2];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Aim the wand at the sky.
             if (attackTimer < wandChargeUpTime && throwingWand == 0f)
@@ -563,9 +578,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
-            // Perform animation effects.
-            npc.frameCounter += 0.2f;
-
             if (attackTimer >= wandChargeUpTime + wandAimDelay + wandCycleTime * totalWandCycles && throwingWand == 0f)
             {
                 throwingWand = 1f;
@@ -574,7 +586,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_SoulSeekerResurrection(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_SoulSeekerResurrection(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)
         {
             int redirectTime = 45;
             int seekerSummonTime = 30;
@@ -587,6 +599,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float totalSummonedSoulSeekers = ref npc.Infernum().ExtraAI[0];
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
             ref float beamDirection = ref npc.Infernum().ExtraAI[2];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Hover to the side of the target.
             if (attackTimer <= redirectTime)
@@ -705,12 +720,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Look at the target.
             if (attackTimer < redirectTime + seekerSummonTime + seekerShootTime + laserTelegraphTime)
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-
-            // Perform animation effects.
-            npc.frameCounter += 0.2f;
         }
 
-        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant)
+        public static void DoBehavior_ShadowTeleports(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float blackFormInterpolant, ref float frameVariant)
         {
             int jitterTime = 45;
             int disappearTime = 20;
@@ -722,7 +734,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float teleportOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float teleportCounter = ref npc.Infernum().ExtraAI[1];
 
-            armRotation = 0f;
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
+
+            armRotation = armRotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
 
             // Inititalize the teleport offset direction.
             if (attackTimer == 1f)
@@ -820,7 +835,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             blackFormInterpolant = MathF.Pow(1f - npc.Opacity, 0.2f) * 3f;
         }
 
-        public static void DoBehavior_DarkOverheadFireball(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_DarkOverheadFireball(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)
         {
             int redirectTime = 45;
             int fireOrbReleaseDelay = 15;
@@ -835,10 +850,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             bool kindlyGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1450f);
             bool almostGoFuckYourselfDueToDistance = !npc.WithinRange(target.Center, 1080f);
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
-            Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+            Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * ArmLength;
             ref float fireShootCounter = ref npc.Infernum().ExtraAI[0];
             ref float isSlammingFireballDown = ref npc.Infernum().ExtraAI[1];
             ref float fireballHasExploded = ref npc.Infernum().ExtraAI[2];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             if (fireballHasExploded == 0f)
             {
@@ -970,7 +988,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_ConvergingBookEnergy(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_ConvergingBookEnergy(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)
         {
             int bookAppearTime = 30;
             int sparkSpiralCount = 7;
@@ -988,6 +1006,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float bookJitterInterpolant = ref npc.Infernum().ExtraAI[2];
             ref float bookHasExploded = ref npc.Infernum().ExtraAI[3];
             ref float blackCutoutRadius = ref npc.Infernum().ExtraAI[4];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             if (bookHasExploded == 0f)
             {
@@ -1110,7 +1131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 target.AddBuff(ModContent.BuffType<Madness>(), 8);
         }
 
-        public static void DoBehavior_FireburstDashes(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float forcefieldScale)
+        public static void DoBehavior_FireburstDashes(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float forcefieldScale, ref float frameVariant)
         {
             int hoverTime = 30;
             int chargeTime = 26;
@@ -1123,6 +1144,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             float chargeAcceleration = 1.75f;
             ref float shieldScale = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Hover to the side of the target in anticipation of the charge.
             if (wrappedAttackTimer <= hoverTime)
@@ -1192,12 +1216,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_BrothersPhase(NPC npc, Player target, bool anyBrothers, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_BrothersPhase(NPC npc, Player target, bool anyBrothers, ref float attackTimer, ref float armRotation, ref float frameVariant, ref float forcefieldScale)
         {
             int rumbleTime = 240;
+            int angyParticleDelay = 120;
+            int tPoseDelay = 60;
 
-            // Aim the arm downward.
-            armRotation = armRotation.AngleTowards(0f, 0.046f);
+            // Do the idle animation at first.
+            frameVariant = (int)CloneFrameType.IdleAnimation;
+            armRotation = 0f;
 
             // Clear away projectiles from old attacks at first.
             if (attackTimer <= 2f)
@@ -1227,6 +1254,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.velocity.X *= 0.75f;
                 npc.Opacity = 1f;
                 target.Infernum_Camera().CurrentScreenShakePower = attackTimer / rumbleTime * 6f;
+            }
+
+            // Make the forcefield dissipate.
+            forcefieldScale = Utils.GetLerpValue(42f, 0f, attackTimer, true);
+
+            // Create some anger particles after some time has passed.
+            if (attackTimer == angyParticleDelay)
+                CreateCartoonAngerParticles(npc);
+
+            // Do a cast animation after enough time has passed.
+            if (attackTimer >= tPoseDelay)
+            {
+                frameVariant = (int)CloneFrameType.TPosingCastAnimation;
+                CreateCastAnimationParticles(npc);
             }
 
             if (attackTimer == rumbleTime - 5f)
@@ -1292,7 +1333,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_TransitionToFinalPhase(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float eyeGleamInterpolant)
+        public static void DoBehavior_TransitionToFinalPhase(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float eyeGleamInterpolant, ref float frameVariant)
         {
             int teleportDelay = 90;
             int blackFadeTime = 12;
@@ -1303,6 +1344,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Disable damage.
             npc.dontTakeDamage = true;
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Aim the arm upward.
             armRotation = armRotation.AngleTowards(MathHelper.Pi, 0.046f);
@@ -1353,8 +1397,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_BarrageOfArcingDarts(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_BarrageOfArcingDarts(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)
         {
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
+
             // Have Cal holder her hand up.
             armRotation = armRotation.AngleLerp(MathHelper.Pi, 0.2f).AngleTowards(MathHelper.Pi, 0.04f);
 
@@ -1367,7 +1414,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             float dartAngularVelocity = MathHelper.ToRadians(0.7f);
             float flySlowdownInterpolant = Utils.GetLerpValue(attackTransitionDelay, 0f, attackTimer - shootDelay - shootTime, true);
             Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
-            Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+            Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * ArmLength;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 250f, -190f);
@@ -1393,7 +1440,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_FireSlashes(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float forcefieldScale)
+        public static void DoBehavior_FireSlashes(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float forcefieldScale, ref float frameVariant)
         {
             int hoverTime = 42;
             int chargeTime = 26;
@@ -1403,6 +1450,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             float baseChargeSpeed = 16f;
             float chargeAcceleration = 2.6f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Hover to the side of the target in anticipation of the charge.
             if (wrappedAttackTimer <= hoverTime)
@@ -1461,18 +1511,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, ref float attackTimer, ref float armRotation)
+        public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)
         {
             int attackCycleCount = 3;
             int hoverTime = 90;
+            int fireballReleaseRate = 20;
+            int fireballReleaseTime = 150;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
             float fireballSpeed = 13.5f;
-            int fireballReleaseRate = 20;
-            int fireballReleaseTime = 150;
-
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Attempt to hover to the side of the target.
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
@@ -1520,10 +1572,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float eyeGleamInterpolant, ref float forcefieldScale, ref float drawCharredForm)
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float eyeGleamInterpolant, ref float forcefieldScale, ref float drawCharredForm, ref float frameVariant)
         {
             int textDelay = 45;
             int chargeUpTime = 150;
+
+            // Let the arm be moved manually.
+            frameVariant = (int)CloneFrameType.FreeArm;
 
             // Fall to the ground and stop taking damage.
             npc.noGravity = false;
@@ -1559,7 +1614,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Create magic on CalClone's hand.
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
-                Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 8f;
+                Vector2 armEnd = armStart + (armRotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * ArmLength;
                 Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
                 magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                 magic.noGravity = true;
@@ -1644,6 +1699,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.StrikeNPCNoInteraction(9999, 0f, 0);
                 npc.NPCLoot();
                 npc.active = false;
+            }
+        }
+
+        public static void CreateCastAnimationParticles(NPC npc)
+        {
+            if (!Main.rand.NextBool())
+                return;
+
+            Vector2 particleVelocity = -Vector2.UnitY * Main.rand.NextFloat(0.3f, 8f);
+            Color particleColor = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.9f));
+            Color bloomColor = Color.Lerp(particleColor, Color.Wheat, 0.6f);
+            Vector2 particleScale = Vector2.One * Main.rand.NextFloat(0.3f, 0.425f);
+            FlareShine particle = new(npc.Center + Main.rand.NextVector2Circular(40f, 60f) - Vector2.UnitY * 12f, particleVelocity, particleColor, bloomColor, Main.rand.NextFloat(-0.1f, 0.1f), particleScale, particleScale * 1.8f, 30, 0f, 12f, 0f, 6);
+            GeneralParticleHandler.SpawnParticle(particle);
+        }
+
+        public static void CreateCartoonAngerParticles(NPC npc)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2 angerParticleSpawnPosition = npc.Center - Vector2.UnitY.RotatedBy(npc.spriteDirection * npc.rotation) * 30f + Main.rand.NextVector2Circular(50f, 50f);
+                int angerParticleLifetime = Main.rand.Next(65, 90);
+                float angerParticleScale = Main.rand.NextFloat(0.27f, 0.4f);
+                CartoonAngerParticle angy = new(angerParticleSpawnPosition, Color.Red, Color.DarkRed, angerParticleLifetime, Main.rand.NextFloat(MathHelper.TwoPi), angerParticleScale);
+                GeneralParticleHandler.SpawnParticle(angy);
             }
         }
 
@@ -1742,16 +1822,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            // Redefine the frame size to be in line with the SCal sheet.
-            npc.frame.Width = 32;
-            npc.frame.Height = 64;
+            CloneFrameType frameVariant = (CloneFrameType)npc.Infernum().ExtraAI[FrameVariantIndex];
 
-            npc.frameCounter += npc.localAI[0];
-            int frameOffset = (int)npc.frameCounter % 1;
-            int frame = frameOffset;
+            // Redefine the frame size to be in line with the custom sheet.
+            npc.frame.Width = 52;
+            npc.frame.Height = 70;
 
-            npc.frame.X = npc.frame.Width * (frame / 21);
-            npc.frame.Y = npc.frame.Height * (frame % 21);
+            npc.frameCounter += 0.2f;
+            if (npc.Infernum().ExtraAI[DrawCharredFormIndex] == 1f)
+                npc.frameCounter = 0f;
+
+            npc.frame.X = npc.frame.Width * (int)frameVariant;
+            npc.frame.Y = npc.frame.Height * ((int)npc.frameCounter % 6);
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -1761,6 +1843,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 direction = SpriteEffects.FlipHorizontally;
 
             int afterimageCount = 8;
+            CloneFrameType frameVariant = (CloneFrameType)npc.Infernum().ExtraAI[FrameVariantIndex];
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasClone").Value;
             Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalamitasCloneArm").Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
@@ -1785,7 +1868,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Draw a shadow backglow.
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-            Vector2 armDrawPosition = drawPosition + new Vector2(npc.spriteDirection * 9.6f, -2f);
+            Vector2 armDrawPosition = drawPosition + new Vector2(npc.spriteDirection * 9.6f, 2f);
             if (shadowBackglowOffset > 0f && !drawCharredForm && npc.Opacity > 0f)
             {
                 for (int i = 0; i < 10; i++)
@@ -1818,9 +1901,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 }
             }
 
-            // Draw the body and arms.
+            // Draw the body and arms (assuming the arms should be manually drawn).
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
-            Main.spriteBatch.Draw(armTexture, armDrawPosition, null, lightColor * npc.Opacity, armRotation, armTexture.Size() * new Vector2(0.4f, 0.1f), npc.scale, direction, 0f);
+            if (frameVariant == CloneFrameType.FreeArm)
+                Main.spriteBatch.Draw(armTexture, armDrawPosition, null, lightColor * npc.Opacity, armRotation, armTexture.Size() * new Vector2(0.4f, 0.1f), npc.scale, direction, 0f);
 
             // Draw the wand if it's being used.
             if (npc.ai[0] == (int)CloneAttackType.WandFireballs && npc.Infernum().ExtraAI[2] == 0f)
@@ -1828,7 +1912,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 float wandBrightness = npc.Infernum().ExtraAI[0];
                 float wandRotation = armRotation + MathHelper.Pi - MathHelper.PiOver4;
                 Texture2D wandTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CharredWand").Value;
-                Vector2 wandDrawPosition = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 12f;
+                Vector2 wandDrawPosition = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 16f;
 
                 if (wandBrightness > 0f)
                 {
@@ -1848,7 +1932,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 float staffRotation = armRotation + MathHelper.Pi - MathHelper.PiOver4;
                 float telegraphInterpolant = npc.Infernum().ExtraAI[1];
                 Texture2D staffTexture = ModContent.Request<Texture2D>("CalamityMod/Items/Weapons/Summon/EntropysVigil").Value;
-                Vector2 staffDrawPosition = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 12f;
+                Vector2 staffDrawPosition = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 16f;
                 Vector2 staffEnd = armDrawPosition + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 48f;
 
                 BloomLineDrawInfo lineInfo = new()
@@ -1924,7 +2008,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 float eyePulse = Main.GlobalTimeWrappedHourly * 0.84f % 1f;
                 Texture2D eyeGleam = InfernumTextureRegistry.Gleam.Value;
-                Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -6f);
+                Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -12f);
                 Vector2 horizontalGleamScaleSmall = new Vector2(eyeGleamInterpolant * 3f, 1f) * 0.55f;
                 Vector2 verticalGleamScaleSmall = new Vector2(1f, eyeGleamInterpolant * 2f) * 0.55f;
                 Vector2 horizontalGleamScaleBig = horizontalGleamScaleSmall * (1f + eyePulse * 2f);

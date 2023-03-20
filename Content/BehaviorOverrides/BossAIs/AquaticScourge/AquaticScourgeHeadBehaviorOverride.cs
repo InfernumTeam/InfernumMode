@@ -542,7 +542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Slowly move towards the target.
-            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 5f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 6.7f;
             if (npc.WithinRange(target.Center, 200f))
                 npc.velocity = (npc.velocity * 1.01f).ClampMagnitude(0f, idealVelocity.Length() * 1.5f);
             else
@@ -907,7 +907,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (phase2)
             {
                 attackTime += 60;
-                rubbleReleaseRate -= 30;
+                rubbleReleaseRate -= 15;
                 turnAngularVelocity += 0.0041f;
                 movementSpeed += 2.4f;
             }

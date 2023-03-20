@@ -384,6 +384,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 ref float DarknessRatio = ref npc.Infernum().ExtraAI[9];
                 float Timer = AITimer - 2f;
 
+                // Disable damage.
+                npc.damage = 0;
+                leftFist.damage = 0;
+                rightFist.damage = 0;
+                attachedHead.damage = 0;
+                freeHead.damage = 0;
+
                 // Fade in for the first 60 frames
                 // Hold black for the second 60 frames
                 if (Timer < 180f)
@@ -398,7 +405,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     leftFist.Opacity = 1f;
                     rightFist.Opacity = 1f;
                     attachedHead.Opacity = 1f;
-                    npc.damage = 0;
                 }
                 else
                 {

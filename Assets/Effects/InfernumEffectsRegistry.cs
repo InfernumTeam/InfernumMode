@@ -21,6 +21,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
+        public static MiscShaderData BackgroundDistortionShader => GameShaders.Misc["Infernum:BackgroundDistortion"];
         public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
         public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
@@ -99,6 +100,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> backgroundDistortionShader = new(assets.Request<Effect>("Assets/Effects/BackgroundDistortionShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:BackgroundDistortion"] = new MiscShaderData(backgroundDistortionShader, "DistortionPass");
+
             Ref<Effect> cultistShield = new(assets.Request<Effect>("Assets/Effects/CultistForcefield", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CultistShield"] = new MiscShaderData(cultistShield, "ShieldPass");
 

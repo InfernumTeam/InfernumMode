@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         // If the sprite is changed, this will also need to be changed.
         public enum CloneFrameType
         {
-            IdleAnimation = 0 ,
+            IdleAnimation = 0,
             FreeArm = 1,
             TPosingCastAnimation = 2
         }
@@ -1321,6 +1321,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             // Teleport above the target and delete stray projectiles in anticipation of the next attack once the brothers are dead.
             if (attackTimer >= rumbleTime + 5f && !anyBrothers)
             {
+                forcefieldScale = 1f;
                 npc.Opacity = 1f;
                 npc.Center = target.Center - Vector2.UnitY * 270f;
                 npc.velocity = Vector2.Zero;

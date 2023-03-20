@@ -58,7 +58,7 @@ namespace InfernumMode.Content.Credits
 
             float gifTime = 360f;
             float fadeInTime = 60f;
-            float fadeOutTime = gifTime = fadeInTime;
+            float fadeOutTime = gifTime - fadeInTime;
 
             switch (CurrentState)
             {

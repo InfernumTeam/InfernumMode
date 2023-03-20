@@ -241,7 +241,7 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         internal void ForceDrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
         {
-            orig(self, force || SubworldSystem.IsActive<LostColosseum>());
+            orig(self, force || SubworldSystem.IsActive<LostColosseum>() || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
         }
 
         internal void ChangeDrawBlackLimit(ILContext il)
@@ -253,6 +253,9 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Ldloc, 3);
             c.EmitDelegate<Func<float, float>>(lightThreshold =>
             {
+                if (CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f)
+                    return 0.5f;
+
                 if (SubworldSystem.IsActive<LostColosseum>())
                     return 0.125f;
 

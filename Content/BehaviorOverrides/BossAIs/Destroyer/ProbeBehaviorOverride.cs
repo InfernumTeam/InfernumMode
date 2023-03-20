@@ -118,8 +118,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             // Allow afterimages.
-            NPCID.Sets.TrailingMode[npc.type] = 2;
-            NPCID.Sets.TrailCacheLength[npc.type] = 5;
+            NPCID.Sets.TrailingMode[npc.type] = 1;
+            NPCID.Sets.TrailCacheLength[npc.type] = 6;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
 
@@ -168,12 +168,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             // Draw afterimages when charging.
             if (npc.ai[0] == 2f)
             {
-                for (int i = 0; i < npc.oldPos.Length; ++i)
+                for (int i = npc.oldPos.Length - 1; i >= 0; i--)
                 {
-                    float afterimageRot = npc.oldRot[i];
-                    Vector2 drawPos = Vector2.Lerp(npc.oldPos[i], npc.position, 0.6f) + npc.Size * 0.5f - Main.screenPosition;
+                    Vector2 drawPos = Vector2.Lerp(npc.oldPos[i], npc.position, 0.3f) + npc.Size * 0.5f - Main.screenPosition;
                     Color color = npc.GetAlpha(Color.Red with { A = 0 }) * ((float)(npc.oldPos.Length - i) / npc.oldPos.Length);
-                    Main.spriteBatch.Draw(texture, drawPos, null, color, afterimageRot, origin, npc.scale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, drawPos, null, color, npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
 

@@ -126,13 +126,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static Vector2 HealerStartingHoverPosition => CrystalPosition + new Vector2(200f, -65f);
 
         // Damage fields.
-        public const int ProfanedRockDamage = 300;
-        public const int MagicShotDamage = 320;
-        public const int HolySpearDamage = 350;
-        public const int LingeringFireDamage = 375;
-        public const int CommanderSpearDamage = 400;
-        public const int HolyFireBeamDamage = 475;
-        public const int LavaPillarDamage = 550;
+        public const int ProfanedRockDamage = 200;
+        public const int MagicShotDamage = 220;
+        public const int HolySpearDamage = 250;
+        public const int LingeringFireDamage = 275;
+        public const int CommanderSpearDamage = 300;
+        public const int HolyFireBeamDamage = 375;
+        public const int LavaPillarDamage = 450;
         #endregion
 
         #region Indexes
@@ -454,6 +454,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     npc.position.Y += sine * 0.5f;
                     npc.spriteDirection = -1;
 
+                    // Do not deal contact damage.
+                    npc.damage = 0;
+
                     if (Main.projectile.Any((Projectile proj) => proj.active && proj.type == ModContent.ProjectileType<HolySpinningFireBeam>()))
                         spawnedLasers = 1;
 
@@ -592,6 +595,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
                 npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = -1;
+
+                // Do not deal contact damage.
+                npc.damage = 0;
             }
 
             else if (npc.type == DefenderType)
@@ -783,6 +789,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
                 npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = -1;
+
+                // Do not deal contact damage.
+                npc.damage = 0;
             }
 
             else if (npc.type == DefenderType)
@@ -974,6 +983,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     float interlopant = MathF.Sin(MathF.PI * ((universalAttackTimer - angerDelay) / angerTime));
                     glowAmount = CalamityUtils.SineInOutEasing(interlopant, 0);
                 }
+
+                // Do not deal contact damage.
+                npc.damage = 0;
 
                 // Make the spear appear and spin.
                 if (universalAttackTimer >= angerDelay + angerTime / 2f)

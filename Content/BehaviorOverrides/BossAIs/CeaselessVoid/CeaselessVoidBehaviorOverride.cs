@@ -159,6 +159,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 phase3 = true;
             }
 
+            // Lock the camera onto the ceaseless void because it's very egotistical and cannot bear the thought of not being the center of attention.
+            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp)
+            {
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+            }
+
             switch ((CeaselessVoidAttackType)(int)attackType)
             {
                 case CeaselessVoidAttackType.ChainedUp:
@@ -337,6 +344,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             ref float hasCreatedDarkEnergy = ref npc.Infernum().ExtraAI[0];
+
+            // Make the screen black to distract the player from the fact that some wacky things are going on in the background.
+            if (attackTimer <= 5f)
+                InfernumMode.BlackFade = 1f;
 
             // Initialize by creating the dark energy ring.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedDarkEnergy == 0f)

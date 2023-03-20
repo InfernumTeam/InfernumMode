@@ -26,7 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.penetrate = -1;
             Projectile.timeLeft = 27;
             Projectile.hide = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

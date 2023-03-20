@@ -269,11 +269,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // Despawn effect.
             if (shouldDespawn)
             {
-                if (npc.timeLeft > 90)
-                    npc.timeLeft = 90;
-
                 npc.velocity.Y -= 0.4f;
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                if (npc.velocity.Y <= -27f)
+                {
+                    if (NPC.AnyNPCs(NPCID.Spazmatism))
+                        SilenceSpazmatismFlameSounds(Main.npc[NPC.FindFirstNPC(NPCID.Spazmatism)]);
+                    npc.active = false;
+                }
+
                 return false;
             }
 
@@ -333,6 +337,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 }
                 else
                     npc.life = (int)(npc.lifeMax * 0.05f);
+
+                npc.dontTakeDamage = true;
             }
 
             if (hasStartedHealFlag == 1f && healCountdown > 0f)
@@ -423,20 +429,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             npc.damage = 0;
 
             // Fly towards the destination.
-            if (!npc.WithinRange(hoverDestination, 96f) || UniversalAttackTimer <= 80f)
-            {
-                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, Utils.GetLerpValue(npc.Distance(Target.Center), 96f, 360f) * 0.0425f);
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.8f);
-                npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-            }
-            else
-            {
-                npc.velocity *= 0.925f;
-                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(Target.Center) - MathHelper.PiOver2, MathHelper.Pi / 12f);
-            }
+            npc.Center = Vector2.Lerp(npc.Center, hoverDestination, Utils.GetLerpValue(npc.Distance(hoverDestination), 96f, 360f) * 0.0425f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.8f);
+            npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
 
             // Relase some projectiles while hovering to pass the time.
-            if (UniversalAttackTimer % 30f == 29f && npc.WithinRange(hoverDestination, 160f) && UniversalAttackTimer >= 60f)
+            if (UniversalAttackTimer % 30f == 29f && UniversalAttackTimer >= 60f)
             {
                 if (!isSpazmatism)
                     SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, npc.Center);
@@ -952,7 +950,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // Spazmatism circles in place and releases accelerating fireballs outward when attacking.
             if (isSpazmatism && isAttacking)
             {
-                npc.rotation += maxSpinAngularVelocity;
+                npc.rotation += (Target.Center.X > npc.Center.X).ToDirectionInt() * maxSpinAngularVelocity;
                 if (UniversalAttackTimer % fireballReleaseRate == 0f)
                 {
                     if (UniversalAttackTimer % (fireballReleaseRate * 3f) == 0f)
@@ -998,8 +996,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 {
                     SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);
                     Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 9f;
-                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 20);
-                    ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -1632,7 +1628,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     // Attempt to fly near the target while spinning and releasing fire outward.
                     float windUpInterpolant = Utils.GetLerpValue(0f, windUpTime, attackTimer, true);
                     if (!npc.WithinRange(Target.Center, 300f))
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(Target.Center) * windUpInterpolant * 15f, windUpInterpolant * 0.24f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(Target.Center) * windUpInterpolant * 15f, windUpInterpolant * 0.19f);
 
                     // SPEEEEEEEEEEEEEEEEEEEEN
                     npc.rotation += windUpInterpolant * 0.18f;

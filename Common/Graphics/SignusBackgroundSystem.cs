@@ -39,15 +39,16 @@ namespace InfernumMode.Common.Graphics
             transformationMatrix.Translation -= Main.BackgroundViewMatrix.ZoomMatrix.Translation * new Vector3(1f, Main.BackgroundViewMatrix.Effects.HasFlag(SpriteEffects.FlipVertically) ? -1f : 1f, 1f);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
+            var backgroundShader = InfernumEffectsRegistry.SignusBackgroundShader;
             Vector2 screenArea = new(Main.instance.GraphicsDevice.Viewport.Width, Main.instance.GraphicsDevice.Viewport.Height);
-            InfernumEffectsRegistry.SignusBackgroundShader.Shader.Parameters["vortexSwirlSpeed"].SetValue(-2.33f);
-            InfernumEffectsRegistry.SignusBackgroundShader.Shader.Parameters["vortexSwirlDetail"].SetValue(67f);
-            InfernumEffectsRegistry.SignusBackgroundShader.Shader.Parameters["vortexEdgeFadeFactor"].SetValue(14f);
-            InfernumEffectsRegistry.SignusBackgroundShader.SetShaderTexture(InfernumTextureRegistry.WavyNoise);
-            InfernumEffectsRegistry.SignusBackgroundShader.UseColor(Color.Lerp(Color.Purple, Color.Black, 0.6f));
-            InfernumEffectsRegistry.SignusBackgroundShader.UseSecondaryColor(Color.White);
-            InfernumEffectsRegistry.SignusBackgroundShader.UseShaderSpecificData(new Vector4(screenArea.Y, screenArea.X, 0f, 0f));
-            InfernumEffectsRegistry.SignusBackgroundShader.Apply();
+            backgroundShader.Shader.Parameters["vortexSwirlSpeed"].SetValue(-2.33f);
+            backgroundShader.Shader.Parameters["vortexSwirlDetail"].SetValue(67f);
+            backgroundShader.Shader.Parameters["vortexEdgeFadeFactor"].SetValue(14f);
+            backgroundShader.SetShaderTexture(InfernumTextureRegistry.WavyNoise);
+            backgroundShader.UseColor(Color.Lerp(Color.Purple, Color.Black, 0.6f));
+            backgroundShader.UseSecondaryColor(Color.White);
+            backgroundShader.UseShaderSpecificData(new Vector4(screenArea.Y, screenArea.X, 0f, 0f));
+            backgroundShader.Apply();
 
             Texture2D pixel = InfernumTextureRegistry.Pixel.Value;
             Vector2 textureArea = screenArea / pixel.Size();

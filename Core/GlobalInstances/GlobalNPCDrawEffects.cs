@@ -142,7 +142,7 @@ namespace InfernumMode.Core.GlobalInstances
                 if (isDoG && npc.alpha >= 252)
                     return false;
 
-                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type))
+                if (OverridingListManager.InfernumPreDrawOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCPreDrawDelegate value))
                 {
                     if (Main.LocalPlayer.Calamity().trippy)
                     {
@@ -178,7 +178,7 @@ namespace InfernumMode.Core.GlobalInstances
                             Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                         }
                     }
-                    return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, Main.spriteBatch, drawColor);
+                    return value.Invoke(npc, Main.spriteBatch, drawColor);
                 }
             }
             return base.PreDraw(npc, Main.spriteBatch, screenPos, drawColor);
@@ -209,8 +209,8 @@ namespace InfernumMode.Core.GlobalInstances
         #region Frame Manipulation
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
-                OverridingListManager.InfernumFrameOverrideList[npc.type].Invoke(npc, frameHeight);
+            if (OverridingListManager.InfernumFrameOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCFindFrameDelegate value) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+                value.Invoke(npc, frameHeight);
         }
         #endregion
     }

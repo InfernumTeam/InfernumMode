@@ -38,7 +38,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.penetrate = -1;
             Projectile.alpha = 255;
             Projectile.tileCollide = false;
-            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override bool ShouldUpdatePosition() => false;

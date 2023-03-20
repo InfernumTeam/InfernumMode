@@ -850,7 +850,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                 attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
-            if (lifeRatio >= Phase3LifeRatio)
+            if (lifeRatio >= Phase3LifeRatio && oldAttackState != AureusAttackType.WalkAndShootLasers)
                 attackSelector.Add(AureusAttackType.AstralLaserBursts);
 
             if (lifeRatio < Phase3LifeRatio && !NPC.AnyNPCs(ModContent.NPCType<AureusSpawn>()))

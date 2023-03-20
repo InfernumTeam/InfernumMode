@@ -25,6 +25,8 @@ float vortexSwirlSpeed;
 float vortexSwirlDetail;
 float vortexEdgeFadeFactor;
 
+float luminanceThreshold;
+
 float2x2 fbmMatrix = float2x2(1.63, 1.2, -1.2, 1.63);
 
 float turbulentNoise(float2 coords)
@@ -64,6 +66,14 @@ float3 swirl(float2 coords)
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
+    if (luminanceThreshold > 0)
+    {
+        float4 color = tex2D(uImage0, coords);
+        float luminance = dot(color.rgb, float3(0.299, 0.587, 0.114));
+        if (luminance < luminanceThreshold)
+            return 0;
+    }
+    
     return float4(swirl(coords), 1) * sampleColor;
 }
 technique Technique1

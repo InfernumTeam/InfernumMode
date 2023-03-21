@@ -309,7 +309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static void DoBehavior_BasicHops(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState)
         {
-            int jumpTime = 24;
+            int jumpTime = 42;
             int slamDelay = 30;
             int slamHoverTime = 35;
             int crystalID = ModContent.ProjectileType<FallingCrystal>();
@@ -326,6 +326,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             ref float jumpState = ref npc.Infernum().ExtraAI[0];
             ref float groundCollisionY = ref npc.Infernum().ExtraAI[1];
             ref float didSlamGroundHitEffects = ref npc.Infernum().ExtraAI[2];
+            ref float jumpWaitDelay = ref npc.Infernum().ExtraAI[3];
 
             // Disable contact damage until the slam, since the hops can be so fast as to be unfair.
             if (jumpState != 3f)
@@ -343,7 +344,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 attackTimer = 0f;
                 npc.noGravity = false;
 
-                if (Collision.SolidCollision(npc.BottomLeft, npc.width, 4))
+                jumpWaitDelay++;
+                if (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24) || jumpWaitDelay >= 96f)
                 {
                     jumpState = 1f;
                     npc.netUpdate = true;
@@ -387,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Begin the slam.
-            if (jumpState == 1f && attackTimer >= slamDelay + 45f && Math.Abs(npc.velocity.Y) <= 0.9f)
+            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Math.Abs(npc.velocity.Y) <= 0.9f)
             {
                 jumpState = 2f;
                 attackTimer = 0f;
@@ -493,7 +495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 {
                     float horizontalOffset = Utils.GetLerpValue(slamFlyTime, slamFlyTime + slamHoverTime, attackTimer, true) * maxSlimeOffset;
                     if (slimeSpawnAttackType == bouncingSlimeID)
-                        horizontalOffset *= 0.6f;
+                        horizontalOffset *= 0.72f;
 
                     Utilities.NewProjectileBetter(npc.Top - Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
                     Utilities.NewProjectileBetter(npc.Top + Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
@@ -551,7 +553,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int laserChargeupTime = attackDuration - bladeReleaseTime;
             int outwardLaserShootRate = 7;
             float maxRiseSpeed = 10f;
-            float bladeOffsetSpacing = 180f;
+            float bladeOffsetSpacing = MathHelper.Lerp(180f, 144f, 1f - npc.life / (float)npc.lifeMax);
             float maxVerticalBladeOffset = 2000f;
 
             bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime + laserChargeupTime + 25f;
@@ -587,6 +589,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             else
             {
                 npc.velocity *= 0.85f;
+                npc.position.X += Math.Sign(target.Center.X - npc.Center.X) * 2f;
 
                 if (target.Infernum_Camera().CurrentScreenShakePower < 1.85f)
                     target.Infernum_Camera().CurrentScreenShakePower = 3f;
@@ -678,7 +681,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static void DoBehavior_CrystalMaze(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState, ref float wingAnimationTimer)
         {
-            int mazeSummonDelay = 60;
+            int mazeSummonDelay = 30;
             int spinningCrystalReleaseRate = 90;
             int spinningCrystalCount = 4;
             int attackCycleCount = 4;
@@ -700,6 +703,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             if (wingAnimationTimer >= WingUpdateCycleTime - 1f)
                 wingAnimationTimer = WingUpdateCycleTime - 1f;
+
+            // Interact with tiles.
+            npc.noGravity = false;
+            npc.noTileCollide = false;
 
             // Create the maze of crystals.
             if (attackTimer == mazeSummonDelay)
@@ -821,9 +828,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     {
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<QueenSlimeLightWave>(), 0, 0f);
 
-                        for (int i = 0; i < 9; i++)
+                        for (int i = 0; i < 8; i++)
                         {
-                            Vector2 crystalDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
+                            Vector2 crystalDirection = (MathHelper.TwoPi * i / 8f).ToRotationVector2();
                             Utilities.NewProjectileBetter(npc.Center - crystalDirection * 70f, crystalDirection, ModContent.ProjectileType<HallowCrystalSpike>(), 200, 0f);
                         }
 
@@ -853,11 +860,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             ref float hasSummonedCrown = ref npc.Infernum().ExtraAI[1];
             ref float projectileReleaseRate = ref npc.Infernum().ExtraAI[2];
 
-            if (projectileReleaseRate <= 0f)
-            {
-                projectileReleaseRate = phase2 ? 60f : 90f;
-                npc.netUpdate = true;
-            }
+            projectileReleaseRate = phase2 ? 60f : 90f;
+            if (attackTimer <= 90f)
+                projectileReleaseRate = 1000000f;
 
             // Decide wing stuff.
             wingMotionState = (int)WingMotionState.Flap;
@@ -1033,9 +1038,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             if (currentAttack == QueenSlimeAttackType.SlimeCongregations && npc.Infernum().ExtraAI[3] > 0f)
             {
                 float telegraphInterpolant = npc.Infernum().ExtraAI[3];
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < 8; i++)
                 {
-                    float laserRotation = -MathHelper.TwoPi * i / 9f;
+                    float laserRotation = -MathHelper.TwoPi * i / 8f;
                     BloomLineDrawInfo lineInfo = new()
                     {
                         LineRotation = laserRotation,

@@ -160,7 +160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Lock the camera onto the ceaseless void because it's very egotistical and cannot bear the thought of not being the center of attention.
-            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp)
+            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType == (int)CeaselessVoidAttackType.DarkEnergySwirl)
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;

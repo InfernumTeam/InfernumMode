@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             if (wrappedAttackTimer > 75f)
                 Projectile.velocity *= 0.925f;
             else
-                Projectile.velocity = Vector2.Zero.MoveTowards(hoverDestination - Projectile.Center, 16f);
+                Projectile.velocity = Vector2.Zero.MoveTowards(hoverDestination - Projectile.Center, 28f);
 
             ChargeGlowTelegraphInterpolant = Utils.GetLerpValue(attackCycleTime - 25f, attackCycleTime - 5f, wrappedAttackTimer, true);
 

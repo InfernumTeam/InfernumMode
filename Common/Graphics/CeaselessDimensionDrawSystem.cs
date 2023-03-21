@@ -42,6 +42,12 @@ namespace InfernumMode.Common.Graphics
             set;
         }
 
+        public static Vector2 BackgroundConvergencePoint
+        {
+            get;
+            set;
+        }
+
         public override void OnModLoad()
         {
             On.Terraria.Main.DoDraw_WallsAndBlacks += DistortBackground;
@@ -88,6 +94,7 @@ namespace InfernumMode.Common.Graphics
                     var backgroundEffect = InfernumEffectsRegistry.BackgroundDistortionShader;
                     backgroundEffect.UseImage1("Images/Misc/Perlin");
                     backgroundEffect.Shader.Parameters["distortionIntensity"].SetValue(BackgroundChangeInterpolant);
+                    backgroundEffect.Shader.Parameters["center"].SetValue(BackgroundConvergencePoint);
                     backgroundEffect.Apply();
                 }
                 else
@@ -100,6 +107,8 @@ namespace InfernumMode.Common.Graphics
                 {
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
+                    Main.spriteBatch.Draw(Main.instance.blackTarget, Main.sceneTilePos - Main.screenPosition, Color.White);
                 }
 
                 TimeLogger.DetailedDrawTime(14);
@@ -113,7 +122,7 @@ namespace InfernumMode.Common.Graphics
             Texture2D pixel = InfernumTextureRegistry.Pixel.Value;
             Vector2 screenArea = new(Main.instance.GraphicsDevice.Viewport.Width, Main.instance.GraphicsDevice.Viewport.Height);
             Vector2 textureArea = screenArea / pixel.Size();
-            var backgroundShader = InfernumEffectsRegistry.SignusBackgroundShader;
+            var backgroundShader = InfernumEffectsRegistry.CeaselessVoidBackgroundShader;
             backgroundShader.Shader.Parameters["vortexSwirlSpeed"].SetValue(-2.33f);
             backgroundShader.Shader.Parameters["vortexSwirlDetail"].SetValue(67f);
             backgroundShader.Shader.Parameters["vortexEdgeFadeFactor"].SetValue(14f);
@@ -135,11 +144,13 @@ namespace InfernumMode.Common.Graphics
                 return;
             }
 
+            // Make the background convergence point stick to the ceaseless void.
+            BackgroundConvergencePoint = (Main.npc[CalamityGlobalNPC.voidBoss].Center - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight);
+
+            // Make interpolants increment.
             ZoomChangeInterpolant = MathHelper.Clamp(ZoomChangeInterpolant + 0.03f, 0f, 1f);
-            BackgroundChangeInterpolant += 0.005f;
-            if (BackgroundChangeInterpolant >= 1f)
-                BackgroundChangeInterpolant = 0f;
-            if (MathHelper.Distance(BackgroundChangeInterpolant, 0.3f) < 0.0001f)
+            BackgroundChangeInterpolant = MathHelper.Clamp(BackgroundChangeInterpolant + 0.005f, 0f, 1f);
+            if (MathHelper.Distance(BackgroundChangeInterpolant, 0.15f) < 0.0001f)
                 SoundEngine.PlaySound(SoundID.Item163 with { Pitch = -0.32f });
         }
 

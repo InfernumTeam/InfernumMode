@@ -56,6 +56,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Make the laser expand outward.
             LaserLength = MathHelper.Clamp(LaserLength + 180f, 100f, MaxLaserLength);
 
+            int queenSlimeIndex = NPC.FindFirstNPC(NPCID.QueenSlimeBoss);
+            if (queenSlimeIndex != -1)
+                Projectile.Center = Main.npc[queenSlimeIndex].Center;
+
             Time++;
         }
 

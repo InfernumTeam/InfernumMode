@@ -55,7 +55,7 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // Else, mark them as playing.
-            CreditsPlaying = true;
+            // CreditsPlaying = true;
         }
 
         private static void UpdateCredits()

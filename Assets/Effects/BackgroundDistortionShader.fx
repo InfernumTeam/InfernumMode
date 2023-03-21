@@ -14,6 +14,7 @@ float2 uImageSize0;
 float2 uImageSize1;
 float4 uShaderSpecificData;
 float distortionIntensity;
+float2 center;
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
@@ -21,9 +22,6 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     // some parts are being distorted more rapidly than others.
     float noise = tex2D(uImage1, coords * 4);
     float collapseIntensity = (45 + noise * 75) * pow(distortionIntensity, 3);
-    
-    // Self-explanatory.
-    float2 center = 0.5;
     
     // Determine the relative collapse intensity for the given pixel. This is based on distance from the center point.
     float intensity = max(0, 1 - distance(coords, center) * collapseIntensity);

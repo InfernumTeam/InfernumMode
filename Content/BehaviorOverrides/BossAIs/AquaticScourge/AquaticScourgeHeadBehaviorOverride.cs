@@ -87,9 +87,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static AquaticScourgeAttackType[] Phase3AttackCycle => new AquaticScourgeAttackType[]
         {
+            AquaticScourgeAttackType.GasBreath,
             AquaticScourgeAttackType.AcidRain,
             AquaticScourgeAttackType.SulphurousTyphoon,
-            AquaticScourgeAttackType.GasBreath,
         };
 
         public override bool PreAI(NPC npc)

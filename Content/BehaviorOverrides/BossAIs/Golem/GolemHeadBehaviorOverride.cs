@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             float AttackCooldownRatio = GolemBodyBehaviorOverride.ConstAttackCooldown - body.Infernum().ExtraAI[7];
             Color prevColor = AttackEyeColorPairs[(GolemAttackState)body.Infernum().ExtraAI[8]];
             float ratio = MathHelper.Clamp(AttackCooldownRatio / (GolemBodyBehaviorOverride.ConstAttackCooldown * 0.67f), 0f, 1f);
-            Color drawColor = body.Infernum().ExtraAI[5] == 1f || body.Infernum().ExtraAI[6] == 1f ? Color.Red * 0.25f : Color.Lerp(prevColor, nextColor, ratio) * 0.25f;
+            Color drawColor = body.Infernum().ExtraAI[5] == 1f || body.Infernum().ExtraAI[6] == 1f ? Color.Red * 0.25f : Color.Lerp(prevColor, nextColor, ratio) * 0.4f;
 
             for (float i = 4; i > 0; i--)
             {

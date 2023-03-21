@@ -516,21 +516,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             hoverDestination += willCharge ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
 
-            if (chargeSpecificWrappedAttackTimer == 1f && isSpazmatism)
-                SoundEngine.PlaySound(Artemis.AttackSelectionSound, Target.Center);
-
             // Redirect.
             if (chargeSpecificWrappedAttackTimer <= redirectTime)
             {
                 // Hover to the ideal position and effectively lock in place when really close.
                 if (npc.WithinRange(hoverDestination, 120f))
                 {
-                    Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(16f, npc.Distance(hoverDestination));
-                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2.6f);
+                    Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(32f, npc.Distance(hoverDestination));
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.16f);
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 3.2f);
                 }
                 else
                 {
+                    npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.06f);
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 36f, 3.7f);
                     npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
                 }
@@ -676,10 +674,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int redirectTime = 90;
             int attackTelegraphTime = 36;
             int chargeTime = 104;
-            int totalCharges = 2;
+            int totalCharges = 3;
             int totalLaserBurstsUntilExhaustion = 5;
             int baseExhaustCountdown = 90;
             int telegraphTime = (int)MathHelper.Lerp(42f, 28f, 1f - CombinedLifeRatio);
+            bool stopAttackingYouStupidRobots = UniversalAttackTimer >= redirectTime + attackTelegraphTime + totalCharges * chargeTime - 75;
             float laserShootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
             float chargeSpeed = MathHelper.Lerp(15f, 18.75f, 1f - CombinedLifeRatio);
             float chargeAngularVelocity = MathHelper.Lerp(0.006f, 0.0093f, 1f - CombinedLifeRatio);
@@ -788,10 +787,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 // Decide telegraph variables.
                 if (laserShootExhaustionCountdown >= 1f)
                 {
-                    // Play a redirect indicator sound shortly before returning to the attack state.
-                    if (laserShootExhaustionCountdown == 30f)
-                        SoundEngine.PlaySound(Artemis.AttackSelectionSound, Target.Center);
-
                     // Charge above the target.
                     if (laserShootExhaustionCountdown >= baseExhaustCountdown - 16f)
                         npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(Target.Center - Vector2.UnitY * 350f) * chargeSpeed * 1.2f, 0.2f);
@@ -809,6 +804,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 }
                 telegraphDirection = npc.rotation + MathHelper.PiOver2;
                 telegraphOpacity = Utils.GetLerpValue(0f, telegraphTime * 0.75f, telegraphShootTimer, true);
+
+                if (stopAttackingYouStupidRobots)
+                {
+                    telegraphShootTimer = 0f;
+                    telegraphOpacity = 0f;
+                }
 
                 // Shoot a burst of lasers once the telegraph should disappear.
                 if (telegraphShootTimer >= telegraphTime)

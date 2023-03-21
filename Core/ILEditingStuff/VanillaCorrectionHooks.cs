@@ -254,7 +254,7 @@ namespace InfernumMode.Core.ILEditingStuff
             c.EmitDelegate<Func<float, float>>(lightThreshold =>
             {
                 if (CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f)
-                    return 0.5f;
+                    return 0.00001f;
 
                 if (SubworldSystem.IsActive<LostColosseum>())
                     return 0.125f;

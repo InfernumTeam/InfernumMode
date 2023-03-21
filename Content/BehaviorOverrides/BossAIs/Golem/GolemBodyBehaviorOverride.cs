@@ -752,7 +752,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                         {
                             for (int j = 0; j < 4; j++)
                             {
-                                Dust smokeDust = Dust.NewDustDirect(new Vector2(npc.position.X - 20f, npc.position.Y + npc.height), npc.width + 20, 4, 31, 0f, 0f, 100, default, 1.5f);
+                                Dust smokeDust = Dust.NewDustDirect(new Vector2(npc.position.X - 20f, npc.position.Y + npc.height), npc.width + 20, 4, DustID.Smoke, 0f, 0f, 100, default, 1.5f);
                                 smokeDust.velocity *= 0.2f;
                             }
 
@@ -968,10 +968,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 trapSpawnPosition = npc.Infernum().Arena.TopLeft();
-                    Dust.NewDustDirect(trapSpawnPosition, 8, 600, 6);
+                    Dust.NewDustDirect(trapSpawnPosition, 8, 600, DustID.Torch);
 
                     trapSpawnPosition = npc.Infernum().Arena.BottomRight();
-                    Dust.NewDustDirect(trapSpawnPosition - new Vector2(-8f, 600f), 8, 600, 6);
+                    Dust.NewDustDirect(trapSpawnPosition - new Vector2(-8f, 600f), 8, 600, DustID.Torch);
                 }
             }
 
@@ -1070,6 +1070,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             leftFist.rotation = 0f;
             rightFist.rotation = 0f;
             freeHead.damage = 0;
+
+            // Prevent being inside of the ground.
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                npc.position.Y -= 6f;
 
             // Have the head hover in place and perform the telegraph prior to firing.
             if (attackTimer < hoverTelegraphTime)
@@ -1516,7 +1520,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 if (Main.npc[i].active && Main.npc[i].type == platformID)
                 {
                     for (int j = 0; j < 12; j++)
-                        Dust.NewDust(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, 148);
+                        Dust.NewDust(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, DustID.t_Lihzahrd);
 
                     Main.npc[i].active = false;
                     Main.npc[i].netUpdate = true;

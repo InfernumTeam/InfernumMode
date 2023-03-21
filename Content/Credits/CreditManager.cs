@@ -5,10 +5,11 @@ using System.IO;
 using System.Threading;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Credits
 {
-    public static class CreditManager
+    public class CreditManager : ModSystem
     {
         private enum CreditState
         {
@@ -27,6 +28,12 @@ namespace InfernumMode.Content.Credits
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
         public const int TotalGIFs = 6;
+
+        public override void Load() => On.Terraria.Main.DrawInfernoRings += DrawCredits;
+
+        public override void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawCredits;
+
+        public override void PostUpdateDusts() => UpdateCredits();
 
         internal static void StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss boss)
         {
@@ -51,7 +58,7 @@ namespace InfernumMode.Content.Credits
             CreditsPlaying = true;
         }
 
-        internal static void UpdateCredits()
+        private static void UpdateCredits()
         {
             if (!CreditsPlaying)
                 return;
@@ -93,6 +100,7 @@ namespace InfernumMode.Content.Credits
                             {
                                 ActiveGifIndex = 0;
                                 CreditsTimer = 0;
+                                CurrentState = CreditState.LoadingTextures;
                                 CreditsPlaying = false;
                                 return;
                             }    
@@ -104,12 +112,16 @@ namespace InfernumMode.Content.Credits
             CreditsTimer++;
         }
 
-        internal static void DrawCredits()
+        private void DrawCredits(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
+            orig(self);
+
             // Only draw if the credits are playing.
             if (!CreditsPlaying || CurrentState != CreditState.Playing)
                 return;
 
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
             float gifTime = 360f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
@@ -126,6 +138,8 @@ namespace InfernumMode.Content.Credits
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
                     CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer, opacity);
             }
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
         }
 
         private static void SetupObjects()

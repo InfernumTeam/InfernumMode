@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -47,7 +48,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         private const int CaptureBitBlit = 0x40000000;
 
-        public const int BaseRecordCountdownLength = 3600;
+        // 6 seconds.
+        public const int BaseRecordCountdownLength = 360;
 
         public static int RecordCountdown
         {
@@ -138,6 +140,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             FreeHandles();
         }
 
+        public override void PostUpdateEverything() => RecordCountdown = (int)MathHelper.Clamp(RecordCountdown - 1f, 0f, float.MaxValue);
+
         private static void RegenerateHandles()
         {
             if (!IsSupported)
@@ -173,6 +177,12 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         private void HandleRecordingFrame(GameTime obj)
         {
+            // Do not attempt to record anything if the game is not the active window.
+            // Not doing this means the users PC screen gets recorded into the gif as well,
+            // which would not go down well.
+            if (!Main.instance.IsActive)
+                return;
+
             // Resize the capture window as necessary.
             CaptureWidth = (int)(Main.screenWidth * 0.45f);
             CaptureHeight = (int)(Main.screenHeight * 0.45f);
@@ -242,6 +252,13 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             if (!IsSupported)
                 return;
 
+            // Ensure none of the frames are null. If they are, creating the gif will crash the game so clear them all and do not continue.
+            if (frames.Any(f => f == null))
+            {
+                ClearFrames();
+                return;
+            }
+
             Bitmap gif = new(CaptureWidth, CaptureHeight);
 
             // Define encoders.
@@ -295,12 +312,14 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             string filePath = $"{FolderPath}/{GetStringFromBoss(bossFootageToLoad)}{FileExtension}";
 
-            // Return if the file does not exist.
-            if (!File.Exists(filePath))
-                return null;
-
+            Bitmap gif;
             // Load the gif and set the frame count.
-            Bitmap gif = (Bitmap)Image.FromFile(filePath);
+
+            if (File.Exists(filePath))
+                gif = (Bitmap)Image.FromFile(filePath);
+            else
+                gif = ModContent.Request<Bitmap>("InfernumMode/Assets/ExtraTextures/test", AssetRequestMode.ImmediateLoad).Value;
+
             int frameCount = gif.FrameDimensionsList.Length;
             Texture2D[] textures = new Texture2D[frameCount];
 

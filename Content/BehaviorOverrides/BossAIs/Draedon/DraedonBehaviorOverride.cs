@@ -11,6 +11,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -564,7 +565,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             {
                 hologramEffectTimer = MathHelper.Clamp(hologramEffectTimer - 1f, 0f, HologramFadeinTime);
                 if (hologramEffectTimer <= 0f)
+                {
+                    // Begin the credits if scal is dead.
+                    if (DownedBossSystem.downedCalamitas)
+                        CreditManager.BeginCredits();
                     npc.active = false;
+                }
             }
 
             // Fade back in as a hologram if the player tried to kill Draedon.

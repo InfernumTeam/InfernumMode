@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Credits
 
         public void Draw(int textureIndex, float opacity)
         {
-            textureIndex = (int)MathHelper.Clamp(textureIndex, 0f, Textures.Length);
+            textureIndex = (int)MathHelper.Clamp(textureIndex, 0f, Textures.Length - 1);
             Texture2D texture = Textures[textureIndex];
             Main.spriteBatch.Draw(texture, Center, null, Color.White * opacity, 0f, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
         }

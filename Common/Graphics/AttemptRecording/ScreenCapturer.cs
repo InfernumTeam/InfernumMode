@@ -305,8 +305,9 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             ClearFrames();
         }
 
-        internal static Texture2D[] LoadGifAsTexture2Ds(RecordingBoss bossFootageToLoad)
+        internal static Texture2D[] LoadGifAsTexture2Ds(RecordingBoss bossFootageToLoad, out bool baseCreditsUsed)
         {
+            baseCreditsUsed = false;
             if (!IsSupported)
                 return null;
 
@@ -318,7 +319,10 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             if (File.Exists(filePath))
                 gif = (Bitmap)Image.FromFile(filePath);
             else
-                gif = ModContent.Request<Bitmap>("InfernumMode/Assets/ExtraTextures/test", AssetRequestMode.ImmediateLoad).Value;
+            {
+                baseCreditsUsed = true;
+                return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
+            }
 
             int frameCount = gif.FrameDimensionsList.Length;
             Texture2D[] textures = new Texture2D[frameCount];

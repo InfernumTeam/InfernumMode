@@ -28,6 +28,10 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> CrustyNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/CrustyNoise");
 
+        public static Asset<Texture2D> CrystalNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/Crystals");
+
+        public static Asset<Texture2D> CrystalNoiseNormal => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/CrystalsNormalMap");
+
         public static Asset<Texture2D> CultistRayMap => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/CultistRayMap");
 
         public static Asset<Texture2D> DiagonalGleam => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/DiagonalGleam");

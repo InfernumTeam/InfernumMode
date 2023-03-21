@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 spikeVelocity = (MathHelper.TwoPi * i / 3f - MathHelper.PiOver2).ToRotationVector2() * 5f;
-                    spikeVelocity = Vector2.Lerp(spikeVelocity, -Vector2.UnitY * spikeVelocity.Length(), 0.9f);
+                    spikeVelocity = Vector2.Lerp(spikeVelocity, -Vector2.UnitY * spikeVelocity.Length(), 0.82f);
                     Utilities.NewProjectileBetter(Projectile.Center + spikeVelocity, spikeVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), 140, 0f);
                 }
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.UnitX * -4f, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), 140, 0f);

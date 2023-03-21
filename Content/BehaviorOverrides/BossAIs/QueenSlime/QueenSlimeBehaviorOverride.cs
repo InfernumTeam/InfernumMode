@@ -345,7 +345,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 npc.noGravity = false;
 
                 jumpWaitDelay++;
-                if (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 8) || jumpWaitDelay >= 96f)
+                if (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24) || jumpWaitDelay >= 96f)
                 {
                     jumpState = 1f;
                     npc.netUpdate = true;
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Begin the slam.
-            if (jumpState == 1f && attackTimer >= slamDelay + 45f && Math.Abs(npc.velocity.Y) <= 0.9f)
+            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Math.Abs(npc.velocity.Y) <= 0.9f)
             {
                 jumpState = 2f;
                 attackTimer = 0f;
@@ -495,7 +495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 {
                     float horizontalOffset = Utils.GetLerpValue(slamFlyTime, slamFlyTime + slamHoverTime, attackTimer, true) * maxSlimeOffset;
                     if (slimeSpawnAttackType == bouncingSlimeID)
-                        horizontalOffset *= 0.6f;
+                        horizontalOffset *= 0.72f;
 
                     Utilities.NewProjectileBetter(npc.Top - Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
                     Utilities.NewProjectileBetter(npc.Top + Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
@@ -589,6 +589,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             else
             {
                 npc.velocity *= 0.85f;
+                npc.position.X += Math.Sign(target.Center.X - npc.Center.X) * 2f;
 
                 if (target.Infernum_Camera().CurrentScreenShakePower < 1.85f)
                     target.Infernum_Camera().CurrentScreenShakePower = 3f;
@@ -680,7 +681,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static void DoBehavior_CrystalMaze(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState, ref float wingAnimationTimer)
         {
-            int mazeSummonDelay = 60;
+            int mazeSummonDelay = 30;
             int spinningCrystalReleaseRate = 90;
             int spinningCrystalCount = 4;
             int attackCycleCount = 4;
@@ -859,11 +860,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             ref float hasSummonedCrown = ref npc.Infernum().ExtraAI[1];
             ref float projectileReleaseRate = ref npc.Infernum().ExtraAI[2];
 
-            if (projectileReleaseRate <= 0f)
-            {
-                projectileReleaseRate = phase2 ? 60f : 90f;
-                npc.netUpdate = true;
-            }
+            projectileReleaseRate = phase2 ? 60f : 90f;
+            if (attackTimer <= 90f)
+                projectileReleaseRate = 1000000f;
 
             // Decide wing stuff.
             wingMotionState = (int)WingMotionState.Flap;

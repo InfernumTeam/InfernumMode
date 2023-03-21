@@ -309,7 +309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static void DoBehavior_BasicHops(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState)
         {
-            int jumpTime = 24;
+            int jumpTime = 42;
             int slamDelay = 30;
             int slamHoverTime = 35;
             int crystalID = ModContent.ProjectileType<FallingCrystal>();
@@ -326,6 +326,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             ref float jumpState = ref npc.Infernum().ExtraAI[0];
             ref float groundCollisionY = ref npc.Infernum().ExtraAI[1];
             ref float didSlamGroundHitEffects = ref npc.Infernum().ExtraAI[2];
+            ref float jumpWaitDelay = ref npc.Infernum().ExtraAI[3];
 
             // Disable contact damage until the slam, since the hops can be so fast as to be unfair.
             if (jumpState != 3f)
@@ -343,7 +344,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 attackTimer = 0f;
                 npc.noGravity = false;
 
-                if (Collision.SolidCollision(npc.BottomLeft, npc.width, 4))
+                jumpWaitDelay++;
+                if (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 8) || jumpWaitDelay >= 96f)
                 {
                     jumpState = 1f;
                     npc.netUpdate = true;
@@ -551,7 +553,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int laserChargeupTime = attackDuration - bladeReleaseTime;
             int outwardLaserShootRate = 7;
             float maxRiseSpeed = 10f;
-            float bladeOffsetSpacing = 180f;
+            float bladeOffsetSpacing = MathHelper.Lerp(180f, 144f, 1f - npc.life / (float)npc.lifeMax);
             float maxVerticalBladeOffset = 2000f;
 
             bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime + laserChargeupTime + 25f;
@@ -701,6 +703,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             if (wingAnimationTimer >= WingUpdateCycleTime - 1f)
                 wingAnimationTimer = WingUpdateCycleTime - 1f;
 
+            // Interact with tiles.
+            npc.noGravity = false;
+            npc.noTileCollide = false;
+
             // Create the maze of crystals.
             if (attackTimer == mazeSummonDelay)
             {
@@ -821,9 +827,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     {
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<QueenSlimeLightWave>(), 0, 0f);
 
-                        for (int i = 0; i < 9; i++)
+                        for (int i = 0; i < 8; i++)
                         {
-                            Vector2 crystalDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
+                            Vector2 crystalDirection = (MathHelper.TwoPi * i / 8f).ToRotationVector2();
                             Utilities.NewProjectileBetter(npc.Center - crystalDirection * 70f, crystalDirection, ModContent.ProjectileType<HallowCrystalSpike>(), 200, 0f);
                         }
 
@@ -1033,9 +1039,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             if (currentAttack == QueenSlimeAttackType.SlimeCongregations && npc.Infernum().ExtraAI[3] > 0f)
             {
                 float telegraphInterpolant = npc.Infernum().ExtraAI[3];
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < 8; i++)
                 {
-                    float laserRotation = -MathHelper.TwoPi * i / 9f;
+                    float laserRotation = -MathHelper.TwoPi * i / 8f;
                     BloomLineDrawInfo lineInfo = new()
                     {
                         LineRotation = laserRotation,

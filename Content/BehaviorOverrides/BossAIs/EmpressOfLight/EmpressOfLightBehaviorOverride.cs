@@ -1482,6 +1482,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             leftArmFrame = 0f;
             rightArmFrame = 0f;
 
+            // Disable damage.
+            npc.dontTakeDamage = true;
+
             // Do a charge-up effect for a little bit. This is emphasized by drawcode elsewhere.
             if (attackTimer < chargeUpTime && rainbowState == 0f)
             {
@@ -1615,8 +1618,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     leftArmFrame = 4f;
                 }
             }
-
-            npc.dontTakeDamage = true;
 
             // Stick to the moon once completely invisible.
             List<Projectile> moons = Utilities.AllProjectilesByID(ModContent.ProjectileType<StolenCelestialObject>()).ToList();

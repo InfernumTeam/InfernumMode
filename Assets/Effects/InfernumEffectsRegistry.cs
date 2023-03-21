@@ -24,6 +24,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData BackgroundDistortionShader => GameShaders.Misc["Infernum:BackgroundDistortion"];
         public static MiscShaderData BasicTintShader => GameShaders.Misc["Infernum:BasicTint"];
         public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
+        public static MiscShaderData CeaselessVoidBackgroundShader => GameShaders.Misc["Infernum:CVBackground"];
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
         public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
         public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];
@@ -240,6 +241,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> signusBGShader = new(assets.Request<Effect>("Assets/Effects/SignusBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:SignusBackground"] = new MiscShaderData(signusBGShader, "ScreenPass");
+
+            Ref<Effect> cvBGShader = new(assets.Request<Effect>("Assets/Effects/CeaselessVoidBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CVBackground"] = new MiscShaderData(cvBGShader, "ScreenPass");
 
             Ref<Effect> codeScrollShader = new(assets.Request<Effect>("Assets/Effects/ScrollingCodePrimShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:ScrollingCode"] = new MiscShaderData(codeScrollShader, "TrailPass");

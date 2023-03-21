@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,11 +15,21 @@ using Terraria.ModLoader;
 using SystemGraphics = System.Drawing.Graphics;
 using SystemRectangle = System.Drawing.Rectangle;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.AttemptRecording
 {
 #pragma warning disable CA1416 // Validate platform compatibility
     public class ScreenCapturer : ModSystem
     {
+        public enum RecordingBoss
+        {
+            KingSlime,
+            WoF,
+            Calamitas,
+            Provi,
+            Draedon,
+            SCal
+        }
+
         private static IntPtr desktopWindowHandle;
 
         private static IntPtr deviceContextHandle;
@@ -36,15 +47,27 @@ namespace InfernumMode.Common.Graphics
 
         private const int CaptureBitBlit = 0x40000000;
 
+        public const int BaseRecordCountdownLength = 3600;
+
         public static int RecordCountdown
         {
             get;
             set;
         }
 
+        internal static RecordingBoss CurrentBoss
+        {
+            get;
+            set;
+        }
         // If on a non-Windows operating system, don't use this system. Fundamental parts are not guaranteed to work outside of it.
         // Also it doesn't run on servers, obviously.
         public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT;
+
+        // The GIFs are saved in a folder for the player, to ensure duplicate gifs are not saved per player.
+        public static string FolderPath => $"{Main.SavePath}/BossFootage/{Main.LocalPlayer.name}";
+
+        public const string FileExtension = ".gif";
 
         public static int CaptureWidth
         {
@@ -239,7 +262,7 @@ namespace InfernumMode.Common.Graphics
             BitmapData[] bitmapDataArray = new BitmapData[frames.Count];
 
             // Create a gif encoder and write each frame to the memory stream.
-            string filePath = $"{Main.SavePath}/BossFootage/lol2.gif";
+            string filePath = $"{FolderPath}/{GetStringFromBoss(CurrentBoss)}{FileExtension}";
 
             // Ensure that the directory exists.
             if (!File.Exists(filePath))
@@ -263,6 +286,72 @@ namespace InfernumMode.Common.Graphics
 
             // Clear the frames.
             ClearFrames();
+        }
+
+        internal static Texture2D[] LoadGifAsTexture2Ds(RecordingBoss bossFootageToLoad)
+        {
+            if (!IsSupported)
+                return null;
+
+            string filePath = $"{FolderPath}/{GetStringFromBoss(bossFootageToLoad)}{FileExtension}";
+
+            // Return if the file does not exist.
+            if (!File.Exists(filePath))
+                return null;
+
+            // Load the gif and set the frame count.
+            Bitmap gif = (Bitmap)Image.FromFile(filePath);
+            int frameCount = gif.FrameDimensionsList.Length;
+            Texture2D[] textures = new Texture2D[frameCount];
+
+            // Loop through the gif, and create a texture from the frame.
+            for (int i = 0; i < gif.FrameDimensionsList.Length; i++)
+            {
+                gif.SelectActiveFrame(new(gif.FrameDimensionsList[i]), i);
+                textures[i] = GetTextureFromImage(gif);
+            }
+
+            gif.Dispose();
+            return textures;
+        }
+
+        // Adapted from https://gamedev.stackexchange.com/questions/6440/bitmap-to-texture2d-problem-with-colors
+        private static Texture2D GetTextureFromImage(Bitmap bitmap)
+        {
+            // Create a new, empty texture.
+            Texture2D texture = new(Main.instance.GraphicsDevice, bitmap.Width, bitmap.Height);
+            // Create an array of the bitmap size.
+            uint[] imgData = new uint[bitmap.Width * bitmap.Height];
+            unsafe
+            {
+                // Lock the bits.
+                BitmapData origdata = bitmap.LockBits(new(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                uint* byteData = (uint*)origdata.Scan0;
+
+                // Loop through each pixel, and set it to the bitmaps info. This also swaps the BGRA of the bitmap to RGBA which the texture2d uses. Not doing this
+                // results in the textures r and b channels being swapped which is not ideal.
+                for (int i = 0; i < imgData.Length; i++)
+                    imgData[i] = ((byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000));
+                // Unlock the bits.
+                bitmap.UnlockBits(origdata);
+            }
+            // Set the textures data, and return it.
+            texture.SetData(imgData);
+            return texture;
+        }
+        
+        internal static string GetStringFromBoss(RecordingBoss boss)
+        {
+            return boss switch
+            { 
+                RecordingBoss.SCal => "SCal",
+                RecordingBoss.Draedon => "Draedon",
+                RecordingBoss.Provi => "Providence",
+                RecordingBoss.Calamitas => "Calamitas",
+                RecordingBoss.WoF => "WallOfFlesh",
+                RecordingBoss.KingSlime => "KingSlime",
+                _ => "HowTheHellAreYouSeeingThis"
+            };
         }
     }
 #pragma warning restore CA1416 // Validate platform compatibility

@@ -18,7 +18,11 @@ namespace InfernumMode.Content.Credits
             FinalizingDisposing
         }
 
-        public static bool CreditsPlaying { get; private set; } = false;
+        public static bool CreditsPlaying
+        {
+            get;
+            private set;
+        }
 
         private static int CreditsTimer = 0;
 
@@ -56,6 +60,9 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // Else, mark them as playing.
+            CurrentState = CreditState.LoadingTextures;
+            CreditsTimer = 0;
+            ActiveGifIndex = 0;
             CreditsPlaying = true;
         }
 
@@ -98,7 +105,7 @@ namespace InfernumMode.Content.Credits
                             CreditGIFs[ActiveGifIndex - 1] = null;
                         }
 
-                        if (CreditsTimer == gifTime)
+                        if (CreditsTimer >= gifTime)
                         {
                             if (ActiveGifIndex < TotalGIFs)
                             {
@@ -117,11 +124,15 @@ namespace InfernumMode.Content.Credits
                     }
                     break;
                 case CreditState.FinalizingDisposing:
-                    if (CreditsTimer >= disposeTime && CreditGIFs.IndexInRange(ActiveGifIndex))
+                    if (CreditsTimer >= disposeTime)
                     {
                         // Dispose of all the final textures.
-                        CreditGIFs[ActiveGifIndex]?.DisposeTextures();
-                        CreditGIFs[ActiveGifIndex] = null;
+                        if (CreditGIFs.IndexInRange(ActiveGifIndex))
+                        {
+                            CreditGIFs[ActiveGifIndex]?.DisposeTextures();
+                            CreditGIFs[ActiveGifIndex] = null;
+                        }
+                        CreditsPlaying = false;
                     }
                     break;
             }
@@ -151,7 +162,7 @@ namespace InfernumMode.Content.Credits
                     opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
 
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer % 3, opacity);
+                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer / 3, opacity);
             }
         }
 

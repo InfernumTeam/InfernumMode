@@ -1,10 +1,10 @@
+using Gif.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -14,7 +14,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using SystemGraphics = System.Drawing.Graphics;
-using SystemRectangle = System.Drawing.Rectangle;
 
 namespace InfernumMode.Common.Graphics.AttemptRecording
 {
@@ -140,8 +139,6 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             FreeHandles();
         }
 
-        public override void PostUpdateEverything() => RecordCountdown = (int)MathHelper.Clamp(RecordCountdown - 1f, 0f, float.MaxValue);
-
         private static void RegenerateHandles()
         {
             if (!IsSupported)
@@ -189,10 +186,11 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             if (RecordCountdown >= 1)
             {
+                RecordCountdown--;
+
                 // Append to the frames. For the sake of performance this happens on frame intervals instead of every frame.
                 if (RecordCountdown % 3 == 0)
                     frames.Add(GetScreenBitmap());
-                RecordCountdown--;
 
                 // Prepare the gif file once the recording countdown is done.
                 if (RecordCountdown <= 0)
@@ -259,50 +257,20 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 return;
             }
 
-            Bitmap gif = new(CaptureWidth, CaptureHeight);
-
-            // Define encoders.
-            EncoderParameters startingEncoder = new(1);
-            startingEncoder.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
-
-            EncoderParameters generalEncoder = new(2);
-            generalEncoder.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.FrameDimensionTime);
-            generalEncoder.Param[1] = new EncoderParameter(Encoder.Quality, 0L);
-
-            // Create a new Graphics object from the bitmap.
-            SystemGraphics graphics = SystemGraphics.FromImage(gif);
-
-            // Set the graphics settings as needed.
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-            // Create an array to hold the BitmapData for each frame.
-            BitmapData[] bitmapDataArray = new BitmapData[frames.Count];
-
-            // Create a gif encoder and write each frame to the memory stream.
             string filePath = $"{FolderPath}/{GetStringFromBoss(CurrentBoss)}{FileExtension}";
+            AnimatedGifEncoder e = new();
 
-            // Ensure that the directory exists.
-            if (!File.Exists(filePath))
-                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-            ImageCodecInfo[] imageEncoders = ImageCodecInfo.GetImageEncoders();
-            ImageCodecInfo gifEncoder = imageEncoders.FirstOrDefault(codec => codec.FormatID == ImageFormat.Gif.Guid);
-            graphics.DrawImage(frames[0], new SystemRectangle(0, 0, CaptureWidth, CaptureHeight));
-            gif.Save(filePath, gifEncoder, startingEncoder);
-
+            using MemoryStream stream = new();
+            using FileStream fileStream = new(filePath, FileMode.Create);
+            e.Start(stream);
+            e.SetDelay(0);
+            e.SetRepeat(0);
             for (int i = 0; i < frames.Count; i++)
-            {
-                graphics.DrawImage(frames[i], new SystemRectangle(0, 0, CaptureWidth, CaptureHeight), new SystemRectangle(0, 0, CaptureWidth, CaptureHeight), GraphicsUnit.Pixel);
-                gif.SaveAdd(frames[i], generalEncoder);
-            }
+                e.AddFrame(frames[i]);
+            e.Finish();
 
-            // Dispose of various objects.
-            startingEncoder.Dispose();
-            generalEncoder.Dispose();
-            graphics.Dispose();
-
-            // Clear the frames.
-            ClearFrames();
+            byte[] data = stream.ToArray();
+            fileStream.Write(data);
         }
 
         internal static Texture2D[] LoadGifAsTexture2Ds(RecordingBoss bossFootageToLoad, out bool baseCreditsUsed)
@@ -313,24 +281,35 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             string filePath = $"{FolderPath}/{GetStringFromBoss(bossFootageToLoad)}{FileExtension}";
 
-            // Return the pre-existing joke gif if the footage does not exist, and set the flag as true.
-            if (!File.Exists(filePath))
+            Image gif;
+            // Load the gif and set the frame count.
+
+            if (File.Exists(filePath))
+                gif = Image.FromFile(filePath);
+            else
             {
                 baseCreditsUsed = true;
                 return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
             }
 
-            // Load the gif and set the frame count.
-            Bitmap gif = (Bitmap)Image.FromFile(filePath);
+            // Get the GUID for the frame dimension of the GIF (which is used to specify the frame dimension when accessing individual frames).
+            FrameDimension dimension = new(gif.FrameDimensionsList[0]);
 
-            int frameCount = gif.FrameDimensionsList.Length;
+            // Get the total number of frames in the GIF.
+            int frameCount = gif.GetFrameCount(dimension);
             Texture2D[] textures = new Texture2D[frameCount];
 
-            // Loop through the gif, and create a texture from the frame.
-            for (int i = 0; i < gif.FrameDimensionsList.Length; i++)
+            // Loop through each frame and add it to the array.
+            for (int i = 0; i < frameCount; i++)
             {
-                gif.SelectActiveFrame(new(gif.FrameDimensionsList[i]), i);
-                textures[i] = GetTextureFromImage(gif);
+                // Set the active frame of the GIF to the current frame.
+                gif.SelectActiveFrame(dimension, i);
+
+                // Create a new Bitmap instance and copy the current frame into it.
+                Bitmap bitmap = new(gif.Width, gif.Height);
+                SystemGraphics graphics = SystemGraphics.FromImage(bitmap);
+                graphics.DrawImage(gif, System.Drawing.Point.Empty);
+                textures[i] = GetTextureFromImage(bitmap);
             }
 
             gif.Dispose();
@@ -350,7 +329,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 BitmapData origdata = bitmap.LockBits(new(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
                 uint* byteData = (uint*)origdata.Scan0;
 
-                // Loop through each pixel, and set it to the bitmaps info. This also swaps the BGRA of the bitmap to RGBA which the texture2d uses. Not doing this
+                // Loop through each pixel, and set it to the bitmap's info. This also swaps the BGRA of the bitmap to RGBA which the texture2d uses. Not doing this
                 // results in the textures r and b channels being swapped which is not ideal.
                 for (int i = 0; i < imgData.Length; i++)
                     imgData[i] = ((byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000));
@@ -361,11 +340,11 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             texture.SetData(imgData);
             return texture;
         }
-        
+
         internal static string GetStringFromBoss(RecordingBoss boss)
         {
             return boss switch
-            { 
+            {
                 RecordingBoss.SCal => "SCal",
                 RecordingBoss.Draedon => "Draedon",
                 RecordingBoss.Provi => "Providence",

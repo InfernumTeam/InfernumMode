@@ -91,6 +91,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
                 SoundEngine.PlaySound(TeleportSound, playerToFollow.Center);
+
+                CreditManager.BeginCredits();
             }
 
             // Pick someone else to pay attention to if the old target is gone.
@@ -392,7 +394,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                         // The hue of the colors. These use HSL for needing to sync a single value as opposed to 3.
                         // These don't really need to be so precise but it is what windows calculator gave me so.
-                        float blue = 0.766666667f;
+                        float blue = 0.666666667f;
                         float green = 0.25f;
                         float orange = 0.0444444444f;
                         float rgb = (1 + Main.GlobalTimeWrappedHourly * 0.3f + 35 * 0.54f) % 1f;

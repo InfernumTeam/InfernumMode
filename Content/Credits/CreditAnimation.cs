@@ -24,9 +24,12 @@ namespace InfernumMode.Content.Credits
 
         public void DisposeTextures()
         {
+            if (Textures is null || BaseCredits)
+                return;
+
             foreach (var texture in Textures)
             {
-                if (!texture.IsDisposed)
+                if (!texture?.IsDisposed ?? false)
                     texture.Dispose();
             }
         }
@@ -42,11 +45,17 @@ namespace InfernumMode.Content.Credits
         {
             if (BaseCredits)
                 textureIndex = 0;
-            else
-                textureIndex = (int)MathHelper.Clamp(textureIndex, 0f, Textures.Length - 1);
+            else if (textureIndex >= Textures.Length)
+                textureIndex = Textures.Length - 1;
             Texture2D texture = Textures[textureIndex];
             if (texture != null && !texture.IsDisposed)
-                Main.spriteBatch.Draw(texture, Center, null, Color.White * opacity, 0f, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            {
+                Vector2 scale = Vector2.One;
+                if (texture.Width >= 640)
+                    scale *= 640f / texture.Width;
+
+                Main.spriteBatch.Draw(texture, Center, null, Color.White * opacity, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            }
         }
     }
 }

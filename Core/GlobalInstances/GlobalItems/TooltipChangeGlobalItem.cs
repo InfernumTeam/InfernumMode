@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -38,15 +39,16 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            void replaceTooltipText(string tooltipIdentifier, string replacementText)
+            void replaceTooltipText(string tooltipIdentifier, string replacementText, Color? replacementColor = null)
             {
                 var tooltip = tooltips.FirstOrDefault(x => x.Name == tooltipIdentifier && x.Mod == "Terraria");
 
                 // Stop if the tooltip could not be identified.
                 if (tooltip is null)
                     return;
-
+                replacementColor ??= Color.White;
                 tooltip.Text = replacementText;
+                tooltip.OverrideColor = replacementColor;
             }
 
             void addTooltipLineAfterLine(string tooltipIdentifier, TooltipLine line)
@@ -70,8 +72,10 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedShard>())
             {
+                bool inGarden = Main.LocalPlayer.Infernum_Biome().InProfanedArena;
                 string summoningText = "Summons the Profaned Guardians when used in the profaned garden at the far right of the underworld";
-                replaceTooltipText("Tooltip1", summoningText);
+                Color textColor = inGarden ? WayfinderSymbol.Colors[2] : Color.White;
+                replaceTooltipText("Tooltip1", summoningText, textColor);
 
                 // Remove the next line about an enrage condition.
                 tooltips.RemoveAll(x => x.Name == "Tooltip2" && x.Mod == "Terraria");
@@ -81,8 +85,10 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 {
                     TooltipLine warningTooltip = new(Mod, "Warning",
                         "Your world does not currently have a Profaned Garden. Kill the Moon Lord again to generate it\n" +
-                        "Be sure to grab the Hell schematic first if you do this, as the garden might destroy the lab");
-                    warningTooltip.OverrideColor = Color.Orange;
+                        "Be sure to grab the Hell schematic first if you do this, as the garden might destroy the lab")
+                    {
+                        OverrideColor = Color.Orange
+                    };
                     addTooltipLineAfterLine("Tooltip1", warningTooltip);
                 }
             }

@@ -1,4 +1,5 @@
-using CalamityMod;
+﻿using CalamityMod;
+using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,28 +12,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class MagicCrystalShot : ModProjectile
     {
-        public static readonly Color[] ColorSet = new Color[]
-        {
-            // Pale pink crystal.
-            new Color(181, 136, 177),
+        public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, MagicSpiralCrystalShot.ColorSet);
 
-            // Profaned fire.
-            new Color(255, 191, 73),
+        public ref float Timer => ref Projectile.ai[0];
 
-            // Yellow-orange crystal.
-            new Color(255, 194, 161),
-        };
+        public ref float Direction => ref Projectile.ai[1];
 
-        public NPC Target => Main.npc[(int)Projectile.ai[0]];
-        public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet);
-        public ref float HealAmount => ref Projectile.localAI[0];
+        public const int TelegraphLength = 30;
+
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Crystalline Light");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 24;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 12;
         }
 
         public override void SetDefaults()
@@ -49,31 +43,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void AI()
         {
-            if (Projectile.timeLeft > 140f)
-            {
-                float offsetScale = (float)Math.Cos(Projectile.identity % 6f / 6f + Projectile.position.X / 320f + Projectile.position.Y / 160f);
-
-                if (Projectile.velocity.Length() < 43f)
-                    Projectile.velocity *= 1.008f;
-                Projectile.velocity = Projectile.velocity.RotatedBy(offsetScale * MathHelper.TwoPi / 360f);
-            }
-
-            if (Projectile.timeLeft > 30f)
-            {
-                Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Vector2 idealVelocity = Projectile.SafeDirectionTo(target.Center) * 16f;
-                Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, MathHelper.Lerp(0.045f, 0.1f, Utils.GetLerpValue(140f, 30f, Projectile.timeLeft, true)));
-            }
-
             if (Projectile.timeLeft < 15)
                 Projectile.damage = 0;
 
-            Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
+            if (Projectile.velocity.Length() < 40f)
+                Projectile.velocity *= 1.04f;
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Timer++;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Timer <= TelegraphLength)
+            {
+                float interpolant = Timer / TelegraphLength;
+                float scalar = MathF.Sin(interpolant * MathF.PI);
+                float yScale = MathHelper.Lerp(0f, 1f, scalar);
+                Color telegraphColor = StreakBaseColor;
+                telegraphColor.A = 0;
+                Texture2D telegraphTexture = InfernumTextureRegistry.BloomLineSmall.Value;
+                Vector2 scaleInner = new(yScale, InfernumTextureRegistry.BloomLineSmall.Value.Height);
+                Vector2 scaleOuter = scaleInner * new Vector2(1.5f, 1f);
+                Vector2 origin = InfernumTextureRegistry.BloomLineSmall.Value.Size() * new Vector2(0.5f, 0f);
+
+                Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, Color.HotPink with { A = 0 } * 2, Projectile.velocity.ToRotation() + MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor * 2, Projectile.velocity.ToRotation() + MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
+
+            }
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 1; i < Projectile.oldPos.Length; i++)
             {
@@ -93,22 +90,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Main.spriteBatch.Draw(streakTexture, drawPosition2, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
             return false;
-        }
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                if (targetHitbox.Intersects(Utils.CenteredRectangle(Projectile.oldPos[i] + Projectile.Size * 0.5f, Projectile.Size)))
-                    return true;
-            }
-            return false;
-        }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            if (Projectile.timeLeft > 15)
-                Projectile.timeLeft = 15;
         }
     }
 }

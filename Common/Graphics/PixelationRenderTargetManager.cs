@@ -37,12 +37,12 @@ namespace InfernumMode.Common.Graphics
         #region Methods
         private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
         {
-            orig(self);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Draw the RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.
             Main.spriteBatch.Draw(pixelRenderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             Main.spriteBatch.End();
+            orig(self);
         }
 
         private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)
@@ -83,7 +83,7 @@ namespace InfernumMode.Common.Graphics
         private static void DrawPrimsToRenderTarget(RenderTarget2D renderTarget, List<IPixelPrimitiveDrawer> pixelPrimitives)
         {
             // Swap to the custom render target to prepare things to pixelation.
-            SwapToRenderTarget(renderTarget);
+            renderTarget.SwapToRenderTarget();
 
             if (pixelPrimitives.Any())
             {
@@ -97,23 +97,6 @@ namespace InfernumMode.Common.Graphics
                 // Prepare the sprite batch for the next draw cycle.
                 Main.spriteBatch.End();
             }
-        }
-
-        private static void SwapToRenderTarget(RenderTarget2D renderTarget)
-        {
-            // Local variables for convinience.
-            GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
-            SpriteBatch spriteBatch = Main.spriteBatch;
-
-            // If we are in the menu, a server, or any of these are null, return.
-            if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
-                return;
-
-            // Otherwise set the render target.
-            graphicsDevice.SetRenderTarget(renderTarget);
-
-            // "Flush" the screen, removing any previous things drawn to it.
-            graphicsDevice.Clear(Color.Transparent);
         }
 
         private void ResizePixelRenderTarget(bool load)

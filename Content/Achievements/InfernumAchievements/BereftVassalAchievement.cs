@@ -17,16 +17,19 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             PositionInMainList = 2;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
         }
+
         public override void ExtraUpdate(Player player, int npcIndex)
         {
             if (Main.npc[npcIndex].type == ModContent.NPCType<BereftVassal>())
                 CurrentCompletion++;
         }
+
         public override void SaveProgress(TagCompound tag)
         {
             tag["BereftVassalCurrentCompletion"] = CurrentCompletion;
             tag["BereftVassalDoneCompletionEffects"] = DoneCompletionEffects;
         }
+
         public override void LoadProgress(TagCompound tag)
         {
             if (LostColosseum.VassalWasBeaten)

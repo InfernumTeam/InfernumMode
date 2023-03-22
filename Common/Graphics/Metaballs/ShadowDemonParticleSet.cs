@@ -9,7 +9,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics.Particles
+namespace InfernumMode.Common.Graphics.Metaballs
 {
     public class ShadowDemonParticleSet : BaseFusableParticleSet
     {

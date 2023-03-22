@@ -7,6 +7,7 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Schematics;
@@ -19,6 +20,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Items.Accessories;
+using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -370,6 +372,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void PrepareSealocketTarget(On.Terraria.Main.orig_CheckMonoliths orig)
         {
+            orig();
             InitializeTargetIfNecessary();
 
             var device = Main.instance.GraphicsDevice;
@@ -388,7 +391,6 @@ namespace InfernumMode.Core.ILEditingStuff
             }
             Main.spriteBatch.End();
             device.SetRenderTargets(bindings);
-            orig();
         }
 
         internal static void FindSealocketItemDyeShader(On.Terraria.Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)
@@ -669,6 +671,39 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => PlaceForbiddenArchive += StorePosition;
 
         public void Unload() => PlaceForbiddenArchive -= StorePosition;
+    }
+
+    public class ChangeProfanedShardUsageHook : IHookEdit
+    {
+        public void Load() => ProfanedShardUseItem += SummonGuardianSpawnerManager;
+
+        public void Unload() => ProfanedShardUseItem -= SummonGuardianSpawnerManager;
+
+        private void SummonGuardianSpawnerManager(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate((Player player) =>
+            {
+                // Normal spawning stuff
+                if (!WorldSaveSystem.InfernumMode)
+                {
+                    // This runs like 6 times without this check for some fucking reason.
+                    if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))
+                    {
+                        SoundEngine.PlaySound(in SoundID.Roar, player.Center);
+                        if (Main.netMode != 1)
+                            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
+                        else
+                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
+                    }
+                }
+                else if (Main.myPlayer == player.whoAmI && !Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
+                    Utilities.NewProjectileBetter(player.Center, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f);
+            });
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Ret);
+        }
     }
 
     public class StopCultistShieldDrawingHook : IHookEdit

@@ -99,6 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(1);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakBigBackground);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
+            InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["reverseDirection"].SetValue(false);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.UseColor(ColorFunction(0.1f));
 
             List<Vector2> points = new();

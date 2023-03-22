@@ -18,6 +18,8 @@ matrix uWorldViewProjection;
 float2x2 localMatrix;
 float4 uShaderSpecificData;
 
+bool fadeOut;
+
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float4 color = tex2D(uImage0, coords);
@@ -28,7 +30,16 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float luminence = (result.r + result.g + result.b) / 3;
     result.b += luminence * 0.8;
     
-    return result * color.a * sampleColor.a;
+    float opacity = 1;
+    
+    if (fadeOut)
+    {
+        float2 uv = framedCoords;
+        if (uv.x < 0.01)
+            opacity *= pow(uv.x / 0.01, 4);
+    }
+    
+    return result * color.a * sampleColor.a * opacity;
 }
 
 technique Technique1

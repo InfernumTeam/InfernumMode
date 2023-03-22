@@ -60,8 +60,6 @@ namespace InfernumMode.Common.Graphics
 
         private static float FlashLifetimeRatio => (float)FlashTime / FlashLifeTime;
 
-        public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;
-
         /// <summary>
         /// Call this to set a flash effect. Any existing ones will be replaced.
         /// </summary>
@@ -92,6 +90,8 @@ namespace InfernumMode.Common.Graphics
             On.Terraria.Graphics.Effects.FilterManager.EndCapture -= DrawBlurEffect;
             Main.OnResolutionChanged -= ResizeRenderTarget;
         }
+
+        public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;
 
         public override void PostUpdateEverything()
         {
@@ -140,12 +140,13 @@ namespace InfernumMode.Common.Graphics
                 // Draw the blur render target 7 times, getting progressively larger and more transparent.
                 for (int i = -3; i <= 3; i++)
                 {
+                    if (i == 0)
+                        continue;
                     // Increase the scale based on the intensity and lifetime of the blur.
                     float scaleAmount = BaseScaleAmount * BlurIntensity;
                     float blurAmount = BaseBlurAmount * BlurIntensity;
                     float scale = 1f + scaleAmount * (1f - BlurLifetimeRatio) * i / blurAmount;
                     Color drawColor = Color.White * 0.42f;
-
                     // Not doing this causes it to not properly fit on the screen. This extends it to be 100 extra in either direction.
                     Rectangle frameOffset = new(-100, -100, Main.screenWidth + 200, Main.screenHeight + 200);
                     // Use that and the position to set the origin to the draw position.

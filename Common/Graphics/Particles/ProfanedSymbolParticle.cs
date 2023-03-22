@@ -1,4 +1,4 @@
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -40,6 +40,7 @@ namespace InfernumMode.Common.Graphics.Particles
 
             // Rapidly affect the scale.
             float scaleSine = (1f + MathF.Sin(Time * 0.25f)) / 2f;
+
             Scale = MathHelper.Lerp(MaxScale * 0.85f, MaxScale, scaleSine);
         }
 

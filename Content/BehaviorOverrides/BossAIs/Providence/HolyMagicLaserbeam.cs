@@ -3,13 +3,16 @@ using CalamityMod.NPCs;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
@@ -35,6 +38,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             get;
             set;
         } = 35;
+
+        public bool FromGuardians
+        {
+            get;
+            set;
+        } = false;
+
+        public float SetAngleToMoveTo
+        {
+            get;
+            set;
+        } = 0f;
+
+        public Vector2 InitialVelocity
+        {
+            get;
+            set;
+        } = Vector2.Zero;
 
         public override float Lifetime => LaserTelegraphTime + LaserShootTime;
 
@@ -77,6 +98,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             writer.Write(Projectile.localAI[1]);
             writer.Write(LaserTelegraphTime);
             writer.Write(LaserShootTime);
+            writer.Write(FromGuardians);
+            writer.Write(SetAngleToMoveTo);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -85,25 +108,63 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.localAI[1] = reader.ReadSingle();
             LaserTelegraphTime = reader.ReadInt32();
             LaserShootTime = reader.ReadInt32();
+            FromGuardians = reader.ReadBoolean();
+            SetAngleToMoveTo = reader.ReadSingle();
         }
 
         public override void AttachToSomething()
         {
-            // Disappear if providence is not present.
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss))
+            // Disappear if providence and the commander is not present.
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss) && !Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
             {
                 Projectile.Kill();
                 return;
             }
 
-            Projectile.Center = Main.npc[CalamityGlobalNPC.holyBoss].Center + Vector2.UnitY * 24f;
+            Vector2 center;
+            if (FromGuardians)
+            {
+                Projectile fireball = null;
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].type == ModContent.ProjectileType<HolyDogmaFireball>())
+                    {
+                        fireball = Main.projectile[i];
+                        break;
+                    }
+                }
+                if (fireball is null)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+                else
+                    center = fireball.Center;
+            }
+            else
+                center = Main.npc[CalamityGlobalNPC.holyBoss].Center;
+
+            Projectile.Center = center + Vector2.UnitY * 24f;
             Projectile.Opacity = 1f;
+
+            if (Time == 0)
+                InitialVelocity = Projectile.velocity;
 
             // Rotate during the telegraph.
             float telegraphCompletion = Utils.GetLerpValue(0f, LaserTelegraphTime, Time, true);
             if (telegraphCompletion < 1f)
-                Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 15f));
+            {
+                if (SetAngleToMoveTo == 0)
+                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 15f));
+                else
+                    Projectile.velocity = InitialVelocity.ToRotation().AngleLerp(SetAngleToMoveTo, telegraphCompletion).ToRotationVector2();
+            }
             Projectile.velocity = Projectile.velocity.RotatedBy(-RotationalSpeed);
+
+            // Play a sound if the telegraph is over.
+            if (Time == LaserTelegraphTime)
+                SoundEngine.PlaySound(new SoundStyle("InfernumMode/Assets/Sounds/Custom/Providence/DogmaLasersFire") with { PitchVariance = 0.5f}, Projectile.Center);
         }
 
         public override void DetermineScale()
@@ -124,11 +185,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width * 2;
 
-        public static Color LaserColorFunction(float completionRatio)
+        public Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             Color c = Color.Lerp(Color.Orange, Color.Pink, colorInterpolant * 0.67f);
-            if (ProvidenceBehaviorOverride.IsEnraged)
+            if (ProvidenceBehaviorOverride.IsEnraged && !FromGuardians)
                 c = Color.Lerp(c, Color.SkyBlue, 0.55f);
 
             return c;
@@ -177,7 +238,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
             laserScopeEffect.Parameters["laserWidth"].SetValue(width);
             laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
-            laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Pink, ProvidenceBehaviorOverride.IsEnraged ? Color.Cyan : Color.Yellow, Projectile.identity / 7f % 1f * 0.84f).ToVector3());
+            laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Pink, ProvidenceBehaviorOverride.IsEnraged && !FromGuardians ? Color.Cyan : Color.Yellow, Projectile.identity / 7f % 1f * 0.84f).ToVector3());
             laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Lerp(Color.Orange, Color.Red, 0.24f).ToVector3());
             laserScopeEffect.Parameters["bloomSize"].SetValue(0.28f + (1f - opacity) * 0.18f);
             laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(0.4f);

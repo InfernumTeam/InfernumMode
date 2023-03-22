@@ -1,9 +1,6 @@
-using CalamityMod;
-using CalamityMod.Events;
-using CalamityMod.Items.SummonItems;
-using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.NPCs.Providence;
-using InfernumMode.Content.Projectiles;
+using CalamityMod.CalPlayer;
+using InfernumMode.Content.UI;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -15,7 +12,8 @@ using Terraria.ObjectData;
 
 namespace InfernumMode.Content.Tiles
 {
-    public class GuardiansSummoner : ModTile
+    [LegacyName( new string[] {"GuardiansSummoner"})]
+    public class GuardiansPlaque : ModTile
     {
         public const int Width = 3;
         public const int Height = 6;
@@ -39,6 +37,8 @@ namespace InfernumMode.Content.Tiles
             TileObjectData.newTile.DrawYOffset = 4;
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
+            //ModTileEntity tileEntity = ModContent.GetInstance<GuardiansPlaqueTileEntity>();
+            //TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(tileEntity.Hook_AfterPlacement, -1, 0, processedCoordinates: true);
             TileObjectData.addTile(Type);
             AddMapEntry(new Color(122, 66, 59));
         }
@@ -56,41 +56,40 @@ namespace InfernumMode.Content.Tiles
 
         public override bool RightClick(int i, int j)
         {
-            Tile tile = Main.tile[i, j];
+            // Don't open if a boss is active, to avoid popping up in the guards fight.
+            if (CalamityPlayer.areThereAnyDamnBosses)
+                return false;
 
-            int left = i - tile.TileFrameX / 18;
-            int top = j - tile.TileFrameY / 18;
-
-            if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedShard>()))
-                return true;
-
-            if (NPC.AnyNPCs(ModContent.NPCType<Providence>()) || NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) || BossRushEvent.BossRushActive)
-                return true;
-
-            if (CalamityUtils.CountProjectiles(ModContent.ProjectileType<GuardiansSummonerProjectile>()) > 0)
-                return true;
-
-            Vector2 ritualSpawnPosition = new Vector2(left + Width * 0.5f, top).ToWorldCoordinates();
-            ritualSpawnPosition += new Vector2(-10f, 76f);
-
-            SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, ritualSpawnPosition);
-            Projectile.NewProjectile(new EntitySource_WorldEvent(), ritualSpawnPosition, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f, Main.myPlayer);
-
+            UIPlayer player = Main.LocalPlayer.Infernum_UI();
+            player.DrawPlaqueUI = !player.DrawPlaqueUI;
+            if (player.DrawPlaqueUI)
+                SoundEngine.PlaySound(SoundID.MenuOpen);
+            else
+                SoundEngine.PlaySound(SoundID.MenuClose);
             return true;
         }
 
         public override void MouseOver(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedShard>();
-            Main.LocalPlayer.noThrow = 2;
-            Main.LocalPlayer.cursorItemIconEnabled = true;
+            MouseOver();
         }
 
         public override void MouseOverFar(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedShard>();
-            Main.LocalPlayer.noThrow = 2;
-            Main.LocalPlayer.cursorItemIconEnabled = true;
+            MouseOver();
+        }
+
+        private void MouseOver()
+        {
+            // Don't show if a boss is active, to avoid popping up in the guards fight.
+            if (CalamityPlayer.areThereAnyDamnBosses)
+                return;
+
+            if (!GuardiansPlaqueUIManager.ShouldDraw)
+            {
+                Main.LocalPlayer.cursorItemIconText = "Read";
+                Main.instance.MouseTextHackZoom(Main.LocalPlayer.cursorItemIconText);
+            }
         }
     }
 }

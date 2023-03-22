@@ -10,6 +10,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Buffs;

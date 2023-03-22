@@ -251,7 +251,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 // Create dust
                 for (int i = 0; i < 6; i++)
                 {
-                    Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
+                    Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
                     ninjaDodgeDust.position += Main.rand.NextVector2Square(-20f, 20f);
                     ninjaDodgeDust.velocity *= 0.4f;
                     ninjaDodgeDust.scale *= Main.rand.NextFloat(1f, 1.4f);
@@ -274,7 +274,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     // Spawn dust
                     for (int i = 0; i < 6; i++)
                     {
-                        Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
+                        Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
                         ninjaDodgeDust.position += Main.rand.NextVector2Square(-20f, 20f);
                         ninjaDodgeDust.velocity *= 0.4f;
                         ninjaDodgeDust.scale *= Main.rand.NextFloat(1f, 1.4f);
@@ -320,7 +320,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     if (NPC.Opacity > 0)
                         for (int i = 0; i < 6; i++)
                         {
-                            Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
+                            Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
                             ninjaDodgeDust.position += Main.rand.NextVector2Square(-20f, 20f);
                             ninjaDodgeDust.velocity *= 0.4f;
                             ninjaDodgeDust.scale *= Main.rand.NextFloat(1f, 1.4f);
@@ -344,7 +344,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 if (NPC.Opacity > 0)
                     for (int i = 0; i < 6; i++)
                     {
-                        Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
+                        Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
                         ninjaDodgeDust.position += Main.rand.NextVector2Square(-20f, 20f);
                         ninjaDodgeDust.velocity *= 0.4f;
                         ninjaDodgeDust.scale *= Main.rand.NextFloat(1f, 1.4f);
@@ -513,7 +513,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
+                    Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
                     ninjaDodgeDust.position += Main.rand.NextVector2Square(-20f, 20f);
                     ninjaDodgeDust.velocity *= 0.4f;
                     ninjaDodgeDust.scale *= Main.rand.NextFloat(1f, 1.4f);

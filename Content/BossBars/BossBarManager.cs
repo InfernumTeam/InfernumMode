@@ -40,13 +40,17 @@ namespace InfernumMode.Content.BossBars
         {
             ActiveBossBars = new();
             MainBarTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BaseBarTexture", AssetRequestMode.ImmediateLoad).Value;
-            MainBorderTexture =  ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BarBorderMain", AssetRequestMode.ImmediateLoad).Value;
+            MainBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BarBorderMain", AssetRequestMode.ImmediateLoad).Value;
             EdgeBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/BarBorderEdge", AssetRequestMode.ImmediateLoad).Value;
         }
 
         #endregion
 
         #region Overrides
+
+        // TODO -- This feature is not yet finished.
+        public override bool IsLoadingEnabled(Mod mod) => false;
+
         public override void Unload()
         {
             ActiveBossBars = null;

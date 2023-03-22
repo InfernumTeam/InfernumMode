@@ -12,6 +12,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Fluids;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
+using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -2303,6 +2304,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (attackTimer >= sitTime)
                 {
+                    // Begin the credits if draedon is dead.
+                    if (DownedBossSystem.downedExoMechs)
+                        CreditManager.BeginCredits();
                     npc.active = false;
                     npc.netUpdate = true;
                     npc.NPCLoot();

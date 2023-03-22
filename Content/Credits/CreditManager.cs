@@ -5,15 +5,17 @@ using System.IO;
 using System.Threading;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Credits
 {
-    public static class CreditManager
+    public class CreditManager : ModSystem
     {
         private enum CreditState
         {
             LoadingTextures,
-            Playing
+            Playing,
+            FinalizingDisposing
         }
 
         public static bool CreditsPlaying { get; private set; } = false;
@@ -27,6 +29,12 @@ namespace InfernumMode.Content.Credits
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
         public const int TotalGIFs = 6;
+
+        public override void Load() => On.Terraria.Main.DrawInfernoRings += DrawCredits;
+
+        public override void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawCredits;
+
+        public override void PostUpdateDusts() => UpdateCredits();
 
         internal static void StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss boss)
         {
@@ -48,15 +56,16 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // Else, mark them as playing.
-            CreditsPlaying = true;
+            //CreditsPlaying = true;
         }
 
-        internal static void UpdateCredits()
+        private static void UpdateCredits()
         {
             if (!CreditsPlaying)
                 return;
 
             float gifTime = 360f;
+            float disposeTime = 60f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
 
@@ -66,10 +75,13 @@ namespace InfernumMode.Content.Credits
                     // The textures must be loaded for each gif, do this all at once here and wait the allocated time to ensure they've all loaded, and to give
                     // the player time to enjoy the victory.
                     if (CreditsTimer == 0)
-                        new Thread(SetupObjects).Start();
+                        Main.QueueMainThreadAction(SetupObjects);
 
                     if (CreditsTimer >= gifTime)
+                    {
                         CurrentState = CreditState.Playing;
+                        CreditsTimer = 0;
+                    }
                     break;
 
                 case CreditState.Playing:
@@ -78,25 +90,38 @@ namespace InfernumMode.Content.Credits
                         if (CreditGIFs.IndexInRange(ActiveGifIndex))
                             CreditGIFs[ActiveGifIndex]?.Update();
 
+                        // Dispose of the textures partway into the next gif, to ensure that it does not try to do it while they are in use.
+                        if (CreditsTimer == disposeTime && CreditGIFs.IndexInRange(ActiveGifIndex - 1))
+                        {
+                            // Dispose of all the textures.
+                            CreditGIFs[ActiveGifIndex - 1]?.DisposeTextures();
+                            CreditGIFs[ActiveGifIndex - 1] = null;
+                        }
+
                         if (CreditsTimer == gifTime)
                         {
-                            if (ActiveGifIndex < TotalGIFs - 1)
+                            if (ActiveGifIndex < TotalGIFs)
                             {
-                                // Dispose of all the textures.
-                                CreditGIFs[ActiveGifIndex]?.DisposeTextures();
-                                CreditGIFs[ActiveGifIndex] = null;
                                 ActiveGifIndex++;
                                 CreditsTimer = 0;
                                 return;
                             }
                             else
                             {
-                                ActiveGifIndex = 0;
                                 CreditsTimer = 0;
-                                CreditsPlaying = false;
+                                CurrentState = CreditState.FinalizingDisposing;
+                                CreditsPlaying = true;
                                 return;
                             }    
                         }
+                    }
+                    break;
+                case CreditState.FinalizingDisposing:
+                    if (CreditsTimer >= disposeTime && CreditGIFs.IndexInRange(ActiveGifIndex))
+                    {
+                        // Dispose of all the final textures.
+                        CreditGIFs[ActiveGifIndex]?.DisposeTextures();
+                        CreditGIFs[ActiveGifIndex] = null;
                     }
                     break;
             }
@@ -104,8 +129,10 @@ namespace InfernumMode.Content.Credits
             CreditsTimer++;
         }
 
-        internal static void DrawCredits()
+        private void DrawCredits(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
+            orig(self);
+
             // Only draw if the credits are playing.
             if (!CreditsPlaying || CurrentState != CreditState.Playing)
                 return;
@@ -121,10 +148,10 @@ namespace InfernumMode.Content.Credits
                 if (CreditsTimer <= fadeInTime)
                     opacity = Utils.GetLerpValue(0f, fadeInTime, CreditsTimer, true);
                 else if (CreditsTimer >= fadeOutTime)
-                    opacity = Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
+                    opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
 
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer, opacity);
+                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer % 3, opacity);
             }
         }
 
@@ -144,8 +171,8 @@ namespace InfernumMode.Content.Credits
                     _ => ScreenCapturer.RecordingBoss.SCal
                 };
 
-                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(boss);
-                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.3f, Main.screenHeight * 0.4f), -Vector2.UnitY, textures);
+                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(boss, out bool baseCreditsUsed);
+                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.3f, Main.screenHeight * 0.4f), -Vector2.UnitY * 0.2f, textures, baseCreditsUsed);
             }
         }
     }

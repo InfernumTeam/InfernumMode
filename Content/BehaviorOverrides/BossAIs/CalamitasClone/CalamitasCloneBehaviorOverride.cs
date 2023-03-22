@@ -11,8 +11,10 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Buffs;
+using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -1359,6 +1361,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
                     Utilities.DisplayText("I'm just getting started!", Color.Orange);
+
+                    // Begin recording.
+                    CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Calamitas);
                 }
 
                 int[] projectilesToDelete = new int[]

@@ -56,7 +56,7 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // Else, mark them as playing.
-            //CreditsPlaying = true;
+            CreditsPlaying = true;
         }
 
         private static void UpdateCredits()
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.Credits
                                 CurrentState = CreditState.FinalizingDisposing;
                                 CreditsPlaying = true;
                                 return;
-                            }    
+                            }
                         }
                     }
                     break;

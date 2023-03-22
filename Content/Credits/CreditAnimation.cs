@@ -45,7 +45,7 @@ namespace InfernumMode.Content.Credits
             else
                 textureIndex = (int)MathHelper.Clamp(textureIndex, 0f, Textures.Length - 1);
             Texture2D texture = Textures[textureIndex];
-            if (texture != null || !texture.IsDisposed)
+            if (texture != null && !texture.IsDisposed)
                 Main.spriteBatch.Draw(texture, Center, null, Color.White * opacity, 0f, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
         }
     }

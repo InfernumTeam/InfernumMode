@@ -313,16 +313,15 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             string filePath = $"{FolderPath}/{GetStringFromBoss(bossFootageToLoad)}{FileExtension}";
 
-            Bitmap gif;
-            // Load the gif and set the frame count.
-
-            if (File.Exists(filePath))
-                gif = (Bitmap)Image.FromFile(filePath);
-            else
+            // Return the pre-existing joke gif if the footage does not exist, and set the flag as true.
+            if (!File.Exists(filePath))
             {
                 baseCreditsUsed = true;
                 return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
             }
+
+            // Load the gif and set the frame count.
+            Bitmap gif = (Bitmap)Image.FromFile(filePath);
 
             int frameCount = gif.FrameDimensionsList.Length;
             Texture2D[] textures = new Texture2D[frameCount];

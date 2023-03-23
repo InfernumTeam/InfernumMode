@@ -688,6 +688,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             if (phase2)
             {
+                mazeSummonDelay += 15;
                 spinningCrystalReleaseRate -= 6;
                 spinningCrystalCount += 3;
             }
@@ -897,11 +898,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 target.Infernum_Camera().CurrentScreenShakePower = 6f;
                 SoundEngine.PlaySound(SoundID.NPCHit1, npc.Center);
 
+                float horizontalSpeedOffset = 3f * Main.rand.NextFloatDirection();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.9f, 3.2f))
                     {
-                        Vector2 gelVelocity = new(i, Main.rand.NextFloat(-12f, -10f));
+                        Vector2 gelVelocity = new(horizontalSpeedOffset + i, Main.rand.NextFloat(-12f, -10f));
                         Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), 125, 0f);
                     }
                 }

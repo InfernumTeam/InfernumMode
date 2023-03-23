@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override void SetDefaults()
         {
-            NPC.damage = 180;
+            NPC.damage = 150;
             NPC.npcSlots = 0f;
             NPC.width = NPC.height = 42;
             NPC.defense = 10;

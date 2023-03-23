@@ -7,7 +7,6 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
-using CalamityMod.World;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Fluids;
@@ -292,6 +291,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                 }
 
+                npc.Infernum().Arena.X += 48;
+                npc.Infernum().Arena.Y += 64;
                 npc.ModNPC<SCalBoss>().initialRitualPosition = npc.Center + Vector2.UnitY * 24f;
                 attackDelay = 270f;
                 attackType = (int)SCalAttackType.SummonSepulcher;

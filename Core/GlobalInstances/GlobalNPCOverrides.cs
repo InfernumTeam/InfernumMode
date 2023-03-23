@@ -10,6 +10,7 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
+using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
@@ -308,7 +309,10 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (npc.type == NPCID.Plantera)
+            if (!InfernumMode.CanUseCustomAIs)
+                return base.CanHitPlayer(npc, target, ref cooldownSlot);
+
+            if (npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>())
                 cooldownSlot = ImmunityCooldownID.Bosses;
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())

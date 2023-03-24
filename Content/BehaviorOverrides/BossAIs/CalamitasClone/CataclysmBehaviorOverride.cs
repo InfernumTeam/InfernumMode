@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float attackSpecificTimer = ref npc.Infernum().ExtraAI[5];
 
             // Reset hit sounds.
-            npc.HitSound = SoundID.NPCHit1;
+            npc.HitSound = SoundID.DD2_OgreRoar;
             npc.DeathSound = null;
 
             // Die if the either brother is missing.

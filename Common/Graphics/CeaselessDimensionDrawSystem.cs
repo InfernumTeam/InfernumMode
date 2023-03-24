@@ -128,7 +128,7 @@ namespace InfernumMode.Common.Graphics
             backgroundShader.Shader.Parameters["vortexEdgeFadeFactor"].SetValue(14f);
             backgroundShader.Shader.Parameters["luminanceThreshold"].SetValue(0.8f);
             backgroundShader.SetShaderTexture(InfernumTextureRegistry.HoneycombNoise);
-            backgroundShader.UseColor(Color.Lerp(Color.BlueViolet, Color.Black, 0.32f));
+            backgroundShader.UseColor(Color.Lerp(Color.BlueViolet, Color.DarkGray, 0.7f));
             backgroundShader.UseSecondaryColor(Color.White);
             backgroundShader.UseShaderSpecificData(new Vector4(screenArea.Y, screenArea.X, 0f, 0f));
             backgroundShader.Apply();
@@ -159,7 +159,7 @@ namespace InfernumMode.Common.Graphics
             if (ZoomChangeInterpolant <= 0f)
                 return;
 
-            Vector2 idealZoom = new Vector2(Main.screenWidth, Main.screenHeight) / new Vector2(2150f, 1210f);
+            Vector2 idealZoom = new Vector2(Main.screenWidth, Main.screenHeight) / new Vector2(2350f, 1320f);
             Main.GameViewMatrix.Zoom = Vector2.SmoothStep(Main.GameViewMatrix.Zoom, idealZoom, ZoomChangeInterpolant);
         }
 

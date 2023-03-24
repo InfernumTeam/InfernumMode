@@ -181,7 +181,7 @@ namespace InfernumMode.Content.Credits
                     4 => ScreenCapturer.RecordingBoss.Draedon,
                     _ => ScreenCapturer.RecordingBoss.SCal
                 };
-
+                
                 Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(boss, out bool baseCreditsUsed);
                 CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.3f, Main.screenHeight * 0.4f), -Vector2.UnitY * 0.2f, textures, baseCreditsUsed);
             }

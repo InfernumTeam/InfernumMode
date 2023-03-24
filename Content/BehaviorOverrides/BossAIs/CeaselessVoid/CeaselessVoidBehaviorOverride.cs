@@ -4,6 +4,7 @@ using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
+using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -39,6 +40,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             ChainedUp,
             DarkEnergySwirl,
+
+            RedirectingAcceleratingDarkEnergy,
+            DiagonalMirrorBolts,
+
+            // Old attacks. The status of each is to be determined.
             RealityRendCharge,
             ConvergingEnergyBarrages,
             SlowEnergySpirals,
@@ -160,10 +166,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Lock the camera onto the ceaseless void because it's very egotistical and cannot bear the thought of not being the center of attention.
-            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType == (int)CeaselessVoidAttackType.DarkEnergySwirl)
+            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp)
             {
+                float lookAtTargetInterpolant = Utils.GetLerpValue(420f, 2700f, ((target.Center - npc.Center) * new Vector2(1f, 1.6f)).Length(), true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;
-                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = Vector2.Lerp(npc.Center, target.Center, lookAtTargetInterpolant);
             }
 
             switch ((CeaselessVoidAttackType)(int)attackType)
@@ -175,6 +182,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     DoBehavior_DarkEnergySwirl(npc, phase2, phase3, target, ref attackTimer);
                     npc.boss = true;
                     break;
+
+                case CeaselessVoidAttackType.RedirectingAcceleratingDarkEnergy:
+                    DoBehavior_RedirectingAcceleratingDarkEnergy(npc, target, ref attackTimer);
+                    break;
+                case CeaselessVoidAttackType.DiagonalMirrorBolts:
+                    DoBehavior_DiagonalMirrorBolts(npc, target, ref attackTimer);
+                    break;
+
                 case CeaselessVoidAttackType.RealityRendCharge:
                     DoBehavior_RealityRendCharge(npc, phase2, phase3, enraged, target, ref attackTimer);
                     break;
@@ -422,6 +437,100 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGBeam>());
                 SelectNewAttack(npc);
             }
+        }
+
+        public static void DoBehavior_RedirectingAcceleratingDarkEnergy(NPC npc, Player target, ref float attackTimer)
+        {
+            int energyReleaseRate = 160;
+            int accelerateDelay = 102;
+            int accelerationTime = 38;
+            int wrappedAttackTimer = (int)attackTimer % energyReleaseRate;
+            int acceleratingEnergyID = ModContent.ProjectileType<AcceleratingDarkEnergy>();
+            float startingEnergySpeed = 6f;
+            float idealEndingSpeed = 28f;
+
+            // Release energy balls from above.
+            if (wrappedAttackTimer == 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item103, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 11; i++)
+                    {
+                        Vector2 baseSpawnOffset = (MathHelper.TwoPi * i / 11f).ToRotationVector2() * new Vector2(1f, 1.2f) * 560f;
+                        for (int j = 0; j < 4; j++)
+                        {
+                            Vector2 microSpawnOffset = (MathHelper.TwoPi * j / 4f).ToRotationVector2() * 40f;
+                            Vector2 energyRestingPosition = Vector2.Lerp(npc.Center, target.Center, 0.3f) + baseSpawnOffset + microSpawnOffset;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
+                            {
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().RestingPosition = energyRestingPosition;
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Index = i * 4 + j;
+                            });
+                            Utilities.NewProjectileBetter(energyRestingPosition - Vector2.UnitY * 1000f, Vector2.Zero, acceleratingEnergyID, 250, 0f);
+                        }
+                    }
+                }
+            }
+
+            // Make energy balls accelerate.
+            if (wrappedAttackTimer >= accelerateDelay)
+            {
+                int indexToFire = wrappedAttackTimer - accelerateDelay;
+                foreach (Projectile energy in Utilities.AllProjectilesByID(acceleratingEnergyID).Where(e => e.ModProjectile<AcceleratingDarkEnergy>().Index == indexToFire && e.ai[0] == 0f))
+                {
+                    energy.ModProjectile<AcceleratingDarkEnergy>().Time = 0f;
+                    energy.ModProjectile<AcceleratingDarkEnergy>().Acceleration = Utilities.AccelerationToReachSpeed(startingEnergySpeed, idealEndingSpeed, accelerationTime);
+                    energy.ModProjectile<AcceleratingDarkEnergy>().AttackState = AcceleratingDarkEnergy.DarkEnergyAttackState.AccelerateTowardsTarget;
+                    energy.velocity = energy.SafeDirectionTo(target.Center) * startingEnergySpeed;
+                    energy.netUpdate = true;
+                }
+            }
+        }
+
+        public static void DoBehavior_DiagonalMirrorBolts(NPC npc, Player target, ref float attackTimer)
+        {
+            int energySuckTime = 0;
+            int energyBoltReleaseRate = 1;
+            int energyBoltReleaseCount = 54;
+            int energyBoltShootTime = energyBoltReleaseRate * energyBoltReleaseCount;
+            int energyDiagonalShootDelay = energySuckTime + energyBoltShootTime + OtherworldlyBolt.LockIntoPositionTime + OtherworldlyBolt.DisappearIntoBackgroundTime;
+            int energyDiagonalBootShootRate = 3;
+            bool doneShooting = attackTimer >= energyDiagonalShootDelay + energyBoltReleaseCount * energyDiagonalBootShootRate;
+            float energyBoltArc = MathHelper.ToRadians(300f);
+
+            // Play funny sounds.
+            if (attackTimer == energySuckTime + 1f)
+                SoundEngine.PlaySound(SoundID.Item164 with { Pitch = -0.7f }, target.Center);
+            if (attackTimer == energyDiagonalShootDelay + 1f)
+                SoundEngine.PlaySound(SoundID.Item163 with { Pitch = -0.7f }, target.Center);
+
+            // Release energy bolts that fly outward.
+            if (attackTimer >= energySuckTime && attackTimer <= energySuckTime + energyBoltShootTime && attackTimer % energyBoltReleaseRate == 0f)
+            {
+                float energyBoltShootInterpolant = Utils.GetLerpValue(energySuckTime, energySuckTime + energyBoltShootTime, attackTimer, true);
+                float energyBoltShootOffsetAngle = MathHelper.Lerp(0.5f * energyBoltArc, -0.5f * energyBoltArc, energyBoltShootInterpolant);
+                Vector2 energyBoltShootDirection = -Vector2.UnitY.RotatedBy(energyBoltShootOffsetAngle);
+                Vector2 energySpawnPosition = npc.Center + 56f * energyBoltShootDirection;
+                Color energyPuffColor = Color.Lerp(Color.Purple, Color.SkyBlue, Main.rand.NextFloat(0.66f));
+
+                MediumMistParticle darkEnergy = new(npc.Center, energyBoltShootDirection.RotatedByRandom(0.6f) * Main.rand.NextFloat(16f), energyPuffColor, Color.DarkGray * 0.6f, 1.5f, 255f);
+                GeneralParticleHandler.SpawnParticle(darkEnergy);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(energySpawnPosition, energyBoltShootDirection, ModContent.ProjectileType<OtherworldlyBolt>(), 0, 0f, -1, 0f, attackTimer - (energySuckTime + energyBoltShootTime));
+            }
+
+            // Release a rain of energy bolts.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= energyDiagonalShootDelay && attackTimer % energyDiagonalBootShootRate == energyDiagonalBootShootRate - 1f)
+            {
+                Vector2 energyBoltSpawnPosition = target.Center + 1250f * OtherworldlyBolt.AimDirection + new Vector2(900f * Main.rand.NextFloatDirection(), -400f);
+                Utilities.NewProjectileBetter(energyBoltSpawnPosition, -5f * OtherworldlyBolt.AimDirection, ModContent.ProjectileType<OtherworldlyBolt>(), 250, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
+            }
+
+            if (doneShooting)
+                attackTimer = -45f;
         }
 
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
@@ -845,6 +954,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.Infernum().ExtraAI[i] = 0f;
 
             npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
+            npc.ai[0] = (int)CeaselessVoidAttackType.DiagonalMirrorBolts;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

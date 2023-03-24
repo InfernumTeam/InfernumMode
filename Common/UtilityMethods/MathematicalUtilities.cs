@@ -176,11 +176,15 @@ namespace InfernumMode
             float n1 = 7.5625f;
             float d1 = 2.75f;
 
-            if (value < 1f / d1) {
+            if (value < 1f / d1)
+            {
                 return n1 * value * value;
-            } else if (value < 2f / d1) {
+            }
+            else if (value < 2f / d1)
+            {
                 return n1 * (value -= 1.5f / d1) * value + 0.75f;
-            } else if (value < 2.5f / d1)
+            }
+            else if (value < 2.5f / d1)
             {
                 return n1 * (value -= 2.25f / d1) * value + 0.9375f;
             }
@@ -203,5 +207,18 @@ namespace InfernumMode
         }
 
         public static float EndingHeight(this CalamityUtils.CurveSegment segment) => segment.startingHeight + segment.elevationShift;
+
+        public static float AccelerationToReachSpeed(float startingSpeed, float idealSpeed, int accelerationTime)
+        {
+            // Writing exponential acceleration as an algebraic equation can allow us to determine how fast each frame must be to reach
+            // the ideal speed:
+            // a^t * v0 = v1
+
+            // a is the variable we wish to find, which can be done by rewriting like so:
+            // a^t * v0 / v1 = 1
+            // a^t = v0 / v1
+            // a = (v0 / v1) ^ (1 / t)
+            return MathF.Pow(idealSpeed / startingSpeed, 1f / accelerationTime);
+        }
     }
 }

@@ -50,7 +50,7 @@ float3 swirl(float2 coords)
     // Start by using turbulence as a base for the background.
     float3 result = uColor * (turbulentNoise(coords * 4) + turbulentNoise(coords * 12)) * 0.75;
     
-    return result;
+    return pow(result, 2.75);
 }
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0

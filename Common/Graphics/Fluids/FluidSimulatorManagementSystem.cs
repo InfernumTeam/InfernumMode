@@ -96,6 +96,7 @@ namespace InfernumMode.Common.Graphics.Fluids
             */
 
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            CreatedFields.RemoveAll(f => f is null);
             foreach (FluidFieldInfernum field in CreatedFields)
             {
                 if (!field.ShouldUpdate)

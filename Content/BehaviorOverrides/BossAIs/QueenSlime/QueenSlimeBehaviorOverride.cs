@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 npc.velocity.Y = 0f;
 
             // Handle ground hit effects when ready.
-            if (npc.collideY && attackTimer >= 5f && hasHitGround == 0f)
+            if (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24) && attackTimer >= 5f && hasHitGround == 0f)
             {
                 for (int i = 0; i < 60; i++)
                 {
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Begin the slam.
-            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Math.Abs(npc.velocity.Y) <= 0.9f)
+            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24))
             {
                 jumpState = 2f;
                 attackTimer = 0f;

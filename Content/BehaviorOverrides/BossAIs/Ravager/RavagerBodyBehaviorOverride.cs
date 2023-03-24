@@ -255,6 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             ref float jumpSubstate = ref npc.Infernum().ExtraAI[0];
             ref float jumpCounter = ref npc.Infernum().ExtraAI[1];
             ref float attackDelayTimer = ref npc.Infernum().ExtraAI[2];
+            ref float tileCollisionLineY = ref npc.Infernum().ExtraAI[3];
 
             // Sit in place and create flame particles as a telegraph to indicate the impending jump.
             // While the player needs to be near Ravager to see the particles, it should still be fine due to
@@ -310,6 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 {
                     attackTimer = 0f;
                     jumpSubstate = 1f;
+                    tileCollisionLineY = target.Top.Y;
 
                     npc.velocity.Y -= 8f;
                     if (target.position.Y + target.height < npc.Center.Y)
@@ -363,7 +365,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 }
 
                 // Make stomp sounds and particles when hitting the ground again.
-                if (npc.velocity.Y == 0f)
+                if (npc.velocity.Y == 0f || (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 48) && npc.noTileCollide))
                 {
                     CreateGroundImpactEffects(npc);
                     attackTimer = 0f;
@@ -378,16 +380,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 }
 
                 // Fall through tiles in the way.
-                if (!target.dead)
-                {
-                    if (target.position.Y > npc.Bottom.Y + 400f && npc.velocity.Y > 0f || target.position.Y < npc.Top.Y - 400f && npc.velocity.Y < 0f)
-                        npc.noTileCollide = true;
-                    else
-                        npc.noTileCollide = false;
-                }
+                npc.noTileCollide = npc.Bottom.Y <= tileCollisionLineY;
             }
             else
-                npc.velocity.X *= 0.8f;
+                npc.velocity.X *= 0.4f;
         }
 
         public static void DoBehavior_BurstsOfBlood(NPC npc, Player target, RavagerPhaseInfo phaseInfo, bool multiplePerShot, ref float attackTimer)
@@ -541,7 +537,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
             // Make stomp sounds and particles when hitting the ground.
             // Also release an even spread of projectiles into the air. A small amount of variance is used to spice things up, but not much.
-            if (npc.velocity.Y == 0f && hasDoneGroundHitEffects == 0f)
+            bool hitGround = npc.velocity.Y == 0f || Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 48);
+            if (hitGround && hasDoneGroundHitEffects == 0f)
             {
                 CreateGroundImpactEffects(npc);
 
@@ -569,6 +566,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                             Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), spikeDamage, 0f);
                         }
                     }
+
+                    npc.velocity.Y = 0f;
+                    npc.netUpdate = true;
                 }
 
                 target.Infernum_Camera().CurrentScreenShakePower = 10f;
@@ -647,12 +647,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             npc.velocity.X = 0f;
 
             // Make stomp sounds and particles when hitting the ground.
-            if (npc.velocity.Y == 0f && hasDoneGroundHitEffects == 0f)
+            bool hitGround = npc.velocity.Y == 0f || Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 48);
+            if (hitGround && hasDoneGroundHitEffects == 0f)
             {
                 CreateGroundImpactEffects(npc);
                 hasDoneGroundHitEffects = 1f;
                 attackTimer = 0f;
-                npc.velocity.X = 0f;
+                npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
 
                 target.Infernum_Camera().CurrentScreenShakePower = 10f;
@@ -824,7 +825,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Dust stompDust = Dust.NewDustDirect(new Vector2(x, npc.Bottom.Y), npc.width + 30, 4, 31, 0f, 0f, 100, default, 1.5f);
+                    Dust stompDust = Dust.NewDustDirect(new Vector2(x, npc.Bottom.Y), npc.width + 30, 4, DustID.Smoke, 0f, 0f, 100, default, 1.5f);
                     stompDust.velocity *= 0.2f;
                 }
 

@@ -71,7 +71,8 @@ namespace InfernumMode.Content.Credits
             if (!CreditsPlaying)
                 return;
 
-            float gifTime = 360f;
+            // TODO -- Make this variable based on the amount of frames in the gif.
+            float gifTime = ScreenCapturer.BaseRecordCountdownLength;
             float disposeTime = 60f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
@@ -148,7 +149,8 @@ namespace InfernumMode.Content.Credits
             if (!CreditsPlaying || CurrentState != CreditState.Playing)
                 return;
 
-            float gifTime = 360f;
+            // TODO -- Make this variable based on the amount of frames in the gif.
+            float gifTime = ScreenCapturer.BaseRecordCountdownLength;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
 
@@ -162,7 +164,7 @@ namespace InfernumMode.Content.Credits
                     opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
 
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer / 3, opacity);
+                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer / ScreenCapturer.RecordingFrameSkip, opacity);
             }
         }
 

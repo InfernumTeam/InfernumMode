@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -338,8 +339,11 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
                 // Loop through each pixel, and set it to the bitmap's info. This also swaps the BGRA of the bitmap to RGBA which the texture2d uses. Not doing this
                 // results in the textures r and b channels being swapped which is not ideal.
-                for (int i = 0; i < imgData.Length; i++)
+                Parallel.For(0, imgData.Length, i =>
+                {
                     imgData[i] = ((byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000));
+                });
+
                 // Unlock the bits.
                 bitmap.UnlockBits(origdata);
             }

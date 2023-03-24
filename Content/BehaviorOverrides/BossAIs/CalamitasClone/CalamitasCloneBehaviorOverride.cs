@@ -1361,9 +1361,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
                     Utilities.DisplayText("I'm just getting started!", Color.Orange);
-
-                    // Begin recording.
-                    CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Calamitas);
                 }
 
                 int[] projectilesToDelete = new int[]
@@ -1400,7 +1397,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             eyeGleamInterpolant = blackFadeCompletion * 0.67f;
 
             if (attackTimer >= teleportDelay + blackFadeTime + 8f)
+            {
+                // Begin recording.
+                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Calamitas);
                 SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_BarrageOfArcingDarts(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)

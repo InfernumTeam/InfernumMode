@@ -183,7 +183,7 @@ namespace InfernumMode.Content.Credits
                 };
 
                 Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(boss, out bool baseCreditsUsed);
-                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.3f, Main.screenHeight * 0.4f), -Vector2.UnitY * 0.2f, textures, baseCreditsUsed);
+                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), -Vector2.UnitY * 0.05f, textures, baseCreditsUsed);
             }
         }
     }

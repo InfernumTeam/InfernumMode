@@ -47,8 +47,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         private const int CaptureBitBlit = 0x40000000;
 
-        // 6 seconds.
-        public const int BaseRecordCountdownLength = 360;
+        // 6 seconds, due to it only recording every 3rd frame.
+        public const int BaseRecordCountdownLength = 1080;
 
         public static int RecordCountdown
         {

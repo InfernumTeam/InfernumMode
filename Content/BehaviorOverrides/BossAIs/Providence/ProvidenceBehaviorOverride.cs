@@ -9,10 +9,12 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.Buffs;
+using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -2171,6 +2173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float bombShootTimer = ref npc.Infernum().ExtraAI[0];
             ref float laserShootTimer = ref npc.Infernum().ExtraAI[1];
             ref float vfxDelayCountdown = ref npc.Infernum().ExtraAI[2];
+            ref float recordingStarted = ref npc.Infernum().ExtraAI[3];
 
             int bombShootRate = (int)MathHelper.Lerp(startingBombShootRate, endingBombShootRate, attackCompletion);
             int laserShootRate = (int)MathHelper.Lerp(startingLaserShootRate, endingLaserShootRate, attackCompletion);
@@ -2183,6 +2186,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 hasCompletedCycle = 1f;
                 npc.netUpdate = true;
+            }
+
+            // Start recording.
+            if (attackCompletion >= 0.5f && recordingStarted == 0)
+            {
+                recordingStarted = 1;
+                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Provi);
             }
 
             // Make the lava rise upward.

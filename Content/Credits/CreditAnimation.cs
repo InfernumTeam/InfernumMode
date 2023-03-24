@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Credits
 
         public Texture2D[] Textures;
 
-        private bool BaseCredits;
+        private readonly bool BaseCredits;
 
         public CreditAnimationObject(Vector2 center, Vector2 velocity, Texture2D[] textures, bool baseCredits)
         {

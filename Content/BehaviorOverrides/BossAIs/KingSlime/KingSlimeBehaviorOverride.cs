@@ -4,7 +4,9 @@ using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -115,6 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
+                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.KingSlime);
                 HatGirl.SayThingWhileOwnerIsAlive(target, "The ninja shoots more shurikens the farther you are, so don't go too far!");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

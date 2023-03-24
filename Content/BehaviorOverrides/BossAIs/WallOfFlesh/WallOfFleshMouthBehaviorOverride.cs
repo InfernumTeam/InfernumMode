@@ -1,5 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Common.Graphics.AttemptRecording;
+using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -131,6 +133,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 int leech = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
                 if (Main.npc.IndexInRange(leech))
                     Main.npc[leech].velocity = npc.velocity * 1.25f;
+            }
+
+            // Start recording for the credits.
+            if (lifeRatio <= Phase2LifeRatio && npc.Infernum().ExtraAI[0] == 0)
+            {
+                npc.Infernum().ExtraAI[0] = 1;
+                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.WoF);
             }
 
             // Roar before beginning the eye laser bursts.

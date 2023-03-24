@@ -148,7 +148,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 AttackState = Utilities.IsAprilFirst() ? Main.rand.NextBool() ? (float)GolemAttackState.BIGSHOT : (float)GolemAttackState.BadTime : (float)GolemAttackState.SummonDelay;
                 if (InfernumMode.EmodeIsActive)
                     AttackState = (float)GolemAttackState.BadTime;
-
+                
                 PreviousAttackState = (float)GolemAttackState.LandingState;
 
                 // This contains a server-side sync.
@@ -471,6 +471,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     slingshotArmToCharge = 0f;
                     attackCounter = 0f;
                     SelectNextAttackState(npc);
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<SpikeTrap>());
                     npc.netUpdate = true;
                 }
 
@@ -646,7 +647,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public static void DoBehavior_FloorFire(NPC npc, Player target, bool inPhase2, bool inPhase3, ref float attackTimer, ref float attackCooldown, ref float jumpState, ref float attackCounter, ref float slamTelegraphInterpolant)
         {
-            int jumpDelay = 25;
+            int jumpDelay = 18;
             int jumpCount = 3;
             int minHoverTime = 35;
             int maxHoverTime = 150;
@@ -735,7 +736,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * slamSpeed, 0.125f);
 
                     bool hitGround = false;
-                    while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && npc.Center.Y >= npc.Infernum().Arena.Center.Y)
+                    while (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && npc.Bottom.Y >= target.Top.Y)
                     {
                         hitGround = true;
                         npc.position.Y -= 2f;

@@ -340,7 +340,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
 
                 npc.Opacity = 1f;
-                SelectNextAttack(npc);
+                if (attackTimer >= 90f)
+                    SelectNextAttack(npc);
                 return;
             }
 

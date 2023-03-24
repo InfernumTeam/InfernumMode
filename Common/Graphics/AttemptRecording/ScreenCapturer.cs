@@ -61,6 +61,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             get;
             set;
         }
+
         // If on a non-Windows operating system, don't use this system. Fundamental parts are not guaranteed to work outside of it.
         // Also it doesn't run on servers, obviously.
         public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT;
@@ -258,10 +259,15 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             }
 
             string filePath = $"{FolderPath}/{GetStringFromBoss(CurrentBoss)}{FileExtension}";
+            string directory = Path.GetDirectoryName(filePath);
             AnimatedGifEncoder e = new();
 
+            // Create the directory if necessary.
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+            
             using MemoryStream stream = new();
-            using FileStream fileStream = new(filePath, FileMode.Create);
+            using FileStream fileStream = File.Create(filePath);
             e.Start(stream);
             e.SetDelay(0);
             e.SetRepeat(0);

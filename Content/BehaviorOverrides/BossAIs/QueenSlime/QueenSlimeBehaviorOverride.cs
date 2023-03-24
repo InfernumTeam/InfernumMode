@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 npc.velocity.Y = 0f;
 
             // Handle ground hit effects when ready.
-            if (npc.collideY && attackTimer >= 5f && hasHitGround == 0f)
+            if (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24) && attackTimer >= 5f && hasHitGround == 0f)
             {
                 for (int i = 0; i < 60; i++)
                 {
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Begin the slam.
-            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Math.Abs(npc.velocity.Y) <= 0.9f)
+            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24))
             {
                 jumpState = 2f;
                 attackTimer = 0f;
@@ -688,6 +688,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             if (phase2)
             {
+                mazeSummonDelay += 15;
                 spinningCrystalReleaseRate -= 6;
                 spinningCrystalCount += 3;
             }
@@ -897,11 +898,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 target.Infernum_Camera().CurrentScreenShakePower = 6f;
                 SoundEngine.PlaySound(SoundID.NPCHit1, npc.Center);
 
+                float horizontalSpeedOffset = 3f * Main.rand.NextFloatDirection();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.9f, 3.2f))
                     {
-                        Vector2 gelVelocity = new(i, Main.rand.NextFloat(-12f, -10f));
+                        Vector2 gelVelocity = new(horizontalSpeedOffset + i, Main.rand.NextFloat(-12f, -10f));
                         Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), 125, 0f);
                     }
                 }

@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         public override void SetDefaults()
         {
             NPC.lifeMax = 1;
-            NPC.defDamage = NPC.damage = 75;
+            NPC.defDamage = NPC.damage = 125;
             NPC.dontTakeDamage = true;
             NPC.width = 40;
             NPC.height = 40;
@@ -33,6 +33,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         public override bool PreAI() => DoFistAI(NPC, true);
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => DrawFist(NPC, Main.spriteBatch, drawColor, true);
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            cooldownSlot = ImmunityCooldownID.Bosses;
+            return base.CanHitPlayer(target, ref cooldownSlot);
+        }
 
         public static bool DoFistAI(NPC npc, bool leftFist)
         {

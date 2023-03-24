@@ -1000,7 +1000,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int dartShootCount = 24;
             int bookAttackDuration = bookAppearTime + sparkReleaseTime + bookExplodeDelay;
             float sparkShootSpeed = 4.5f;
-            float dartShootSpeed = 4.5f;
+            float dartShootSpeed = 5.76f;
             float dartAngularVelocity = MathHelper.ToRadians(0.6f);
             Vector2 bookCenter = npc.Center - Vector2.UnitX * npc.scale * npc.spriteDirection * 12f;
             ref float bookAppearInterpolant = ref npc.Infernum().ExtraAI[0];
@@ -1242,6 +1242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     ModContent.ProjectileType<CharredWand>(),
                     ModContent.ProjectileType<ConvergingShadowSpark>(),
                     ModContent.ProjectileType<DarkMagicFlame>(),
+                    ModContent.ProjectileType<EntropyBeam>(),
                     ModContent.ProjectileType<LargeDarkFireOrb>(),
                 };
                 Utilities.DeleteAllProjectiles(false, projectilesToDelete);
@@ -1371,6 +1372,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     ModContent.ProjectileType<CharredWand>(),
                     ModContent.ProjectileType<ConvergingShadowSpark>(),
                     ModContent.ProjectileType<DarkMagicFlame>(),
+                    ModContent.ProjectileType<EntropyBeam>(),
                     ModContent.ProjectileType<LargeDarkFireOrb>(),
                 };
                 Utilities.DeleteAllProjectiles(false, projectilesToDelete);
@@ -1743,7 +1745,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             switch (currentAttack)
             {
                 case CloneAttackType.SpawnAnimation:
-                case CloneAttackType.BrothersPhase:
                     nextAttack = CloneAttackType.WandFireballs;
                     break;
                 case CloneAttackType.WandFireballs:
@@ -1753,6 +1754,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     nextAttack = CloneAttackType.ShadowTeleports;
                     break;
                 case CloneAttackType.ShadowTeleports:
+                case CloneAttackType.BrothersPhase:
                     nextAttack = CloneAttackType.DarkOverheadFireball;
                     break;
                 case CloneAttackType.DarkOverheadFireball:

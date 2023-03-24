@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.Assets.Sounds;
@@ -64,6 +65,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
+            // Main this mod removes a lot of debuffs, huh?
+            if (target.HasBuff(ModContent.BuffType<Plague>()))
+                target.ClearBuff(ModContent.BuffType<Plague>());
 
             // Fly away if the target is gone.
             if (!target.active || target.dead)
@@ -231,7 +236,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_MissileLaunch(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
         {
-            int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 1 : 2;
+            int attackCycleCount = 1;
             int missileShootRate = (int)(14f - enrageFactor * 6f);
             float missileShootSpeed = enrageFactor * 5f + 16f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -308,7 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_PlagueVomit(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
         {
-            int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 1 : 2;
+            int attackCycleCount = 1;
             int vomitShootRate = (int)(55f - enrageFactor * 29f);
             float vomitShootSpeed = 14f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -349,7 +354,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.5f) * 0.95f;
 
                     vomitShootTimer++;
-                    if (vomitShootTimer >= vomitShootRate)
+                    if (vomitShootTimer >= vomitShootRate && attackTimer <= 136f)
                     {
                         SoundEngine.PlaySound(SoundID.Item11, npc.Center);
 
@@ -366,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.netUpdate = true;
                     }
 
-                    if (attackTimer >= 180f)
+                    if (attackTimer >= 210f)
                     {
                         attackCycleCounter++;
                         if (attackCycleCounter >= attackCycleCount)
@@ -656,6 +661,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 hoverOffsetY = 400f * (chargeCount % 2f == 0f).ToDirectionInt();
                 chargeState = 1f;
                 bombingTimer = 0f;
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<RedirectingPlagueMissile>());
                 npc.netUpdate = true;
             }
 
@@ -713,7 +719,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     chargeState++;
                     npc.netUpdate = true;
 
-                    if (chargeCount > attackCycleCount)
+                    if (chargeCount >= attackCycleCount)
                         SelectNextAttack(npc);
                 }
             }
@@ -731,7 +737,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.16f;
                     for (float horizontalOffset = -1900f; horizontalOffset < 1900f; horizontalOffset += 90f)
                     {
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph => telegraph.rotation = bombRotation);
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph => telegraph.rotation = bombRotation + Main.rand.NextFloatDirection() * 0.022f);
                         Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f, target.whoAmI, bombingDelay);
                     }
                 }

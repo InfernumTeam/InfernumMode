@@ -47,8 +47,9 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         private const int CaptureBitBlit = 0x40000000;
 
-        // 6 seconds, due to it only recording every 3rd frame.
-        public const int BaseRecordCountdownLength = 1080;
+        public const int BaseRecordCountdownLength = 360 * RecordingFrameSkip;
+
+        public const int RecordingFrameSkip = 3;
 
         public static int RecordCountdown
         {
@@ -190,7 +191,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 RecordCountdown--;
 
                 // Append to the frames. For the sake of performance this happens on frame intervals instead of every frame.
-                if (RecordCountdown % 3 == 0)
+                if (RecordCountdown % RecordingFrameSkip == 0)
                     frames.Add(GetScreenBitmap());
 
                 // Prepare the gif file once the recording countdown is done.
@@ -265,7 +266,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             // Create the directory if necessary.
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
-            
+
             using MemoryStream stream = new();
             using FileStream fileStream = File.Create(filePath);
             e.Start(stream);

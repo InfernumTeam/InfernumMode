@@ -20,6 +20,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
 using InfernumMode.Content.WorldGeneration;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -304,9 +305,14 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
         {
-            // Don't draw the moon if it's in use.
-            if (!Main.dayTime && StolenCelestialObject.MoonIsNotInSky)
-                return;
+            // Don't draw the moon if it's in use, or being drawn seperately.
+            if (!Main.dayTime)
+            {
+                if (StolenCelestialObject.MoonIsNotInSky)
+                    return;
+                else if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive)
+                    return;
+            }
 
             // Don't draw the sun if it's in use.
             if (Main.dayTime && StolenCelestialObject.SunIsNotInSky)
@@ -1166,6 +1172,20 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.GotoPrev(MoveType.After, i => i.MatchLdcI4(0));
             cursor.Emit(OpCodes.Pop);
             cursor.EmitDelegate(() => DownedBossSystem.downedExoMechs.ToInt());
+        }
+    }
+
+    public class DrawNightStarsHook : IHookEdit
+    {
+        public void Load() => On.Terraria.Main.DrawStarsInBackground += DrawStarsHook;
+        public void Unload() => On.Terraria.Main.DrawStarsInBackground -= DrawStarsHook;
+
+        private void DrawStarsHook(On.Terraria.Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea)
+        {
+            // Do not draw if the flower ocean visuals are active.
+            if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive)
+                return;
+            orig(self, sceneArea);
         }
     }
 }

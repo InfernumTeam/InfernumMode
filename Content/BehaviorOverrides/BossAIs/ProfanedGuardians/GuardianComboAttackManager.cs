@@ -279,7 +279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // The commander bobs on the spot, pausing to aim and fire a fire beam at the player from afar.
             if (npc.type == CommanderType)
             {
-                float deathrayFireRate = 150;
+                float deathrayFireRate = 165;
                 float initialDelay = 120;
                 ref float movementTimer = ref npc.Infernum().ExtraAI[0];
 

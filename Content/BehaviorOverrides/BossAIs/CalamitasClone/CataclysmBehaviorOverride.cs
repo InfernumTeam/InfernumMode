@@ -141,7 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
             }
         }
-        
+
         public static void UpdateEnergyDrawer(float attackTimer, float chargeDelay, AresCannonChargeParticleSet energyDrawer)
         {
             // Decide the state of the particle drawers.
@@ -447,10 +447,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                             npc.velocity *= 0.3f;
                             npc.netUpdate = true;
 
-                            for (int i = 0; i < 5; i++)
+                            for (int i = 0; i < 7; i++)
                             {
-                                float offsetAngle = MathHelper.Lerp(-0.96f, 0.96f, i / 4f) + Main.rand.NextFloatDirection() * 0.04f;
-                                Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(9f, 12f);
+                                float offsetAngle = MathHelper.Lerp(-1.09f, 1.09f, i / 6f) + Main.rand.NextFloatDirection() * 0.04f;
+                                Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(10f, 13.6f);
                                 shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
                                 Utilities.NewProjectileBetter(npc.Top, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 155, 0f);
                             }

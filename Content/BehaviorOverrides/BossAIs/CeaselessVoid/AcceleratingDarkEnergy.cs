@@ -49,25 +49,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public ref float Acceleration => ref Projectile.ai[1];
 
+        public ref float ZapFrameTimer => ref Projectile.localAI[1];
+
         public static float IdealSpeed => 42f;
+
+        public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergy";
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Energy");
-            Main.projFrames[Type] = 6;
+            Main.projFrames[Type] = 8;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 56;
+            Projectile.width = Projectile.height = 48;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 360;
-            Projectile.scale = 0.7f;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
             LocalParticles = new();
@@ -110,6 +113,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 particle.Update();
             }
 
+            if (Projectile.frame == 0 && Projectile.frameCounter % 5 == 0 && Main.rand.NextBool(3) && ZapFrameTimer <= 0f)
+                ZapFrameTimer = 1f;
+            if (ZapFrameTimer >= 1f)
+            {
+                ZapFrameTimer++;
+                if (ZapFrameTimer >= Main.projFrames[Type] * 5)
+                    ZapFrameTimer = 0f;
+            }
+
+            // Rotate based on velocity.
+            if (Projectile.velocity != Vector2.Zero)
+                Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+
             Time++;
         }
 
@@ -137,9 +153,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Arc towards the target.
             if (Time <= 28f)
-                Projectile.velocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
+            {
+                if (!Projectile.WithinRange(Target.Center, 250f))
+                    Projectile.velocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
+            }
             else
                 Projectile.tileCollide = true;
+
+            Projectile.Opacity = 1f;
 
             // Spawn particles.
             for (int i = 0; i < 3; i++)
@@ -176,12 +197,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Projectile.Opacity = 1f;
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             foreach (Particle particle in LocalParticles)
                 particle.CustomDraw(Main.spriteBatch);
             Main.spriteBatch.ExitShaderRegion();
 
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D electricityTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyElectricity").Value;
+            if (ZapFrameTimer >= 1f && Projectile.frame <= 3f)
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyBright").Value;
+
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
+
+            if (ZapFrameTimer >= 1f)
+                Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, electricityTexture);
             return false;
         }
     }

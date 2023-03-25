@@ -60,6 +60,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
         public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
         public static MiscShaderData SignusBackgroundShader => GameShaders.Misc["Infernum:SignusBackground"];
+        public static MiscShaderData ScreenInversionMetaballShader => GameShaders.Misc["Infernum:ScreenInversionMetaball"];
         public static MiscShaderData ScrollingCodePrimShader => GameShaders.Misc["Infernum:ScrollingCode"];
         public static MiscShaderData TelegraphVertexShader => GameShaders.Misc["Infernum:TelegraphShader"];
         public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
@@ -87,6 +88,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter ScreenBorderShader => Filters.Scene["InfernumMode:ScreenBorder"];
         public static Filter ScreenSaturationBlurScreenShader => Filters.Scene["InfernumMode:ScreenSaturationBlur"];
         public static Filter ScreenShakeScreenShader => Filters.Scene["InfernumMode:ScreenShake"];
+        public static Filter ScreenShakeScreenShader2 => Filters.Scene["InfernumMode:ScreenShake2"];
         public static Filter TwinsScreenShader => Filters.Scene["InfernumMode:Twins"];
         #endregion
 
@@ -242,6 +244,9 @@ namespace InfernumMode.Assets.Effects
             Ref<Effect> signusBGShader = new(assets.Request<Effect>("Assets/Effects/SignusBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:SignusBackground"] = new MiscShaderData(signusBGShader, "ScreenPass");
 
+            Ref<Effect> screenInversionShader = new(assets.Request<Effect>("Assets/Effects/ScreenInversionMetaballShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ScreenInversionMetaball"] = new MiscShaderData(screenInversionShader, "UpdatePass");
+
             Ref<Effect> cvBGShader = new(assets.Request<Effect>("Assets/Effects/CeaselessVoidBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CVBackground"] = new MiscShaderData(cvBGShader, "ScreenPass");
 
@@ -299,9 +304,12 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
 
-            // General screen shake distortion.
+            // General screen shake distortion shaders.
             Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Assets/Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
+
+            screenShakeShader = new(assets.Request<Effect>("Assets/Effects/ScreenShockwaveShader2", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ScreenShake2"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
 
             // Heat distortion effect.
             Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Assets/Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);

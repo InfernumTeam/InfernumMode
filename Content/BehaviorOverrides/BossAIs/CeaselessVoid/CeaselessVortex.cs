@@ -3,24 +3,27 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-    public class CeaselessVortex : ModProjectile
+    public class CeaselessVortex : ModProjectile, ISpecializedDrawRegion
     {
         public static NPC CeaselessVoid => Main.npc[CalamityGlobalNPC.voidBoss];
 
-        public ref float Time => ref Projectile.ai[1];
+        public ref float Time => ref Projectile.ai[0];
+
+        public ref float TelegraphInterpolant => ref Projectile.ai[1];
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ceaseless Vorttex");
+            DisplayName.SetDefault("Ceaseless Vortex");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
@@ -32,7 +35,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 240;
+            Projectile.timeLeft = 300;
+            Projectile.MaxUpdates = 3;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
@@ -46,6 +50,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 return;
             }
 
+            float fadeOutFactor = Utils.GetLerpValue(60f, 0f, Projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Time, true) * (1f - fadeOutFactor);
+            Projectile.scale = Utils.GetLerpValue(0f, 45f, Time, true) * (4f * fadeOutFactor + 1f);
+
+            // Cast the telegraph.
+            TelegraphInterpolant = Utils.GetLerpValue(0f, 45f, Time, true) * Utils.GetLerpValue(28f, 36f, Projectile.timeLeft, true);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft == 36f)
+            {
+                Vector2 tearSpawnPosition = Projectile.Center;
+                Vector2 tearVelocity = Projectile.velocity * 24f;
+                Utilities.NewProjectileBetter(tearSpawnPosition + 2f * tearVelocity, tearVelocity, ModContent.ProjectileType<CeaselessVortexTear>(), 250, 0f);
+
+                // Tell the Ceaseless Void to play the sound.
+                CeaselessVoid.Infernum().ExtraAI[0] = 1f;
+                CeaselessVoid.netUpdate = true;
+            }
+
             Time++;
         }
 
@@ -57,11 +79,39 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = InfernumTextureRegistry.WhiteHole.Value;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            DrawData metaball = new(texture, drawPosition, null, Color.HotPink, 0f, texture.Size() * 0.5f, Projectile.scale * 0.125f, 0, 0);
-            ScreenInversionMetaballSystem.AddMetaball(metaball);
+            // Draw the laser telegraph.
+            if (TelegraphInterpolant > 0f)
+            {
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+                float telegraphColorInterpolant = MathF.Cos(MathHelper.TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 13f) * 0.5f + 0.5f;
+                float telegraphBaseWidth = MathHelper.Lerp(20f, 36f, telegraphColorInterpolant);
+                Vector2 start = Projectile.Center;
+                Vector2 end = start + 3000f * Projectile.velocity;
+                Color baseTelegraphColor = Color.Lerp(Color.Purple, Color.DarkBlue, 0.415f);
+                Main.spriteBatch.DrawBloomLine(start, end, baseTelegraphColor * (1f + telegraphColorInterpolant * 0.6f), telegraphBaseWidth * TelegraphInterpolant);
+            }
             return false;
+        }
+
+        public void SpecialDraw(SpriteBatch spriteBatch)
+        {
+            var portalShader = GameShaders.Misc["CalamityMod:DoGPortal"];
+            float portalColorInterpolant = MathF.Cos(MathHelper.TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f;
+            Texture2D noiseTexture = InfernumTextureRegistry.WavyNeuronsNoise.Value;
+            Vector2 origin = noiseTexture.Size() * 0.5f;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+
+            portalShader.UseOpacity(Projectile.Opacity);
+            portalShader.UseColor(Color.Purple);
+            portalShader.UseSecondaryColor(Color.Lerp(Color.HotPink, Color.DarkBlue, portalColorInterpolant));
+            portalShader.Apply();
+            spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, Projectile.scale, 0, 0f);
+        }
+
+        public void PrepareSpriteBatch(SpriteBatch spriteBatch)
+        {
+            spriteBatch.EnterShaderRegion();
         }
     }
 }

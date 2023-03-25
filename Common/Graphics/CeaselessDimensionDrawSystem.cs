@@ -50,7 +50,10 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
-            On.Terraria.Main.DoDraw_WallsAndBlacks += DistortBackground;
+            Main.QueueMainThreadAction(() =>
+            {
+                On.Terraria.Main.DoDraw_WallsAndBlacks += DistortBackground;
+            });
 
             // Wrap the draw black and draw walls functions in delegates so that they can be tossed around and called at will.
             var drawBlack = typeof(Main).GetMethod("DrawBlack", Utilities.UniversalBindingFlags);

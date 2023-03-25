@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -16,6 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public enum DarkEnergyAttackState
         {
             HoverInPlace,
+            SpinInPlace,
             AccelerateTowardsTarget
         }
 
@@ -31,7 +33,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             set;
         }
 
+        public float SpinOffsetAngle
+        {
+            get;
+            set;
+        }
+
         public Vector2 RestingPosition
+        {
+            get;
+            set;
+        }
+
+        public Vector2 CenterPoint
         {
             get;
             set;
@@ -43,6 +57,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             set => Projectile.ai[0] = (int)value;
         }
 
+        public CurveSegment SpinRise => new(EasingType.PolyIn, 0f, CenterPoint.Distance(RestingPosition), 60f, 2);
+
+        public CurveSegment SpinFall => new(EasingType.PolyOut, 0.35f, SpinRise.EndingHeight, -SpinRise.EndingHeight, 4);
+
         public Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
         public ref float Time => ref Projectile.localAI[0];
@@ -52,6 +70,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public ref float ZapFrameTimer => ref Projectile.localAI[1];
 
         public static float IdealSpeed => 42f;
+
+        public static int SpinTime => 30;
 
         public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergy";
 
@@ -79,13 +99,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(Index);
+            writer.Write(SpinOffsetAngle);
             writer.WriteVector2(RestingPosition);
+            writer.WriteVector2(CenterPoint);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Index = reader.ReadInt32();
+            SpinOffsetAngle = reader.ReadSingle();
             RestingPosition = reader.ReadVector2();
+            CenterPoint = reader.ReadVector2();
         }
 
         public override void AI()
@@ -94,6 +118,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 case DarkEnergyAttackState.HoverInPlace:
                     DoBehavior_HoverInPlace();
+                    break;
+                case DarkEnergyAttackState.SpinInPlace:
+                    DoBehavior_SpinInPlace();
                     break;
                 case DarkEnergyAttackState.AccelerateTowardsTarget:
                     DoBehavior_AccelerateTowardsTarget();
@@ -131,18 +158,50 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public void DoBehavior_HoverInPlace()
         {
-            float hoverInstabilityInterpolant = Utils.GetLerpValue(82f, 45f, Time, true);
+            float hoverInstabilityInterpolant = Utils.GetLerpValue(40f, 30f, Time, true);
             float hoverOffsetSine = MathF.Sin(MathHelper.TwoPi * Time / 60f + MathHelper.PiOver4 * Projectile.identity);
             Vector2 bobHoverOffset = 60f * hoverInstabilityInterpolant * hoverOffsetSine * Vector2.UnitY;
             Vector2 fallFromAboveOffset = MathHelper.SmoothStep(0f, -950f, Utils.GetLerpValue(32f, 0f, Time, true)) * Vector2.UnitY;
 
             // Hover into position.
             Vector2 hoverDestination = RestingPosition + bobHoverOffset + fallFromAboveOffset;
-            Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, 0.04f).MoveTowards(hoverDestination, 6f);
+            Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, 0.06f).MoveTowards(hoverDestination, 6f);
             Projectile.velocity = Vector2.Zero;
 
             // Fade in.
             Projectile.Opacity = MathF.Pow(Utils.GetLerpValue(8f, 36f, Time, true), 2.6f);
+        }
+
+        public void DoBehavior_SpinInPlace()
+        {
+            float spinCompletion = Utils.GetLerpValue(0f, SpinTime, Time, true);
+            float radius = PiecewiseAnimation(spinCompletion, SpinRise, SpinFall);
+
+            if (Time <= 0f)
+                SpinOffsetAngle = CenterPoint.AngleTo(Projectile.Center);
+
+            // Accelerate once done spinning.
+            if (Time >= SpinTime)
+            {
+                Projectile.velocity = 12f * SpinOffsetAngle.ToRotationVector2();
+                AttackState = DarkEnergyAttackState.AccelerateTowardsTarget;
+                Time = 28f;
+                Projectile.netUpdate = true;
+                return;
+            }
+
+            // SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN!!
+            SpinOffsetAngle += MathHelper.TwoPi / SpinTime;
+            Projectile.Center = CenterPoint + SpinOffsetAngle.ToRotationVector2() * radius;
+
+            // Spawn particles.
+            for (int i = 0; i < 2; i++)
+            {
+                Color voidColor = Color.Lerp(Color.Purple, Color.Black, Main.rand.NextFloat(0.5f, 0.9f));
+                voidColor = Color.Lerp(voidColor, Color.DarkBlue, Main.rand.NextFloat(0.25f));
+                HeavySmokeParticle voidGas = new(Projectile.Center + Main.rand.NextVector2Circular(10f, 10f), Main.rand.NextVector2Circular(2f, 2f), voidColor, 9, Projectile.scale * 1.7f, Projectile.Opacity, Main.rand.NextFloat(0.02f), true);
+                LocalParticles.Add(voidGas);
+            }
         }
 
         public void DoBehavior_AccelerateTowardsTarget()
@@ -157,10 +216,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 if (!Projectile.WithinRange(Target.Center, 250f))
                     Projectile.velocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
             }
-            else
-                Projectile.tileCollide = true;
 
             Projectile.Opacity = 1f;
+            Projectile.tileCollide = Time >= 66f;
 
             // Spawn particles.
             for (int i = 0; i < 3; i++)

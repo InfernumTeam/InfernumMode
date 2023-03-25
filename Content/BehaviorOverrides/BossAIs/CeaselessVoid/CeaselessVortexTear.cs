@@ -28,8 +28,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetDefaults()
         {
-            Projectile.width = 14;
-            Projectile.height = 14;
+            Projectile.width = 18;
+            Projectile.height = 18;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.oldPos[0] + Projectile.Size * 0.5f, Projectile.Center, WidthFunction(0.2f) * 0.5f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.oldPos[0] + Projectile.Size * 0.5f, Projectile.Center, WidthFunction(0.2f) * 0.1f, ref _);
         }
 
         public float WidthFunction(float completionRatio)

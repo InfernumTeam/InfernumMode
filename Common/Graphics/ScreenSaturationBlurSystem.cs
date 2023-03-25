@@ -88,7 +88,11 @@ namespace InfernumMode.Common.Graphics
             On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
-            IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
+
+            Main.QueueMainThreadAction(() =>
+            {
+                IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
+            });
             Main.OnPreDraw += PrepareBlurEffects;
         }
 

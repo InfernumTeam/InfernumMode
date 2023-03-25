@@ -10,7 +10,6 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -45,6 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             RedirectingAcceleratingDarkEnergy,
             DiagonalMirrorBolts,
             CircularVortexSpawn,
+            SpinningDarkEnergy,
 
             // Old attacks. The status of each is to be determined.
             RealityRendCharge,
@@ -193,6 +193,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     break;
                 case CeaselessVoidAttackType.CircularVortexSpawn:
                     DoBehavior_CircularVortexSpawn(npc, target, ref attackTimer);
+                    break;
+                case CeaselessVoidAttackType.SpinningDarkEnergy:
+                    DoBehavior_SpinningDarkEnergy(npc, target, ref attackTimer);
                     break;
 
                 case CeaselessVoidAttackType.RealityRendCharge:
@@ -472,11 +475,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                         for (int j = 0; j < 4; j++)
                         {
                             Vector2 microSpawnOffset = (MathHelper.TwoPi * j / 4f).ToRotationVector2() * 40f;
-                            Vector2 energyRestingPosition = Vector2.Lerp(npc.Center, target.Center, 0.3f) + baseSpawnOffset + microSpawnOffset;
+                            Vector2 energyRestingPosition = Vector2.Lerp(npc.Center, target.Center, 0.3f) + baseSpawnOffset;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
                             {
-                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().RestingPosition = energyRestingPosition;
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().RestingPosition = energyRestingPosition + microSpawnOffset;
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().CenterPoint = energyRestingPosition;
                                 darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Index = i * 4 + j;
                             });
                             Utilities.NewProjectileBetter(energyRestingPosition - Vector2.UnitY * 1000f, Vector2.Zero, acceleratingEnergyID, 250, 0f);
@@ -654,6 +658,80 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer >= chargeUpDelay + chargeUpTime + burstWaitTime)
             {
                 attackTimer = 0f;
+            }
+        }
+
+        public static void DoBehavior_SpinningDarkEnergy(NPC npc, Player target, ref float attackTimer)
+        {
+            int energyReleaseRate = 128;
+            int accelerateDelay = 54;
+            int wrappedAttackTimer = (int)attackTimer % energyReleaseRate;
+            int acceleratingEnergyID = ModContent.ProjectileType<AcceleratingDarkEnergy>();
+            float acceleration = 1.021f;
+
+            // Release energy balls from the Ceaseless Void's center.
+            if (wrappedAttackTimer == 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item104, target.Center);
+
+                // Create bloom and pulse rings while firing.
+                PulseRing ring = new(npc.Center, Vector2.Zero, Color.MediumPurple * 0.5f, 0f, 8f, 20);
+                GeneralParticleHandler.SpawnParticle(ring);
+
+                StrongBloom bloom = new(npc.Center, Vector2.Zero, Color.Lerp(Color.Purple, Color.DarkBlue, 0.6f), 4f, 35);
+                GeneralParticleHandler.SpawnParticle(bloom);
+
+                // Create bursts of energy outward.
+                for (int i = 0; i < 80; i++)
+                {
+                    Vector2 energyVelocity = -Vector2.UnitY.RotatedByRandom(0.47f) * Main.rand.NextFloat(2f, 53f);
+                    Color energyColor = Color.Lerp(Color.MediumPurple, Color.Blue, Main.rand.NextFloat(0.6f));
+                    MediumMistParticle darkEnergy = new(npc.Center, energyVelocity, energyColor, Color.DarkGray * 0.6f, 1.5f, 255f);
+                    GeneralParticleHandler.SpawnParticle(darkEnergy);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 7; i++)
+                    {
+                        Vector2 baseSpawnOffset = new(MathHelper.Lerp(-775f, 775f, i / 6f), -200f - CalamityUtils.Convert01To010(i / 6f) * 100f);
+                        for (int j = 0; j < 8; j++)
+                        {
+                            Vector2 microSpawnOffset = (MathHelper.TwoPi * j / 8f).ToRotationVector2() * 66f;
+                            if (i % 2 == 0)
+                                microSpawnOffset = microSpawnOffset.RotatedBy(MathHelper.Pi / 6f);
+
+                            Vector2 energyRestingPosition = Vector2.Lerp(npc.Center, target.Center, 0.125f) + baseSpawnOffset;
+
+                            ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
+                            {
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().RestingPosition = energyRestingPosition + microSpawnOffset;
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().CenterPoint = energyRestingPosition;
+                                darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Index = i * 4 + j;
+                            });
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, acceleratingEnergyID, 250, 0f);
+                        }
+                    }
+                }
+            }
+
+            // Make energy balls accelerate.
+            if (wrappedAttackTimer == accelerateDelay)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound with { Volume = 0.6f }, target.Center);
+                foreach (Projectile energy in Utilities.AllProjectilesByID(acceleratingEnergyID))
+                {
+                    energy.ModProjectile<AcceleratingDarkEnergy>().Time = 0f;
+                    energy.ModProjectile<AcceleratingDarkEnergy>().Acceleration = acceleration;
+                    energy.ModProjectile<AcceleratingDarkEnergy>().AttackState = AcceleratingDarkEnergy.DarkEnergyAttackState.SpinInPlace;
+                    energy.netUpdate = true;
+                }
+            }
+
+            if (wrappedAttackTimer == accelerateDelay + AcceleratingDarkEnergy.SpinTime)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = 10f;
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound with { Pitch = -0.6f }, target.Center);
             }
         }
 

@@ -1,4 +1,5 @@
 using CalamityMod.NPCs;
+using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
@@ -68,6 +69,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 CeaselessVoid.netUpdate = true;
             }
 
+            // Emit a bunch of light from the portal.
+            if (Main.rand.NextBool(8))
+            {
+                int lightLifetime = Main.rand.Next(20, 24);
+                float squishFactor = 2f;
+                float scale = 0.56f;
+                Vector2 lightSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 45f;
+                Vector2 lightVelocity = Projectile.velocity * Main.rand.NextFloat(10f, 20f);
+                Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0f, 0.5f));
+                if (Main.rand.NextBool())
+                    lightColor = Color.Lerp(Color.Purple, Color.Black, 0.6f);
+
+                SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, scale, lightColor, lightLifetime, 1f, squishFactor, squishFactor * 10f);
+                GeneralParticleHandler.SpawnParticle(light);
+            }
+
             Time++;
         }
 
@@ -106,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             portalShader.UseColor(Color.Purple);
             portalShader.UseSecondaryColor(Color.Lerp(Color.HotPink, Color.DarkBlue, portalColorInterpolant));
             portalShader.Apply();
-            spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, Projectile.scale, 0, 0f);
+            spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, Projectile.velocity.ToRotation(), origin, new Vector2(0.5f, 1f) * Projectile.scale, 0, 0f);
         }
 
         public void PrepareSpriteBatch(SpriteBatch spriteBatch)

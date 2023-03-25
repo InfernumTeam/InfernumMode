@@ -600,5 +600,17 @@ namespace InfernumMode
             if (resetSpritebatch)
                 Main.spriteBatch.ExitShaderRegion();
         }
+
+        /// <summary>
+        /// Return a matrix suitable for use when resetting spritebatches in CustomSkys for shader work.
+        /// </summary>
+        /// <returns></returns>
+        public static Matrix GetCustomSkyBackgroundMatrix()
+        {
+            Matrix transformationMatrix = Main.BackgroundViewMatrix.TransformationMatrix;
+            transformationMatrix.Translation -= Main.BackgroundViewMatrix.ZoomMatrix.Translation *
+                new Vector3(1f, Main.BackgroundViewMatrix.Effects.HasFlag(SpriteEffects.FlipVertically) ? (-1f) : 1f, 1f);
+            return transformationMatrix;
+        }
     }
 }

@@ -16,6 +16,14 @@ namespace InfernumMode.Content.Projectiles
 
         public float RippleSpeed;
 
+        public bool UseSecondaryVariant
+        {
+            get => Projectile.ai[0] == 1f;
+            set => Projectile.ai[0] = value.ToInt();
+        }
+
+        public Filter ScreenShader => UseSecondaryVariant ? InfernumEffectsRegistry.ScreenShakeScreenShader2 : InfernumEffectsRegistry.ScreenShakeScreenShader;
+
         public const int Lifetime = 105;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Screen Shake");
@@ -52,19 +60,22 @@ namespace InfernumMode.Content.Projectiles
             if (Main.netMode == NetmodeID.Server || !CalamityConfig.Instance.Screenshake)
                 return;
 
-            if (!InfernumEffectsRegistry.ScreenShakeScreenShader.IsActive())
-                Filters.Scene.Activate("InfernumMode:ScreenShake", Projectile.Center).GetShader().UseColor(RippleCount, RippleSize, RippleSpeed).UseTargetPosition(Projectile.Center);
+            if (!ScreenShader.IsActive())
+            {
+                string screenShaderKey = UseSecondaryVariant ? "InfernumMode:ScreenShake2" : "InfernumMode:ScreenShake";
+                Filters.Scene.Activate(screenShaderKey, Projectile.Center).GetShader().UseColor(RippleCount, RippleSize, RippleSpeed).UseTargetPosition(Projectile.Center);
+            }
             else
             {
                 float progress = Utils.Remap(Projectile.timeLeft, Lifetime, 0f, 0f, 1f);
-                InfernumEffectsRegistry.ScreenShakeScreenShader.GetShader().UseProgress(progress).UseOpacity((1f - progress) * 30f);
+                ScreenShader.GetShader().UseProgress(progress).UseOpacity((1f - progress) * 30f);
             }
         }
 
         public override void Kill(int timeLeft)
         {
-            if (Main.netMode != NetmodeID.Server && InfernumEffectsRegistry.ScreenShakeScreenShader.IsActive())
-                InfernumEffectsRegistry.ScreenShakeScreenShader.Deactivate();
+            if (Main.netMode != NetmodeID.Server && ScreenShader.IsActive())
+                ScreenShader.Deactivate();
         }
     }
 }

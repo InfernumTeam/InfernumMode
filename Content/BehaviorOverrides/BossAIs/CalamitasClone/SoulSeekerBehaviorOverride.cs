@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (attackTimer % shootRate == shootRate - 1f && !npc.WithinRange(target.Center, 400f) && flyingAway == 0f)
             {
                 // Release some fire mist.
-                Vector2 magicVelocity = npc.SafeDirectionTo(target.Center) * Main.rand.NextFloat(8f, 9f);
+                Vector2 magicVelocity = npc.SafeDirectionTo(target.Center) * Main.rand.NextFloat(9f, 10f);
                 for (int i = 0; i < 8; i++)
                 {
                     Color fireMistColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.66f));

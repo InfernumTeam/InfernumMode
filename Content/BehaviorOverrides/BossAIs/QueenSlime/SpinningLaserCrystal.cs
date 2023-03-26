@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             float idealAngle = Projectile.AngleTo(Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center);
             AimDirection = AimDirection.AngleLerp(idealAngle, aimInterpolant);
 
-            if (Time == 54f)
+            if (Time == 64f)
             {
                 SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)

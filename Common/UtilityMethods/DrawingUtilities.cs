@@ -158,6 +158,23 @@ namespace InfernumMode
             spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
+        public static void DrawBloomLine(this SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, float width)
+        {
+            // Draw nothing if the start and end are equal, to prevent division by 0 problems.
+            if (start == end)
+                return;
+
+            start -= Main.screenPosition;
+            end -= Main.screenPosition;
+
+            Texture2D line = InfernumTextureRegistry.BloomLine.Value;
+            float rotation = (end - start).ToRotation() + MathHelper.PiOver2;
+            Vector2 scale = new Vector2(width, Vector2.Distance(start, end)) / line.Size();
+            Vector2 origin = new(line.Width / 2f, line.Height);
+
+            spriteBatch.Draw(line, start, null, color, rotation, origin, scale, SpriteEffects.None, 0f);
+        }
+
         /// <summary>
         /// Creates a generic dust explosion at a given position.
         /// </summary>
@@ -426,7 +443,7 @@ namespace InfernumMode
             }
         }
 
-        public static void CreateShockwave(Vector2 shockwavePosition, int rippleCount = 2, int rippleSize = 8, float rippleSpeed = 75f, bool playSound = true)
+        public static void CreateShockwave(Vector2 shockwavePosition, int rippleCount = 2, int rippleSize = 8, float rippleSpeed = 75f, bool playSound = true, bool useSecondaryVariant = false)
         {
             DeleteAllProjectiles(false, ModContent.ProjectileType<ScreenShakeProj>());
 
@@ -435,7 +452,7 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int shockwaveID = NewProjectileBetter(shockwavePosition, Vector2.Zero, ModContent.ProjectileType<ScreenShakeProj>(), 0, 0f);
+                int shockwaveID = NewProjectileBetter(shockwavePosition, Vector2.Zero, ModContent.ProjectileType<ScreenShakeProj>(), 0, 0f, -1, useSecondaryVariant.ToInt());
                 if (Main.projectile.IndexInRange(shockwaveID))
                 {
                     var shockwave = Main.projectile[shockwaveID].ModProjectile<ScreenShakeProj>();

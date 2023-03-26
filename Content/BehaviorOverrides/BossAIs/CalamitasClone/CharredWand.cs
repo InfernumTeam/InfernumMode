@@ -91,11 +91,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             SoundEngine.PlaySound(SCalBrimstoneGigablast.ImpactSound, Projectile.Center);
 
             Utilities.CreateShockwave(Projectile.Center, 2, 8, 120f, false);
+
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            float speedBoost = 0.009f + Projectile.Distance(target.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < 35; i++)
                 {
-                    Vector2 cinderVelocity = (MathHelper.TwoPi * i / 35f).ToRotationVector2() * 13.5f;
+                    Vector2 cinderVelocity = (MathHelper.TwoPi * i / 35f).ToRotationVector2() * (speedBoost + 13.5f);
                     Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
                 }
             }

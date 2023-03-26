@@ -205,6 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.gfxOffY = 4f;
+            npc.Calamity().ProvidesProximityRage = true;
 
             // Disable extra damage from the brimstone flames debuff. The attacks themselves hit hard enough.
             if (target.HasBuff(ModContent.BuffType<BrimstoneFlames>()))
@@ -564,7 +565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(armStart, (target.Center - armStart).SafeNormalize(Vector2.UnitY) * 18f, ModContent.ProjectileType<CharredWand>(), 0, 0f);
+                        Utilities.NewProjectileBetter(armStart, (target.Center - armStart).SafeNormalize(Vector2.UnitY) * 22f, ModContent.ProjectileType<CharredWand>(), 0, 0f);
                         wandWasThrown = 1f;
                         npc.netUpdate = true;
                     }
@@ -1061,7 +1062,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
-                if (attackTimer >= 128f)
+                if (attackTimer >= 180f)
                 {
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ArcingBrimstoneDart>());
                     SelectNextAttack(npc);
@@ -1142,7 +1143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             int flameShootCount = 19;
             int wrappedAttackTimer = (int)attackTimer % (hoverTime + chargeTime + chargeSlowdowntime);
             float baseChargeSpeed = 12f;
-            float flameShootSpeed = 8f;
+            float flameShootSpeed = 9.5f;
             float chargeAcceleration = 1.75f;
             ref float shieldScale = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];

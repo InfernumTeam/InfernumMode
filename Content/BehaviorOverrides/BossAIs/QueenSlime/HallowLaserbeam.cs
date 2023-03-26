@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             set;
         } = null;
 
-        public const int LaserLifetime = 32;
+        public const int LaserLifetime = 21;
 
         public override float Lifetime => LaserLifetime;
 

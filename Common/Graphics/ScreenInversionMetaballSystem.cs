@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Assets.Effects;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -46,7 +47,10 @@ namespace InfernumMode.Common.Graphics
         private void DrawMetaballs(On.Terraria.Main.orig_SortDrawCacheWorms orig, Main self)
         {
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(MetaballsTarget, Vector2.Zero, Color.White);
+
+            Main.instance.GraphicsDevice.Textures[1] = ScreenSaturationBlurSystem.FinalScreenTarget;
+            InfernumEffectsRegistry.ScreenInversionMetaballShader.Apply();
+            Main.spriteBatch.Draw(MetaballsTarget, Main.screenLastPosition - Main.screenPosition, Color.White);
             Main.spriteBatch.End();
 
             orig(self);

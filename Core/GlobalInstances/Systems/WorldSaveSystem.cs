@@ -256,26 +256,5 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             ForbiddenArchiveCenter = new(tag.GetInt("ForbiddenArchiveCenterX"), tag.GetInt("ForbiddenArchiveCenterY"));
         }
-
-        public override void OnWorldLoad()
-        {
-            InfernumMode = false;
-            HasGeneratedProfanedShrine = false;
-            HasGeneratedColosseumEntrance = false;
-            HasBeatenInfernumProvRegularly = false;
-            HasBeatenInfernumNightProvBeforeDay = false;
-            HasProvidenceDoorShattered = false;
-            HasSepulcherAnimationBeenPlayed = false;
-            HasOpenedLostColosseumPortal = false;
-            DownedBereftVassal = false;
-            DisplayedEmodeWarningText = false;
-            PerformedLacewingAnimation = false;
-            MetSignusAtProfanedGarden = false;
-
-            ProvidenceArena = Rectangle.Empty;
-            ProvidenceDoorXPosition = 0;
-            WayfinderGateLocation = Vector2.Zero;
-            ForbiddenArchiveCenter = Point.Zero;
-        }
     }
 }

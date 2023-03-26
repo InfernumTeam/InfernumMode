@@ -152,7 +152,7 @@ namespace InfernumMode.Content.Projectiles
         {
             new()
             {
-                HoverText = "Storm After Rain - Infernum",
+                HoverText = "Sky After Rain - Infernum",
                 TrackName = "TitleScreen",
                 HoverTextColor = () =>
                 {

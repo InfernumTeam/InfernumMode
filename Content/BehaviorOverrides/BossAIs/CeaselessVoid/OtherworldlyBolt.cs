@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public void DoBehavior_AccelerateFromBelow()
         {
             // Accelerate.
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, -33f * AimDirection, 0.0425f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, 24f * Projectile.velocity.SafeNormalize(Vector2.UnitY), 0.0425f);
 
             // Aim in the direction that the blade is accelerating.
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;

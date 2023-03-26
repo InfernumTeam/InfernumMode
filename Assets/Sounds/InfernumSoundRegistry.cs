@@ -59,7 +59,9 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle CeaselessVoidStrikeSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidStrike");
 
-        public static readonly SoundStyle CeaselessVoidSwirlSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidSwirl");
+        public static readonly SoundStyle CeaselessVoidSwirlSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidSwirl") with { Volume = 0.6f };
+
+        public static readonly SoundStyle CeaselessVoidMetalBreakSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidMetalBreak");
 
         public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Assets/Sounds/Custom/CloudElementalWind");
 

@@ -136,6 +136,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Phase3LifeRatio
         };
 
+        public static int DarkMagicFlameDamage => 155;
+
+        public static int CatharsisSoulDamage => 155;
+
+        public static int BrimstoneSlashDamage => 160;
+
+        public static int BrimstoneBombDamage => 160;
+
+        public static int BrimstoneDartDamage => 160;
+
+        public static int ShadowSparkDamage => 160;
+
+        public static int BrimstoneMeteorDamage => 160;
+
+        public static int DashFireDamage => 165;
+
+        public static int EntropyBeamDamage => 240;
+
         public static float ArmLength => 12f;
 
         public override bool PreAI(NPC npc)
@@ -270,7 +288,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(target.Center, soulShootDirection * 12f, ModContent.ProjectileType<CatharsisSoul>(), 155, 0f);
+                    Utilities.NewProjectileBetter(target.Center, soulShootDirection * 12f, ModContent.ProjectileType<CatharsisSoul>(), CatharsisSoulDamage, 0f);
             }
 
             // Handle phase transitions.
@@ -511,7 +529,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                             if (npc.velocity.Length() < 10f)
                                 npc.velocity -= npc.SafeDirectionTo(target.Center) * 1.3f;
                             Vector2 fireShootVelocity = Vector2.Lerp(npc.SafeDirectionTo(wandEnd), npc.SafeDirectionTo(target.Center), 0.24f) * fireShootSpeed;
-                            Utilities.NewProjectileBetter(wandEnd, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                            Utilities.NewProjectileBetter(wandEnd, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                         }
 
                         // Do funny screen effects.
@@ -655,6 +673,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     npc.velocity = Vector2.Zero;
                     armRotation = MathHelper.Pi;
 
+                    // Create energy particles at the end of the staff.
                     armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
                     staffEnd = armStart + (armRotation + MathHelper.Pi - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 66f;
                     for (int i = 0; i < 35; i++)
@@ -706,7 +725,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, armRotation.ToRotationVector2(), ModContent.ProjectileType<EntropyBeam>(), 240, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, armRotation.ToRotationVector2(), ModContent.ProjectileType<EntropyBeam>(), EntropyBeamDamage, 0f);
                         beamDirection = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - armRotation - MathHelper.PiOver2) > 0f).ToDirectionInt();
                         npc.netUpdate = true;
                     }
@@ -829,7 +848,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.72f, 0.72f, i / 6f);
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 12f;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                         }
                     }
                 }
@@ -928,7 +947,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                             if (kindlyGoFuckYourselfDueToDistance)
                                 fireShootVelocity = (target.Center - fireOrbCenter).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.4f) * fireShootSpeed * Main.rand.NextFloat(0.95f, 1.05f);
 
-                            Utilities.NewProjectileBetter(fireOrbCenter + fireShootVelocity * 5f, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                            Utilities.NewProjectileBetter(fireOrbCenter + fireShootVelocity * 5f, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                         }
 
                         fireShootCounter++;
@@ -978,7 +997,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         {
                             Vector2 meteorSpawnPosition = target.Center + new Vector2(dx - 60f, Math.Abs(dx) * -0.35f - 600f);
                             Vector2 meteorShootVelocity = Vector2.UnitY * 15f;
-                            Utilities.NewProjectileBetter(meteorSpawnPosition, meteorShootVelocity, ModContent.ProjectileType<BrimstoneMeteor>(), 160, 0f, -1, 0f, target.Bottom.Y);
+                            Utilities.NewProjectileBetter(meteorSpawnPosition, meteorShootVelocity, ModContent.ProjectileType<BrimstoneMeteor>(), BrimstoneMeteorDamage, 0f, -1, 0f, target.Bottom.Y);
                         }
                     }
                 }
@@ -1076,7 +1095,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     Vector2 sparkSpawnPosition = npc.Center + (MathHelper.TwoPi * i / sparkSpiralCount + sparkShootOffsetAngle).ToRotationVector2() * 1800f;
                     Vector2 sparkVelocity = (npc.Center - sparkSpawnPosition).SafeNormalize(Vector2.UnitY) * sparkShootSpeed;
-                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ConvergingShadowSpark>(), 160, 0f);
+                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ConvergingShadowSpark>(), ShadowSparkDamage, 0f);
                 }
                 sparkShootOffsetAngle += MathHelper.ToRadians(12f);
             }
@@ -1119,8 +1138,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                     for (int i = 0; i < dartShootCount; i++)
                     {
                         Vector2 dartVelocity = (MathHelper.TwoPi * i / dartShootCount).ToRotationVector2() * dartShootSpeed;
-                        Utilities.NewProjectileBetter(bookCenter, dartVelocity * 0.5f, ModContent.ProjectileType<ArcingBrimstoneDart>(), 160, 0f, -1, -dartAngularVelocity, 0f);
-                        Utilities.NewProjectileBetter(bookCenter, dartVelocity, ModContent.ProjectileType<ArcingBrimstoneDart>(), 160, 0f, -1, dartAngularVelocity, 0f);
+                        Utilities.NewProjectileBetter(bookCenter, dartVelocity * 0.5f, ModContent.ProjectileType<ArcingBrimstoneDart>(), BrimstoneDartDamage, 0f, -1, -dartAngularVelocity, 0f);
+                        Utilities.NewProjectileBetter(bookCenter, dartVelocity, ModContent.ProjectileType<ArcingBrimstoneDart>(), BrimstoneDartDamage, 0f, -1, dartAngularVelocity, 0f);
                     }
                 }
 
@@ -1205,7 +1224,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                         for (int i = 0; i < flameShootCount; i++)
                         {
                             Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / flameShootCount) * flameShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 2f, flameShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 160, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 2f, flameShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                         }
                         npc.netUpdate = true;
                     }
@@ -1442,7 +1461,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < dartShootCount; i++)
                 {
                     Vector2 dartVelocity = (MathHelper.TwoPi * i / dartShootCount + shootOffsetAngle).ToRotationVector2() * dartShootSpeed;
-                    Utilities.NewProjectileBetter(armEnd, dartVelocity * 0.5f, ModContent.ProjectileType<ArcingBrimstoneDart>(), 160, 0f, -1, -dartAngularVelocity, 0f);
+                    Utilities.NewProjectileBetter(armEnd, dartVelocity * 0.5f, ModContent.ProjectileType<ArcingBrimstoneDart>(), BrimstoneDartDamage, 0f, -1, -dartAngularVelocity, 0f);
                 }
             }
 
@@ -1493,7 +1512,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.1f, ModContent.ProjectileType<LingeringBrimstoneFlames>(), 165, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.1f, ModContent.ProjectileType<LingeringBrimstoneFlames>(), DashFireDamage, 0f);
             }
 
             // Slow down in anticipation of the next charge.

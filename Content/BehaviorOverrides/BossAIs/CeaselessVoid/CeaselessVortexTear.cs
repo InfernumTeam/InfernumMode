@@ -13,9 +13,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
     {
         internal PrimitiveTrail TentacleDrawer;
 
-        public ref float Time => ref Projectile.ai[0];
+        public bool CreateShockwave
+        {
+            get => Projectile.ai[0] == 1f;
+            set => Projectile.ai[0] = value.ToInt();
+        }
+
+        public ref float Time => ref Projectile.ai[1];
 
         public static int Lifetime => 90;
+
+        public static float Acceleration => 1.03f;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
@@ -28,8 +36,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetDefaults()
         {
-            Projectile.width = 18;
-            Projectile.height = 18;
+            Projectile.width = 26;
+            Projectile.height = 26;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
@@ -50,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Accelerate.
-            Projectile.velocity *= 1.03f;
+            Projectile.velocity *= Acceleration;
 
             // Dissipate into nothingness before dying.
             Projectile.scale = Utils.GetLerpValue(0f, 26f, Projectile.timeLeft, true);
@@ -63,8 +71,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (Time <= 3f || Projectile.timeLeft < 26f)
+                return false;
+
             float _ = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.oldPos[0] + Projectile.Size * 0.5f, Projectile.Center, WidthFunction(0.2f) * 0.1f, ref _);
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !CreateShockwave)
+                return;
+
+            Utilities.NewProjectileBetter(Projectile.Center - 20f * Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<CeaselessEnergyPulse>(), CeaselessVoidBehaviorOverride.EnergyPulseDamage, 0f);
         }
 
         public float WidthFunction(float completionRatio)
@@ -76,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public Color ColorFunction(float completionRatio)
         {
             Color baseColor = Color.Lerp(Color.Purple, Color.DarkBlue, 0.65f);
-            float opacity = 0.35f * Utils.GetLerpValue(0.9f, 0.82f, completionRatio, true) * Projectile.Opacity;
+            float opacity = 0.35f * Utils.GetLerpValue(0.8f, 0.65f, completionRatio, true) * Projectile.Opacity;
             return baseColor * opacity;
         }
 

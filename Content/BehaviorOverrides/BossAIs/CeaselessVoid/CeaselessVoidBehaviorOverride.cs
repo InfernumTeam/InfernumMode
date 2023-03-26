@@ -41,10 +41,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             ChainedUp,
             DarkEnergySwirl,
 
+            // Phase 1 attacks.
             RedirectingAcceleratingDarkEnergy,
             DiagonalMirrorBolts,
             CircularVortexSpawn,
             SpinningDarkEnergy,
+            AreaDenialVortexTears,
+
+            // Phase 2 midpoint attack.
+            ShellCrackAndEnergyTorrent,
 
             // Old attacks. The status of each is to be determined.
             RealityRendCharge,
@@ -103,6 +108,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         #region AI
 
+        public static int DarkEnergyDamage => 250;
+
+        public static int OtherworldlyBoltDamage => 250;
+
+        public static int EnergyPulseDamage => 250;
+
+        public static int VortexTearDamage => 300;
+
         public override bool PreAI(NPC npc)
         {
             // Reset DR.
@@ -137,6 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float currentPhase = ref npc.ai[2];
+            ref float voidIsCracked = ref npc.localAI[0];
 
             // Do phase transitions.
             if (currentPhase == 0f && phase2)
@@ -170,7 +184,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Lock the camera onto the ceaseless void because it's very egotistical and cannot bear the thought of not being the center of attention.
             if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp)
             {
-                float lookAtTargetInterpolant = Utils.GetLerpValue(420f, 2700f, ((target.Center - npc.Center) * new Vector2(1f, 1.6f)).Length(), true);
+                float lookAtTargetInterpolant = Utils.GetLerpValue(420f, 2700f, ((target.Center - npc.Center) * new Vector2(1f, 1.8f)).Length(), true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = Vector2.Lerp(npc.Center, target.Center, lookAtTargetInterpolant);
             }
@@ -196,6 +210,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     break;
                 case CeaselessVoidAttackType.SpinningDarkEnergy:
                     DoBehavior_SpinningDarkEnergy(npc, target, ref attackTimer);
+                    break;
+                case CeaselessVoidAttackType.AreaDenialVortexTears:
+                    DoBehavior_AreaDenialVortexTears(npc, target, ref attackTimer);
+                    break;
+
+                case CeaselessVoidAttackType.ShellCrackAndEnergyTorrent:
+                    DoBehavior_ShellCrackAndEnergyTorrent(npc, target, ref attackTimer, ref voidIsCracked);
                     break;
 
                 case CeaselessVoidAttackType.RealityRendCharge:
@@ -437,7 +458,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (darkEnergyTotalMaxLife <= 0)
                 darkEnergyLifeRatio = 0f;
 
-            if (darkEnergyLifeRatio <= 0.3f)
+            if (darkEnergyLifeRatio <= 0.35f)
             {
                 foreach (NPC darkEnergy in darkEnergies)
                 {
@@ -483,7 +504,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                                 darkEnergy.ModProjectile<AcceleratingDarkEnergy>().CenterPoint = energyRestingPosition;
                                 darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Index = i * 4 + j;
                             });
-                            Utilities.NewProjectileBetter(energyRestingPosition - Vector2.UnitY * 1000f, Vector2.Zero, acceleratingEnergyID, 250, 0f);
+                            Utilities.NewProjectileBetter(energyRestingPosition - Vector2.UnitY * 1000f, Vector2.Zero, acceleratingEnergyID, DarkEnergyDamage, 0f);
                         }
                     }
                 }
@@ -492,6 +513,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Make energy balls accelerate.
             if (wrappedAttackTimer >= accelerateDelay)
             {
+                if (wrappedAttackTimer == accelerateDelay)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound, target.Center);
+
                 int indexToFire = wrappedAttackTimer - accelerateDelay;
                 foreach (Projectile energy in Utilities.AllProjectilesByID(acceleratingEnergyID).Where(e => e.ModProjectile<AcceleratingDarkEnergy>().Index == indexToFire && e.ai[0] == 0f))
                 {
@@ -541,7 +565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= energyDiagonalShootDelay && attackTimer % energyDiagonalBootShootRate == energyDiagonalBootShootRate - 1f)
             {
                 Vector2 energyBoltSpawnPosition = target.Center + 1250f * OtherworldlyBolt.AimDirection + new Vector2(900f * Main.rand.NextFloatDirection(), -400f);
-                Utilities.NewProjectileBetter(energyBoltSpawnPosition, -5f * OtherworldlyBolt.AimDirection, ModContent.ProjectileType<OtherworldlyBolt>(), 250, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
+                Utilities.NewProjectileBetter(energyBoltSpawnPosition, -5f * OtherworldlyBolt.AimDirection, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
             }
 
             if (doneShooting)
@@ -647,7 +671,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     for (int i = 0; i < ringBulletCount; i++)
                     {
                         Vector2 energyBoltVelocity = (MathHelper.TwoPi * i / ringBulletCount + ringBulletAngularOffset).ToRotationVector2() * 0.02f;
-                        Utilities.NewProjectileBetter(energyBoltSpawnPosition, energyBoltVelocity, ModContent.ProjectileType<OtherworldlyBolt>(), 250, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
+                        Utilities.NewProjectileBetter(energyBoltSpawnPosition, energyBoltVelocity, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
                     }
 
                     ringBulletAngularOffset += MathHelper.ToRadians(11f);
@@ -709,7 +733,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                                 darkEnergy.ModProjectile<AcceleratingDarkEnergy>().CenterPoint = energyRestingPosition;
                                 darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Index = i * 4 + j;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, acceleratingEnergyID, 250, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, acceleratingEnergyID, DarkEnergyDamage, 0f);
                         }
                     }
                 }
@@ -718,7 +742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Make energy balls accelerate.
             if (wrappedAttackTimer == accelerateDelay)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound with { Volume = 0.6f }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound, target.Center);
                 foreach (Projectile energy in Utilities.AllProjectilesByID(acceleratingEnergyID))
                 {
                     energy.ModProjectile<AcceleratingDarkEnergy>().Time = 0f;
@@ -733,6 +757,91 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 target.Infernum_Camera().CurrentScreenShakePower = 10f;
                 SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound with { Pitch = -0.6f }, target.Center);
             }
+        }
+
+        public static void DoBehavior_AreaDenialVortexTears(NPC npc, Player target, ref float attackTimer)
+        {
+            int vortexSpawnDelay = 60;
+            int vortexSpawnRate = 30;
+            int vortexSpawnCount = 8;
+            ref float vortexSpawnCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Wait before creating vortices.
+            if (attackTimer < vortexSpawnDelay)
+                return;
+
+            // Periodically release vortices that strike at the target.
+            if ((attackTimer - vortexSpawnDelay) % vortexSpawnRate == 0f)
+            {
+                float attackCompletion = Utils.GetLerpValue(vortexSpawnDelay, vortexSpawnDelay + vortexSpawnCount * vortexSpawnRate, attackTimer, true);
+                float vortexSpawnOffsetAngle = MathHelper.TwoPi * attackCompletion;
+                SoundEngine.PlaySound(SoundID.Item104, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 vortexSpawnPosition = Vector2.Lerp(npc.Center, target.Center, 0.45f) - Vector2.UnitY.RotatedBy(vortexSpawnOffsetAngle) * 600f;
+                    Vector2 vortexAimDirection = (target.Center - vortexSpawnPosition).SafeNormalize(Vector2.UnitY);
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(vortex =>
+                    {
+                        vortex.MaxUpdates = 4;
+                        vortex.ModProjectile<CeaselessVortex>().AimDirectlyAtTarget = true;
+                    });
+                    Utilities.NewProjectileBetter(vortexSpawnPosition, vortexAimDirection, ModContent.ProjectileType<CeaselessVortex>(), 0, 0f);
+
+                    if (attackCompletion >= 1f)
+                        attackTimer = vortexSpawnDelay - 1f;
+                }
+            }
+        }
+
+        public static void DoBehavior_ShellCrackAndEnergyTorrent(NPC npc, Player target, ref float attackTimer, ref float voidIsCracked)
+        {
+            int chargeUpTime = 88;
+            int whiteningTime = 35;
+            int whiteningWaitTime = 36;
+            int whiteningFadeOutTime = 12;
+
+            // Charge up energy before performing whitening.
+            if (attackTimer <= chargeUpTime)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = attackTimer / chargeUpTime * 3f;
+
+                // Create a slice effect through the void right before the screen whitening happens.
+                if (attackTimer == chargeUpTime - CeaselessVoidLineTelegraph.Lifetime)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound with { Volume = 1.8f }, target.Center);
+
+                float sliceInterpolant = Utils.GetLerpValue(chargeUpTime - CeaselessVoidLineTelegraph.Lifetime, chargeUpTime - CeaselessVoidLineTelegraph.Lifetime + 6f, attackTimer, true);
+                if (Main.netMode != NetmodeID.MultiplayerClient && sliceInterpolant > 0f && sliceInterpolant < 1f)
+                {
+                    Vector2 lineDirection = (MathHelper.ToRadians(30f) + MathHelper.Pi * sliceInterpolant).ToRotationVector2();
+                    Utilities.NewProjectileBetter(npc.Center, lineDirection, ModContent.ProjectileType<CeaselessVoidLineTelegraph>(), 0, 0f);
+                }
+
+                return;
+            }
+
+            // Make the whitening effect happen.
+            float whiteningFadeIn = Utils.GetLerpValue(chargeUpTime, chargeUpTime + whiteningTime, attackTimer, true);
+            float whiteningFadeOut = Utils.GetLerpValue(chargeUpTime + whiteningTime + whiteningWaitTime + whiteningFadeOutTime, chargeUpTime + whiteningTime + whiteningWaitTime, attackTimer, true);
+            CeaselessVoidWhiteningEffect.WhiteningInterpolant = whiteningFadeIn * whiteningFadeOut;
+
+            // Break the metal.
+            if (attackTimer == chargeUpTime + whiteningTime)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = 24f;
+
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidMetalBreakSound);
+                voidIsCracked = 1f;
+
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    for (int i = 0; i < 15; i++)
+                        Gore.NewGore(npc.GetSource_FromAI(), npc.Center + Main.rand.NextVector2Circular(85f, 85f), Main.rand.NextVector2Circular(10f, 10f), InfernumMode.Instance.Find<ModGore>("CeaselessVoidFragment").Type, 0.8f);
+                }
+            }
+
+            if (whiteningFadeOut <= 0f)
+                SelectNewAttack(npc);
         }
 
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
@@ -1156,7 +1265,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.Infernum().ExtraAI[i] = 0f;
 
             npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
-            npc.ai[0] = (int)CeaselessVoidAttackType.CircularVortexSpawn;
+            npc.ai[0] = (int)CeaselessVoidAttackType.ShellCrackAndEnergyTorrent;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }
@@ -1172,19 +1281,44 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     DrawChain(chain);
             }
 
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/CeaselessVoid/CeaselessVoidGlow").Value;
             Texture2D voidTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidVoidStuff").Value;
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
-            Main.spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
 
             Main.spriteBatch.EnterShaderRegion();
 
-            DrawData drawData = new(voidTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
+            DrawData drawData = new(voidTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
             InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(InfernumTextureRegistry.Stars);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
             drawData.Draw(Main.spriteBatch);
-            Main.spriteBatch.ExitShaderRegion();
+
+            Main.spriteBatch.EnterShaderRegion();
+
+            // Draw the shell.
+            bool voidIsCracked = npc.localAI[0] == 1f;
+            if (voidIsCracked)
+            {
+                Texture2D metalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShell").Value;
+                Texture2D maskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShellMaskWhite").Value;
+                drawData = new(maskTexture, drawPosition, maskTexture.Frame(), npc.GetAlpha(Color.White) * (1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant), npc.rotation, maskTexture.Size() * 0.5f, npc.scale, 0, 0);
+                InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(InfernumTextureRegistry.Stars);
+                InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
+                drawData.Draw(Main.spriteBatch);
+
+                Main.spriteBatch.EnterShaderRegion();
+
+                // Apply the crack effect if necessary.
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.UseShaderSpecificData(new(npc.frame.X, npc.frame.Y, npc.frame.Width, npc.frame.Height));
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.UseImage1("Images/Misc/Perlin");
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.Shader.Parameters["sheetSize"].SetValue(metalTexture.Size());
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.Apply();
+
+                Main.spriteBatch.Draw(metalTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+                Main.spriteBatch.ExitShaderRegion();
+            }
 
             if (npc.ai[0] == (int)CeaselessVoidAttackType.ChainedUp)
                 DrawSeal(npc);

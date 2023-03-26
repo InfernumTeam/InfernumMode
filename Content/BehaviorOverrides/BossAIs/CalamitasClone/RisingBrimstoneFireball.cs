@@ -51,18 +51,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int fireDamage = 160;
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center) * 18f;
-            Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), CalamitasCloneBehaviorOverride.BrimstoneBombDamage, 0f);
 
             for (int i = 0; i < 7; i++)
             {
                 shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4).ToRotationVector2() * 8f;
-                Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), fireDamage - 5, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasCloneBehaviorOverride.DarkMagicFlameDamage, 0f);
 
                 shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4 + MathHelper.Pi / 6f).ToRotationVector2() * 11.5f;
-                Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), fireDamage - 5, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasCloneBehaviorOverride.DarkMagicFlameDamage, 0f);
             }
         }
 

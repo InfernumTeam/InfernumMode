@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 SoundEngine.PlaySound(SoundID.Item72, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + magicVelocity * 2f, magicVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + magicVelocity * 2f, magicVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasCloneBehaviorOverride.DarkMagicFlameDamage, 0f);
             }
             attackTimer++;
 

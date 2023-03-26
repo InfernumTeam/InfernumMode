@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Main.netMode != NetmodeID.MultiplayerClient && !Projectile.WithinRange(target.Center, 300f))
             {
-                Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(target.Center) * 19f, ModContent.ProjectileType<DarkMagicFlame>(), 160, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(target.Center) * 19f, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasCloneBehaviorOverride.DarkMagicFlameDamage, 0f);
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneBoomExplosion>(), 0, 0f);
             }
         }

@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 SoundEngine.PlaySound(SoundID.Item72, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(Projectile.Center + magicVelocity * 2f, magicVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center + magicVelocity * 2f, magicVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasCloneBehaviorOverride.DarkMagicFlameDamage, 0f);
             }
 
             // Fade away if the hex has been lifted.

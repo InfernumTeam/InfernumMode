@@ -63,7 +63,7 @@ namespace InfernumMode.Content.Skies
                 Texture2D rayTexture = InfernumTextureRegistry.LaserCircle.Value;
                 Color lightColor = Color.Lerp(Color.SkyBlue, Color.Teal, ColorLerpAmount) * Opacity * (0.015f * OpacityScalar) * opacity;
                 Vector2 scale = new(0.4f, 15.3f * LengthScalar);
-                spriteBatch.Draw(rayTexture, DrawPosition, null, lightColor with { A = 0 }, Rotation, rayTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);;
+                spriteBatch.Draw(rayTexture, DrawPosition, null, lightColor with { A = 0 }, Rotation, rayTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
         }
 

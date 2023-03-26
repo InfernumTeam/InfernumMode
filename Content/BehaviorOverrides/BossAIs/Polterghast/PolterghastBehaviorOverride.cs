@@ -32,13 +32,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterghastBoss>();
 
-        // These store the roar sound slot to allow for updating its position.
-        // TODO -- Why are these public fields in the behavior override class and not wrapped inside of a npc.localAI instance? These classes are singletons and this will
-        // probably fail if two or more instances of the NPC are present.
-        public SlotId RoarSlot;
-
-        public SlotId ShortRoarSlot;
-
         #region Enumerations
         public enum PolterghastAttackType
         {
@@ -126,6 +119,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public const int CurrentPhaseIndex = 15;
 
+        public const int RoarSlotIndex = 16;
+
+        public const int ShortRoarSlotIndex = 17;
+
         public const float MinGhostCircleRadius = 600f;
 
         public const float Phase2LifeRatio = 0.65f;
@@ -175,8 +172,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             ref float vignetteRadiusDecreaseFactor = ref npc.Infernum().ExtraAI[VignetteRadiusDecreaseFactorIndex];
             ref float veryFirstAttack = ref npc.Infernum().ExtraAI[PerformingVeryFirstAttackIndex];
             ref float currentPhase = ref npc.Infernum().ExtraAI[CurrentPhaseIndex];
+            ref float roarSlotF = ref npc.Infernum().ExtraAI[RoarSlotIndex];
+            ref float shortRoarSlotF = ref npc.Infernum().ExtraAI[ShortRoarSlotIndex];
             ref float telegraphOpacity = ref npc.localAI[1];
             ref float telegraphDirection = ref npc.localAI[2];
+
+            SlotId roarSlot = SlotId.FromFloat(roarSlotF);
+            SlotId shortRoarSlot = SlotId.FromFloat(shortRoarSlotF);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
@@ -214,7 +216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Perform the death animation as necessary.
             if (dyingTimer > 0f)
             {
-                DoBehavior_DeathAnimation(npc, target, ref dyingTimer, ref totalReleasedSouls, ref initialDeathPositionX, ref initialDeathPositionY, ref ShortRoarSlot);
+                DoBehavior_DeathAnimation(npc, target, ref dyingTimer, ref totalReleasedSouls, ref initialDeathPositionX, ref initialDeathPositionY, ref shortRoarSlot);
                 return false;
             }
 
@@ -233,9 +235,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 npc.Opacity = 0f;
 
             // Make roars update their position.
-            if (SoundEngine.TryGetActiveSound(RoarSlot, out var r) && r.IsPlaying)
+            if (SoundEngine.TryGetActiveSound(roarSlot, out var r) && r.IsPlaying)
                 r.Position = npc.Center;
-            if (SoundEngine.TryGetActiveSound(ShortRoarSlot, out var sr) && sr.IsPlaying)
+            if (SoundEngine.TryGetActiveSound(shortRoarSlot, out var sr) && sr.IsPlaying)
                 sr.Position = npc.Center;
 
             switch (attackState)
@@ -244,22 +246,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     DoBehavior_LegSwipes(npc, target, ref legToManuallyControlIndex, ref attackTimer);
                     break;
                 case PolterghastAttackType.WispCircleCharges:
-                    DoBehavior_WispCircleCharges(npc, target, ref attackTimer, ref ShortRoarSlot);
+                    DoBehavior_WispCircleCharges(npc, target, ref attackTimer, ref shortRoarSlot);
                     break;
                 case PolterghastAttackType.AsgoreRingSoulAttack:
-                    DoBehavior_AsgoreRingSoulAttack(npc, target, ref totalReleasedSouls, ref attackTimer, ref ShortRoarSlot);
+                    DoBehavior_AsgoreRingSoulAttack(npc, target, ref totalReleasedSouls, ref attackTimer, ref shortRoarSlot);
                     break;
                 case PolterghastAttackType.EctoplasmUppercutCharges:
-                    DoBehavior_EctoplasmUppercutCharges(npc, target, ref attackTimer, ref telegraphDirection, ref telegraphOpacity, ref veryFirstAttack, ref RoarSlot);
+                    DoBehavior_EctoplasmUppercutCharges(npc, target, ref attackTimer, ref telegraphDirection, ref telegraphOpacity, ref veryFirstAttack, ref roarSlot);
                     break;
                 case PolterghastAttackType.ArcingSouls:
-                    DoBehavior_ArcingSouls(npc, target, ref attackTimer, ref ShortRoarSlot);
+                    DoBehavior_ArcingSouls(npc, target, ref attackTimer, ref shortRoarSlot);
                     break;
                 case PolterghastAttackType.SpiritPetal:
                     DoBehavior_SpiritPetal(npc, target, ref attackTimer, ref totalReleasedSouls, enraged);
                     break;
                 case PolterghastAttackType.VortexCharge:
-                    DoBehavior_DoVortexCharge(npc, target, ref attackTimer, enraged, ref RoarSlot);
+                    DoBehavior_DoVortexCharge(npc, target, ref attackTimer, enraged, ref roarSlot);
                     break;
                 case PolterghastAttackType.CloneSplit:
                     DoBehavior_CloneSplit(npc, target, ref attackTimer, enraged);

@@ -1,9 +1,14 @@
-﻿using InfernumMode.Content.Rarities.InfernumRarities;
+﻿using InfernumMode.Content.Rarities;
+using InfernumMode.Content.Rarities.InfernumRarities;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Core;
 
 namespace InfernumMode.Core.GlobalInstances.GlobalItems
 {
+    // TODO - Automate this properly.
     public class CustomRarityGlobalItem : GlobalItem
     {
         public override bool PreDrawTooltipLine(Item item, DrawableTooltipLine line, ref int yOffset)
@@ -57,6 +62,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 else if (item.rare == ModContent.RarityType<InfernumSoulDrivenHeadphonesRarity>())
                 {
                     InfernumSoulDrivenHeadphonesRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
+                else if (item.rare == ModContent.RarityType<InfernumOceanFlowerRarity>())
+                {
+                    InfernumOceanFlowerRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
             }

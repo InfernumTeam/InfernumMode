@@ -10,6 +10,7 @@
         CodeSymbols,
         RedLightningSparkle,
         PuritySparkle,
-        MusicNotes
+        MusicNotes,
+        BubbleSparkle
     }
 }

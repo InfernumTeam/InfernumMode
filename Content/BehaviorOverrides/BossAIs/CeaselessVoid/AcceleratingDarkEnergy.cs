@@ -98,6 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(Time);
             writer.Write(Index);
             writer.Write(SpinOffsetAngle);
             writer.WriteVector2(RestingPosition);
@@ -106,6 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            Time = reader.ReadSingle();
             Index = reader.ReadInt32();
             SpinOffsetAngle = reader.ReadSingle();
             RestingPosition = reader.ReadVector2();
@@ -221,7 +223,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             Projectile.Opacity = 1f;
-            Projectile.tileCollide = Time >= 54f;
+            Projectile.tileCollide = Time >= 75f;
 
             // Spawn particles.
             for (int i = 0; i < 3; i++)
@@ -239,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion with { Pitch = 0.4f }, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion with { Pitch = 0.4f, Volume = 0.4f }, Projectile.Center);
             for (int i = 0; i < 8; i++)
             {
                 Color streakColor = Color.Lerp(Color.HotPink, Color.LightCyan, Main.rand.NextFloat());

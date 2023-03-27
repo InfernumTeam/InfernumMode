@@ -23,10 +23,10 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     
     // Framed coordinates -- a UV of the NPC's current framed sprite, instead of the whole sheet
     float2 framedCoords = (coords * sheetSize - uShaderSpecificData.xy) / uShaderSpecificData.zw;
-    float2 pixel = 1 / sheetSize;
+    float2 pixel = 2 / sheetSize;
     framedCoords = floor(framedCoords / pixel) * pixel;
     
-    float4 noiseColor = tex2D(uImage1, framedCoords * 0.5);
+    float4 noiseColor = tex2D(uImage1, framedCoords * 0.15 + float2(0.12, 0.32));
     
     // If the noise over the erasure threshold, completely erase this pixel.
     if (noiseColor.r > 0.42)

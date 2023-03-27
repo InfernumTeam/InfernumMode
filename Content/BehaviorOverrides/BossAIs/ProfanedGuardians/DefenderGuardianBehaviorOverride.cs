@@ -122,6 +122,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     DoBehavior_CrashRam(npc, target, ref attackTimer, commander);
                     break;
 
+                case GuardiansAttackType.FireballBulletHell:
+                    DoBehavior_FireballBulletHell(npc, target, ref attackTimer, commander);
+                    break;
+
                 case GuardiansAttackType.DefenderDeathAnimation:
                     DoBehavior_DefenderDeathAnimation(npc, target, ref attackTimer, commander);
                     break;

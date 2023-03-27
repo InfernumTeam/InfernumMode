@@ -19,6 +19,7 @@ namespace InfernumMode.Assets.Effects
         }
         public static MiscShaderData AEWPsychicEnergyShader => GameShaders.Misc["Infernum:AEWPsychicEnergy"];
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
+        public static MiscShaderData AreaBorderVertexShader => GameShaders.Misc["Infernum:AreaBorder"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BackgroundDistortionShader => GameShaders.Misc["Infernum:BackgroundDistortion"];
@@ -107,6 +108,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
+            Ref<Effect> areaBorder = new(assets.Request<Effect>("Assets/Effects/AreaBorderShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:AreaBorder"] = new MiscShaderData(areaBorder, "TrailPass");
+
             Ref<Effect> atThisTimeOfYear = new(assets.Request<Effect>("Assets/Effects/UnderwaterRayShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:UnderwaterRays"] = new MiscShaderData(atThisTimeOfYear, "RayPass");
 

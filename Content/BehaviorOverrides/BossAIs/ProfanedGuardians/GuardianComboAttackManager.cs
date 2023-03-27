@@ -24,183 +24,8 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public static class GuardianComboAttackManager
+    public static partial class GuardianComboAttackManager
     {
-        #region Enums
-        public enum GuardiansAttackType
-        {
-            // Initial attacks.
-            SpawnEffects,
-            FlappyBird,
-
-            // All 3 combo attacks.
-            SoloHealer,
-            SoloDefender,
-            HealerAndDefender,
-
-            HealerDeathAnimation,
-
-            // Commander and Defender combo attacks
-            SpearDashAndGroundSlam,
-            CrashRam,
-
-            DefenderDeathAnimation,
-
-            // Commander solo attacks.
-            LargeGeyserAndCharge,
-            DogmaLaserBall,
-            BerdlySpears,
-            SpearSpinThrow,
-            RiftFireCharges,
-
-            CommanderDeathAnimation
-        }
-
-        public enum DefenderShieldStatus
-        {
-            Inactive,
-            ActiveAndAiming,
-            ActiveAndStatic,
-            MarkedForRemoval
-        }
-        #endregion
-
-        #region Attack Cycles
-        public static List<GuardiansAttackType> CommanderAttackCycle => new()
-        {
-            GuardiansAttackType.LargeGeyserAndCharge,
-            GuardiansAttackType.DogmaLaserBall,
-            GuardiansAttackType.SpearSpinThrow,
-            GuardiansAttackType.RiftFireCharges,
-            GuardiansAttackType.BerdlySpears,
-            GuardiansAttackType.DogmaLaserBall,
-            GuardiansAttackType.LargeGeyserAndCharge,
-            GuardiansAttackType.RiftFireCharges,
-            GuardiansAttackType.SpearSpinThrow,
-            GuardiansAttackType.DogmaLaserBall,
-            GuardiansAttackType.BerdlySpears
-        };
-        #endregion
-
-        #region Fields And Properties
-        public static Vector2 CrystalPosition => WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(6740f, 1500f);
-
-        public static Rectangle ShardUseisAllowedArea
-        { 
-            get
-            {
-                Vector2 proviArenaPos = new(WorldSaveSystem.ProvidenceArena.X * 16f, WorldSaveSystem.ProvidenceArena.Y * 16f);
-                Vector2 leftPos = proviArenaPos + new Vector2(850f, 1125f);
-                Vector2 rightPos = proviArenaPos + new Vector2(1275f, 1735f);
-                return new Rectangle((int)leftPos.X, (int)leftPos.Y, (int)rightPos.X - (int)leftPos.X, (int)rightPos.Y - (int)leftPos.Y);
-            }
-        }
-
-        private static Vector2 leftHandPosition = Vector2.Zero;
-        private static Vector2 rightHandPosition = Vector2.Zero;
-
-        /// <summary>
-        /// Set this as an offset vector from the commander center.
-        /// </summary>
-        public static Vector2 LeftHandPosition
-        {
-            get => leftHandPosition;
-            set => leftHandPosition = value;
-        }
-
-        /// <summary>
-        /// Set this as an offset vector from the commander center.
-        /// </summary>
-        public static Vector2 RightHandPosition
-        {
-            get => rightHandPosition;
-            set => rightHandPosition = value;
-        }
-
-        public static int CommanderType => ModContent.NPCType<ProfanedGuardianCommander>();
-        public static int DefenderType => ModContent.NPCType<ProfanedGuardianDefender>();
-        public static int HealerType => ModContent.NPCType<ProfanedGuardianHealer>();
-
-        public static Vector2 CommanderStartingHoverPosition => CrystalPosition + new Vector2(600f, -65f);
-        public static Vector2 DefenderStartingHoverPosition => CrystalPosition + new Vector2(185f, 475f);
-        public static Vector2 HealerStartingHoverPosition => CrystalPosition + new Vector2(200f, -65f);
-
-        // Damage fields.
-        public const int ProfanedRockDamage = 200;
-        public const int MagicShotDamage = 220;
-        public const int HolySpearDamage = 250;
-        public const int LingeringFireDamage = 275;
-        public const int CommanderSpearDamage = 300;
-        public const int HolyFireBeamDamage = 375;
-        public const int LavaPillarDamage = 450;
-        #endregion
-
-        #region Indexes
-        public const int DefenderFireSuckupWidthIndex = 10;
-        public const int HealerConnectionsWidthScaleIndex = 11;
-        public const int DefenderShouldGlowIndex = 12;
-        public const int DefenderDrawDashTelegraphIndex = 13;
-        public const int DefenderDashTelegraphOpacityIndex = 14;
-        public const int CommanderMovedToTriplePositionIndex = 15;
-        /// <summary>
-        /// 0 = shield needs to spawn, 1 = shield is spawned and should aim at the player, 2 = shield is spawned and should stop aiming, 3 = shield should die.
-        /// </summary>
-        public const int DefenderShieldStatusIndex = 16;
-        public const int DefenderFireAfterimagesIndex = 17;
-        public const int CommanderBlenderShouldFadeOutIndex = 18;
-        public const int CommanderAngerGlowAmountIndex = 19;
-        /// 0 = spear needs to spawn, 1 = spear is spawned and should aim at the player, 2 = spear is spawned and should stop aiming, 3 = spear should die.
-        public const int CommanderSpearStatusIndex = 20;
-        public const int CommanderSpearRotationIndex = 21;
-        /// <summary>
-        /// Handled entirely by the commander. Do not touch
-        /// </summary>
-        public const int CommanderSpearSmearOpacityIndex = 22;
-        // Reset by the commander every frame.
-        public const int CommanderDrawSpearSmearIndex = 22;
-        public const int CommanderFireAfterimagesIndex = 23;
-        public const int CommanderFireAfterimagesLengthIndex = 24;
-
-        public const int CommanderDrawBlackBarsIndex = 25;
-        public const int CommanderBlackBarsRotationIndex = 26;
-        /// <summary>
-        /// Reset by the commander every frame based on the draw index.
-        /// </summary>
-        public const int CommanderBlackBarsOpacityIndex = 27;
-
-        // Hand stuff
-        public const int LeftHandIndex = 28;
-        public const int RightHandIndex = 29;
-        public const int LeftHandXIndex = 30;
-        public const int LeftHandYIndex = 31;
-        public const int RightHandXIndex = 32;
-        public const int RightHandYIndex = 33;
-
-        public const int DefenderHasBeenYeetedIndex = 34;
-
-        public const int CommanderHasSpawnedBlenderAlreadyIndex = 35;
-
-        /// <summary>
-        /// Set by the dogma fireball once, then reset once read by the commander.
-        /// </summary>
-        public const int CommanderDogmaFireballHasBeenYeetedIndex = 36;
-        /// <summary>
-        /// This does not reset automatically, it must be end up at 0
-        /// </summary>
-        public const int CommanderSpearPositionOffsetIndex = 37;
-
-        public const int CommanderBlenderBackglowOpacityIndex = 38;
-
-        /// <summary>
-        /// Reset by the commander every frame.
-        /// </summary>
-        public const int HandsShouldUseNotDefaultPositionIndex = 39;
-
-        public const int CommanderBrightnessWidthFactorIndex = 50;
-
-        public const int CommanderAttackCyclePositionIndex = 51;
-        #endregion
-
         #region Commander + Defender + Healer Attacks
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackTimer)
         {
@@ -1272,6 +1097,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (npc.WithinRange(target.Center, 200f))
                             npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 5f;
 
+                        if (npc.Opacity < 1f)
+                        {
+                            if (npc.Opacity == 0f)
+                                CreateFireExplosion(npc.Center, true);
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+                            npc.dontTakeDamage = false;
+                        }
+
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (universalAttackTimer >= chargeUpLength && npc.Distance(hoverDestination) < 75f)
@@ -1697,6 +1530,335 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         break;
                 }
+            }
+        }
+
+        public static void DoBehavior_FireballBulletHell(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
+        {
+            ref float fireballRingsReleased = ref commander.Infernum().ExtraAI[1];
+            float maxFireballRingsToRelease = 9f;
+
+            // The commander moves to the center of the arena, creating a border of fire around the himself and periodically releasing
+            // near solid rings of fireballs that move outwards to the border.
+            if (npc.type == CommanderType)
+            {
+                ref float substate = ref npc.Infernum().ExtraAI[0];
+
+                ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
+                ref float drawBorder = ref npc.Infernum().ExtraAI[FireBorderShouldDrawIndex];
+
+                float flySpeed = 25f;
+                float maxMoveToCenterTime = 120f;
+                float fireballCount = 20f;
+                float fireballSpeed = 1.5f;
+                float fireballReleaseRate = 45;
+                float endOfAttackWait = 180f;
+                float areaDistance = 1150f;
+
+                npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
+                // Despawn the spear if it is active.
+                if ((DefenderShieldStatus)spearStatus != DefenderShieldStatus.Inactive || Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<CommanderSpear>()))
+                    // Mark the spear for removal.
+                    spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
+
+                if (universalAttackTimer <= fireballReleaseRate && substate == 1)
+                {
+                    // Create convergence particles.
+                    if (universalAttackTimer < fireballReleaseRate)
+                    {
+                        int lightLifetime = Main.rand.Next(20, 24);
+                        float squishFactor = 1.5f;
+                        float scale = 0.4f;
+                        Vector2 lightSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(240f, 630f);
+                        Vector2 lightVelocity = (npc.Center - lightSpawnPosition) / lightLifetime * 1.1f;
+                        Color lightColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat(0f, 0.5f));
+                        if (Main.rand.NextBool())
+                            lightColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.6f);
+
+                        SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, scale, lightColor, lightLifetime, 1f, squishFactor, squishFactor * 4f);
+                        GeneralParticleHandler.SpawnParticle(light);
+
+                        // Create pulse rungs and bloom periodically.
+                        if (universalAttackTimer % 15f == 0f)
+                        {
+                            PulseRing ring = new(npc.Center, Vector2.Zero, lightColor, 3.6f, 0f, 60);
+                            GeneralParticleHandler.SpawnParticle(ring);
+
+                            StrongBloom bloom = new(npc.Center, Vector2.Zero, lightColor, 1f, 15);
+                            GeneralParticleHandler.SpawnParticle(bloom);
+                        }
+
+                        // Create energy sparks at the center.
+                        CritSpark spark = new(npc.Center, Main.rand.NextVector2Circular(8f, 8f), Color.OrangeRed, Color.Gold, 5f, 6, 0.01f, 7.5f);
+                        GeneralParticleHandler.SpawnParticle(spark);
+                    }
+                    else if (substate == 1)
+                    {
+                        float lightAmount = 25f;
+                        for (int i = 0; i < lightAmount; i++)
+                        {
+                            Vector2 lightSpawnPosition = npc.Center;
+                            Vector2 lightVelocity = npc.Center.DirectionTo(npc.Center + Main.rand.NextVector2Unit()) * Main.rand.NextFloat(5f, 10f);
+                            int lightLifetime = Main.rand.Next(30, 54);
+                            float squishFactor = 2f;
+                            float scale = 0.8f;
+                            Color lightColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat(0f, 0.5f));
+                            if (Main.rand.NextBool())
+                                lightColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.6f);
+
+                            SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, scale, lightColor, lightLifetime, 1f, squishFactor, squishFactor * 4f);
+                            GeneralParticleHandler.SpawnParticle(light);
+                            if (i == 0)
+                            {
+                                PulseRing ring = new(npc.Center, Vector2.Zero, lightColor, 0f, 3.6f, 30);
+                                GeneralParticleHandler.SpawnParticle(ring);
+
+                                StrongBloom bloom = new(npc.Center, Vector2.Zero, lightColor, 1f, 15);
+                                GeneralParticleHandler.SpawnParticle(bloom);
+                            }
+                        }
+
+                        // Release a fast but less dense ring of fireballs.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int i = 0; i < 12; i++)
+                            {
+                                Vector2 fireballVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * fireballSpeed * 4.5f;
+                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(f =>
+                                {
+                                    f.ModProjectile<HolyBasicFireball>().GuardiansType = true;
+                                });
+                                Utilities.NewProjectileBetter(npc.Center, fireballVelocity, ModContent.ProjectileType<HolyBasicFireball>(), HolySpearDamage, 0f);
+                            }
+                        }
+                    }
+                }
+
+                switch (substate)
+                {
+                    // The commander moves to the center of the garden.
+                    case 0:
+                        Vector2 hoverDestination = CenterOfGarden;
+                        if (npc.Distance(hoverDestination) > 100f)
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        else
+                            npc.velocity *= 0.9f;
+
+                        if (npc.WithinRange(hoverDestination, flySpeed) || universalAttackTimer >= maxMoveToCenterTime)
+                        {
+                            universalAttackTimer = 0f;
+                            substate++;
+                        }
+                        break;
+
+                    // The commander sits still, and periodially creates rings of fireballs.
+                    case 1:
+                        npc.velocity *= 0.8f;
+
+                        drawBorder = 1f;
+
+                        if (universalAttackTimer % fireballReleaseRate == fireballReleaseRate - 1f && fireballRingsReleased < maxFireballRingsToRelease)
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float offset = (fireballRingsReleased % 2 == 0 ? 0f : 0.5f);
+                                for (int i = 0; i < fireballCount; i++)
+                                {
+                                    Vector2 fireballVelocity = (MathHelper.TwoPi * i / fireballCount + offset).ToRotationVector2() * fireballSpeed;
+                                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(f =>
+                                    {
+                                        f.ModProjectile<HolyBasicFireball>().GuardiansType = true;
+                                    });
+                                    Utilities.NewProjectileBetter(npc.Center, fireballVelocity, ModContent.ProjectileType<HolyBasicFireball>(), HolySpearDamage, 0f);
+                                }
+                            }
+                            SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { PitchVariance = 0.2f, Volume = 0.75f }, target.Center);
+
+                            // Create a fire explosion.
+                            for (int i = 0; i < 30; i++)
+                            {
+                                Vector2 position = npc.Center + Main.rand.NextVector2Circular(50f, 50f);
+                                CloudParticle fireExplosion = new(position, npc.Center.DirectionTo(position) * Main.rand.NextFloat(1f, 2f),
+                                    Main.rand.NextBool() ? WayfinderSymbol.Colors[0] : WayfinderSymbol.Colors[1],
+                                    Color.Gray, 50, Main.rand.NextFloat(0.45f, 1.05f), true);
+                                GeneralParticleHandler.SpawnParticle(fireExplosion);
+                            }
+
+                            fireballRingsReleased++;
+                            if (fireballRingsReleased >= maxFireballRingsToRelease)
+                            {
+                                universalAttackTimer = 0f;
+                                substate++;
+                            }
+                        }
+                        break;
+
+                    case 2:
+
+                        if (universalAttackTimer >= endOfAttackWait)
+                        {
+                            drawBorder = 0f;
+                            SelectNewAttack(commander, ref universalAttackTimer);
+                        }
+                        break;
+                }
+            }
+
+            // The defender dashes at you. Very eventful.
+            else if (npc.type == DefenderType)
+            {
+                ref float substate = ref npc.Infernum().ExtraAI[0];
+                ref float localAttackTimer = ref npc.Infernum().ExtraAI[1];
+                ref float hoverOffsetX = ref npc.Infernum().ExtraAI[2];
+                ref float hoverOffsetY = ref npc.Infernum().ExtraAI[3];
+
+                ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
+                ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
+                ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
+
+                float telegraphWaitTime = 10f;
+                float dashPositioningWaitTime = 45f;
+                float flySpeed = 33f;
+                float dashTime = 40f;
+                float dashSpeed = 19f;
+                float dashAcceleration = 1.15f;
+
+                Vector2 oldHoverOffset = new(hoverOffsetX, hoverOffsetY);
+
+                // Generate the shield if it is inactive.
+                if ((DefenderShieldStatus)shieldStatus == DefenderShieldStatus.Inactive || !Main.projectile.Any((Projectile p) => p.active && p.type == ModContent.ProjectileType<DefenderShield>()))
+                {
+                    // Mark the shield as active.
+                    shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
+                }
+
+                //Main.NewText(dashTelegraphOpacity);
+
+                switch (substate)
+                {
+                    // Decide the position to hover at.
+                    case 0:
+                        Vector2 hoverOffset = Vector2.UnitY;
+                        for (int i = 0; i < 100; i++)
+                        {
+                            float hoverOffsetAngle = Main.rand.Next(4) * MathHelper.TwoPi / 4f + MathHelper.PiOver4;
+                            hoverOffset = hoverOffsetAngle.ToRotationVector2();
+
+                            // Leave and use the current offset to see if the direction of the new offset is perpendicular or less to the previous one. This prevents going to opposite sides and
+                            // moving thorugh the player's position to reach it. The 0.01 is added on top to ensure that tiny floating point imprecisions don't become a problem.
+                            float angleBetween = oldHoverOffset.AngleBetween(hoverOffset);
+                            if (angleBetween is < (MathHelper.PiOver2 + 0.01f) and not 0)
+                                break;
+                        }
+
+                        hoverOffsetX = hoverOffset.X;
+                        hoverOffsetY = hoverOffset.Y;
+                        localAttackTimer = 0;
+                        substate++;
+                        break;
+
+                    // Hover at the position.
+                    case 1:
+                        if (npc.Opacity < 1f)
+                        {
+                            if (npc.Opacity == 0f)
+                                CreateFireExplosion(npc.Center, true);
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+                            npc.dontTakeDamage = false;
+                        }
+                        float distance = 700f;
+                        Vector2 hoverDestination = target.Center + oldHoverOffset * distance;
+
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+
+                        npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
+
+                        // Move out of the way of the target if going around them.
+                        if (npc.WithinRange(target.Center, 150f))
+                            npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
+
+                        // Initialize the dash telegraph.
+                        if (universalAttackTimer >= telegraphWaitTime)
+                            drawDashTelegraph = 1;
+
+                        // Increase the opacity.
+                        if (drawDashTelegraph == 1)
+                            dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
+
+                        // Do not deal contact damage while positioning.
+                        npc.damage = 0;
+
+                        if ((npc.WithinRange(hoverDestination, 25f) && localAttackTimer >= dashPositioningWaitTime && fireballRingsReleased > 0f) || localAttackTimer >= 180f)
+                        {
+                            localAttackTimer = 0;
+                            substate++;
+                        }
+                        break;
+
+                    // Charge
+                    case 2:
+                        drawDashTelegraph = 1;
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
+                        npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
+                        commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
+                        SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
+
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            target.Infernum_Camera().CurrentScreenShakePower = 3f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 0.4f, 30);
+                        }
+
+                        npc.damage = npc.defDamage;
+                        substate++;
+                        localAttackTimer = 0;
+                        break;
+
+                    // After a set time, reset.
+                    case 3:
+                        // Decrease the dash telegraph.
+                        drawDashTelegraph = 1;
+                        dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
+                        commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
+                        npc.damage = npc.defDamage;
+
+                        // Accelerate after charging.
+                        if (localAttackTimer < dashTime && npc.velocity.Length() <= 60f)
+                            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + dashAcceleration);
+
+                        // Create particles to indicate the sudden speed.
+                        if (Main.rand.NextBool(2))
+                        {
+                            Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(30f, 20f) - npc.velocity;
+                            Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
+                            GeneralParticleHandler.SpawnParticle(energyLeak);
+                        }
+
+                        if (localAttackTimer >= dashTime)
+                        {
+                            if (fireballRingsReleased >= maxFireballRingsToRelease)
+                            {
+                                // Fade out rapidly.
+                                if (npc.Opacity == 1f)
+                                    CreateFireExplosion(npc.Center, true);
+                                npc.velocity *= 0.8f;
+                                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                                npc.dontTakeDamage = true;
+                            }
+                            else
+                            {
+                                shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
+                                substate = 0;
+                                localAttackTimer = 0;
+                            }
+                        }
+                        break;
+                }
+                localAttackTimer++;
             }
         }
 
@@ -2845,10 +3007,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 commander.ai[0] = (float)GuardiansAttackType.SpearDashAndGroundSlam;
 
             // If its at the end of the final double combo attack, reset back to the start.
-            else if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.CrashRam)
+            else if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.FireballBulletHell)
                 commander.ai[0] = (float)GuardiansAttackType.SpearDashAndGroundSlam;
 
-            else if ((GuardiansAttackType)commander.ai[0] < GuardiansAttackType.CrashRam)
+            else if ((GuardiansAttackType)commander.ai[0] < GuardiansAttackType.FireballBulletHell)
                 commander.ai[0]++;
         }
 

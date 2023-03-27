@@ -161,7 +161,7 @@ namespace InfernumMode.Content.Projectiles
                 FireballScale = MathHelper.Clamp(FireballScale + 0.01f, 0f, 1f);
             }
 
-            if (Player.WithinRange(MainPosition, 10000))
+            if (Player.WithinRange(MainPosition, 20000))
             {
                 Player.Infernum_Camera().ScreenFocusPosition = MainPosition;
                 Player.Infernum_Camera().ScreenFocusInterpolant = CalamityUtils.SineInOutEasing(MathHelper.Clamp(Time / MoveTime, 0f, 1f), 0);

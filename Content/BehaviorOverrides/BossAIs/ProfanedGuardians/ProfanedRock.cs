@@ -41,6 +41,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public int RockTypeVarient = (int)RockType.Aimed;
 
+        public bool DoNotDrawLine;
+
         public ref float Timer => ref Projectile.ai[0];
 
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
@@ -177,7 +179,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Color backglowColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.5f);
             backglowColor.A = 0;
 
-            if (Timer <= RedHotGlowTimer)
+            if (Timer <= RedHotGlowTimer && !DoNotDrawLine)
             {
                 Texture2D invis = InfernumTextureRegistry.Invisible.Value;
                 float opacity = MathF.Sin(Timer / RedHotGlowTimer * MathF.PI);

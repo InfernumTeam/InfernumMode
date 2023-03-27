@@ -22,6 +22,8 @@ using CalamityMod.Buffs.StatDebuffs;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Buffs;
+using static InfernumMode.Common.Graphics.PrimitiveTrailCopy;
+using ReLogic.Content;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -143,6 +145,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0f;
 
+            ref float fireBorderOpacity = ref npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
+            if (npc.Infernum().ExtraAI[FireBorderShouldDrawIndex] == 1f)
+                fireBorderOpacity = MathHelper.Clamp(fireBorderOpacity + 0.1f, 0f, 1f);
+            else
+                fireBorderOpacity = MathHelper.Clamp(fireBorderOpacity - 0.1f, 0f, 1f);
+
+            // Force the player into the area if the opacity is drawn.
+            if (fireBorderOpacity > 0f && target.Center.Distance(npc.Center) > 1150f)
+                target.Center = Vector2.Lerp(target.Center, npc.Center + npc.Center.DirectionTo(target.Center) * 1150f, 0.2f);
+
             //if (attackState >= (float)GuardiansAttackType.DefenderDeathAnimation)
             //    npc.Infernum().ShouldUseSaturationBlur = true;
 
@@ -179,6 +191,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case GuardiansAttackType.CrashRam:
                     DoBehavior_CrashRam(npc, target, ref attackTimer, npc);
+                    break;
+
+                case GuardiansAttackType.FireballBulletHell:
+                    DoBehavior_FireballBulletHell(npc, target, ref attackTimer, npc);
                     break;
 
                 case GuardiansAttackType.DefenderDeathAnimation:
@@ -329,8 +345,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (shouldDrawShield)
                 DrawBackglowEffects(npc, spriteBatch, texture);
 
-            if (npc.Infernum().ExtraAI[CommanderFireAfterimagesIndex] == 1)
-                PrepareFireAfterimages(npc, spriteBatch, direction);
+            //if (npc.Infernum().ExtraAI[CommanderFireAfterimagesIndex] == 1)
+            //    PrepareFireAfterimages(npc, spriteBatch, direction);
 
             if ((GuardiansAttackType)npc.ai[0] > GuardiansAttackType.HealerDeathAnimation)
                 DefenderGuardianBehaviorOverride.DrawBackglow(npc, spriteBatch, texture);
@@ -349,9 +365,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
-
-            // DEBUG
-            spriteBatch.Draw(InfernumTextureRegistry.LaserCircle.Value, UI.GuardiansPlaqueUIManager.PlaqueWorldPosition - Main.screenPosition, null, Color.White, 0f, InfernumTextureRegistry.LaserCircle.Value.Size() * 0.5f, 0.3f, 0, 0f);
+            if (npc.Infernum().ExtraAI[FireBorderInterpolantIndex] > 0f)
+                DrawFireBorder(npc, spriteBatch);
             return false;
         }
 
@@ -504,6 +519,48 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (shieldColor.ToVector4().Length() > 0.02f)
                 spriteBatch.Draw(noise, drawPosition, null, Color.White * opacity, 0, noise.Size() / 2f, scale * 2f, 0, 0);
 
+            spriteBatch.ExitShaderRegion();
+        }
+
+        public static void DrawFireBorder(NPC npc, SpriteBatch spriteBatch)
+        {
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            
+            // Get variables.
+            List<VertexPosition2DColor> vertices = new();
+            float totalPoints = 200;
+            float width = 300f;
+            float radius = 1200f;
+            Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
+            float distanceFromCenter = radius - Main.player[npc.target].Center.Distance(npc.Center);
+            float alpha = MathHelper.Clamp(1f - distanceFromCenter / (radius * 1.5f), 0f, 1f);
+            color *= alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
+
+            for (int i = 0; i <= totalPoints; i++)
+            {
+                float interpolant = i / totalPoints;
+                Vector2 position = npc.Center - Main.screenPosition + (i * MathHelper.TwoPi / totalPoints).ToRotationVector2() * radius;
+                Vector2 position2 = npc.Center - Main.screenPosition + (i * MathHelper.TwoPi / totalPoints).ToRotationVector2() * (radius + width);
+
+                Vector2 textureCoords = new(interpolant, 0f);
+                Vector2 textureCoords2 = new(interpolant, 1f);
+
+                vertices.Add(new VertexPosition2DColor(position, color, textureCoords));
+                vertices.Add(new VertexPosition2DColor(position2, color, textureCoords2));
+            }
+
+            CalamityUtils.CalculatePerspectiveMatricies(out var view, out var projection);
+            InfernumEffectsRegistry.AreaBorderVertexShader.UseOpacity(alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex]);
+            InfernumEffectsRegistry.AreaBorderVertexShader.UseColor(WayfinderSymbol.Colors[2]);
+            InfernumEffectsRegistry.AreaBorderVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
+            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["noiseSpeed"].SetValue(new Vector2(0.1f, 0.1f));
+            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["timeFactor"].SetValue(2f);
+            InfernumEffectsRegistry.AreaBorderVertexShader.Apply();
+
+            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient", AssetRequestMode.ImmediateLoad).Value;
+            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
             spriteBatch.ExitShaderRegion();
         }
         #endregion Draw Effects

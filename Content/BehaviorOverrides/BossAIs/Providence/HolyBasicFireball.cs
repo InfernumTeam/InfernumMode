@@ -17,6 +17,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
     public class HolyBasicFireball : ModProjectile
     {
+        public bool GuardiansType;
+
         public static int Variant => (int)(ProvidenceBehaviorOverride.IsEnraged ? ProvidenceBoss.BossMode.Night : ProvidenceBoss.BossMode.Day);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
@@ -70,8 +72,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Projectile.Size != newScale)
                 Projectile.Size = newScale;
 
-            if (Projectile.velocity.Length() < 16f)
-                Projectile.velocity *= 1.01f;
+            if (GuardiansType)
+            {
+                if (Projectile.velocity.Length() < 20f)
+                    Projectile.velocity *= 1.015f;
+            }
+            else
+            {
+                if (Projectile.velocity.Length() < 16f)
+                    Projectile.velocity *= 1.01f;
+            }
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 

@@ -61,6 +61,12 @@ namespace InfernumMode.Common.BaseEntities
             Projectile.scale = MathHelper.Lerp(MinScale, MaxScale, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
             Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Radius * 0.4f, targetHitbox);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.EnterShaderRegion();
@@ -71,7 +77,7 @@ namespace InfernumMode.Common.BaseEntities
                 ExplosionNoiseTexture,
                 drawPosition,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f - (float)Math.Sqrt(1f - Projectile.timeLeft / (float)Lifetime))) * 0.7f * Opacity,
+                new Color(new Vector4((float)Math.Sqrt(Projectile.timeLeft / (float)Lifetime))) * 0.7f * Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,

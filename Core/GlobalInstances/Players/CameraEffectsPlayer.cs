@@ -58,7 +58,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             // Handle screen-shake effects. This can be disabled with one of Calamity's configuration options.
             if (CurrentScreenShakePower > 0f)
-                CurrentScreenShakePower = Utils.Clamp(CurrentScreenShakePower - 0.2f, 0f, 15f);
+                CurrentScreenShakePower = Utils.Clamp(CurrentScreenShakePower - 0.2f, 0f, 28f);
             else
                 return;
 

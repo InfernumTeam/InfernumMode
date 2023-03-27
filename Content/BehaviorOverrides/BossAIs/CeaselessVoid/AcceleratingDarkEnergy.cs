@@ -214,11 +214,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Time <= 28f)
             {
                 if (!Projectile.WithinRange(Target.Center, 250f))
-                    Projectile.velocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
+                {
+                    Vector2 idealVelocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
+                    Projectile.velocity = Projectile.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi / 5f);
+                }
             }
 
             Projectile.Opacity = 1f;
-            Projectile.tileCollide = Time >= 66f;
+            Projectile.tileCollide = Time >= 54f;
 
             // Spawn particles.
             for (int i = 0; i < 3; i++)

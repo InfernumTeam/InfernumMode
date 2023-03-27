@@ -1,11 +1,14 @@
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,6 +18,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
     public class CeaselessVortex : ModProjectile, ISpecializedDrawRegion
     {
         public static NPC CeaselessVoid => Main.npc[CalamityGlobalNPC.voidBoss];
+
+        public bool AimDirectlyAtTarget
+        {
+            get => Projectile.localAI[0] == 1f;
+            set => Projectile.localAI[0] = value.ToInt();
+        }
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -37,9 +46,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 300;
-            Projectile.MaxUpdates = 3;
+            Projectile.MaxUpdates = 2;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(AimDirectlyAtTarget);
+            writer.Write(Projectile.MaxUpdates);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            AimDirectlyAtTarget = reader.ReadBoolean();
+            Projectile.MaxUpdates = reader.ReadInt32();
         }
 
         public override void AI()
@@ -58,11 +79,43 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Cast the telegraph.
             TelegraphInterpolant = Utils.GetLerpValue(0f, 45f, Time, true) * Utils.GetLerpValue(28f, 36f, Projectile.timeLeft, true);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft == 36f)
+            if (Projectile.timeLeft == 36f)
             {
+                float tearShootSpeed = 24f;
                 Vector2 tearSpawnPosition = Projectile.Center;
-                Vector2 tearVelocity = Projectile.velocity * 24f;
-                Utilities.NewProjectileBetter(tearSpawnPosition + 2f * tearVelocity, tearVelocity, ModContent.ProjectileType<CeaselessVortexTear>(), 250, 0f);
+
+                // Ensure that the tear fires a preset distance away from the player if this vortex is directed to aim directly at the target.
+                if (AimDirectlyAtTarget)
+                {
+                    float distanceToTarget = tearSpawnPosition.Distance(Main.player[CeaselessVoid.target].Center);
+                    float tearTravelDistance = distanceToTarget + 840f;
+
+                    // Calculate the base speed assuming that there is no acceleration.
+                    tearShootSpeed = tearTravelDistance / CeaselessVortexTear.Lifetime;
+
+                    // Factor acceleration into the speed calculation.
+                    tearShootSpeed /= MathF.Pow(CeaselessVortexTear.Acceleration, CeaselessVortexTear.Lifetime) / 4;
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound, Projectile.Center);
+                }
+
+                for (int i = 0; i < 40; i++)
+                {
+                    int gasLifetime = Main.rand.Next(20, 24);
+                    float scale = 1.9f;
+                    Vector2 gasSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 72f;
+                    Vector2 gasVelocity = Projectile.velocity.RotatedByRandom(0.3f) * Main.rand.NextFloat(10f, 90f);
+                    Color gasColor = Color.Lerp(Color.HotPink, Color.Blue, Main.rand.NextFloat(0.6f));
+                    Particle gas = new HeavySmokeParticle(gasSpawnPosition, gasVelocity, gasColor, gasLifetime, scale, 1f, 0f, true);
+                    if (Main.rand.NextBool(3))
+                        gas = new MediumMistParticle(gasSpawnPosition, gasVelocity, gasColor, Color.Black, 0.67f * scale, 255f);
+
+                    GeneralParticleHandler.SpawnParticle(gas);
+                }
+
+                Vector2 tearVelocity = Projectile.velocity * tearShootSpeed;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(tearSpawnPosition + 2f * tearVelocity, tearVelocity, ModContent.ProjectileType<CeaselessVortexTear>(), CeaselessVoidBehaviorOverride.VortexTearDamage, 0f, -1, AimDirectlyAtTarget.ToInt());
 
                 // Tell the Ceaseless Void to play the sound.
                 CeaselessVoid.Infernum().ExtraAI[0] = 1f;
@@ -75,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 int lightLifetime = Main.rand.Next(20, 24);
                 float squishFactor = 2f;
                 float scale = 0.56f;
-                Vector2 lightSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 45f;
+                Vector2 lightSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 72f;
                 Vector2 lightVelocity = Projectile.velocity * Main.rand.NextFloat(10f, 20f);
                 Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0f, 0.5f));
                 if (Main.rand.NextBool())
@@ -104,7 +157,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 float telegraphColorInterpolant = MathF.Cos(MathHelper.TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 13f) * 0.5f + 0.5f;
                 float telegraphBaseWidth = MathHelper.Lerp(20f, 36f, telegraphColorInterpolant);
                 Vector2 start = Projectile.Center;
-                Vector2 end = start + 3000f * Projectile.velocity;
+
+                // Calculate the telegraph length.
+                float telegraphDistance = AimDirectlyAtTarget ? start.Distance(Main.player[CeaselessVoid.target].Center) : 3000f;
+                Vector2 end = start + telegraphDistance * Projectile.velocity;
                 Color baseTelegraphColor = Color.Lerp(Color.Purple, Color.DarkBlue, 0.415f);
                 Main.spriteBatch.DrawBloomLine(start, end, baseTelegraphColor * (1f + telegraphColorInterpolant * 0.6f), telegraphBaseWidth * TelegraphInterpolant);
             }

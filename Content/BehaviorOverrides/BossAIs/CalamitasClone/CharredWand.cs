@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < 35; i++)
                 {
                     Vector2 cinderVelocity = (MathHelper.TwoPi * i / 35f).ToRotationVector2() * (speedBoost + 13.5f);
-                    Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasCloneBehaviorOverride.DarkMagicFlameDamage, 0f);
                 }
             }
 

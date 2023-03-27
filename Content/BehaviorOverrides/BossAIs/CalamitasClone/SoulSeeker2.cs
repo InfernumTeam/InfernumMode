@@ -65,9 +65,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 AttackTimer++;
                 if (AttackTimer >= MathHelper.Lerp(90f, 30f, Utils.GetLerpValue(30f, 520f, AngerTimer, true)))
                 {
-                    int dartDamage = 180;
                     Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 15f) * 21f;
-                    int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f, -1, 1f);
+                    int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), CalamitasCloneBehaviorOverride.BrimstoneDartDamage, 0f, -1, 1f);
                     if (Main.projectile.IndexInRange(dart))
                     {
                         Main.projectile[dart].tileCollide = false;

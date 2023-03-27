@@ -365,7 +365,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 }
 
                 // Make stomp sounds and particles when hitting the ground again.
-                if (npc.velocity.Y == 0f || (Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 48) && npc.noTileCollide))
+                if (npc.velocity.Y == 0f)
                 {
                     CreateGroundImpactEffects(npc);
                     attackTimer = 0f;
@@ -374,7 +374,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
                     target.Infernum_Camera().CurrentScreenShakePower = 6f;
                     if (jumpCounter >= jumpCount)
+                    {
+                        npc.velocity.X = 0f;
                         SelectNextAttack(npc, phaseInfo);
+                    }
 
                     npc.netUpdate = true;
                 }
@@ -537,7 +540,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
             // Make stomp sounds and particles when hitting the ground.
             // Also release an even spread of projectiles into the air. A small amount of variance is used to spice things up, but not much.
-            bool hitGround = npc.velocity.Y == 0f || Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 48);
+            bool hitGround = npc.velocity.Y == 0f || (npc.Center.Y >= target.Top.Y && Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height));
             if (hitGround && hasDoneGroundHitEffects == 0f)
             {
                 CreateGroundImpactEffects(npc);
@@ -566,14 +569,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                             Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), spikeDamage, 0f);
                         }
                     }
-
-                    npc.velocity.Y = 0f;
                     npc.netUpdate = true;
                 }
 
                 target.Infernum_Camera().CurrentScreenShakePower = 10f;
                 hasDoneGroundHitEffects = 1f;
                 attackTimer = 0f;
+                npc.velocity.Y = 0f;
+                while (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 16))
+                    npc.position.Y -= 2f;
+
                 npc.netUpdate = true;
             }
 
@@ -647,13 +652,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             npc.velocity.X = 0f;
 
             // Make stomp sounds and particles when hitting the ground.
-            bool hitGround = npc.velocity.Y == 0f || Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 48);
+            bool hitGround = npc.velocity.Y == 0f;
             if (hitGround && hasDoneGroundHitEffects == 0f)
             {
                 CreateGroundImpactEffects(npc);
                 hasDoneGroundHitEffects = 1f;
                 attackTimer = 0f;
-                npc.velocity = Vector2.Zero;
+                npc.velocity.X = 0f;
                 npc.netUpdate = true;
 
                 target.Infernum_Camera().CurrentScreenShakePower = 10f;
@@ -723,7 +728,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
 
             // WHY ARE YOU SLIDING AWAY YOU MOTHERFUCKER???
-            npc.velocity.X *= 0.95f;
+            npc.velocity.X *= 0.8f;
 
             // Be a bit more lenient with wall creation rates if the free head is present.
             if (phaseInfo.FreeHeadExists)

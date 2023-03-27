@@ -9,12 +9,12 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.CalamityUtils;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone.CalamitasCloneBehaviorOverride;
 using CalCloneNPC = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
@@ -340,7 +340,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                             {
                                 float shootOffsetAngle = MathHelper.Lerp(-0.6f, 0.6f, i / 4f);
                                 Vector2 fireShootVelocity = (target.Center - fireSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * fireShootSpeed;
-                                Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 155, 0f);
+                                Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                             }
 
                             for (int i = 0; i < 15; i++)
@@ -357,7 +357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                             {
                                 float shootOffsetAngle = MathHelper.Lerp(-0.46f, 0.46f, i / 2f);
                                 Vector2 slashShootVelocity = (target.Center - slashSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * slashShootSpeed;
-                                Utilities.NewProjectileBetter(slashSpawnPosition, slashShootVelocity, ModContent.ProjectileType<BrimstoneSlash>(), 155, 0f);
+                                Utilities.NewProjectileBetter(slashSpawnPosition, slashShootVelocity, ModContent.ProjectileType<BrimstoneSlash>(), BrimstoneSlashDamage, 0f);
                             }
 
                             for (int i = 0; i < 25; i++)
@@ -452,7 +452,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                                 float offsetAngle = MathHelper.Lerp(-1.09f, 1.09f, i / 6f) + Main.rand.NextFloatDirection() * 0.04f;
                                 Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(10f, 13.6f);
                                 shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
-                                Utilities.NewProjectileBetter(npc.Top, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 155, 0f);
+                                Utilities.NewProjectileBetter(npc.Top, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), BrimstoneBombDamage, 0f);
                             }
                         }
                     }

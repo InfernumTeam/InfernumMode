@@ -17,7 +17,6 @@ namespace InfernumMode.Assets.Effects
             get;
             internal set;
         }
-        public static MiscShaderData AEWPsychicEnergyShader => GameShaders.Misc["Infernum:AEWPsychicEnergy"];
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
         public static MiscShaderData AreaBorderVertexShader => GameShaders.Misc["Infernum:AreaBorder"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
@@ -33,26 +32,16 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData CosmicBackgroundShader => GameShaders.Misc["Infernum:CosmicBackground"];
         public static MiscShaderData CultistDeathVertexShader => GameShaders.Misc["Infernum:CultistDeath"];
         public static MiscShaderData CultistShieldShader => GameShaders.Misc["Infernum:CultistShield"];
-        public static MiscShaderData CyclicHueShader => GameShaders.Misc["Infernum:CyclicHueShader"];
         public static MiscShaderData DarkFlamePillarVertexShader => GameShaders.Misc["Infernum:DarkFlamePillar"];
         public static MiscShaderData DoGDashIndicatorVertexShader => GameShaders.Misc["Infernum:DoGDashIndicatorShader"];
         public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
-        public static MiscShaderData FireBeamVertexShader => GameShaders.Misc["Infernum:FireBeamShader"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
-        public static MiscShaderData GaussianBlurShader => GameShaders.Misc["Infernum:GaussianBlur"];
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
-        public static MiscShaderData GradientWingShader => GameShaders.Misc["Infernum:GradientWingShader"];
         public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
-        public static MiscShaderData HologramShader => GameShaders.Misc["Infernum:Hologram"];
-        public static MiscShaderData LavaVertexShader => GameShaders.Misc["Infernum:LavaShader"];
-        public static MiscShaderData LinearTransformationVertexShader => GameShaders.Misc["Infernum:LinearTransformation"];
-        public static MiscShaderData NecroplasmicRoarShader => GameShaders.Misc["Infernum:NecroplasmicRoar"];
         public static MiscShaderData MechsIntroLetterShader => GameShaders.Misc["Infernum:MechsIntro"];
-        public static MiscShaderData MoonLordBGDistortionShader => GameShaders.Misc["Infernum:MoonLordBGDistortion"];
         public static MiscShaderData NoiseDisplacementShader => GameShaders.Misc["Infernum:NoiseDisplacement"];
         public static MiscShaderData PolterghastEctoplasmVertexShader => GameShaders.Misc["Infernum:PolterghastEctoplasm"];
         public static MiscShaderData PrismaticRayVertexShader => GameShaders.Misc["Infernum:PrismaticRay"];
-        public static MiscShaderData PristineArmorShader => GameShaders.Misc["Infernum:PristineArmorShader"];
         public static MiscShaderData ProfanedLavaVertexShader => GameShaders.Misc["Infernum:ProfanedLava"];
         public static MiscShaderData ProfanedPortalShader => GameShaders.Misc["Infernum:ProfanedPortal"];
         public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
@@ -64,7 +53,6 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData SignusBackgroundShader => GameShaders.Misc["Infernum:SignusBackground"];
         public static MiscShaderData ScreenInversionMetaballShader => GameShaders.Misc["Infernum:ScreenInversionMetaball"];
         public static MiscShaderData ScrollingCodePrimShader => GameShaders.Misc["Infernum:ScrollingCode"];
-        public static MiscShaderData TelegraphVertexShader => GameShaders.Misc["Infernum:TelegraphShader"];
         public static MiscShaderData TwinsFlameTrailVertexShader => GameShaders.Misc["Infernum:TwinsFlameTrail"];
         public static MiscShaderData UnderwaterRayShader => GameShaders.Misc["Infernum:UnderwaterRays"];
         public static MiscShaderData WaterVertexShader => InfernumConfig.Instance.ReducedGraphicsConfig ? DukeTornadoVertexShader : GameShaders.Misc["Infernum:WaterShader"];
@@ -109,173 +97,143 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadRegularShaders(AssetRepository assets)
         {
-            Ref<Effect> areaBorder = new(assets.Request<Effect>("Assets/Effects/AreaBorderShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:AreaBorder"] = new MiscShaderData(areaBorder, "TrailPass");
-
-            Ref<Effect> atThisTimeOfYear = new(assets.Request<Effect>("Assets/Effects/UnderwaterRayShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:UnderwaterRays"] = new MiscShaderData(atThisTimeOfYear, "RayPass");
-
-            Ref<Effect> backgroundDistortionShader = new(assets.Request<Effect>("Assets/Effects/BackgroundDistortionShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:BackgroundDistortion"] = new MiscShaderData(backgroundDistortionShader, "DistortionPass");
-
-            Ref<Effect> profanedPortal = new(assets.Request<Effect>("Assets/Effects/ProfanedPortalShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:ProfanedPortal"] = new MiscShaderData(profanedPortal, "PortalPass");
-
-            Ref<Effect> cultistShield = new(assets.Request<Effect>("Assets/Effects/CultistForcefield", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CultistShield"] = new MiscShaderData(cultistShield, "ShieldPass");
-
             FluidSimulatorShader = new(assets.Request<Effect>("Assets/Effects/FluidSimulator", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:DrawFluidResult"] = new MiscShaderData(FluidSimulatorShader, "DrawResultPass");
             GameShaders.Misc["Infernum:FluidUpdateVelocity"] = new MiscShaderData(FluidSimulatorShader, "VelocityUpdatePass");
             GameShaders.Misc["Infernum:FluidUpdateVelocityVorticity"] = new MiscShaderData(FluidSimulatorShader, "VelocityUpdateVorticityPass");
             GameShaders.Misc["Infernum:FluidAdvect"] = new MiscShaderData(FluidSimulatorShader, "AdvectPass");
 
-            Ref<Effect> fireBeamShader = new(assets.Request<Effect>("Assets/Effects/FireBeamShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:FireBeamShader"] = new MiscShaderData(fireBeamShader, "TrailPass");
-
-            Ref<Effect> lavaShader = new(assets.Request<Effect>("Assets/Effects/LavaShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:LavaShader"] = new MiscShaderData(lavaShader, "WaterPass");
-
-            Ref<Effect> telegraphShader = new(assets.Request<Effect>("Assets/Effects/TelegraphShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:TelegraphShader"] = new MiscShaderData(telegraphShader, "TrailPass");
-
-            Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
-
-            Ref<Effect> dashIndicator = new(assets.Request<Effect>("Assets/Effects/DoGDashIndicatorShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:DoGDashIndicatorShader"] = new MiscShaderData(dashIndicator, "TrailPass");
-
-            Ref<Effect> waterShader = new(assets.Request<Effect>("Assets/Effects/WaterShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:WaterShader"] = new MiscShaderData(waterShader, "WaterPass");
-
-            Ref<Effect> pulsatingLaser = new(assets.Request<Effect>("Assets/Effects/PulsatingLaser", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:PulsatingLaserShader"] = new MiscShaderData(pulsatingLaser, "TrailPass");
-
-            Ref<Effect> gaussianBlur = new(assets.Request<Effect>("Assets/Effects/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["InfernumMode:GaussianBlur"] = new MiscShaderData(gaussianBlur, "ScreenPass");
-
-            Ref<Effect> cloudShader = new(assets.Request<Effect>("Assets/Effects/CloudShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CloudShader"] = new MiscShaderData(cloudShader, "TrailPass");
-
-            Ref<Effect> cosmicBGShader = new(assets.Request<Effect>("Assets/Effects/CosmicBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CosmicBackground"] = new MiscShaderData(cosmicBGShader, "CosmicPass");
-
-            Ref<Effect> genericLaserShader = new(assets.Request<Effect>("Assets/Effects/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");
-
-            Ref<Effect> proviLaserShader = new(assets.Request<Effect>("Assets/Effects/ProviLaserShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:ProviLaserShader"] = new MiscShaderData(proviLaserShader, "TrailPass");
-
-            Ref<Effect> basicTintShader = new(assets.Request<Effect>("Assets/Effects/BasicTint", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:BasicTint"] = new MiscShaderData(basicTintShader, "BasicTint");
-
-            Ref<Effect> aewPsychicEnergyShader = new(assets.Request<Effect>("Assets/Effects/AEWPsychicDistortionShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");
-
-            Ref<Effect> aewShadowShader = new(assets.Request<Effect>("Assets/Effects/AEWShadowShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> aewShadowShader = new(assets.Request<Effect>("Assets/Effects/Overlays/AEWShadowShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:AEWShadowForm"] = new MiscShaderData(aewShadowShader, "BurnPass");
 
-            Ref<Effect> gradientShader = new(assets.Request<Effect>("Assets/Effects/GradientWingShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:GradientWingShader"] = new MiscShaderData(gradientShader, "GradientPass");
+            Ref<Effect> areaBorder = new(assets.Request<Effect>("Assets/Effects/Shapes/AreaBorderShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:AreaBorder"] = new MiscShaderData(areaBorder, "TrailPass");
 
-            Ref<Effect> cyclicHueShader = new(assets.Request<Effect>("Assets/Effects/CyclicHueShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CyclicHueShader"] = new MiscShaderData(cyclicHueShader, "OutlineShader");
-
-            Ref<Effect> pristineArmorShader = new(assets.Request<Effect>("Assets/Effects/PristineArmorShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:PristineArmorShader"] = new MiscShaderData(pristineArmorShader, "PristinePass");
-
-            Ref<Effect> dukeTornadoShader = new(assets.Request<Effect>("Assets/Effects/DukeTornado", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:DukeTornado"] = new MiscShaderData(dukeTornadoShader, "TrailPass");
-
-            Ref<Effect> tentacleFleshShader = new(assets.Request<Effect>("Assets/Effects/TentacleTexture", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:WoFTentacleTexture"] = new MiscShaderData(tentacleFleshShader, "TrailPass");
-
-            Ref<Effect> bloodGeyserShader = new(assets.Request<Effect>("Assets/Effects/BloodGeyser", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:WoFGeyserTexture"] = new MiscShaderData(bloodGeyserShader, "TrailPass");
-
-            Ref<Effect> shadowflameShader = new(assets.Request<Effect>("Assets/Effects/Shadowflame", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:Fire"] = new MiscShaderData(shadowflameShader, "TrailPass");
-
-            Ref<Effect> brainPsychicShader = new(assets.Request<Effect>("Assets/Effects/BrainPsychicShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:BrainPsychic"] = new MiscShaderData(brainPsychicShader, "TrailPass");
-
-            Ref<Effect> cultistDeathAnimationShader = new(assets.Request<Effect>("Assets/Effects/CultistDeathAnimation", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CultistDeath"] = new MiscShaderData(cultistDeathAnimationShader, "DeathPass");
-
-            Ref<Effect> flameTrailShader = new(assets.Request<Effect>("Assets/Effects/TwinsFlameTail", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:TwinsFlameTrail"] = new MiscShaderData(flameTrailShader, "TrailPass");
-
-            Ref<Effect> aresLightningArcShader = new(assets.Request<Effect>("Assets/Effects/AresLightningArcShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> aresLightningArcShader = new(assets.Request<Effect>("Assets/Effects/Primitives/AresLightningArcShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:AresLightningArc"] = new MiscShaderData(aresLightningArcShader, "TrailPass");
 
-            Ref<Effect> ghostlyShader = new(assets.Request<Effect>("Assets/Effects/EidolicWailRingShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:PolterghastEctoplasm"] = new MiscShaderData(ghostlyShader, "BurstPass");
-
-            ghostlyShader = new Ref<Effect>(assets.Request<Effect>("Assets/Effects/NecroplasmicRoarShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:NecroplasmicRoar"] = new MiscShaderData(ghostlyShader, "BurstPass");
-
-            Ref<Effect> introShader = new(assets.Request<Effect>("Assets/Effects/MechIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");
-
-            introShader = new Ref<Effect>(assets.Request<Effect>("Assets/Effects/SCalIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
-
-            Ref<Effect> rayShader = new(assets.Request<Effect>("Assets/Effects/PrismaticRayShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:PrismaticRay"] = new MiscShaderData(rayShader, "TrailPass");
-
-            Ref<Effect> darkFlamePillarShader = new(assets.Request<Effect>("Assets/Effects/DarkFlamePillarShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:DarkFlamePillar"] = new MiscShaderData(darkFlamePillarShader, "TrailPass");
-
-            Ref<Effect> artemisLaserShader = new(assets.Request<Effect>("Assets/Effects/ArtemisLaserShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> artemisLaserShader = new(assets.Request<Effect>("Assets/Effects/Primitives/ArtemisLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:ArtemisLaser"] = new MiscShaderData(artemisLaserShader, "TrailPass");
 
-            Ref<Effect> realityTearShader = new(assets.Request<Effect>("Assets/Effects/RealityTearShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:RealityTear"] = new MiscShaderData(realityTearShader, "TrailPass");
+            Ref<Effect> backgroundDistortionShader = new(assets.Request<Effect>("Assets/Effects/Overlays/BackgroundDistortionShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:BackgroundDistortion"] = new MiscShaderData(backgroundDistortionShader, "DistortionPass");
 
-            realityTearShader = new(assets.Request<Effect>("Assets/Effects/RealityTear2Shader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:RealityTear2"] = new MiscShaderData(realityTearShader, "TrailPass");
+            Ref<Effect> basicTintShader = new(assets.Request<Effect>("Assets/Effects/Overlays/BasicTint", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:BasicTint"] = new MiscShaderData(basicTintShader, "BasicTint");
 
-            Ref<Effect> hologramShader = new(assets.Request<Effect>("Assets/Effects/HologramShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
+            Ref<Effect> brainPsychicShader = new(assets.Request<Effect>("Assets/Effects/Primitives/BrainPsychicShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:BrainPsychic"] = new MiscShaderData(brainPsychicShader, "TrailPass");
 
-            Ref<Effect> matrixShader = new(assets.Request<Effect>("Assets/Effects/LocalLinearTransformationShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:LinearTransformation"] = new MiscShaderData(matrixShader, "TransformationPass");
-
-            Ref<Effect> cutoutShader = new(assets.Request<Effect>("Assets/Effects/CircleCutoutShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CircleCutout"] = new MiscShaderData(cutoutShader, "CutoutPass");
-
-            cutoutShader = new(assets.Request<Effect>("Assets/Effects/CircleCutoutShader2", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:CircleCutout2"] = new MiscShaderData(cutoutShader, "CutoutPass");
-
-            Ref<Effect> streakShader = new(assets.Request<Effect>("Assets/Effects/SideStreakTrail", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:SideStreak"] = new MiscShaderData(streakShader, "TrailPass");
-
-            Ref<Effect> signusBGShader = new(assets.Request<Effect>("Assets/Effects/SignusBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:SignusBackground"] = new MiscShaderData(signusBGShader, "ScreenPass");
-
-            Ref<Effect> screenInversionShader = new(assets.Request<Effect>("Assets/Effects/ScreenInversionMetaballShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:ScreenInversionMetaball"] = new MiscShaderData(screenInversionShader, "UpdatePass");
-
-            Ref<Effect> cvBGShader = new(assets.Request<Effect>("Assets/Effects/CeaselessVoidBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> cvBGShader = new(assets.Request<Effect>("Assets/Effects/Overlays/CeaselessVoidBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CVBackground"] = new MiscShaderData(cvBGShader, "ScreenPass");
 
-            Ref<Effect> cvCrackShader = new(assets.Request<Effect>("Assets/Effects/CeaselessVoidCrackShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> cvCrackShader = new(assets.Request<Effect>("Assets/Effects/Cutouts/CeaselessVoidCrackShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CVCrack"] = new MiscShaderData(cvCrackShader, "CrackPass");
 
-            Ref<Effect> codeScrollShader = new(assets.Request<Effect>("Assets/Effects/ScrollingCodePrimShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:ScrollingCode"] = new MiscShaderData(codeScrollShader, "TrailPass");
+            Ref<Effect> cutoutShader = new(assets.Request<Effect>("Assets/Effects/Shapes/CircleCutoutShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CircleCutout"] = new MiscShaderData(cutoutShader, "CutoutPass");
 
-            Ref<Effect> yharonBurnShader = new(assets.Request<Effect>("Assets/Effects/YharonBurnShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
+            cutoutShader = new(assets.Request<Effect>("Assets/Effects/Shapes/CircleCutoutShader2", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CircleCutout2"] = new MiscShaderData(cutoutShader, "CutoutPass");
 
-            Ref<Effect> teleportShader = new(assets.Request<Effect>("Assets/Effects/TeleportShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:Teleport"] = new MiscShaderData(teleportShader, "HologramPass");
+            Ref<Effect> cloudShader = new(assets.Request<Effect>("Assets/Effects/Primitives/CloudShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CloudShader"] = new MiscShaderData(cloudShader, "TrailPass");
 
-            Ref<Effect> noiseDisplacementShader = new(assets.Request<Effect>("Assets/Effects/NoiseDisplacement", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> cosmicBGShader = new(assets.Request<Effect>("Assets/Effects/Overlays/CosmicBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CosmicBackground"] = new MiscShaderData(cosmicBGShader, "CosmicPass");
+
+            Ref<Effect> cultistDeathAnimationShader = new(assets.Request<Effect>("Assets/Effects/Cutouts/CultistDeathAnimation", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CultistDeath"] = new MiscShaderData(cultistDeathAnimationShader, "DeathPass");
+
+            Ref<Effect> cultistShield = new(assets.Request<Effect>("Assets/Effects/Shapes/CultistForcefield", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CultistShield"] = new MiscShaderData(cultistShield, "ShieldPass");
+
+            Ref<Effect> darkFlamePillarShader = new(assets.Request<Effect>("Assets/Effects/Primitives/DarkFlamePillarShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:DarkFlamePillar"] = new MiscShaderData(darkFlamePillarShader, "TrailPass");
+
+            Ref<Effect> dashIndicator = new(assets.Request<Effect>("Assets/Effects/Primitives/DoGDashIndicatorShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:DoGDashIndicatorShader"] = new MiscShaderData(dashIndicator, "TrailPass");
+
+            Ref<Effect> dukeTornadoShader = new(assets.Request<Effect>("Assets/Effects/Primitives/DukeTornado", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:DukeTornado"] = new MiscShaderData(dukeTornadoShader, "TrailPass");
+
+            Ref<Effect> shadowflameShader = new(assets.Request<Effect>("Assets/Effects/Primitives/Shadowflame", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:Fire"] = new MiscShaderData(shadowflameShader, "TrailPass");
+
+            Ref<Effect> gaussianBlur = new(assets.Request<Effect>("Assets/Effects/Overlays/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["InfernumMode:GaussianBlur"] = new MiscShaderData(gaussianBlur, "ScreenPass");
+
+            Ref<Effect> genericLaserShader = new(assets.Request<Effect>("Assets/Effects/Primitives/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");
+
+            Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/Primitives/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
+
+            Ref<Effect> introShader = new(assets.Request<Effect>("Assets/Effects/Shapes/MechIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");
+
+            Ref<Effect> noiseDisplacementShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/NoiseDisplacement", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:NoiseDisplacement"] = new MiscShaderData(noiseDisplacementShader, "GlitchPass");
 
-            Ref<Effect> profanedLavaShader = new(assets.Request<Effect>("Assets/Effects/ProfanedLava", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> ghostlyShader = new(assets.Request<Effect>("Assets/Effects/Primitives/PolterghastEctoplasmShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:PolterghastEctoplasm"] = new MiscShaderData(ghostlyShader, "BurstPass");
+
+            Ref<Effect> rayShader = new(assets.Request<Effect>("Assets/Effects/Primitives/PrismaticRayShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:PrismaticRay"] = new MiscShaderData(rayShader, "TrailPass");
+
+            Ref<Effect> profanedLavaShader = new(assets.Request<Effect>("Assets/Effects/Primitives/ProfanedLava", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:ProfanedLava"] = new MiscShaderData(profanedLavaShader, "TrailPass");
+
+            Ref<Effect> profanedPortal = new(assets.Request<Effect>("Assets/Effects/Shapes/ProfanedPortalShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ProfanedPortal"] = new MiscShaderData(profanedPortal, "PortalPass");
+
+            Ref<Effect> proviLaserShader = new(assets.Request<Effect>("Assets/Effects/Primitives/ProviLaserShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ProviLaserShader"] = new MiscShaderData(proviLaserShader, "TrailPass");
+
+            Ref<Effect> pulsatingLaser = new(assets.Request<Effect>("Assets/Effects/Primitives/PulsatingLaser", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:PulsatingLaserShader"] = new MiscShaderData(pulsatingLaser, "TrailPass");
+
+            Ref<Effect> realityTearShader = new(assets.Request<Effect>("Assets/Effects/Primitives/RealityTearShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:RealityTear"] = new MiscShaderData(realityTearShader, "TrailPass");
+
+            realityTearShader = new(assets.Request<Effect>("Assets/Effects/Shapes/RealityTear2Shader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:RealityTear2"] = new MiscShaderData(realityTearShader, "TrailPass");
+
+            introShader = new Ref<Effect>(assets.Request<Effect>("Assets/Effects/Shapes/SCalIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
+
+            Ref<Effect> streakShader = new(assets.Request<Effect>("Assets/Effects/Primitives/SideStreakTrail", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:SideStreak"] = new MiscShaderData(streakShader, "TrailPass");
+
+            Ref<Effect> signusBGShader = new(assets.Request<Effect>("Assets/Effects/Overlays/SignusBackgroundShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:SignusBackground"] = new MiscShaderData(signusBGShader, "ScreenPass");
+
+            Ref<Effect> screenInversionShader = new(assets.Request<Effect>("Assets/Effects/Shapes/ScreenInversionMetaballShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ScreenInversionMetaball"] = new MiscShaderData(screenInversionShader, "UpdatePass");
+
+            Ref<Effect> codeScrollShader = new(assets.Request<Effect>("Assets/Effects/Primitives/ScrollingCodePrimShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:ScrollingCode"] = new MiscShaderData(codeScrollShader, "TrailPass");
+
+            Ref<Effect> teleportShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/TeleportShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:Teleport"] = new MiscShaderData(teleportShader, "HologramPass");
+
+            Ref<Effect> flameTrailShader = new(assets.Request<Effect>("Assets/Effects/Primitives/TwinsFlameTail", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:TwinsFlameTrail"] = new MiscShaderData(flameTrailShader, "TrailPass");
+
+            Ref<Effect> atThisTimeOfYear = new(assets.Request<Effect>("Assets/Effects/Shapes/UnderwaterRayShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:UnderwaterRays"] = new MiscShaderData(atThisTimeOfYear, "RayPass");
+
+            Ref<Effect> waterShader = new(assets.Request<Effect>("Assets/Effects/Primitives/WaterShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:WaterShader"] = new MiscShaderData(waterShader, "WaterPass");
+
+            Ref<Effect> bloodGeyserShader = new(assets.Request<Effect>("Assets/Effects/Primitives/BloodGeyser", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:WoFGeyserTexture"] = new MiscShaderData(bloodGeyserShader, "TrailPass");
+
+            Ref<Effect> tentacleFleshShader = new(assets.Request<Effect>("Assets/Effects/Primitives/TentacleTexture", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:WoFTentacleTexture"] = new MiscShaderData(tentacleFleshShader, "TrailPass");
+
+            Ref<Effect> yharonBurnShader = new(assets.Request<Effect>("Assets/Effects/Overlays/YharonBurnShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
         }
 
         public static void LoadScreenShaders(AssetRepository assets)
@@ -285,11 +243,11 @@ namespace InfernumMode.Assets.Effects
             SkyManager.Instance["InfernumMode:FlowerOfTheOcean"] = new FlowerOceanSky();
 
             // Fireball shader.
-            Ref<Effect> fireballShader = new(assets.Request<Effect>("Assets/Effects/FireballShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> fireballShader = new(assets.Request<Effect>("Assets/Effects/Shapes/FireballShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["Infernum:FireballShader"] = new Filter(new(fireballShader, "FirePass"), EffectPriority.VeryHigh);
 
             // Screen Border Shader.
-            Ref<Effect> screenBorderShader = new(assets.Request<Effect>("Assets/Effects/ScreenBorderShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> screenBorderShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ScreenBorderShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenBorder"] = new Filter(new ScreenShaderData(screenBorderShader, "ScreenPass"), EffectPriority.VeryHigh);
 
             Filters.Scene["InfernumMode:GuardianCommander"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
@@ -316,19 +274,19 @@ namespace InfernumMode.Assets.Effects
             SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
 
             // Empress of Light.
-            Effect screenShader = assets.Request<Effect>("Assets/Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
+            Effect screenShader = assets.Request<Effect>("Assets/Effects/Overlays/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
 
             // General screen shake distortion shaders.
-            Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Assets/Effects/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> screenShakeShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/ScreenShakeShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenShake"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
 
-            screenShakeShader = new(assets.Request<Effect>("Assets/Effects/ScreenShockwaveShader2", AssetRequestMode.ImmediateLoad).Value);
+            screenShakeShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/ScreenShockwaveShader2", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenShake2"] = new Filter(new ScreenShaderData(screenShakeShader, "DyePass"), EffectPriority.VeryHigh);
 
             // Heat distortion effect.
-            Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Assets/Effects/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> screenDistortionShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ScreenDistortionShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenDistortion"] = new Filter(new ScreenShaderData(screenDistortionShader, "ScreenPass"), EffectPriority.VeryHigh);
 
             // Hive Mind.
@@ -340,12 +298,12 @@ namespace InfernumMode.Assets.Effects
             SkyManager.Instance["InfernumMode:HyperplaneMatrixTimeChange"] = new HyperplaneMatrixTimeChangeSky();
 
             // Deerclops.
-            Ref<Effect> madnessShader = new(assets.Request<Effect>("Assets/Effects/Madness", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> madnessShader = new(assets.Request<Effect>("Assets/Effects/Overlays/Madness", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Madness"] = new Filter(new MadnessScreenShaderData(madnessShader, "DyePass"), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Madness"] = new MadnessSky();
 
             // Moon Lord.
-            Ref<Effect> fireBGShader = new(assets.Request<Effect>("Assets/Effects/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> fireBGShader = new(assets.Request<Effect>("Assets/Effects/Overlays/SCalFireBGShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:MoonLord"] = new Filter(new MLScreenShaderData(fireBGShader, "DyePass").UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:MoonLord"] = new MLSky();
 
@@ -362,7 +320,7 @@ namespace InfernumMode.Assets.Effects
             SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
 
             // Screen saturation blur system shader.
-            Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Assets/Effects/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
 
             // Supreme Calamitas.

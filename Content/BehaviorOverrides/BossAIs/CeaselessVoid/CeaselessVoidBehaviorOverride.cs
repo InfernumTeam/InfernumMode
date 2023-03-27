@@ -977,7 +977,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 for (int i = 0; i < darkEnergyCircleCount; i++)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningDarkEnergy>(), DarkEnergyDamage, 0f, -1, 0f, MathHelper.TwoPi * i / darkEnergyCircleCount);
             }
-            
+
             // Do contact damage so that the player is punished for being sucked in.
             npc.damage = npc.defDamage;
 
@@ -1040,7 +1040,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 }
             }
 
-            // Release rubble around the player.
+            // Release rubble around the arena.
             if (Main.netMode != NetmodeID.MultiplayerClient && suckPowerInterpolant > 0f && attackTimer % rubbleReleaseRate == 0f)
             {
                 float rubbleShootSpeed = 9f;
@@ -1617,9 +1617,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 Vector2 drawPosition = bezierCurve.Evaluate(i / (float)totalChains);
                 float completionRatio = i / (float)totalChains + 1f / totalChains;
                 float angle = (bezierCurve.Evaluate(completionRatio) - drawPosition).ToRotation() - MathHelper.PiOver2;
-
-                float brightnessInterpolant1 = MathF.Pow(MathF.Sin(12f * MathHelper.Pi * completionRatio - Main.GlobalTimeWrappedHourly * 9f) * 0.5f + 0.5f, 4f);
-                float brightnessInterpolant2 = MathF.Pow(MathF.Sin(15f * MathHelper.Pi * completionRatio - Main.GlobalTimeWrappedHourly * 13.5f) * 0.5f + 0.5f, 4.4f);
                 Color baseChainColor = Lighting.GetColor((int)drawPosition.X / 16, (int)drawPosition.Y / 16) * 2f;
                 Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, baseChainColor, angle, chainTexture.Size() * 0.5f, chainScale, SpriteEffects.None, 0);
             }

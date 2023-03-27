@@ -11,6 +11,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -49,9 +50,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             SpinningDarkEnergy,
             AreaDenialVortexTears,
 
-            // Phase 2 midpoint attack.
+            // Phase 2 midpoint.
             ShellCrackTransition,
             DarkEnergyTorrent,
+
+            // Phase 2 attacks.
+            EnergySuck,
 
             // Old attacks. The status of each is to be determined.
             RealityRendCharge,
@@ -112,6 +116,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public const float DarkEnergyOffsetRadius = 1120f;
 
         public static int DarkEnergyDamage => 250;
+
+        public static int RubbleDamage => 250;
 
         public static int OtherworldlyBoltDamage => 250;
 
@@ -227,6 +233,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     DoBehavior_DarkEnergyTorrent(npc, target, ref attackTimer);
                     break;
 
+                case CeaselessVoidAttackType.EnergySuck:
+                    DoBehavior_EnergySuck(npc, target, ref attackTimer);
+                    break;
+
                 case CeaselessVoidAttackType.RealityRendCharge:
                     DoBehavior_RealityRendCharge(npc, phase2, phase3, enraged, target, ref attackTimer);
                     break;
@@ -307,6 +317,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             Chains = null;
+        }
+
+        public static void CreateEnergySuckParticles(NPC npc, Vector2 generalOffset, float minOffset = 240f, float maxOffset = 630f, float scale = 0.8f)
+        {
+            int lightLifetime = Main.rand.Next(20, 24);
+            float squishFactor = 2f;
+            Vector2 lightSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(minOffset, maxOffset) + generalOffset;
+            Vector2 lightVelocity = (npc.Center - lightSpawnPosition) / lightLifetime * 1.1f;
+            Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0.5f));
+            if (Main.rand.NextBool())
+                lightColor = Color.Lerp(Color.Purple, Color.Black, 0.6f);
+
+            SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, scale, lightColor, lightLifetime, 1f, squishFactor, squishFactor * 4f);
+            GeneralParticleHandler.SpawnParticle(light);
         }
 
         public static void MoveChainBasedOnEntity(List<VerletSimulatedSegment> chain, Entity e, NPC npc)
@@ -606,7 +630,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.netUpdate = true;
             }
 
-            // Grant the target flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
+            // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
             if (attackTimer <= chargeUpDelay)
                 target.wingTime = target.wingTimeMax;
 
@@ -623,25 +647,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create convergence particles.
             if (attackTimer >= chargeUpDelay && attackTimer <= chargeUpDelay + chargeUpTime)
             {
-                int lightLifetime = Main.rand.Next(20, 24);
-                float squishFactor = 2f;
-                float scale = 0.8f;
-                Vector2 lightSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(240f, 630f);
-                Vector2 lightVelocity = (npc.Center - lightSpawnPosition) / lightLifetime * 1.1f;
-                Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0f, 0.5f));
-                if (Main.rand.NextBool())
-                    lightColor = Color.Lerp(Color.Purple, Color.Black, 0.6f);
-
-                SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, scale, lightColor, lightLifetime, 1f, squishFactor, squishFactor * 4f);
-                GeneralParticleHandler.SpawnParticle(light);
+                CreateEnergySuckParticles(npc, Vector2.Zero);
 
                 // Create pulse rungs and bloom periodically.
                 if (attackTimer % 15f == 0f)
                 {
-                    PulseRing ring = new(npc.Center, Vector2.Zero, lightColor, 3.6f, 0f, 60);
+                    Color energyColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0.5f));
+                    PulseRing ring = new(npc.Center, Vector2.Zero, energyColor, 3.6f, 0f, 60);
                     GeneralParticleHandler.SpawnParticle(ring);
 
-                    StrongBloom bloom = new(npc.Center, Vector2.Zero, lightColor, 1f, 15);
+                    StrongBloom bloom = new(npc.Center, Vector2.Zero, energyColor, 1f, 15);
                     GeneralParticleHandler.SpawnParticle(bloom);
                 }
 
@@ -860,8 +875,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             int spiralReleaseRate = 7;
             int spiralArmsCount = 6;
             float spiralAcceleration = 1.023f;
-            ref float turrentAimDirection = ref npc.Infernum().ExtraAI[0];
-            ref float torrentSpinDirection = ref npc.Infernum().ExtraAI[1];
 
             // Disable damage during this attack.
             npc.dontTakeDamage = true;
@@ -877,19 +890,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 // Create light streaks that converge inward.
                 if (attackTimer <= chargeUpTime - 45f)
-                {
-                    int lightLifetime = Main.rand.Next(20, 24);
-                    float squishFactor = 2f;
-                    float scale = 0.3f;
-                    Vector2 lightSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(240f, 776f);
-                    Vector2 lightVelocity = (npc.Center - lightSpawnPosition) / lightLifetime * 1.1f;
-                    Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0f, 0.5f));
-                    if (Main.rand.NextBool())
-                        lightColor = Color.Lerp(Color.Purple, Color.Black, 0.6f);
-
-                    SquishyLightParticle light = new(lightSpawnPosition, lightVelocity, scale, lightColor, lightLifetime, 1f, squishFactor, squishFactor * 4f);
-                    GeneralParticleHandler.SpawnParticle(light);
-                }
+                    CreateEnergySuckParticles(npc, Vector2.Zero, 240f, 776f, 0.3f);
 
                 // Create a pulsating energy orb.
                 float energyOrbChargeInterpolant = Utils.GetLerpValue(30f, chargeUpTime - 30f, attackTimer, true);
@@ -916,15 +917,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     ScreenEffectSystem.SetBlurEffect(npc.Center, 0.5f, 20);
                 }
 
-                // Shoot the torrent away from the target at first.
-                turrentAimDirection = npc.AngleTo(target.Center) + MathHelper.Pi;
-                torrentSpinDirection = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - turrentAimDirection) > 0f).ToDirectionInt();
-
                 return;
             }
-
-            // Spin the torrent.
-            turrentAimDirection += MathHelper.ToRadians(torrentSpinDirection * 0.8f);
 
             // Release a spiral of dark energy.
             if (attackTimer >= chargeUpTime && attackTimer < chargeUpTime + spiralShootTime)
@@ -962,7 +956,128 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             if (attackTimer >= chargeUpTime + spiralShootTime + attackTransitionDelay)
-                attackTimer = 0f;
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_EnergySuck(NPC npc, Player target, ref float attackTimer)
+        {
+            int suckTime = 270;
+            int attackTransitionDelay = 120;
+            int darkEnergyCircleCount = 5;
+            int rubbleReleaseRate = 2;
+            float suckDistance = 2750f;
+            float burstAcceleration = 1.02f;
+
+            // Grant the target infinite flight time so that they don't run out and take an unfair hit.
+            target.wingTime = target.wingTimeMax;
+
+            // Create a dark energy circle on the first frame.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
+            {
+                for (int i = 0; i < darkEnergyCircleCount; i++)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningDarkEnergy>(), DarkEnergyDamage, 0f, -1, 0f, MathHelper.TwoPi * i / darkEnergyCircleCount);
+            }
+            
+            // Do contact damage so that the player is punished for being sucked in.
+            npc.damage = npc.defDamage;
+
+            // Calculate the relative intensity of the suck effect.
+            float suckPowerInterpolant = Utils.GetLerpValue(30f, suckTime * 0.35f, attackTimer, true);
+            float suckAcceleration = 0f;
+            if (attackTimer >= suckTime)
+                suckPowerInterpolant = 0f;
+
+            // Make the screen shake at first.
+            if (attackTimer <= suckTime)
+                target.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(suckTime - 90f, suckTime, attackTimer, true) * 12f;
+
+            if (attackTimer == suckTime)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = 18f;
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 0.6f, 25);
+
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound with { Volume = 2f, Pitch = -0.5f });
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 27; i++)
+                    {
+                        Vector2 spiralShootVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * Main.rand.NextFloat(7f, 9.5f) + Main.rand.NextVector2Circular(0.5f, 0.5f);
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
+                        {
+                            darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Time = 30f;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, spiralShootVelocity, ModContent.ProjectileType<AcceleratingDarkEnergy>(), DarkEnergyDamage, 0f, -1, (int)AcceleratingDarkEnergy.DarkEnergyAttackState.AccelerateTowardsTarget, burstAcceleration);
+                    }
+                }
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<SpinningDarkEnergy>(), ModContent.ProjectileType<ConvergingDungeonRubble>());
+            }
+
+            // Play a suck sound.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(CeaselessVoidBoss.BuildupSound);
+
+            // Create various energy particles.
+            if (suckPowerInterpolant > 0f)
+            {
+                suckAcceleration = MathHelper.Lerp(0.3f, 0.5f, suckPowerInterpolant);
+                Vector2 energySuckOffset = Vector2.Zero;
+                CreateEnergySuckParticles(npc, energySuckOffset, 240f, 960f, 0.5f / (energySuckOffset.Length() * 0.0012f + 1f));
+
+                // Create pulse rungs and bloom periodically.
+                if (attackTimer % 15f == 0f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item104 with { Pitch = 0.4f, Volume = 0.8f }, npc.Center);
+
+                    Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0f, 0.5f));
+                    if (Main.rand.NextBool())
+                        lightColor = Color.Lerp(Color.Purple, Color.Black, 0.6f);
+
+                    PulseRing ring = new(npc.Center, Vector2.Zero, lightColor, 4f, 0f, 60);
+                    GeneralParticleHandler.SpawnParticle(ring);
+
+                    StrongBloom bloom = new(npc.Center, Vector2.Zero, lightColor, 1f, 15);
+                    GeneralParticleHandler.SpawnParticle(bloom);
+                }
+            }
+
+            // Release rubble around the player.
+            if (Main.netMode != NetmodeID.MultiplayerClient && suckPowerInterpolant > 0f && attackTimer % rubbleReleaseRate == 0f)
+            {
+                float rubbleShootSpeed = 9f;
+                Vector2 rubbleSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * (npc.Distance(target.Center) + Main.rand.NextFloat(250f, 700f));
+                Vector2 rubbleVelocity = (npc.Center - rubbleSpawnPosition).SafeNormalize(Vector2.UnitY) * rubbleShootSpeed;
+                while (target.WithinRange(rubbleSpawnPosition, 750f))
+                    rubbleSpawnPosition -= rubbleVelocity;
+
+                Utilities.NewProjectileBetter(rubbleSpawnPosition, rubbleVelocity, ModContent.ProjectileType<ConvergingDungeonRubble>(), RubbleDamage, 0f, -1, 0f, 1f);
+            }
+
+            // Suck the player in towards the Ceaseless Void.
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player p = Main.player[i];
+
+                for (int j = 0; j < 10; j++)
+                {
+                    if (p.grappling[j] != -1)
+                    {
+                        Main.projectile[p.grappling[j]].Kill();
+                        p.grappling[j] = -1;
+                    }
+                }
+
+                float distance = p.Distance(npc.Center);
+                if (distance < suckDistance && p.grappling[0] == -1)
+                {
+                    p.velocity.X += (p.Center.X < npc.Center.X).ToDirectionInt() * suckAcceleration;
+
+                    if (Math.Abs(p.velocity.Y) >= 0.2f)
+                        p.velocity.Y += (p.Center.Y < npc.Center.Y).ToDirectionInt() * suckAcceleration * 0.5f;
+                }
+            }
+
+            if (attackTimer >= suckTime + attackTransitionDelay)
+                SelectNewAttack(npc);
         }
 
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
@@ -1386,10 +1501,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.Infernum().ExtraAI[i] = 0f;
 
             //npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
-            if (npc.ai[0] == (int)CeaselessVoidAttackType.ShellCrackTransition)
+            if (npc.ai[0] == (int)CeaselessVoidAttackType.DarkEnergySwirl)
+                npc.ai[0] = (int)CeaselessVoidAttackType.ShellCrackTransition;
+            else if (npc.ai[0] == (int)CeaselessVoidAttackType.ShellCrackTransition)
                 npc.ai[0] = (int)CeaselessVoidAttackType.DarkEnergyTorrent;
             else
-                npc.ai[0] = (int)CeaselessVoidAttackType.ShellCrackTransition;
+                npc.ai[0] = (int)CeaselessVoidAttackType.EnergySuck;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

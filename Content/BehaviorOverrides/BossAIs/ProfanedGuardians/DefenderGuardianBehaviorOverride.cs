@@ -28,6 +28,7 @@ using InfernumMode.Common.Graphics.Particles;
 using Terraria.GameContent.Events;
 using InfernumMode.Core;
 using CalamityMod.Buffs.StatDebuffs;
+using InfernumMode.Assets.Sounds;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -155,6 +156,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Play a loud explosion + hurt sound and screenshake to give the impact power.
                         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 4f }, target.Center);
                         SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 6f }, target.Center);
+
+                        SoundEngine.PlaySound(InfernumSoundRegistry.GuardiansPhaseThreeTransition, target.Center);
 
                         if (CalamityConfig.Instance.Screenshake)
                         {

@@ -313,6 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     commanderHasAlreadyDoneBoom = 1;
                 }
             }
+
             // The defender hovers to your top left, not dealing contact damage and occasionally firing rocks at you.
             else if (npc.type == DefenderType)
             {
@@ -869,6 +870,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 if (universalAttackTimer <= whiteGlowTime)
                     whiteGlowOpacity = CalamityUtils.ExpInEasing(MathHelper.Lerp(0f, 1f, universalAttackTimer / whiteGlowTime), 0);
+
                 else if (universalAttackTimer == whiteGlowTime + ashesTime - 5)
                 {
                     for (int i = 0; i < 100; i++)
@@ -884,6 +886,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Die once the animation is complete.
                     npc.life = 0;
                     npc.active = false;
+                    SoundEngine.PlaySound(InfernumSoundRegistry.GuardiansPhaseTwoTransition, target.Center);
                 }
             }
         }
@@ -1536,24 +1539,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static void DoBehavior_FireballBulletHell(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
             ref float fireballRingsReleased = ref commander.Infernum().ExtraAI[1];
-            float maxFireballRingsToRelease = 9f;
+            float maxFireballRingsToRelease = 10f;
 
             // The commander moves to the center of the arena, creating a border of fire around the himself and periodically releasing
             // near solid rings of fireballs that move outwards to the border.
             if (npc.type == CommanderType)
             {
                 ref float substate = ref npc.Infernum().ExtraAI[0];
+                ref float xPosToMoveTo = ref npc.Infernum().ExtraAI[2];
 
                 ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
                 ref float drawBorder = ref npc.Infernum().ExtraAI[FireBorderShouldDrawIndex];
 
                 float flySpeed = 25f;
                 float maxMoveToCenterTime = 120f;
-                float fireballCount = 20f;
+                float fireballCount = 24f;
                 float fireballSpeed = 1.5f;
-                float fireballReleaseRate = 45;
-                float endOfAttackWait = 180f;
-                float areaDistance = 1150f;
+                float fireballReleaseRate = 35;
+                float endOfAttackWait = 160f;
 
                 npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -1562,7 +1565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Mark the spear for removal.
                     spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
 
-                if (universalAttackTimer <= fireballReleaseRate && substate == 1)
+                if (universalAttackTimer <= fireballReleaseRate && substate == 2)
                 {
                     // Create convergence particles.
                     if (universalAttackTimer < fireballReleaseRate)
@@ -1593,7 +1596,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         CritSpark spark = new(npc.Center, Main.rand.NextVector2Circular(8f, 8f), Color.OrangeRed, Color.Gold, 5f, 6, 0.01f, 7.5f);
                         GeneralParticleHandler.SpawnParticle(spark);
                     }
-                    else if (substate == 1)
+                    else if (substate == 2)
                     {
                         float lightAmount = 25f;
                         for (int i = 0; i < lightAmount; i++)
@@ -1637,14 +1640,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 switch (substate)
                 {
-                    // The commander moves to the center of the garden.
+                    // The commander chooses a location to go.
                     case 0:
-                        Vector2 hoverDestination = CenterOfGarden;
+
+                        float maxXPos = CrystalPosition.X;
+                        float minXPos = CenterOfGarden.X - 2370f;
+                        xPosToMoveTo = MathHelper.Clamp(npc.Center.X, minXPos, maxXPos);
+                        // Don't deal damage while moving.
+                        npc.damage = 0;
+
+                        universalAttackTimer = 0f;
+                        substate++;
+                        break;
+
+                    // The commander moves to the center of the garden.
+                    case 1:
+                        // Don't deal damage while moving.
+                        npc.damage = 0;
+                        Vector2 hoverDestination = new(xPosToMoveTo, CenterOfGarden.Y);
                         if (npc.Distance(hoverDestination) > 100f)
                             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         else
                             npc.velocity *= 0.9f;
-
                         if (npc.WithinRange(hoverDestination, flySpeed) || universalAttackTimer >= maxMoveToCenterTime)
                         {
                             universalAttackTimer = 0f;
@@ -1653,7 +1670,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         break;
 
                     // The commander sits still, and periodially creates rings of fireballs.
-                    case 1:
+                    case 2:
                         npc.velocity *= 0.8f;
 
                         drawBorder = 1f;
@@ -1694,7 +1711,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         break;
 
-                    case 2:
+                    case 3:
 
                         if (universalAttackTimer >= endOfAttackWait)
                         {
@@ -2001,7 +2018,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
 
-                        if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 0)
+                        if (localAttackTimer == 0)
                             typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);//MoonlordDeathDrama.RequestLight(1f/*1f - Utils.GetLerpValue(15f, 45f, universalAttackTimer, true)*/, target.Center);
 
                         if (npc.WithinRange(hoverDestination, 20f) && localAttackTimer >= chargeDelay)
@@ -2105,7 +2122,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             localAttackTimer = 0;
                             substate++;
                             commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] = 1f;
-                            //SelectNewAttack(commander, ref universalAttackTimer);
                             return;
                         }
                         break;

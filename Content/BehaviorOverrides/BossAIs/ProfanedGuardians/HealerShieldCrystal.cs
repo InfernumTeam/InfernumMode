@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -93,6 +94,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (player.active && !player.dead && player.Center.WithinRange(NPC.Center, 6000f))
                     if (player.Center.X > NPC.Center.X)
                         player.Center = new(NPC.Center.X, player.Center.Y);
+
+            ShatteringTimer++;
         }
 
         public void DoBehavior_SitStill(Player target)
@@ -100,6 +103,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // If the target is close enough, take damage.
             if (target.WithinRange(NPC.Center * NPC.Opacity, 1000))
                 NPC.dontTakeDamage = false;
+
+            float sparkleRate = 12f;
+
+            // Spawn sparkles.
+            if (ShatteringTimer % sparkleRate == 0)
+            {
+                Vector2 position = NPC.Center + Main.rand.NextVector2Circular(NPC.width * 1.3f, NPC.height);
+                Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f)) * Main.rand.NextFloat(0.5f, 1f);
+                Color color = Color.Lerp(Color.HotPink, Color.LightPink, Main.rand.NextFloat());
+                Vector2 scale = new(0.5f + Main.rand.NextFloat());
+                Particle sparkle;
+                if (Main.rand.NextBool())
+                    sparkle = new GenericSparkle(position, velocity, color, Color.White, Main.rand.NextFloat(0.5f, 0.75f), 75, Main.rand.NextFloat(0.05f), 2f);
+                else
+                    sparkle = new FlareShine(position, velocity, color, Color.White, -MathHelper.PiOver2, scale, scale * 1.5f, 60, Main.rand.NextFloat(0.05f), 2f);
+                GeneralParticleHandler.SpawnParticle(sparkle);
+            }
         }
 
         public void DoBehavior_Shatter(Player target)
@@ -140,7 +160,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Tell the commander to swap attacks. The other guardians use this.
                 GuardianComboAttackManager.SelectNewAttack(guard, ref guard.ai[1], (float)GuardianComboAttackManager.GuardiansAttackType.SoloHealer);
             }
-            ShatteringTimer++;
         }
 
 
@@ -153,6 +172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 origin = mainTexture.Size() * 0.5f;
 
             DrawWall(spriteBatch, drawPosition);
+            DrawMovingBackglow(spriteBatch, mainTexture, drawPosition, NPC.frame);
             DrawBackglow(spriteBatch, mainTexture, drawPosition, NPC.frame);
             spriteBatch.Draw(mainTexture, drawPosition, null, Color.White * NPC.Opacity, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
             return false;
@@ -172,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.EnterShaderRegion();
             float lifeRatio = (float)NPC.life / NPC.lifeMax;
             float opacity = MathHelper.Lerp(0f, 0.125f, lifeRatio);
-            float interpolant = ShatteringTimer / 120f;
+            float interpolant = CurrentState == (float)CrystalState.Shattering ? ShatteringTimer / 120f : 0f;
             float shaderWallOpacity = MathHelper.Lerp(0.02f, 0f, interpolant);
 
             // Initialize the shader.
@@ -208,11 +228,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
+        public void DrawMovingBackglow(SpriteBatch spriteBatch, Texture2D npcTexture, Vector2 drawPosition, Rectangle frame)
+        {
+            float backglowAmount = 5;
+            for (int i = 0; i < backglowAmount; i++)
+            {
+                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount + Main.GlobalTimeWrappedHourly * 2f).ToRotationVector2() * 7f;
+                Color backglowColor = Color.Lerp(MagicSpiralCrystalShot.ColorSet[0], MagicSpiralCrystalShot.ColorSet[1], 0.5f);
+                backglowColor.A = 0;
+                spriteBatch.Draw(npcTexture, drawPosition + backglowOffset, frame, backglowColor * NPC.Opacity, NPC.rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+            }
+        }
+
         public override bool CheckActive() => false;
 
         public override bool CheckDead()
         {
             CurrentState = (int)CrystalState.Shattering;
+            ShatteringTimer = 0;
             NPC.life = NPC.lifeMax;
             NPC.netUpdate = true;
 

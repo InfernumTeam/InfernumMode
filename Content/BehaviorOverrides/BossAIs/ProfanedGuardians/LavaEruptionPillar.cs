@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 start = Projectile.Center;
             Vector2 end = start - Vector2.UnitY * CurrentLength;
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, VariableWidth, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, VariableWidth * 0.95f, ref _);
         }
 
         public float WidthFunction(float completionRatio) => /*Timer < Lifetime / 2f ? Width :*/ VariableWidth;

@@ -153,7 +153,7 @@ namespace InfernumMode.Content.Projectiles
 
             // Play a rumble sound.
             if (Time == FireballCreateTime)
-                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound, MainPosition);
+                SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound);
             if (Time is >= FireballCreateTime and <= SpawnTime)
             {
                 Player.Infernum_TempleCinder().CreateALotOfHolyCinders = true;
@@ -176,6 +176,8 @@ namespace InfernumMode.Content.Projectiles
                 // Create screen shake effects.
                 Player.Infernum_Camera().CurrentScreenShakePower = 3;
                 GuardsGlowAmount = MathHelper.Clamp(GuardsGlowAmount + 0.025f, 0f, 1f);
+                if (Time is 250)
+                    SoundEngine.PlaySound(new("CalamityMod/Sounds/Custom/ProfanedGuardians/GuardianRockShieldActivate"));
             }
 
             if (Time == SpawnTime)
@@ -183,9 +185,10 @@ namespace InfernumMode.Content.Projectiles
                 Player.Infernum_Camera().CurrentScreenShakePower = 20f;
 
                 // Make the crystal shatter.
-                SoundEngine.PlaySound(Providence.HurtSound, MainPosition);
+                SoundEngine.PlaySound(Providence.HurtSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.6f, Pitch = 0.6f });
+                SoundEngine.PlaySound(InfernumSoundRegistry.GuardianSpawnSound);
 
                 ScreenEffectSystem.SetBlurEffect(MainPosition, 1f, 45);
 

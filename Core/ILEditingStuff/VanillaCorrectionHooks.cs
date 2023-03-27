@@ -98,6 +98,9 @@ namespace InfernumMode.Core.ILEditingStuff
                 {
                     if (Type == InfernumMode.CalamityMod.Find<ModGore>("Hive" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("Hive").Type)
                         return Main.maxDust;
+
+                    else if (Type == InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossA" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossA").Type)
+                        return Main.maxDust;
                 }
             }
 

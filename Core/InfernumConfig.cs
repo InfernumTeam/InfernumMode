@@ -46,7 +46,7 @@ namespace InfernumMode.Core
 
         [Label("Fancy Lighting")]
         [BackgroundColor(224, 127, 180, 192)]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         [Tooltip("Enables fancy lighting shaders. Disable if lag becomes an issue")]
         public bool FancyLighting { get; set; }
 

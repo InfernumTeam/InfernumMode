@@ -44,6 +44,12 @@ namespace InfernumMode.Core
         [Tooltip("Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.")]
         public bool FlashbangOverlays { get; set; }
 
+        [Label("Fancy Lighting")]
+        [BackgroundColor(224, 127, 180, 192)]
+        [DefaultValue(true)]
+        [Tooltip("Enables fancy lighting shaders. Disable if lag becomes an issue")]
+        public bool FancyLighting { get; set; }
+
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
     }
 }

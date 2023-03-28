@@ -3037,6 +3037,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ModContent.ProjectileType<ProfanedRock>(),
                 ModContent.ProjectileType<MagicCrystalShot>(),
                 ModContent.ProjectileType<MagicSpiralCrystalShot>(),
+                ModContent.ProjectileType<FallingCrystalShard>(),
                 ModContent.ProjectileType<DefenderShield>(),
                 ModContent.ProjectileType<LavaEruptionPillar>(),
                 ModContent.ProjectileType<ProfanedSpearInfernum>(),
@@ -3045,7 +3046,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ModContent.ProjectileType<HolyDogmaFireball>(),
                 ModContent.ProjectileType<CommanderSpearThrown>(),
                 ModContent.ProjectileType<HolySineSpear>(),
-                ModContent.ProjectileType<HolyFireRift>()
+                ModContent.ProjectileType<HolyFireRift>(),
+                ModContent.ProjectileType<HolyBasicFireball>()
                 );
         }
         #endregion

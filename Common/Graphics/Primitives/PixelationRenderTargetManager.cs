@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Common.Graphics.Interfaces;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.Primitives
 {
     public class PixelationRenderTargetManager : ModSystem
     {

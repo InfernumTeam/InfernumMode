@@ -1,4 +1,4 @@
-﻿using InfernumMode.Common.Graphics;
+﻿using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

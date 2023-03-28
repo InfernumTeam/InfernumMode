@@ -3,7 +3,7 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.Particles;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

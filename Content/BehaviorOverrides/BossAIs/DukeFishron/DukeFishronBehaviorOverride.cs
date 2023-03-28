@@ -4,6 +4,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -1016,7 +1017,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             {
                 Vector2 spawnPosition = (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(i * MathHelper.Pi / 7f) + npc.Center;
                 Vector2 dustVelocity = (Main.rand.NextFloat(MathHelper.Pi) - MathHelper.PiOver2).ToRotationVector2() * Main.rand.Next(3, 8);
-                int water = Dust.NewDust(spawnPosition + dustVelocity, 0, 0, 172, dustVelocity.X * 2f, dustVelocity.Y * 2f, 100, default, 1.4f);
+                int water = Dust.NewDust(spawnPosition + dustVelocity, 0, 0, DustID.DungeonWater, dustVelocity.X * 2f, dustVelocity.Y * 2f, 100, default, 1.4f);
                 Main.dust[water].noGravity = true;
                 Main.dust[water].noLight = true;
                 Main.dust[water].velocity *= 0.25f;

@@ -2,6 +2,7 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,13 +47,15 @@ namespace InfernumMode.Content.Skies
             public float OpacityScalar;
             public float Depth;
             public float LengthScalar;
+            public bool GuardsVersion;
             public Vector2 DrawPosition;
 
             public float LifetimeCompletion => Timer / (float)Lifetime;
 
             public void Update()
             {
-                DrawPosition = GetMoonPosition();
+                if (!GuardsVersion)
+                    DrawPosition = GetMoonPosition();
                 Opacity = Utils.GetLerpValue(0f, 0.2f, LifetimeCompletion, true) * Utils.GetLerpValue(1f, 0.8f, LifetimeCompletion, true);
                 Rotation += RotationSpeed;
                 Timer++;
@@ -61,7 +64,11 @@ namespace InfernumMode.Content.Skies
             public void Draw(SpriteBatch spriteBatch, float opacity)
             {
                 Texture2D rayTexture = InfernumTextureRegistry.LaserCircle.Value;
-                Color lightColor = Color.Lerp(Color.SkyBlue, Color.Teal, ColorLerpAmount) * Opacity * (0.015f * OpacityScalar) * opacity;
+
+                Color lightColor = (GuardsVersion ? Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], ColorLerpAmount) : 
+                    Color.Lerp(Color.SkyBlue, Color.Teal, ColorLerpAmount)) 
+                    * Opacity * (0.015f * OpacityScalar) * opacity;
+
                 Vector2 scale = new(0.4f, 15.3f * LengthScalar);
                 spriteBatch.Draw(rayTexture, DrawPosition, null, lightColor with { A = 0 }, Rotation, rayTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }

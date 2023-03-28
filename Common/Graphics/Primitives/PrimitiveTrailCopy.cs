@@ -6,7 +6,7 @@ using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.Primitives
 {
     public class PrimitiveTrailCopy
     {

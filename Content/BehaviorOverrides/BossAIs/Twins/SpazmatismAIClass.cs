@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

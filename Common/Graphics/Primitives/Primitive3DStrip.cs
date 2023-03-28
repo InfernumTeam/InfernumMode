@@ -5,7 +5,7 @@ using ReLogic.Content;
 using System;
 using Terraria;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.Primitives
 {
     public class Primitive3DStrip
     {

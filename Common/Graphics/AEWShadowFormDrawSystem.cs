@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

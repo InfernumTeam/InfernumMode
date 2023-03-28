@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.Interfaces
 {
     public interface IPixelPrimitiveDrawer
     {

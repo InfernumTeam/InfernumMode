@@ -1,4 +1,4 @@
-﻿using InfernumMode.Common.Graphics;
+﻿using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

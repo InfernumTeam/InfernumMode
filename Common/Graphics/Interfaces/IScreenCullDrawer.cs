@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.Interfaces
 {
     // Restarting the sprite batch for each different projectile is analogously equivalent to creating an entire new factory just to build a single car.
     // It is inefficient and leads to performance problems as many projectiles do it.

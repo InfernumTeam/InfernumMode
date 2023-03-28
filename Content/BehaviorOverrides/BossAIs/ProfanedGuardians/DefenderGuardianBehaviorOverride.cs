@@ -29,6 +29,7 @@ using Terraria.GameContent.Events;
 using InfernumMode.Core;
 using CalamityMod.Buffs.StatDebuffs;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {

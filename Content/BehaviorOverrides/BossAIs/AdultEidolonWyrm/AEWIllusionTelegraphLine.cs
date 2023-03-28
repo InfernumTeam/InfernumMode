@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.Sounds;
-using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;

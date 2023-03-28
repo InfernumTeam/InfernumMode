@@ -70,6 +70,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
         public static Filter FireballShader => Filters.Scene["Infernum:FireballShader"];
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
+        public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
@@ -80,6 +81,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter ScreenSaturationBlurScreenShader => Filters.Scene["InfernumMode:ScreenSaturationBlur"];
         public static Filter ScreenShakeScreenShader => Filters.Scene["InfernumMode:ScreenShake"];
         public static Filter ScreenShakeScreenShader2 => Filters.Scene["InfernumMode:ScreenShake2"];
+        public static Filter ShadowShader => Filters.Scene["InfernumMode:ShadowShader"];
         public static Filter TwinsScreenShader => Filters.Scene["InfernumMode:Twins"];
         #endregion
 
@@ -238,6 +240,14 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Basic fake shadows shader.
+            Ref<Effect> shadowShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ShadowShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:ShadowShader"] = new Filter(new(shadowShader, "GetShadowPass"), EffectPriority.VeryHigh);
+
+            // Basic lighting shader.
+            Ref<Effect> lightingShader = new(assets.Request<Effect>("Assets/Effects/Overlays/LightingShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:BasicLighting"] = new Filter(new(lightingShader, "LightingPass"), EffectPriority.VeryHigh);
+
             // Flower of the ocean sky.
             Filters.Scene["InfernumMode:FlowerOfTheOcean"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:FlowerOfTheOcean"] = new FlowerOceanSky();

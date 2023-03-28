@@ -19,11 +19,11 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.Gu
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using CalamityMod.Buffs.StatDebuffs;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Buffs;
-using static InfernumMode.Common.Graphics.PrimitiveTrailCopy;
+using static InfernumMode.Common.Graphics.Primitives.PrimitiveTrailCopy;
 using ReLogic.Content;
+using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -365,8 +365,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
+
             if (npc.Infernum().ExtraAI[FireBorderInterpolantIndex] > 0f)
                 DrawFireBorder(npc, spriteBatch);
+
+            if (WorldSaveSystem.HasProvidenceDoorShattered)
+                DrawTempleBorder(npc, spriteBatch);
             return false;
         }
 
@@ -562,6 +566,56 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient", AssetRequestMode.ImmediateLoad).Value;
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
             spriteBatch.ExitShaderRegion();
+        }
+
+        public static void DrawTempleBorder(NPC npc, SpriteBatch spriteBatch)
+        {
+            DrawTestPrims(npc, spriteBatch);
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
+            // Get variables.
+            List<VertexPosition2DColor> vertices = new();
+            float totalPoints = 50;
+            float width = 300f;
+            Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
+            Vector2 startPos = new(WorldSaveSystem.ProvidenceDoorXPosition, CenterOfGarden.Y - 600f);
+            Vector2 endPos = startPos + new Vector2(0f, 1570f);
+            float fadeDistance = 500f;
+            float distanceFromBorder = new Vector2(Main.player[npc.target].Center.X, startPos.Y).Distance(startPos);
+            float alpha = MathHelper.Clamp(1f - distanceFromBorder / (fadeDistance * 1.5f), 0f, 1f);
+            color *= alpha;
+
+            for (int i = 0; i < totalPoints; i++)
+            {
+                float interpolant = i / totalPoints;
+                Vector2 position = Vector2.Lerp(startPos, endPos, interpolant) - Main.screenPosition;
+                Vector2 position2 = (Vector2.Lerp(startPos, endPos, interpolant) - Main.screenPosition);
+                Vector2 textureCoords = new(interpolant, 0f);
+                Vector2 textureCoords2 = new(interpolant, 1f);
+                vertices.Add(new VertexPosition2DColor(position, color, textureCoords));
+                vertices.Add(new VertexPosition2DColor(position2 + new Vector2(width, 0f), color, textureCoords2));
+            }
+
+            CalamityUtils.CalculatePerspectiveMatricies(out var view, out var projection);
+            InfernumEffectsRegistry.AreaBorderVertexShader.UseOpacity(alpha);
+            InfernumEffectsRegistry.AreaBorderVertexShader.UseColor(WayfinderSymbol.Colors[2]);
+            InfernumEffectsRegistry.AreaBorderVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
+            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
+            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["noiseSpeed"].SetValue(new Vector2(0.1f, 0.1f));
+            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["timeFactor"].SetValue(2f);
+            InfernumEffectsRegistry.AreaBorderVertexShader.Apply();
+
+            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient", AssetRequestMode.ImmediateLoad).Value;
+            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
+            spriteBatch.ExitShaderRegion();
+
+        }
+
+        public static void DrawTestPrims(NPC npc, SpriteBatch spriteBatch)
+        {
+
         }
         #endregion Draw Effects
 

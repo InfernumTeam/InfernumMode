@@ -6,6 +6,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
 using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;

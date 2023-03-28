@@ -34,6 +34,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> CultistRayMap => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/CultistRayMap");
 
+        public static Asset<Texture2D> DayGradient => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Gradients/DayGradient");
+
         public static Asset<Texture2D> DiagonalGleam => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/DiagonalGleam");
 
         public static Asset<Texture2D> DistortedBloomRing => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/DistortedBloomRing");
@@ -85,6 +87,8 @@ namespace InfernumMode.Assets.ExtraTextures
         public static Asset<Texture2D> MilkyNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/MilkyNoise");
 
         public static Asset<Texture2D> MoonLordBackground => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/MoonLordBGLayer");
+
+        public static Asset<Texture2D> NightGradient => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Gradients/NightGradient");
 
         public static Asset<Texture2D> Pixel => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Pixel");
 

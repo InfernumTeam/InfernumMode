@@ -116,7 +116,7 @@ namespace InfernumMode.Core.Balancing
             [NPCID.MoonLordHead] = BossRushEvent.BossRushActive ? 661110 : 61000,
             [NPCID.MoonLordCore] = BossRushEvent.BossRushActive ? 1600000 : 135000,
             [ModContent.NPCType<ProfanedGuardianCommander>()] = BossRushEvent.BossRushActive ? 720000 : 132000,
-            [ModContent.NPCType<ProfanedGuardianDefender>()] = BossRushEvent.BossRushActive ? 205000 : 100000,
+            [ModContent.NPCType<ProfanedGuardianDefender>()] = BossRushEvent.BossRushActive ? 205000 : 80000,
             [ModContent.NPCType<ProfanedGuardianHealer>()] = BossRushEvent.BossRushActive ? 205000 : 80000,
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 860000 : 256000,
             [ModContent.NPCType<Bumblefuck2>()] = BossRushEvent.BossRushActive ? -1 : 14300,

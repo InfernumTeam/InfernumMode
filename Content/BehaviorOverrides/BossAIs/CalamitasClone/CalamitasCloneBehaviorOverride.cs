@@ -32,6 +32,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using CalamitasCloneBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
+using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 {

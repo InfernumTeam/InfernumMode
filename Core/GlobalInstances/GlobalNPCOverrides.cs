@@ -17,6 +17,7 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;

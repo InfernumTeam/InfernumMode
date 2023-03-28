@@ -113,15 +113,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 direction = SpriteEffects.FlipHorizontally;
 
             // Draw the base texture and backglow.
-            Texture2D baseTexture = TextureAssets.Npc[npc.type].Value;
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D fireGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow").Value;
             Texture2D crystalGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianHealerGlow2").Value;
+            if (IsEnraged)
+            {
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceHealerGuardianNight").Value;
+                fireGlowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceHealerGuardianNightGlowFire").Value;
+                crystalGlowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceHealerGuardianNightGlowCrystal").Value;
+            }
+
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             npc.DrawBackglow(Color.Pink with { A = 0 } * telegraphInterpolant, 2f * telegraphInterpolant, direction, npc.frame, Main.screenPosition);
-            Main.spriteBatch.Draw(baseTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             // Draw the fire and crystal glowmasks.
-            Color fireColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
+            Color fireColor = Color.Lerp(Color.White, Color.Yellow, IsEnraged ? 0.05f : 0.5f);
             Color crystalColor = Color.Lerp(Color.White, Color.Violet, 0.5f);
             Main.spriteBatch.Draw(fireGlowmask, drawPosition, npc.frame, fireColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             Main.spriteBatch.Draw(crystalGlowmask, drawPosition, npc.frame, crystalColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);

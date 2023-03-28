@@ -133,9 +133,9 @@ namespace InfernumMode
             }
         }
 
-        public static void DrawProjectileWithBackglowTemp(this Projectile projectile, Color backglowColor, Color lightColor, float backglowArea, Rectangle? frame = null)
+        public static void DrawProjectileWithBackglowTemp(this Projectile projectile, Color backglowColor, Color lightColor, float backglowArea, Rectangle? frame = null, Texture2D texture = null)
         {
-            Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
+            texture ??= TextureAssets.Projectile[projectile.type].Value;
 
             // Use a fallback for the frame.
             frame ??= texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);

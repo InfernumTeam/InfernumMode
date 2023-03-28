@@ -1,8 +1,11 @@
-﻿using CalamityMod.Particles.Metaballs;
+﻿using CalamityMod.NPCs;
+using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -28,9 +31,12 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override List<Texture2D> BackgroundTextures => new()
         {
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.HolyFirePixelLayer.Value,
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : InfernumTextureRegistry.HolyFirePixelLayer.Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : PreferredBackground.Value,
+            Main.gameMenu ? TextureAssets.MagicPixel.Value : PreferredBackground.Value,
         };
+
+        public static Asset<Texture2D> PreferredBackground => ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? 
+            InfernumTextureRegistry.HolyFirePixelLayerNight : InfernumTextureRegistry.HolyFirePixelLayer;
 
         public override void DrawParticles()
         {

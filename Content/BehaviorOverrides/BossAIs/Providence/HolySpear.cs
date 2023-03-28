@@ -79,6 +79,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static int DeathDelay => 90;
 
+        public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/CommanderSpear2";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
 
         public override void SetDefaults()
@@ -192,6 +194,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float drawOffsetRadius = burnInterpolant * 16f;
             Color color = Projectile.GetAlpha(Color.Lerp(Color.White, Color.Yellow with { A = 0 } * 0.6f, burnInterpolant));
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/CommanderSpear2Night").Value;
 
             // Draw the spear as a white hot flame with additive blending before it converge inward to create the actual spear.
             for (int i = 0; i < 10; i++)

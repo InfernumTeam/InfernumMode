@@ -1553,7 +1553,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 float flySpeed = 25f;
                 float maxMoveToCenterTime = 120f;
-                float fireballCount = 24f;
+                float fireballCount = 22f;
                 float fireballSpeed = 1.5f;
                 float fireballReleaseRate = 35;
                 float endOfAttackWait = 160f;
@@ -2537,12 +2537,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
 
             float hoverDistance = 700f;
-            float flySpeed = 16f;
-            float shootDelay = 80f;
+            float flySpeed = 18f;
+            float shootDelay = 90f;
             float totalSpearThrows = 3f;
             float totalShootLength = shootDelay * totalSpearThrows;
             float spearSpeed = 20f;
-            float minDistanceToSpeedUpAt = 1000f;
+            float minDistanceToSpeedUpAt = 700f;
 
             float endOfAttackDelay = 45f;
 

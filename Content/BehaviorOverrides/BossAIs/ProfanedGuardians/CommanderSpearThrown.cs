@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int crossWaves = 3;
+            int crossWaves = 2;
             int crossCount = 18;
             for (int i = 0; i < crossWaves; i++)
             {

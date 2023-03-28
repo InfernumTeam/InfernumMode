@@ -1,6 +1,7 @@
 using CalamityMod.Dusts;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -73,8 +74,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A /= 2;
 
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 128 }, Color.White, 3f);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/HolyCrossNight").Value;
+
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 128 }, Color.White, 3f, null, texture);
             return false;
         }
 

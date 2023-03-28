@@ -1,4 +1,6 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -41,13 +43,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Lighting.AddLight(Projectile.Center, Vector3.One);
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor)
+        {
+            if (CalamityGlobalNPC.holyBoss != -1 && ProvidenceBehaviorOverride.IsEnraged)
+                return Color.Cyan * Projectile.Opacity;
+
+            return Color.White * Projectile.Opacity;
+        }
 
         public override bool PreDraw(ref Color lightColor)
         {
             float alpha = 1f - (float)Projectile.alpha / 255;
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
+            Projectile.DrawProjectileWithBackglowTemp(Projectile.GetAlpha(Color.White) with { A = 0 }, Color.White, 2f);
             return false;
         }
     }

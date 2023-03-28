@@ -129,6 +129,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            if (IsEnraged)
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/CommanderSpear2Night").Value;
 
             if (CircularSmearInterpolant > 0f)
             {
@@ -142,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             for (int i = 0; i < backglowAmount; i++)
             {
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
-                Color backglowColor = Color.Gold;
+                Color backglowColor = IsEnraged ? Color.Cyan : Color.Gold;
                 backglowColor.A = 0;
                 Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * MathHelper.Clamp(Projectile.Opacity * 2f, 0f, 1f) * Owner.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }

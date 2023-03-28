@@ -72,14 +72,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             int npcType = (int)npc.ai[2];
-            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedRocks" + npcType.ToString()).Value;
-            Vector2 drawOrigin = new(texture.Width / 2, texture.Height / 2);
-            Vector2 drawPos = npc.Center - Main.screenPosition;
-            drawPos -= new Vector2(texture.Width, texture.Height) * npc.scale / 2f;
-            drawPos += drawOrigin * npc.scale + new Vector2(0f, npc.gfxOffY);
+            string rockVariantName = $"ProfanedRocks{npcType}";
+            Texture2D texture = ModContent.Request<Texture2D>($"CalamityMod/NPCs/ProfanedGuardians/{rockVariantName}").Value;
+            if (ProvidenceBehaviorOverride.IsEnraged)
+                texture = ModContent.Request<Texture2D>($"InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/{rockVariantName}").Value;
+
+            Vector2 origin = new(texture.Width / 2, texture.Height / 2);
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
             Rectangle frame = new(0, 0, texture.Width, texture.Height);
+
+            // Draw a backglow behind the rock for visual clarity reasons, along with the rock itself.
             npc.DrawBackglow(Color.White with { A = 0 }, 4f, SpriteEffects.None, frame, Main.screenPosition, texture);
-            spriteBatch.Draw(texture, drawPos, frame, npc.GetAlpha(lightColor), npc.rotation, drawOrigin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion Drawcode

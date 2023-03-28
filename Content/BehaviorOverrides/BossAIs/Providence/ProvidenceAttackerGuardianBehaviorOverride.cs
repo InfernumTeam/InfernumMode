@@ -7,8 +7,10 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Providence.ProvidenceBehaviorOverride;
@@ -64,11 +66,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 15);
 
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Pitch = 0.4f, Volume = 0.8f }, npc.Center);
+
+                Color ashColor = IsEnraged ? Color.Teal : new Color(255, 191, 73);
                 for (int j = 0; j < 100; j++)
                 {
                     Vector2 ashSpawnPosition = npc.Center + Main.rand.NextVector2Circular(200f, 200f);
                     Vector2 ashVelocity = npc.SafeDirectionTo(ashSpawnPosition) * Main.rand.NextFloat(1.5f, 2f);
-                    Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.75f, 0.95f), 400f, Main.rand.NextFloat(-0.04f, 0.04f));
+                    Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, ashColor, Color.Gray, Main.rand.NextFloat(0.75f, 0.95f), 400f, Main.rand.NextFloat(-0.04f, 0.04f));
                     GeneralParticleHandler.SpawnParticle(ash);
                 }
 
@@ -88,5 +92,54 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         }
 
         #endregion
+
+        #region Drawing
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            // Calculate the appropriate direction and various other important draw variables.
+            int afterimageCount = 5;
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianCommanderGlow").Value;
+            if (IsEnraged)
+            {
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceAttackerGuardianNight").Value;
+                glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceAttackerGuardianNightGlow").Value;
+            }
+
+            // Draw the base texture.
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i += 2)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
+                    Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            // Draw the glowmask.
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i++)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
+                    Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
+                    spriteBatch.Draw(glowmask, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            return false;
+        }
+        #endregion Drawing
     }
 }

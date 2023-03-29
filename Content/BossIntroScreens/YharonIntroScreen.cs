@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BossIntroScreens
             get
             {
                 if (CachedText == "Grand\nYharon")
-                    return new SoundStyle("InfernumMode/Assets/Sounds/Custom/YharonRoarTroll");
+                    return new SoundStyle("InfernumMode/Assets/Sounds/Custom/Yharon/YharonRoarTroll");
 
                 return new SoundStyle("CalamityMod/Sounds/Custom/Yharon/YharonRoar");
             }

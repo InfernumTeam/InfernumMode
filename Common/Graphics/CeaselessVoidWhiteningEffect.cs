@@ -1,6 +1,7 @@
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,6 +12,18 @@ namespace InfernumMode.Common.Graphics
 {
     public class CeaselessVoidWhiteningEffect : ModSystem
     {
+        public enum OutlineDrawStatus
+        {
+            DrawCeaselessVoid,
+            DrawChains
+        }
+
+        public static OutlineDrawStatus DrawStatus
+        {
+            get;
+            set;
+        }
+
         public static float WhiteningInterpolant
         {
             get;
@@ -45,28 +58,46 @@ namespace InfernumMode.Common.Graphics
             {
                 Main.spriteBatch.EnterShaderRegion();
 
-                NPC ceaselessVoid = Main.npc[CalamityGlobalNPC.voidBoss];
-                bool voidIsCracked = ceaselessVoid.localAI[0] == 1f;
-                Texture2D voidMaskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShellMask").Value;
-                Vector2 voidDrawPosition = ceaselessVoid.Center - Main.screenPosition;
-                Color voidColor = Color.White * MathF.Pow(WhiteningInterpolant, 0.66f) * ceaselessVoid.Opacity;
-
-                // Apply the crack effect if necessary.
-                if (voidIsCracked)
+                switch (DrawStatus)
                 {
-                    Rectangle frame = voidMaskTexture.Frame();
-                    InfernumEffectsRegistry.CeaselessVoidCrackShader.UseShaderSpecificData(new(frame.X, frame.Y, frame.Width, frame.Height));
-                    InfernumEffectsRegistry.CeaselessVoidCrackShader.UseImage1("Images/Misc/Perlin");
-                    InfernumEffectsRegistry.CeaselessVoidCrackShader.Shader.Parameters["sheetSize"].SetValue(voidMaskTexture.Size());
-                    InfernumEffectsRegistry.CeaselessVoidCrackShader.Apply();
+                    case OutlineDrawStatus.DrawCeaselessVoid:
+                        DrawCeaselessVoid();
+                        break;
+                    case OutlineDrawStatus.DrawChains:
+                        DrawChains();
+                        break;
                 }
-
-                Main.spriteBatch.Draw(voidMaskTexture, voidDrawPosition, null, voidColor, ceaselessVoid.rotation, voidMaskTexture.Size() * 0.5f, ceaselessVoid.scale, 0, 0f);
 
                 Main.spriteBatch.ExitShaderRegion();
             }
             else
                 WhiteningInterpolant = MathHelper.Clamp(WhiteningInterpolant - 0.1f, 0f, 1f);
+        }
+
+        public static void DrawCeaselessVoid()
+        {
+            NPC ceaselessVoid = Main.npc[CalamityGlobalNPC.voidBoss];
+            bool voidIsCracked = ceaselessVoid.localAI[0] == 1f;
+            Texture2D voidMaskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShellMask").Value;
+            Vector2 voidDrawPosition = ceaselessVoid.Center - Main.screenPosition;
+            Color voidColor = Color.White * MathF.Pow(WhiteningInterpolant, 0.66f) * ceaselessVoid.Opacity;
+
+            // Apply the crack effect if necessary.
+            if (voidIsCracked)
+            {
+                Rectangle frame = voidMaskTexture.Frame();
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.UseShaderSpecificData(new(frame.X, frame.Y, frame.Width, frame.Height));
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.UseImage1("Images/Misc/Perlin");
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.Shader.Parameters["sheetSize"].SetValue(voidMaskTexture.Size());
+                InfernumEffectsRegistry.CeaselessVoidCrackShader.Apply();
+            }
+
+            Main.spriteBatch.Draw(voidMaskTexture, voidDrawPosition, null, voidColor, ceaselessVoid.rotation, voidMaskTexture.Size() * 0.5f, ceaselessVoid.scale, 0, 0f);
+        }
+
+        public static void DrawChains()
+        {
+            CeaselessVoidBehaviorOverride.DrawChains(Color.Black * WhiteningInterpolant);
         }
     }
 }

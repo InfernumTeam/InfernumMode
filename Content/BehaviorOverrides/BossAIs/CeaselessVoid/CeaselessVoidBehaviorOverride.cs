@@ -1,11 +1,13 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Events;
+using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -28,7 +30,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using static CalamityMod.CalamityUtils;
 using CeaselessVoidBoss = CalamityMod.NPCs.CeaselessVoid.CeaselessVoid;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
@@ -50,12 +52,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             SpinningDarkEnergy,
             AreaDenialVortexTears,
 
-            // Phase 2 midpoint.
+            // Phase 2 transition.
             ShellCrackTransition,
             DarkEnergyTorrent,
 
             // Phase 2 attacks.
             EnergySuck,
+
+            // Phase 3 transition.
+            ChainBreakTransition,
+
+            // Phase 3 attacks.
+            JevilDarkEnergyBursts,
+            MirroredCharges,
 
             // Old attacks. The status of each is to be determined.
             RealityRendCharge,
@@ -162,6 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             ref float attackTimer = ref npc.ai[1];
             ref float currentPhase = ref npc.ai[2];
             ref float voidIsCracked = ref npc.localAI[0];
+            ref float teleportEffectInterpolant = ref npc.localAI[1];
 
             // Do phase transitions.
             if (currentPhase == 0f && phase2)
@@ -192,8 +202,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 phase3 = true;
             }
 
-            // Lock the camera onto the ceaseless void because it's very egotistical and cannot bear the thought of not being the center of attention.
-            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp)
+            // Lock the camera onto the Ceaseless Void because it's very egotistical and cannot bear the thought of not being the center of attention.
+            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp && attackType != (int)CeaselessVoidAttackType.MirroredCharges)
             {
                 float lookAtTargetInterpolant = Utils.GetLerpValue(420f, 2700f, ((target.Center - npc.Center) * new Vector2(1f, 1.8f)).Length(), true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;
@@ -235,6 +245,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                 case CeaselessVoidAttackType.EnergySuck:
                     DoBehavior_EnergySuck(npc, target, ref attackTimer);
+                    break;
+
+                case CeaselessVoidAttackType.ChainBreakTransition:
+                    DoBehavior_ChainBreakTransition(npc, target, ref attackTimer);
+                    break;
+
+                case CeaselessVoidAttackType.JevilDarkEnergyBursts:
+                    DoBehavior_JevilDarkEnergyBursts(npc, target, ref attackTimer, ref teleportEffectInterpolant);
+                    break;
+                case CeaselessVoidAttackType.MirroredCharges:
+                    DoBehavior_MirroredCharges(npc, target, ref attackTimer, ref teleportEffectInterpolant);
                     break;
 
                 case CeaselessVoidAttackType.RealityRendCharge:
@@ -317,6 +338,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             Chains = null;
+        }
+
+        public static void TeleportToPosition(NPC npc, Vector2 teleportPosition)
+        {
+            // Teleport to the position.
+            npc.Center = teleportPosition;
+            npc.netUpdate = true;
+
+            // Play the teleport sound.
+            SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidTeleportSound with { Volume = 0.6f, Pitch = -0.25f }, npc.Center);
+
+            // Create a puff of dark energy at the teleport position.
+            for (int i = 0; i < 32; i++)
+            {
+                Color darkEnergyColor = Main.rand.NextBool() ? Color.HotPink : Color.Purple;
+                CloudParticle darkEnergyCloud = new(npc.Center, (MathHelper.TwoPi * i / 32f).ToRotationVector2() * 8f, darkEnergyColor, Color.DarkBlue * 0.75f, 25, Main.rand.NextFloat(2.5f, 3.2f));
+                GeneralParticleHandler.SpawnParticle(darkEnergyCloud);
+            }
         }
 
         public static void CreateEnergySuckParticles(NPC npc, Vector2 generalOffset, float minOffset = 240f, float maxOffset = 630f, float scale = 0.8f)
@@ -843,10 +882,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 return;
             }
 
-            // Make the whitening effect happen.
+            // Make the whitening effect draw the Ceaseless Void.
             float whiteningFadeIn = Utils.GetLerpValue(chargeUpTime, chargeUpTime + whiteningTime, attackTimer, true);
             float whiteningFadeOut = Utils.GetLerpValue(chargeUpTime + whiteningTime + whiteningWaitTime + whiteningFadeOutTime, chargeUpTime + whiteningTime + whiteningWaitTime, attackTimer, true);
             CeaselessVoidWhiteningEffect.WhiteningInterpolant = whiteningFadeIn * whiteningFadeOut;
+            CeaselessVoidWhiteningEffect.DrawStatus = CeaselessVoidWhiteningEffect.OutlineDrawStatus.DrawCeaselessVoid;
 
             // Break the metal.
             if (attackTimer == chargeUpTime + whiteningTime)
@@ -1078,6 +1118,219 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             if (attackTimer >= suckTime + attackTransitionDelay)
                 SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_ChainBreakTransition(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeUpTime = 184;
+            int whiteningTime = 35;
+            int whiteningWaitTime = 36;
+            int whiteningFadeOutTime = 6;
+            float whiteningFadeIn = Utils.GetLerpValue(chargeUpTime, chargeUpTime + whiteningTime, attackTimer, true);
+            float whiteningFadeOut = Utils.GetLerpValue(chargeUpTime + whiteningTime + whiteningWaitTime + whiteningFadeOutTime, chargeUpTime + whiteningTime + whiteningWaitTime, attackTimer, true);
+            float whiteningInterpolant = whiteningFadeIn * whiteningFadeOut;
+
+            // Play a buildup sound prior to the whitening effect.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(CeaselessVoidBoss.BuildupSound);
+
+            // Enable the distortion filter if it isnt active and the player's config permits it.
+            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)
+            {
+                float distortionInterpolant = (1f - whiteningInterpolant) * whiteningFadeOut * Utils.GetLerpValue(0f, 45f, attackTimer, true);
+
+                Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(distortionInterpolant * 25f);
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(2f);
+            }
+
+            // Charge up energy before performing whitening.
+            if (attackTimer <= chargeUpTime)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = attackTimer / chargeUpTime * 8f;
+                CreateEnergySuckParticles(npc, Vector2.Zero, 240f, 1120f, 0.4f);
+
+                // Create pulse rings and bloom periodically.
+                if (attackTimer % 10f == 9f)
+                {
+                    Color energyColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0.5f));
+                    PulseRing ring = new(npc.Center, Vector2.Zero, energyColor, 3.6f, 0f, 60);
+                    GeneralParticleHandler.SpawnParticle(ring);
+
+                    StrongBloom bloom = new(npc.Center, Vector2.Zero, energyColor, 1f, 15);
+                    GeneralParticleHandler.SpawnParticle(bloom);
+                }
+
+                return;
+            }
+
+            // Make the whitening effect draw the Ceaseless Void's chains.
+            CeaselessVoidWhiteningEffect.WhiteningInterpolant = whiteningInterpolant;
+            CeaselessVoidWhiteningEffect.DrawStatus = CeaselessVoidWhiteningEffect.OutlineDrawStatus.DrawChains;
+
+            // Break the chains.
+            if (attackTimer == chargeUpTime + whiteningTime)
+            {
+                target.Infernum_Camera().CurrentScreenShakePower = 25f;
+
+                SoundEngine.PlaySound(CeaselessVoidBoss.DeathSound);
+                DestroyChains(npc);
+            }
+
+            if (whiteningFadeOut <= 0f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_JevilDarkEnergyBursts(NPC npc, Player target, ref float attackTimer, ref float teleportEffectInterpolant)
+        {
+            int teleportAnimationTime = 42;
+            int darkBurstCount = 3;
+            int shootCount = 9;
+            float animationAttackTimer = attackTimer % teleportAnimationTime;
+            float spiralAcceleration = 1.02f;
+            float teleportOffset = 560f;
+            float teleportAnimationCompletionFactor = 1.8f;
+            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Decide the teleport effect interpolant.
+            teleportEffectInterpolant = animationAttackTimer / teleportAnimationTime * teleportAnimationCompletionFactor;
+
+            if (animationAttackTimer == (int)(teleportAnimationTime * 0.5f / teleportAnimationCompletionFactor))
+            {
+                // Teleport next to the target.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(MathHelper.Pi - 0.6f);
+                    TeleportToPosition(npc, target.Center + teleportOffsetDirection * teleportOffset);
+
+                    shootCounter++;
+                    npc.netUpdate = true;
+
+                    if (shootCounter >= shootCount)
+                    {
+                        SelectNewAttack(npc);
+                        return;
+                    }
+
+                    for (int i = 0; i < darkBurstCount; i++)
+                    {
+                        float shootOffsetAngle = MathHelper.Lerp(-0.5f, 0.5f, i / (float)(darkBurstCount - 1f));
+                        Vector2 spiralShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 9f + Main.rand.NextVector2Circular(1.4f, 1.4f);
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
+                        {
+                            darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Time = 30f;
+                        });
+                        Utilities.NewProjectileBetter(npc.Center, spiralShootVelocity, ModContent.ProjectileType<AcceleratingDarkEnergy>(), DarkEnergyDamage, 0f, -1, (int)AcceleratingDarkEnergy.DarkEnergyAttackState.AccelerateTowardsTarget, spiralAcceleration);
+                    }
+                }
+
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound, npc.Center);
+            }
+        }
+
+        public static void DoBehavior_MirroredCharges(NPC npc, Player target, ref float attackTimer, ref float teleportEffectInterpolant)
+        {
+            int teleportAnimationTime = 42;
+            int ringBulletCount = 18;
+            int chargeCount = 6;
+            int attackStartDelay = 60;
+            float teleportAnimationCompletionFactor = 2.4f;
+            float teleportOffset = 540f;
+            float startingSpeed = teleportOffset / 172f;
+            float arcingBoltAngularVelocity = MathHelper.ToRadians(0.7f) * Main.rand.NextFromList(-1f, 1f);
+            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+            ref float teleportCenterX = ref npc.Infernum().ExtraAI[1];
+            ref float teleportCenterY = ref npc.Infernum().ExtraAI[2];
+            ref float acceleration = ref npc.Infernum().ExtraAI[3];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[4];
+
+            float animationAttackTimer = (attackTimer - attackStartDelay) % teleportAnimationTime;
+
+            // Do contact damage.
+            npc.damage = npc.defDamage;
+
+            // Initialize acceleration. The underlying calculus necessary to decide this value can be a bit complex, and as such it is only done once for
+            // performance reasons. This calculates the acceleration the Ceaseless Void must move at every frame to ensure that it travels an exact distance in a given
+            // amount of given from a specific starting speed.
+            if (acceleration <= 0f)
+            {
+                double offsetFromIdealTravelDistance(double x)
+                {
+                    double distance = 0D;
+                    for (int i = 1; i <= teleportAnimationTime; i++)
+                        distance += Math.Pow(x, i) * startingSpeed;
+                    return distance - teleportOffset;
+                }
+                acceleration = (float)Utilities.IterativelySearchForRoot(offsetFromIdealTravelDistance, 1D, 13);
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer <= attackStartDelay)
+            {
+                teleportEffectInterpolant = 0f;
+                npc.velocity = Vector2.Zero;
+                return;
+            }
+
+            // Decide the teleport effect interpolant.
+            teleportEffectInterpolant = animationAttackTimer / teleportAnimationTime * teleportAnimationCompletionFactor;
+
+            // Teleport on top of the player before the split charges happen.
+            if (animationAttackTimer == (int)(teleportAnimationTime * 0.5f / teleportAnimationCompletionFactor))
+            {
+                // Do funny screen stuff.
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1.25f, 24);
+
+                Vector2 impactPoint = new(teleportCenterX, teleportCenterY);
+
+                // Release energy sparks at the impact point.
+                for (int i = 0; i < 25; i++)
+                {
+                    Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 16f);
+                    Color sparkColor = Color.Lerp(Color.Cyan, Color.IndianRed, Main.rand.NextFloat(0.6f));
+                    GeneralParticleHandler.SpawnParticle(new SparkParticle(impactPoint, sparkVelocity, false, 45, 2f, sparkColor));
+
+                    sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 23f);
+                    Color arcColor = Color.Lerp(Color.Cyan, Color.HotPink, Main.rand.NextFloat(0.1f, 0.65f));
+                    GeneralParticleHandler.SpawnParticle(new ElectricArc(impactPoint, sparkVelocity, arcColor, 0.84f, 27));
+                }
+
+                if (chargeCounter >= chargeCount)
+                {
+                    npc.velocity = Vector2.Zero;
+                    TeleportToPosition(npc, target.Center - Vector2.UnitY * 350f);
+                    SelectNewAttack(npc);
+                    return;
+                }
+
+                SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound with { Volume = 0.55f }, impactPoint);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < ringBulletCount; i++)
+                    {
+                        Vector2 energyBoltVelocity = (MathHelper.TwoPi * i / ringBulletCount).ToRotationVector2() * 3f;
+
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bolt =>
+                        {
+                            bolt.ModProjectile<OtherworldlyBolt>().ArcAngularVelocity = arcingBoltAngularVelocity;
+                        });
+                        Utilities.NewProjectileBetter(impactPoint, energyBoltVelocity, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.ArcAndAccelerate);
+                    }
+                }
+
+                // Teleport at an offset perpendicular to the player's current velocity.
+                teleportCenterX = target.Center.X + target.velocity.X * 12f;
+                teleportCenterY = target.Center.Y + target.velocity.Y * 12f;
+                TeleportToPosition(npc, new Vector2(teleportCenterX, teleportCenterY) - target.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Main.rand.NextVector2Unit()) * teleportOffset);
+                npc.velocity = npc.SafeDirectionTo(new(teleportCenterX, teleportCenterY)) * startingSpeed;
+                chargeCounter++;
+            }
+
+            // Accelerate.
+            npc.velocity *= acceleration;
         }
 
         public static void DoBehavior_RealityRendCharge(NPC npc, bool phase2, bool phase3, bool enraged, Player target, ref float attackTimer)
@@ -1505,33 +1758,73 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.ai[0] = (int)CeaselessVoidAttackType.ShellCrackTransition;
             else if (npc.ai[0] == (int)CeaselessVoidAttackType.ShellCrackTransition)
                 npc.ai[0] = (int)CeaselessVoidAttackType.DarkEnergyTorrent;
+            else if (npc.ai[0] == (int)CeaselessVoidAttackType.DarkEnergyTorrent)
+                npc.ai[0] = (int)CeaselessVoidAttackType.ChainBreakTransition;
             else
-                npc.ai[0] = (int)CeaselessVoidAttackType.EnergySuck;
+                npc.ai[0] = (int)CeaselessVoidAttackType.MirroredCharges;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }
         #endregion AI
 
         #region Drawing
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             // Draw chains.
-            if (Chains is not null)
+            DrawChains(Color.White);
+
+            // Draw the Ceaseless Void.
+            if (npc.ai[0] == (int)CeaselessVoidAttackType.MirroredCharges)
             {
-                foreach (var chain in Chains)
-                    DrawChain(chain);
+                Vector2 teleportCenter = new Vector2(npc.Infernum().ExtraAI[1], npc.Infernum().ExtraAI[2]) - Main.screenPosition;
+                Vector2 left = npc.Center - Main.screenPosition;
+                Vector2 right = teleportCenter + (teleportCenter - left);
+                float distanceFromCenter = teleportCenter.Distance(left);
+                float specialColorInterpolant = Utils.GetLerpValue(40f, 150f, distanceFromCenter, true);
+                DrawInstance(npc, left, lightColor, Color.Lerp(Color.White, Color.Cyan with { A = 0 } * 0.5f, specialColorInterpolant));
+                DrawInstance(npc, right, lightColor, Color.Lerp(Color.White, Color.HotPink with { A = 0 } * 0.5f, specialColorInterpolant));
+            }
+            else
+                DrawInstance(npc, npc.Center - Main.screenPosition, lightColor, Color.White);
+
+            return false;
+        }
+
+        public static void DrawInstance(NPC npc, Vector2 drawPosition, Color lightColor, Color colorFactor)
+        {
+            // Calculate scale values for the teleport effect.
+            float teleportEffectInterpolant = npc.localAI[1];
+            float stretchX = 1f;
+            float stretchY = 1f;
+            float opacity = 1f;
+            if (teleportEffectInterpolant < 0.5f)
+            {
+                float localStretchInterpolant = Utils.GetLerpValue(0f, 0.5f, teleportEffectInterpolant, true);
+                stretchX = MathHelper.Lerp(1f, 0.4f, MathF.Pow(localStretchInterpolant, 2f));
+                stretchY = MathHelper.Lerp(1f, 0f, MathF.Pow(localStretchInterpolant, 0.5f));
+
+                opacity = MathF.Pow(1f - localStretchInterpolant, 3f);
+            }
+            else if (teleportEffectInterpolant < 0.8f)
+            {
+                float localStretchInterpolant = Utils.GetLerpValue(0.5f, 0.8f, teleportEffectInterpolant, true);
+                stretchX = localStretchInterpolant;
+                stretchY = MathF.Sqrt(localStretchInterpolant);
+
+                opacity = MathF.Pow(localStretchInterpolant, 2f);
             }
 
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 scale = new Vector2(stretchX, stretchY) * npc.scale;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/CeaselessVoid/CeaselessVoidGlow").Value;
             Texture2D voidTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidVoidStuff").Value;
-            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
-            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor).MultiplyRGBA(colorFactor) * opacity, npc.rotation, npc.frame.Size() * 0.5f, scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White).MultiplyRGBA(colorFactor) * opacity, npc.rotation, npc.frame.Size() * 0.5f, scale, 0, 0f);
 
             Main.spriteBatch.EnterShaderRegion();
 
-            DrawData drawData = new(voidTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
+            DrawData drawData = new(voidTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, scale, 0, 0);
             InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(InfernumTextureRegistry.Stars);
             InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
             drawData.Draw(Main.spriteBatch);
@@ -1544,7 +1837,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 Texture2D metalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShell").Value;
                 Texture2D maskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShellMaskWhite").Value;
-                drawData = new(maskTexture, drawPosition, maskTexture.Frame(), npc.GetAlpha(Color.White) * (1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant), npc.rotation, maskTexture.Size() * 0.5f, npc.scale, 0, 0);
+                drawData = new(maskTexture, drawPosition, maskTexture.Frame(), npc.GetAlpha(Color.White).MultiplyRGBA(colorFactor) * (1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant) * opacity, npc.rotation, maskTexture.Size() * 0.5f, scale, 0, 0);
                 InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(InfernumTextureRegistry.Stars);
                 InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
                 drawData.Draw(Main.spriteBatch);
@@ -1557,13 +1850,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 InfernumEffectsRegistry.CeaselessVoidCrackShader.Shader.Parameters["sheetSize"].SetValue(metalTexture.Size());
                 InfernumEffectsRegistry.CeaselessVoidCrackShader.Apply();
 
-                Main.spriteBatch.Draw(metalTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
+                Main.spriteBatch.Draw(metalTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White).MultiplyRGBA(colorFactor) * (1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant) * opacity, npc.rotation, npc.frame.Size() * 0.5f, scale, 0, 0f);
                 Main.spriteBatch.ExitShaderRegion();
             }
 
             if (npc.ai[0] == (int)CeaselessVoidAttackType.ChainedUp)
                 DrawSeal(npc);
-            return false;
         }
 
         public static void DrawSeal(NPC npc)
@@ -1601,7 +1893,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Main.spriteBatch.ExitShaderRegion();
         }
 
-        public static void DrawChain(List<VerletSimulatedSegment> chain)
+        public static void DrawChain(List<VerletSimulatedSegment> chain, Color colorFactor)
         {
             Texture2D chainTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidChain").Value;
 
@@ -1618,7 +1910,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 float completionRatio = i / (float)totalChains + 1f / totalChains;
                 float angle = (bezierCurve.Evaluate(completionRatio) - drawPosition).ToRotation() - MathHelper.PiOver2;
                 Color baseChainColor = Lighting.GetColor((int)drawPosition.X / 16, (int)drawPosition.Y / 16) * 2f;
-                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, baseChainColor, angle, chainTexture.Size() * 0.5f, chainScale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, baseChainColor.MultiplyRGBA(colorFactor), angle, chainTexture.Size() * 0.5f, chainScale, SpriteEffects.None, 0);
+            }
+        }
+
+        public static void DrawChains(Color colorFactor)
+        {
+            if (Chains is not null)
+            {
+                foreach (var chain in Chains)
+                    DrawChain(chain, colorFactor);
             }
         }
         #endregion Drawing

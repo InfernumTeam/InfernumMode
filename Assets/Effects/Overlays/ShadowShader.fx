@@ -17,10 +17,11 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
     // Get the screen color.
     float4 color = tex2D(uImage0, coords);
     float4 finalColor = float4(0, 0, 0, 0);
-    
+    float brightest = max(max(color.r, color.b), color.g);
+
     // If its blue (sky should be mostly blue) is lower than the threshold, decrease its alpha.
     if (color.b < threshold)
-        finalColor = float4(1, 1, 1, pow(1 - color.b, 0.75));
+        finalColor = float4(1, 1, 1, pow(1 - color.b, 0.35));
 
     return finalColor;
 }

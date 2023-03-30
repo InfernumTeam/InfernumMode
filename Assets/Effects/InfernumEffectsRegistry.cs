@@ -26,6 +26,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData BrainPsychicVertexShader => GameShaders.Misc["Infernum:BrainPsychic"];
         public static MiscShaderData CeaselessVoidBackgroundShader => GameShaders.Misc["Infernum:CVBackground"];
         public static MiscShaderData CeaselessVoidCrackShader => GameShaders.Misc["Infernum:CVCrack"];
+        public static MiscShaderData CeaselessVoidPortalShader => GameShaders.Misc["Infernum:CVPortal"];
         public static MiscShaderData CircleCutoutShader => GameShaders.Misc["Infernum:CircleCutout"];
         public static MiscShaderData CircleCutout2Shader => GameShaders.Misc["Infernum:CircleCutout2"];
         public static MiscShaderData CloudVertexShader => GameShaders.Misc["Infernum:CloudShader"];
@@ -131,6 +132,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> cvCrackShader = new(assets.Request<Effect>("Assets/Effects/Cutouts/CeaselessVoidCrackShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CVCrack"] = new MiscShaderData(cvCrackShader, "CrackPass");
+
+            Ref<Effect> cvPortalShader = new(assets.Request<Effect>("Assets/Effects/Shapes/CeaselessVoidPortalShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:CVPortal"] = new MiscShaderData(cvPortalShader, "ScreenPass");
 
             Ref<Effect> cutoutShader = new(assets.Request<Effect>("Assets/Effects/Shapes/CircleCutoutShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:CircleCutout"] = new MiscShaderData(cutoutShader, "CutoutPass");

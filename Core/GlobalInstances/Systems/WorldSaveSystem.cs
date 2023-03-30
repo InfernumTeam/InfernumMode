@@ -1,3 +1,5 @@
+using CalamityMod.NPCs.CeaselessVoid;
+using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -52,9 +54,23 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set
             {
                 if (!value)
+                {
+                    int signusID = ModContent.NPCType<Signus>();
+                    int ceaselessVoidID = ModContent.NPCType<CeaselessVoid>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC n = Main.npc[i];
+                        if (n.active && (n.type == signusID || n.type == ceaselessVoidID))
+                            n.active = false;
+                    }
+
                     CalamityBossHPBarChangesSystem.UndoBarChanges();
+                }
                 else
+                {
                     CalamityBossHPBarChangesSystem.PerformBarChanges();
+                    CeaselessVoidArchivesSpawnSystem.WaitingForPlayersToLeaveArchives = true;
+                }
 
                 infernumMode = value;
             }

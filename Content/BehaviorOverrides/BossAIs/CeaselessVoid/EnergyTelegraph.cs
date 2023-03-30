@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 float opacity = Utils.GetLerpValue(0f, 0.15f, completionRatio, true);
                 return Projectile.GetAlpha(Color.White) * opacity;
             });
-            TelegraphDrawer.Draw(TelegraphPoints, -Main.screenPosition, 43);
+            TelegraphDrawer.Draw(TelegraphPoints, -Main.screenPosition, 26);
             return false;
         }
     }

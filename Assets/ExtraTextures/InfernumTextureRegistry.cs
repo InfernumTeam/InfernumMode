@@ -138,6 +138,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> TrypophobiaNoise => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/TrypophobiaNoise");
 
+        public static Asset<Texture2D> Void => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/Void");
+
         public static Asset<Texture2D> VolcanoWarning => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/VolcanoWarningBlack");
 
         public static Asset<Texture2D> VoronoiCelluar => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/VoronoiCellular");

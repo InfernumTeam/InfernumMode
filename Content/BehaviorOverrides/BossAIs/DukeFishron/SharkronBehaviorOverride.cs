@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             npc.Infernum().ExtraAI[0]++;
             npc.noTileCollide = npc.Infernum().ExtraAI[0] < 90f;
             npc.noGravity = npc.noTileCollide;
-            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height) && !npc.noTileCollide)
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 24, true) && !npc.noTileCollide)
             {
                 if (npc.DeathSound != null)
                     SoundEngine.PlaySound(npc.DeathSound, npc.position);

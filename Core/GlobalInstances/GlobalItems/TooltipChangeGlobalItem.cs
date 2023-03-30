@@ -99,6 +99,12 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 replaceTooltipText("Tooltip1", summoningText);
             }
 
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<RuneofKos>())
+            {
+                TooltipLine developerLine = new(Mod, "CVWarning", CalamityUtils.ColorMessage("The Ceaseless Void can only be fought in the Archives", Color.Magenta));
+                tooltips.Add(developerLine);
+            }
+
             if (InfernumMode.CanUseCustomAIs && item.type == ItemID.LihzahrdPowerCell)
             {
                 string summoningText = "Summons Golem when used at the Lihzhard Altar\n" +

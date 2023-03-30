@@ -565,7 +565,7 @@ namespace InfernumMode.Core.ILEditingStuff
                             ceaselessVoid.netUpdate = true;
                         }
                     }
-                    else
+                    else if (!InfernumMode.CanUseCustomAIs)
                     {
                         SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)

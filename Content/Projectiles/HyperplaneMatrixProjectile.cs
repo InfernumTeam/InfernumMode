@@ -176,18 +176,7 @@ namespace InfernumMode.Content.Projectiles
                 HoverText = "Atomize every single hostile NPC",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/AtomizeIcon"),
                 ClickBehavior = _ => AtomizeHostileNPCs()
-            },
-
-            new()
-            {
-                HoverText = "Unlock all music with the Soul-Driven Headphones",
-                IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SoulDrivenHeadphones"),
-                ClickBehavior = player =>
-                {
-                    player.Infernum_Music().UnlockAllMusic = true;
-                    Utilities.DisplayText("All music has been unlocked for the Soul-Driven Headphones.", Color.Pink);
-                }
-            },
+            }
         };
 
         public ref float Time => ref Projectile.ai[0];

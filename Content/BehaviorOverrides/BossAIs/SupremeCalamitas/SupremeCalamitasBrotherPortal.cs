@@ -60,7 +60,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Time == (int)(Lifetime * 0.8f))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.2f }, Projectile.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.HeavyExplosionSound with { Volume = 1.6f }, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);

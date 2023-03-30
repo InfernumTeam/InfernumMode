@@ -38,17 +38,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     Vector2 shootDirection = Projectile.SafeDirectionTo(target.Center + target.velocity * 12f);
                     float rotation = -(Projectile.rotation + MathHelper.Pi - (shootDirection.ToRotation() + MathHelper.Pi));
                     Projectile.rotation = MathHelper.WrapAngle(Projectile.rotation + MathHelper.Clamp(rotation, -MathHelper.ToRadians(10), MathHelper.ToRadians(10)));
-
-                    // Create a line telegraph.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.localAI[0] == 0f)
-                    {
-                        Utilities.NewProjectileBetter(Projectile.Center, shootDirection, ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
-                        Projectile.localAI[0] = 1f;
-                    }
                 }
             }
             else if (Projectile.Infernum().ExtraAI[0] == 60f)
             {
+                // Create a line telegraph.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(Projectile.Center, Projectile.rotation.ToRotationVector2(), ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
+
                 SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
                 if (Main.player.IndexInRange((int)Projectile.Infernum().ExtraAI[2]))
                 {

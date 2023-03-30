@@ -2,7 +2,6 @@ using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -21,13 +20,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             AccelerateTowardsTarget
         }
 
-        public List<Particle> LocalParticles
+        public int Index
         {
             get;
             set;
         }
 
-        public int Index
+        public bool NeverCollideWithTiles
         {
             get;
             set;
@@ -93,7 +92,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.timeLeft = 360;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
-            LocalParticles = new();
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -101,6 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             writer.Write(Time);
             writer.Write(Index);
             writer.Write(SpinOffsetAngle);
+            writer.Write(NeverCollideWithTiles);
             writer.WriteVector2(RestingPosition);
             writer.WriteVector2(CenterPoint);
         }
@@ -110,6 +109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Time = reader.ReadSingle();
             Index = reader.ReadInt32();
             SpinOffsetAngle = reader.ReadSingle();
+            NeverCollideWithTiles = reader.ReadBoolean();
             RestingPosition = reader.ReadVector2();
             CenterPoint = reader.ReadVector2();
         }
@@ -131,16 +131,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
-
-            // Update all particles.
-            LocalParticles.RemoveAll(p => p.Time >= p.Lifetime || p is null);
-            foreach (Particle particle in LocalParticles)
-            {
-                particle.Position += particle.Velocity;
-                particle.Position = Vector2.Lerp(particle.Position, Projectile.Center, 0.2f);
-                particle.Time++;
-                particle.Update();
-            }
 
             if (Projectile.frame == 0 && Projectile.frameCounter % 5 == 0 && Main.rand.NextBool(3) && ZapFrameTimer <= 0f)
                 ZapFrameTimer = 1f;
@@ -202,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 Color voidColor = Color.Lerp(Color.Purple, Color.Black, Main.rand.NextFloat(0.5f, 0.9f));
                 voidColor = Color.Lerp(voidColor, Color.DarkBlue, Main.rand.NextFloat(0.25f));
                 HeavySmokeParticle voidGas = new(Projectile.Center + Main.rand.NextVector2Circular(10f, 10f), Main.rand.NextVector2Circular(2f, 2f), voidColor, 9, Projectile.scale * 1.7f, Projectile.Opacity, Main.rand.NextFloat(0.02f), true);
-                LocalParticles.Add(voidGas);
+                GeneralParticleHandler.SpawnParticle(voidGas);
             }
         }
 
@@ -223,15 +213,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             Projectile.Opacity = 1f;
-            Projectile.tileCollide = Time >= 75f;
+            Projectile.tileCollide = Time >= 75f && !NeverCollideWithTiles;
 
             // Spawn particles.
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Color voidColor = Color.Lerp(Color.Purple, Color.Black, Main.rand.NextFloat(0.6f, 0.9f));
                 voidColor = Color.Lerp(voidColor, Color.DarkBlue, Main.rand.NextFloat(0.3f));
                 HeavySmokeParticle voidGas = new(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), Main.rand.NextVector2Circular(2f, 2f), voidColor, 9, Projectile.scale * 1.7f, Projectile.Opacity, Main.rand.NextFloat(0.02f), true);
-                LocalParticles.Add(voidGas);
+                GeneralParticleHandler.SpawnParticle(voidGas);
             }
         }
 
@@ -261,16 +251,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public override bool PreDraw(ref Color lightColor)
         {
             Projectile.Opacity = 1f;
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
-            foreach (Particle particle in LocalParticles)
-                particle.CustomDraw(Main.spriteBatch);
-            Main.spriteBatch.ExitShaderRegion();
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D electricityTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyElectricity").Value;
             if (ZapFrameTimer >= 1f && Projectile.frame <= 3f)
                 texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyBright").Value;
 
+            Utilities.DrawBackglow(Projectile, Color.White with { A = 0 }, 10f);
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
 
             if (ZapFrameTimer >= 1f)

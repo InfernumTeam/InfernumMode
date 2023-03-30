@@ -75,7 +75,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             string rockVariantName = $"ProfanedRocks{npcType}";
             Texture2D texture = ModContent.Request<Texture2D>($"CalamityMod/NPCs/ProfanedGuardians/{rockVariantName}").Value;
             if (ProvidenceBehaviorOverride.IsEnraged)
+            {
+                rockVariantName = $"ProfanedRocksNight{npcType}";
                 texture = ModContent.Request<Texture2D>($"InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/{rockVariantName}").Value;
+            }
 
             Vector2 origin = new(texture.Width / 2, texture.Height / 2);
             Vector2 drawPosition = npc.Center - Main.screenPosition;

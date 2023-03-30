@@ -14,23 +14,26 @@ namespace InfernumMode.Common.Graphics.Fluids
     {
         // For the sake of absolute management all fields must be kept track of to ensure no loose resources are hanging around (Especially on mod reloads, since GPU memory cannot be easily cleared automatically).
         // Furthermore, the updating must be performed in such a way that it happens at a specialized point in the draw loop, to prevent screwing up the vanilla game's backbuffer contents.
-        internal static readonly List<FluidFieldInfernum> CreatedFields = new();
+        internal static List<FluidFieldInfernum> CreatedFields = new();
 
-        internal static FluidFieldInfernum TestField = new(650, 650, new(0.0051f, 0.8f, 0.99975f, 0.3f, 0.08f, 0.77f, 0.99f));
+        //internal static FluidFieldInfernum TestField = new(650, 650, new(0.0051f, 0.8f, 0.99975f, 0.3f, 0.08f, 0.77f, 0.99f));
 
         public override void OnModLoad()
         {
+            CreatedFields = new();
             Main.OnPreDraw += UpdateFields;
             //On.Terraria.Main.DrawInfernoRings += DrawTestField;
         }
 
         private void DrawTestField(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
+            /*
             TestField.Draw(new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f - Vector2.UnitY * 36f, 1f, 85f, new Vector4[]
             {
                 Color.Transparent.ToVector4() with { W = 0f },
                 Color.SaddleBrown.ToVector4()
             });
+            */
         }
 
         public override void OnModUnload()
@@ -48,7 +51,7 @@ namespace InfernumMode.Common.Graphics.Fluids
 
         internal static void UpdateFields(GameTime obj)
         {
-            if (Main.gameMenu || InfernumConfig.Instance.ReducedGraphicsConfig)
+            if (Main.gameMenu || (InfernumConfig.Instance?.ReducedGraphicsConfig ?? true))
                 return;
 
             bool doLava = false;

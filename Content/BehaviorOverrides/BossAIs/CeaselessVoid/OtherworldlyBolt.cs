@@ -1,7 +1,7 @@
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -15,10 +15,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             LockIntoPosition,
             FlyIntoBackground,
-            AccelerateFromBelow
+            AccelerateFromBelow,
+            ArcAndAccelerate
         }
 
-        public static NPC CeaselessVoid => Main.npc[CalamityGlobalNPC.voidBoss];
+        public float ArcAngularVelocity
+        {
+            get;
+            set;
+        }
 
         public OtherwordlyBoltAttackState AttackState
         {
@@ -33,6 +38,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public static int DisappearIntoBackgroundTime => 90;
 
         public static Vector2 AimDirection => new Vector2(-1f, -1f).SafeNormalize(Vector2.UnitY);
+
+        public static NPC CeaselessVoid => Main.npc[CalamityGlobalNPC.voidBoss];
 
         public override void SetStaticDefaults()
         {
@@ -52,6 +59,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
+
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(ArcAngularVelocity);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => ArcAngularVelocity = reader.ReadSingle();
 
         public override void AI()
         {
@@ -73,6 +84,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 case OtherwordlyBoltAttackState.AccelerateFromBelow:
                     DoBehavior_AccelerateFromBelow();
                     break;
+                case OtherwordlyBoltAttackState.ArcAndAccelerate:
+                    DoBehavior_ArcAndAccelerate();
+                    break;
             }
 
             Time++;
@@ -84,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Vector2 hoverDestination = CeaselessVoid.Center + 120f * Projectile.velocity.SafeNormalize(Vector2.UnitY);
             Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, 0.08f).MoveTowards(hoverDestination, 2f);
 
-            // Aim in the direction that the blade will fire in.
+            // Aim in the direction that the bolt will fire in.
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Begin flying into the background once ready.
@@ -113,11 +127,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Accelerate.
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, 24f * Projectile.velocity.SafeNormalize(Vector2.UnitY), 0.0425f);
 
-            // Aim in the direction that the blade is accelerating.
+            // Aim in the direction that the bolt is accelerating.
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 0.9f && AttackState == OtherwordlyBoltAttackState.AccelerateFromBelow;
+        public void DoBehavior_ArcAndAccelerate()
+        {
+            // Arc and accelerate.
+            float maxSpeed = 25f;
+            float acceleration = 1.032f;
+            Projectile.velocity = Projectile.velocity.RotatedBy(ArcAngularVelocity);
+            if (Projectile.velocity.Length() < maxSpeed)
+                Projectile.velocity *= acceleration;
+
+            // Aim in the direction that the bolt is accelerating.
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public override bool? CanDamage() => Projectile.Opacity >= 0.9f && (AttackState == OtherwordlyBoltAttackState.AccelerateFromBelow || AttackState == OtherwordlyBoltAttackState.ArcAndAccelerate);
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 

@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.TreasureBags;
 using CalamityMod.Items.TreasureBags.MiscGrabBags;
-using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Pets;
 using Terraria;
 using Terraria.ID;
@@ -26,7 +25,9 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             if (item.type == ModContent.ItemType<StarterBag>())
             {
                 loot.Add(ModContent.ItemType<BlastedTophat>());
-                loot.Add(ModContent.ItemType<SoulDrivenHeadphones>());
+
+                if (InfernumMode.CalMusicModIsActive && InfernumMode.InfernumMusicMod.TryFind("SoulDrivenHeadphones", out ModItem headphonesItem))
+                    loot.Add(headphonesItem.Type);
             }
 
             // The Eater of Worlds and Brain of Cthulhu both drop 125 extra ore and 50 extra scales/tissue samples.

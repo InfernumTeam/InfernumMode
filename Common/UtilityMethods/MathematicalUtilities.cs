@@ -220,5 +220,29 @@ namespace InfernumMode
             // a = (v0 / v1) ^ (1 / t)
             return MathF.Pow(idealSpeed / startingSpeed, 1f / accelerationTime);
         }
+
+        // Approximates a derivative based on the following limit:
+        // lim h -> 0 (f(x + h) - f(x - h)) / 2h
+        // This method uses doubles for precision when approximating the tiny infinitesimal of h.
+        public static double ApproximateDerivative(this Func<double, double> fx, double x) =>
+            (fx(x + 1e-8) - fx(x - 1e-8)) * 5e7;
+
+        public static double IterativelySearchForRoot(this Func<double, double> fx, double initialGuess, int iterations)
+        {
+            // This uses the Newton-Raphson method to iteratively get closer and closer to roots of a given function.
+            // The exactly formula is as follows:
+            // x = x - f(x) / f'(x)
+            // In most circumstances repeating the above equation will result in closer and closer approximations to a root.
+            // The exact reason as to why this intuitively works can be found at the following video:
+            // https://www.youtube.com/watch?v=-RdOwhmqP5s
+            double result = initialGuess;
+            for (int i = 0; i < iterations; i++)
+            {
+                double derivative = fx.ApproximateDerivative(result);
+                result -= fx(result) / derivative;
+            }
+
+            return result;
+        }
     }
 }

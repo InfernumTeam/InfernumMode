@@ -1,8 +1,14 @@
+using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items;
 using CalamityMod.NPCs.ExoMechs;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.TrackedMusic;
+using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -26,9 +32,46 @@ namespace InfernumMode.Core.CrossCompatibility
                 case "SetInfernumActive":
                     WorldSaveSystem.InfernumMode = (bool)args[1];
                     break;
+                case "BopHeadToMusic":
+                    Player player = (Player)args[1];
+                    float headRotationTime = (float)args[2];
+
+                    // Return the head rotation to its intended angle if there is no music high point being played.
+                    if (!TrackedMusicManager.TryGetSongInformation(out var songInfo) || !songInfo.HeadphonesHighPoints.Any(s => s.WithinRange(TrackedMusicManager.SongElapsedTime)) || player.velocity.Length() > 0.1f)
+                    {
+                        player.headRotation = player.headRotation.AngleTowards(0f, 0.042f);
+                        headRotationTime = 0f;
+                        return headRotationTime;
+                    }
+
+                    // Jam to the music in accordance with its BMP.
+                    float beatTime = MathHelper.TwoPi * songInfo.BeatsPerMinute / 3600f;
+                    if (songInfo.HeadBobState == BPMHeadBobState.Half)
+                        beatTime *= 0.5f;
+                    if (songInfo.HeadBobState == BPMHeadBobState.Quarter)
+                        beatTime *= 0.25f;
+
+                    headRotationTime += beatTime;
+                    player.headRotation = (float)Math.Sin(headRotationTime) * 0.276f;
+                    player.eyeHelper.BlinkBecausePlayerGotHurt();
+                    return headRotationTime;
                 case "CanPlayMusicForNPC":
                     int npcID = (int)args[1];
                     return CanPlayMusicForNPC(npcID);
+                case "RegisterAsSoulHeadphones":
+                    Item item = (Item)args[1];
+                    item.value = CalamityGlobalItem.RarityHotPinkBuyPrice;
+                    item.rare = ModContent.RarityType<InfernumSoulDrivenHeadphonesRarity>();
+                    item.Infernum_Tooltips().DeveloperItem = true;
+                    break;
+                case "CanPlaySoulHeadphonesMusic":
+                    string musicName = (string)args[1];
+                    return musicName switch
+                    {
+                        "BereftVassal" => WorldSaveSystem.DownedBereftVassal,
+                        "ExoMechs" => DownedBossSystem.downedExoMechs,
+                        _ => (object)false,
+                    };
             }
             return null;
         }
@@ -49,6 +92,8 @@ namespace InfernumMode.Core.CrossCompatibility
             if (npcID == NPCID.QueenBee)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.SkeletronHead)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.QueenSlimeBoss)
                 return NPC.AnyNPCs(npcID);
             if (npcID is NPCID.Retinazer or NPCID.Spazmatism or NPCID.SkeletronPrime or NPCID.TheDestroyer)
                 return NPC.AnyNPCs(npcID);

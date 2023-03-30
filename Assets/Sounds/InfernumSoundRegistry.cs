@@ -63,15 +63,17 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle CeaselessVoidSwirlSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidSwirl") with { Volume = 0.6f };
 
+        public static readonly SoundStyle CeaselessVoidTeleportSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidTeleport");
+
         public static readonly SoundStyle CeaselessVoidMetalBreakSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidMetalBreak");
 
         public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Assets/Sounds/Custom/CloudElementalWind");
 
-        public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Assets/Sounds/Custom/DeerclopsRubbleAttackDistorted");
+        public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Assets/Sounds/Custom/Deerclops/DeerclopsRubbleAttackDistorted");
 
-        public static readonly SoundStyle DesertScourgeSandstormWindSound = new("InfernumMode/Assets/Sounds/Custom/DesertScourgeSandstormWind");
+        public static readonly SoundStyle DesertScourgeSandstormWindSound = new("InfernumMode/Assets/Sounds/Custom/DesertScourge/DesertScourgeSandstormWind");
 
-        public static readonly SoundStyle DesertScourgeShortRoar = new("InfernumMode/Assets/Sounds/Custom/DesertScourgeShortRoar");
+        public static readonly SoundStyle DesertScourgeShortRoar = new("InfernumMode/Assets/Sounds/Custom/DesertScourge/DesertScourgeShortRoar");
 
         public static readonly SoundStyle DestroyerBombExplodeSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerBombExplode");
 
@@ -83,7 +85,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/DevilfishRoar");
 
-        public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DoGLaugh");
+        public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DevourerOfGods/DoGLaugh");
 
         public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
 
@@ -121,13 +123,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Assets/Sounds/Custom/GulperEelScream");
 
-        public static readonly SoundStyle HeavyExplosionSound = new("InfernumMode/Assets/Sounds/Custom/HeavyExplosion");
-
         public static readonly SoundStyle KingSlimeDeathAnimation = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/KingSlimeDeathAnimation");
 
-        public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Assets/Sounds/Custom/LeviathanSummonBase");
+        public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Assets/Sounds/Custom/Leviathan/LeviathanRumble");
 
-        public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Assets/Sounds/Custom/MoonLordIntro");
+        public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Assets/Sounds/Custom/MoonLord/MoonLordIntro");
 
         public static readonly SoundStyle ModeToggleLaugh = new("InfernumMode/Assets/Sounds/Custom/ModeToggleLaugh");
 
@@ -153,7 +153,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle PolterSoulVortexShootSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterSoulShoot");
 
-        public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Assets/Sounds/Custom/PrimeSaw");
+        public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronPrime/PrimeSaw");
 
         public static readonly SoundStyle ProvidenceBlenderSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Providence/ProvidenceBlender") with { Volume = 2f };
 
@@ -193,7 +193,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle SizzleSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceSizzle");
 
-        public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronHeadBonk");
+        public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/Skeletron/SkeletronHeadBonk");
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
 
@@ -219,7 +219,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle VassalWaterBeamSound = new("InfernumMode/Assets/Sounds/Custom/BereftVassal/VassalWaterBeam");
 
-        public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Assets/Sounds/Custom/WyrmElectricCharge");
+        public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Assets/Sounds/Custom/AEW/WyrmElectricCharge");
 
         public const int AresTelegraphSoundLength = 183;
         #endregion Bosses and Enemies

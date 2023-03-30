@@ -16,8 +16,6 @@ namespace InfernumMode
 
         public static EggPlayer Infernum_Egg(this Player player) => player.GetModPlayer<EggPlayer>();
 
-        public static CustomMusicPlayer Infernum_Music(this Player player) => player.GetModPlayer<CustomMusicPlayer>();
-
         public static PhysicsDefiancePlayer Infernum_PhysicsDefiance(this Player player) => player.GetModPlayer<PhysicsDefiancePlayer>();
 
         public static ProfanedTempleCinderPlayer Infernum_TempleCinder(this Player player) => player.GetModPlayer<ProfanedTempleCinderPlayer>();

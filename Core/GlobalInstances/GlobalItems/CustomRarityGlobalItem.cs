@@ -1,10 +1,6 @@
-﻿using InfernumMode.Content.Rarities;
-using InfernumMode.Content.Rarities.InfernumRarities;
-using System;
-using System.Collections.Generic;
+﻿using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Core;
 
 namespace InfernumMode.Core.GlobalInstances.GlobalItems
 {

@@ -1293,7 +1293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_MirroredCharges(NPC npc, Player target, ref float attackTimer, ref float teleportEffectInterpolant)
         {
-            int teleportAnimationTime = 42;
+            int teleportAnimationTime = 40;
             int ringBulletCount = 18;
             int chargeCount = 6;
             int attackStartDelay = 60;

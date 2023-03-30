@@ -3,7 +3,9 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
@@ -18,9 +20,24 @@ namespace InfernumMode.Common.Graphics
         // Used to store the shadow information.
         private static RenderTarget2D ShadowRenderTarget;
         // Used to store bloom information.
-        private static RenderTarget2D BloomRenderTarget;
-
+        private static RenderTarget2D DownscaledBloomTarget;
+        // Temp target to perform bloom effects to.
         private static RenderTarget2D TempBloomTarget;
+
+        private static RenderTarget2D RaymarchingOccludersTarget;
+
+        private static RenderTarget2D RaymarchingLightsTarget;
+
+        private static RenderTarget2D RaymarchingVoronoiTarget;
+
+        private static RenderTarget2D RaymarchingDisplacementFieldTarget;
+
+        private static RenderTarget2D TempRaymarchingDisplacementFieldTarget;
+
+
+        private static int BloomPasses => InfernumConfig.Instance.ReducedGraphicsConfig ? 3 : 6;
+
+        private static bool UseRaymarching = false;
 
         public override void Load()
         {
@@ -56,16 +73,35 @@ namespace InfernumMode.Common.Graphics
             ShadowRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
             // Ensure it is correctly disposed.
-            if (BloomRenderTarget != null && !BloomRenderTarget.IsDisposed)
-                BloomRenderTarget.Dispose();
+            if (DownscaledBloomTarget != null && !DownscaledBloomTarget.IsDisposed)
+                DownscaledBloomTarget.Dispose();
 
-            BloomRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
-
+            DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight * 0.5f));
             // Ensure it is correctly disposed.
             if (TempBloomTarget != null && !TempBloomTarget.IsDisposed)
                 TempBloomTarget.Dispose();
 
-            TempBloomTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+            TempBloomTarget = new(Main.instance.GraphicsDevice, (int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight * 0.5f));
+
+            if (RaymarchingOccludersTarget != null && !RaymarchingOccludersTarget.IsDisposed)
+                RaymarchingOccludersTarget.Dispose();
+            RaymarchingOccludersTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+
+            if (RaymarchingLightsTarget != null && !RaymarchingLightsTarget.IsDisposed)
+                RaymarchingLightsTarget.Dispose();
+            RaymarchingLightsTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+
+            if (RaymarchingDisplacementFieldTarget != null && !RaymarchingDisplacementFieldTarget.IsDisposed)
+                RaymarchingDisplacementFieldTarget.Dispose();
+            RaymarchingDisplacementFieldTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+
+            if (TempRaymarchingDisplacementFieldTarget != null && !TempRaymarchingDisplacementFieldTarget.IsDisposed)
+                TempRaymarchingDisplacementFieldTarget.Dispose();
+            TempRaymarchingDisplacementFieldTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+
+            if (RaymarchingVoronoiTarget != null && !RaymarchingVoronoiTarget.IsDisposed)
+                RaymarchingVoronoiTarget.Dispose();
+            RaymarchingVoronoiTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
         }
 
         private void DrawRTStuff(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Microsoft.Xna.Framework.Color clearColor)
@@ -78,8 +114,18 @@ namespace InfernumMode.Common.Graphics
             }
 
             // Ensure these are all set.
-            if (LightRenderTarget == null || ScreenCaptureTarget == null || ShadowRenderTarget == null || BloomRenderTarget == null || TempBloomTarget == null)
+            if (LightRenderTarget == null || ScreenCaptureTarget == null || ShadowRenderTarget == null || DownscaledBloomTarget == null 
+                || TempBloomTarget == null || RaymarchingOccludersTarget == null || RaymarchingLightsTarget == null || RaymarchingDisplacementFieldTarget == null 
+                || TempRaymarchingDisplacementFieldTarget == null || RaymarchingVoronoiTarget == null)
                 ResizeRenderTargets(Vector2.Zero);
+
+            // TODO: Fix. Doesn't work properly but its 6 am and i cannot be bothered to do any more today.
+            if (UseRaymarching)
+            {
+                DoRaymarching(Main.spriteBatch, screenTarget1, screenTarget2);
+                orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
+                return;
+            }
 
             // Save the current screen. This will be redrawn later.
             ScreenCaptureTarget.SwapToRenderTarget(Color.Black);
@@ -101,12 +147,100 @@ namespace InfernumMode.Common.Graphics
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }
 
+        private static void DoRaymarching(SpriteBatch spriteBatch, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2)
+        {
+            // For testing purposes, setup the two RTs
+            RaymarchingLightsTarget.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            spriteBatch.Draw(TextureAssets.Sun.Value, new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), Color.White);
+            spriteBatch.Draw(TextureAssets.Sun.Value, new Vector2(Main.screenWidth * 0.3f, Main.screenHeight * 0.7f), Color.White);
+            spriteBatch.Draw(InfernumTextureRegistry.VolcanoWarning.Value, new Vector2(Main.screenWidth * 0.6f, Main.screenHeight * 0.6f), Color.White);
+            spriteBatch.Draw(InfernumTextureRegistry.VolcanoWarning.Value, new Vector2(Main.screenWidth * 0.2f, Main.screenHeight * 0.2f), Color.White);
+            spriteBatch.End();
+
+            // Create the distance field
+            SetupDistanceField(spriteBatch);
+
+            // Raymarch.
+            screenTarget1.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+            return;
+            Effect raymarchShader = InfernumEffectsRegistry.RaymarchingShader.GetShader().Shader;
+
+            raymarchShader.Parameters["lightsTexture"].SetValue(RaymarchingLightsTarget);
+            raymarchShader.Parameters["noiseTexure"].SetValue(InfernumTextureRegistry.SimpleNoise.Value);
+            raymarchShader.Parameters["screenTexture"].SetValue(screenTarget1);
+            raymarchShader.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            raymarchShader.Parameters["screenResolution"].SetValue(screenTarget1.Size());
+            raymarchShader.Parameters["rEmissionMultiplier"].SetValue(1f);
+            raymarchShader.Parameters["rDistanceMod"].SetValue(1f);
+            raymarchShader.CurrentTechnique.Passes["RaymarchPass"].Apply();
+
+            spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+        }
+        private static void SetupDistanceField(SpriteBatch spriteBatch)
+        {
+            Effect mapShader = InfernumEffectsRegistry.DisplacementMap.GetShader().Shader;
+
+            // Setup the voronoi texture.
+            RaymarchingVoronoiTarget.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            mapShader.Parameters["screenResolution"].SetValue(RaymarchingLightsTarget.Size());
+            mapShader.CurrentTechnique.Passes["VoronoiPass"].Apply();
+            spriteBatch.Draw(RaymarchingOccludersTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+            RaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin();
+            spriteBatch.Draw(RaymarchingVoronoiTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+            // The number of passes required is the log2 of the largest viewport dimension rounded up to the nearest power of 2.
+            var passes = MathF.Log(MathF.Max(RaymarchingOccludersTarget.Size().X, RaymarchingOccludersTarget.Size().Y) / MathF.Log(2));
+
+            // Create the voronoi image.
+            for (int i = 0; i < passes; i++)
+            {
+                // The offset for each pass is half the previous one, starting at half the square resolution rounded up to nearest power 2.
+                float offset = MathF.Pow(2, passes - i - 1);
+                if (i % 2 == 0)
+                    TempRaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+                else
+                    RaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+                mapShader.Parameters["jfimageResolution"].SetValue(TempRaymarchingDisplacementFieldTarget.Size());
+                mapShader.Parameters["jfOffset"].SetValue(offset);
+                mapShader.CurrentTechnique.Passes["JumpFloodPass"].Apply();
+
+                if (i == 0)
+                    spriteBatch.Draw(RaymarchingVoronoiTarget, Vector2.Zero, Color.White);
+                else if (i % 2 == 0)
+                    spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+                else
+                    spriteBatch.Draw(TempRaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+                spriteBatch.End();
+            }
+
+
+            // Turn it into a distance map.
+            RaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            mapShader.Parameters["dDistanceModifier"].SetValue(0.3f);
+            mapShader.CurrentTechnique.Passes["DisplacementPass"].Apply();
+            spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+        }
+
         private static void DrawLighting(SpriteBatch spriteBatch, RenderTarget2D screenTarget, out float intensity)
         {
             // Swap to the main lighting RT.
             LightRenderTarget.SwapToRenderTarget(Color.Black);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             // Set the shader params.
             Effect lighting = InfernumEffectsRegistry.BasicLightingShader.GetShader().Shader;
             // Set the gradient texture to sample from.
@@ -134,7 +268,7 @@ namespace InfernumMode.Common.Graphics
             }
 
             // Night time should be a bit dimmer.
-            lighting.Parameters["intensity"].SetValue(Main.dayTime ? intensity : 0.8f);
+            lighting.Parameters["intensity"].SetValue(Main.dayTime ? intensity : 0.75f);
             // Apply the shader
             lighting.CurrentTechnique.Passes[0].Apply();
 
@@ -178,9 +312,9 @@ namespace InfernumMode.Common.Graphics
                 for (int i = 0; i < 30; i++)
                 {
                     Color color = Color.White;
-                    float alphaModifer = 0.55f * (30f - i) / 90f;
+                    float alphaModifer = 0.55f * (30f - i) / 80;
                     color.A = (byte)(color.A * alphaModifer * (1.1f * (lightIntensity * 0.5f - 0.1f)));
-                    float scale = 1f + i * 0.011322f;
+                    float scale = 1f + i * 0.005f;
                     spriteBatch.Draw(ShadowRenderTarget, drawPosOrigin, null, color, 0f, drawPosOrigin, scale, SpriteEffects.None, 0f);
                 }
             }
@@ -191,8 +325,8 @@ namespace InfernumMode.Common.Graphics
                 for (int i = 0; i < 20; i++)
                 {
                     Color color = Color.White;
-                    float alpha = (20f - i) / 150f;
-                    float scale = (1f + i * 0.01f);
+                    float alpha = (20f - i) / 120f;
+                    float scale = (1f + i * 0.005f);
                     spriteBatch.Draw(ShadowRenderTarget, drawPosOrigin, null, color * alpha, 0f, drawPosOrigin, scale, SpriteEffects.None, 0f);
                 }
             }
@@ -225,56 +359,47 @@ namespace InfernumMode.Common.Graphics
 
         private static void DoBloomEffect(SpriteBatch spriteBatch, RenderTarget2D screenTarget)
         {
-            // Store the current screen in the shadow RT.
-            ShadowRenderTarget.SwapToRenderTarget(Color.Black);
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            spriteBatch.Draw(screenTarget, Vector2.Zero, Color.White);
-            spriteBatch.End();
-            
-            // Swap to the now redundant lighting target, and draw the original screen with a filter shader.
-            LightRenderTarget.SwapToRenderTarget(Color.Black);
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
-            var shader = InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.GetShader().Shader;
-            shader.Parameters["prefilteringThreshold"].SetValue(0.9f);
-            shader.CurrentTechnique.Passes["PrefilteringPass"].Apply();
-            spriteBatch.Draw(ScreenCaptureTarget, Vector2.Zero, Color.White);
+            // Swap to the downscaled bloom target and store a filtered pass of the screen.
+            DownscaledBloomTarget.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            Effect bloomEffect = InfernumEffectsRegistry.BloomShader.GetShader().Shader;
+            bloomEffect.Parameters["filterThreshold"].SetValue(0.99f);
+            bloomEffect.CurrentTechnique.Passes["FilterPass"].Apply();
+            // Draw the screen to it at half size. This "downscales" it and creates a better bloom effect when upscaling it.
+            spriteBatch.Draw(ScreenCaptureTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
             spriteBatch.End();
 
-            // Swap to the bloom target and draw the filtered RT with the blur effect.
-            BloomRenderTarget.SwapToRenderTarget(Color.Black);
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
-            shader.Parameters["uImageSize1"].SetValue(LightRenderTarget.Size());
-            shader.Parameters["blurMaxOffset"].SetValue(10f);
-            shader.CurrentTechnique.Passes["DownsamplePass"].Apply();
-            spriteBatch.Draw(LightRenderTarget, Vector2.Zero, Color.White);
+            // Perform blurring.
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            bloomEffect.Parameters["textureSize"].SetValue(DownscaledBloomTarget.Size());
+
+            // This performs multiple passes of blurring. More = better quality but also more performance costly.
+            for (int i = 0; i < BloomPasses; i++)
+            {
+                // Swap to the temp target.
+                TempBloomTarget.SwapToRenderTarget(Color.Black);
+
+                // Perform the horizontal pass first.
+                bloomEffect.Parameters["horizontal"].SetValue(true);
+                bloomEffect.CurrentTechnique.Passes["BlurPass"].Apply();
+                spriteBatch.Draw(DownscaledBloomTarget, Vector2.Zero, Color.White);
+
+                // Then draw it to the main target and do the vertical pass. Ensure the already blurred one is drawn through.
+                DownscaledBloomTarget.SwapToRenderTarget(Color.Black);
+                bloomEffect.Parameters["horizontal"].SetValue(false);
+                bloomEffect.CurrentTechnique.Passes["BlurPass"].Apply();
+                spriteBatch.Draw(TempBloomTarget, Vector2.Zero, Color.White);
+            }
             spriteBatch.End();
 
-            // Swap to the temp target, and draw the bloom.
-            TempBloomTarget.SwapToRenderTarget(Color.Black);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
-
-            Main.instance.GraphicsDevice.Textures[1] = BloomRenderTarget;
-
-            // Get the intensity and use that for the blur amount.
-            Color skyColor = Main.ColorOfTheSkies;
-            float intensity = Main.dayTime ? (skyColor.R * 0.3f + skyColor.G * 0.6f + skyColor.B * 0.1f) / 255f * 0.75f : 0.8f;
-            shader.Parameters["maxSaturationAdditive"].SetValue(intensity);
-            shader.Parameters["blurExponent"].SetValue(1.53f);
-
-            float saturationBias = 0.3f;
-            float brightness = intensity * 4.5f;
-            shader.Parameters["blurAdditiveBrightness"].SetValue(brightness);
-            shader.Parameters["blurSaturationBiasInterpolant"].SetValue(saturationBias);
-            shader.Parameters["onlyShowBlurMap"].SetValue(false);
-            shader.CurrentTechnique.Passes["ScreenPass"].Apply();
-            spriteBatch.Draw(ShadowRenderTarget, Vector2.Zero, Color.White);
-            spriteBatch.End();
-
-            // Swap to the main screen target and draw both the original screen and the bloomed one.
+            // Swap back to the screen target, and perform the bloom blending.
             screenTarget.SwapToRenderTarget(Color.Black);
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-            spriteBatch.Draw(ShadowRenderTarget, Vector2.Zero, Color.White * 0.65f);
-            spriteBatch.Draw(TempBloomTarget, Vector2.Zero, Color.White);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+            bloomEffect.Parameters["bloomScene"].SetValue(DownscaledBloomTarget);
+            bloomEffect.Parameters["downsampledSize"].SetValue(1f);
+            bloomEffect.Parameters["bloomIntensity"].SetValue(1.1f);
+            bloomEffect.CurrentTechnique.Passes["BloomPass"].Apply();
+            spriteBatch.Draw(screenTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0);
             spriteBatch.End();
         }
 
@@ -295,35 +420,38 @@ namespace InfernumMode.Common.Graphics
 
         private static void DisposeOfTargets()
         {
-            // Ensure it is correctly disposed.
-            if (LightRenderTarget != null && !LightRenderTarget.IsDisposed)
-                LightRenderTarget.Dispose();
+            Main.RunOnMainThread(() =>
+            {
+                // Ensure it is correctly disposed.
+                if (LightRenderTarget != null && !LightRenderTarget.IsDisposed)
+                    LightRenderTarget.Dispose();
 
-            LightRenderTarget = null;
+                LightRenderTarget = null;
 
-            // Ensure it is correctly disposed.
-            if (ScreenCaptureTarget != null && !ScreenCaptureTarget.IsDisposed)
-                ScreenCaptureTarget.Dispose();
+                // Ensure it is correctly disposed.
+                if (ScreenCaptureTarget != null && !ScreenCaptureTarget.IsDisposed)
+                    ScreenCaptureTarget.Dispose();
 
-            ScreenCaptureTarget = null;
+                ScreenCaptureTarget = null;
 
-            // Ensure it is correctly disposed.
-            if (ShadowRenderTarget != null && !ShadowRenderTarget.IsDisposed)
-                ShadowRenderTarget.Dispose();
+                // Ensure it is correctly disposed.
+                if (ShadowRenderTarget != null && !ShadowRenderTarget.IsDisposed)
+                    ShadowRenderTarget.Dispose();
 
-            ShadowRenderTarget = null;
+                ShadowRenderTarget = null;
 
-            // Ensure it is correctly disposed.
-            if (BloomRenderTarget != null && !BloomRenderTarget.IsDisposed)
-                BloomRenderTarget.Dispose();
+                // Ensure it is correctly disposed.
+                if (DownscaledBloomTarget != null && !DownscaledBloomTarget.IsDisposed)
+                    DownscaledBloomTarget.Dispose();
 
-            BloomRenderTarget = null;
+                DownscaledBloomTarget = null;
 
-            // Ensure it is correctly disposed.
-            if (TempBloomTarget != null && !TempBloomTarget.IsDisposed)
-                TempBloomTarget.Dispose();
+                // Ensure it is correctly disposed.
+                if (TempBloomTarget != null && !TempBloomTarget.IsDisposed)
+                    TempBloomTarget.Dispose();
 
-            TempBloomTarget = null;
+                TempBloomTarget = null;
+            });
         }
 
         private static void ModifyIntensityBasedOnBiomes(ref float intensity)

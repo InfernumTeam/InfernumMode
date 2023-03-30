@@ -63,18 +63,21 @@ namespace InfernumMode.Assets.Effects
 
         #region Screen Shaders
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
+        public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
+        public static Filter BloomShader => Filters.Scene["InfernumMode:Bloom"];
         public static Filter CalCloneScreenShader => Filters.Scene["InfernumMode:CalClone"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
+        public static Filter DisplacementMap => Filters.Scene["InfernumMode:DisplacementMap"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
         public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
         public static Filter FireballShader => Filters.Scene["Infernum:FireballShader"];
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
-        public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
+        public static Filter RaymarchingShader => Filters.Scene["InfernumMode:Raymarching"];
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
         public static Filter ScreenBorderShader => Filters.Scene["InfernumMode:ScreenBorder"];
@@ -162,9 +165,6 @@ namespace InfernumMode.Assets.Effects
             Ref<Effect> shadowflameShader = new(assets.Request<Effect>("Assets/Effects/Primitives/Shadowflame", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:Fire"] = new MiscShaderData(shadowflameShader, "TrailPass");
 
-            Ref<Effect> gaussianBlur = new(assets.Request<Effect>("Assets/Effects/Overlays/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["InfernumMode:GaussianBlur"] = new MiscShaderData(gaussianBlur, "ScreenPass");
-
             Ref<Effect> genericLaserShader = new(assets.Request<Effect>("Assets/Effects/Primitives/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");
 
@@ -240,6 +240,18 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Raymarching shader.
+            Ref<Effect> raymarchingShader = new(assets.Request<Effect>("Assets/Effects/Overlays/RaymarchingShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:Raymarching"] = new Filter(new(raymarchingShader, "RaymarchPass"), EffectPriority.VeryHigh);
+
+            // Displacement map shader.
+            Ref<Effect> displacementMap = new(assets.Request<Effect>("Assets/Effects/Overlays/DisplacementMapShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:DisplacementMap"] = new Filter(new(displacementMap, "DisplacementPass"), EffectPriority.VeryHigh);
+
+            // Bloom shader.
+            Ref<Effect> bloomShader = new(assets.Request<Effect>("Assets/Effects/Overlays/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:Bloom"] = new Filter(new(bloomShader, "BloomPass"), EffectPriority.VeryHigh);
+
             // Basic fake shadows shader.
             Ref<Effect> shadowShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ShadowShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:ShadowShader"] = new Filter(new(shadowShader, "GetShadowPass"), EffectPriority.VeryHigh);

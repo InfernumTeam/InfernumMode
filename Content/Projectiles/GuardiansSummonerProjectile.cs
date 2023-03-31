@@ -188,7 +188,6 @@ namespace InfernumMode.Content.Projectiles
                 SoundEngine.PlaySound(Providence.HurtSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.6f, Pitch = 0.6f });
-                SoundEngine.PlaySound(InfernumSoundRegistry.GuardianSpawnSound);
 
                 ScreenEffectSystem.SetBlurEffect(MainPosition, 1f, 45);
 

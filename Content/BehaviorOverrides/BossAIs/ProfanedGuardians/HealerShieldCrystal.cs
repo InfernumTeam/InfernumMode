@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DoBehavior_Shatter(Player target)
         {
-            float attackLength = 180;
+            float attackLength = 90;
             float offsetAmount = MathHelper.Lerp(0, 15, ShatteringTimer / attackLength * NPC.Opacity);
             NPC.Center = InitialPosition + Main.rand.NextVector2Circular(offsetAmount, offsetAmount);
             NPC.netUpdate = true;

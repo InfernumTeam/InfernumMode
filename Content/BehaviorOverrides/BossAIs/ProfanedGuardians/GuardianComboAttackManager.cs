@@ -886,7 +886,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Die once the animation is complete.
                     npc.life = 0;
                     npc.active = false;
-                    SoundEngine.PlaySound(InfernumSoundRegistry.GuardiansPhaseTwoTransition, target.Center);
+                    DoPhaseTransitionEffects(commander, 2);
                 }
             }
         }
@@ -1738,7 +1738,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float dashPositioningWaitTime = 45f;
                 float flySpeed = 33f;
                 float dashTime = 40f;
-                float dashSpeed = 19f;
+                float dashSpeed = 16f;
                 float dashAcceleration = 1.15f;
 
                 Vector2 oldHoverOffset = new(hoverOffsetX, hoverOffsetY);
@@ -1905,6 +1905,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Ensure they are fully faded in.
             npc.Opacity = 1f;
+            // Stop this drawing.
+            commander.Infernum().ExtraAI[FireBorderShouldDrawIndex] = 0;
 
             // The commander spawns in the hands, moves towards your top right, pulls the defender into its hands, spins it around itself twice then lobs it at the player at mach 10.
             if (npc.type == CommanderType)
@@ -2953,6 +2955,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Make the spear rotation point to the player.
             float idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
             spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
+        }
+
+        public static void DoPhaseTransitionEffects(NPC commander, int phaseTransition)
+        {
+            commander.Infernum().ExtraAI[GuardianSkyExtraIntensityIndex] = phaseTransition switch
+            {
+                1 => 0.6f,
+                2 => 0.8f,
+                _ => 1f
+            };
+
+            SoundStyle soundToPlay = phaseTransition switch
+            {
+                1 => InfernumSoundRegistry.GuardianSpawnSound,
+                2 => InfernumSoundRegistry.GuardiansPhaseTwoTransition,
+                _ => InfernumSoundRegistry.GuardiansPhaseThreeTransition
+            };
+            SoundEngine.PlaySound(soundToPlay);
+
+            if (Main.player.IndexInRange(commander.target))
+            {
+                Main.player[commander.target].Infernum_Camera().CurrentScreenShakePower = commander.Infernum().ExtraAI[GuardianSkyExtraIntensityIndex] * 12f;
+                ScreenEffectSystem.SetBlurEffect(commander.Center, 2f, 90);
+            }
         }
 
         public static void SelectNewAttack(NPC commander, ref float universalAttackTimer, float specificAttackToSwapTo = -1)

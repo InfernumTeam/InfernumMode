@@ -87,10 +87,16 @@ namespace InfernumMode.Content.Skies
 
         public override void Update(GameTime gameTime)
         {
+            float extraOpacity = 0f;
+            if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) && Main.npc[CalamityGlobalNPC.doughnutBoss].active)
+                extraOpacity = Main.npc[CalamityGlobalNPC.doughnutBoss].Infernum().ExtraAI[GuardianComboAttackManager.GuardianSkyExtraIntensityIndex];
+
             if (isActive && intensity < 1f)
                 intensity = MathHelper.Clamp(intensity + 0.005f, 0f, MaxIntensity);
             else if (!isActive && intensity > 0f)
                 intensity = MathHelper.Clamp(intensity - 0.005f, 0f, MaxIntensity);
+
+            intensity += extraOpacity;
 
             if (NPC.FindFirstNPC(ModContent.NPCType<ProfanedGuardianCommander>()) == -1)
                 Deactivate();

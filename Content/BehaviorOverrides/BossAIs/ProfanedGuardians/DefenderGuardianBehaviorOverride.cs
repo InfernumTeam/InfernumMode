@@ -27,8 +27,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Common.Graphics.Particles;
 using Terraria.GameContent.Events;
 using InfernumMode.Core;
-using CalamityMod.Buffs.StatDebuffs;
-using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
@@ -158,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 4f }, target.Center);
                         SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 6f }, target.Center);
 
-                        SoundEngine.PlaySound(InfernumSoundRegistry.GuardiansPhaseThreeTransition, target.Center);
+                        DoPhaseTransitionEffects(commander, 1);
 
                         if (CalamityConfig.Instance.Screenshake)
                         {

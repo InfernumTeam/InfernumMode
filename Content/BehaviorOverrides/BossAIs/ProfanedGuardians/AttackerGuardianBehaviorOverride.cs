@@ -1,10 +1,16 @@
 using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Content.Buffs;
+using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +22,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
-using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Content.Projectiles.Wayfinder;
-using CalamityMod.Buffs.StatDebuffs;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Content.Buffs;
 using static InfernumMode.Common.Graphics.Primitives.PrimitiveTrailCopy;
-using ReLogic.Content;
-using InfernumMode.Common.Graphics.Primitives;
-
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride
@@ -58,10 +56,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             CalamityGlobalNPC.doughnutBoss = npc.whoAmI;
 
             // Summon the defender and healer guardian.
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[1] == 0f)
+            if (npc.localAI[1] == 0f)
             {
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)DefenderStartingHoverPosition.X + 20, (int)DefenderStartingHoverPosition.Y + 90, ModContent.NPCType<ProfanedGuardianDefender>());
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)HealerStartingHoverPosition.X + 20, (int)HealerStartingHoverPosition.Y + 90, ModContent.NPCType<ProfanedGuardianHealer>());
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)DefenderStartingHoverPosition.X + 20, (int)DefenderStartingHoverPosition.Y + 90, ModContent.NPCType<ProfanedGuardianDefender>());
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)HealerStartingHoverPosition.X + 20, (int)HealerStartingHoverPosition.Y + 90, ModContent.NPCType<ProfanedGuardianHealer>());
+                }
+                DoPhaseTransitionEffects(npc, 1);
                 npc.localAI[1] = 1f;
             }
 
@@ -71,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Despawn if no valid target exists.
             npc.timeLeft = 3600;
             Player target = Main.player[npc.target];
-            if ((!target.active || target.dead) || target.Center.X < WorldSaveSystem.ProvidenceArena.X * 16)
+            if (((!target.active || target.dead) || target.Center.X < WorldSaveSystem.ProvidenceArena.X * 16) || !Main.dayTime)
             {
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
                 if (npc.timeLeft < 180)
@@ -150,6 +152,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 fireBorderOpacity = MathHelper.Clamp(fireBorderOpacity + 0.1f, 0f, 1f);
             else
                 fireBorderOpacity = MathHelper.Clamp(fireBorderOpacity - 0.1f, 0f, 1f);
+
+            // Decrease the extra sky opacity;
+            ref float skyOpacity = ref npc.Infernum().ExtraAI[GuardianSkyExtraIntensityIndex];
+            skyOpacity = MathHelper.Clamp(skyOpacity - 0.01f, 0f, 1f);
 
             // Force the player into the area if the opacity is drawn.
             if (fireBorderOpacity > 0f && target.Center.Distance(npc.Center) > 1150f)
@@ -361,7 +367,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Draw an overlay.
             ref float glowAmount = ref npc.Infernum().ExtraAI[CommanderAngerGlowAmountIndex];
             if (glowAmount > 0f && (GuardiansAttackType)npc.ai[0] is GuardiansAttackType.HealerDeathAnimation)
-                DrawAngerOverlay(npc, spriteBatch, texture, glowmask, lightColor, direction, glowAmount);
+                DrawAngerOverlay(npc, spriteBatch, texture, glowmask, direction, glowAmount);
 
             if (shouldDrawShield)
                 DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
@@ -454,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public static void DrawAngerOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Color lightColor, SpriteEffects direction, float glowAmount)
+        public static void DrawAngerOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, SpriteEffects direction, float glowAmount)
         {
             spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 } * glowAmount * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 } * glowAmount * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
@@ -530,7 +536,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            
+
             // Get variables.
             List<VertexPosition2DColor> vertices = new();
             float totalPoints = 200;
@@ -570,8 +576,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static void DrawTempleBorder(NPC npc, SpriteBatch spriteBatch)
         {
-            DrawTestPrims(npc, spriteBatch);
-
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -610,11 +614,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient", AssetRequestMode.ImmediateLoad).Value;
             Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
             spriteBatch.ExitShaderRegion();
-
-        }
-
-        public static void DrawTestPrims(NPC npc, SpriteBatch spriteBatch)
-        {
 
         }
         #endregion Draw Effects

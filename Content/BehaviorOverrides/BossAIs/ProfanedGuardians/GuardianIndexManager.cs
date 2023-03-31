@@ -189,6 +189,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public const int FireBorderShouldDrawIndex = 41;
 
+        public const int GuardianSkyExtraIntensityIndex = 42;
+
         public const int CommanderBrightnessWidthFactorIndex = 50;
 
         public const int CommanderAttackCyclePositionIndex = 51;

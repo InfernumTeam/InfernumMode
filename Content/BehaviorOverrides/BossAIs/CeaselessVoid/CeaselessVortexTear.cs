@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 return false;
 
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.oldPos[0] + Projectile.Size * 0.5f, Projectile.Center, WidthFunction(0.2f) * 0.1f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.oldPos[0] + Projectile.Size * 0.5f, Projectile.Center, WidthFunction(0.3f) * 0.25f, ref _);
         }
 
         public override void Kill(int timeLeft)
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 return;
 
             Vector2 end = Projectile.Center - 20f * Projectile.velocity;
-            Utilities.NewProjectileBetter(end, Vector2.Zero, ModContent.ProjectileType<CeaselessEnergyPulse>(), CeaselessVoidBehaviorOverride.EnergyPulseDamage, 0f);
+            Utilities.NewProjectileBetter(end, Vector2.Zero, ModContent.ProjectileType<CeaselessEnergyPulse>(), EnergyPulseDamage, 0f);
 
             for (int i = 0; i < 6; i++)
                 Utilities.NewProjectileBetter(end, (MathHelper.TwoPi * i / 6f + MathHelper.Pi / 6f).ToRotationVector2() * 6f, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);

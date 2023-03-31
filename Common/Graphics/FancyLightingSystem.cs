@@ -104,7 +104,7 @@ namespace InfernumMode.Common.Graphics
             RaymarchingVoronoiTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
         }
 
-        private void DrawRTStuff(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Microsoft.Xna.Framework.Color clearColor)
+        private void DrawRTStuff(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
         {
             // This has its own config due to being mildly demanding.
             if (!InfernumConfig.Instance.FancyLighting)
@@ -114,8 +114,8 @@ namespace InfernumMode.Common.Graphics
             }
 
             // Ensure these are all set.
-            if (LightRenderTarget == null || ScreenCaptureTarget == null || ShadowRenderTarget == null || DownscaledBloomTarget == null 
-                || TempBloomTarget == null || RaymarchingOccludersTarget == null || RaymarchingLightsTarget == null || RaymarchingDisplacementFieldTarget == null 
+            if (LightRenderTarget == null || ScreenCaptureTarget == null || ShadowRenderTarget == null || DownscaledBloomTarget == null
+                || TempBloomTarget == null || RaymarchingOccludersTarget == null || RaymarchingLightsTarget == null || RaymarchingDisplacementFieldTarget == null
                 || TempRaymarchingDisplacementFieldTarget == null || RaymarchingVoronoiTarget == null)
                 ResizeRenderTargets(Vector2.Zero);
 
@@ -333,7 +333,7 @@ namespace InfernumMode.Common.Graphics
             spriteBatch.End();
 
             // Draw the shadows to the actual shadow render target.
-            ShadowRenderTarget.SwapToRenderTarget(Color.Black);          
+            ShadowRenderTarget.SwapToRenderTarget(Color.Black);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             spriteBatch.Draw(screenTarget, Vector2.Zero, Color.White);
             spriteBatch.End();

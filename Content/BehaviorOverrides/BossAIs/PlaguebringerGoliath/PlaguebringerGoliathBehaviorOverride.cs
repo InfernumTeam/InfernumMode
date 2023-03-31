@@ -521,7 +521,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.velocity *= 0.935f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f || fuckingChargeAnyway)
+                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 32f || fuckingChargeAnyway)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;

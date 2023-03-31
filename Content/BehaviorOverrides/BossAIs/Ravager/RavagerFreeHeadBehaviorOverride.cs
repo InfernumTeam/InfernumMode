@@ -79,28 +79,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     }
                 }
             }
-            else
-            {
-                cinderShootRate = 60;
-                hoverDestination = target.Center - Vector2.UnitY * 450f;
-                wrappedAttackTimer = attackTimer % cinderShootRate;
-                telegraphInterpolant = Utils.GetLerpValue(cinderShootRate - 25f, cinderShootRate, wrappedAttackTimer, true);
-
-                if (wrappedAttackTimer == cinderShootRate - 1f)
-                {
-                    SoundEngine.PlaySound(SoundID.Item72, cinderShootPosition);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        for (int i = 0; i < 3; i++)
-                        {
-                            Vector2 cinderShootVelocity = aimDirection.RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 2f)) * 14f;
-                            Utilities.NewProjectileBetter(cinderShootPosition, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
-                        }
-                        npc.velocity -= aimDirection * 5f;
-                        npc.netUpdate = true;
-                    }
-                }
-            }
 
             // Hover into position.
             float acceleration = target.HoldingTrueMeleeWeapon() ? 0.2f : 0.7f;

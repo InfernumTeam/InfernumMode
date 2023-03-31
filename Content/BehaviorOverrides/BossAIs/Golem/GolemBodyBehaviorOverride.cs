@@ -1462,7 +1462,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer >= 25f && attackTimer % laserReleaseRate == laserReleaseRate - 1f)
             {
                 Vector2 laserSpawnOffsetFactors = new(Main.rand.NextBool().ToDirectionInt() * 0.95f, Main.rand.NextFloat(-0.85f, 0.85f));
-                Vector2 laserSpawnPosition = npc.Infernum().Arena.Center.ToVector2() + npc.Infernum().Arena.Size() * laserSpawnOffsetFactors * 0.467f;
+                Vector2 laserSpawnPosition = npc.Infernum().Arena.Center.ToVector2() + npc.Infernum().Arena.Size() * laserSpawnOffsetFactors * 0.51f;
                 SoundEngine.PlaySound(SoundID.Item12, laserSpawnPosition);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)

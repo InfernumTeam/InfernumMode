@@ -5,6 +5,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
@@ -313,7 +314,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CanHitPlayer(npc, target, ref cooldownSlot);
 
-            if (npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>())
+            if (npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>() || npc.type == ModContent.NPCType<DarkEnergy>())
                 cooldownSlot = ImmunityCooldownID.Bosses;
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())

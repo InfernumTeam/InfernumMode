@@ -78,7 +78,7 @@ namespace InfernumMode.Common.Graphics
             // It could theoretically be loaded into a binary file in some way but at that point you're going to need to translate it into some GPU-friendly object, like a render target.
             // It's easiest to just create it dynamically here.
             // There are a LOT of calculations needed to generate the entire texture though, hence the usage of background threads.
-            KalisetFractal = new(false, (width, height) =>
+            KalisetFractal = new(false, (_, _2) =>
             {
                 return new(Main.instance.GraphicsDevice, width, height, false, SurfaceFormat.Single, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
             });

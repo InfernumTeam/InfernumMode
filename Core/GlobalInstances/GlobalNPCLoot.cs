@@ -214,7 +214,19 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DevourerOfGodsRelic>());
 
             if (npc.type == ModContent.NPCType<Yharon>())
+            {
+                // UNLIMITED CHICKEN NUGGET
+                npcLoot.Add(new DropOneByOne(ItemID.ChickenNugget, new DropOneByOne.Parameters()
+                {
+                    ChanceNumerator = 1,
+                    ChanceDenominator = 1,
+                    MinimumStackPerChunkBase = 10,
+                    MaximumStackPerChunkBase = 15,
+                    MinimumItemDropsCount = 600,
+                    MaximumItemDropsCount = 700
+                }));
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
+            }
 
             if (npc.type == ModContent.NPCType<AdultEidolonWyrmHead>())
             {

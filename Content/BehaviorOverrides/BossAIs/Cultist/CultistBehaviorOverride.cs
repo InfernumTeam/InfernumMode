@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.Sounds;
@@ -109,13 +110,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             if (initialXPosition == 0f)
             {
-                initialXPosition = npc.Center.X;
+                initialXPosition = target.Center.X;
                 npc.netUpdate = true;
             }
 
             // Use the desperation attack after "dying".
             if (npc.Infernum().ExtraAI[6] == 1f)
                 attackState = CultistAIState.DesperationAttack;
+
+            // Lol. Lmao.
+            if (target.HasBuff(BuffID.Electrified))
+                target.ClearBuff(BuffID.Electrified);
+            if (target.HasBuff(ModContent.BuffType<HolyFlames>()))
+                target.ClearBuff(ModContent.BuffType<HolyFlames>());
 
             if (dying)
             {
@@ -635,36 +642,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             int summonLightningTime = phase2 ? 27 : 36;
             int lightningBurstTime = (hoverTime + summonLightningTime) * lightningBurstCount;
             int attackLength = lightningBurstTime + 20;
-
-            int nebulaTelegraphTime = 50;
-            int nebulaShootTime = 50;
-            int lightningCount = 18;
-            int nebulaLightningCycleCount = 2;
-            int nebulaLightningShootTime = (nebulaTelegraphTime + nebulaShootTime + 10) * nebulaLightningCycleCount;
-            Vector2 lightningSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 20f;
-            if (phase2)
-                attackLength += (nebulaTelegraphTime + nebulaShootTime + 10) * nebulaLightningCycleCount - 2;
             ref float nebulaLightningDirection = ref npc.Infernum().ExtraAI[0];
             ref float telegraphSummonCounter = ref npc.Infernum().ExtraAI[1];
-
-            // Play a chant sound and create pink dust prior to releasing red lightning.
-            if (phase2 && attackTimer >= attackLength - nebulaLightningShootTime - 35f && attackTimer < attackLength - nebulaLightningShootTime + 5f)
-            {
-                // Release hand electric dust.
-                for (int j = 0; j < 2; j++)
-                {
-                    Dust electricity = Dust.NewDustPerfect(lightningSpawnPosition, 264);
-                    electricity.velocity = Vector2.UnitX.RotatedByRandom(0.2f) * npc.spriteDirection * 2.6f;
-                    electricity.scale = Main.rand.NextFloat(1.3f, 1.425f);
-                    electricity.fadeIn = 0.9f;
-                    electricity.color = Color.Red;
-                    electricity.noLight = true;
-                    electricity.noGravity = true;
-                }
-            }
-
-            if (phase2 && attackTimer == attackLength - nebulaLightningShootTime + 5f)
-                SoundEngine.PlaySound(SoundID.Zombie91, npc.Center);
 
             // Hover and fly above the player.
             if (attackTimer % (hoverTime + summonLightningTime) < hoverTime && attackTimer < lightningBurstTime + 20)
@@ -777,62 +756,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 frameType = (int)CultistFrameState.RaiseArmsUp;
             }
 
-            // Release a torrent of telegraphed nebula lightning in phase 2.
-            else if (phase2)
-            {
-                // Hold hands out.
-                frameType = (int)CultistFrameState.HoldArmsOut;
-
-                npc.velocity *= 0.95f;
-
-                float wrappedAttackTimer = (attackTimer - lightningBurstTime - 3f) % (nebulaTelegraphTime + nebulaShootTime);
-
-                // Create telegraph lines.
-                if (wrappedAttackTimer < nebulaTelegraphTime)
-                {
-                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    if (wrappedAttackTimer == 1f && telegraphSummonCounter < nebulaLightningCycleCount)
-                    {
-                        // Play a firing sound.
-                        SoundEngine.PlaySound(SoundID.Item72, target.Center);
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            nebulaLightningDirection = npc.AngleTo(target.Center);
-                            telegraphSummonCounter++;
-                            for (int i = 0; i < lightningCount; i++)
-                            {
-                                Vector2 telegraphDirection = (MathHelper.TwoPi * i / lightningCount + nebulaLightningDirection).ToRotationVector2();
-
-                                ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
-                                {
-                                    telegraph.localAI[0] = MathHelper.Lerp(1f, 0.35f, i / (float)(lightningCount - 1f));
-                                });
-                                Utilities.NewProjectileBetter(npc.Center, telegraphDirection, ModContent.ProjectileType<NebulaTelegraphLine>(), 0, 0f, -1, 0f, nebulaTelegraphTime - 1f);
-                            }
-                            npc.netUpdate = true;
-                        }
-                    }
-                }
-
-                // Release the nebula lightning.
-                else if (wrappedAttackTimer % 3f == 2f && wrappedAttackTimer < nebulaTelegraphTime + nebulaShootTime)
-                {
-                    float shootInterpolant = Utils.GetLerpValue(nebulaTelegraphTime, nebulaTelegraphTime + nebulaShootTime, wrappedAttackTimer, true);
-                    Vector2 lightningVelocity = (MathHelper.TwoPi * shootInterpolant + nebulaLightningDirection).ToRotationVector2() * 1.87f;
-                    lightningSpawnPosition -= lightningVelocity * 40f;
-
-                    npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
-                    SoundEngine.PlaySound(SoundID.Item72, target.Center);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 200, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
-                }
-            }
-
             if (attackTimer >= attackLength)
             {
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<FireballLineTelegraph>(), ModContent.ProjectileType<PinkLightning>());
+                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<FireballLineTelegraph>());
                 SelectNextAttack(npc);
             }
         }

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
@@ -76,6 +77,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             Player target = Main.player[npc.target];
+
+            // Lol. Lmao.
+            if (target.HasBuff(ModContent.BuffType<AstralInfectionDebuff>()))
+                target.ClearBuff(ModContent.BuffType<AstralInfectionDebuff>());
 
             // Create a beacon if none exists.
             List<Projectile> beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
@@ -680,8 +685,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int plasmaShootRate = (int)MathHelper.Lerp(54f, 28f, beaconAngerFactor);
             int crystalShootRate = 45;
             bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
-            float flySpeed = 16.5f;
-            float flyTurnSpeed = 0.035f;
+            float flySpeed = 18.5f;
+            float flyTurnSpeed = 0.039f;
             float plasmaShootSpeed = 12.5f;
             ref float plasmaShootTimer = ref npc.Infernum().ExtraAI[0];
 

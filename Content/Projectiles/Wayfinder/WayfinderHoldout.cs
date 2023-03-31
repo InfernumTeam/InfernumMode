@@ -226,6 +226,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 {
                     Owner.Bottom = WorldSaveSystem.WayfinderGateLocation;
                     Owner.velocity = Vector2.Zero;
+                    Owner.noFallDmg = true;
                     CreateFlameExplosion(Owner.Center, 10, 20, 40, 0.6f, 60);
                 }
                 else
@@ -315,7 +316,10 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                         new CustomTileConditions.ActiveAndNotActuated()
                     }), out Point newBottom);
 
-                    WorldSaveSystem.WayfinderGateLocation = newBottom.ToWorldCoordinates(8, 0);
+                    if (newBottom != GenSearch.NOT_FOUND)
+                        WorldSaveSystem.WayfinderGateLocation = newBottom.ToWorldCoordinates(8, 0);
+                    else
+                        return;
                 }
 
                 Owner.Infernum_Camera().CurrentScreenShakePower = 5;

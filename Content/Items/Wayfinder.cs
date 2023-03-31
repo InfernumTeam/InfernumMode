@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -118,8 +119,9 @@ namespace InfernumMode.Content.Items
                 drawData.Draw(spriteBatch);
 
                 spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
-                return false;
+                PlayerInput.SetZoom_UI();
+                Matrix transformMatrix = Main.UIScaleMatrix;
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, transformMatrix);
             }
 
             spriteBatch.Draw(texture, position, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8), Color.White, 0f, origin, scale, SpriteEffects.None, 0f);

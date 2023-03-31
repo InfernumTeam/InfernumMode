@@ -26,7 +26,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             {
                 loot.Add(ModContent.ItemType<BlastedTophat>());
 
-                if (InfernumMode.CalMusicModIsActive && InfernumMode.InfernumMusicMod.TryFind("SoulDrivenHeadphones", out ModItem headphonesItem))
+                if (InfernumMode.MusicModIsActive && InfernumMode.InfernumMusicMod.TryFind("SoulDrivenHeadphones", out ModItem headphonesItem))
                     loot.Add(headphonesItem.Type);
             }
 

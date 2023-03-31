@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid.CeaselessVoidBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -83,7 +84,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Main.netMode == NetmodeID.MultiplayerClient || !CreateShockwave)
                 return;
 
-            Utilities.NewProjectileBetter(Projectile.Center - 20f * Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<CeaselessEnergyPulse>(), CeaselessVoidBehaviorOverride.EnergyPulseDamage, 0f);
+            Vector2 end = Projectile.Center - 20f * Projectile.velocity;
+            Utilities.NewProjectileBetter(end, Vector2.Zero, ModContent.ProjectileType<CeaselessEnergyPulse>(), CeaselessVoidBehaviorOverride.EnergyPulseDamage, 0f);
+
+            for (int i = 0; i < 6; i++)
+                Utilities.NewProjectileBetter(end, (MathHelper.TwoPi * i / 6f + MathHelper.Pi / 6f).ToRotationVector2() * 6f, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
         }
 
         public float WidthFunction(float completionRatio)

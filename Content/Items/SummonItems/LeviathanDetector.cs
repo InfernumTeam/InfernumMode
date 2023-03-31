@@ -19,7 +19,6 @@ namespace InfernumMode.Content.Items.SummonItems
             SacrificeTotal = 1;
             DisplayName.SetDefault("Leviathan Detector");
             Tooltip.SetDefault("Summons Anahita\n" +
-                "Does not need to be used at the ocean\n" +
                 "Not consumable");
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
         }

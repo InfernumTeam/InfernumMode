@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -33,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             Projectile.tileCollide = Projectile.timeLeft < 90;
             Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
 
-            if (Main.dedServ)
+            if (Main.dedServ || InfernumConfig.Instance.ReducedGraphicsConfig)
                 return;
 
             Dust cursedFlame = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width, Projectile.height) * 0.5f, 173);

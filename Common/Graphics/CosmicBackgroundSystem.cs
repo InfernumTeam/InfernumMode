@@ -15,7 +15,7 @@ namespace InfernumMode.Common.Graphics
 {
     public class CosmicBackgroundSystem : ModSystem
     {
-        public static RenderTarget2D KalisetFractal
+        public static ManagedRenderTarget KalisetFractal
         {
             get;
             internal set;
@@ -78,7 +78,10 @@ namespace InfernumMode.Common.Graphics
             // It could theoretically be loaded into a binary file in some way but at that point you're going to need to translate it into some GPU-friendly object, like a render target.
             // It's easiest to just create it dynamically here.
             // There are a LOT of calculations needed to generate the entire texture though, hence the usage of background threads.
-            KalisetFractal = new(Main.instance.GraphicsDevice, width, height, false, SurfaceFormat.Single, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+            KalisetFractal = new(false, (width, height) =>
+            {
+                return new(Main.instance.GraphicsDevice, width, height, false, SurfaceFormat.Single, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+            });
 
             // This number is highly important to the resulting structure of the fractal, and is very sensitive (as is typically the case with objects from Chaos Theory).
             // Many numbers will give no fractal at all, pure white, or pure black. But tweaking it to be just right gives some amazing patterns.
@@ -125,7 +128,7 @@ namespace InfernumMode.Common.Graphics
                     kalisetData[i] = totalChange;
                 }
 
-                Main.QueueMainThreadAction(() => KalisetFractal.SetData(kalisetData));
+                Main.QueueMainThreadAction(() => KalisetFractal.Target.SetData(kalisetData));
             }).Start();
         }
 
@@ -160,7 +163,7 @@ namespace InfernumMode.Common.Graphics
 
             Vector2 scale = new Vector2(Main.screenWidth, Main.screenWidth) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;
 
-            Main.instance.GraphicsDevice.Textures[1] = KalisetFractal;
+            Main.instance.GraphicsDevice.Textures[1] = KalisetFractal.Target;
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["zoom"].SetValue(0.5f);
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["brightness"].SetValue(intensity);

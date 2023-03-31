@@ -44,6 +44,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             if (Projectile.frameCounter++ % 5 == 4)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
 
+            // Accelerate.
+            if (Projectile.velocity.Length() < 27f)
+                Projectile.velocity *= 1.015f;
+
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 

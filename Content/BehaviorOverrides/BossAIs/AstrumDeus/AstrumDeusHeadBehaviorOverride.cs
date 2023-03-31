@@ -578,7 +578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 float sinT = (float)Math.Sin(t);
                 float sin2T = (float)Math.Sin(2D * t);
                 float cosT = (float)Math.Cos(t);
-                float denominator = (float)(1f + 2D * Math.Pow(Math.Sin(t), 2D) + Math.Pow(sinT, 4D));
+                float denominator = (float)(1D + 2D * Math.Pow(Math.Sin(t), 2D) + Math.Pow(sinT, 4D));
 
                 float speedX = flySpeed * (float)(-sinT - Math.Pow(sinT, 3D) - cosT * sin2T) / denominator;
                 float speedY = flySpeed * (float)(Math.Pow(cosT, 2D) - 2D * Math.Pow(sinT, 4D) - sinT * cosT * sin2T) / denominator;

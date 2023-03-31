@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 if (!Projectile.WithinRange(Target.Center, 250f))
                 {
                     Vector2 idealVelocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
-                    Projectile.velocity = Projectile.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi / 27f);
+                    Projectile.velocity = Projectile.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi / 33f);
                 }
             }
 

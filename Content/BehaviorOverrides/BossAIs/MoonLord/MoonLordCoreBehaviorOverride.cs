@@ -453,7 +453,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         MoonLordAttackState.PhantasmalDance,
                         MoonLordAttackState.PhantasmalWrath,
                         MoonLordAttackState.PhantasmalBarrage,
-                        MoonLordAttackState.ExplodingConstellations,
                         MoonLordAttackState.PhantasmalWrath,
                     };
                 }

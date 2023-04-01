@@ -14,8 +14,6 @@ namespace InfernumMode.Content.Items.Dyes
 {
     public class ProfanedCrystalDye : BaseDye
     {
-        public override bool IsLoadingEnabled(Mod mod) => false;
-
         public override ArmorShaderData ShaderDataToBind
         {
             get

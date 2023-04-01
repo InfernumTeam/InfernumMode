@@ -37,6 +37,7 @@ using CalamityMod.NPCs.Yharon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Content.Items.Dyes;
 using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Content.Items.Weapons.Magic;
@@ -191,6 +192,7 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Providence>())
             {
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs && !Main.dayTime, ModContent.ItemType<ProfanedCrystalDye>(), 1, 4, 5);
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProvidenceRelic>());
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ElysianAegis>());
             }

@@ -142,6 +142,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         public override void OnModUnload()
         {
             FreeHandles();
+            cancelThread?.Dispose();
         }
 
         private static void RegenerateHandles()
@@ -200,6 +201,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 // Prepare the gif file once the recording countdown is done.
                 if (RecordCountdown <= 0)
                 {
+                    cancelThread?.Dispose();
                     cancelThread = new();
                     new Thread(() => CreateGif(cancelThread.Token)).Start();
                 }
@@ -248,7 +250,6 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         {
             // Ensure that any background threads are gracefully stopped if the frames need to be manipulated.
             cancelThread?.Cancel();
-            cancelThread?.Dispose();
 
             while (frames?.Any() ?? false)
             {
@@ -282,12 +283,12 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             e.Start(stream);
             e.SetDelay(0);
             e.SetRepeat(0);
+            for (int i = 0; i < frames.Count; i++)
             {
                 if (token.IsCancellationRequested)
                     return;
 
-                for (int i = 0; i < frames.Count; i++)
-                    e.AddFrame(frames[i]);
+                e.AddFrame(frames[i]);
             }
             e.Finish();
 

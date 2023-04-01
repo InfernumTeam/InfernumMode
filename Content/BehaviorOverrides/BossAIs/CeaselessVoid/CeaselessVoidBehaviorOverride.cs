@@ -1151,7 +1151,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create various energy particles.
             if (suckPowerInterpolant > 0f)
             {
-                suckAcceleration = MathHelper.Lerp(0.25f, 0.435f, suckPowerInterpolant);
+                suckAcceleration = MathHelper.Lerp(0.16f, 0.35f, suckPowerInterpolant);
                 Vector2 energySuckOffset = Vector2.Zero;
                 CreateEnergySuckParticles(npc, energySuckOffset, 240f, 960f, 0.5f / (energySuckOffset.Length() * 0.0012f + 1f));
 

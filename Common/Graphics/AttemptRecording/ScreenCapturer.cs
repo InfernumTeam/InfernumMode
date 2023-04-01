@@ -43,6 +43,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         private static List<Bitmap> frames;
 
+        private static CancellationTokenSource cancelThread;
+
         // Bit flags for specifying how bitmap data should be copied in unmanaged code.
         private const int SourceCopy = 0x00CC0020;
 
@@ -197,7 +199,10 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
                 // Prepare the gif file once the recording countdown is done.
                 if (RecordCountdown <= 0)
-                    new Thread(CreateGif).Start();
+                {
+                    cancelThread = new();
+                    new Thread(() => CreateGif(cancelThread.Token)).Start();
+                }
             }
         }
 
@@ -241,6 +246,10 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         private static void ClearFrames()
         {
+            // Ensure that any background threads are gracefully stopped if the frames need to be manipulated.
+            cancelThread?.Cancel();
+            cancelThread?.Dispose();
+
             while (frames?.Any() ?? false)
             {
                 frames.First().Dispose();
@@ -248,7 +257,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             }
         }
 
-        private static void CreateGif()
+        private static void CreateGif(CancellationToken token)
         {
             if (!IsSupported)
                 return;
@@ -273,8 +282,13 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             e.Start(stream);
             e.SetDelay(0);
             e.SetRepeat(0);
-            for (int i = 0; i < frames.Count; i++)
-                e.AddFrame(frames[i]);
+            {
+                if (token.IsCancellationRequested)
+                    return;
+
+                for (int i = 0; i < frames.Count; i++)
+                    e.AddFrame(frames[i]);
+            }
             e.Finish();
 
             byte[] data = stream.ToArray();

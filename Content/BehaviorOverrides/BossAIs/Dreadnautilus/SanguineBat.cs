@@ -12,10 +12,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
     public class SanguineBat : ModProjectile
     {
         public Player Target => Main.player[Projectile.owner];
+
         public ref float Time => ref Projectile.ai[0];
+
         public ref float LocalLifetime => ref Projectile.ai[1];
 
         public const int Lifetime = 420;
+
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.BatOfLight}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sanguine Bat");

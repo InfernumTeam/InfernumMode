@@ -9,6 +9,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
     public class DarkPulse : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.AncientDoomProjectile}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Pulse");
@@ -41,14 +44,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-
-
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
 
         public override bool PreDraw(ref Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.Purple, 0.5f);
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, lightColor, 4f);
             return false;
         }
     }

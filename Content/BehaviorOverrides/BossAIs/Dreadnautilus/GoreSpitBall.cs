@@ -9,6 +9,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
     public class GoreSpitBall : ModProjectile
     {
         public Player Target => Main.player[Projectile.owner];
+
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.DripplerFlail}";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Gore Spit Ball");
 
         public override void SetDefaults()

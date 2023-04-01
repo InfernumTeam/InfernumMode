@@ -1,4 +1,3 @@
-using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,18 +45,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (npc.dontTakeDamage)
                 return false;
 
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/FreeHead").Value;
-            Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Golem/FreeHeadGlow").Value;
-            Rectangle rect = new(0, 0, texture.Width, texture.Height);
-            if (InfernumMode.EmodeIsActive)
-            {
-                texture = TextureAssets.Npc[npc.type].Value;
-                glowMask = InfernumTextureRegistry.Invisible.Value;
-                rect = npc.frame;
-            }
-
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Rectangle rect = npc.frame;
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             GolemHeadBehaviorOverride.DoEyeDrawing(npc);
             return false;
         }

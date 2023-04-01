@@ -16,7 +16,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
     public class AncientDoom : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
         public Player Target => Main.player[(int)Projectile.ai[1]];
+
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.AncientDoom}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Doomer");

@@ -209,7 +209,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public static void DoEyeEffect(NPC npc)
         {
-            Vector2 eyePosition = npc.Top + new Vector2(npc.spriteDirection == -1f ? -8f : 6f, 12f);
+            Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection == -1f ? -8f : 6f, -12f);
 
             Dust eyeDust = Dust.NewDustPerfect(eyePosition, 264);
             eyeDust.color = Color.CornflowerBlue;

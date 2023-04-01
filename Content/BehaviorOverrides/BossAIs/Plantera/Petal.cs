@@ -7,6 +7,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 {
     public class Petal : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.SeedPlantera}";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Petal");
 
         public override void SetDefaults()

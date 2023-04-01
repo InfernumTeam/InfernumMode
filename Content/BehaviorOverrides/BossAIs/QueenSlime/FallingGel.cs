@@ -8,6 +8,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 {
     public class FallingGel : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.QueenSlimeGelAttack}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Falling Gel");

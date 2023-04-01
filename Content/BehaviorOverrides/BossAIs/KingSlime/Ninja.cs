@@ -535,7 +535,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (KatanaUseTimer > 0f)
             {
-                Texture2D katanaTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/KingSlime/Katana").Value;
+                Texture2D katanaTexture = TextureAssets.Item[ItemID.Katana].Value;
                 Vector2 drawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
                 drawPosition -= NPC.rotation.ToRotationVector2() * NPC.spriteDirection * 22f;
                 float rotation = MathHelper.PiOver4 + NPC.rotation;

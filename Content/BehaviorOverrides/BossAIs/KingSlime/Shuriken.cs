@@ -11,6 +11,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 {
     public class Shuriken : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.Shuriken}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Shuriken");
@@ -42,25 +44,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D shurikenTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/KingSlime/ShurikenOutline").Value;
-            float pulseOutwardness = MathHelper.Lerp(2f, 3f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.5f) * 0.5f + 0.5f);
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
-            for (int i = 0; i < 4; i++)
-            {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * pulseOutwardness;
-                Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
-                Color innerAfterimageColor = Color.Wheat * Projectile.Opacity * 0.5f;
-                innerAfterimageColor.A = 0;
-
-                Color outerAfterimageColor = Color.Lerp(Color.DarkGray, Color.Black, 0.66f) * Projectile.Opacity * 0.5f;
-                Main.spriteBatch.Draw(shurikenTexture, drawPosition, null, outerAfterimageColor, Projectile.rotation, shurikenTexture.Size() * 0.5f, Projectile.scale * 1.085f, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(shurikenTexture, drawPosition, null, innerAfterimageColor, Projectile.rotation, shurikenTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
-            }
-
-            Vector2 outlineDrawPosition = Projectile.Center - Main.screenPosition;
-            Main.spriteBatch.Draw(outlineTexture, outlineDrawPosition, null, Color.White * Projectile.Opacity * 0.8f, Projectile.rotation, outlineTexture.Size() * 0.5f, Projectile.scale * 1.25f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(shurikenTexture, outlineDrawPosition, null, lightColor * Projectile.Opacity, Projectile.rotation, outlineTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.White with { A = 0 }, lightColor, 3f);
             return false;
         }
 

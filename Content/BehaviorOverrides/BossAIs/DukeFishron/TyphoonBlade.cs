@@ -8,6 +8,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
     public class TyphoonBlade : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.SharknadoBolt}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Typhoon Blade");

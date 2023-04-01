@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static float MaxLength => 3200f;
 
-        public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/QueenSlime/HallowCrystalSpike";
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.CrystalVileShardHead}";
 
         public override void SetStaticDefaults()
         {

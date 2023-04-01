@@ -11,6 +11,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
     public class ExplodingServant : ModNPC
     {
         public ref float Timer => ref NPC.ai[0];
+
+        public override string Texture => $"Terraria/Images/NPC_{NPCID.ServantofCthulhu}";
+
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();

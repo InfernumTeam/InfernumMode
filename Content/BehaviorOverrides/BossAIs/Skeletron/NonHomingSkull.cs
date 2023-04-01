@@ -10,6 +10,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
     {
         public ref float AccelerationFactorReduction => ref Projectile.ai[0];
 
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.Skull}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Skull");

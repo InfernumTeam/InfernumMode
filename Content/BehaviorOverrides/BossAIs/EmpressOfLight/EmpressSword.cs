@@ -98,6 +98,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const float TelegraphLength = 3600f;
 
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.EmpressBlade}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Empress Blade");

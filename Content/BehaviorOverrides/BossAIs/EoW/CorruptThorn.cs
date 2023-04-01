@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -15,10 +16,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 {
     public class CorruptThorn : ModProjectile
     {
-        public ref float MaxPillarHeight => ref Projectile.ai[0];
-        public ref float Time => ref Projectile.ai[1];
         public float CurrentHeight = 0f;
+
+        public ref float MaxPillarHeight => ref Projectile.ai[0];
+
+        public ref float Time => ref Projectile.ai[1];
+
         public const float StartingHeight = 22f;
+
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.VilethornTip}";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Corrupt Thorn");
 
         public override void SetDefaults()
@@ -132,7 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public void DrawVine(Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
         {
-            Texture2D thornBodyPiece = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/EoW/CorruptThornPiece").Value;
+            Texture2D thornBodyPiece = TextureAssets.Projectile[ProjectileID.VilethornBase].Value;
 
             UnifiedRandom sideThornRNG = new(Projectile.identity);
             for (int i = thornBodyPiece.Height; i < CurrentHeight + thornBodyPiece.Height; i += thornBodyPiece.Height)

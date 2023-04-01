@@ -48,6 +48,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static int FireDelay => 68;
 
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.FireWhipProj}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ethereal Lance");

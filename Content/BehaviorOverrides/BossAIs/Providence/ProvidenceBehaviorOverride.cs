@@ -673,7 +673,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Become fully opaque.
             npc.Opacity = 1f;
-            burnIntensity = 0.96f * MathF.Pow(Utils.GetLerpValue(90f, 0f, localAttackTimer, true), 0.12f);
+            burnIntensity = MathF.Pow(Utils.GetLerpValue(90f, 0f, localAttackTimer, true), 0.12f) * 0.96f;
 
             if (localAttackTimer <= 5f)
                 performedEndEffects = 0f;

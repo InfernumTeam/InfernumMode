@@ -657,19 +657,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public static void DoBehavior_PhantasmalWrath(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int attckDelay = 60;
-            int slowdownTime = 16;
+            int slowdownTime = 28;
             int boltCount = 12;
             int chargeTime = 36;
             int chargeCount = 4;
             float spinOffset = 400f;
-            float boltShootSpeed = 6.25f;
+            float boltShootSpeed = 5f;
             float chargeSpeed = 38.5f;
 
             if (MoonLordCoreBehaviorOverride.InFinalPhase)
             {
                 chargeTime -= 3;
                 boltCount += 6;
-                boltShootSpeed -= 0.5f;
+                boltShootSpeed -= 1f;
                 chargeSpeed += 3f;
             }
 

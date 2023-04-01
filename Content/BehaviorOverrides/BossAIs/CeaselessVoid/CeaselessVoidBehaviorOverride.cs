@@ -23,7 +23,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.CalamityUtils;
@@ -686,7 +685,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Vector2 energyBoltSpawnPosition = target.Center + 1250f * OtherworldlyBolt.AimDirection + new Vector2(1650f * Main.rand.NextFloatDirection(), -400f);
+                    Vector2 energyBoltSpawnPosition = target.Center + 1250f * OtherworldlyBolt.AimDirection + new Vector2(1960f * Main.rand.NextFloatDirection(), -400f);
                     Utilities.NewProjectileBetter(energyBoltSpawnPosition, OtherworldlyBolt.AimDirection * -energyShootSpeed, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
                 }
             }
@@ -697,15 +696,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_CircularVortexSpawn(NPC npc, Player target, bool phase2, ref float attackTimer)
         {
-            int vortexCount = 27;
-            int chargeUpDelay = 180;
+            int vortexCount = 35;
+            int chargeUpDelay = 150;
             int chargeUpTime = 90;
             int burstWaitTime = 132;
             int energyBoltCountMainRing = 39;
 
             if (phase2)
             {
-                chargeUpDelay -= 20;
+                chargeUpDelay -= 15;
                 burstWaitTime -= 36;
             }
 
@@ -1174,7 +1173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // Release rubble around the arena.
-            if (Main.netMode != NetmodeID.MultiplayerClient && suckPowerInterpolant > 0f && attackTimer % rubbleReleaseRate == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && suckPowerInterpolant > 0f && attackTimer % rubbleReleaseRate == 0f && attackTimer < attackDelay + suckTime)
             {
                 float rubbleShootSpeed = 9f;
                 Vector2 rubbleSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * (npc.Distance(target.Center) + Main.rand.NextFloat(250f, 700f));

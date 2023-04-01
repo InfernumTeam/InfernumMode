@@ -13,6 +13,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public ref float SpinSpeed => ref Projectile.ai[1];
 
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.PhantasmalEye}";
+
         public override void SetStaticDefaults()
         {
             // HOLY SHIT IS THAT A FARGO REFERENCE OH MY GOD I AM GOING TO CANCEL DOMINIC VON KARMA FOR THIS

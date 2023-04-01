@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -137,6 +138,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             // Restrict the player's position.
             target.Center = Vector2.Clamp(target.Center, new Vector2(left + target.width * 0.5f, -100f), new Vector2(right - target.width * 0.5f, Main.maxTilesY * 16f + 100f));
+            if (target.Center.X <= left + target.width * 0.5f + 16f || target.Center.X >= right - target.width * 0.5f - 16f)
+            {
+                target.velocity = target.SafeDirectionTo(new Vector2(initialXPosition, target.Center.Y)) * 10f;
+                target.Hurt(PlayerDeathReason.ByCustomReason($"{target.name} was repelled by celestial forces."), 200, 0);
+            }
+
             if (target.Center.X < left + 160f)
             {
                 Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 261);

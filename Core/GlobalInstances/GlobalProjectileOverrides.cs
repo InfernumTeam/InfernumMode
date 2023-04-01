@@ -318,9 +318,9 @@ namespace InfernumMode.Core.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 if (projectile.type == ProjectileID.PhantasmalSphere)
-                    return projectile.Infernum().ExtraAI[0] > 40f;
+                    return projectile.Infernum().ExtraAI[0] >= 25f;
                 if (projectile.type == ProjectileID.PhantasmalBolt)
-                    return projectile.Infernum().ExtraAI[0] > 40f;
+                    return projectile.Infernum().ExtraAI[0] >= 40f;
             }
 
             // Prevent projectiles that are fading away from doing damage.

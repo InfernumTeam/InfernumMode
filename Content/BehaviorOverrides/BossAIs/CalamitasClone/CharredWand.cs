@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             Utilities.CreateShockwave(Projectile.Center, 2, 8, 120f, false);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            float speedBoost = 0.009f + Projectile.Distance(target.Center);
+            float speedBoost = Projectile.Distance(target.Center) * 0.009f;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int i = 0; i < 35; i++)

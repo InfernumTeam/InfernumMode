@@ -228,11 +228,11 @@ namespace InfernumMode.Content.Projectiles
 
             // Cease all horizontal and upward vertical velocity.
             Projectile.velocity.X = 0f;
-            if (Projectile.velocity.Y < 0f)
-                Projectile.velocity.Y = 0f;
+            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.3f, 0f, 4f);
 
             // Use sitting frames.
             FrameState = BirbFrameState.Sitting;
+            Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X).ToDirectionInt();
 
             // Fly again if the owner moved away.
             if (!Projectile.WithinRange(Owner.Center, 300f))
@@ -270,13 +270,14 @@ namespace InfernumMode.Content.Projectiles
 
             // Use petting frames.
             FrameState = BirbFrameState.BeingPet;
+            Projectile.spriteDirection = Owner.direction;
 
             // Sit down as usual again if the owner stopped giving pets.
             if (Main.myPlayer == Projectile.owner && Owner.Infernum_Pet().ProjectileThatsBeingPetted != Projectile.whoAmI)
             {
-                AIState = BirbAIState.Flying;
+                Owner.Infernum_Pet().StopPetAnimation();
+                AIState = BirbAIState.SitDown;
                 Time = 0f;
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Owner.Center) * 8f, 0.6f);
                 Projectile.netUpdate = true;
                 return;
             }

@@ -9,7 +9,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class LunarFlare : ModProjectile
     {
         public ref float Countdown => ref Projectile.ai[0];
+
         public Player Target => Main.player[Projectile.owner];
+
+        public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.LunarFlare}";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Phantasmal Flare");

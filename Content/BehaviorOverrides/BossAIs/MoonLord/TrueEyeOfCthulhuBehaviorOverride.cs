@@ -272,6 +272,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     pupilScale = MathHelper.Lerp(pupilScale, 0.7f, 0.15f);
                     lineTelegraphInterpolant = attackTimer / fireDelay;
                     telegraphAngularOffset = MathHelper.Lerp(1.5f, 1f, lineTelegraphInterpolant) * pressureLaserStartingAngularOffset;
+
+                    // Delete leftover phantasmal spheres.
+                    Utilities.DeleteAllProjectiles(true, ProjectileID.PhantasmalSphere);
                 }
                 else
                 {
@@ -373,7 +376,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public static void DoBehavior_PhantasmalDance(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int spinTime = 60;
-            int chargeTelegraphTime = 52;
+            int chargeTelegraphTime = 56;
             int chargeTime = 36;
             int chargeCount = 4;
             int orbReleaseRate = 5;
@@ -429,8 +432,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 telegraphInterpolant = Utils.GetLerpValue(0f, 0.65f, telegraphCompletion, true) * Utils.GetLerpValue(1f, 0.75f, telegraphCompletion, true);
 
                 // Define the telegraph direction.
-                if (telegraphCompletion < 0.9f)
-                    telegraphDirection = telegraphDirection.AngleLerp(npc.AngleTo(target.Center + target.velocity * chargePredictiveness), 0.18f);
+                if (telegraphCompletion < 0.8f)
+                    telegraphDirection = telegraphDirection.AngleLerp(npc.AngleTo(target.Center + target.velocity * chargePredictiveness), 0.25f);
 
                 // Scream before charging.
                 if (wrappedAttackTimer == spinTime + 8f)

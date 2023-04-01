@@ -439,6 +439,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     MoonLordAttackState.PhantasmalDance,
                     MoonLordAttackState.PhantasmalRush,
                     MoonLordAttackState.PhantasmalBarrage,
+                    MoonLordAttackState.ExplodingConstellations,
                 };
 
                 if (lifeRatio < Phase2LifeRatio)

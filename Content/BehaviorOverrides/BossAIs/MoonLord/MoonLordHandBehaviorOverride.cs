@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         {
             int waveTime = 270;
             int sphereShootDelay = 36;
-            int sphereShootRate = 12;
+            int sphereShootRate = 8;
             int attackTransitionDelay = 40;
             float sphereShootSpeed = 12f;
             float sphereSlamSpeed = 6f;

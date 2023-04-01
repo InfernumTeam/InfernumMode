@@ -1941,6 +1941,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             YharonAttackType attackType = (YharonAttackType)npc.ai[0];
             Texture2D tex = ModContent.Request<Texture2D>(npc.ModNPC.Texture).Value;
+            if (Utilities.IsAprilFirst())
+                tex = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Yharon/GrandYharon").Value;
 
             // Use defaults for the draw position.
             position ??= npc.Center;
@@ -1953,7 +1955,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             // Determine variables for the fire effect.
             int afterimageCount = 1;
-            float afterimageOffsetMax = 32f;
+            float afterimageOffsetMax = 30f;
             float fireIntensity = npc.Infernum().ExtraAI[FireFormInterpolantIndex];
             bool inLastSubphases = npc.life / (float)npc.lifeMax <= 0.2f;
             if (inLastSubphases)

@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             get
             {
-                if (IntroScreenManager.ShouldDisplayJokeIntroText)
+                if (IntroScreenManager.ShouldDisplayJokeIntroText || Utilities.IsAprilFirst())
                     return "Grand\nYharon";
 
                 return "Unwavering Guardian\nYharon";

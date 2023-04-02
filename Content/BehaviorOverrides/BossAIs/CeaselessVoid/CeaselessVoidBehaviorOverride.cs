@@ -1622,18 +1622,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                         PulseRing ring = new(npc.Center, Vector2.Zero, energyColor, 0f, s, 30);
                         GeneralParticleHandler.SpawnParticle(ring);
                     }
-
-                    for (int i = 0; i < spiralArmsCount * 4; i++)
-                    {
-                        float shootOffsetAngle = MathHelper.TwoPi * i / (spiralArmsCount * 4f);
-                        Vector2 spiralShootVelocity = shootOffsetAngle.ToRotationVector2() * 7.2f + Main.rand.NextVector2Circular(0.5f, 0.5f);
-
-                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
-                        {
-                            darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Time = 30f;
-                        });
-                        Utilities.NewProjectileBetter(npc.Center, spiralShootVelocity, ModContent.ProjectileType<AcceleratingDarkEnergy>(), DarkEnergyTorrentDamage, 0f, -1, (int)AcceleratingDarkEnergy.DarkEnergyAttackState.AccelerateTowardsTarget, spiralAcceleration);
-                    }
                 }
 
                 // Release very powerful spirals of dark energy outward.
@@ -1642,8 +1630,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     for (int i = 0; i < spiralArmsCount; i++)
                     {
                         float spiralOffsetAngle = MathHelper.TwoPi * i / spiralArmsCount;
-                        float timeShootOffsetAngle = (attackTimer - jitterTime) * MathHelper.ToRadians(2.24f);
-                        Vector2 spiralShootVelocity = (spiralOffsetAngle + timeShootOffsetAngle).ToRotationVector2() * 7.2f;
+                        float timeShootOffsetAngle = MathF.Cos(MathHelper.TwoPi * (attackTimer - jitterTime) / 90f) * MathHelper.ToRadians(54f);
+                        Vector2 spiralShootVelocity = (spiralOffsetAngle + timeShootOffsetAngle).ToRotationVector2() * 7.5f;
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
                         {

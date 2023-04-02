@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using System;
@@ -138,10 +139,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Color baseColor = Color.Lerp(Color.Red, Color.Orange, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
             return Color.Lerp(baseColor, Color.DarkRed, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
         }
+
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false);
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 3);
+            if (!PrimitiveBatchingSystem.BatchIsRegistered<RedLightning>())
+                PrimitiveBatchingSystem.PrepareBatch<RedLightning>(new(WidthFunction, ColorFunction, null, false));
+
+            PrimitiveBatchingSystem.PrepareVertices<RedLightning>(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 12);
             return false;
         }
         #endregion

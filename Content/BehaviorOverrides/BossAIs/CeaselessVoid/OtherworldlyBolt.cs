@@ -157,15 +157,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Color drawColor = Projectile.GetAlpha(lightColor);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-            for (int i = 0; i < 24; i++)
+            for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + drawOffset, null, Color.MediumPurple with { A = 160 } * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, scale, 0, 0);
             }
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 7; i++)
             {
-                float scaleFactor = 1f - i / 16f;
-                Vector2 drawOffset = Projectile.velocity * i * -0.18f;
+                float scaleFactor = 1f - i / 6f;
+                Vector2 drawOffset = Projectile.velocity * i * -0.34f;
                 Main.EntitySpriteDraw(texture, drawPosition + drawOffset, null, drawColor with { A = 160 } * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, scale * scaleFactor, 0, 0);
             }
             Main.EntitySpriteDraw(texture, drawPosition, null, drawColor with { A = 130 }, Projectile.rotation, texture.Size() * 0.5f, scale, 0, 0);

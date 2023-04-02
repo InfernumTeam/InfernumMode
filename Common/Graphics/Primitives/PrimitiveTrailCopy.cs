@@ -34,16 +34,26 @@ namespace InfernumMode.Common.Graphics.Primitives
         internal Matrix? PerspectiveMatrixOverride = null;
 
         public delegate float VertexWidthFunction(float completionRatio);
+
         public delegate Vector2 VertexOffsetFunction(float completionRatio);
+
         public delegate Color VertexColorFunction(float completionRatio);
 
         public VertexWidthFunction WidthFunction;
+
         public VertexColorFunction ColorFunction;
+
         public VertexOffsetFunction OffsetFunction;
 
         public bool UsesSmoothening;
-        public BasicEffect BaseEffect;
+
         public MiscShaderData SpecialShader;
+
+        public static BasicEffect BaseEffect
+        {
+            get;
+            private set;
+        }
 
         public PrimitiveTrailCopy(VertexWidthFunction widthFunction, VertexColorFunction colorFunction, VertexOffsetFunction offsetFunction = null, bool useSmoothening = true, MiscShaderData specialShader = null)
         {
@@ -58,7 +68,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             if (specialShader != null)
                 SpecialShader = specialShader;
 
-            BaseEffect = new BasicEffect(Main.instance.GraphicsDevice)
+            BaseEffect ??= new BasicEffect(Main.instance.GraphicsDevice)
             {
                 VertexColorEnabled = true,
                 TextureEnabled = false
@@ -66,7 +76,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             UpdateBaseEffect(out _, out _);
         }
 
-        public void UpdateBaseEffect(out Matrix effectProjection, out Matrix effectView)
+        public static void UpdateBaseEffect(out Matrix effectProjection, out Matrix effectView)
         {
             // Screen bounds.
             int height = Main.instance.GraphicsDevice.Viewport.Height;
@@ -95,7 +105,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             BaseEffect.Projection = effectProjection;
         }
 
-        public void UpdatePixelatedBaseEffect(out Matrix effectProjection, out Matrix effectView)
+        public static void UpdatePixelatedBaseEffect(out Matrix effectProjection, out Matrix effectView)
         {
             effectProjection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
             effectView = Matrix.Identity;
@@ -185,7 +195,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             return points;
         }
 
-        public VertexPosition2DColor[] GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
+        public List<VertexPosition2DColor> GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
         {
             List<VertexPosition2DColor> vertices = new();
 
@@ -215,10 +225,10 @@ namespace InfernumMode.Common.Graphics.Primitives
                 vertices.Add(new VertexPosition2DColor(currentPosition + sideDirection * widthAtVertex, vertexColor, rightCurrentTextureCoord));
             }
 
-            return vertices.ToArray();
+            return vertices;
         }
 
-        public static short[] GetIndicesFromTrailPoints(int pointCount)
+        public static List<short> GetIndicesFromTrailPoints(int pointCount)
         {
             // What this is doing is basically representing each point on the vertices list as
             // indices. These indices should come together to create a tiny rectangle that acts
@@ -240,7 +250,7 @@ namespace InfernumMode.Common.Graphics.Primitives
                 indices[startingTriangleIndex + 5] = (short)(connectToIndex + 3);
             }
 
-            return indices;
+            return indices.ToList();
         }
 
         public void SpecifyPerspectiveMatrix(Matrix m) => PerspectiveMatrixOverride = m;
@@ -283,6 +293,14 @@ namespace InfernumMode.Common.Graphics.Primitives
             if (trailPoints.All(point => point == trailPoints[0]))
                 return;
 
+            DrawPrimsFromVertexData(GetVerticesFromTrailPoints(trailPoints, directionOverride), GetIndicesFromTrailPoints(trailPoints.Count), pixelated);
+        }
+
+        internal void DrawPrimsFromVertexData(List<VertexPosition2DColor> vertices, List<short> triangleIndices, bool pixelated)
+        {
+            if (triangleIndices.Count % 6 != 0 || vertices.Count <= 3)
+                return;
+
             Matrix projection;
             Matrix view;
 
@@ -290,12 +308,6 @@ namespace InfernumMode.Common.Graphics.Primitives
                 UpdatePixelatedBaseEffect(out projection, out view);
             else
                 UpdateBaseEffect(out projection, out view);
-
-            VertexPosition2DColor[] vertices = GetVerticesFromTrailPoints(trailPoints, directionOverride);
-            short[] triangleIndices = GetIndicesFromTrailPoints(trailPoints.Count);
-
-            if (triangleIndices.Length % 6 != 0 || vertices.Length <= 3)
-                return;
 
             Main.instance.GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             Main.instance.GraphicsDevice.RasterizerState.ScissorTestEnable = true;
@@ -310,7 +322,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             else
                 BaseEffect.CurrentTechnique.Passes[0].Apply();
 
-            Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length, triangleIndices, 0, triangleIndices.Length / 3);
+            Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, triangleIndices.Count / 3);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
         }
     }

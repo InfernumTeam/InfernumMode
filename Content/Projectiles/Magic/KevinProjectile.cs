@@ -60,7 +60,12 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Kevin");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Kevin");
+            ProjectileID.Sets.TrailingMode[Type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Type] = 3;
+        }
 
         public override void SetDefaults()
         {
@@ -186,7 +191,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Main.instance.GraphicsDevice.Textures[0] = LightningTarget.Target;
             Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.WavyNoise.Value;
 
-            float angularOffset = Projectile.oldRot[1] - Projectile.oldRot[0];
+            float angularOffset = Projectile.oldRot[0] - Projectile.oldRot[1];
             Vector2 lightningDirection = Projectile.velocity.SafeNormalize(Vector2.Zero);
 
             LightningCoordinateOffset += lightningDirection * -0.003f;

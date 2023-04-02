@@ -125,7 +125,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }, permittedNPCs: new int[] { ModContent.NPCType<DesertScourgeBody>(), ModContent.NPCType<DesertScourgeTail>() }),
 
                 new Boss(ModContent.NPCType<ProfanedGuardianCommander>(), TimeChangeContext.Day,
-                    permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianDefender>(), ModContent.NPCType<ProfanedGuardianHealer>(), ModContent.NPCType<EtherealHand>() }),
+                    permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianDefender>(), ModContent.NPCType<ProfanedGuardianHealer>(), ModContent.NPCType<EtherealHand>(), ModContent.NPCType<HealerShieldCrystal>() }),
                 
                 // Tier 2.
                 new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),

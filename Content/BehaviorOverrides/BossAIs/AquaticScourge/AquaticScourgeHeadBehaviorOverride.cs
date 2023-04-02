@@ -137,7 +137,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
-            bool enraged = !target.IsUnderwater() && !phase3;
+            bool enraged = !target.IsUnderwater() && !phase3 && !BossRushEvent.BossRushActive;
 
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
             if (!target.Calamity().ZoneAbyss)

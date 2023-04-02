@@ -139,6 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public void DrawVine(Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
         {
+            Main.instance.LoadProjectile(ProjectileID.VilethornBase);
             Texture2D thornBodyPiece = TextureAssets.Projectile[ProjectileID.VilethornBase].Value;
 
             UnifiedRandom sideThornRNG = new(Projectile.identity);

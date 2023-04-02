@@ -54,6 +54,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Texture2D tipTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D body1Texture = TextureAssets.Projectile[ProjectileID.NettleBurstRight].Value;
             Texture2D body2Texture = TextureAssets.Projectile[ProjectileID.NettleBurstLeft].Value;
+
+            Main.instance.LoadProjectile(ProjectileID.NettleBurstRight);
+            Main.instance.LoadProjectile(ProjectileID.NettleBurstLeft);
+
             Vector2 bodyOrigin = body1Texture.Size() * new Vector2(0.5f, 1f);
             Vector2 tipOrigin = tipTexture.Size() * new Vector2(0.5f, 1f);
             Vector2 currentDrawPosition = StartingPosition;

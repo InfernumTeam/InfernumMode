@@ -36,9 +36,12 @@ namespace InfernumMode.Common.Graphics
             if (ManagedTargets is null)
                 return;
 
-            foreach (ManagedRenderTarget target in ManagedTargets)
-                target?.Dispose();
-            ManagedTargets.Clear();
+            Main.QueueMainThreadAction(() =>
+            {
+                foreach (ManagedRenderTarget target in ManagedTargets)
+                    target?.Dispose();
+                ManagedTargets.Clear();
+            });
         }
 
         public static RenderTarget2D CreateScreenSizedTarget(int screenWidth, int screenHeight) =>

@@ -54,7 +54,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public ref float TargetIndex => ref Projectile.ai[1];
 
-        public static Color LightningColor => Color.Lerp(Color.Yellow, Color.Cyan, 0.9f);
+        public static Color LightningColor => Color.Lerp(Color.Cyan, Color.DeepSkyBlue, 0.7f);
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 

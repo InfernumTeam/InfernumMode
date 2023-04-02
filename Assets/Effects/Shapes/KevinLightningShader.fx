@@ -48,7 +48,9 @@ float FractalNoise(float2 coords)
 
 float4 UpdatePreviousState(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 rotatedCoords = RotatedBy(coords - 0.5, lightningAngle) + 0.5;
+    float2 pixelationZoom = 2 / zoomFactor;
+    float2 pixelatedCoords = round(coords / pixelationZoom) * pixelationZoom;
+    float2 rotatedCoords = RotatedBy(pixelatedCoords - 0.5, lightningAngle) + 0.5;
     float4 color = tex2D(uImage0, rotatedCoords);
     float4 result = color;
     

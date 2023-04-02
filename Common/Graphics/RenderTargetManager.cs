@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -8,6 +9,10 @@ namespace InfernumMode.Common.Graphics
     public class RenderTargetManager : ModSystem
     {
         internal static List<ManagedRenderTarget> ManagedTargets = new();
+
+        public delegate void RenderTargetUpdateDelegate();
+
+        public static event RenderTargetUpdateDelegate ModifyHitByItemEvent;
 
         internal static void ResetTargetSizes(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
@@ -43,8 +48,11 @@ namespace InfernumMode.Common.Graphics
         {
             DisposeOfTargets();
             ManagedTargets = new();
+            Main.OnPreDraw += HandleTargetUpdateLoop;
             On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
         }
+
+        private void HandleTargetUpdateLoop(GameTime obj) => ModifyHitByItemEvent?.Invoke();
 
         public override void OnModUnload() => DisposeOfTargets();
     }

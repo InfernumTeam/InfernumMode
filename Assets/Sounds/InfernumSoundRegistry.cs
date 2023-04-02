@@ -240,6 +240,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle HyperplaneMatrixActivateSound = new("InfernumMode/Assets/Sounds/Item/HyperplaneMatrixActivate");
 
+        public static readonly SoundStyle KevinElectricitySound = new("InfernumMode/Assets/Sounds/Item/KevinElectricity");
+
         public static readonly SoundStyle WayfinderCreateSound = new("InfernumMode/Assets/Sounds/Item/WayfinderCreate");
 
         public static readonly SoundStyle WayfinderDestroySound = new("InfernumMode/Assets/Sounds/Item/WayfinderDestroy");

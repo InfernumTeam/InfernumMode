@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.damage = 50;
             Item.DamageType = DamageClass.Melee;
             Item.width = Item.height = 108;
-            Item.shoot = 21;
+            Item.shoot = ProjectileID.Bone;
             Item.shootSpeed = 23;
             Item.knockBack = 3;
             Item.useTime = 15;
@@ -88,7 +88,6 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 .AddIngredient(ModContent.ItemType<LifeAlloy>(), 5)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
-
         }
     }
 }

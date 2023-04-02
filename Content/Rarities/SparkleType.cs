@@ -11,6 +11,7 @@
         RedLightningSparkle,
         PuritySparkle,
         MusicNotes,
-        BubbleSparkle
+        BubbleSparkle,
+        CyanLightningSparkle
     }
 }

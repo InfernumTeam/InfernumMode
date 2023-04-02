@@ -4,9 +4,9 @@ using Terraria;
 
 namespace InfernumMode.Content.Rarities.Sparkles
 {
-    public class RedLightningSparkle : RaritySparkle
+    public class CyanLightningSparkle : RaritySparkle
     {
-        public RedLightningSparkle(SparkleType type, int lifetime, float scale, float initialRotation, Vector2 position, Vector2 velocity)
+        public CyanLightningSparkle(SparkleType type, int lifetime, float scale, float initialRotation, Vector2 position, Vector2 velocity)
         {
             Type = type;
             Lifetime = lifetime;
@@ -15,7 +15,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Rotation = initialRotation;
             Position = position;
             Velocity = velocity;
-            DrawColor = Color.Lerp(Color.IndianRed, Color.Orange, Main.rand.NextFloat(0.9f));
+            DrawColor = Color.Lerp(Color.Cyan, Color.Yellow, Utilities.UltrasmoothStep(Main.rand.NextFloat())) * 0.5f;
             Texture = InfernumTextureRegistry.Gleam.Value;
             MaxScale *= 0.4f;
         }

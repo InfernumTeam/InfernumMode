@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Projectiles.Magic
         {
             Projectile.width = Projectile.height = 20;
             Projectile.friendly = true;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 7200;

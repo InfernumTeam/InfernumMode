@@ -65,6 +65,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumOceanFlowerRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumCyanSparkRarity>())
+                {
+                    InfernumCyanSparkRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

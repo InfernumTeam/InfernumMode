@@ -39,6 +39,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
         public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
+        public static MiscShaderData KevinLightningShader => GameShaders.Misc["Infernum:KevinLightning"];
         public static MiscShaderData MechsIntroLetterShader => GameShaders.Misc["Infernum:MechsIntro"];
         public static MiscShaderData NoiseDisplacementShader => GameShaders.Misc["Infernum:NoiseDisplacement"];
         public static MiscShaderData PolterghastEctoplasmVertexShader => GameShaders.Misc["Infernum:PolterghastEctoplasm"];
@@ -174,6 +175,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> guardiansShader = new(assets.Request<Effect>("Assets/Effects/Primitives/GuardiansLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
+
+            Ref<Effect> kevinLightningShader = new(assets.Request<Effect>("Assets/Effects/Shapes/KevinLightningShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:KevinLightning"] = new MiscShaderData(kevinLightningShader, "BurnPass");
 
             Ref<Effect> introShader = new(assets.Request<Effect>("Assets/Effects/Shapes/MechIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");

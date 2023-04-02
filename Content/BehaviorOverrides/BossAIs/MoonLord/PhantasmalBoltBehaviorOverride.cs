@@ -1,3 +1,4 @@
+using InfernumMode.Core;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -38,15 +39,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Rectangle collisionArea = core.Infernum().Arena;
             collisionArea.Inflate(-600, -600);
 
+            // Determine whether the bolt should collide with tiles.
             projectile.tileCollide = projectile.Hitbox.Intersects(collisionArea);
 
-            Dust electrivity = Dust.NewDustDirect(projectile.Center, 0, 0, 229, 0f, 0f, 100, default, 1f);
-            electrivity.noLight = true;
-            electrivity.noGravity = true;
-            electrivity.velocity = projectile.velocity;
-            electrivity.position -= Vector2.One * 4f;
-            electrivity.scale = 0.8f;
-
+            // Determine frames.
             projectile.frameCounter++;
             if (projectile.frameCounter >= 9)
             {
@@ -55,6 +51,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 if (projectile.frame >= 5)
                     projectile.frame = 0;
             }
+
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+                return false;
+
+            Dust electricity = Dust.NewDustDirect(projectile.Center, 0, 0, DustID.Vortex, 0f, 0f, 100, default, 1f);
+            electricity.noLight = true;
+            electricity.noGravity = true;
+            electricity.velocity = projectile.velocity;
+            electricity.position -= Vector2.One * 4f;
+            electricity.scale = 0.8f;
             return false;
         }
     }

@@ -58,6 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             energyDrawer.Update();
 
             npc.dontTakeDamage = false;
+
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 

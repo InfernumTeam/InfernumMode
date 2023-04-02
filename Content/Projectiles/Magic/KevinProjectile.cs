@@ -9,6 +9,7 @@ using InfernumMode.Content.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -106,6 +107,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             {
                 TargetIndex = potentialTarget.whoAmI;
                 Projectile.rotation = Projectile.AngleTo(potentialTarget.Center);
+                Owner.ChangeDir(Math.Sign(potentialTarget.Center.X - Projectile.Center.X));
             }
 
             // Update the sound's position.
@@ -114,6 +116,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             else if (TargetIndex >= 0)
                 ElectricitySound = SoundEngine.PlaySound(InfernumSoundRegistry.KevinElectricitySound, Projectile.Center);
 
+            // Continuously use mana. If the owner has no more mana to use, destroy this projectile.
             if (Time % 5f == 4f && !Owner.CheckMana(Owner.ActiveItem(), -1, true))
                 Projectile.Kill();
 

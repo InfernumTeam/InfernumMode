@@ -808,10 +808,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             attackSelector.Add(SignusAttackType.FastHorizontalCharge);
 
             if (lifeRatio < Phase2LifeRatio)
-            {
-                attackSelector.Add(SignusAttackType.CosmicFlameChargeBombs, 1.85);
-                attackSelector.Add(SignusAttackType.SummonEntities, 1.85);
-            }
+                attackSelector.Add(SignusAttackType.CosmicFlameChargeBombs, 1.3);
 
             do
                 attackState = (int)attackSelector.Get();

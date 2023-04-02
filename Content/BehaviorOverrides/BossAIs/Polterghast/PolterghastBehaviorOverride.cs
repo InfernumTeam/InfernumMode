@@ -675,7 +675,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int ringCount = 7;
             int soulsPerRing = 24;
             int ringReleaseRate = 67;
-            int ringCreationDelay = 60;
+            int ringCreationDelay = 90;
             int attackTransitionDelay = 120;
             float overallRingSpeedFactor = MathHelper.Lerp(1f, 1.84f, 1f - lifeRatio);
             float ringOpeningAngleSpread = MathHelper.ToRadians(56f);
@@ -906,6 +906,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int shootTime = 300;
             int attackTransitionDelay = 90;
             int soulCount = (int)MathHelper.Lerp(5f, 9f, 1f - lifeRatio);
+
+            if (soulCount % 2 != 0)
+                soulCount++;
+
             float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
 
             if (lifeRatio < Phase2LifeRatio)
@@ -933,7 +937,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                         {
                             for (int i = 0; i < soulCount / 2; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(0.13f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
+                                float shootOffsetAngle = MathHelper.Lerp(0.01f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
                                 float soulAngularVelocity = -shootOffsetAngle * 0.00825f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
                                 Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), 290, 0f, -1, soulAngularVelocity);
@@ -1252,7 +1256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int spiritFlameTime = 540;
             int soulsPerRing = 24;
             int ringReleaseRate = 60;
-            float overallRingSpeedFactor = 1.75f;
+            float overallRingSpeedFactor = 1.5f;
             float ringOpeningAngleSpread = MathHelper.ToRadians(55f);
 
             int finalAttackStartTime = attackDelay + vortexSpiralTime + spiritFlameTime;
@@ -1449,7 +1453,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 (telegraphStart + telegraphEnd) * 0.5f,
                 telegraphEnd
             };
-            npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 72);
+            npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 44);
 
             if (inPhase3 || enraged)
             {

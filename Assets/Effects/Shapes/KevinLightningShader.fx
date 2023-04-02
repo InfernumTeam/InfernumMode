@@ -48,7 +48,7 @@ float FractalNoise(float2 coords)
 
 float4 UpdatePreviousState(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 pixelationZoom = 2 / zoomFactor;
+    float2 pixelationZoom = 2 / actualSize;
     float2 pixelatedCoords = round(coords / pixelationZoom) * pixelationZoom;
     float2 rotatedCoords = RotatedBy(pixelatedCoords - 0.5, lightningAngle) + 0.5;
     float4 color = tex2D(uImage0, rotatedCoords);
@@ -58,16 +58,16 @@ float4 UpdatePreviousState(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     result *= float4(0.81 + uColor.r * 0.14, 0.81 + uColor.g * 0.14, 0.81 + uColor.b * 0.14, 1) * 0.88;
     
     // Apply the lightning effects. If necessary, this will apply random jumps in the noise to create slightly large, more varied arcs.
-    float2 baseNoiseCoords = (coords + noiseCoordsOffset) * 0.9;
-    float2 noiseCoords = float2(baseNoiseCoords.x, currentFrame * floor(1 + abs(coords.y) * 3) * 0.02);
+    float2 baseNoiseCoords = (pixelatedCoords + noiseCoordsOffset) * 0.9;
+    float2 noiseCoords = float2(baseNoiseCoords.x, currentFrame * floor(1 + abs(pixelatedCoords.y) * 3) * 0.02);
     float noise = FractalNoise(noiseCoords) * 1.1;
     if (bigArc)
         noise *= 1.5;
     
     // Calculate the lighting.
-    float2 direction = normalize(coords - 0.5);    
-    float4 brightness = 0.0156 / abs(coords.y * zoomFactor - noise - zoomFactor * 0.5);
-    result += brightness * direction.x * smoothstep(0.04, 0.12, coords.x) * smoothstep(lightningLength, lightningLength - 0.03, coords.x);
+    float2 direction = normalize(pixelatedCoords - 0.5);
+    float4 brightness = 0.0156 / abs(pixelatedCoords.y * zoomFactor - noise - zoomFactor * 0.5);
+    result += brightness * direction.x * smoothstep(0.04, 0.12, coords.x) * smoothstep(lightningLength, lightningLength - 0.03, pixelatedCoords.x);
     
     return result;
 }

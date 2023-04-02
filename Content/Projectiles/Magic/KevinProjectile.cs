@@ -222,7 +222,8 @@ namespace InfernumMode.Content.Projectiles.Magic
         public override bool PreDraw(ref Color lightColor)
         {
             Main.Rasterizer = RasterizerState.CullNone;
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
             Main.spriteBatch.ResetBlendState();
             return false;

@@ -114,6 +114,9 @@ namespace InfernumMode.Content.Projectiles.Magic
             else if (TargetIndex >= 0)
                 ElectricitySound = SoundEngine.PlaySound(InfernumSoundRegistry.KevinElectricitySound, Projectile.Center);
 
+            if (Time % 5f == 4f && !Owner.CheckMana(Owner.ActiveItem(), -1, true))
+                Projectile.Kill();
+
             Time++;
         }
 

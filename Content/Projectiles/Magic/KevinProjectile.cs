@@ -54,6 +54,8 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public ref float TargetIndex => ref Projectile.ai[1];
 
+        public ref float LightningDistance => ref Projectile.localAI[0];
+
         public static Color LightningColor => Color.Lerp(Color.Cyan, Color.DeepSkyBlue, 0.7f);
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
@@ -97,28 +99,58 @@ namespace InfernumMode.Content.Projectiles.Magic
             }
 
             // Stick to the owner.
-            Projectile.Center = Owner.MountedCenter - Vector2.UnitX * Projectile.spriteDirection * 18f;
-            AdjustPlayerValues();
+            Projectile.Center = Owner.MountedCenter;
 
             // Decide a target every frame.
             TargetIndex = -1;
             NPC potentialTarget = Projectile.Center.ClosestNPCAt(Kevin.TargetingDistance);
             if (potentialTarget != null)
             {
-                TargetIndex = potentialTarget.whoAmI;
-                Projectile.rotation = Projectile.AngleTo(potentialTarget.Center);
-                Owner.ChangeDir(Math.Sign(potentialTarget.Center.X - Projectile.Center.X));
+                if (TargetIndex != potentialTarget.whoAmI)
+                {
+                    TargetIndex = potentialTarget.whoAmI;
+                    Time = 0f;
+                    Projectile.netUpdate = true;
+                }
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(potentialTarget.Center), 0.6f);
+                LightningDistance = Projectile.Distance(potentialTarget.Center);
             }
 
+            // If no target was found, aim the lightning in the direction of the mouse.
+            else if (Main.myPlayer == Owner.whoAmI)
+            {
+                Vector2 aimDirection = Projectile.SafeDirectionTo(Main.MouseWorld);
+                if (Projectile.velocity != aimDirection)
+                {
+                    LightningDistance = Projectile.Distance(Main.MouseWorld) * Main.rand.NextFloat(0.9f, 1.1f);
+                    Projectile.velocity = aimDirection;
+                    Projectile.netUpdate = true;
+                }
+            }
+
+            // Clamp the lightning distance so that it does not exceed the range of the render target.
+            float maxLightningRange = Kevin.LightningArea * 0.5f - 8f;
+            if (LightningDistance >= maxLightningRange)
+                LightningDistance = maxLightningRange;
+
+            // Determine the direction the owner should face.
+            Owner.ChangeDir(Math.Sign(Projectile.velocity.X));
+
+            // Determine the rotation based on the direction of the velocity.
+            Projectile.rotation = Projectile.velocity.ToRotation();
+
             // Update the sound's position.
-            if (TargetIndex >= 0 && SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)
+            if (SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)
                 t.Position = Projectile.Center;
-            else if (TargetIndex >= 0)
+            else
                 ElectricitySound = SoundEngine.PlaySound(InfernumSoundRegistry.KevinElectricitySound, Projectile.Center);
 
             // Continuously use mana. If the owner has no more mana to use, destroy this projectile.
             if (Time % 5f == 4f && !Owner.CheckMana(Owner.ActiveItem(), -1, true))
                 Projectile.Kill();
+
+            // Adjust player values such as arm rotation.
+            AdjustPlayerValues();
 
             Time++;
         }
@@ -154,8 +186,9 @@ namespace InfernumMode.Content.Projectiles.Magic
             Main.instance.GraphicsDevice.Textures[0] = LightningTarget.Target;
             Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.WavyNoise.Value;
 
-            float lightningDistance = TargetIndex >= 0f ? Projectile.Distance(Main.npc[(int)TargetIndex].Center) : 0f;
-            Vector2 lightningDirection = TargetIndex >= 0f ? Projectile.SafeDirectionTo(Main.npc[(int)TargetIndex].Center) : Vector2.Zero;
+            float angularOffset = Projectile.oldRot[1] - Projectile.oldRot[0];
+            Vector2 lightningDirection = Projectile.velocity.SafeNormalize(Vector2.Zero);
+
             LightningCoordinateOffset += lightningDirection * -0.003f;
 
             // Supply a bunch of parameters to the shader.
@@ -165,10 +198,10 @@ namespace InfernumMode.Content.Projectiles.Magic
             shader.Parameters["actualSize"].SetValue(LightningTarget.Target.Size());
             shader.Parameters["screenMoveOffset"].SetValue(Main.screenPosition - Main.screenLastPosition);
             shader.Parameters["lightningDirection"].SetValue(lightningDirection);
-            shader.Parameters["lightningAngle"].SetValue(Projectile.oldRot[1] - Projectile.oldRot[0]);
+            shader.Parameters["lightningAngle"].SetValue(angularOffset);
             shader.Parameters["noiseCoordsOffset"].SetValue(LightningCoordinateOffset);
             shader.Parameters["currentFrame"].SetValue(Main.GameUpdateCount);
-            shader.Parameters["lightningLength"].SetValue(lightningDistance / LightningTarget.Target.Width + 0.5f);
+            shader.Parameters["lightningLength"].SetValue(LightningDistance / LightningTarget.Target.Width + 0.5f);
             shader.Parameters["zoomFactor"].SetValue(15f);
             shader.Parameters["bigArc"].SetValue(Main.rand.NextBool(5));
             shader.CurrentTechnique.Passes["UpdatePass"].Apply();

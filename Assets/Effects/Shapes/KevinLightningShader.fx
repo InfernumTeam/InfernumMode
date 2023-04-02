@@ -22,6 +22,7 @@ float lightningAngle;
 float2 noiseCoordsOffset;
 float currentFrame;
 float lightningLength;
+float zoomFactor;
 bool bigArc;
 
 float2 RotatedBy(float2 v, float angle)
@@ -62,7 +63,6 @@ float4 UpdatePreviousState(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
         noise *= 1.5;
     
     // Calculate the lighting.
-    float zoomFactor = 12;
     float2 direction = normalize(coords - 0.5);    
     float4 brightness = 0.0156 / abs(coords.y * zoomFactor - noise - zoomFactor * 0.5);
     result += brightness * direction.x * smoothstep(0.04, 0.12, coords.x) * smoothstep(lightningLength, lightningLength - 0.03, coords.x);

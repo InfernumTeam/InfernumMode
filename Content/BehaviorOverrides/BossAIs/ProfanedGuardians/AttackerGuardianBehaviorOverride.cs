@@ -158,8 +158,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             skyOpacity = MathHelper.Clamp(skyOpacity - 0.01f, 0f, 1f);
 
             // Force the player into the area if the opacity is drawn.
-            if (fireBorderOpacity > 0f && target.Center.Distance(npc.Center) > 1150f)
-                target.Center = Vector2.Lerp(target.Center, npc.Center + npc.Center.DirectionTo(target.Center) * 1150f, 0.2f);
+            if (fireBorderOpacity > 0f && target.Center.Distance(npc.Center) > 1250f)
+                target.Center = Vector2.Lerp(target.Center, npc.Center + npc.Center.DirectionTo(target.Center) * 1250f, 0.2f);
 
             //if (attackState >= (float)GuardiansAttackType.DefenderDeathAnimation)
             //    npc.Infernum().ShouldUseSaturationBlur = true;
@@ -541,7 +541,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             List<VertexPosition2DColor> vertices = new();
             float totalPoints = 200;
             float width = 300f;
-            float radius = 1200f;
+            float radius = 1300f;
             Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
             float distanceFromCenter = radius - Main.player[npc.target].Center.Distance(npc.Center);
             float alpha = MathHelper.Clamp(1f - distanceFromCenter / (radius * 1.5f), 0f, 1f);

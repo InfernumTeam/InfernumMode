@@ -117,9 +117,9 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle GreatSandSharkSuddenRoarSound = new("InfernumMode/Assets/Sounds/Custom/BereftVassal/GreatSandSharkSuddenRoar");
 
-        public static readonly SoundStyle GuardiansPhaseThreeTransition = new("InfernumMode/Assets/Sounds/Custom/ProfanedGuardians/GuardiansPhaseThreeTransition");
+        public static readonly SoundStyle GuardiansPhaseThreeTransition = new SoundStyle("InfernumMode/Assets/Sounds/Custom/ProfanedGuardians/GuardiansPhaseThreeTransition") with { Volume = 0.66f };
 
-        public static readonly SoundStyle GuardiansPhaseTwoTransition = new("InfernumMode/Assets/Sounds/Custom/ProfanedGuardians/GuardiansPhaseTwoTransition");
+        public static readonly SoundStyle GuardiansPhaseTwoTransition = new SoundStyle("InfernumMode/Assets/Sounds/Custom/ProfanedGuardians/GuardiansPhaseTwoTransition") with { Volume = 0.66f };
 
         public static readonly SoundStyle GuardianSpawnSound = new("InfernumMode/Assets/Sounds/Custom/ProfanedGuardians/GuardiansSpawn");
 

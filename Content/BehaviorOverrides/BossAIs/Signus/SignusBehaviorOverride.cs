@@ -502,7 +502,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     if (attackTimer > telegraphTime && attackTimer < telegraphTime + blackTime - 3f && attackTimer % 3f == 2f)
                     {
                         // Play a sound.
-                        SoundEngine.PlaySound(InfernumSoundRegistry.SignusSlashSound with { Pitch = 0.4f }, target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.SignusSlashSound with { Volume = 0.66f, Pitch = 0.4f }, target.Center);
 
                         // Define a starting point if one has yet to be selected for the slashes.
                         // It attempts to start at Signus' position, but will not start too far off from the target.

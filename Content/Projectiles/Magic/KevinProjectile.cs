@@ -161,6 +161,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             shader.Parameters["noiseCoordsOffset"].SetValue(LightningCoordinateOffset);
             shader.Parameters["currentFrame"].SetValue(Main.GameUpdateCount);
             shader.Parameters["lightningLength"].SetValue(lightningDistance / LightningTarget.Target.Width + 0.5f);
+            shader.Parameters["zoomFactor"].SetValue(15f);
             shader.Parameters["bigArc"].SetValue(Main.rand.NextBool(5));
             shader.CurrentTechnique.Passes["UpdatePass"].Apply();
 

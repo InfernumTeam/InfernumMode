@@ -112,7 +112,7 @@ namespace InfernumMode.Content.Items
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
-                DrawData drawData = new(texture, position, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8, true), drawColor * 0.1f, 0f, origin, scale, SpriteEffects.None, 0);
+                DrawData drawData = new(texture, position, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8, false), drawColor * 0.1f, 0f, origin, scale, SpriteEffects.None, 0);
                 InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/WayfinderLayer"));
                 InfernumEffectsRegistry.RealityTear2Shader.Apply(drawData);
 

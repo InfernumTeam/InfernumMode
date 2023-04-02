@@ -141,6 +141,8 @@ namespace InfernumMode.Content.Projectiles.Magic
             // Update the lightning effect every frame.
             Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget.Target);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
+
+            Main.Rasterizer = RasterizerState.CullNone;
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
 
             Main.instance.GraphicsDevice.Textures[0] = LightningTarget.Target;
@@ -169,11 +171,13 @@ namespace InfernumMode.Content.Projectiles.Magic
             Main.spriteBatch.Draw(LightningTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
             Main.spriteBatch.End();
 
+            Main.Rasterizer = RasterizerState.CullNone;
             LightningTarget.Target.CopyContentsFrom(TemporaryAuxillaryTarget.Target);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Main.Rasterizer = RasterizerState.CullNone;
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
             Main.spriteBatch.ResetBlendState();

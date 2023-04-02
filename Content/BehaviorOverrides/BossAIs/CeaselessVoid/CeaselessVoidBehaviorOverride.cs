@@ -1123,7 +1123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer >= attackDelay && attackTimer <= attackDelay + suckTime)
                 target.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(attackDelay + suckTime - 90f, attackDelay + suckTime, attackTimer, true) * 12f;
 
-            if (attackTimer == suckTime)
+            if (attackTimer == attackDelay + suckTime)
             {
                 target.Infernum_Camera().CurrentScreenShakePower = 18f;
                 ScreenEffectSystem.SetBlurEffect(npc.Center, 0.6f, 25);
@@ -1221,6 +1221,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             float whiteningFadeIn = Utils.GetLerpValue(chargeUpTime, chargeUpTime + whiteningTime, attackTimer, true);
             float whiteningFadeOut = Utils.GetLerpValue(chargeUpTime + whiteningTime + whiteningWaitTime + whiteningFadeOutTime, chargeUpTime + whiteningTime + whiteningWaitTime, attackTimer, true);
             float whiteningInterpolant = whiteningFadeIn * whiteningFadeOut;
+
+            // Disable damage.
+            npc.dontTakeDamage = true;
 
             // Play a buildup sound prior to the whitening effect.
             if (attackTimer == 1f)

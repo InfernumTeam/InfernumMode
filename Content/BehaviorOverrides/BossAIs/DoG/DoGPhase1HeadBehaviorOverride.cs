@@ -462,7 +462,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            DoGPhase2HeadBehaviorOverride.DrawDashTimingIndicator(npc, spriteBatch);
+            DoGPhase2HeadBehaviorOverride.DrawDashTimingIndicator(npc);
 
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
                 return DoGPhase2HeadBehaviorOverride.PreDraw(npc, lightColor);

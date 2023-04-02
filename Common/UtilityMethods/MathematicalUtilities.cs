@@ -244,5 +244,13 @@ namespace InfernumMode
 
             return result;
         }
+
+        public static Vector2 QuadraticBezier(Vector2 a, Vector2 b, Vector2 c, float interpolant)
+        {
+            Vector2 firstTerm = MathF.Pow(1f - interpolant, 2f) * a;
+            Vector2 secondTerm = (2f - interpolant * 2f) * interpolant * b;
+            Vector2 thirdTerm = MathF.Pow(interpolant, 2f) * c;
+            return firstTerm + secondTerm + thirdTerm;
+        }
     }
 }

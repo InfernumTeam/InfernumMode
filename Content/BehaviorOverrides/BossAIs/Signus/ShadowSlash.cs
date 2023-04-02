@@ -1,6 +1,10 @@
 using CalamityMod;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -10,6 +14,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 {
     public class ShadowSlash : ModProjectile
     {
+        public PrimitiveTrailCopy SlashDrawer
+        {
+            get;
+            set;
+        }
+
+        public override string Texture => InfernumTextureRegistry.InvisPath;
+
+        public static int Lifetime => 20;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Shadow Slash");
@@ -17,12 +31,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void SetDefaults()
         {
-            Projectile.width = 500;
+            Projectile.width = 640;
             Projectile.height = 100;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = 30;
+            Projectile.timeLeft = Lifetime;
             Projectile.hide = true;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
@@ -30,8 +44,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void AI()
         {
-            Projectile.Opacity = Projectile.timeLeft / 30f;
-            Projectile.scale = Utils.GetLerpValue(30f, 25f, Projectile.timeLeft, true);
+            Projectile.Opacity = Projectile.timeLeft / (float)Lifetime;
+            Projectile.scale = Utils.GetLerpValue(Lifetime, Lifetime - 5f, Projectile.timeLeft, true);
             Projectile.scale *= MathHelper.Lerp(0.7f, 1.1f, Projectile.identity % 6f / 6f) * 0.5f;
             Projectile.rotation = Projectile.ai[0];
         }
@@ -44,6 +58,40 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Vector2 start = Projectile.Center - Projectile.rotation.ToRotationVector2() * Projectile.width * Projectile.scale * 0.5f;
             Vector2 end = Projectile.Center + Projectile.rotation.ToRotationVector2() * Projectile.width * Projectile.scale * 0.5f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.height * 0.5f, ref _);
+        }
+
+        public static float PrimitiveWidthFunction(float completionRatio) => Utils.GetLerpValue(0f, 0.32f, completionRatio, true) * Utils.GetLerpValue(1f, 0.68f, completionRatio, true) * 40f;
+
+        public static Color PrimitiveColorFunction(float completionRatio) => Color.Cyan;
+
+        public Color PrimitiveColorFunction2(float completionRatio) => Color.Lerp(Color.Cyan, Color.Fuchsia, MathF.Pow(Projectile.Opacity, 0.5f)) with { A = 0 };
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // Initialize the slash drawer.
+            var slashShader = InfernumEffectsRegistry.DoGDashIndicatorVertexShader;
+            SlashDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction2, null, true, slashShader);
+
+            // Calculate the three points that define the overall shape of the slash.
+            Vector2 start = Projectile.Center - Projectile.rotation.ToRotationVector2() * Projectile.width * Projectile.scale * 0.5f;
+            Vector2 end = Projectile.Center + Projectile.rotation.ToRotationVector2() * Projectile.width * Projectile.scale * 0.5f;
+            Vector2 middle = (start + end) * 0.5f + (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * Projectile.width * Projectile.scale * 0.167f;
+
+            // Create a bunch of points that slash across the Bezier curve created from the above three points.
+            List<Vector2> slashPoints = new();
+            for (int i = 0; i < 16; i++)
+            {
+                float interpolant = i / 15f * MathF.Pow(1f - Projectile.Opacity, 0.4f);
+                slashPoints.Add(Utilities.QuadraticBezier(start, middle, end, interpolant));
+            }
+
+            slashShader.UseOpacity(MathF.Pow(Projectile.Opacity, 0.35f));
+            slashShader.UseImage1("Images/Extra_194");
+            slashShader.UseColor(PrimitiveColorFunction2(0.5f));
+            SlashDrawer.Draw(slashPoints, -Main.screenPosition, 50);
+            SlashDrawer.Draw(slashPoints, -Main.screenPosition, 24);
+
+            return false;
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI, List<int> overWiresUI)

@@ -195,6 +195,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle SizzleSound = new("CalamityMod/Sounds/Custom/Providence/ProvidenceSizzle");
 
+        public static readonly SoundStyle SignusSlashSound = new("InfernumMode/Assets/Sounds/Custom/Signus/SignusSlash");
+
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/Skeletron/SkeletronHeadBonk");
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/SonicBoom") with { Volume = 1.7f };

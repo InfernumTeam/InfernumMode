@@ -1405,7 +1405,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public static Color PrimitiveColorFunction(float completionRatio) => Color.Fuchsia;
 
-        public static void DrawDashTimingIndicator(NPC npc, SpriteBatch spriteBatch)
+        public static void DrawDashTimingIndicator(NPC npc)
         {
             npc.Infernum().OptionalPrimitiveDrawer ??= new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, InfernumEffectsRegistry.DoGDashIndicatorVertexShader);
             Player target;

@@ -138,7 +138,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public void UpdateLightningField()
         {
-            // Update the shadowy wisp effect every frame.
+            // Update the lightning effect every frame.
             Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget.Target);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
@@ -150,6 +150,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Vector2 lightningDirection = TargetIndex >= 0f ? Projectile.SafeDirectionTo(Main.npc[(int)TargetIndex].Center) : Vector2.Zero;
             LightningCoordinateOffset += lightningDirection * -0.003f;
 
+            // Supply a bunch of parameters to the shader.
             var shader = InfernumEffectsRegistry.KevinLightningShader.Shader;
             shader.Parameters["uColor"].SetValue(LightningColor.ToVector3());
             shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
@@ -163,6 +164,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             shader.Parameters["bigArc"].SetValue(Main.rand.NextBool(5));
             shader.CurrentTechnique.Passes["UpdatePass"].Apply();
 
+            // Draw the result to the next frame and copy it over.
             Main.spriteBatch.Draw(LightningTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
             Main.spriteBatch.End();
 

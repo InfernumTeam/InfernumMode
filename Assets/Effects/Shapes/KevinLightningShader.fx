@@ -24,13 +24,6 @@ float currentFrame;
 float lightningLength;
 bool bigArc;
 
-float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
-{
-    float4 color = tex2D(uImage0, coords);
-    float luminosity = (color.r + color.g + color.b) / 3;
-    return pow(color, 4) * sampleColor * luminosity;
-}
-
 float2 RotatedBy(float2 v, float angle)
 {
     float c = sin(angle + 1.5707);
@@ -79,10 +72,6 @@ float4 UpdatePreviousState(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 
 technique Technique1
 {
-    pass BurnPass
-    {
-        PixelShader = compile ps_2_0 PixelShaderFunction();
-    }
     pass UpdatePass
     {
         PixelShader = compile ps_2_0 UpdatePreviousState();

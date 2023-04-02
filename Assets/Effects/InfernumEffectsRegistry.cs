@@ -177,7 +177,7 @@ namespace InfernumMode.Assets.Effects
             GameShaders.Misc["Infernum:GuardiansLaserShader"] = new MiscShaderData(guardiansShader, "TrailPass");
 
             Ref<Effect> kevinLightningShader = new(assets.Request<Effect>("Assets/Effects/Shapes/KevinLightningShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:KevinLightning"] = new MiscShaderData(kevinLightningShader, "BurnPass");
+            GameShaders.Misc["Infernum:KevinLightning"] = new MiscShaderData(kevinLightningShader, "UpdatePass");
 
             Ref<Effect> introShader = new(assets.Request<Effect>("Assets/Effects/Shapes/MechIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");

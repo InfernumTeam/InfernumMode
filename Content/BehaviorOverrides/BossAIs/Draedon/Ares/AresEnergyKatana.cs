@@ -161,10 +161,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             for (int i = 0; i < 12; i++)
             {
+                float lockedRotation;
                 if (ArmOffsetDirection == 1f)
-                    Limbs[0].Rotation = 0.23f;
+                    lockedRotation = 0.23f;
                 else
-                    Limbs[0].Rotation = MathHelper.Pi - 0.23f;
+                    lockedRotation = MathHelper.Pi - 0.23f;
+                Limbs[0].Rotation = MathHelper.Clamp((float)Limbs[0].Rotation, lockedRotation - 0.45f, lockedRotation + 0.45f);
 
                 Limbs.Update(connectPosition, endPosition);
             }
@@ -172,27 +174,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public void DoBehavior_EnergyBladeSlices()
         {
-            int anticipationTime = 42;
+            int anticipationTime = 58;
             int sliceTime = 16;
-            float wrappedAttackTimer = (AttackTimer + (int)ArmOffsetDirection * 14) % (anticipationTime + sliceTime);
+            int hoverTime = 8;
+            float wrappedAttackTimer = (AttackTimer + (int)ArmOffsetDirection * anticipationTime / 3) % (anticipationTime + sliceTime + hoverTime);
+            float flySpeedBoost = Ares.velocity.Length() * 0.4f;
 
             Vector2 hoverOffset = Vector2.Zero;
             if (wrappedAttackTimer <= anticipationTime)
             {
-                SlashFadeOut = MathHelper.Clamp(SlashFadeOut + 0.12f, 0f, 1f);
-                float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.77f, 3f, 36f);
+                SlashFadeOut = 1f;
+                float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.5f, 2f, 42f);
                 Vector2 startingOffset = new(ArmOffsetDirection * 470f, 0f);
                 Vector2 endingOffset = new(ArmOffsetDirection * 172f, -175f);
                 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(0f, anticipationTime, wrappedAttackTimer, true));
-                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 450f, minHoverSpeed, 115f);
+                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 450f, flySpeedBoost + minHoverSpeed, 115f);
             }
-            else
+            else if (wrappedAttackTimer <= anticipationTime + sliceTime)
             {
                 SlashFadeOut = 0f;
                 Vector2 startingOffset = new(ArmOffsetDirection * 172f, -175f);
                 Vector2 endingOffset = new(ArmOffsetDirection * -260f, 400f);
                 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(anticipationTime, anticipationTime + sliceTime, wrappedAttackTimer, true));
-                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 400f, 30f, 115f);
+                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 400f, flySpeedBoost + 49f, 115f);
+            }
+            else
+            {
+                NPC.velocity.X *= 0.6f;
+                NPC.velocity.Y *= 0.1f;
+                SlashFadeOut = MathHelper.Clamp(SlashFadeOut + 0.5f, 0f, 1f);
             }
 
             // Play a slice sound.
@@ -321,7 +331,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 bladeOrigin = bladeFrame.Size() * new Vector2(0.5f, 1f);
                 Vector2 bladeDrawPosition = NPC.Center - Main.screenPosition - NPC.rotation.ToRotationVector2() * ArmOffsetDirection * 14f;
                 Vector2 bladeScale = Vector2.One * NPC.scale;
-                float squish = NPC.position.Distance(NPC.oldPosition) * 0.01f;
+                float squish = NPC.position.Distance(NPC.oldPosition) * 0.006f;
                 bladeScale.X -= squish;
 
                 Main.EntitySpriteDraw(bladeTexture, bladeDrawPosition, bladeFrame, NPC.GetAlpha(Color.White), NPC.rotation - ArmOffsetDirection * MathHelper.PiOver2, bladeOrigin, bladeScale, 0, 0);

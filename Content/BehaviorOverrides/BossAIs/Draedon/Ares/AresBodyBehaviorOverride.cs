@@ -671,7 +671,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_EnergyBladeSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
         {
-            npc.velocity *= 0.9f;
+            // Attempt to loosely hover above the player.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 320f;
+            if (target.velocity.Y < 0f)
+                hoverDestination.Y += target.velocity.Y * 16f;
+
+            Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.06f;
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.12f);
         }
 
         public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
@@ -1393,12 +1399,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     DrawArm(npc, Main.npc[teslaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2, baseInterpolateColor, npc.localAI[3] * 0.6f);
                 if (plasmaArm != -1)
                     DrawArm(npc, Main.npc[plasmaArm].Center, Main.screenPosition, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2, baseInterpolateColor, npc.localAI[3] * 0.6f);
-
-                foreach (NPC katana in katanas)
-                {
-                    int direction = (int)katana.ai[2];
-                    DrawArmWithIK(npc, katana, armGlowmaskColor, direction);
-                }
             }
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
@@ -1425,6 +1425,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow").Value;
             Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+
+            if (npc.Opacity > 0.05f)
+            {
+                foreach (NPC katana in katanas)
+                {
+                    int direction = (int)katana.ai[2];
+                    DrawArmWithIK(npc, katana, armGlowmaskColor, direction);
+                }
+            }
 
             // Draw line telegraphs.
             float telegraphInterpolant = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphInterpolantIndex];

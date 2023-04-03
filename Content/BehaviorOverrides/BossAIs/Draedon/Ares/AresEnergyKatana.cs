@@ -15,6 +15,9 @@ using InfernumMode.Assets.ExtraTextures;
 using CalamityMod.InverseKinematics;
 using static Humanizer.In;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Primitives;
+using Terraria.Graphics.Shaders;
+using System.Collections.Generic;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -27,6 +30,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public AresCannonChargeParticleSet EnergyDrawer = new(-1, 15, 40f, Color.Red);
 
         public ThanatosSmokeParticleSet SmokeDrawer = new(-1, 3, 0f, 16f, 1.5f);
+
+        public Vector2 SlashStart
+        {
+            get;
+            set;
+        }
+
+        public PrimitiveTrailCopy SlashDrawer
+        {
+            get;
+            set;
+        }
 
         public bool KatanaIsInUse
         {
@@ -44,6 +59,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public ref float CurrentDirection => ref NPC.ai[3];
 
+        public ref float SlashFadeOut => ref NPC.localAI[0];
+
         public static NPC Ares => AresCannonBehaviorOverride.Ares;
 
         public static float AttackTimer => Ares.ai[1];
@@ -53,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             this.HideFromBestiary();
             DisplayName.SetDefault("XF-09 Ares Energy Katana");
             NPCID.Sets.TrailingMode[NPC.type] = 3;
-            NPCID.Sets.TrailCacheLength[NPC.type] = NPC.oldPos.Length;
+            NPCID.Sets.TrailCacheLength[NPC.type] = 50;
         }
 
         public override void SetDefaults()
@@ -162,6 +179,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 hoverOffset = Vector2.Zero;
             if (wrappedAttackTimer <= anticipationTime)
             {
+                SlashFadeOut = MathHelper.Clamp(SlashFadeOut + 0.12f, 0f, 1f);
                 float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.77f, 3f, 36f);
                 Vector2 startingOffset = new(ArmOffsetDirection * 470f, 0f);
                 Vector2 endingOffset = new(ArmOffsetDirection * 172f, -175f);
@@ -170,6 +188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             else
             {
+                SlashFadeOut = 0f;
                 Vector2 startingOffset = new(ArmOffsetDirection * 172f, -175f);
                 Vector2 endingOffset = new(ArmOffsetDirection * -260f, 400f);
                 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(anticipationTime, anticipationTime + sliceTime, wrappedAttackTimer, true));
@@ -178,7 +197,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Play a slice sound.
             if (wrappedAttackTimer == anticipationTime)
+            {
+                NPC.oldPos = new Vector2[NPC.oldPos.Length];
+                SlashStart = NPC.Center + ((float)Limbs.Limbs[1].Rotation).ToRotationVector2() * NPC.scale * 160f;
+                NPC.netUpdate = true;
                 SoundEngine.PlaySound(InfernumSoundRegistry.AresSlashSound, NPC.Center);
+            }
 
             // Rotate based on the direction of the arm.
             NPC.rotation = (float)Limbs[1].Rotation;
@@ -245,12 +269,52 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
+        public float SlashWidthFunction(float completionRatio) => NPC.scale * 100f;
+
+        public Color SlashColorFunction(float completionRatio) => Color.White * Utils.GetLerpValue(0.9f, 0.4f, completionRatio, true) * (1f - SlashFadeOut) * NPC.Opacity;
+
+        public void DrawSlash()
+        {
+            var slashShader = GameShaders.Misc["CalamityMod:ExobladeSlash"];
+            slashShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes"));
+            slashShader.UseColor(new Color(237, 148, 54));
+            slashShader.UseSecondaryColor(new Color(104, 24, 38));
+            slashShader.Shader.Parameters["fireColor"].SetValue(Color.Wheat.ToVector3());
+            slashShader.Shader.Parameters["flipped"].SetValue(false);
+            slashShader.Apply();
+
+            Vector2 slashStart = SlashStart;
+            Vector2 aimDirection = ((float)Limbs.Limbs[1].Rotation).ToRotationVector2();
+            Vector2 slashEnd = NPC.Center + aimDirection * NPC.scale * 160f;
+            Vector2 slashMiddle1 = Vector2.Lerp(slashStart, slashEnd, 0.25f);
+            Vector2 slashMiddle2 = Vector2.Lerp(slashStart, slashEnd, 0.5f);
+            Vector2 slashMiddle3 = Vector2.Lerp(slashStart, slashEnd, 0.75f);
+            SlashDrawer.Draw(new List<Vector2>()
+            {
+                slashEnd,
+                slashMiddle3 + aimDirection * 30f,
+                slashMiddle2,
+                slashMiddle1 - aimDirection * 30f,
+                slashStart,
+            }, -Main.screenPosition, 20, (float)Limbs.Limbs[1].Rotation + MathHelper.PiOver2);
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             AresCannonBehaviorOverride.DrawCannon(NPC, InfernumTextureRegistry.InvisPath, Color.Transparent, drawColor, NPC.Center - Main.screenPosition, EnergyDrawer, SmokeDrawer);
 
             if (KatanaIsInUse)
             {
+                var slashShader = GameShaders.Misc["CalamityMod:ExobladeSlash"];
+                SlashDrawer ??= new PrimitiveTrailCopy(SlashWidthFunction, SlashColorFunction, null, true, slashShader);
+
+                // Draw the zany slash effect.
+                Main.spriteBatch.EnterShaderRegion();
+
+                for (int i = 0; i < 6; i++)
+                    DrawSlash();
+                Main.spriteBatch.ExitShaderRegion();
+
                 int bladeFrameNumber = (int)((Main.GlobalTimeWrappedHourly * 16f + NPC.whoAmI * 7.13f) % 9f);
                 Texture2D bladeTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/DraedonsArsenal/PhaseslayerBlade").Value;
                 Rectangle bladeFrame = bladeTexture.Frame(3, 7, bladeFrameNumber / 7, bladeFrameNumber % 7);

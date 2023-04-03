@@ -19,6 +19,7 @@ namespace InfernumMode.Assets.Effects
         }
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
         public static MiscShaderData AreaBorderVertexShader => GameShaders.Misc["Infernum:AreaBorder"];
+        public static MiscShaderData AresEnergySlashShader => GameShaders.Misc["Infernum:AresEnergySlash"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BackgroundDistortionShader => GameShaders.Misc["Infernum:BackgroundDistortion"];
@@ -115,6 +116,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> areaBorder = new(assets.Request<Effect>("Assets/Effects/Shapes/AreaBorderShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:AreaBorder"] = new MiscShaderData(areaBorder, "TrailPass");
+
+            Ref<Effect> aresEnergySlashShader = new(assets.Request<Effect>("Assets/Effects/Primitives/AresEnergySlashShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:AresEnergySlash"] = new MiscShaderData(aresEnergySlashShader, "TrailPass");
 
             Ref<Effect> aresLightningArcShader = new(assets.Request<Effect>("Assets/Effects/Primitives/AresLightningArcShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:AresLightningArc"] = new MiscShaderData(aresLightningArcShader, "TrailPass");

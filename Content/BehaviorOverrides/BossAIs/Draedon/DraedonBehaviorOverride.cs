@@ -47,12 +47,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
         public const int StrongerNormalShotDamage = 540;
 
+        public const int AresEnergySlashDamage = 640;
+
         public const int PowerfulShotDamage = 850;
 
         // Contact damage values.
-        public const int AresChargeContactDamage = 650;
-
-        public const int AresPhotonRipperContactDamage = 600;
+        public const int AresEnergyKatanaContactDamage = 650;
 
         public const int TwinsChargeContactDamage = 600;
 

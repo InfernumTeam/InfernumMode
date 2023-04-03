@@ -56,7 +56,5 @@ namespace InfernumMode.Common.Graphics
         }
 
         private void HandleTargetUpdateLoop(GameTime obj) => ModifyHitByItemEvent?.Invoke();
-
-        public override void OnModUnload() => DisposeOfTargets();
     }
 }

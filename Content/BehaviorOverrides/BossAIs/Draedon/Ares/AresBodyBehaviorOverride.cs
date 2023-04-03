@@ -495,7 +495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            int attackTime = 1200;
+            int attackTime = 1136;
             if (ExoMechManagement.CurrentAresPhase >= 5)
                 attackTime = 1350;
             if (ExoMechManagement.CurrentAresPhase >= 6)
@@ -671,13 +671,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_EnergyBladeSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
         {
-            // Attempt to loosely hover above the player.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 320f;
-            if (target.velocity.Y < 0f)
-                hoverDestination.Y += target.velocity.Y * 16f;
+            ref float attackDelayTimer = ref npc.Infernum().ExtraAI[0];
 
-            Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.06f;
-            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.12f);
+            // Laugh.
+            frameType = (int)AresBodyFrameType.Laugh;
+
+            attackDelayTimer++;
+            if (attackDelayTimer <= 60f)
+            {
+                if (attackDelayTimer == 1f)
+                    DoLaughEffect(npc, target);
+
+                attackTimer = 1f;
+                npc.velocity *= 0.9f;
+            }
+            else
+            {
+                // Attempt to loosely hover above the player.
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 320f;
+                if (target.velocity.Y < 0f)
+                    hoverDestination.Y += target.velocity.Y * 16f;
+
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.06f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
+            }
         }
 
         public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)

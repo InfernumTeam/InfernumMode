@@ -4,6 +4,8 @@ using Terraria.ModLoader;
 using Terraria.Graphics.Shaders;
 using CalamityMod;
 using System.Collections.Generic;
+using InfernumMode.Assets.Effects;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -26,43 +28,56 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetDefaults()
         {
-            Projectile.width = 60;
-            Projectile.height = 144;
+            Projectile.height = 180;
+            Projectile.height = 180;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 30;
+            Projectile.timeLeft = 60;
             Projectile.tileCollide = false;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 26f, Projectile.timeLeft, true);
-            Projectile.velocity *= 1.06f;
-            Projectile.scale *= 1.01f;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 56f, Projectile.timeLeft, true);
+            Projectile.velocity *= 1.09f;
+
+            if (Projectile.timeLeft >= 30)
+                Projectile.scale *= 1.05f;
         }
 
-        public float SlashWidthFunction(float completionRatio) => Projectile.scale * 22f;
+        public float SlashWidthFunction(float completionRatio) => Projectile.scale * Utils.GetLerpValue(0f, 0.35f, completionRatio, true) * Utils.GetLerpValue(1f, 0.65f, completionRatio, true) * 30f;
 
-        public Color SlashColorFunction(float completionRatio) => Color.White * Utils.GetLerpValue(0.04f, 0.27f, completionRatio, true) * Projectile.Opacity;
+        public Color SlashColorFunction(float completionRatio) => Color.Red * Utils.GetLerpValue(0.04f, 0.27f, completionRatio, true) * Projectile.Opacity * Projectile.localAI[1];
 
         public override bool PreDraw(ref Color lightColor)
         {
             // Initialize the drawer.
-            SlashDrawer ??= new(SlashWidthFunction, SlashColorFunction, null, GameShaders.Misc["CalamityMod:ExobladeSlash"]);
+            SlashDrawer ??= new(SlashWidthFunction, SlashColorFunction, null, InfernumEffectsRegistry.AresEnergySlashShader);
 
             // Draw the slash effect.
             Main.spriteBatch.EnterShaderRegion();
-            //AresEnergyKatana.PrepareSlashShader();
 
             List<Vector2> points = new();
-            for (int i = 0; i < ControlPoints.Length; i++)
-                points.Add(ControlPoints[i] + ControlPoints[i].SafeNormalize(Vector2.Zero) * (Projectile.scale - 1f) * 40f);
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
+            Vector2 perpendicularDirection = direction.RotatedBy(MathHelper.PiOver2);
+            Vector2 left = Projectile.Center - perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
+            Vector2 right = Projectile.Center + perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
+            Vector2 farLeft = left - direction * Projectile.height * Projectile.scale * 4f;
+            Vector2 farRight = right - direction * Projectile.height * Projectile.scale * 4f;
 
-            for (int i = 0; i < 3; i++)
-                SlashDrawer.Draw(points, Projectile.Center - Main.screenPosition, 36);
+            for (int i = 0; i < 10; i++)
+                points.Add(Vector2.CatmullRom(farLeft, left, right, farRight, i / 9f));
+
+            InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes"));
+            InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture2(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
+            for (int i = 0; i < 7; i++)
+            {
+                Projectile.localAI[1] = 1f - i / 7f;
+                SlashDrawer.Draw(points, -Main.screenPosition - direction * i * MathHelper.Clamp(Projectile.velocity.Length(), 0f, 40f) * 2f, 56);
+            }
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

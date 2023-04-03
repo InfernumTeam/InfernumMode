@@ -1,5 +1,6 @@
 ﻿sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
+sampler uImage2 : register(s2);
 float3 uColor;
 float3 uSecondaryColor;
 float uOpacity;
@@ -12,6 +13,7 @@ float uDirection;
 float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
+float2 uImageSize2;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
 
@@ -45,27 +47,18 @@ VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
 // This is simply how the primitive TextCoord is layed out in the C# code.
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-    // Ignore the primtive color and just use this.
-    float4 color = float4(uColor, 1);
     float2 coords = input.TextureCoordinates;
+    float brightnessInterpolant = pow(1 - coords.y, 2);
+    float4 color = input.Color;
+    color.gb += color.r * brightnessInterpolant * float2(1, 0.75);
     
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 0.8 - uTime * 0.5), coords.y));
-    float bloomFadeout = pow(sin(coords.y * 3.141), 8);
-
-    // Calcuate the grayscale version of the pixel and use it as the opacity.
-    float opacity = (0.3 + fadeMapColor.r) * uOpacity * bloomFadeout;
+    float noise = tex2D(uImage1, coords + float2(0, uTime * -2)) - tex2D(uImage2, float2(coords.y, coords.x) + float2(uTime * -3, 0)).r * coords.y;
+    float edgeTaper = pow(sin(coords.x * 3.141), 2.8) * pow(sin(coords.y * 3.141), 0.8);
     
     float4 finalColor = color;
-    if (uOpacity > 1)
-        finalColor = lerp(color, float4(1, 1, 1, opacity), opacity - 0.3);
+    finalColor.rgb *= noise;
     
-    // Fade out at the ends of the streak.
-    if (coords.x < 0.1)
-        opacity *= pow(coords.x / 0.1, 3);
-    if (coords.x > 0.9)
-        opacity *= pow(1 - (coords.x - 0.9) / 0.1, 3);
-    
-    return finalColor * saturate(opacity);
+    return color * noise * edgeTaper * (1 + brightnessInterpolant * 10);
 }
 
 technique Technique1

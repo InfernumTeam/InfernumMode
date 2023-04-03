@@ -8,16 +8,16 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using CalamityModClass = CalamityMod.CalamityMod;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using InfernumMode.Assets.ExtraTextures;
 using CalamityMod.InverseKinematics;
-using static Humanizer.In;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 using Terraria.Graphics.Shaders;
 using System.Collections.Generic;
+
+using CalamityModClass = CalamityMod.CalamityMod;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
+using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -54,6 +54,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 katanaIsInUse = value;
             }
         }
+
+        public List<Vector2> SlashControlPoints
+        {
+            get
+            {
+                Vector2 slashStart = SlashStart;
+                Vector2 aimDirection = ((float)Limbs.Limbs[1].Rotation).ToRotationVector2();
+                Vector2 slashEnd = NPC.Center + aimDirection * NPC.scale * 160f;
+                Vector2 slashMiddle1 = Vector2.Lerp(slashStart, slashEnd, 0.25f);
+                Vector2 slashMiddle2 = Vector2.Lerp(slashStart, slashEnd, 0.5f);
+                Vector2 slashMiddle3 = Vector2.Lerp(slashStart, slashEnd, 0.75f);
+
+                return new List<Vector2>()
+                {
+                    slashEnd,
+                    slashMiddle3 + aimDirection * 30f,
+                    slashMiddle2,
+                    slashMiddle1 - aimDirection * 30f,
+                    slashStart,
+                };
+            }
+        }
+
+        public Player Target => Main.player[NPC.target];
 
         public ref float ArmOffsetDirection => ref NPC.ai[2];
 
@@ -174,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public void DoBehavior_EnergyBladeSlices()
         {
-            int anticipationTime = 58;
+            int anticipationTime = 40;
             int sliceTime = 16;
             int hoverTime = 8;
             float wrappedAttackTimer = (AttackTimer + (int)ArmOffsetDirection * anticipationTime / 3) % (anticipationTime + sliceTime + hoverTime);
@@ -212,6 +236,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 SlashStart = NPC.Center + ((float)Limbs.Limbs[1].Rotation).ToRotationVector2() * NPC.scale * 160f;
                 NPC.netUpdate = true;
                 SoundEngine.PlaySound(InfernumSoundRegistry.AresSlashSound, NPC.Center);
+            }
+
+            // Create an energy slash.
+            if (wrappedAttackTimer == anticipationTime + sliceTime / 2 + 4)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 energySlashVelocity = Vector2.Lerp(((float)Limbs[1].Rotation).ToRotationVector2(), NPC.SafeDirectionTo(Target.Center), 0.6f) * 3f;
+
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(slash =>
+                    {
+                        slash.ModProjectile<AresEnergySlash>().ControlPoints = SlashControlPoints.ToArray();
+                    });
+                    Utilities.NewProjectileBetter(NPC.Center, energySlashVelocity, ModContent.ProjectileType<AresEnergySlash>(), AresEnergySlashDamage, 0f);
+                }
             }
 
             // Rotate based on the direction of the arm.
@@ -285,6 +324,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public void DrawSlash()
         {
+            PrepareSlashShader();
+            SlashDrawer.Draw(SlashControlPoints, -Main.screenPosition, 20, (float)Limbs.Limbs[1].Rotation + MathHelper.PiOver2);
+        }
+
+        public static void PrepareSlashShader()
+        {
             var slashShader = GameShaders.Misc["CalamityMod:ExobladeSlash"];
             slashShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes"));
             slashShader.UseColor(new Color(237, 148, 54));
@@ -292,29 +337,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             slashShader.Shader.Parameters["fireColor"].SetValue(Color.Wheat.ToVector3());
             slashShader.Shader.Parameters["flipped"].SetValue(false);
             slashShader.Apply();
-
-            Vector2 slashStart = SlashStart;
-            Vector2 aimDirection = ((float)Limbs.Limbs[1].Rotation).ToRotationVector2();
-            Vector2 slashEnd = NPC.Center + aimDirection * NPC.scale * 160f;
-            Vector2 slashMiddle1 = Vector2.Lerp(slashStart, slashEnd, 0.25f);
-            Vector2 slashMiddle2 = Vector2.Lerp(slashStart, slashEnd, 0.5f);
-            Vector2 slashMiddle3 = Vector2.Lerp(slashStart, slashEnd, 0.75f);
-            SlashDrawer.Draw(new List<Vector2>()
-            {
-                slashEnd,
-                slashMiddle3 + aimDirection * 30f,
-                slashMiddle2,
-                slashMiddle1 - aimDirection * 30f,
-                slashStart,
-            }, -Main.screenPosition, 20, (float)Limbs.Limbs[1].Rotation + MathHelper.PiOver2);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            AresCannonBehaviorOverride.DrawCannon(NPC, InfernumTextureRegistry.InvisPath, Color.Transparent, drawColor, NPC.Center - Main.screenPosition, EnergyDrawer, SmokeDrawer);
+            // Draw the cannon.
+            string glowmaskTexturePath = "InfernumMode/Content/BehaviorOverrides/BossAIs/Draedon/Ares/AresEnergyKatanaGlow";
+            AresCannonBehaviorOverride.DrawCannon(NPC, glowmaskTexturePath, Color.Red, drawColor, NPC.Center - Main.screenPosition, EnergyDrawer, SmokeDrawer);
 
             if (KatanaIsInUse)
             {
+                // Prepare the slash drawer.
                 var slashShader = GameShaders.Misc["CalamityMod:ExobladeSlash"];
                 SlashDrawer ??= new PrimitiveTrailCopy(SlashWidthFunction, SlashColorFunction, null, true, slashShader);
 
@@ -325,6 +358,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     DrawSlash();
                 Main.spriteBatch.ExitShaderRegion();
 
+                // Draw the energy katana.
                 int bladeFrameNumber = (int)((Main.GlobalTimeWrappedHourly * 16f + NPC.whoAmI * 7.13f) % 9f);
                 Texture2D bladeTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/DraedonsArsenal/PhaseslayerBlade").Value;
                 Rectangle bladeFrame = bladeTexture.Frame(3, 7, bladeFrameNumber / 7, bladeFrameNumber % 7);

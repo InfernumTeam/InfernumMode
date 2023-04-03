@@ -394,6 +394,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (Heads is null || Heads.Length <= 0)
+                return false;
+
             float headScale = NPC.scale * 1.6f;
             for (int i = 0; i < Heads.Length; i++)
             {

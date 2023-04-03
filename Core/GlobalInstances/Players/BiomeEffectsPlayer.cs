@@ -122,29 +122,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void PreUpdate()
         {
-            // Constantly redefine whether the player is near a profaned fountain. This influences the color of lava to be the same as in the Profaned Temple.
-            // NearbyEffects and other things that rely on Terraria's natural scene system had an insufficient range, hence why it's handled in here specifically.
-            ProfanedLavaFountain = false;
-            CosmicBackgroundEffect = false;
-
-            int profanedFountainID = ModContent.TileType<ProfanedFountainTile>();
-            int cosmicMonolithID = ModContent.TileType<CosmicMonolithTile>();
-            for (int dx = -75; dx < 75; dx++)
-            {
-                for (int dy = -75; dy < 75; dy++)
-                {
-                    int x = (int)(Player.Center.X / 16f + dx);
-                    int y = (int)(Player.Center.Y / 16f + dy);
-                    if (!WorldGen.InWorld(x, y))
-                        continue;
-
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == profanedFountainID && Main.tile[x, y].TileFrameX < 36)
-                        ProfanedLavaFountain = true;
-                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == cosmicMonolithID && Main.tile[x, y].TileFrameX >= 36)
-                        CosmicBackgroundEffect = true;
-                }
-            }
-
             // Make the map turn black if in the final layer of the abyss.
             bool obscureMap = Player.Calamity().ZoneAbyssLayer4 && !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
             MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + obscureMap.ToDirectionInt() * 0.008f, 0f, 1f);

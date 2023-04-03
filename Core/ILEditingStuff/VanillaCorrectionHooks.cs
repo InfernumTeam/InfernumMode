@@ -685,19 +685,6 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload() => On.Terraria.GameContent.Drawing.TileDrawing.DrawTiles_EmitParticles -= EmitFireParticles;
     }
 
-    public class LessenDesertTileRequirementsHook : IHookEdit
-    {
-        internal static void MakeDesertRequirementsMoreLenient(On.Terraria.Player.orig_UpdateBiomes orig, Player self)
-        {
-            orig(self);
-            self.ZoneDesert = Main.SceneMetrics.SandTileCount > 300;
-        }
-
-        public void Load() => On.Terraria.Player.UpdateBiomes += MakeDesertRequirementsMoreLenient;
-
-        public void Unload() => On.Terraria.Player.UpdateBiomes -= MakeDesertRequirementsMoreLenient;
-    }
-
     public class ReplaceAbyssWorldgen : IHookEdit
     {
         internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();

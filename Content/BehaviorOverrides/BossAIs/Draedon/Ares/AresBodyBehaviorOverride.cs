@@ -692,8 +692,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (target.velocity.Y < 0f)
                     hoverDestination.Y += target.velocity.Y * 16f;
 
-                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.06f;
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.09f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
             }
         }
 

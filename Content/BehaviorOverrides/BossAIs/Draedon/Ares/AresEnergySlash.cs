@@ -42,10 +42,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 56f, Projectile.timeLeft, true);
-            Projectile.velocity *= 1.09f;
+            Projectile.velocity *= 1.06f;
 
             if (Projectile.timeLeft >= 30)
-                Projectile.scale *= 1.05f;
+                Projectile.scale *= 1.033f;
         }
 
         public float SlashWidthFunction(float completionRatio) => Projectile.scale * Utils.GetLerpValue(0f, 0.35f, completionRatio, true) * Utils.GetLerpValue(1f, 0.65f, completionRatio, true) * 30f;
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i < 7; i++)
             {
                 Projectile.localAI[1] = 1f - i / 7f;
-                SlashDrawer.Draw(points, -Main.screenPosition - direction * i * MathHelper.Clamp(Projectile.velocity.Length(), 0f, 40f) * 2f, 56);
+                SlashDrawer.Draw(points, -Main.screenPosition - direction * i * MathHelper.Clamp(Projectile.velocity.Length(), 0f, Projectile.scale * 10f) * 2f, 56);
             }
 
             Main.spriteBatch.ExitShaderRegion();

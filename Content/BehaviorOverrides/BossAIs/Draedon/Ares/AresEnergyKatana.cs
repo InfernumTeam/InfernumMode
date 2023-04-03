@@ -198,9 +198,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public void DoBehavior_EnergyBladeSlices()
         {
-            int anticipationTime = 40;
+            int anticipationTime = 48;
             int sliceTime = 16;
             int hoverTime = 8;
+            float slashShootSpeed = 4.5f;
             float wrappedAttackTimer = (AttackTimer + (int)ArmOffsetDirection * anticipationTime / 3) % (anticipationTime + sliceTime + hoverTime);
             float flySpeedBoost = Ares.velocity.Length() * 0.4f;
 
@@ -243,7 +244,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 energySlashVelocity = Vector2.Lerp(((float)Limbs[1].Rotation).ToRotationVector2(), NPC.SafeDirectionTo(Target.Center), 0.6f) * 3f;
+                    Vector2 energySlashVelocity = Vector2.Lerp(((float)Limbs[1].Rotation).ToRotationVector2(), NPC.SafeDirectionTo(Target.Center), 0.6f) * slashShootSpeed;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(slash =>
                     {

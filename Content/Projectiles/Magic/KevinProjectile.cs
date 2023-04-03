@@ -148,7 +148,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)
                 t.Position = Projectile.Center;
             else
-                ElectricitySound = SoundEngine.PlaySound(InfernumSoundRegistry.KevinElectricitySound, Projectile.Center);
+                ElectricitySound = SoundEngine.PlaySound(InfernumSoundRegistry.KevinElectricitySound with { Volume = 0.6f }, Projectile.Center);
 
             // Continuously use mana. If the owner has no more mana to use, destroy this projectile.
             if (Time % 5f == 4f && !Owner.CheckMana(Owner.ActiveItem(), -1, true))

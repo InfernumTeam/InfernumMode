@@ -475,6 +475,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.Calamity().ShouldCloseHPBar = true;
             npc.Calamity().ProvidesProximityRage = false;
             BossHealthBarManager.Bars.RemoveAll(b => b.NPCIndex == npc.whoAmI);
+
+            if (BossRushEvent.BossRushActive)
+            {
+                npc.life = 0;
+                BossRushEvent.BossRushStage++;
+                npc.active = false;
+            }
         }
 
         public static void DoBehavior_DarkEnergySwirl(NPC npc, bool phase2, bool phase3, Player target, ref float attackTimer)

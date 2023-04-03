@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Systems;
 using Terraria;
@@ -10,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
     public class ProvidenceMusicSceneInfernum : BaseMusicSceneEffect
     {
-        public override SceneEffectPriority Priority => (SceneEffectPriority)9;
+        public override SceneEffectPriority Priority => BossRushEvent.BossRushActive ? SceneEffectPriority.None : (SceneEffectPriority)9;
 
         public override int NPCType => ModContent.NPCType<ProvidenceBoss>();
 

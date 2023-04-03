@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.ProfanedGuardians;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Systems;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class GuardiansMusicSceneInfernum : BaseMusicSceneEffect
     {
-        public override SceneEffectPriority Priority => (SceneEffectPriority)9;
+        public override SceneEffectPriority Priority => BossRushEvent.BossRushActive ? SceneEffectPriority.None : (SceneEffectPriority)9;
 
         public override int NPCType => ModContent.NPCType<ProfanedGuardianCommander>();
 

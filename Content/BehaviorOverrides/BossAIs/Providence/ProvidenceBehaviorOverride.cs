@@ -198,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
 
-        public static bool SyncAttacksWithMusic => Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f;
+        public static bool SyncAttacksWithMusic => Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;
 
         public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
 
@@ -268,7 +268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
-            bool shouldDespawnBecauseOfTime = shouldDespawnAtNight || shouldDespawnAtDay;
+            bool shouldDespawnBecauseOfTime = (shouldDespawnAtNight || shouldDespawnAtDay) && !BossRushEvent.BossRushActive;
 
             Vector2 crystalCenter = npc.Center + new Vector2(8f, 56f);
 
@@ -429,7 +429,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 npc.Opacity = 1f;
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
                 if (deathEffectTimer == 1f && !Main.dedServ)
-                    SoundEngine.PlaySound(SoundID.DD2_DefeatScene with { Volume = 1.65f }, target.Center);
+                    SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with { Volume = 1.8f }, target.Center);
 
                 // Delete all fire blenders.
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());

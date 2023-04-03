@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Systems;
 using Terraria;
@@ -10,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class CeaselessVoidMusicSceneInfernum : BaseMusicSceneEffect
     {
-        public override SceneEffectPriority Priority => CalamityGlobalNPC.ghostBoss != -1 ? SceneEffectPriority.BossLow : (SceneEffectPriority)9;
+        public override SceneEffectPriority Priority => CalamityGlobalNPC.ghostBoss != -1 || BossRushEvent.BossRushActive ? SceneEffectPriority.BossLow : (SceneEffectPriority)9;
 
         public override int NPCType => ModContent.NPCType<CVBoss>();
 

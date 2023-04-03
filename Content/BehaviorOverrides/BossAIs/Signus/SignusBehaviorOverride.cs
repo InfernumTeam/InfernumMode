@@ -127,6 +127,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             ref float verticalRepositionDelay = ref npc.Infernum().ExtraAI[0];
             ref float useFreddy = ref npc.Infernum().ExtraAI[10];
 
+            if (BossRushEvent.BossRushActive)
+            {
+                SelectNextAttack(npc);
+                return;
+            }
+
             // Disable boss effects.
             npc.boss = false;
             npc.Calamity().ShouldCloseHPBar = true;

@@ -17,7 +17,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 {
     public class ProfanedLavaParticleSet : BaseFusableParticleSet
     {
-        public override Color BorderColor => Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0f);
+        public override Color BorderColor => ProvidenceBehaviorOverride.IsEnraged ? Color.DeepSkyBlue : Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0f);
 
         public override bool BorderShouldBeSolid => true;
 

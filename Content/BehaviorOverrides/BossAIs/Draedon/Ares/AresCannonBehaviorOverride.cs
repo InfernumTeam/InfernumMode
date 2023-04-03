@@ -57,12 +57,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             AresCannonChargeParticleSet energyDrawer = GetEnergyDrawer(npc);
             energyDrawer.Update();
 
-            npc.dontTakeDamage = false;
-
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 
-            // Ensure this does not take damage during the desperation attack.
+            // Ensure the cannon does not take damage during the desperation attack.
+            npc.dontTakeDamage = false;
             if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
                 npc.dontTakeDamage = true;
 
@@ -99,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Hover near Ares.
-            bool performingCharge = Ares.ai[0] == (int)AresBodyAttackType.HoverCharge && !performingDeathAnimation;
+            bool performingCharge = false;
             Vector2 hoverOffset = PerformHoverMovement(npc, performingCharge);
 
             // Update the telegraph outline intensity timer.
@@ -123,54 +122,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 predictivenessFactor.X *= 0.6f;
                 predictivenessFactor.Y *= 0.33f;
             }
-
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
-            ExoMechAIUtilities.PerformAresArmDirectioning(npc, Ares, target, aimDirection, currentlyDisabled, performingCharge, ref currentDirection);
-
-            float rotationToEndOfCannon = npc.rotation;
-            if (rotationToEndOfCannon < 0f)
-                rotationToEndOfCannon += MathHelper.Pi;
-            Vector2 endOfCannon = npc.Center + rotationToEndOfCannon.ToRotationVector2() * 74f + Vector2.UnitY * 8f;
+            Vector2 endOfCannon = GetEndOfCannon(npc, target, aimDirection, currentlyDisabled, performingCharge, ref currentDirection);
 
             // Play a sound telegraph before firing.
-            int telegraphTime = Math.Max((int)chargeDelay - InfernumSoundRegistry.AresTelegraphSoundLength, 2);
-            if (attackTimer == telegraphTime && !currentlyDisabled)
-                telegraphSound = SoundEngine.PlaySound(FireTelegraphSound with { Volume = 1.6f }, npc.Center).ToFloat();
-
-            // Update the sound telegraph's position.
-            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(telegraphSound), out var t) && t.IsPlaying)
-            {
-                t.Position = npc.Center;
-                if (performingCharge)
-                    t.Stop();
-            }
+            HandleTelegraphSounds(npc, FireTelegraphSound, currentlyDisabled, performingCharge, attackTimer, chargeDelay, ref telegraphSound);
 
             // Create a dust telegraph before firing.
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
                 CreateDustTelegraphs(npc, endOfCannon);
 
             // Decide the state of the particle drawers.
-            smokeDrawer.ParticleSpawnRate = int.MaxValue;
-            energyDrawer.ParticleSpawnRate = int.MaxValue;
-            if (attackTimer > chargeDelay * 0.45f)
-            {
+            if (UpdateParticleDrawers(smokeDrawer, energyDrawer, attackTimer, chargeDelay))
                 shouldPrepareToFire = 1f;
-                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
-                energyDrawer.ParticleSpawnRate = 3;
-                energyDrawer.SpawnAreaCompactness = 100f;
-                energyDrawer.chargeProgress = chargeCompletion;
 
-                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
-                    energyDrawer.AddPulse(chargeCompletion * 6f);
-            }
-            if (Ares.localAI[3] >= 0.36f)
-            {
-                smokeDrawer.ParticleSpawnRate = 1;
-                smokeDrawer.BaseMoveRotation = MathHelper.PiOver2;
-                smokeDrawer.SpawnAreaCompactness = 40f;
-            }
-
-            // Fire lasers.
+            // Shoot projectiles.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
                 SoundEngine.PlaySound(ShootSound, npc.Center);
@@ -195,6 +161,56 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             attackTimer++;
             return false;
+        }
+
+        public static Vector2 GetEndOfCannon(NPC npc, Player target, Vector2 aimDirection, bool currentlyDisabled, bool performingCharge, ref float currentDirection)
+        {
+            ExoMechAIUtilities.PerformAresArmDirectioning(npc, Ares, target, aimDirection, currentlyDisabled, performingCharge, ref currentDirection);
+
+            float rotationToEndOfCannon = npc.rotation;
+            if (rotationToEndOfCannon < 0f)
+                rotationToEndOfCannon += MathHelper.Pi;
+            return npc.Center + rotationToEndOfCannon.ToRotationVector2() * 74f + Vector2.UnitY * 8f;
+        }
+
+        public static void HandleTelegraphSounds(NPC npc, SoundStyle fireTelegraphSound, bool currentlyDisabled, bool stopSound, float attackTimer, float chargeDelay, ref float telegraphSound)
+        {
+            int telegraphTime = Math.Max((int)chargeDelay - InfernumSoundRegistry.AresTelegraphSoundLength, 2);
+            if (attackTimer == telegraphTime && !currentlyDisabled)
+                telegraphSound = SoundEngine.PlaySound(fireTelegraphSound with { Volume = 1.6f }, npc.Center).ToFloat();
+
+            // Update the sound telegraph's position.
+            if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(telegraphSound), out var t) && t.IsPlaying)
+            {
+                t.Position = npc.Center;
+                if (stopSound)
+                    t.Stop();
+            }
+        }
+
+        public static bool UpdateParticleDrawers(ThanatosSmokeParticleSet smokeDrawer, AresCannonChargeParticleSet energyDrawer, float attackTimer, float chargeDelay)
+        {
+            smokeDrawer.ParticleSpawnRate = int.MaxValue;
+            energyDrawer.ParticleSpawnRate = int.MaxValue;
+            bool charging = attackTimer > chargeDelay * 0.45f;
+            if (charging)
+            {
+                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                energyDrawer.ParticleSpawnRate = 3;
+                energyDrawer.SpawnAreaCompactness = 100f;
+                energyDrawer.chargeProgress = chargeCompletion;
+
+                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
+                    energyDrawer.AddPulse(chargeCompletion * 6f);
+            }
+            if (Ares.localAI[3] >= 0.36f)
+            {
+                smokeDrawer.ParticleSpawnRate = 1;
+                smokeDrawer.BaseMoveRotation = MathHelper.PiOver2;
+                smokeDrawer.SpawnAreaCompactness = 40f;
+            }
+
+            return charging;
         }
 
         public static Vector2 PerformHoverMovement(NPC npc, bool performingCharge)
@@ -250,24 +266,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static void DrawUltimateAttackTelegraphs(NPC npc, Vector2 drawPosition)
         {
-            SpriteEffects direction = SpriteEffects.None;
-            if (npc.spriteDirection == 1)
-                direction = SpriteEffects.FlipHorizontally;
-
-            // Locate Ares' body for reference with certain AI attributes.
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Rectangle frame = npc.frame;
-            Vector2 origin = frame.Size() * 0.5f;
-            Vector2 center = npc.Center - Main.screenPosition;
-            bool enraged = Enraged || ExoMechComboAttackContent.EnrageTimer > 0f;
-            Color glowmaskColor = enraged ? Color.Red : Color.White;
-
-            // Use the heat effect, just like the body.
-            if (CalamityGlobalNPC.draedonExoMechPrime != -1)
-                lightColor = Color.Lerp(lightColor, Color.Red with { A = 100 }, Ares.localAI[3] * 0.48f);
-
             // Draw telegraphs if necessary during the ultimate attack.
             float telegraphIntensity = 0f;
             if (CalamityGlobalNPC.draedonExoMechPrime != -1 && Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
@@ -283,29 +283,48 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 beamScale = new(telegraphIntensity * 0.5f, 2.4f);
                 Vector2 beamDirection = npc.rotation.ToRotationVector2();
                 float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2 * npc.spriteDirection;
-                Vector2 beamCenter = center - beamDirection.RotatedBy(-MathHelper.PiOver2) * npc.scale * 10f;
+                Vector2 beamCenter = drawPosition - beamDirection.RotatedBy(-MathHelper.PiOver2) * npc.scale * 10f;
                 Main.spriteBatch.Draw(line, beamCenter, null, outlineColor, beamRotation, beamOrigin, beamScale, 0, 0f);
 
                 Main.spriteBatch.ResetBlendState();
             }
+        }
+
+        public static void DrawCannon(NPC npc, string glowmaskTexturePath, Color telegraphBackglowColor, Color lightColor, Vector2 coreDrawPosition, AresCannonChargeParticleSet energyDrawer, ThanatosSmokeParticleSet smokeDrawer)
+        {
+            SpriteEffects direction = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                direction = SpriteEffects.FlipHorizontally;
+
+            // Locate Ares' body for reference with certain AI attributes.
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Rectangle frame = npc.frame;
+            Vector2 origin = frame.Size() * 0.5f;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            bool enraged = Enraged || ExoMechComboAttackContent.EnrageTimer > 0f;
+            Color glowmaskColor = enraged ? Color.Red : Color.White;
+
+            // Use the heat effect, just like the body.
+            if (CalamityGlobalNPC.draedonExoMechPrime != -1)
+                lightColor = Color.Lerp(lightColor, Color.Red with { A = 100 }, Ares.localAI[3] * 0.48f);
+
+            // Draw telegraphs if necessary during the ultimate attack.
+            DrawUltimateAttackTelegraphs(npc, drawPosition);
 
             // Draw backglow effects, telegraphs, and the base texture.
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
-            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, TelegraphBackglowColor, texture, center, frame, origin);
-            Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, npc, texture, drawPosition, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, npc, telegraphBackglowColor, texture, drawPosition, frame, origin);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
             // Draw glowmasks.
-            texture = ModContent.Request<Texture2D>(GlowmaskTexturePath).Value;
+            texture = ModContent.Request<Texture2D>(glowmaskTexturePath).Value;
 
             // Draw the main texture.
-            Main.spriteBatch.Draw(texture, center, frame, glowmaskColor * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, glowmaskColor * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
 
             // Draw energy effects for telegraph purposes.
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            AresCannonChargeParticleSet energyDrawer = GetEnergyDrawer(npc);
-            ThanatosSmokeParticleSet smokeDrawer = GetSmokeDrawer(npc);
-            Vector2 coreDrawPosition = GetCoreSpritePosition(npc);
             if (npc.Infernum().ExtraAI[1] == 1f)
                 energyDrawer.DrawBloom(coreDrawPosition);
             energyDrawer.DrawPulses(coreDrawPosition);
@@ -313,6 +332,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             smokeDrawer.DrawSet(coreDrawPosition);
 
             Main.spriteBatch.ResetBlendState();
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            DrawCannon(npc, GlowmaskTexturePath, TelegraphBackglowColor, lightColor, GetCoreSpritePosition(npc), GetEnergyDrawer(npc), GetSmokeDrawer(npc));
             return false;
         }
 

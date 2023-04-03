@@ -49,10 +49,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             get
             {
                 int lasersPerBurst = 12;
-
-                if (Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes)
-                    lasersPerBurst = 5;
-
                 return lasersPerBurst;
             }
         }
@@ -80,7 +76,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             int totalLasersPerBurst = 1;
             int laserDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
-            bool photonRipperAttack = Ares.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PhotonRipperSlashes;
             float laserShootSpeed = 10.6f;
             ref float laserShootCounter = ref npc.ai[LaserCounterIndex];
 
@@ -95,13 +90,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (totalLasersPerBurst >= 3)
                     totalLasersPerBurst += 2;
-            }
-
-            // Make things a bit less chaotic during the photon ripper attack.
-            if (photonRipperAttack)
-            {
-                totalLasersPerBurst = 5;
-                laserShootSpeed -= 2.3f;
             }
 
             // Fire the lasers.

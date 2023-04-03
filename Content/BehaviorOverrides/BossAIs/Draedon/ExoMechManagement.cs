@@ -292,7 +292,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ExolaserBomb>(),
                 ModContent.ProjectileType<ExolaserSpark>(),
                 ModContent.ProjectileType<LightOverloadRay>(),
-                ModContent.ProjectileType<PhotonRipperCrystal>(),
                 ModContent.ProjectileType<PlasmaGas>(),
                 ModContent.ProjectileType<RefractionRotor>(),
                 ModContent.ProjectileType<SmallPlasmaSpark>(),

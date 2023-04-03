@@ -400,6 +400,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             float headScale = NPC.scale * 1.6f;
             for (int i = 0; i < Heads.Length; i++)
             {
+                if (Heads[i] is null)
+                    continue;
+
                 int maxFrame = 6;
                 Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregation").Value;
                 Texture2D backTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregationBack").Value;

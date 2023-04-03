@@ -91,8 +91,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
                 SoundEngine.PlaySound(TeleportSound, playerToFollow.Center);
-
-                CreditManager.BeginCredits();
             }
 
             // Pick someone else to pay attention to if the old target is gone.

@@ -89,8 +89,8 @@ namespace InfernumMode.Core.GlobalInstances
                 if (projectile.type == ModContent.ProjectileType<TrilobiteSpike>())
                     projectile.ModProjectile.CooldownSlot = 1;
 
-                if (OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
-                    return (bool)OverridingListManager.InfernumProjectilePreAIOverrideList[projectile.type].DynamicInvoke(projectile);
+                if (OverridingListManager.InfernumProjectilePreAIOverrideList.TryGetValue(projectile.type, out Delegate value))
+                    return (bool)value.DynamicInvoke(projectile);
             }
 
             // No tombs.
@@ -217,8 +217,8 @@ namespace InfernumMode.Core.GlobalInstances
                             frame, shroomColor, projectile.rotation, origin, projectile.scale, direction, 0);
                     }
                 }
-                if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
-                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, Main.spriteBatch, lightColor);
+                if (OverridingListManager.InfernumProjectilePreDrawOverrideList.TryGetValue(projectile.type, out Delegate value))
+                    return (bool)value.DynamicInvoke(projectile, Main.spriteBatch, lightColor);
             }
             return true;
         }

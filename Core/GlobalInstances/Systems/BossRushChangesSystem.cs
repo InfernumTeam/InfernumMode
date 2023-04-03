@@ -291,7 +291,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     Main.npc[apollo].Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = ModContent.NPCType<ThanatosHead>();
 
                 }, permittedNPCs: new int[] { ModContent.NPCType<Artemis>(), ModContent.NPCType<Apollo>(), ModContent.NPCType<AresBody>(),
-                    ModContent.NPCType<AresLaserCannon>(), ModContent.NPCType<AresTeslaCannon>(), ModContent.NPCType<AresPlasmaFlamethrower>(), ModContent.NPCType<AresGaussNuke>(), ModContent.NPCType<AresPulseCannon>(), ModContent.NPCType<PhotonRipperNPC>(),
+                    ModContent.NPCType<AresLaserCannon>(), ModContent.NPCType<AresTeslaCannon>(), ModContent.NPCType<AresPlasmaFlamethrower>(), ModContent.NPCType<AresGaussNuke>(), ModContent.NPCType<AresPulseCannon>(), ModContent.NPCType<AresEnergyKatana>(),
                     ModContent.NPCType<ThanatosHead>(), ModContent.NPCType<ThanatosBody1>(), ModContent.NPCType<ThanatosBody2>(), ModContent.NPCType<ThanatosTail>() }),
 
                 new Boss(ModContent.NPCType<SupremeCalamitas>(), spawnContext: type =>

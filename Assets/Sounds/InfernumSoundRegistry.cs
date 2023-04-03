@@ -25,6 +25,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresLaugh");
 
+        public static readonly SoundStyle AresSlashSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresSlash");
+
         public static readonly SoundStyle AresTeslaShotSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresTeslaShot");
 
         public static readonly SoundStyle AresPulseCannonChargeSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresPulseCannonCharge");

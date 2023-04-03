@@ -1,9 +1,12 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Melee;
+using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.Items.Weapons.Melee.Jawbone;
@@ -13,6 +16,8 @@ namespace InfernumMode.Content.Projectiles.Melee
     public class JawboneHoldout : ModProjectile
     {
         #region Fields/Properties
+        internal PrimitiveTrailCopy SlashDrawer;
+
         public SwingType CurrentSwing
         {
             get => (SwingType)Projectile.ai[0];
@@ -32,6 +37,8 @@ namespace InfernumMode.Content.Projectiles.Melee
         public Vector2 InitialDirection;
 
         public float SwingDirection => Projectile.ai[0] * Math.Sign(InitialDirection.X);
+
+        public float BladeDistance = 200f;
 
         #endregion
 
@@ -64,7 +71,7 @@ namespace InfernumMode.Content.Projectiles.Melee
         {
             DisplayName.SetDefault("Jawbone");
             ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 30;
+            ProjectileID.Sets.TrailCacheLength[Type] = 13;
         }
 
         public override void SetDefaults()
@@ -92,11 +99,13 @@ namespace InfernumMode.Content.Projectiles.Melee
                 Projectile.Kill();
                 return;
             }
-
+            float interpolant = MathF.Sin(GetSwingOffsetAngle(SwingCompletion) * MathF.PI) * 0.5f + 0.5f;
+            BladeDistance = MathHelper.Lerp(100f, 170f, interpolant);
+            Main.NewText(interpolant);
             AdjustPlayerValues();
             Projectile.spriteDirection = Projectile.direction = Projectile.velocity.X.DirectionalSign();
-            Projectile.Center = Owner.Center;// - InitialDirection * 1f;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Lerp(SwingWidth / 2f * SwingDirection, (0f - SwingWidth) / 2f * SwingDirection, GetSwingOffsetAngle(SwingCompletion));
+            Projectile.Center = Owner.Center + Projectile.rotation.ToRotationVector2() * BladeDistance;
             Timer++;
         }
 
@@ -131,6 +140,44 @@ namespace InfernumMode.Content.Projectiles.Melee
         #region Drawing
         public override bool PreDraw(ref Color lightColor)
         {
+            DrawChain();
+            //DrawSlash();
+            DrawBlade(lightColor);
+            return false;
+        }
+
+        public void DrawChain()
+        {
+            Vector2 startPos = Owner.Center;
+            Vector2 endPos = startPos + Projectile.rotation.ToRotationVector2() * BladeDistance;
+            float distance = startPos.Distance(endPos);
+
+            Texture2D chainTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessVoidChain", AssetRequestMode.ImmediateLoad).Value;
+            Vector2 chainOrigin = chainTexture.Size() * 0.5f;
+            float chainAmount = distance / (chainTexture.Height / 1f);
+
+            for (int i = 0; i < chainAmount; i++)
+            {
+                Vector2 drawPos = Vector2.Lerp(startPos, endPos, (float)i / chainAmount);
+                Color chainDrawColor = Lighting.GetColor((int)drawPos.X / 16, (int)(drawPos.Y / 16f));
+
+                Main.spriteBatch.Draw(chainTexture, drawPos - Main.screenPosition, null, chainDrawColor, drawPos.ToRotation(), chainOrigin, 1f, SpriteEffects.None, 0f);
+            }
+        }
+
+        internal float SlashWidthFunction(float completionRatio) => Projectile.scale * 40f;
+
+        public Color SlashColorFunction(float completionRatio) => Color.Lerp(Color.DarkRed, Color.IndianRed, completionRatio);
+
+        public void DrawSlash()
+        {
+            SlashDrawer ??= new PrimitiveTrailCopy(SlashWidthFunction, SlashColorFunction, null, true, GameShaders.Misc["CalamityMod:PhaseslayerRipEffect"]);
+            GameShaders.Misc["CalamityMod:PhaseslayerRipEffect"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
+            SlashDrawer.Draw(Projectile.oldPos, -Main.screenPosition, 30);
+        }
+
+        public void DrawBlade(Color lightColor)
+        {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
             SpriteEffects spriteEffects = (Projectile.direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
@@ -144,7 +191,6 @@ namespace InfernumMode.Content.Projectiles.Melee
             Vector2 origin = new((Owner.direction < 0) ? texture.Width : 0f, texture.Height);
 
             Main.EntitySpriteDraw(texture, drawOffset, null, Projectile.GetAlpha(lightColor), drawRotation, origin, Projectile.scale, spriteEffects, 0);
-            return false;
         }
         #endregion
     }

@@ -55,8 +55,11 @@ namespace InfernumMode.Common.Graphics
                 return;
 
             IsDisposed = true;
-            Target?.Dispose();
-            GC.SuppressFinalize(this);
+            Main.QueueMainThreadAction(() => 
+            {
+                Target?.Dispose();
+                GC.SuppressFinalize(this); 
+            });
         }
 
         public void Recreate(int screenWidth, int screenHeight)

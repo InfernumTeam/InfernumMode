@@ -50,6 +50,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.UseSound = SoundID.Item1;
             Item.value = CalamityGlobalItem.Rarity16BuyPrice;
             Item.Infernum_Tooltips().DeveloperItem = true;
+            CurrentSwing = SwingType.Downward;
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[ModContent.ProjectileType<JawboneHoldout>()] <= 0;

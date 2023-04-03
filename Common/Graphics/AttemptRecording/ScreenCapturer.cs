@@ -306,7 +306,6 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             Image gif;
             // Load the gif and set the frame count.
-
             if (File.Exists(filePath))
                 gif = Image.FromFile(filePath);
             else

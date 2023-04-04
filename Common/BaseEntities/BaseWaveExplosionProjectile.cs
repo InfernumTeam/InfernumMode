@@ -69,7 +69,8 @@ namespace InfernumMode.Common.BaseEntities
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Main.spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             Vector2 scale = new(1.5f, 1f);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f;

@@ -791,13 +791,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 zPosition = wrappedAttackTimer / anticipationTime * 2.6f;
                 npc.Center = Vector2.Lerp(npc.Center, target.Center - Vector2.UnitY * zPosition * 100f, 0.1f);
-                npc.position.X -= zPosition * 5f;
+                npc.position.X += zPosition * 3f;
 
                 if (attackTimer == anticipationTime - 40f)
                     DoLaughEffect(npc, target);
             }
             else
-                zPosition -= 0.34f;
+                zPosition -= 0.3f;
 
             if (wrappedAttackTimer == anticipationTime + sliceTime - 5f)
             {
@@ -1126,6 +1126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
             }
+            npc.ai[0] = (int)AresBodyAttackType.ThreeDimensionalSuperslashes;
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
@@ -1471,7 +1472,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 arm1DrawPosition = limbs.Limbs[0].ConnectPoint;
             arm1DrawPosition = npc.Center + (arm1DrawPosition - npc.Center) * scale - Main.screenPosition;
             Vector2 shoulderDrawPosition = arm1DrawPosition - Vector2.UnitY * scale * 26f;
-            Vector2 arm2DrawPosition = arm1DrawPosition + ((float)limbs.Limbs[1].Rotation).ToRotationVector2() * (float)limbs.Limbs[0].Length * scale - Main.screenPosition;
+            Vector2 arm2DrawPosition = arm1DrawPosition + ((float)limbs.Limbs[0].Rotation).ToRotationVector2() * (float)limbs.Limbs[0].Length * scale;
 
             // Determine frames.
             float frameTime = Main.GlobalTimeWrappedHourly * 0.9f % 1f;

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
@@ -196,6 +197,10 @@ namespace InfernumMode.Core.GlobalInstances
 
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
             if (isDoG && npc.alpha >= 252)
+                return false;
+
+            // Don't draw HP bars if Ares is in the background.
+            if (npc.realLife == CalamityGlobalNPC.draedonExoMechPrime && CalamityGlobalNPC.draedonExoMechPrime >= 0 && Math.Abs(Main.npc[CalamityGlobalNPC.draedonExoMechPrime].ai[2]) >= 0.25f)
                 return false;
 
             if (npc.type == NPCID.EaterofWorldsBody)

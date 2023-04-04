@@ -212,12 +212,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             AresCannonBehaviorOverride.UpdateParticleDrawers(SmokeDrawer, EnergyDrawer, 0f, 100f);
 
-            // The katana should by default not be in use.
-            KatanaIsInUse = false;
-
             // Hover in place below Ares if disabled.
             if (currentlyDisabled)
             {
+                // The katana should by default not be in use.
+                KatanaIsInUse = false;
+
                 ExoMechAIUtilities.PerformAresArmDirectioning(NPC, Ares, target, Vector2.UnitY, currentlyDisabled, false, ref CurrentDirection);
                 PerformHoverMovement();
                 return;

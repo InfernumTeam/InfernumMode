@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Vector2 soulSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(120f, 120f);
+                    Vector2 soulSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(100f, 100f);
                     Vector2 soulVelocity = Projectile.velocity * 24.5f;
                     Utilities.NewProjectileBetter(soulSpawnPosition, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), 300, 0f);
                 }

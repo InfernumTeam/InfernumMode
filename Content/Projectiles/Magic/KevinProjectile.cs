@@ -58,11 +58,10 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public static Color LightningColor => Color.Lerp(Color.Cyan, Color.DeepSkyBlue, 0.7f);
 
-        public override string Texture => InfernumTextureRegistry.InvisPath;
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Kevin");
+            Main.projFrames[Type] = 8;
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 3;
         }
@@ -104,19 +103,14 @@ namespace InfernumMode.Content.Projectiles.Magic
             }
 
             // Stick to the owner.
-            Projectile.Center = Owner.MountedCenter;
+            Projectile.Center = Owner.MountedCenter + Projectile.velocity * new Vector2(24f, 16f);
 
             // Decide a target every frame.
             TargetIndex = -1;
             NPC potentialTarget = Projectile.Center.ClosestNPCAt(Kevin.TargetingDistance);
             if (potentialTarget != null)
             {
-                if (TargetIndex != potentialTarget.whoAmI)
-                {
-                    TargetIndex = potentialTarget.whoAmI;
-                    Time = 0f;
-                    Projectile.netUpdate = true;
-                }
+                TargetIndex = potentialTarget.whoAmI;
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(potentialTarget.Center), 0.6f);
                 LightningDistance = Projectile.Distance(potentialTarget.Center);
             }
@@ -142,7 +136,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.ChangeDir(Math.Sign(Projectile.velocity.X));
 
             // Determine the rotation based on the direction of the velocity.
-            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Update the sound's position.
             if (SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)
@@ -156,6 +150,10 @@ namespace InfernumMode.Content.Projectiles.Magic
 
             // Adjust player values such as arm rotation.
             AdjustPlayerValues();
+
+            // Decide frames.
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 3 % Main.projFrames[Type];
 
             Time++;
         }
@@ -219,14 +217,21 @@ namespace InfernumMode.Content.Projectiles.Magic
             LightningTarget.Target.CopyContentsFrom(TemporaryAuxillaryTarget.Target);
         }
 
+        // Kevin should be at maximum brightness at all times.
+        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
+
         public override bool PreDraw(ref Color lightColor)
         {
+            if (LightningTarget.IsDisposed)
+                return true;
+
             Main.Rasterizer = RasterizerState.CullNone;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation - MathHelper.PiOver2, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
             Main.spriteBatch.ResetBlendState();
-            return false;
+
+            return true;
         }
 
         public override bool? CanHitNPC(NPC target) => target.whoAmI == TargetIndex ? null : false;

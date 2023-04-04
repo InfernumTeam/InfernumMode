@@ -49,6 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Energy katana attacks.
             EnergyBladeSlices,
+            DownwardCrossSlices,
 
             // Ultimate attack. Only happens when in the final phase.
             PrecisionBlasts
@@ -333,6 +334,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     case AresBodyAttackType.EnergyBladeSlices:
                         DoBehavior_EnergyBladeSlices(npc, target, ref enraged, ref attackTimer, ref frameType);
+
+                        // Disable back-arm swapping during this attack due to it looking very awkward.
+                        if (backarmSwapTimer >= 5f)
+                            backarmSwapTimer--;
+
+                        break;
+
+                    case AresBodyAttackType.DownwardCrossSlices:
+                        DoBehavior_DownwardCrossSlices(npc, target, ref enraged, ref attackTimer, ref frameType);
 
                         // Disable back-arm swapping during this attack due to it looking very awkward.
                         if (backarmSwapTimer >= 5f)
@@ -671,6 +681,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_EnergyBladeSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
         {
+            int attackTime = 420;
             ref float attackDelayTimer = ref npc.Infernum().ExtraAI[0];
 
             // Laugh.
@@ -695,6 +706,52 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.09f;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
             }
+
+            if (attackTimer >= attackTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_DownwardCrossSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
+        {
+            int anticipationTime = AresEnergyKatana.DownwardCrossSlicesAnticipationTime;
+            int sliceTime = AresEnergyKatana.DownwardCrossSlicesSliceTime;
+            int holdInPlaceTime = AresEnergyKatana.DownwardCrossSlicesHoldInPlaceTime;
+            float wrappedAttackTimer = attackTimer % (anticipationTime + sliceTime + holdInPlaceTime);
+
+            // Laugh.
+            frameType = (int)AresBodyFrameType.Laugh;
+
+            // Hover above the target during the anticipation.
+            if (wrappedAttackTimer <= anticipationTime)
+            {
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 320f;
+                if (target.velocity.Y < 0f)
+                    hoverDestination.Y += target.velocity.Y * 16f;
+
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.09f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.09f);
+            }
+
+            // Slow down after anticipation.
+            if (wrappedAttackTimer >= anticipationTime)
+                npc.velocity *= 0.85f;
+
+            // Create a bunch of energy deathrays.
+            if (wrappedAttackTimer == anticipationTime + sliceTime - 10f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Vector2 shootDirection = (MathHelper.TwoPi * i / 20f + shootOffsetAngle).ToRotationVector2();
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 250f, shootDirection, ModContent.ProjectileType<AresEnergyDeathrayTelegraph>(), 0, 0f);
+                    }
+                }
+            }
+            
+            if (wrappedAttackTimer == anticipationTime + sliceTime + AresEnergyDeathrayTelegraph.Lifetime - 10f)
+                SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, npc.Center);
         }
 
         public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
@@ -973,7 +1030,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
 
-                npc.ai[0] = (int)AresBodyAttackType.EnergyBladeSlices;
+                npc.ai[0] = (int)AresBodyAttackType.DownwardCrossSlices;
             }
 
             npc.ai[1] = 0f;
@@ -1051,7 +1108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Plasma Flamethrower, Pulse Cannon,
             // Katanas are completely exempt from this.
 
-            if (aresBody.ai[0] == (int)AresBodyAttackType.EnergyBladeSlices)
+            if (aresBody.ai[0] is ((int)AresBodyAttackType.EnergyBladeSlices) or ((int)AresBodyAttackType.DownwardCrossSlices))
                 return npc.type != ModContent.NPCType<AresEnergyKatana>();
 
             if (npc.type == ModContent.NPCType<AresEnergyKatana>())

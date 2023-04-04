@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.Graphics.Shaders;
 using CalamityMod;
 using System.Collections.Generic;
 using InfernumMode.Assets.Effects;
 using Microsoft.Xna.Framework.Graphics;
+using CalamityMod.DataStructures;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetDefaults()
         {
-            Projectile.height = 180;
+            Projectile.width = 180;
             Projectile.height = 180;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Projectile.scale *= 1.033f;
         }
 
-        public float SlashWidthFunction(float completionRatio) => Projectile.scale * Utils.GetLerpValue(0f, 0.35f, completionRatio, true) * Utils.GetLerpValue(1f, 0.65f, completionRatio, true) * 25f;
+        public float SlashWidthFunction(float completionRatio) => Utils.GetLerpValue(0f, 0.35f, completionRatio, true) * Utils.GetLerpValue(1f, 0.65f, completionRatio, true) * Projectile.scale * 35f;
 
         public Color SlashColorFunction(float completionRatio) => Color.Red with { A = 0 } * Utils.GetLerpValue(0.04f, 0.27f, completionRatio, true) * Projectile.Opacity * Projectile.localAI[1];
 
@@ -65,17 +65,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 perpendicularDirection = direction.RotatedBy(MathHelper.PiOver2);
             Vector2 left = Projectile.Center - perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
             Vector2 right = Projectile.Center + perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
-            Vector2 farLeft = left - direction * Projectile.height * Projectile.scale * 6f;
-            Vector2 farRight = right - direction * Projectile.height * Projectile.scale * 6f;
-
-            for (int i = 0; i < 20; i++)
-                points.Add(Vector2.CatmullRom(farLeft, left, right, farRight, i / 19f));
+            Vector2 middle = Projectile.Center + direction * Projectile.height / Projectile.scale * 2f;
+            for (int i = 0; i < 15; i++)
+                points.Add(Utilities.QuadraticBezier(left, middle, right, i / 14f));
 
             InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes"));
             InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture2(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
 
-            for (Projectile.localAI[1] = 1f; Projectile.localAI[1] > 0f; Projectile.localAI[1] -= 0.5f)
-                SlashDrawer.Draw(points, -Main.screenPosition, 43);
+            for (Projectile.localAI[1] = 1f; Projectile.localAI[1] > 0f; Projectile.localAI[1] -= 0.33f)
+                SlashDrawer.Draw(points, direction * -60f - Main.screenPosition, 43);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

@@ -28,6 +28,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
@@ -50,6 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Energy katana attacks.
             EnergyBladeSlices,
             DownwardCrossSlices,
+            ThreeDimensionalSuperslashes,
 
             // Ultimate attack. Only happens when in the final phase.
             PrecisionBlasts
@@ -124,6 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float zPosition = ref npc.ai[2];
             ref float armsHaveBeenSummoned = ref npc.ai[3];
             ref float armCycleCounter = ref npc.Infernum().ExtraAI[5];
             ref float armCycleTimer = ref npc.Infernum().ExtraAI[6];
@@ -220,6 +223,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 ExoMechManagement.SummonComplementMech(npc);
                 hasSummonedComplementMech = 1f;
                 attackTimer = 0f;
+                zPosition = 0f;
                 SelectNextAttack(npc);
                 npc.netUpdate = true;
             }
@@ -228,6 +232,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (wasNotInitialSummon == 0f && finalMechIndex == -1f && complementMech != null && complementMech.life / (float)complementMech?.lifeMax < ExoMechManagement.ComplementMechInvincibilityThreshold)
             {
                 ExoMechManagement.SummonFinalMech(npc);
+                zPosition = 0f;
                 npc.netUpdate = true;
             }
 
@@ -249,6 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     npc.Center = target.Center - Vector2.UnitY * 1500f;
 
                 attackTimer = 0f;
+                zPosition = 0f;
                 attackType = (int)AresBodyAttackType.IdleHover;
                 npc.Calamity().newAI[1] = (int)AresBody.SecondaryPhase.PassiveAndImmune;
                 npc.Calamity().ShouldCloseHPBar = true;
@@ -274,6 +280,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 attackType = (int)AresBodyAttackType.IdleHover;
                 finalPhaseAnimationTime++;
+                zPosition = 0f;
                 npc.dontTakeDamage = true;
                 DoBehavior_DoFinalPhaseTransition(npc, target, ref frameType, finalPhaseAnimationTime);
                 return false;
@@ -334,26 +341,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     case AresBodyAttackType.EnergyBladeSlices:
                         DoBehavior_EnergyBladeSlices(npc, target, ref enraged, ref attackTimer, ref frameType);
-
-                        // Disable back-arm swapping during this attack due to it looking very awkward.
                         if (backarmSwapTimer >= 5f)
                             backarmSwapTimer--;
-
                         break;
 
                     case AresBodyAttackType.DownwardCrossSlices:
                         DoBehavior_DownwardCrossSlices(npc, target, ref enraged, ref attackTimer, ref frameType);
-
-                        // Disable back-arm swapping during this attack due to it looking very awkward.
                         if (backarmSwapTimer >= 5f)
                             backarmSwapTimer--;
+                        break;
 
+                    case AresBodyAttackType.ThreeDimensionalSuperslashes:
+                        DoBehavior_ThreeDimensionalSuperslashes(npc, target, ref enraged, ref attackTimer, ref frameType, ref zPosition);
+                        if (backarmSwapTimer >= 5f)
+                            backarmSwapTimer--;
                         break;
 
                     case AresBodyAttackType.PrecisionBlasts:
                         DoBehavior_PrecisionBlasts(npc, target, ref enraged, ref attackTimer, ref frameType);
-
-                        // Back-arms should not swap during the ultimate attack, to ensure that attack harmony is maintained.
                         backarmSwapTimer = 300f;
                         break;
                 }
@@ -372,6 +377,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 npc.velocity = Vector2.Zero;
                 npc.rotation = 0f;
+            }
+
+            npc.scale = 1f / (zPosition + 1f);
+            npc.ShowNameOnHover = true;
+            if (zPosition <= -0.9f)
+            {
+                npc.scale = 0f;
+                npc.dontTakeDamage = true;
+                npc.ShowNameOnHover = false;
             }
 
             attackTimer++;
@@ -713,6 +727,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_DownwardCrossSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
         {
+            int sliceCount = 3;
             int anticipationTime = AresEnergyKatana.DownwardCrossSlicesAnticipationTime;
             int sliceTime = AresEnergyKatana.DownwardCrossSlicesSliceTime;
             int holdInPlaceTime = AresEnergyKatana.DownwardCrossSlicesHoldInPlaceTime;
@@ -749,9 +764,80 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     }
                 }
             }
-            
+
             if (wrappedAttackTimer == anticipationTime + sliceTime + AresEnergyDeathrayTelegraph.Lifetime - 10f)
                 SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, npc.Center);
+
+            if (attackTimer >= (anticipationTime + sliceTime + holdInPlaceTime) * sliceCount)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_ThreeDimensionalSuperslashes(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType, ref float zPosition)
+        {
+            int anticipationTime = AresEnergyKatana.ThreeDimensionalSlicesAnticipationTime;
+            int sliceTime = AresEnergyKatana.ThreeDimensionalSlicesSliceTime;
+            int laserCount = 11;
+            int sliceCount = 3;
+            if (ExoMechManagement.CurrentAresPhase >= 6)
+                laserCount += 4;
+
+            float wrappedAttackTimer = attackTimer % (anticipationTime + sliceTime);
+            ref float laserSoundCountdown = ref npc.Infernum().ExtraAI[0];
+
+            // Move into the background and hover above the player.
+            if (wrappedAttackTimer <= anticipationTime)
+            {
+                zPosition = wrappedAttackTimer / anticipationTime * 4f;
+                npc.Center = Vector2.Lerp(npc.Center, target.Center - Vector2.UnitY * zPosition * 100f, 0.1f);
+                npc.position.X -= zPosition * 5f;
+
+                if (attackTimer == anticipationTime - 40f)
+                    DoLaughEffect(npc, target);
+            }
+            else
+                zPosition -= 0.4f;
+
+            if (wrappedAttackTimer == anticipationTime + sliceTime - 5f)
+            {
+                // Create slice impact lasers.
+                target.Infernum_Camera().CurrentScreenShakePower = 13.5f;
+                ScreenEffectSystem.SetFlashEffect(target.Center, 0.8f, 18);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < laserCount; i++)
+                    {
+                        Vector2 shootDirection = (MathHelper.TwoPi * i / laserCount + shootOffsetAngle).ToRotationVector2();
+                        Utilities.NewProjectileBetter(Vector2.Lerp(npc.Center, target.Center, 0.55f) + Vector2.UnitY * 150f, shootDirection, ModContent.ProjectileType<AresEnergyDeathrayTelegraph>(), 0, 0f);
+                    }
+                    laserSoundCountdown = AresEnergyDeathrayTelegraph.Lifetime;
+                }
+
+                npc.Center = target.Center - Vector2.UnitY * 1500f;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].realLife == npc.whoAmI)
+                    {
+                        Main.npc[i].Center = npc.Center;
+                        Main.npc[i].netUpdate = true;
+                    }
+                }
+
+                npc.velocity.Y = 0f;
+                zPosition = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Wait for laser sounds to play.
+            if (laserSoundCountdown >= 1f)
+            {
+                laserSoundCountdown--;
+                if (laserSoundCountdown <= 0f)
+                    SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, target.Center);
+            }
+
+            if (attackTimer >= (anticipationTime + sliceTime) * sliceCount)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
@@ -1020,17 +1106,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 npc.ai[0] = (int)AresBodyAttackType.IdleHover;
 
-                if (oldAttackType == AresBodyAttackType.IdleHover)
+                if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 2)
                 {
-                    if (ExoMechManagement.CurrentAresPhase >= 2)
-                        npc.ai[0] = (int)(Main.rand.NextBool() ? AresBodyAttackType.DirectionChangingSpinBursts : AresBodyAttackType.LaserSpinBursts);
+                    WeightedRandom<AresBodyAttackType> rng = new(Main.rand);
+                    rng.Add(AresBodyAttackType.DirectionChangingSpinBursts);
+                    rng.Add(AresBodyAttackType.LaserSpinBursts);
+                    rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.8);
+                    if (ExoMechManagement.CurrentAresPhase >= 5)
+                        rng.Add(AresBodyAttackType.ThreeDimensionalSuperslashes, 2.55);
+                    else if (ExoMechManagement.CurrentAresPhase >= 3)
+                        rng.Add(AresBodyAttackType.DownwardCrossSlices, 1.5);
+
+                    npc.ai[0] = (int)rng.Get();
 
                     // Use the ultimate attack in the final phase.
                     if (ExoMechManagement.CurrentAresPhase >= 6)
                         npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
-
-                npc.ai[0] = (int)AresBodyAttackType.DownwardCrossSlices;
             }
 
             npc.ai[1] = 0f;
@@ -1108,7 +1200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Plasma Flamethrower, Pulse Cannon,
             // Katanas are completely exempt from this.
 
-            if (aresBody.ai[0] is ((int)AresBodyAttackType.EnergyBladeSlices) or ((int)AresBodyAttackType.DownwardCrossSlices))
+            if (aresBody.ai[0] is ((int)AresBodyAttackType.EnergyBladeSlices) or ((int)AresBodyAttackType.DownwardCrossSlices) or (int)(AresBodyAttackType.ThreeDimensionalSuperslashes))
                 return npc.type != ModContent.NPCType<AresEnergyKatana>();
 
             if (npc.type == ModContent.NPCType<AresEnergyKatana>())
@@ -1196,6 +1288,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DrawArm(NPC npc, Vector2 handPosition, Vector2 screenOffset, Color glowmaskColor, int direction, bool backArm, Color? colorToInterpolateTo = null, float colorInterpolant = 0f)
         {
+            float scale = npc.scale;
             ref PrimitiveTrail lightningDrawer = ref npc.ModNPC<AresBody>().LightningDrawer;
             ref PrimitiveTrail lightningBackgroundDrawer = ref npc.ModNPC<AresBody>().LightningBackgroundDrawer;
 
@@ -1219,8 +1312,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Texture2D armSegmentGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopSegmentGlow").Value;
                 Texture2D armGlowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopPart2Glow").Value;
 
-                Vector2 shoulderDrawPosition = npc.Center + npc.scale * new Vector2(direction * 176f, -100f);
-                Vector2 arm1DrawPosition = shoulderDrawPosition + npc.scale * new Vector2(direction * (shoulderTexture.Width + 16f), 10f);
+                Vector2 shoulderDrawPosition = npc.Center + scale * new Vector2(direction * 176f, -100f);
+                Vector2 arm1DrawPosition = shoulderDrawPosition + scale * new Vector2(direction * (shoulderTexture.Width + 16f), 10f);
                 Vector2 armSegmentDrawPosition = arm1DrawPosition;
 
                 // Determine frames.
@@ -1238,11 +1331,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 float armSegmentRotation = arm2Rotation;
 
                 // Handle offsets for points.
-                armSegmentDrawPosition += arm1Rotation.ToRotationVector2() * npc.scale * direction * -14f;
-                armSegmentDrawPosition -= arm2Rotation.ToRotationVector2() * npc.scale * direction * 20f;
+                armSegmentDrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * -14f;
+                armSegmentDrawPosition -= arm2Rotation.ToRotationVector2() * scale * direction * 20f;
                 Vector2 arm2DrawPosition = armSegmentDrawPosition;
-                arm2DrawPosition -= arm2Rotation.ToRotationVector2() * direction * npc.scale * 40f;
-                arm2DrawPosition += (arm2Rotation - MathHelper.PiOver2).ToRotationVector2() * npc.scale * 14f;
+                arm2DrawPosition -= arm2Rotation.ToRotationVector2() * direction * scale * 40f;
+                arm2DrawPosition += (arm2Rotation - MathHelper.PiOver2).ToRotationVector2() * scale * 14f;
 
                 // Calculate colors.
                 Color shoulderLightColor = npc.GetAlpha(Lighting.GetColor((int)shoulderDrawPosition.X / 16, (int)shoulderDrawPosition.Y / 16));
@@ -1261,12 +1354,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 // Draw electricity between arms.
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
-                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(armSegmentDrawPosition, arm2DrawPosition + arm2Rotation.ToRotationVector2() * -direction * 20f, 250290787);
+                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(armSegmentDrawPosition, arm2DrawPosition + arm2Rotation.ToRotationVector2() * -direction * scale * 20f, 250290787);
                     lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
                     lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
 
                     // Draw electricity between the final arm and the hand.
-                    List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * 100f, handPosition, 27182);
+                    List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 100f, handPosition, 27182);
                     lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
                     lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
                 }
@@ -1276,13 +1369,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 armSegmentDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
                 arm2DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
 
-                Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, null, arm1LightColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, shoulderLightColor, 0f, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection, 0f);
-                Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, 0f, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection, 0f);
-                Main.spriteBatch.Draw(armSegmentTexture, armSegmentDrawPosition, armSegmentFrame, armSegmentLightColor, armSegmentRotation, armSegmentFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(armSegmentGlowmask, armSegmentDrawPosition, armSegmentFrame, glowmaskAlphaColor, armSegmentRotation, armSegmentFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, arm2LightColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipVertically, 0f);
-                Main.spriteBatch.Draw(armGlowmask2, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipVertically, 0f);
+                Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, null, arm1LightColor, arm1Rotation, arm1Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, shoulderLightColor, 0f, shoulderFrame.Size() * 0.5f, scale, spriteDirection, 0f);
+                Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, 0f, shoulderFrame.Size() * 0.5f, scale, spriteDirection, 0f);
+                Main.spriteBatch.Draw(armSegmentTexture, armSegmentDrawPosition, armSegmentFrame, armSegmentLightColor, armSegmentRotation, armSegmentFrame.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armSegmentGlowmask, armSegmentDrawPosition, armSegmentFrame, glowmaskAlphaColor, armSegmentRotation, armSegmentFrame.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, arm2LightColor, arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipVertically, 0f);
+                Main.spriteBatch.Draw(armGlowmask2, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipVertically, 0f);
             }
             else
             {
@@ -1295,9 +1388,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Texture2D armTexture1Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart1Glow").Value;
                 Texture2D armTexture2Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart2Glow").Value;
 
-                Vector2 shoulderDrawPosition = npc.Center + npc.scale * new Vector2(direction * 110f, -54f);
-                Vector2 connectorDrawPosition = shoulderDrawPosition + npc.scale * new Vector2(direction * 20f, 32f);
-                Vector2 arm1DrawPosition = shoulderDrawPosition + npc.scale * Vector2.UnitX * direction * 20f;
+                Vector2 shoulderDrawPosition = npc.Center + scale * new Vector2(direction * 110f, -54f);
+                Vector2 connectorDrawPosition = shoulderDrawPosition + scale * new Vector2(direction * 20f, 32f);
+                Vector2 arm1DrawPosition = shoulderDrawPosition + scale * Vector2.UnitX * direction * 20f;
 
                 // Determine frames.
                 Rectangle arm1Frame = armTexture1.Frame(1, 9, 0, (int)(frameTime * 9f));
@@ -1308,11 +1401,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
 
                 float arm1Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - shoulderDrawPosition).ToRotation()) * 0.5f;
-                connectorDrawPosition += arm1Rotation.ToRotationVector2() * npc.scale * direction * -26f;
-                arm1DrawPosition += arm1Rotation.ToRotationVector2() * npc.scale * direction * (armTexture1.Width - 14f);
+                connectorDrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * -26f;
+                arm1DrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * (armTexture1.Width - 14f);
                 float arm2Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - arm1DrawPosition).ToRotation());
 
-                Vector2 arm2DrawPosition = arm1DrawPosition + arm2Rotation.ToRotationVector2() * npc.scale * direction * (armTexture2.Width + 16f) - Vector2.UnitY * 16f;
+                Vector2 arm2DrawPosition = arm1DrawPosition + arm2Rotation.ToRotationVector2() * scale * direction * (armTexture2.Width + 16f) - Vector2.UnitY * scale * 16f;
 
                 // Calculate colors.
                 Color shoulderLightColor = npc.GetAlpha(Lighting.GetColor((int)shoulderDrawPosition.X / 16, (int)shoulderDrawPosition.Y / 16));
@@ -1329,12 +1422,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 // Draw electricity between arms.
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
-                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
+                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
                     lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
                     lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
 
                     // Draw electricity between the final arm and the hand.
-                    List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * 20f, handPosition, 27182);
+                    List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 20f, handPosition, 27182);
                     lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
                     lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
                 }
@@ -1344,18 +1437,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 arm1DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
                 arm2DrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
 
-                Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, shoulderLightColor, arm1Rotation, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, arm1Rotation, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(connectorTexture, connectorDrawPosition, null, shoulderLightColor, 0f, connectorTexture.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, arm1Frame, arm1LightColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(armTexture1Glowmask, arm1DrawPosition, arm1Frame, glowmaskAlphaColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, arm2LightColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-                Main.spriteBatch.Draw(armTexture2Glowmask, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, shoulderLightColor, arm1Rotation, shoulderFrame.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, arm1Rotation, shoulderFrame.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(connectorTexture, connectorDrawPosition, null, shoulderLightColor, 0f, connectorTexture.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, arm1Frame, arm1LightColor, arm1Rotation, arm1Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture1Glowmask, arm1DrawPosition, arm1Frame, glowmaskAlphaColor, arm1Rotation, arm1Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, arm2LightColor, arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+                Main.spriteBatch.Draw(armTexture2Glowmask, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
             }
         }
 
         public static void DrawArmWithIK(NPC npc, NPC katana, Color glowmaskColor, int direction)
         {
+            float scale = npc.scale;
             SpriteEffects spriteDirection = direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Color glowmaskAlphaColor = npc.GetAlpha(glowmaskColor);
 
@@ -1364,7 +1458,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 return;
 
             Texture2D shoulderTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmShoulder").Value;
-            Texture2D connectorTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmConnector").Value;
             Texture2D armTexture1 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart1").Value;
             Texture2D armTexture2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart2").Value;
 
@@ -1373,9 +1466,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Texture2D armTexture2Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart2Glow").Value;
 
             // Determine draw positions.
-            Vector2 shoulderDrawPosition = limbs[0].ConnectPoint - Vector2.UnitY * 26f - Main.screenPosition;
-            Vector2 arm1DrawPosition = limbs.Limbs[0].ConnectPoint - Main.screenPosition;
-            Vector2 arm2DrawPosition = limbs.Limbs[1].ConnectPoint - Main.screenPosition;
+            Vector2 arm1DrawPosition = limbs.Limbs[0].ConnectPoint;
+            arm1DrawPosition = npc.Center + (arm1DrawPosition - npc.Center) * scale - Main.screenPosition;
+            Vector2 shoulderDrawPosition = arm1DrawPosition - Vector2.UnitY * scale * 26f;
+            Vector2 arm2DrawPosition = arm1DrawPosition + ((float)limbs.Limbs[1].Rotation).ToRotationVector2() * (float)limbs.Limbs[0].Length * scale - Main.screenPosition;
 
             // Determine frames.
             float frameTime = Main.GlobalTimeWrappedHourly * 0.9f % 1f;
@@ -1393,24 +1487,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Determine origins.
-            Vector2 arm1Origin = arm1Frame.Size() * new Vector2((direction == -1 ? 1f : 0f), 0.5f);
-            Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == -1 ? 1f : 0f), 0.5f);
+            Vector2 arm1Origin = arm1Frame.Size() * new Vector2(direction == -1 ? 1f : 0f, 0.5f);
+            Vector2 arm2Origin = arm2Frame.Size() * new Vector2(direction == -1 ? 1f : 0f, 0.5f);
 
             // Determine colors.
             Color arm1Color = Lighting.GetColor((arm1DrawPosition + Main.screenPosition).ToTileCoordinates());
             Color arm2Color = Lighting.GetColor((arm2DrawPosition + Main.screenPosition).ToTileCoordinates());
 
             // Draw the shoulder.
-            Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, npc.GetAlpha(Color.White), 0f, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-            Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, 0f, shoulderFrame.Size() * 0.5f, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(shoulderTexture, shoulderDrawPosition, shoulderFrame, npc.GetAlpha(Color.White), 0f, shoulderFrame.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(shoulderGlowmask, shoulderDrawPosition, shoulderFrame, glowmaskAlphaColor, 0f, shoulderFrame.Size() * 0.5f, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
 
             // Draw the forearm.
-            Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, arm1Frame, npc.GetAlpha(arm1Color), arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-            Main.spriteBatch.Draw(armTexture1Glowmask, arm1DrawPosition, arm1Frame, glowmaskAlphaColor, arm1Rotation, arm1Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(armTexture1, arm1DrawPosition, arm1Frame, npc.GetAlpha(arm1Color), arm1Rotation, arm1Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(armTexture1Glowmask, arm1DrawPosition, arm1Frame, glowmaskAlphaColor, arm1Rotation, arm1Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
 
             // Draw the arm.
-            Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, npc.GetAlpha(arm2Color), arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
-            Main.spriteBatch.Draw(armTexture2Glowmask, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, npc.scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(armTexture2, arm2DrawPosition, arm2Frame, npc.GetAlpha(arm2Color), arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(armTexture2Glowmask, arm2DrawPosition, arm2Frame, glowmaskAlphaColor, arm2Rotation, arm2Origin, scale, spriteDirection ^ SpriteEffects.FlipHorizontally, 0f);
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -1424,6 +1518,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             List<NPC> katanas = Main.npc.Take(Main.maxNPCs).
                 Where(n => n.active && n.type == photonRipperID).ToList();
             Color afterimageBaseColor = Color.White;
+            float scale = npc.scale;
 
             // Become red if enraged.
             if (Enraged || ExoMechComboAttackContent.EnrageTimer > 0f)
@@ -1491,14 +1586,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     color.A = 0;
 
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
-                    Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, scale, SpriteEffects.None, 0f);
                 }
             }
 
-            Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, scale, SpriteEffects.None, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow").Value;
-            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, scale, SpriteEffects.None, 0f);
 
             if (npc.Opacity > 0.05f)
             {
@@ -1518,7 +1613,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Texture2D telegraphTexture = InfernumTextureRegistry.BloomLine.Value;
                 float telegraphRotation = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphRotationIndex];
                 float telegraphScaleFactor = telegraphInterpolant * 1.2f;
-                Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
+                Vector2 telegraphStart = npc.Center + Vector2.UnitY * scale * 34f + telegraphRotation.ToRotationVector2() * scale * 20f - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                 Vector2 telegraphInnerScale = telegraphScale * 0.75f;

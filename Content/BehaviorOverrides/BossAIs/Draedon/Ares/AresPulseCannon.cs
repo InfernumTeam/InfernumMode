@@ -222,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (performingCharge)
                 hoverOffset = new(backArmDirection * 380f, 150f);
 
-            Vector2 hoverDestination = Ares.Center + hoverOffset;
+            Vector2 hoverDestination = Ares.Center + hoverOffset * Ares.scale;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 64f, 115f);
 
             return hoverOffset;

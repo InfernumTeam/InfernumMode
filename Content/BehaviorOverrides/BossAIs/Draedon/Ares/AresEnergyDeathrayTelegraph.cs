@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity, ModContent.ProjectileType<AresEnergyDeathray>(), DraedonBehaviorOverride.PowerfulShotDamage, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center + Projectile.velocity * 80f, Projectile.velocity, ModContent.ProjectileType<AresEnergyDeathray>(), DraedonBehaviorOverride.PowerfulShotDamage, 0f);
         }
 
         public override bool ShouldUpdatePosition() => false;

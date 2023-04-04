@@ -215,7 +215,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static Vector2 PerformHoverMovement(NPC npc, bool performingCharge)
         {
-            Vector2 hoverOffset = npc.BehaviorOverride<AresCannonBehaviorOverride>().GetHoverOffset(npc, performingCharge);
+            Vector2 hoverOffset = npc.BehaviorOverride<AresCannonBehaviorOverride>().GetHoverOffset(npc, performingCharge) * Ares.scale;
             Vector2 hoverDestination = Ares.Center + hoverOffset;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 64f, 115f);
 

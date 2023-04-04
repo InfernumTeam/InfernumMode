@@ -12,7 +12,7 @@ namespace InfernumMode.Common.Graphics
 
         public delegate void RenderTargetUpdateDelegate();
 
-        public static event RenderTargetUpdateDelegate ModifyHitByItemEvent;
+        public static event RenderTargetUpdateDelegate RenderTargetUpdateLoopEvent;
 
         internal static void ResetTargetSizes(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
@@ -55,6 +55,6 @@ namespace InfernumMode.Common.Graphics
             On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
         }
 
-        private void HandleTargetUpdateLoop(GameTime obj) => ModifyHitByItemEvent?.Invoke();
+        private void HandleTargetUpdateLoop(GameTime obj) => RenderTargetUpdateLoopEvent?.Invoke();
     }
 }

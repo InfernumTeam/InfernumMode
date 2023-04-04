@@ -89,7 +89,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             {
                 return new(Main.instance.GraphicsDevice, Kevin.LightningArea, Kevin.LightningArea, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
             });
-            RenderTargetManager.ModifyHitByItemEvent += UpdateLightningField;
+            RenderTargetManager.RenderTargetUpdateLoopEvent += UpdateLightningField;
             LightningCoordinateOffset = Vector2.Zero;
         }
 
@@ -255,7 +255,7 @@ namespace InfernumMode.Content.Projectiles.Magic
         {
             if (Main.netMode != NetmodeID.Server)
             {
-                RenderTargetManager.ModifyHitByItemEvent -= UpdateLightningField;
+                RenderTargetManager.RenderTargetUpdateLoopEvent -= UpdateLightningField;
                 LightningTarget?.Dispose();
                 TemporaryAuxillaryTarget?.Dispose();
             }

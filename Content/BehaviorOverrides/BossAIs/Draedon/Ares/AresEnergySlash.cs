@@ -48,9 +48,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Projectile.scale *= 1.033f;
         }
 
-        public float SlashWidthFunction(float completionRatio) => Projectile.scale * Utils.GetLerpValue(0f, 0.35f, completionRatio, true) * Utils.GetLerpValue(1f, 0.65f, completionRatio, true) * 30f;
+        public float SlashWidthFunction(float completionRatio) => Projectile.scale * Utils.GetLerpValue(0f, 0.35f, completionRatio, true) * Utils.GetLerpValue(1f, 0.65f, completionRatio, true) * 25f;
 
-        public Color SlashColorFunction(float completionRatio) => Color.Red * Utils.GetLerpValue(0.04f, 0.27f, completionRatio, true) * Projectile.Opacity * Projectile.localAI[1];
+        public Color SlashColorFunction(float completionRatio) => Color.Red with { A = 0 } * Utils.GetLerpValue(0.04f, 0.27f, completionRatio, true) * Projectile.Opacity * Projectile.localAI[1];
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -65,19 +65,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 perpendicularDirection = direction.RotatedBy(MathHelper.PiOver2);
             Vector2 left = Projectile.Center - perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
             Vector2 right = Projectile.Center + perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
-            Vector2 farLeft = left - direction * Projectile.height * Projectile.scale * 4f;
-            Vector2 farRight = right - direction * Projectile.height * Projectile.scale * 4f;
+            Vector2 farLeft = left - direction * Projectile.height * Projectile.scale * 6f;
+            Vector2 farRight = right - direction * Projectile.height * Projectile.scale * 6f;
 
-            for (int i = 0; i < 10; i++)
-                points.Add(Vector2.CatmullRom(farLeft, left, right, farRight, i / 9f));
+            for (int i = 0; i < 20; i++)
+                points.Add(Vector2.CatmullRom(farLeft, left, right, farRight, i / 19f));
 
             InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes"));
             InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture2(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
-            for (int i = 0; i < 7; i++)
-            {
-                Projectile.localAI[1] = 1f - i / 7f;
-                SlashDrawer.Draw(points, -Main.screenPosition - direction * i * MathHelper.Clamp(Projectile.velocity.Length(), 0f, Projectile.scale * 10f) * 2f, 56);
-            }
+
+            for (Projectile.localAI[1] = 1f; Projectile.localAI[1] > 0f; Projectile.localAI[1] -= 0.5f)
+                SlashDrawer.Draw(points, -Main.screenPosition, 43);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

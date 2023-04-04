@@ -26,6 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 240;
             Projectile.Calamity().DealsDefenseDamage = true;
+            Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 

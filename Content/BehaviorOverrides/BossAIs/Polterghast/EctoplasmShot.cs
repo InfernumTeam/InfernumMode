@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -86,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
-            for (int i = 1; i < Projectile.oldPos.Length; i++)
+            for (int i = 1; i < Projectile.oldPos.Length; i += InfernumConfig.Instance.ReducedGraphicsConfig ? 2 : 1)
             {
                 if (Projectile.oldPos[i - 1] == Vector2.Zero || Projectile.oldPos[i] == Vector2.Zero)
                     continue;

@@ -381,12 +381,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             npc.scale = 1f / (zPosition + 1f);
             npc.ShowNameOnHover = true;
-            if (zPosition <= -0.9f)
+            if (Math.Abs(zPosition) >= 0.4f)
             {
-                npc.scale = 0f;
                 npc.dontTakeDamage = true;
                 npc.ShowNameOnHover = false;
             }
+
+            if (zPosition <= -0.9f)
+                npc.scale = 0f;
 
             attackTimer++;
             return false;
@@ -787,7 +789,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Move into the background and hover above the player.
             if (wrappedAttackTimer <= anticipationTime)
             {
-                zPosition = wrappedAttackTimer / anticipationTime * 4f;
+                zPosition = wrappedAttackTimer / anticipationTime * 2.6f;
                 npc.Center = Vector2.Lerp(npc.Center, target.Center - Vector2.UnitY * zPosition * 100f, 0.1f);
                 npc.position.X -= zPosition * 5f;
 
@@ -795,7 +797,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     DoLaughEffect(npc, target);
             }
             else
-                zPosition -= 0.4f;
+                zPosition -= 0.34f;
 
             if (wrappedAttackTimer == anticipationTime + sliceTime - 5f)
             {

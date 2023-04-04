@@ -79,6 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             npc.Opacity = aresBody.Opacity;
             npc.dontTakeDamage = aresBody.dontTakeDamage;
             npc.scale = aresBody.scale;
+            npc.ShowNameOnHover = aresBody.ShowNameOnHover;
 
             // Inherit death animation variables from Ares.
             npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex] = aresBody.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];

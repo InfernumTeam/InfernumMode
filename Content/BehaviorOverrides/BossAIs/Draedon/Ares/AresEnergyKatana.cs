@@ -212,6 +212,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             AresCannonBehaviorOverride.UpdateParticleDrawers(SmokeDrawer, EnergyDrawer, 0f, 100f);
 
+            // The katana should by default not be in use.
+            KatanaIsInUse = false;
+
             // Hover in place below Ares if disabled.
             if (currentlyDisabled)
             {
@@ -407,17 +410,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int anticipationTime = ThreeDimensionalSlicesAnticipationTime;
             int sliceTime = ThreeDimensionalSlicesSliceTime;
             float wrappedAttackTimer = AttackTimer % (anticipationTime + sliceTime);
-            float flySpeedBoost = Ares.velocity.Length() * 0.51f;
+            float flySpeedBoost = Ares.position.Distance(Ares.oldPosition);
 
             // Anticipate the slash.
             if (wrappedAttackTimer <= anticipationTime)
             {
                 SlashFadeOut = 1f;
-                float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.5f, 2f, 42f);
+                float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.5f, 9f, 66f);
                 Vector2 startingOffset = new(ArmOffsetDirection * 470f, 0f);
                 Vector2 endingOffset = new(ArmOffsetDirection * 172f, -175f);
                 Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(0f, anticipationTime, wrappedAttackTimer, true));
-                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * Ares.scale * 1200f, flySpeedBoost + minHoverSpeed, 115f);
+                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * Ares.scale * 880f, flySpeedBoost + minHoverSpeed, 115f);
             }
 
             // Do the slash.
@@ -427,7 +430,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 startingOffset = new(ArmOffsetDirection * 172f, -175f);
                 Vector2 endingOffset = new(ArmOffsetDirection * -260f, 400f);
                 Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(anticipationTime, anticipationTime + sliceTime, wrappedAttackTimer, true));
-                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * Ares.scale * 800f, flySpeedBoost + 67f, 115f);
+                ExoMechAIUtilities.DoSnapHoverMovement(NPC, Ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * Ares.scale * 400f, flySpeedBoost + 67f, 115f);
             }
 
             // Prepare the slash.

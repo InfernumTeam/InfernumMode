@@ -692,7 +692,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))
                     {
                         SoundEngine.PlaySound(in SoundID.Roar, player.Center);
-                        if (Main.netMode != 1)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
                         else
                             NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());

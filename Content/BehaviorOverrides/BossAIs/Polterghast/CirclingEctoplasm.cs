@@ -139,7 +139,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Polterghast/SoulMedium").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 scale = Projectile.scale * Projectile.Size / texture.Size();
-            Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, texture.Size() * 0.5f, scale, 0, 0);
+            Rectangle frame = texture.Frame(1, 4, 0, 0);
+            Main.EntitySpriteDraw(texture, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, frame.Size() * 0.5f, scale, 0, 0);
         }
 
         public override bool? CanDamage() => Projectile.timeLeft < 1480 ? null : false;

@@ -202,12 +202,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Play phase transition sounds.
             if (currentPhase == 0f && phase2)
             {
+                if (attackState == PolterghastAttackType.LegSwipes)
+                    SelectNextAttack(npc);
+
                 SoundEngine.PlaySound(PolterghastBoss.P2Sound with { Volume = 3f }, target.Center);
                 currentPhase = 1f;
                 npc.netUpdate = true;
             }
             if (currentPhase == 1f && phase3)
             {
+                if (attackState == PolterghastAttackType.LegSwipes)
+                    SelectNextAttack(npc);
+
                 SoundEngine.PlaySound(PolterghastBoss.P3Sound with { Volume = 3f }, target.Center);
                 currentPhase = 2f;
                 npc.netUpdate = true;
@@ -958,7 +964,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         {
             int slowdownTime = 60;
             int shootTime = 240;
-            float soulSpeed = Utils.Remap(attackTimer, slowdownTime, slowdownTime + 100f, 7.11f, 20.5f);
+            float soulSpeed = Utils.Remap(attackTimer, slowdownTime, slowdownTime + 120f, 7.11f, 18.5f);
             int attackDuration = slowdownTime + shootTime;
 
             // Slow down and look at the target.

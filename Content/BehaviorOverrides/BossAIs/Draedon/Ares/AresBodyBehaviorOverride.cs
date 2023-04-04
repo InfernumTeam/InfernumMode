@@ -1126,7 +1126,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
             }
-            npc.ai[0] = (int)AresBodyAttackType.ThreeDimensionalSuperslashes;
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

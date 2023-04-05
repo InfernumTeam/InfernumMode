@@ -387,7 +387,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.ShowNameOnHover = false;
             }
 
-            if (zPosition <= -0.9f)
+            if (zPosition <= -0.96f)
                 npc.scale = 0f;
 
             attackTimer++;
@@ -779,7 +779,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int anticipationTime = AresEnergyKatana.ThreeDimensionalSlicesAnticipationTime;
             int sliceTime = AresEnergyKatana.ThreeDimensionalSlicesSliceTime;
             int laserCount = 11;
-            int sliceCount = 3;
+            int sliceCount = 4;
             if (ExoMechManagement.CurrentAresPhase >= 6)
                 laserCount += 4;
 
@@ -790,8 +790,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (wrappedAttackTimer <= anticipationTime)
             {
                 zPosition = wrappedAttackTimer / anticipationTime * 2.6f;
-                npc.Center = Vector2.Lerp(npc.Center, target.Center - Vector2.UnitY * zPosition * 100f, 0.1f);
-                npc.position.X += zPosition * 3f;
+                npc.Center = Vector2.Lerp(npc.Center, target.Center + new Vector2(target.velocity.X * 12f, zPosition * -100f), 0.1f);
+                npc.velocity.X *= 0.9f;
 
                 if (attackTimer == anticipationTime - 40f)
                     DoLaughEffect(npc, target);

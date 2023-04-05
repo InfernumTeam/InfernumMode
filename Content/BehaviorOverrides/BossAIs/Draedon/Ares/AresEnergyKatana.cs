@@ -180,7 +180,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (CalamityGlobalNPC.draedonExoMechPrime == -1)
             {
                 NPC.life = 0;
-                NPC.HitEffect();
                 NPC.active = false;
                 return;
             }

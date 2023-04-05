@@ -26,6 +26,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             KingSlime,
             WoF,
             Calamitas,
+            Vassal,
             Provi,
             Draedon,
             SCal
@@ -373,6 +374,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 RecordingBoss.SCal => "SCal",
                 RecordingBoss.Draedon => "Draedon",
                 RecordingBoss.Provi => "Providence",
+                RecordingBoss.Vassal => "Vassal",
                 RecordingBoss.Calamitas => "Calamitas",
                 RecordingBoss.WoF => "WallOfFlesh",
                 RecordingBoss.KingSlime => "KingSlime",

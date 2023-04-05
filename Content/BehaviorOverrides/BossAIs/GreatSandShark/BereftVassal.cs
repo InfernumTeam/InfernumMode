@@ -4,8 +4,10 @@ using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BossBars;
+using InfernumMode.Content.Credits;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.BossBags;
@@ -357,10 +359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             }
             BereftVassalComboAttackManager.DoComboAttacksIfNecessary(NPC, Target, ref AttackTimer);
             if (NPC.ai[0] >= 100f && BereftVassalComboAttackManager.FightState != BereftVassalFightState.BereftVassalAndGSS)
-            {
                 SelectNextAttack();
-                CurrentAttack = BereftVassalAttackType.TransitionToFinalPhase;
-            }
 
             AttackTimer++;
         }
@@ -1823,7 +1822,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             int tileCoordY = (int)position.Y / 16;
             if (WorldGen.InWorld(tileCoordX, tileCoordY) && Main.tile[tileCoordX, tileCoordY].WallType == WallID.None)
             {
-                Dust dust = Dust.NewDustDirect(position, 10, 10, 268, 0f, 0f, 0, default, 1f);
+                Dust dust = Dust.NewDustDirect(position, 10, 10, DustID.Sandstorm, 0f, 0f, 0, default, 1f);
                 dust.velocity.Y = Main.rand.NextFloat(0.7f, 0.77f) * dust.scale;
                 dust.velocity.X = Main.rand.NextFloat(1f, 40f) * (fromRight ? -1f : 1f);
                 if (Enraged)

@@ -59,6 +59,9 @@ namespace InfernumMode.Content.Items.Weapons.Melee
         {
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, (float)CurrentSwing);
 
+            //DEBUG, START CREDITS.
+            Credits.CreditManager.BeginCredits();
+
             if ((float)CurrentSwing == 1f)
                 CurrentSwing = SwingType.Downward;
             else

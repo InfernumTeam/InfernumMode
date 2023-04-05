@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
-using System.Threading;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -32,7 +31,23 @@ namespace InfernumMode.Content.Credits
 
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
+        private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4 };
+
         public const int TotalGIFs = 6;
+
+        public const string Artists = "Arix\nFreeman\nIbanPlay\nPengolin\nReika\nSpicySpaceSnake";
+
+        public const string Musicians = "Pinpin";
+
+        public const string Programmers = "Dominic\nNycro\nToasty";
+
+        public const string Testers1 = "Blast\nBronze\nCata\nEin\nGamerXD";
+
+        public const string Testers2 = "Gonk\nIan\nJareto\nJoey\nLGL";
+
+        public const string Testers3 = "Nutella\nMatthionine\nMyra\nPiky\nPurpleMattik";
+
+        public const string Testers4 = "Smh\nShade\nShadine\nTeiull";
 
         public override void Load() => On.Terraria.Main.DrawInfernoRings += DrawCredits;
 
@@ -179,13 +194,14 @@ namespace InfernumMode.Content.Credits
                     0 => ScreenCapturer.RecordingBoss.KingSlime,
                     1 => ScreenCapturer.RecordingBoss.WoF,
                     2 => ScreenCapturer.RecordingBoss.Calamitas,
-                    3 => ScreenCapturer.RecordingBoss.Provi,
-                    4 => ScreenCapturer.RecordingBoss.Draedon,
+                    3 => ScreenCapturer.RecordingBoss.Vassal,
+                    4 => ScreenCapturer.RecordingBoss.Provi,
+                    5 => ScreenCapturer.RecordingBoss.Draedon,
                     _ => ScreenCapturer.RecordingBoss.SCal
                 };
                 
                 Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(boss, out bool baseCreditsUsed);
-                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), -Vector2.UnitY * 0.05f, textures, baseCreditsUsed);
+                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), -Vector2.UnitY * 0.05f, textures, Names[i], baseCreditsUsed);
             }
         }
     }

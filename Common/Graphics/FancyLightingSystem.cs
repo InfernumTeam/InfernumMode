@@ -292,8 +292,8 @@ namespace InfernumMode.Common.Graphics
             // Modify the intensity based on the current biome. Not doing this causes it to look pretty bad in them.
             ModifyIntensityBasedOnBiomes(ref intensity);
 
-            // Shrink it a bit.
-            intensity *= 0.75f;
+            // Shrink it considerably so it is not a flashbang.
+            intensity *= 0.5f;
 
             if ((Main.LocalPlayer.Center.Y / 16f) > Main.worldSurface - 150.0)
             {

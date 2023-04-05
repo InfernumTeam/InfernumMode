@@ -533,8 +533,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (attackTimer == 1f)
                 SoundEngine.PlaySound(OldDukeBoss.VomitSound with { Volume = 1.5f, Pitch = -0.225f }, target.Center);
 
-            npc.velocity *= 0.9f;
-            if (attackTimer >= 12f)
+            npc.velocity *= 0.87f;
+            if (attackTimer >= 20f)
                 SelectNextAttack(npc);
         }
 
@@ -658,6 +658,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_AcidBelch(NPC npc, Player target, bool inPhase2, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
+            // Disable contact damage.
             npc.damage = 0;
 
             int shootDelay = inPhase2 ? 40 : 50;
@@ -704,6 +705,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_AcidBubbleFountain(NPC npc, Player target, bool inPhase2, float attackTimer, ref float frameType)
         {
+            // Disable contact damage.
             npc.damage = 0;
 
             int shootDelay = inPhase2 ? 40 : 55;
@@ -745,6 +747,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_SharkronSpinSummon(NPC npc, Player target, float attackTimer, ref float frameType)
         {
+            // Disable contact damage.
             npc.damage = 0;
 
             int spinTime = 72;
@@ -800,6 +803,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_ToothBallVomit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
+            // Disable contact damage.
             npc.damage = 0;
 
             int shootDelay = inPhase3 ? 42 : 55;
@@ -848,6 +852,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_GoreAndAcidSpit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
+            // Disable contact damage.
             npc.damage = 0;
 
             int goreShootDelay = 92;
@@ -904,11 +909,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
-            int fadeTime = 22;
+            int fadeTime = 47;
             if (attackTimer <= fadeTime)
                 npc.Opacity = Utils.GetLerpValue(fadeTime * 0.8f, 0f, attackTimer, true);
             else if (attackTimer <= fadeTime * 2f)
-                npc.Opacity = Utils.GetLerpValue(fadeTime * 0.8f, fadeTime * 1.6f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(fadeTime, fadeTime * 1.6f, attackTimer, true);
 
             // Decide frames.
             if (attackTimer > fadeTime - 4f && attackTimer < fadeTime + 4f)
@@ -925,6 +930,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (attackTimer == fadeTime)
             {
                 SoundEngine.PlaySound(OldDukeBoss.RoarSound, target.Center);
+                npc.oldPos = new Vector2[npc.oldPos.Length];
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * -620f, -250f);
@@ -974,6 +980,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 npc.TargetClosest();
                 npc.ai[0] = (int)OldDukeAttackState.AttackSelectionWait;
                 npc.ai[2] = (int)newAttackState;
+                if (oldAttackState is OldDukeAttackState.TeleportPause or OldDukeAttackState.ChargeIndicatorSound)
+                    npc.ai[0] = npc.ai[2];
+
                 npc.ai[3]++;
             }
             npc.netUpdate = true;

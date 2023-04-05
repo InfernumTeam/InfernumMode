@@ -30,7 +30,9 @@ namespace InfernumMode.Common.Graphics
 
         private static RenderTarget2D RaymarchingVoronoiTarget;
 
-        private static RenderTarget2D RaymarchingDisplacementFieldTarget;
+        private static RenderTarget2D RaymarchingOccluderDisplacementFieldTarget;
+
+        private static RenderTarget2D RaymarchingLightDisplacementFieldTarget;
 
         private static RenderTarget2D TempRaymarchingDisplacementFieldTarget;
 
@@ -91,9 +93,13 @@ namespace InfernumMode.Common.Graphics
                 RaymarchingLightsTarget.Dispose();
             RaymarchingLightsTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
-            if (RaymarchingDisplacementFieldTarget != null && !RaymarchingDisplacementFieldTarget.IsDisposed)
-                RaymarchingDisplacementFieldTarget.Dispose();
-            RaymarchingDisplacementFieldTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+            if (RaymarchingOccluderDisplacementFieldTarget != null && !RaymarchingOccluderDisplacementFieldTarget.IsDisposed)
+                RaymarchingOccluderDisplacementFieldTarget.Dispose();
+            RaymarchingOccluderDisplacementFieldTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+
+            if (RaymarchingLightDisplacementFieldTarget != null && !RaymarchingLightDisplacementFieldTarget.IsDisposed)
+                RaymarchingLightDisplacementFieldTarget.Dispose();
+            RaymarchingLightDisplacementFieldTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
             if (TempRaymarchingDisplacementFieldTarget != null && !TempRaymarchingDisplacementFieldTarget.IsDisposed)
                 TempRaymarchingDisplacementFieldTarget.Dispose();
@@ -115,10 +121,10 @@ namespace InfernumMode.Common.Graphics
 
             // Ensure these are all set.
             if (LightRenderTarget == null || ScreenCaptureTarget == null || ShadowRenderTarget == null || DownscaledBloomTarget == null
-                || TempBloomTarget == null || RaymarchingOccludersTarget == null || RaymarchingLightsTarget == null || RaymarchingDisplacementFieldTarget == null
-                || TempRaymarchingDisplacementFieldTarget == null || RaymarchingVoronoiTarget == null)
+                || TempBloomTarget == null || RaymarchingOccludersTarget == null || RaymarchingLightsTarget == null || RaymarchingOccluderDisplacementFieldTarget == null
+                || RaymarchingLightDisplacementFieldTarget == null || TempRaymarchingDisplacementFieldTarget == null || RaymarchingVoronoiTarget == null)
                 ResizeRenderTargets(Vector2.Zero);
-
+            UseRaymarching = false;
             // TODO: Fix. Doesn't work properly but its 6 am and i cannot be bothered to do any more today.
             if (UseRaymarching)
             {
@@ -150,88 +156,116 @@ namespace InfernumMode.Common.Graphics
         private static void DoRaymarching(SpriteBatch spriteBatch, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2)
         {
             // For testing purposes, setup the two RTs
-            RaymarchingLightsTarget.SwapToRenderTarget(Color.Black);
+            RaymarchingOccludersTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            spriteBatch.Draw(TextureAssets.Sun.Value, new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), Color.White);
-            spriteBatch.Draw(TextureAssets.Sun.Value, new Vector2(Main.screenWidth * 0.3f, Main.screenHeight * 0.7f), Color.White);
-            spriteBatch.Draw(InfernumTextureRegistry.VolcanoWarning.Value, new Vector2(Main.screenWidth * 0.6f, Main.screenHeight * 0.6f), Color.White);
-            spriteBatch.Draw(InfernumTextureRegistry.VolcanoWarning.Value, new Vector2(Main.screenWidth * 0.2f, Main.screenHeight * 0.2f), Color.White);
+            spriteBatch.Draw(InfernumTextureRegistry.BlurryPerlinNoise.Value, new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.2f), Color.White);
+            spriteBatch.Draw(InfernumTextureRegistry.VolcanoWarning.Value, new Vector2(Main.screenWidth * 0.8f, Main.screenHeight * 0.3f), Color.White);
             spriteBatch.End();
 
-            // Create the distance field
-            SetupDistanceField(spriteBatch);
+            RaymarchingLightsTarget.SwapToRenderTarget(Color.Transparent);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            spriteBatch.Draw(TextureAssets.Sun.Value, GetSunPosition(screenTarget1), Color.White);
+            spriteBatch.End();
+
+            // Create the distance fields
+            SetupDistanceField(spriteBatch, true);
+            SetupDistanceField(spriteBatch, false);
 
             // Raymarch.
-            screenTarget1.SwapToRenderTarget(Color.Black);
+            screenTarget1.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
-            spriteBatch.End();
-            return;
+            //spriteBatch.Draw(RaymarchingLightDisplacementFieldTarget, Vector2.Zero, Color.White);
+            //spriteBatch.End();
+            //return;
             Effect raymarchShader = InfernumEffectsRegistry.RaymarchingShader.GetShader().Shader;
 
-            raymarchShader.Parameters["lightsTexture"].SetValue(RaymarchingLightsTarget);
-            raymarchShader.Parameters["noiseTexure"].SetValue(InfernumTextureRegistry.SimpleNoise.Value);
-            raymarchShader.Parameters["screenTexture"].SetValue(screenTarget1);
+            raymarchShader.Parameters["lightsTexture"].SetValue(RaymarchingLightDisplacementFieldTarget);
+            raymarchShader.Parameters["noiseTexure"].SetValue(InfernumTextureRegistry.BlurryPerlinNoise.Value);
+            raymarchShader.Parameters["screenTexture"].SetValue(RaymarchingOccludersTarget);
             raymarchShader.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             raymarchShader.Parameters["screenResolution"].SetValue(screenTarget1.Size());
             raymarchShader.Parameters["rEmissionMultiplier"].SetValue(1f);
             raymarchShader.Parameters["rDistanceMod"].SetValue(1f);
             raymarchShader.CurrentTechnique.Passes["RaymarchPass"].Apply();
 
-            spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+            spriteBatch.Draw(RaymarchingOccluderDisplacementFieldTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+            // Draw them over the top of the scene.
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            spriteBatch.Draw(RaymarchingOccludersTarget, Vector2.Zero, Color.White);
+            spriteBatch.Draw(RaymarchingLightsTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
         }
-        private static void SetupDistanceField(SpriteBatch spriteBatch)
+
+        private static void SetupDistanceField(SpriteBatch spriteBatch, bool forOccluders)
         {
-            Effect mapShader = InfernumEffectsRegistry.DisplacementMap.GetShader().Shader;
+            Effect jumpFlood = InfernumEffectsRegistry.JumpFloodShader.GetShader().Shader;
 
             // Setup the voronoi texture.
-            RaymarchingVoronoiTarget.SwapToRenderTarget(Color.Black);
+            RaymarchingVoronoiTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            mapShader.Parameters["screenResolution"].SetValue(RaymarchingLightsTarget.Size());
-            mapShader.CurrentTechnique.Passes["VoronoiPass"].Apply();
-            spriteBatch.Draw(RaymarchingOccludersTarget, Vector2.Zero, Color.White);
+            jumpFlood.Parameters["screenResolution"].SetValue(RaymarchingOccludersTarget.Size());
+            jumpFlood.CurrentTechnique.Passes["VoronoiPass"].Apply();
+            if (forOccluders)
+                spriteBatch.Draw(RaymarchingOccludersTarget, Vector2.Zero, Color.White);
+            else
+                spriteBatch.Draw(RaymarchingLightsTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
 
-            RaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+            if (forOccluders)
+                RaymarchingOccluderDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
+            else
+                RaymarchingLightDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin();
             spriteBatch.Draw(RaymarchingVoronoiTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
 
             // The number of passes required is the log2 of the largest viewport dimension rounded up to the nearest power of 2.
             var passes = MathF.Log(MathF.Max(RaymarchingOccludersTarget.Size().X, RaymarchingOccludersTarget.Size().Y) / MathF.Log(2));
-
+            passes = 12;
             // Create the voronoi image.
             for (int i = 0; i < passes; i++)
             {
                 // The offset for each pass is half the previous one, starting at half the square resolution rounded up to nearest power 2.
                 float offset = MathF.Pow(2, passes - i - 1);
                 if (i % 2 == 0)
-                    TempRaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+                {
+                    if (forOccluders)
+                        RaymarchingOccluderDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
+                    else
+                        RaymarchingLightDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
+                }
                 else
-                    RaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+                    TempRaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
 
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                mapShader.Parameters["jfimageResolution"].SetValue(TempRaymarchingDisplacementFieldTarget.Size());
-                mapShader.Parameters["jfOffset"].SetValue(offset);
-                mapShader.CurrentTechnique.Passes["JumpFloodPass"].Apply();
+                jumpFlood.Parameters["jfimageResolution"].SetValue(TempRaymarchingDisplacementFieldTarget.Size());
+                jumpFlood.Parameters["jfOffset"].SetValue(offset);
+                jumpFlood.CurrentTechnique.Passes["JumpFloodPass"].Apply();
 
                 if (i == 0)
                     spriteBatch.Draw(RaymarchingVoronoiTarget, Vector2.Zero, Color.White);
                 else if (i % 2 == 0)
-                    spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
-                else
                     spriteBatch.Draw(TempRaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+                else
+                {
+                    if (forOccluders)
+                        spriteBatch.Draw(RaymarchingOccluderDisplacementFieldTarget, Vector2.Zero, Color.White);
+                    else
+                        spriteBatch.Draw(RaymarchingLightDisplacementFieldTarget, Vector2.Zero, Color.White);
+                }
                 spriteBatch.End();
             }
-
-
+            Effect mapShader = InfernumEffectsRegistry.DisplacementMap.GetShader().Shader;
             // Turn it into a distance map.
-            RaymarchingDisplacementFieldTarget.SwapToRenderTarget(Color.Black);
+            if (forOccluders)
+                RaymarchingOccluderDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
+            else
+                RaymarchingLightDisplacementFieldTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            mapShader.Parameters["dDistanceModifier"].SetValue(0.3f);
+            mapShader.Parameters["dDistanceModifier"].SetValue(1f);
             mapShader.CurrentTechnique.Passes["DisplacementPass"].Apply();
-            spriteBatch.Draw(RaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
+            spriteBatch.Draw(TempRaymarchingDisplacementFieldTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
         }
 

@@ -76,6 +76,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
         public static Filter FireballShader => Filters.Scene["Infernum:FireballShader"];
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
+        public static Filter JumpFloodShader => Filters.Scene["InfernumMode:JumpFlood"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
@@ -259,6 +260,10 @@ namespace InfernumMode.Assets.Effects
             // Displacement map shader.
             Ref<Effect> displacementMap = new(assets.Request<Effect>("Assets/Effects/Overlays/DisplacementMapShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:DisplacementMap"] = new Filter(new(displacementMap, "DisplacementPass"), EffectPriority.VeryHigh);
+
+            // Jump flood shader.
+            Ref<Effect> jumpFlood = new(assets.Request<Effect>("Assets/Effects/Overlays/JumpFloodShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:JumpFlood"] = new Filter(new(jumpFlood, "JumpFloodPass"), EffectPriority.VeryHigh);
 
             // Bloom shader.
             Ref<Effect> bloomShader = new(assets.Request<Effect>("Assets/Effects/Overlays/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);

@@ -431,16 +431,22 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class GetRidOfOnHitDebuffsHook : IHookEdit
     {
+        internal static void EarlyReturn(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ret);
+        }
+
         public void Load()
         {
-            YharonOnHitPlayer += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
-            SCalOnHitPlayer += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+            YharonOnHitPlayer += EarlyReturn;
+            SCalOnHitPlayer += EarlyReturn;
         }
 
         public void Unload()
         {
-            YharonOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
-            SCalOnHitPlayer -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+            YharonOnHitPlayer -= EarlyReturn;
+            SCalOnHitPlayer -= EarlyReturn;
         }
     }
 
@@ -523,9 +529,15 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class GetRidOfProvidenceLootBoxHook : IHookEdit
     {
-        public void Load() => SpawnProvLootBox += SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+        internal static void EarlyReturn(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ret);
+        }
 
-        public void Unload() => SpawnProvLootBox -= SepulcherOnHitProjectileEffectRemovalHook.EarlyReturn;
+        public void Load() => SpawnProvLootBox += EarlyReturn;
+
+        public void Unload() => SpawnProvLootBox -= EarlyReturn;
     }
 
     public class AddWarningAboutNonExpertOnWorldSelectionHook : IHookEdit
@@ -692,31 +704,6 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load() => GenerateAbyss += ChangeAbyssGen;
 
         public void Unload() => GenerateAbyss -= ChangeAbyssGen;
-    }
-
-    public class SepulcherOnHitProjectileEffectRemovalHook : IHookEdit
-    {
-        internal static void EarlyReturn(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.Emit(OpCodes.Ret);
-        }
-
-        public void Load()
-        {
-            SepulcherHeadModifyProjectile += EarlyReturn;
-            SepulcherBodyModifyProjectile += EarlyReturn;
-            SepulcherBody2ModifyProjectile += EarlyReturn;
-            SepulcherTailModifyProjectile += EarlyReturn;
-        }
-
-        public void Unload()
-        {
-            SepulcherHeadModifyProjectile -= EarlyReturn;
-            SepulcherBodyModifyProjectile -= EarlyReturn;
-            SepulcherBody2ModifyProjectile -= EarlyReturn;
-            SepulcherTailModifyProjectile -= EarlyReturn;
-        }
     }
 
     public class GetRidOfDesertNuisancesHook : IHookEdit

@@ -56,13 +56,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             AresCannonChargeParticleSet energyDrawer = GetEnergyDrawer(npc);
             energyDrawer.Update();
 
-            // Inherit a bunch of attributes such as opacity from the body.
-            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
-
             // Ensure the cannon does not take damage during the desperation attack.
             npc.dontTakeDamage = false;
             if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
                 npc.dontTakeDamage = true;
+
+            // Inherit a bunch of attributes such as opacity from the body.
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 
             bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             Player target = Main.player[npc.target];

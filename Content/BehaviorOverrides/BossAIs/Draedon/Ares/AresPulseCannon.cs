@@ -97,13 +97,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             EnergyDrawer.Update();
             SmokeDrawer.Update();
 
-            // Inherit a bunch of attributes such as opacity from the body.
-            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
-
             // Ensure this does not take damage in the desperation attack.
             NPC.dontTakeDamage = false;
             if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
                 NPC.dontTakeDamage = true;
+
+            // Inherit a bunch of attributes such as opacity from the body.
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
 
             bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(NPC);
             Player target = Main.player[NPC.target];

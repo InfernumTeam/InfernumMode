@@ -10,7 +10,9 @@ using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -210,6 +212,21 @@ namespace InfernumMode.Core.GlobalInstances
         }
 
         #endregion
+
+        #region Layering Manipulation
+        public override void DrawBehind(NPC npc, int index)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            bool isAres = npc.whoAmI == CalamityGlobalNPC.draedonExoMechPrime || npc.realLife == CalamityGlobalNPC.draedonExoMechPrime;
+            if (isAres && CalamityGlobalNPC.draedonExoMechPrime >= 0 && AresBodyBehaviorOverride.ShouldDrawBehindTiles && npc.hide)
+            {
+                Main.instance.DrawCacheNPCProjectiles.Remove(index);
+                ScreenOverlaysSystem.DrawCacheBeforeBlack.Add(index);
+            }
+        }
+        #endregion Layering Manipulation
 
         #region Frame Manipulation
         public override void FindFrame(NPC npc, int frameHeight)

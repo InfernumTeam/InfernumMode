@@ -97,6 +97,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
+        public static bool ShouldDrawBehindTiles
+        {
+            get
+            {
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
+                    return false;
+
+                return Main.npc[CalamityGlobalNPC.draedonExoMechPrime].ai[2] >= 0.2f;
+            }
+        }
+
         #region Netcode Syncs
 
         public override void SendExtraData(NPC npc, ModPacket writer) => writer.Write(npc.Opacity);
@@ -163,6 +174,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.takenDamageMultiplier = 1f;
             if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
                 npc.takenDamageMultiplier *= 0.5f;
+
+            // Disable natural draw layering if necessary.
+            npc.hide = ShouldDrawBehindTiles;
 
             // Spawn initial arm cannons and initialize other things.
             if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)

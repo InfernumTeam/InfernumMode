@@ -59,12 +59,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 {
                     try
                     {
-                        Main.instance.DrawProj(DrawCacheBeforeBlack[i]);
+                        Main.instance.DrawNPC(DrawCacheBeforeBlack[i], false);
                     }
                     catch (Exception e)
                     {
                         TimeLogger.DrawException(e);
-                        Main.projectile[DrawCacheBeforeBlack[i]].active = false;
+                        Main.npc[DrawCacheBeforeBlack[i]].active = false;
                     }
                 }
                 DrawCacheBeforeBlack.Clear();

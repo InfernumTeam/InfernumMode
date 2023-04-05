@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -56,10 +57,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             NPC.target = calamitas.target;
             NPC.Center = calamitas.Center + RingAngle.ToRotationVector2() * 950f;
             NPC.Opacity = 1f - calamitas.Opacity;
-            float idealRotation = RingAngle + MathHelper.Pi;
+
+            NPC.spriteDirection = (calamitas.Center.X > NPC.Center.X).ToDirectionInt();
             if (!Target.WithinRange(calamitas.Center, 1000f))
             {
-                idealRotation = NPC.AngleTo(Target.Center) + MathHelper.Pi;
+                NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
 
                 AngerTimer++;
                 AttackTimer++;
@@ -81,7 +83,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 AngerTimer = 0f;
                 AttackTimer = 0f;
             }
-            NPC.rotation = NPC.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.1f);
         }
 
         public override bool CheckActive() => false;
@@ -89,7 +90,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         public override void FindFrame(int frameHeight)
         {
             NPC.frameCounter++;
-            NPC.frame.Y = (int)(NPC.frameCounter / 5D + RingAngle / MathHelper.TwoPi * 50f) % Main.npcFrameCount[NPC.type] * frameHeight;
+            NPC.frame.Width = 88;
+            NPC.frame.Height = 105;
+            NPC.frame.Y = (int)(NPC.frameCounter / 5D + RingAngle / MathHelper.TwoPi * 50f) % 5 * NPC.frame.Height;
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Other/CalamitasEnchantDemon").Value;
+            Vector2 drawPosition = NPC.Center - screenPos;
+            Vector2 origin = NPC.frame.Size() * 0.5f;
+            SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, direction, 0f);
+            return false;
         }
 
         public override bool PreKill() => false;

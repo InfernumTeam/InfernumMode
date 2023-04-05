@@ -3,6 +3,7 @@ using CalamityMod.NPCs.CalClone;
 using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -38,6 +39,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             NPC calClone = Main.npc[CalamityGlobalNPC.calamitas];
             bool phase3 = calClone.life / (float)calClone.lifeMax < CalamitasCloneBehaviorOverride.Phase3LifeRatio;
 
+            // Inherit the target from CalClone.
+            npc.target = calClone.target;
+            Player target = Main.player[npc.target];
+
             // Hover near CalClone if applicable. Otherwise fly away from her.
             if (flyingAway == 0f && calClone.ai[0] != (int)CalamitasCloneBehaviorOverride.CloneAttackType.BrothersPhase && !phase3)
             {
@@ -59,19 +64,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 // Once a flyer, always a flyer...
                 flyingAway = 1f;
 
-                npc.rotation = npc.AngleFrom(calClone.Center) + MathHelper.Pi;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(calClone.Center) * -30f, 0.06f);
                 if (!npc.WithinRange(calClone.Center, 3000f))
                     npc.active = false;
             }
-
-            // Inherit the target from CalClone.
-            npc.target = calClone.target;
-            Player target = Main.player[npc.target];
-
-            if (flyingAway == 0f)
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
-
             npc.ai[1] += MathHelper.ToRadians(0.6f);
 
             // Periodically release dark magic bolts.
@@ -95,6 +92,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
             attackTimer++;
 
+            return false;
+        }
+
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            npc.frameCounter++;
+            npc.frame.Width = 88;
+            npc.frame.Height = 105;
+            npc.frame.Y = (int)(npc.frameCounter / 5D + npc.whoAmI * 14) % 5 * npc.frame.Height;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Other/CalamitasEnchantDemon").Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, direction, 0f);
             return false;
         }
     }

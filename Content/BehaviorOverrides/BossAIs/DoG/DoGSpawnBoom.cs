@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
     {
         public override int Lifetime => 180;
 
-        public override float MaxRadius => 4300f;
+        public override float MaxRadius => 3900f;
 
         public override float RadiusExpandRateInterpolant => 0.15f;
 

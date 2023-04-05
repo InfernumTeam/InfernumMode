@@ -200,6 +200,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.netUpdate = true;
                     sentinelAttackTimer = 0f;
                     ScreenEffectSystem.SetBlurEffect(npc.Center, 0.2f, 30);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
                 }
                 return false;
             }

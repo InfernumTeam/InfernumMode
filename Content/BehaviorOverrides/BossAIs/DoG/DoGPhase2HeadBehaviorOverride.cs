@@ -1415,11 +1415,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 target = Main.player[npc.target];
             else
                 return;
+
+            bool doNotChangeOpacities = false;
+            int passiveMoveTime = PassiveMovementTimeP1;
+            int aggressiveMoveTime = AggressiveMovementTimeP1;
             ref float outerRingOpacity = ref npc.Infernum().ExtraAI[DashTelegraphOuterOpacityIndex];
             ref float innerRingOpacity = ref npc.Infernum().ExtraAI[DashTelegraphInnerOpacityIndex];
-            bool doNotChangeOpacities = false;
+            if (npc.life < npc.lifeMax * Phase2LifeRatio)
+            {
+                passiveMoveTime = PassiveMovementTimeP2;
+                aggressiveMoveTime = AggressiveMovementTimeP2;
+            }
 
-            if (npc.Infernum().ExtraAI[PerformingSpecialAttackFlagIndex] != 0 || !(npc.Infernum().ExtraAI[PhaseCycleTimerIndex] % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) < AggressiveMovementTimeP1))
+            if (npc.Infernum().ExtraAI[PerformingSpecialAttackFlagIndex] != 0 || !(npc.Infernum().ExtraAI[PhaseCycleTimerIndex] % (passiveMoveTime + aggressiveMoveTime) < aggressiveMoveTime))
             {
                 if (outerRingOpacity > 0f || innerRingOpacity > 0f)
                 {

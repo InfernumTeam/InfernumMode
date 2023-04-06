@@ -351,7 +351,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 slimeColor.A = 135;
                 for (int i = 0; i < 12; i++)
                 {
-                    Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, npc.alpha, slimeColor, 2f);
+                    Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, DustID.TintableDust, npc.velocity.X, npc.velocity.Y, npc.alpha, slimeColor, 2f);
                     slime.noGravity = true;
                     slime.velocity *= 0.5f;
                 }
@@ -446,7 +446,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                 SoundEngine.PlaySound(new SoundStyle("CalamityMod/Sounds/Custom/SlimeGodPossession"), npc.Center);
                 for (int k = 0; k < 50; k++)
-                    Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.TintableDust, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }
 
             // Circle around the target, sometimes taking time to dash inward at them.

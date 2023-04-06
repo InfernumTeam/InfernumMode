@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             bool isExoTwin = npc.type == ModContent.NPCType<Artemis>() || npc.type == ModContent.NPCType<Apollo>();
             bool isAttackingExoTwin = npc.type == exoTwinThatShouldAttack;
             float artemisSpinRadius = 560f;
-            float artemisSpinArc = MathHelper.Pi * 1.1f;
+            float artemisSpinArc = MathHelper.Pi * 0.95f;
 
             // TODO -- This may need to be represented as a series and then numerically solved via some root-approximating method if
             // Artemis should accelerate when spinning and not have a constant angular velocity.
@@ -160,6 +160,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             float apolloChargeAcceleration = 1.06f;
             float apolloFireballExplosionRadius = 640f;
             float apolloPlasmaFireballSpeed = Main.rand.NextFloat(10f, 32f);
+
+            if (ExoTwinsAreInSecondPhase)
+            {
+                baseApolloChargeSpeed += 4f;
+                artemisSpinArc *= 1.2f;
+                apolloFireballExplosionRadius += 60f;
+                apolloPlasmaFireballSpeed *= 1.2f;
+            }
+
             ref float artemisSpinDirection = ref npc.Infernum().ExtraAI[0];
             ref float apolloHoverOffsetAngle = ref npc.Infernum().ExtraAI[0];
 

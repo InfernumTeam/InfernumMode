@@ -272,7 +272,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (CalamityGlobalNPC.draedonExoMechPrime != -1 && Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
                 telegraphIntensity = Ares.Infernum().ExtraAI[4] / Ares.Infernum().ExtraAI[2];
 
-            if (telegraphIntensity > 0f)
+            if (telegraphIntensity > 0f && npc.type != ModContent.NPCType<AresEnergyKatana>())
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 

@@ -14,10 +14,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
         public ref float Time => ref Projectile.ai[0];
         public const float FlameRotation = MathHelper.Pi / 16f;
-        public const float FadeinTime = 40f;
-        public const float FadeoutTime = 35f;
+        public const float FadeinTime = 18f;
+        public const float FadeoutTime = 16f;
         public const float Lifetime = FadeinTime + FadeoutTime;
-        public const float FireMaxLength = 1950f;
+        public const float FireMaxLength = 1450f;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Flame Breath");
 

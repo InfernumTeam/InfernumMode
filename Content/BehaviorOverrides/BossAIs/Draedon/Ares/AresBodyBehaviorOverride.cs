@@ -569,7 +569,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Stay away from the top of the world, to ensure that the target can deal with the laser spin.
             if (npc.Top.Y <= 3600f)
-                npc.position.Y += 32f;
+                npc.position.Y += Utils.GetLerpValue(3600f, 2400f, npc.Top.Y, true) * 30f;
 
             // Determine an initial direction.
             if (laserDirectionSign == 0f)
@@ -1119,6 +1119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public static void SelectNextAttack(NPC npc)
         {
             AresBodyAttackType oldAttackType = (AresBodyAttackType)(int)npc.ai[0];
+            ref float previousSuperAttack = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_PreviousSuperAttackIndex];
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
                 npc.ai[0] = (int)newAttack;
@@ -1138,7 +1139,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     else
                         rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.8);
 
-                    npc.ai[0] = (int)rng.Get();
+                    do
+                        npc.ai[0] = (int)rng.Get();
+                    while (npc.ai[0] == previousSuperAttack);
+                    previousSuperAttack = npc.ai[0];
 
                     // Use the ultimate attack in the final phase.
                     if (ExoMechManagement.CurrentAresPhase >= 6)
@@ -1170,7 +1174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Cannons are disabled only when the attack says so during the ultimate attack.
             // Otherwise, all of them fire.
             if (aresBody.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
-                return aresBody.Infernum().ExtraAI[3] == 0f;
+                return aresBody.Infernum().ExtraAI[3] == 0f || npc.type == ModContent.NPCType<AresEnergyKatana>();
 
             int thanatosIndex = NPC.FindFirstNPC(ModContent.NPCType<ThanatosHead>());
             if (thanatosIndex >= 0 && aresBody.ai[0] >= 100f && Main.npc[thanatosIndex].Infernum().ExtraAI[13] < 240f)

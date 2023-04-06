@@ -268,6 +268,8 @@ namespace InfernumMode.GlobalInstances
                     int slime = NPC.NewNPC(npc.GetSource_Death(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, ModContent.NPCType<SplitBigSlimeAnimation>());
                     Main.npc[slime].velocity = Main.rand.NextVector2Circular(8f, 8f);
                 }
+
+                SlimeGodComboAttackManager.SelectNextAttackSpecific(SlimeGodComboAttackManager.LeaderOfFight);
             }
 
             if (!WeakReferenceSupport.InAnySubworld())

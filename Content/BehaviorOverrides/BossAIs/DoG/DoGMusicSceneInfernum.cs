@@ -1,7 +1,6 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Systems;
-using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Calamity = CalamityMod.CalamityMod;

@@ -710,7 +710,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 // The attack only happens when Yharon spawns.
                 case YharonAttackType.SpawnEffects:
-                    DoBehavior_SpawnEffects(npc, ref attackType, ref attackTimer);
+                    DoBehavior_SpawnEffects(npc, target, ref attackType, ref attackTimer);
                     break;
                 case YharonAttackType.Charge:
                 case YharonAttackType.TeleportingCharge:
@@ -770,13 +770,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             return new(x, y);
         }
 
-        public static void DoBehavior_SpawnEffects(NPC npc, ref float attackType, ref float attackTimer)
+        public static void DoBehavior_SpawnEffects(NPC npc, Player target, ref float attackType, ref float attackTimer)
         {
             int spawnEffectsTime = 336;
 
             // Disable damage.
             npc.dontTakeDamage = true;
             npc.damage = 0;
+
+            // Teleport above the target on the first frame.
+            if (attackTimer <= 3f)
+            {
+                npc.Center = target.Center - Vector2.UnitY * 700f;
+                npc.netUpdate = true;
+            }
 
             // Idly spawn pretty sparkles.
             if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool())

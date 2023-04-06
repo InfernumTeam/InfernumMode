@@ -7,7 +7,6 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;
-using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
@@ -808,7 +807,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.velocity.X *= 0.9f;
 
                 if (attackTimer == anticipationTime - 40f)
+                {
                     DoLaughEffect(npc, target);
+
+                    // Play the impending death sound.
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with { Volume = 2f }, target.Center);
+                }
             }
             else
                 zPosition -= 0.3f;
@@ -1139,6 +1143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     if (ExoMechManagement.CurrentAresPhase >= 6)
                         npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
+                npc.ai[0] = (int)AresBodyAttackType.ThreeDimensionalSuperslashes;
             }
 
             npc.ai[1] = 0f;

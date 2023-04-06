@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             AresTwins_CircleAttack,
 
             ThanatosAres_LaserCircle,
-            ThanatosAres_ElectricCage,
+            ThanatosAres_EnergySlashesAndCharges,
 
             TwinsThanatos_ThermoplasmaDashes,
             TwinsThanatos_CircledLaserSweep,
@@ -27,10 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
         public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new()
         {
-            [ExoMechComboAttackType.ThanatosAres_ElectricCage] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
-                ModContent.NPCType<AresPlasmaFlamethrower>(),
-                ModContent.NPCType<AresLaserCannon>(),
-                ModContent.NPCType<AresPulseCannon>() },
+            [ExoMechComboAttackType.ThanatosAres_EnergySlashesAndCharges] = new int[] { ModContent.NPCType<AresEnergyKatana>() },
         };
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)
@@ -101,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             {
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
-                    (int)ExoMechComboAttackType.ThanatosAres_LaserCircle => (int)ExoMechComboAttackType.ThanatosAres_ElectricCage,
+                    (int)ExoMechComboAttackType.ThanatosAres_LaserCircle => (int)ExoMechComboAttackType.ThanatosAres_EnergySlashesAndCharges,
                     _ => (int)ExoMechComboAttackType.ThanatosAres_LaserCircle,
                 };
 

@@ -3,18 +3,16 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
-using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
+using System;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
@@ -72,9 +70,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             {
                 case ExoMechComboAttackType.ThanatosAres_LaserCircle:
                     return DoBehavior_ThanatosAres_LaserCircle(npc, target, ref attackTimer, ref frame);
-                case ExoMechComboAttackType.ThanatosAres_ElectricCage:
+                case ExoMechComboAttackType.ThanatosAres_EnergySlashesAndCharges:
                     {
-                        bool result = DoBehavior_ThanatosAres_ElectricCage(npc, target, ref attackTimer, ref frame);
+                        bool result = DoBehavior_ThanatosAres_EnergySlashesAndCharges(npc, target, ref attackTimer, ref frame);
                         if (result && aresIndex >= 0)
                         {
                             Main.npc[aresIndex].Infernum().ExtraAI[13] = 0f;
@@ -225,251 +223,139 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             return attackTimer > attackDelay + attackTime;
         }
 
-        public static bool DoBehavior_ThanatosAres_ElectricCage(NPC npc, Player target, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_ThanatosAres_EnergySlashesAndCharges(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 150;
-            int aresShootRate = 90;
-            int aresCircularBoltCount = 25;
-            int aresShotBoltCount = 7;
-            int thanatosShootRate = 70;
-            int lasersPerRotor = 9;
-            float rotorSpeed = 23f;
-            bool aresShouldAttack = attackTimer % 360f > 210f && attackTimer > attackDelay;
-            bool thanatosShouldAttack = attackTimer % 360f <= 150f && attackTimer > attackDelay;
-            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[Ares_LineTelegraphInterpolantIndex];
-            ref float telegraphRotation = ref npc.Infernum().ExtraAI[Ares_LineTelegraphRotationIndex];
+            int attackDelay = 120;
+            int slashAnticipationTime = 80;
+            int slashTime = 31;
+            int slashCount = 3;
 
+            int redirectTime = 22;
+            int chargeTime = 84;
+            float flyAcceleration = 1.022f;
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {
-                aresShootRate -= 8;
-                aresCircularBoltCount += 12;
-                aresShotBoltCount += 2;
-                thanatosShootRate -= 10;
+                slashAnticipationTime -= 40;
+                slashTime -= 5;
+                redirectTime -= 6;
+                chargeTime -= 21;
+                slashCount += 3;
+                flyAcceleration += 0.008f;
             }
 
-            if (CalamityGlobalNPC.draedonExoMechPrime == -1)
-                return false;
-
-            // Ares' arms hover in rectangular positions, marking a border.
-            NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Vector2? hoverOffset = null;
-            float borderOffset = 950f;
-            Rectangle borderArea = Utils.CenteredRectangle(aresBody.Center, Vector2.One * borderOffset * 2f);
-
-            int armShootType = -1;
-            bool canShoot = true;
-            float armShootSpeed = 10f;
-            float perpendicularOffset = 0f;
-            bool enraged = aresBody.Infernum().ExtraAI[13] == 1f;
-            SoundStyle shootSound = default;
-
-            if (enraged)
-            {
-                aresShootRate /= 3;
-                aresCircularBoltCount += 8;
-                aresShotBoltCount += 8;
-                thanatosShootRate -= 24;
-            }
-
-            if (npc.type == ModContent.NPCType<AresLaserCannon>())
-            {
-                armShootType = ModContent.ProjectileType<AresLaserDeathray>();
-                canShoot = !Utilities.AnyProjectiles(armShootType);
-                hoverOffset = new Vector2(-borderOffset, -borderOffset);
-                shootSound = CommonCalamitySounds.LaserCannonSound;
-            }
-            if (npc.type == ModContent.NPCType<AresTeslaCannon>())
-            {
-                armShootType = ModContent.ProjectileType<AresTeslaSpark>();
-                hoverOffset = new Vector2(-borderOffset, borderOffset);
-                shootSound = CommonCalamitySounds.PlasmaBoltSound;
-            }
-            if (npc.type == ModContent.NPCType<AresPlasmaFlamethrower>())
-            {
-                armShootType = ModContent.ProjectileType<SmallPlasmaSpark>();
-                hoverOffset = new Vector2(borderOffset, borderOffset);
-                shootSound = PlasmaCaster.FireSound;
-            }
-            if (npc.type == ModContent.NPCType<AresPulseCannon>())
-            {
-                armShootType = ModContent.ProjectileType<AresPulseDeathray>();
-                canShoot = !Utilities.AnyProjectiles(armShootType);
-                hoverOffset = new Vector2(borderOffset, -borderOffset);
-                shootSound = PulseRifle.FireSound;
-                armShootSpeed = 2f;
-                perpendicularOffset = 15f;
-            }
-
-            // Have arms hover and continuously fire things.
-            if (hoverOffset.HasValue && attackTimer >= attackDelay)
-            {
-                // Hover into position.
-                ExoMechAIUtilities.DoSnapHoverMovement(npc, aresBody.Center + hoverOffset.Value, 65f, 115f);
-
-                float idealHoverRotation = hoverOffset.Value.ToRotation() + MathHelper.Pi - MathHelper.PiOver4;
-                Vector2 aimDirection = idealHoverRotation.ToRotationVector2();
-
-                // Choose a direction and rotation.
-                // Rotation is relative to predictiveness.
-                float idealRotation = aimDirection.ToRotation();
-                if (npc.spriteDirection == 1)
-                    idealRotation += MathHelper.Pi;
-                if (idealRotation < 0f)
-                    idealRotation += MathHelper.TwoPi;
-                if (idealRotation > MathHelper.TwoPi)
-                    idealRotation -= MathHelper.TwoPi;
-                npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.065f);
-                npc.spriteDirection = -1;
-
-                float rotationToEndOfCannon = npc.rotation;
-                if (rotationToEndOfCannon < 0f)
-                    rotationToEndOfCannon += MathHelper.Pi;
-                npc.ai[3] = rotationToEndOfCannon;
-                Vector2 endOfCannon = npc.Center + aimDirection * 120f + aimDirection.RotatedBy(npc.spriteDirection * -MathHelper.PiOver2) * perpendicularOffset;
-
-                if (attackTimer % 9f == 8f && canShoot)
-                {
-                    if (Main.rand.NextBool(5) && shootSound != default)
-                        SoundEngine.PlaySound(shootSound, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        // Ensure that specific projectiles receive NPC owner index information.
-                        float ai0;
-                        if (armShootType == ModContent.ProjectileType<AresPulseDeathray>() || armShootType == ModContent.ProjectileType<AresLaserDeathray>())
-                            ai0 = npc.whoAmI;
-                        // This tells them to set a shorter lifespan.
-                        else
-                            ai0 = 1f;
-                        Utilities.NewProjectileBetter(endOfCannon, aimDirection * armShootSpeed, armShootType, NormalShotDamage, 0f, -1, ai0);
-                    }
-                }
-            }
-
-            // Ares sits in place and releases bursts of exo sparks.
-            if (npc.type == ModContent.NPCType<AresBody>())
-            {
-                // Prevent arms from swapping.
-                npc.Infernum().ExtraAI[14] = 180;
-                npc.Infernum().ExtraAI[15] = 0f;
-
-                // Decide frames.
-                frame = (int)AresBodyFrameType.Normal;
-
-                Vector2 coreCenter = npc.Center + Vector2.UnitY * 34f;
-
-                if (attackTimer < attackDelay)
-                    ExoMechAIUtilities.DoSnapHoverMovement(npc, target.Center - Vector2.UnitY * 450f, 24f, 75f);
-                else
-                {
-                    npc.velocity *= 0.9f;
-
-                    // Descend if there is no ground below in sight, to prevent cases where the player is stuck in the air
-                    // with limited flight time.
-                    if (!WorldUtils.Find(npc.Center.ToTileCoordinates(), Searches.Chain(new Searches.Down(30), new Conditions.IsSolid()), out _))
-                        npc.position.Y += 8f;
-                }
-
-                if (aresShouldAttack)
-                {
-                    Dust electricity = Dust.NewDustPerfect(npc.Center + Vector2.UnitY * 34f, 226);
-                    electricity.velocity = Main.rand.NextVector2Circular(7f, 7f);
-                    electricity.scale *= 1.3f;
-                    electricity.position += electricity.velocity.SafeNormalize(Vector2.Zero) * 20f;
-                    electricity.noGravity = true;
-
-                    if (attackTimer % aresShootRate >= aresShootRate - 35f)
-                    {
-                        telegraphInterpolant = Utils.GetLerpValue(aresShootRate - 50f, aresShootRate - 5f, attackTimer % aresShootRate, true);
-                        if (attackTimer % aresShootRate < aresShootRate - 5f)
-                            telegraphRotation = (target.Center - coreCenter).ToRotation();
-                    }
-                }
-
-                if (aresShouldAttack && attackTimer % aresShootRate == aresShootRate - 1f)
-                {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        // Fire a burst of circular sparks along with sparks that are loosely fired towards the target.
-                        float circularSpreadAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
-                        for (int i = 0; i < aresCircularBoltCount; i++)
-                        {
-                            Vector2 boltShootVelocity = (MathHelper.TwoPi * i / aresCircularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 13f;
-                            Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
-                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), NormalShotDamage, 0f);
-                        }
-
-                        for (int i = 0; i < aresShotBoltCount; i++)
-                        {
-                            Vector2 boltShootVelocity = telegraphRotation.ToRotationVector2() * 31f + Main.rand.NextVector2Circular(5f, 5f);
-                            Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 21f;
-                            Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), NormalShotDamage, 0f);
-                        }
-                    }
-                }
-
-                // Get pissed off if the player attempts to leave the arm borders.
-                if (!target.Hitbox.Intersects(borderArea) && !enraged && attackTimer > attackDelay)
-                {
-                    if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
-                        SoundEngine.PlaySound(AresBody.EnragedSound, target.Center);
-
-                    // Have Draedon comment on the player's attempts to escape.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonAresEnrageText", CalamityMod.NPCs.ExoMechs.Draedon.TextColorEdgy);
-
-                    npc.Infernum().ExtraAI[13] = 1f;
-                    npc.netUpdate = true;
-                }
-            }
-
-            // Thanatos moves around and releases refraction rotors.
+            // Thanatos attempts to slam into the target and accelerate.
             if (npc.type == ModContent.NPCType<ThanatosHead>())
             {
+                float wrappedAttackTimer = (attackTimer - attackDelay) % (redirectTime + chargeTime);
+
+                // Hover near the target before the attack begins.
+                if (attackTimer < attackDelay)
+                {
+                    // Disable contact damage before the attack happens, to prevent cheap hits.
+                    npc.damage = 0;
+
+                    if (!npc.WithinRange(target.Center, 300f))
+                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 12f, 0.06f);
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    return false;
+                }
+
+                // Redirect and look at the target before charging.
+                // Thanatos will zip towards the target during this if necessary, to ensure that he's nearby by the time the attack begins.
+                if (wrappedAttackTimer <= redirectTime)
+                {
+                    float flySpeed = Utils.Remap(npc.Distance(target.Center), 750f, 2700f, 8f, 32f);
+                    float aimInterpolant = Utils.Remap(wrappedAttackTimer, 0f, redirectTime - 4f, 0.01f, 0.5f);
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * aimInterpolant, true) * flySpeed;
+
+                    if (!npc.WithinRange(target.Center, 1100f) && Vector2.Dot(npc.velocity, npc.SafeDirectionTo(target.Center)) < 0f)
+                        npc.velocity *= -0.1f;
+                }
+
+                // Accelerate.
+                else
+                    npc.velocity *= flyAcceleration;
+
+                // Decide the current rotation based on velocity.
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
                 // Decide frames.
                 frame = (int)ThanatosFrameType.Open;
-
-                // Don't do contact damage.
-                npc.damage = 0;
-
-                // Do slow movement.
-                DoProjectileShootInterceptionMovement(npc, target, 1.1f);
-                if (npc.WithinRange(target.Center, 270f))
-                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -22f, 2f);
-
-                ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
-                ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
-                ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
-
-                // Select segment shoot attributes.
-                int segmentShootDelay = 115;
-                if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
-                {
-                    totalSegmentsToFire = 16f;
-                    segmentFireTime = 75f;
-
-                    segmentFireCountdown = segmentFireTime;
-                    npc.netUpdate = true;
-                }
-
-                if (segmentFireCountdown > 0f)
-                    segmentFireCountdown--;
-
-                // Shoot refraction rotors.
-                if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f && npc.WithinRange(target.Center, 1040f))
-                {
-                    Vector2 rotorShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rotorSpeed;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        Utilities.NewProjectileBetter(npc.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f, -1, lasersPerRotor);
-                        rotorShootVelocity = rotorShootVelocity.RotatedBy(MathHelper.TwoPi / 5f);
-                    }
-                }
             }
 
-            if (attackTimer == 840f)
-                ClearAwayTransitionProjectiles();
-            return attackTimer > 840f;
+            // Ares hovers above the target and slashes downward, forcing the player into a tight position momentarily.
+            float wrappedAresAttackTimer = (attackTimer - attackDelay) % (slashAnticipationTime + slashTime);
+            if (npc.type == ModContent.NPCType<AresBody>())
+            {
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 280f;
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.072f;
+                if (wrappedAresAttackTimer >= slashAnticipationTime)
+                    idealVelocity.X = 0f;
+
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+            }
+
+            if (npc.type == ModContent.NPCType<AresEnergyKatana>())
+            {
+                ref float slashTrailFadeOut = ref npc.ModNPC<AresEnergyKatana>().SlashTrailFadeOut;
+
+                // Dangle about like normal if waiting for the attack to start.
+                if (attackTimer < attackDelay || CalamityGlobalNPC.draedonExoMechPrime == -1)
+                {
+                    npc.ModNPC<AresEnergyKatana>().PerformDisabledHoverMovement();
+                    return false;
+                }
+
+                NPC ares = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+                float flySpeedBoost = ares.velocity.Length() * 0.72f;
+                float armOffsetDirection = npc.ModNPC<AresEnergyKatana>().ArmOffsetDirection;
+
+                // Ensure that the katana is drawn.
+                npc.ModNPC<AresEnergyKatana>().KatanaIsInUse = true;
+
+                // Anticipate the slash.
+                if (wrappedAresAttackTimer <= slashAnticipationTime)
+                {
+                    slashTrailFadeOut = MathHelper.Clamp(slashTrailFadeOut + 0.2f, 0f, 1f);
+                    float minHoverSpeed = Utils.Remap(wrappedAresAttackTimer, 7f, slashAnticipationTime * 0.5f, 2f, 42f);
+                    Vector2 startingOffset = new(armOffsetDirection * 470f, 0f);
+                    Vector2 endingOffset = new(armOffsetDirection * 172f, -175f);
+                    Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(0f, slashAnticipationTime, wrappedAresAttackTimer, true));
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 450f, flySpeedBoost + minHoverSpeed, 115f);
+                }
+
+                // Perform the slash.
+                else
+                {
+                    slashTrailFadeOut = Utils.GetLerpValue(slashAnticipationTime + slashTime - 16f, slashAnticipationTime + slashTime - 11f, wrappedAresAttackTimer, true);
+                    Vector2 startingOffset = new(armOffsetDirection * 172f, -175f);
+                    Vector2 endingOffset = new(armOffsetDirection * 64f, 250f);
+                    Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, MathF.Pow(Utils.GetLerpValue(slashAnticipationTime, slashAnticipationTime + slashTime - 16f, wrappedAresAttackTimer, true), 0.4f));
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 300f, flySpeedBoost + 49f, 115f);
+                }
+
+                // Prepare the slash.
+                if (wrappedAresAttackTimer == slashAnticipationTime)
+                {
+                    // Reset the position cache, so that the trail can be drawn with a fresh set of points.
+                    npc.oldPos = new Vector2[npc.oldPos.Length];
+
+                    // Calculate the starting position of the slash. This is used for determining the orientation of the trail.
+                    npc.ModNPC<AresEnergyKatana>().SlashStart = npc.Center + ((float)npc.ModNPC<AresEnergyKatana>().Limbs[1].Rotation).ToRotationVector2() * npc.scale * 160f;
+                    npc.netUpdate = true;
+
+                    // Play a slice sound.
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AresSlashSound, npc.Center);
+                }
+
+                // Rotate based on the direction of the arm.
+                npc.rotation = (float)npc.ModNPC<AresEnergyKatana>().Limbs[1].Rotation;
+                npc.spriteDirection = (int)armOffsetDirection;
+                if (armOffsetDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+            }
+
+            return attackTimer >= attackDelay + (slashAnticipationTime + slashTime) * slashCount;
         }
     }
 }

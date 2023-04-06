@@ -507,9 +507,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
             // Hover near the target.
             if (horizontalHoverOffset == 0f)
-                horizontalHoverOffset = Math.Sign(target.Center.X - npc.Center.X) * 500f;
+            {
+                horizontalHoverOffset = Math.Sign(target.Center.X - npc.Center.X) * -500f;
+                npc.netUpdate = true;
+            }
             Vector2 hoverDestination = target.Center + new Vector2(horizontalHoverOffset, -350f) - npc.velocity;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 12f, 0.7f);
 
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();

@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public ref float CurrentDirection => ref NPC.ai[3];
 
-        public ref float SlashFadeOut => ref NPC.localAI[0];
+        public ref float SlashTrailFadeOut => ref NPC.localAI[0];
 
         public static int DownwardCrossSlicesAnticipationTime
         {
@@ -204,21 +204,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 NPC.dontTakeDamage = true;
 
             bool currentlyDisabled = ArmIsDisabled(NPC);
-            Player target = Main.player[NPC.target];
 
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
 
             AresCannonBehaviorOverride.UpdateParticleDrawers(SmokeDrawer, EnergyDrawer, 0f, 100f);
 
+            // Check to see if this arm should be used for special things in a combo attack.
+            if (AresCannonBehaviorOverride.IsInUseByComboAttack(NPC))
+                return;
+
             // Hover in place below Ares if disabled.
             if (currentlyDisabled)
             {
-                // The katana should by default not be in use.
-                KatanaIsInUse = false;
-
-                ExoMechAIUtilities.PerformAresArmDirectioning(NPC, Ares, target, Vector2.UnitY, currentlyDisabled, false, ref CurrentDirection);
-                PerformHoverMovement();
+                PerformDisabledHoverMovement();
                 return;
             }
 
@@ -274,7 +273,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Anticipate the slash.
             if (wrappedAttackTimer <= anticipationTime)
             {
-                SlashFadeOut = 1f;
+                SlashTrailFadeOut = 1f;
                 float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.5f, 2f, 42f);
                 Vector2 startingOffset = new(ArmOffsetDirection * 470f, 0f);
                 Vector2 endingOffset = new(ArmOffsetDirection * 172f, -175f);
@@ -285,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Do the slash.
             else if (wrappedAttackTimer <= anticipationTime + sliceTime)
             {
-                SlashFadeOut = 0f;
+                SlashTrailFadeOut = 0f;
                 Vector2 startingOffset = new(ArmOffsetDirection * 172f, -175f);
                 Vector2 endingOffset = new(ArmOffsetDirection * -260f, 400f);
                 Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(anticipationTime, anticipationTime + sliceTime, wrappedAttackTimer, true));
@@ -297,7 +296,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 NPC.velocity.X *= 0.6f;
                 NPC.velocity.Y *= 0.1f;
-                SlashFadeOut = MathHelper.Clamp(SlashFadeOut + 0.5f, 0f, 1f);
+                SlashTrailFadeOut = MathHelper.Clamp(SlashTrailFadeOut + 0.5f, 0f, 1f);
             }
 
             // Prepare the slash.
@@ -350,7 +349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Anticipate the slash.
             if (wrappedAttackTimer <= anticipationTime)
             {
-                SlashFadeOut = 1f;
+                SlashTrailFadeOut = 1f;
                 float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.5f, 2f, 42f);
                 Vector2 startingOffset = new(ArmOffsetDirection * 470f, 0f);
                 Vector2 endingOffset = new(ArmOffsetDirection * 140f, -192f);
@@ -361,7 +360,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Do the slash.
             else if (wrappedAttackTimer <= anticipationTime + sliceTime)
             {
-                SlashFadeOut = 0f;
+                SlashTrailFadeOut = 0f;
                 Vector2 startingOffset = new(ArmOffsetDirection * 140f, -192f);
                 Vector2 endingOffset = new(ArmOffsetDirection * -260f, 450f);
                 Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(anticipationTime, anticipationTime + sliceTime, wrappedAttackTimer, true));
@@ -372,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             else
             {
                 NPC.velocity *= 0.27f;
-                SlashFadeOut = MathHelper.Clamp(SlashFadeOut + 0.25f, 0f, 1f);
+                SlashTrailFadeOut = MathHelper.Clamp(SlashTrailFadeOut + 0.25f, 0f, 1f);
             }
 
             // Prepare the slash.
@@ -414,7 +413,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Anticipate the slash.
             if (wrappedAttackTimer <= anticipationTime)
             {
-                SlashFadeOut = 1f;
+                SlashTrailFadeOut = 1f;
                 float minHoverSpeed = Utils.Remap(wrappedAttackTimer, 7f, anticipationTime * 0.5f, 9f, 66f);
                 Vector2 startingOffset = new(ArmOffsetDirection * 470f, 0f);
                 Vector2 endingOffset = new(ArmOffsetDirection * 172f, -175f);
@@ -425,7 +424,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Do the slash.
             else if (wrappedAttackTimer <= anticipationTime + sliceTime)
             {
-                SlashFadeOut = 0f;
+                SlashTrailFadeOut = 0f;
                 Vector2 startingOffset = new(ArmOffsetDirection * 172f, -175f);
                 Vector2 endingOffset = new(ArmOffsetDirection * -260f, 400f);
                 Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Utils.GetLerpValue(anticipationTime, anticipationTime + sliceTime, wrappedAttackTimer, true));
@@ -456,8 +455,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             KatanaIsInUse = true;
         }
 
-        public Vector2 PerformHoverMovement()
+        public Vector2 PerformDisabledHoverMovement()
         {
+            // The katana should by default not be in use.
+            KatanaIsInUse = false;
+
+            ExoMechAIUtilities.PerformAresArmDirectioning(NPC, Ares, Target, Vector2.UnitY, true, false, ref CurrentDirection);
+
             Vector2 hoverOffset = new(ArmOffsetDirection * 470f, 0f);
             Vector2 hoverDestination = Ares.Center + hoverOffset * Ares.scale;
             ExoMechAIUtilities.DoSnapHoverMovement(NPC, hoverDestination, 64f, 115f);
@@ -504,10 +508,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool? CanHitNPC(NPC target) => false;
 
-        public override void FindFrame(int frameHeight)
-        {
-        }
-
         public override void HitEffect(int hitDirection, double damage)
         {
             if (NPC.soundDelay == 1)
@@ -547,7 +547,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public float SlashWidthFunction(float completionRatio) => NPC.scale * 100f;
 
-        public Color SlashColorFunction(float completionRatio) => Color.White * Utils.GetLerpValue(0.9f, 0.4f, completionRatio, true) * (1f - SlashFadeOut) * NPC.Opacity * NPC.scale;
+        public Color SlashColorFunction(float completionRatio) => Color.White * Utils.GetLerpValue(0.9f, 0.4f, completionRatio, true) * (1f - SlashTrailFadeOut) * NPC.Opacity * NPC.scale;
 
         public void DrawSlash()
         {

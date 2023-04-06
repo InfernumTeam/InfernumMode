@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 if (segmentFireCountdown == (int)(segmentFireTime / 2) + fireDelay)
                 {
-                    bool willShootProjectile = (int)headAttackType != (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ElectricCage;
+                    bool willShootProjectile = (int)headAttackType != (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_EnergySlashesAndCharges;
 
                     // Decide what sound to play.
                     if (willShootProjectile)

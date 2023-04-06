@@ -1481,7 +1481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     enrageTimer = 900f;
                     npc.netUpdate = true;
 
-                    // Play the impending death sounds.
+                    // Play the impending death sound.
                     SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, target.Center);
 
                     // Have Draedon comment on the player's attempts to escape.

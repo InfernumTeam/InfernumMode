@@ -1129,13 +1129,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 2)
                 {
                     WeightedRandom<AresBodyAttackType> rng = new(Main.rand);
-                    rng.Add(AresBodyAttackType.DirectionChangingSpinBursts);
-                    rng.Add(AresBodyAttackType.LaserSpinBursts);
-                    rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.8);
+                    rng.Add(AresBodyAttackType.DirectionChangingSpinBursts, 2.2);
+                    rng.Add(AresBodyAttackType.LaserSpinBursts, 2.2);
                     if (ExoMechManagement.CurrentAresPhase >= 5)
                         rng.Add(AresBodyAttackType.ThreeDimensionalSuperslashes, 2.55);
                     else if (ExoMechManagement.CurrentAresPhase >= 3)
                         rng.Add(AresBodyAttackType.DownwardCrossSlices, 1.5);
+                    else
+                        rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.8);
 
                     npc.ai[0] = (int)rng.Get();
 
@@ -1143,7 +1144,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     if (ExoMechManagement.CurrentAresPhase >= 6)
                         npc.ai[0] = (int)AresBodyAttackType.PrecisionBlasts;
                 }
-                npc.ai[0] = (int)AresBodyAttackType.ThreeDimensionalSuperslashes;
             }
 
             npc.ai[1] = 0f;
@@ -1333,7 +1333,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Texture2D armSegmentGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopSegmentGlow").Value;
                 Texture2D armGlowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresArmTopPart2Glow").Value;
 
-                Vector2 shoulderDrawPosition = npc.Center + scale * new Vector2(direction * 176f, -100f);
+                Vector2 shoulderDrawPosition = npc.Center + scale * new Vector2(direction * 176f, -100f).RotatedBy(npc.spriteDirection * -npc.rotation);
                 Vector2 arm1DrawPosition = shoulderDrawPosition + scale * new Vector2(direction * (shoulderTexture.Width + 16f), 10f);
                 Vector2 armSegmentDrawPosition = arm1DrawPosition;
 
@@ -1409,7 +1409,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Texture2D armTexture1Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart1Glow").Value;
                 Texture2D armTexture2Glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBottomArmPart2Glow").Value;
 
-                Vector2 shoulderDrawPosition = npc.Center + scale * new Vector2(direction * 110f, -54f);
+                Vector2 shoulderDrawPosition = npc.Center + scale * new Vector2(direction * 110f, -54f).RotatedBy(npc.spriteDirection * -npc.rotation);
                 Vector2 connectorDrawPosition = shoulderDrawPosition + scale * new Vector2(direction * 20f, 32f);
                 Vector2 arm1DrawPosition = shoulderDrawPosition + scale * Vector2.UnitX * direction * 20f;
 

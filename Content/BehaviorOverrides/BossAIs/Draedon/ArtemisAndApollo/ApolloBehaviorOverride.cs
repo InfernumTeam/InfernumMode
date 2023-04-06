@@ -1044,7 +1044,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 return;
             }
 
-            int shootDelay = ArtemisLaserbeamTelegraph.TrueLifetime + 4; // 40
+            int shootDelay = ArtemisLaserbeamTelegraph.TrueLifetime + 4;
             float spinRadius = 640f;
             float spinArc = MathHelper.Pi * 1.1f;
 
@@ -1120,6 +1120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         }
                     }
 
+                    // Initialize Artemis' spin direction.
                     if (spinDirection == 0f)
                     {
                         float angularOffset = MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.rotation + MathHelper.PiOver2);

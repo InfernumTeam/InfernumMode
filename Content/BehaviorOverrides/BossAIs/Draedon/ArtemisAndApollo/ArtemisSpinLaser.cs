@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 return;
             }
 
-            bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.ArtemisLaserRay;
+            bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.ArtemisLaserRay && ExoMechManagement.TotalMechs <= 1;
             if (Main.npc[OwnerIndex].Opacity <= 0f || notUsingReleventAttack)
             {
                 Projectile.Kill();
@@ -106,7 +106,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (Main.netMode != NetmodeID.Server && Time % lightningBoltCreateRate == lightningBoltCreateRate - 1f)
                 ExoMechsSky.CreateLightningBolt(6);
 
-            Time = Main.npc[OwnerIndex].ai[1];
+            if (ExoMechManagement.TotalMechs <= 1)
+                Time = Main.npc[OwnerIndex].ai[1];
         }
 
         public override float DetermineLaserLength()
@@ -136,7 +137,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (Projectile.frameCounter % 5f == 0f)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
         }
-
 
         public float LaserWidthFunction(float _) => Projectile.scale * Projectile.width;
 

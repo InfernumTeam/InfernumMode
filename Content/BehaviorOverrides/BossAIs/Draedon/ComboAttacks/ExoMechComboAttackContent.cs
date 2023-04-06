@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             ThanatosAres_EnergySlashesAndCharges,
 
             TwinsThanatos_ThermoplasmaDashes,
-            TwinsThanatos_CircledLaserSweep,
+            TwinsThanatos_AlternatingTwinsBursts,
         }
 
         public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new()
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             {
                 initialMech.ai[0] = (int)initialMech.ai[0] switch
                 {
-                    (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes => (int)ExoMechComboAttackType.TwinsThanatos_CircledLaserSweep,
+                    (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes => (int)ExoMechComboAttackType.TwinsThanatos_AlternatingTwinsBursts,
                     _ => (int)ExoMechComboAttackType.TwinsThanatos_ThermoplasmaDashes,
                 };
 

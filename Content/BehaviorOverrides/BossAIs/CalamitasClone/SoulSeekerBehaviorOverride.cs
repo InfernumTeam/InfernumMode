@@ -39,6 +39,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             NPC calClone = Main.npc[CalamityGlobalNPC.calamitas];
             bool phase3 = calClone.life / (float)calClone.lifeMax < CalamitasCloneBehaviorOverride.Phase3LifeRatio;
 
+            // Use more thematically appropriate hit sounds.
+            npc.HitSound = SoundID.DD2_KoboldHurt;
+            npc.DeathSound = null;
+
             // Inherit the target from CalClone.
             npc.target = calClone.target;
             Player target = Main.player[npc.target];

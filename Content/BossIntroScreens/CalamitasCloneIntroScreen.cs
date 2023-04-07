@@ -9,13 +9,13 @@ namespace InfernumMode.Content.BossIntroScreens
 {
     public class CalamitasCloneIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => Color.Red;
+        public override TextColorData TextColor => Color.Lerp(Color.Lerp(Color.Purple, Color.DarkGray, 0.5f), Color.Black, 0.4f);
 
         public override bool TextShouldBeCentered => true;
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "False Witch\nCalamitas' Clone";
+        public override string TextToDisplay => "False Witch\nCalamitas' Shadow";
 
         public override float TextScale => MajorBossTextScale;
 

@@ -9,6 +9,7 @@ using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
@@ -235,5 +236,20 @@ namespace InfernumMode.Core.GlobalInstances
                 value.Invoke(npc, frameHeight);
         }
         #endregion
+
+        #region Name Manipulation
+        public override void ModifyTypeName(NPC npc, ref string typeName)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            if (npc.type == ModContent.NPCType<CalamitasClone>())
+                typeName = $"The {CalamitasCloneBehaviorOverride.CustomName}";
+            if (npc.type == ModContent.NPCType<Cataclysm>())
+                typeName = CalamitasCloneBehaviorOverride.CustomNameCataclysm;
+            if (npc.type == ModContent.NPCType<Catastrophe>())
+                typeName = CalamitasCloneBehaviorOverride.CustomNameCatastrophe;
+        }
+        #endregion Name Manipulation
     }
 }

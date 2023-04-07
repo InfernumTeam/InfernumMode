@@ -157,6 +157,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static float ArmLength => 12f;
 
+        // TODO -- Technically renaming all of the internal code references to match these renames is the correct move. If that's desired, it can be done.
+        // It's pretty far from high priority, though, and I'm fine with it just being left as CalClone in the source code.
+        public const string CustomName = "Forgotten Shadow of Calamitas";
+
+        public const string CustomNameCataclysm = "Forgotten Shadow of Cataclysm";
+
+        public const string CustomNameCatastrophe = "Forgotten Shadow of Catastrophe";
+
         public override bool PreAI(NPC npc)
         {
             // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
@@ -1060,6 +1068,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     npc.velocity *= 0.7f;
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    armRotation = MathHelper.PiOver2 * npc.spriteDirection;
 
                     // Don't get stuck in blocks.
                     if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 300))
@@ -1081,6 +1090,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.067f;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                armRotation = MathHelper.PiOver2 * npc.spriteDirection;
 
                 if (attackTimer >= 180f)
                 {

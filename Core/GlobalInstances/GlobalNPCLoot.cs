@@ -139,7 +139,7 @@ namespace InfernumMode.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BrimstoneElementalRelic>());
 
             if (npc.type == ModContent.NPCType<CalamitasClone>())
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CalamitasCloneRelic>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ForgottenShadowOfCalamitasRelic>());
 
             if (npc.type == NPCID.Plantera)
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PlanteraRelic>());

@@ -319,8 +319,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Make catastrophe swing his blade.
                 CurveSegment anticipation = new(EasingType.PolyOut, 0f, 0f, -2.4f, 4);
-                CurveSegment slash = new(EasingType.SineInOut, 0.34f, anticipation.EndingHeight, 5.8f, 3);
-                CurveSegment recovery = new(EasingType.PolyIn, 0.8f, slash.EndingHeight, -slash.EndingHeight, 3);
+                CurveSegment slash = new(EasingType.PolyInOut, 0.34f, anticipation.EndingHeight, 5.8f, 3);
+                CurveSegment recovery = new(EasingType.PolyIn, 0.8f, slash.EndingHeight, -slash.EndingHeight, 8);
                 float swingCompletion = Utils.GetLerpValue(0f, fireReleaseRate, wrappedTimer % fireReleaseRate, true);
                 catastropheArmRotation = PiecewiseAnimation(swingCompletion, anticipation, slash, recovery);
 

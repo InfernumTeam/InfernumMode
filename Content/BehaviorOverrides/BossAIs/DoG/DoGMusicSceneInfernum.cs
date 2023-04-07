@@ -1,10 +1,10 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Systems;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Calamity = CalamityMod.CalamityMod;
-using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 {
@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
     {
         public override SceneEffectPriority Priority => BossRushEvent.BossRushActive ? SceneEffectPriority.None : (SceneEffectPriority)10;
 
-        public override int NPCType => ModContent.NPCType<ProvidenceBoss>();
+        public override int NPCType => ModContent.NPCType<DevourerofGodsHead>();
 
         public override int? MusicModMusic
         {

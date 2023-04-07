@@ -66,28 +66,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public static readonly YharonAttackType[] Subphase1Pattern = new YharonAttackType[]
         {
             YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FireballBurst,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.FlamethrowerAndMeteors,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.Charge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FlamethrowerAndMeteors
-        };
-
-        public static readonly YharonAttackType[] Subphase2Pattern = new YharonAttackType[]
-        {
-            YharonAttackType.Charge,
             YharonAttackType.FastCharge,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
@@ -109,6 +87,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FastCharge,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
+            YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
+            YharonAttackType.FireballBurst,
+        };
+
+        public static readonly YharonAttackType[] Subphase2Pattern = new YharonAttackType[]
+        {
+            YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FlamethrowerAndMeteors,
+            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.FireballBurst,
+            YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FlamethrowerAndMeteors,
+            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.FireballBurst,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FlamethrowerAndMeteors,
+            YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
             YharonAttackType.FireballBurst,
         };
@@ -116,84 +124,76 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public static readonly YharonAttackType[] Subphase3Pattern = new YharonAttackType[]
         {
             YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.FastCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.TeleportingCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.FlamethrowerAndMeteors,
+            YharonAttackType.FastCharge,
+            YharonAttackType.FastCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.TeleportingCharge,
+            YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.FireballBurst,
-            YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
             YharonAttackType.FastCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FlamethrowerAndMeteors,
-            YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.FireballBurst,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FlamethrowerAndMeteors,
-            YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
-            YharonAttackType.FireballBurst,
         };
 
         public static readonly YharonAttackType[] Subphase4Pattern = new YharonAttackType[]
         {
+            YharonAttackType.CarpetBombing,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.FlamethrowerAndMeteors,
             YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.CarpetBombing,
+            YharonAttackType.SummonFlareRing,
             YharonAttackType.FastCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FastCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
+            YharonAttackType.FireTrailCharge,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FlamethrowerAndMeteors,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.TeleportingCharge,
+            YharonAttackType.SummonFlareRing,
             YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.FastCharge,
         };
 
         public static readonly YharonAttackType[] Subphase5Pattern = new YharonAttackType[]
         {
-            YharonAttackType.SummonFlareRing,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlashRing,
             YharonAttackType.CarpetBombing,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FireTrailCharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlashRing,
             YharonAttackType.CarpetBombing,
-            YharonAttackType.SummonFlareRing,
-            YharonAttackType.FastCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.FireTrailCharge,
-            YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.FastCharge,
-            YharonAttackType.TeleportingCharge,
-            YharonAttackType.FastCharge,
-            YharonAttackType.MassiveInfernadoSummon,
         };
 
         public static readonly YharonAttackType[] Subphase6Pattern = new YharonAttackType[]
@@ -202,82 +202,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlashRing,
+            YharonAttackType.VorticesOfFlame,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlashRing,
+            YharonAttackType.VorticesOfFlame,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.CarpetBombing,
+            YharonAttackType.VorticesOfFlame,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.VorticesOfFlame,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.CarpetBombing,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.HeatFlashRing,
             YharonAttackType.CarpetBombing,
         };
 
         public static readonly YharonAttackType[] Subphase7Pattern = new YharonAttackType[]
-        {
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.CarpetBombing,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.CarpetBombing,
-        };
-
-        public static readonly YharonAttackType[] Subphase8Pattern = new YharonAttackType[]
-        {
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.VorticesOfFlame,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.VorticesOfFlame,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.CarpetBombing,
-            YharonAttackType.VorticesOfFlame,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.VorticesOfFlame,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.CarpetBombing,
-        };
-
-        public static readonly YharonAttackType[] Subphase9Pattern = new YharonAttackType[]
         {
             YharonAttackType.PhoenixSupercharge,
         };
@@ -306,37 +258,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-        public const float Subphase2LifeRatio = 0.875f;
+        public const float Subphase2LifeRatio = 0.75f;
 
-        public const float Subphase3LifeRatio = 0.65f;
+        public const float Subphase3LifeRatio = 0.45f;
 
-        public const float Subphase4LifeRatio = 0.35f;
+        public const float Subphase4LifeRatio = Phase2LifeRatio;
 
-        public const float Subphase5LifeRatio = Phase2LifeRatio;
+        public const float Subphase5LifeRatio = 0.8f;
 
-        public const float Subphase6LifeRatio = 0.8f;
+        public const float Subphase6LifeRatio = 0.4f;
 
-        public const float Subphase7LifeRatio = 0.6f;
+        public const float Subphase7LifeRatio = 0.2f;
 
-        public const float Subphase8LifeRatio = 0.4f;
-
-        public const float Subphase9LifeRatio = 0.2f;
-
-        public const float Subphase10LifeRatio = 0.025f;
+        public const float Subphase8LifeRatio = 0.025f;
 
         public static readonly Dictionary<YharonAttackType[], Func<NPC, bool>> SubphaseTable = new()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase2LifeRatio && !InSecondPhase,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase3LifeRatio && npc.life / (float)npc.lifeMax <= Subphase2LifeRatio && !InSecondPhase,
             [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase4LifeRatio && npc.life / (float)npc.lifeMax <= Subphase3LifeRatio && !InSecondPhase,
-            [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase5LifeRatio && npc.life / (float)npc.lifeMax <= Subphase4LifeRatio && !InSecondPhase,
 
-            [Subphase5Pattern] = (npc) => (npc.life / (float)npc.lifeMax > Subphase6LifeRatio || npc.Infernum().ExtraAI[InvincibilityTimerIndex] > 0f) && InSecondPhase,
+            [Subphase4Pattern] = (npc) => (npc.life / (float)npc.lifeMax > Subphase5LifeRatio || npc.Infernum().ExtraAI[InvincibilityTimerIndex] > 0f) && InSecondPhase,
+            [Subphase5Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase6LifeRatio && npc.life / (float)npc.lifeMax <= Subphase5LifeRatio && InSecondPhase,
             [Subphase6Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase7LifeRatio && npc.life / (float)npc.lifeMax <= Subphase6LifeRatio && InSecondPhase,
             [Subphase7Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase8LifeRatio && npc.life / (float)npc.lifeMax <= Subphase7LifeRatio && InSecondPhase,
-            [Subphase8Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase9LifeRatio && npc.life / (float)npc.lifeMax <= Subphase8LifeRatio && InSecondPhase,
-            [Subphase9Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase10LifeRatio && npc.life / (float)npc.lifeMax <= Subphase9LifeRatio && InSecondPhase,
-            [LastSubphasePattern] = (npc) => npc.life / (float)npc.lifeMax <= Subphase10LifeRatio && InSecondPhase,
+            [LastSubphasePattern] = (npc) => npc.life / (float)npc.lifeMax <= Subphase8LifeRatio && InSecondPhase,
         };
 
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -347,9 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Subphase5LifeRatio,
             Subphase6LifeRatio,
             Subphase7LifeRatio,
-            Subphase8LifeRatio,
-            Subphase9LifeRatio,
-            Subphase10LifeRatio,
+            Subphase8LifeRatio
         };
         #endregion
 
@@ -516,8 +460,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 subphaseTransitionTimer = TransitionDRBoostTime;
 
-                // Clear away projectiles in subphase 5 and 9.
-                if (Main.netMode != NetmodeID.MultiplayerClient && (currentSubphase == 4f || currentSubphase == 8f))
+                // Clear away projectiles in subphase 4 and 7.
+                if (Main.netMode != NetmodeID.MultiplayerClient && (currentSubphase == 3f || currentSubphase == 6f))
                 {
                     attackTimer = 0f;
                     if (currentSubphase == 8f)
@@ -624,12 +568,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             bool berserkChargeMode = shouldPerformBerserkCharges == 1f;
             if (!berserkChargeMode)
             {
-                berserkChargeMode = phase2 && lifeRatio < Subphase9LifeRatio && lifeRatio >= Subphase10LifeRatio && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
+                berserkChargeMode = phase2 && lifeRatio < Subphase8LifeRatio && lifeRatio >= Subphase7LifeRatio && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
                 shouldPerformBerserkCharges = berserkChargeMode.ToInt();
             }
             if (berserkChargeMode)
             {
-                berserkChargeMode = lifeRatio >= Subphase10LifeRatio;
+                berserkChargeMode = lifeRatio >= Subphase6LifeRatio;
                 shouldPerformBerserkCharges = berserkChargeMode.ToInt();
             }
 
@@ -653,8 +597,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     break;
             }
 
-            // Buff charges in subphase 6 and onwards.
-            if (currentSubphase >= 5f)
+            // Buff charges in subphase 4 and onwards.
+            if (currentSubphase >= 3f)
                 fastChargeSpeedMultiplier *= 1.125f;
 
             // Kill the player if enraged.
@@ -1902,7 +1846,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             int afterimageCount = 1;
             float afterimageOffsetMax = 30f;
             float fireIntensity = npc.Infernum().ExtraAI[FireFormInterpolantIndex];
-            bool inLastSubphases = npc.life / (float)npc.lifeMax <= 0.2f;
+            bool inLastSubphases = npc.life / (float)npc.lifeMax <= Subphase7LifeRatio && InSecondPhase;
             if (inLastSubphases)
                 fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
 
@@ -2038,7 +1982,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             yield return n =>
             {
-                if (n.life < n.lifeMax * Subphase10LifeRatio)
+                if (n.life < n.lifeMax * Subphase8LifeRatio)
                     return "AND IF I SHOULD DIE BEFORE YOU CONTINUEE, YOU SHALL HAV-... Wait, you died? Come on, I was on a roll here!";
                 return string.Empty;
             };

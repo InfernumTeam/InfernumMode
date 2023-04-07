@@ -403,8 +403,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         // Factor for how much Yharon deceleratrs once a charge concludes.
         // This exists as a way of reducing Yharon's momentum after a charge so that he can more easily get into position for the next charge.
-        // The lower this value is, the quicker his charges will be.
+        // The closer to 1 this value is, the quicker his charges will be.
         public const float PostChargeDecelerationFactor = 0.42f;
+
+        public const int InfernadoDamage = 550;
 
         #region AI
 
@@ -1129,7 +1131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     for (int i = 0; i < 3; i++)
                     {
                         Vector2 tornadoSpawnerShootVelocity = (MathHelper.TwoPi / 3f * i).ToRotationVector2() * 7f;
-                        Utilities.NewProjectileBetter(mouthPosition, tornadoSpawnerShootVelocity, ModContent.ProjectileType<BigFlare>(), 0, 0f, Main.myPlayer, 1f, npc.target + 1);
+                        Utilities.NewProjectileBetter(mouthPosition, tornadoSpawnerShootVelocity, ModContent.ProjectileType<InfernadoSpawner>(), 0, 0f, -1, 1f);
                     }
                 }
                 SoundEngine.PlaySound(YharonBoss.RoarSound, npc.Center);
@@ -1186,7 +1188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     {
                         float angle = MathHelper.TwoPi / 3f * i;
                         Vector2 flareSpawnPosition = npc.Center + angle.ToRotationVector2() * 600f;
-                        Utilities.NewProjectileBetter(flareSpawnPosition, angle.ToRotationVector2().RotatedByRandom(0.03f) * Vector2.Zero, ModContent.ProjectileType<ChargeFlare>(), 0, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(flareSpawnPosition, angle.ToRotationVector2().RotatedByRandom(0.03f) * Vector2.Zero, ModContent.ProjectileType<InfernadoSpawner>(), 0, 0f, Main.myPlayer);
                     }
                 }
                 SoundEngine.PlaySound(YharonBoss.RoarSound, npc.Center);

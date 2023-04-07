@@ -29,6 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.penetrate = -1;
             Projectile.friendly = false;
             Projectile.hostile = true;
+            Projectile.tileCollide = false;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
@@ -102,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.frameCounter++;
 
             // Die after enough time has passed.
-            if (Time >= Lifetime)
+            if (Time >= Lifetime - 1f)
                 Projectile.Kill();
         }
 

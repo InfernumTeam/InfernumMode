@@ -62,6 +62,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData WoFGeyserVertexShader => GameShaders.Misc["Infernum:WoFGeyserTexture"];
         public static MiscShaderData WoFTentacleVertexShader => GameShaders.Misc["Infernum:WoFTentacleTexture"];
         public static MiscShaderData YharonBurnShader => GameShaders.Misc["Infernum:YharonBurn"];
+        public static MiscShaderData YharonInfernadoShader => GameShaders.Misc["Infernum:YharonInfernado"];
         #endregion
 
         #region Screen Shaders
@@ -249,6 +250,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> yharonBurnShader = new(assets.Request<Effect>("Assets/Effects/Overlays/YharonBurnShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:YharonBurn"] = new MiscShaderData(yharonBurnShader, "BurnPass");
+
+            Ref<Effect> yharonInfernadoShader = new(assets.Request<Effect>("Assets/Effects/Primitives/YharonInfernadoShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:YharonInfernado"] = new MiscShaderData(yharonInfernadoShader, "TrailPass");
         }
 
         public static void LoadScreenShaders(AssetRepository assets)

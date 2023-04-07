@@ -1065,7 +1065,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             int totalFlamethrowerBursts = 1;
             int flamethrowerHoverTime = 75;
             float flamethrowerFlySpeed = 55.5f;
-            float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f);
+            float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 36f);
 
             // Look at the target and hover towards the top left/right of the target.
             if (wrappedAttackTimer < flamethrowerHoverTime + 15f)
@@ -1108,9 +1108,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), 540, 0f, -1, 0f, npc.whoAmI);
             }
 
+            // Slow down once the flamethrower is gone.
+            if (wrappedAttackTimer >= flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f)
+                npc.velocity *= 0.95f;
+
+            // Decide the current rotation.
             npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
 
-            if (attackTimer >= totalFlamethrowerBursts * (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f) - 3f)
+            if (attackTimer >= totalFlamethrowerBursts * (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 36f) - 3f)
                 SelectNextAttack(npc, ref attackType);
         }
 
@@ -1132,9 +1137,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 2; i++)
                     {
-                        Vector2 tornadoSpawnerShootVelocity = (MathHelper.TwoPi / 3f * i).ToRotationVector2() * 7f;
+                        Vector2 tornadoSpawnerShootVelocity = (MathHelper.TwoPi / 2f * i).ToRotationVector2() * 7f;
                         Utilities.NewProjectileBetter(mouthPosition, tornadoSpawnerShootVelocity, ModContent.ProjectileType<InfernadoSpawner>(), 0, 0f, -1, 1f);
                     }
                 }

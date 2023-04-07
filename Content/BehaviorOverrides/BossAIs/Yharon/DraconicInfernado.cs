@@ -1,3 +1,4 @@
+using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -51,6 +52,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 Projectile.localAI[0] = 1f;
             }
 
+            // Begin to disappear if Yharon is gone.
+            if (CalamityGlobalNPC.yharon == -1 && CalamityGlobalNPC.yharonP2 == -1 && Time > 32f)
+                Time = 32f;
+
             // Calculate the opacity of the tornado. At the start and end of its life it will fade in/out.
             Projectile.Opacity = Utils.GetLerpValue(0, 35f, Time, true) * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true);
 
@@ -99,6 +104,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         }
 
         // Disable damage if the tornado is not suffiently faded in.
-        public override bool? CanDamage() => Projectile.Opacity >= 0.8f ? null : false;
+        public override bool? CanDamage() => Projectile.Opacity >= 0.8f && Time >= 90f ? null : false;
     }
 }

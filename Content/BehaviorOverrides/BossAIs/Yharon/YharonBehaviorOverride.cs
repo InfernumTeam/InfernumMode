@@ -455,10 +455,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             ref float teleportOffsetAngle = ref npc.Infernum().ExtraAI[TeleportOffsetAngleIndex];
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[HasGottenNearPlayerIndex];
 
-            // Go to phase 2 if at 50%.
+            // Go to phase 2 if close to death.
             if (!InSecondPhase && lifeRatio < Phase2LifeRatio)
             {
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Better stay near the edges of the arena during those carpet bomb flames, That should keep them out of the way!");
+
+                // Set Yharon's private phase 2 flag that base Calamity uses.
+                // This is necessary to ensure that the special phase 2 name is used.
+                typeof(YharonBoss).GetField("startSecondAI", Utilities.UniversalBindingFlags).SetValue(npc.ModNPC, true);
 
                 InSecondPhase = true;
 
@@ -468,7 +472,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
                 SelectNextAttack(npc, ref attackType);
 
-                // And spawn a lot of cool sparkles.
+                // Spawn a lot of cool sparkles.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 180; i++)

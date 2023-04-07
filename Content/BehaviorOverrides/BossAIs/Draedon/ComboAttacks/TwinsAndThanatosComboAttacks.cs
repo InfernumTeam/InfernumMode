@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int attackDelay = 90;
             int redirectTime = 20;
             int thanatosChargeTime = 80;
-            float thanatosFlyAcceleration = 1.02f;
+            float thanatosFlyAcceleration = 1.0184f;
 
             int exoTwinAttackCycleTime = 150;
             int exoTwinAttackCycleCount = 2;

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.Core.OverridingSystem;
@@ -72,6 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
             npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
             npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
+            npc.buffImmune[ModContent.BuffType<MiracleBlight>()] = true;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

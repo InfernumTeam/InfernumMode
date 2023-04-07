@@ -546,6 +546,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 fireIntensity = fadeIn * fadeOut;
             }
 
+            // Perform various screen shader manipulations.
+            // Ensure this isnt done on the server, as it will throw a null reference error.
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
+
+                // This screen shader kind of sucks. Please turn it off.
+                Filters.Scene["CalamityMod:Yharon"].Deactivate();
+            }
+
             // Slow down and transition to the next subphase as necessary.
             // Following this Yharon will recieve a DR boost. The code for this up a small bit.
             if (subphaseTransitionTimer > 0)
@@ -585,10 +595,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             // Adjust various values before doing anything else. If these need to be changed later in certain attacks, they will be.
             npc.dontTakeDamage = false;
-
-            // Ensure this isnt loaded on the server, as it will throw a null reference error.
-            if (Main.netMode != NetmodeID.Server)
-                Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
             npc.Infernum().ExtraAI[IllusionCountIndex] = 0f;
 
             // Define various attack-specific variables.
@@ -600,9 +606,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             int fireballBreathShootDelay = 34;
             int totalFireballBreaths = 12;
             float fireballBreathShootRate = 5f;
-
-            int totalShotgunBursts = 3;
-            int shotgunBurstFireRate = 30;
 
             int infernadoAttackPowerupTime = 90;
 
@@ -660,8 +663,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 fireballBreathShootDelay = 25;
                 totalFireballBreaths = 25;
                 fireballBreathShootRate = 3f;
-
-                shotgunBurstFireRate = 15;
 
                 splittingMeteorBombingSpeed = 40f;
             }

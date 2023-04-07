@@ -258,7 +258,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public void DoBehavior_ShadowGigablastsAndCharges(NPC scal, ref float attackTimer)
         {
-            int hoverTime = 35;
+            int hoverTime = 54;
             int chargeTime = 56;
             int chargeCount = 5;
             int boltReleaseRate = 8;
@@ -278,7 +278,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 NPC.velocity = Vector2.Lerp(NPC.velocity, idealVelocity, 0.12f);
 
                 // Charge and release a shadow gigablast if close to the destination or enough time has passed.
-                if (attackTimer >= hoverTime || NPC.WithinRange(hoverDestination, 75f) && chargeCounter >= 1f)
+                if (attackTimer >= hoverTime || (NPC.WithinRange(hoverDestination, 75f) && chargeCounter >= 1f))
                 {
                     attackTimer = 0f;
                     attackSubstate = 1f;

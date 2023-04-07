@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults(NPC npc)
         {
-            npc.damage = 465;
+            npc.damage = 420;
             npc.npcSlots = 5f;
             npc.width = 62;
             npc.height = 64;

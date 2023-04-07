@@ -268,7 +268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const float Subphase6LifeRatio = 0.4f;
 
-        public const float Subphase7LifeRatio = 0.2f;
+        public const float Subphase7LifeRatio = 0.15f;
 
         public const float Subphase8LifeRatio = 0.025f;
 

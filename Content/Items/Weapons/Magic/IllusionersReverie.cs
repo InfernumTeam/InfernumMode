@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
                 "Its existence compels one to wonder what knowledge has been lost to the mysterious, watery depths";
             DisplayName.SetDefault("Illusioner's Reverie");
             Tooltip.SetDefault(tooltip);
-            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 6));
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 12));
             ItemID.Sets.AnimatesAsSoul[Type] = true;
             SacrificeTotal = 1;
         }

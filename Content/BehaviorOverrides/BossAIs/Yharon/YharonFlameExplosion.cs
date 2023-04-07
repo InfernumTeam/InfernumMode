@@ -1,3 +1,4 @@
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -7,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
-    public class YharonFlameExplosion : ModProjectile
+    public class YharonFlameExplosion : ModProjectile, IAdditiveDrawer
     {
         public override string Texture => "CalamityMod/Skies/XerocLight";
 
@@ -18,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.width = Projectile.height = 16;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.extraUpdates = 1;
+            Projectile.MaxUpdates = 2;
             Projectile.timeLeft = Projectile.MaxUpdates * 210;
             Projectile.scale = 0.15f;
             CooldownSlot = ImmunityCooldownID.Bosses;
@@ -36,10 +37,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Lighting.AddLight(Projectile.Center, Color.Orange.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor)
-        {
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
+        public override bool PreDraw(ref Color lightColor) => false;
 
+        public void AdditiveDraw(SpriteBatch spriteBatch)
+        {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
             explosionColor = Color.Lerp(explosionColor, Color.White, Projectile.Opacity * 0.2f);
@@ -47,10 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < (int)MathHelper.Lerp(3f, 6f, Projectile.Opacity); i++)
-                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
-
-            Main.spriteBatch.ResetBlendState();
-            return false;
+                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
         }
     }
 }

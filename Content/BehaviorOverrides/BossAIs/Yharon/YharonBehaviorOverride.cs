@@ -568,7 +568,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             bool berserkChargeMode = shouldPerformBerserkCharges == 1f;
             if (!berserkChargeMode)
             {
-                berserkChargeMode = phase2 && lifeRatio < Subphase8LifeRatio && lifeRatio >= Subphase7LifeRatio && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
+                berserkChargeMode = phase2 && lifeRatio >= Subphase8LifeRatio && lifeRatio < Subphase7LifeRatio && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
                 shouldPerformBerserkCharges = berserkChargeMode.ToInt();
             }
             if (berserkChargeMode)
@@ -888,7 +888,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             // Slow down and rotate towards the player.
             if (attackTimer < chargeDelay)
             {
-                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 ref float xAimOffset = ref npc.Infernum().ExtraAI[0];
                 if (xAimOffset == 0f)
                     xAimOffset = (berserkChargeMode ? 920f : 620f) * Math.Sign((npc.Center - target.Center).X);
@@ -969,7 +969,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
 
             // Hover to the top left/right of the target and look at them.
-            npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             ref float xAimOffset = ref npc.Infernum().ExtraAI[0];
             if (xAimOffset == 0f)
                 xAimOffset = 560f * Math.Sign((npc.Center - target.Center).X);
@@ -1017,7 +1017,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 1560f, -375f);
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
-                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination - npc.velocity) * 36f, 1.1f);
 
@@ -1156,7 +1156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_CarpetBombing(NPC npc, Player target, float splittingMeteorRiseTime, float splittingMeteorBombingSpeed, float splittingMeteorBombTime, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
-            int directionToDestination = (npc.Center.X > target.Center.X).ToDirectionInt();
+            int directionToDestination = (target.Center.X < npc.Center.X).ToDirectionInt();
             bool morePowerfulMeteors = npc.life < npc.lifeMax * 0.35f;
 
             // Fly towards the hover destination near the target.
@@ -1168,7 +1168,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.035f);
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.25f);
 
-                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
                 // Once it has been reached, change the attack timer to begin the carpet bombing.
                 if (npc.WithinRange(destination, 32f))
@@ -1390,19 +1390,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             Player target = Main.player[npc.target];
 
-            int totalCharges = 8;
-            int chargeCycleTime = 78;
+            int totalCharges = 0;
+            int chargeCycleTime = 0;
             float confusingChargeSpeed = 53.5f;
 
             float splittingMeteorHoverSpeed = 24f;
             float splittingMeteorBombingSpeed = 37.5f;
-            float splittingMeteorRiseTime = 120f;
-            float splittingMeteorBombTime = 90f;
+            float splittingMeteorRiseTime = 0f;
+            float splittingMeteorBombTime = 0f;
             int fireballReleaseRate = 3;
             int totalTimeSpentPerCarpetBomb = (int)(splittingMeteorRiseTime + splittingMeteorBombTime);
 
-            int totalBerserkCharges = 10;
-            int berserkChargeTime = 54;
+            int totalBerserkCharges = 0;
+            int berserkChargeTime = 0;
             float berserkChargeSpeed = 42f;
 
             ref float attackTimer = ref npc.ai[1];
@@ -1659,7 +1659,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     pulseDeathEffectCooldown--;
                 }
 
-                if (npc.life < 2000 && hasCreatedExplosionFlag == 0f)
+                if (npc.life < 6000 && hasCreatedExplosionFlag == 0f)
                 {
                     if (Main.myPlayer == target.whoAmI)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
@@ -1672,7 +1672,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 if (Main.myPlayer == target.whoAmI && attackTimer > preAttackTime + 100f)
                 {
                     for (int i = 0; i < 3; i++)
-                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(19f, 19f), ModContent.ProjectileType<FlareDust>(), 640, 0f, target.whoAmI, 0f, 2f);
+                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(19f, 19f), ModContent.ProjectileType<FlareBomb>(), 640, 0f, target.whoAmI, -1f);
                 }
 
                 if (npc.life <= 0)
@@ -1693,12 +1693,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             int[] projectilesToDelete = new int[]
             {
                 ProjectileID.CultistBossFireBall,
+                ModContent.ProjectileType<DraconicInfernado>(),
                 ModContent.ProjectileType<DragonFireball>(),
                 ModContent.ProjectileType<HomingFireball>(),
                 ModContent.ProjectileType<YharonFireball>(),
                 ModContent.ProjectileType<YharonFireball2>(),
                 ModContent.ProjectileType<Infernado>(),
                 ModContent.ProjectileType<Infernado2>(),
+                ModContent.ProjectileType<InfernadoSpawner>(),
                 ModContent.ProjectileType<Flare>(),
                 ModContent.ProjectileType<BigFlare>(),
                 ModContent.ProjectileType<BigFlare2>(),

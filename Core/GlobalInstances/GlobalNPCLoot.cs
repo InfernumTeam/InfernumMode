@@ -234,6 +234,7 @@ namespace InfernumMode.GlobalInstances
             {
                 npcLoot.Add(ModContent.ItemType<EvokingSearune>());
                 npcLoot.Add(ModContent.ItemType<IllusionersReverie>());
+                npcLoot.Add(ModContent.ItemType<EyeOfMadness>());
             }
 
             bool isExoMech = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<AresBody>();

@@ -1,8 +1,10 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Projectiles.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -57,7 +59,7 @@ namespace InfernumMode.Common.Graphics
 
         internal static void PrepareAEWTargets(GameTime obj)
         {
-            if (Main.gameMenu || ShadowDrawTarget.IsDisposed || !Utilities.AnyProjectiles(ModContent.ProjectileType<ShadowIllusion>()))
+            if (Main.gameMenu || ShadowDrawTarget.IsDisposed)
                 return;
 
             Main.instance.GraphicsDevice.SetRenderTarget(ShadowDrawTarget);
@@ -72,13 +74,24 @@ namespace InfernumMode.Common.Graphics
 
         internal static void DrawShadowProjectiles()
         {
-            int illusionID = ModContent.ProjectileType<ShadowIllusion>();
+            // Draw regular projectiles.
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (!Main.projectile[i].active || Main.projectile[i].type != illusionID)
+                if (!Main.projectile[i].active || !Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is IAdditiveDrawer)
                     continue;
 
-                Main.projectile[i].ModProjectile<ShadowIllusion>().Draw();
+                Main.instance.DrawProj(i);
+            }
+
+            // Draw additive effects.
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (!Main.projectile[i].active || !Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is not IAdditiveDrawer)
+                    continue;
+
+                Main.instance.DrawProj(i);
             }
         }
 

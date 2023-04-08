@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.Items;
 using CalamityMod.Rarities;
+using InfernumMode.Content.Projectiles.Magic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -10,6 +11,8 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 {
     public class EyeOfMadness : ModItem
     {
+        public const float TargetingDistance = 1400f;
+
         public override void SetStaticDefaults()
         {
             // This thing canonically has the Mrrp Lore Rework contained within it! Unfortunately, the player is too stupid to unlock it.
@@ -40,7 +43,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
             Item.autoReuse = true;
             Item.noUseGraphic = true;
-            //Item.shoot = ModContent.ProjectileType<EyeOfMadnessProj>();
+            Item.shoot = ModContent.ProjectileType<EyeOfMadnessProj>();
             Item.channel = true;
             Item.shootSpeed = 0f;
         }

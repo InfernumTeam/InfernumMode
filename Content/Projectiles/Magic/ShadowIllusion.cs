@@ -29,6 +29,8 @@ namespace InfernumMode.Content.Projectiles.Magic
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 9;
             Projectile.Opacity = 0f;
+            Projectile.hide = true;
+            Projectile.Infernum().DrawAsShadow = true;
         }
 
         public override void AI()
@@ -111,9 +113,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override bool? CanDamage() => !FadingAway;
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void Draw()
+        public override bool PreDraw(ref Color lightColor)
         {
             int owner = Projectile.owner;
             Player other = Main.player[owner];
@@ -136,6 +136,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             player.PlayerFrame();
             player.socialIgnoreLight = true;
             Main.PlayerRenderer.DrawPlayer(Main.Camera, player, player.position, 0f, player.fullRotationOrigin, 0f, 1f);
+            return false;
         }
     }
 }

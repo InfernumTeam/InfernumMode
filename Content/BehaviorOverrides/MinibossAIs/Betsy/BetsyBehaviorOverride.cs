@@ -364,9 +364,6 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                     npc.ai[0] = (int)BetsyAttackType.FlameBreath;
                     break;
                 case BetsyAttackType.FlameBreath:
-                    npc.ai[0] = (int)BetsyAttackType.ExplodingWyvernSummoning;
-                    break;
-                case BetsyAttackType.ExplodingWyvernSummoning:
                     npc.ai[0] = (int)BetsyAttackType.SpinCharge;
                     break;
                 case BetsyAttackType.SpinCharge:

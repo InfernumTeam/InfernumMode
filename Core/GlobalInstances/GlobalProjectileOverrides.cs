@@ -29,6 +29,8 @@ namespace InfernumMode.Core.GlobalInstances
 
         public bool FadesAwayWhenManuallyKilled;
 
+        public bool DrawAsShadow;
+
         public int FadeAwayTimer;
 
         public const int FadeAwayTime = 30;
@@ -41,14 +43,12 @@ namespace InfernumMode.Core.GlobalInstances
         {
             // Allow Infernum projectiles to draw offscreen by default.
             // TODO -- This is pretty far from ideal. While it may be a bit unpleasant projectiles should really be manually evaluated in terms of whether this is necessary.
-            // Applying this effect universally is just asking for edge cases that cause performance issues, such as Providence's ground/ceiling spears.
+            // Applying this effect universally is just asking for edge cases that cause performance issues, such as Providence's old ground/ceiling spears.
             if (projectile.ModProjectile?.Mod.Name == Mod.Name)
                 ProjectileID.Sets.DrawScreenCheckFluff[projectile.type] = 20000;
 
             for (int i = 0; i < ExtraAI.Length; i++)
-            {
                 ExtraAI[i] = 0f;
-            }
             if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
                 projectile.timeLeft = ProvidenceBehaviorOverride.AuraTime;
         }

@@ -1614,11 +1614,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             int chargeupTime = 75;
             int vigilanceSpinTime = 36;
-            int seekerSummonCount = 24;
+            int seekerSummonCount = 12;
             int seekerSummonRate = 5;
             int seekerSummonTime = seekerSummonRate * seekerSummonCount;
             float fanCompletionInterpolant = Utils.GetLerpValue(0f, seekerSummonTime, attackTimer - chargeupTime, true);
             ref float vigilanceIndex = ref npc.Infernum().ExtraAI[0];
+            ref float seekersCanFire = ref npc.Infernum().ExtraAI[1];
 
             // Define the projectile as a convenient reference type variable, for easy manipulation of its attributes.
             Projectile vigilanceRef = Main.projectile[(int)vigilanceIndex];
@@ -1630,7 +1631,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Despawn leftover projectiles.
-            if (attackTimer == 1)
+            if (attackTimer == 1f)
             {
                 Utilities.DeleteAllProjectiles(false,
                     ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
@@ -1688,22 +1689,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 vigilanceRef.rotation = (-MathHelper.PiOver2).AngleLerp(spinRotation, vigilanceSpinInterpolant) + MathHelper.TwoPi * fanCompletionInterpolant - MathHelper.PiOver4 + MathHelper.Pi;
 
             // Release bursts of energy from Vigilance's tip and summon a seeker.
-            if (vigilanceRef != null && fanCompletionInterpolant > 0f && attackTimer % seekerSummonRate == 0f)
+            if (vigilanceRef != null && fanCompletionInterpolant > 0f && fanCompletionInterpolant < 1f && attackTimer % seekerSummonRate == 0f)
             {
                 SoundEngine.PlaySound(SoundID.Item73, handPosition);
-                Vector2 seekerSpawnOffset = (MathHelper.TwoPi * fanCompletionInterpolant).ToRotationVector2() * 300f;
+
+                bool outerSeeker = fanCompletionInterpolant > 0.5f;
+                Vector2 seekerSpawnOffset = (MathHelper.Pi * fanCompletionInterpolant * 4f).ToRotationVector2() * (outerSeeker ? 1000f : 500f);
                 Vector2 seekerSpawnPosition = npc.Center + seekerSpawnOffset;
 
                 Dust.QuickDustLine(vigilanceRef.ModProjectile<VigilanceProj>().TipPosition, seekerSpawnPosition, 40f, Color.Red);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float seekerOffsetAngle = MathHelper.ToDegrees(seekerSpawnOffset.ToRotation() + MathHelper.Pi);
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)seekerSpawnPosition.X, (int)seekerSpawnPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, seekerOffsetAngle, 0f, 0f, seekerOffsetAngle);
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)seekerSpawnPosition.X, (int)seekerSpawnPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, seekerOffsetAngle, 0f, outerSeeker.ToInt(), seekerOffsetAngle);
                 }
             }
 
-            // Decide when to transition to the next attack.
-            if (fanCompletionInterpolant >= 1f)
+            // Allow seekers to fire once they've all been summoned.
+            seekersCanFire = (fanCompletionInterpolant >= 1f).ToInt();
+            if (fanCompletionInterpolant >= 1f && vigilanceRef.type == ModContent.ProjectileType<VigilanceProj>())
+                vigilanceRef?.Kill();
+
+            // Transition to the next attack once most of the seekers are dead.
+            if (fanCompletionInterpolant >= 1f && NPC.CountNPCS(ModContent.NPCType<SoulSeekerSupreme>()) <= 3)
             {
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<VigilanceProj>());
                 SelectNextAttack(npc);
@@ -2480,7 +2488,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             DrawShield(npc);
             return false;
         }
-
 
         public static void DrawForcefield(NPC npc)
         {

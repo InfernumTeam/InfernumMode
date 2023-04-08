@@ -1,9 +1,8 @@
 using CalamityMod;
 using CalamityMod.Dusts;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Projectiles.Boss;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -30,8 +29,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             npc.target = SCal.target;
-            Player Target = Main.player[npc.target];
+
+            bool outerSeeker = npc.ai[2] == 1f;
+            bool canFire = SCal.Infernum().ExtraAI[1] == 1f;
+            Player target = Main.player[npc.target];
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection == -1 ? 40f : -36f, 16f);
+            ref float spinOffsetAngle = ref npc.ai[1];
             ref float attackTimer = ref npc.Infernum().ExtraAI[0];
 
             // Initialize the turn rotation.
@@ -48,59 +51,59 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Enraged)
                 npc.Calamity().DR = 0.99999f;
 
-            // Get a target
-            if (npc.target < 0 || npc.target == Main.maxPlayers || Target.dead || !Target.active)
+            // Pick a target if the current one is invalid.
+            if (npc.target < 0 || npc.target == Main.maxPlayers || target.dead || !target.active)
                 npc.TargetClosest();
 
-            // Target another player if the current player target is too far away
-            if (!npc.WithinRange(Target.Center, CalamityGlobalNPC.CatchUpDistance200Tiles))
+            // Pick a target if the current one is too far away.
+            if (!npc.WithinRange(target.Center, CalamityGlobalNPC.CatchUpDistance200Tiles))
                 npc.TargetClosest();
 
-            npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
+            // Look at the target.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
-            // Shoot darts at the target.
-            int shootRate = BossRushEvent.BossRushActive ? 120 : 180;
-            if (attackTimer > shootRate)
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC seeker = Main.npc[i];
-                    if (seeker.type == npc.type)
-                    {
-                        if (seeker == npc)
-                            SoundEngine.PlaySound(SCalNPC.BrimstoneShotSound, SCal.Center);
-                        break;
-                    }
-                }
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int type = ModContent.ProjectileType<BrimstoneBarrage>();
-                    int damage = npc.GetProjectileDamage(type);
-                    Vector2 shootVelocity = (Target.Center - eyePosition).SafeNormalize(Vector2.UnitY) * 9f;
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), eyePosition, shootVelocity, type, damage, 1f, Main.myPlayer);
-                }
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            npc.dontTakeDamage = true;
+            // Disable natural knockback resistence. Apparently this is something that Calamity never disabled?
             npc.knockBackResist = 0f;
-            npc.position = SCal.Center - MathHelper.ToRadians(npc.ai[1]).ToRotationVector2() * 300f - npc.Size * 0.5f;
 
-            // In the time it takes to complete the summoning circle with Vigilance seekers already
-            // drift somewhat rotationally, meaning that without this check there will be a single large gap in the ring.
-            var scalAttack = (SCalAttackType)SCal.ai[0];
-            bool dontShoot = scalAttack is SCalAttackType.CondemnationFanBurst or SCalAttackType.ExplosiveCharges or SCalAttackType.FireLaserSpin or SCalAttackType.BrimstoneJewelBeam;
+            // Spin around SCal's arena.
+            Vector2 arenaCenter = SCal.Infernum().Arena.Center.ToVector2();
+            npc.Center = arenaCenter - MathHelper.ToRadians(spinOffsetAngle).ToRotationVector2() * (outerSeeker ? 1000f : 500f);
 
+            // Begin to disappear if SCal isn't doing the seekers attack anymore.
+            npc.dontTakeDamage = false;
             if (SCal.ai[0] != (int)SCalAttackType.SummonSeekers)
             {
-                npc.ai[1] += 0.5f;
-                npc.dontTakeDamage = false;
+                npc.Opacity -= 0.1f;
+                if (npc.Opacity <= 0f)
+                    npc.active = false;
 
-                if (dontShoot)
-                    attackTimer = 0f;
-                else
-                    attackTimer++;
+                npc.dontTakeDamage = true;
+                return false;
+            }
+
+            // Spin around.
+            spinOffsetAngle += outerSeeker.ToDirectionInt() * 0.5f;
+
+            // Release semi-inaccurate bombs towards the target.
+            if (canFire)
+                attackTimer++;
+            var n = Main.projectile;
+            if (attackTimer % 136f == 135f && !target.WithinRange(npc.Center, 400f))
+            {
+                SoundEngine.PlaySound(SCalNPC.BrimstoneBigShotSound, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int bombExplodeDelay = 90;
+                    float bombExplosionRadius = 600f;
+                    float bombShootSpeed = outerSeeker ? 8f : npc.Distance(target.Center) * 0.012f + 9f;
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
+                    {
+                        bomb.timeLeft = bombExplodeDelay;
+                        bomb.ModProjectile<DemonicBomb>().ExplodeIntoDarts = outerSeeker;
+                    });
+                    Vector2 bombShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.3f) * bombShootSpeed;
+                    Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 0, 0f, -1, bombExplosionRadius);
+                }
             }
             return false;
         }

@@ -67,12 +67,13 @@ namespace InfernumMode.Content.Items.Weapons.Magic
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.UIScaleMatrix);
 
                 // Apply glitch effects to the word "incomprehensibly".
-                InfernumEffectsRegistry.NoiseDisplacementShader.UseColor(Color.Purple);
-                InfernumEffectsRegistry.NoiseDisplacementShader.UseImage1("Images/Misc/Perlin");
-                InfernumEffectsRegistry.NoiseDisplacementShader.UseImage2("Images/Misc/noise");
-                InfernumEffectsRegistry.NoiseDisplacementShader.Shader.Parameters["noiseIntensity"].SetValue(2f);
-                InfernumEffectsRegistry.NoiseDisplacementShader.Shader.Parameters["horizontalDisplacementFactor"].SetValue(0.0094f);
-                InfernumEffectsRegistry.NoiseDisplacementShader.Apply();
+                var displacementShader = InfernumEffectsRegistry.NoiseDisplacementShader;
+                displacementShader.UseColor(Color.Purple);
+                displacementShader.UseImage1("Images/Misc/Perlin");
+                displacementShader.UseImage2("Images/Misc/noise");
+                displacementShader.Shader.Parameters["noiseIntensity"].SetValue(2f);
+                displacementShader.Shader.Parameters["horizontalDisplacementFactor"].SetValue(0.0094f);
+                displacementShader.Apply();
                 drawOffset.X += DrawLine(line, drawOffset, "incomprehensibly ");
 
                 Main.spriteBatch.End();

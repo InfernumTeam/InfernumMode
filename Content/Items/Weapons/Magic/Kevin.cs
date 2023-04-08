@@ -1,4 +1,6 @@
 ﻿using CalamityMod.Items;
+using CalamityMod.Items.Materials;
+using CalamityMod.Tiles.Furniture.CraftingStations;
 using InfernumMode.Content.Projectiles.Magic;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
@@ -44,5 +46,16 @@ namespace InfernumMode.Content.Items.Weapons.Magic
         }
 
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] <= 0;
+
+        public override void AddRecipes()
+        {
+            CreateRecipe().
+                AddIngredient<AshesofAnnihilation>(3).
+                AddIngredient<MiracleMatter>(3).
+                AddIngredient<DubiousPlating>(150).
+                AddIngredient<MysteriousCircuitry>(150).
+                AddTile(ModContent.TileType<DraedonsForge>()).
+                Register();
+        }
     }
 }

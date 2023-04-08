@@ -847,7 +847,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_HellblastBarrage(NPC npc, Player target, int currentPhase, bool inBerserkPhase, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
         {
             int shootDelay = 105;
-            int hellblastShootRate = 12;
+            int hellblastShootRate = 14;
             int verticalBobPeriod = 56;
             int shootTime = 360;
             int endOfAttackShootBlockTime = 90;
@@ -1082,7 +1082,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Create telegraph lines.
                 if (wrappedBombShootTimer <= bombShootDelay + telegraphTime && wrappedBombShootTimer % telegraphReleaseRate == telegraphReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, target.Center);
+                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound with { Volume = 0.67f }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float bombFireOffset = MathHelper.Lerp(-totalBombOffset, totalBombOffset, Utils.GetLerpValue(0f, telegraphTime, wrappedBombShootTimer - bombShootDelay)) * 0.5f;
@@ -1936,7 +1936,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             float dartShootSpeed = 8.4f;
             float bombExplosionRadius = 1050f;
 
-            int gigablastBulletHellDuration = 1200;
+            int gigablastBulletHellDuration = 1050;
             int baseGigaReleaseRate = 75;
             int dartBulletHellReleaseRate = 54;
             float dartBulletHellWallArea = 420f;

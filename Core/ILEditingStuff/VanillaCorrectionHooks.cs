@@ -1155,6 +1155,7 @@ namespace InfernumMode.Core.ILEditingStuff
     public class DrawNightStarsHook : IHookEdit
     {
         public void Load() => On.Terraria.Main.DrawStarsInBackground += DrawStarsHook;
+
         public void Unload() => On.Terraria.Main.DrawStarsInBackground -= DrawStarsHook;
 
         private void DrawStarsHook(On.Terraria.Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea)
@@ -1162,7 +1163,23 @@ namespace InfernumMode.Core.ILEditingStuff
             // Do not draw if the flower ocean visuals are active.
             if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive)
                 return;
+
             orig(self, sceneArea);
+        }
+    }
+
+    public class DisableWaterDrawingDuringAEWHook : IHookEdit
+    {
+        public void Load() => On.Terraria.Main.DrawWaters += DisableWaterDrawing;
+
+        public void Unload() => On.Terraria.Main.DrawWaters -= DisableWaterDrawing;
+
+        private void DisableWaterDrawing(On.Terraria.Main.orig_DrawWaters orig, Main self, bool isBackground)
+        {
+            if (InfernumMode.CanUseCustomAIs && Main.LocalPlayer.Calamity().ZoneAbyssLayer4 || InfernumConfig.Instance.ReducedGraphicsConfig)
+                return;
+
+            orig(self, isBackground);
         }
     }
 }

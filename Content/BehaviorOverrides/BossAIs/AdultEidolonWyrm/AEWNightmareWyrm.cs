@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             for (int i = 0; i < 4; i++)
             {
-                Dust darkMatter = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 109, 0f, -3f, 0, default, 1.4f);
+                Dust darkMatter = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.Asphalt, 0f, -3f, 0, default, 1.4f);
                 darkMatter.noGravity = true;
                 darkMatter.velocity = Vector2.Lerp(darkMatter.velocity, idealParticleVelocity, 0.55f);
                 darkMatter.fadeIn = Main.rand.NextFloat(0.3f, 0.8f);
@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 Texture2D texture = decideSegmentTexture(i);
                 Color color = Projectile.GetAlpha(Color.White);
-                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, decideDrawPosition(i), null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
+                AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(texture, decideDrawPosition(i), null, color, Projectile.oldRot[i], texture.Size() * 0.5f, Projectile.scale, 0, 0));
             }
 
             return false;

@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
@@ -237,6 +238,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             target.breath = target.breathMax;
             target.ignoreWater = true;
             target.wingTime = target.wingTimeMax;
+
+            // Set the global whoAmI variable.
+            CalamityGlobalNPC.adultEidolonWyrmHead = npc.whoAmI;
 
             // Reset various things every frame.
             npc.dontTakeDamage = false;

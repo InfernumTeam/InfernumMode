@@ -63,7 +63,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public void ReleaseThings()
         {
-            SoundEngine.PlaySound(BossRushEvent.TeleportSound with { Pitch = 0.2f });
+            SoundEngine.PlaySound(BossRushEvent.TeleportSound with { Pitch = 0.2f, Volume = 0.6f });
             if (Main.myPlayer != Projectile.owner)
                 return;
 

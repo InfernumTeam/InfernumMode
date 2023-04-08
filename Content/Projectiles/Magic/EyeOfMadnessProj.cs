@@ -56,7 +56,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public void ReleaseThings()
         {
-            SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound, Projectile.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound with { Volume = 0.5f }, Projectile.Center);
             if (Main.myPlayer != Projectile.owner)
                 return;
 

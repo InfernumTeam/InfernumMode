@@ -55,7 +55,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public static void AttemptToSpawnMiniboss(Player player)
         {
             // Spawn a miniboss a preset distance away from the target.
-            int minibossID = ModContent.NPCType<ReaperShark>();
+            int minibossID = Main.rand.NextFromList(ModContent.NPCType<ReaperShark>(), ModContent.NPCType<EidolonWyrmHead>());
             Vector2 minibossSpawnPosition = player.Center + Main.rand.NextVector2CircularEdge(1080f, 1080f);
 
             int miniboss = NPC.NewNPC(new EntitySource_WorldEvent(), (int)minibossSpawnPosition.X, (int)minibossSpawnPosition.Y, minibossID, 1);

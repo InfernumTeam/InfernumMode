@@ -21,6 +21,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
         public override void ExtraUpdate(Player player, int extraInfo)
         {
             // TODO: Check whether the extraInfo is equal to the shrine tile ID.
+            CurrentCompletion++;
         }
 
         public override void OnCompletion(Player player)

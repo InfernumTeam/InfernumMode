@@ -1,8 +1,11 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
+using InfernumMode.Content.Achievements.InfernumAchievements;
+using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
@@ -57,6 +60,13 @@ namespace InfernumMode.Core.GlobalInstances
                 WorldGen.KillTile(i, j - 1);
 
             return base.CanKillTile(i, j, type, ref blockDamaged);
+        }
+
+        public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
+        {
+            // Trigger achievement checks.
+            if (Main.netMode != NetmodeID.Server)
+                AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.TileBreak, type);
         }
 
         public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)

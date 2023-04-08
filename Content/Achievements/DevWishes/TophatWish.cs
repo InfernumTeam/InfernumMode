@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
         public override void Initialize()
         {
             Name = "Amazingly Asinine Assistant";
-            Description = "Insert inspirational quote here\n[c/777777:Have 3 deaths in a row to a boss]";
+            Description = "You're improving with every failure! Keep going!\n[c/777777:Have 3 deaths in a row to a boss]";
             TotalCompletion = 1;
             PositionInMainList = 9;
             UpdateCheck = AchievementUpdateCheck.PlayerDeath;

@@ -89,8 +89,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Keep a handful of segments open if the head is open, for the sake of making it easier to damage Thanatos.
+            // This does not happen if he's doing his desperation phase attack.
             int openSegmentPeriodWhenHeadIsOpen = 12;
-            if (head.localAI[0] == (int)ThanatosFrameType.Open && segmentAttackIndex % openSegmentPeriodWhenHeadIsOpen == openSegmentPeriodWhenHeadIsOpen - 1f)
+            bool busyObliteratingTarget = head.ai[0] == (int)ThanatosHeadAttackType.MaximumOverdrive && head.Infernum().ExtraAI[0] == 0f;
+            if (head.localAI[0] == (int)ThanatosFrameType.Open && segmentAttackIndex % openSegmentPeriodWhenHeadIsOpen == openSegmentPeriodWhenHeadIsOpen - 1f && !busyObliteratingTarget)
             {
                 thanatosIsFiring = false;
                 canBeOpen = true;

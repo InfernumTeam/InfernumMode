@@ -703,6 +703,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float rayTelegraphSoundSlot = ref npc.Infernum().ExtraAI[1];
             ref float redirectCounter = ref npc.Infernum().ExtraAI[2];
 
+            if (ExoMechManagement.CurrentThanatosPhase >= 6)
+                redirectCount = 2;
+
             // Initialize a hover offset direction.
             if (hoverOffsetDirection == 0f)
             {

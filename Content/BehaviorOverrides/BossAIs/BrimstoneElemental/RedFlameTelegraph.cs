@@ -20,6 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
+        // Hello, github reader!
         public override void SetStaticDefaults() => DisplayName.SetDefault("Fuck you nobody is going to ever see this name");
 
         public override void SetDefaults()

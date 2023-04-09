@@ -4,7 +4,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class DraetingSimSystem : ModSystem
     {
-        public static bool ShouldEnableDraedonDialog => true;
+        public static bool ShouldEnableDraedonDialog => false;
 
         public override void OnModLoad()
         {

@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
-using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
@@ -24,6 +23,7 @@ namespace InfernumMode.Core.GlobalInstances
             {
                 ModContent.TileType<BrimstoneRose>(),
                 ModContent.TileType<ColosseumPortal>(),
+                ModContent.TileType<EggSwordShrine>(),
                 ModContent.TileType<IronBootsSkeleton>(),
                 ModContent.TileType<ProvidenceSummoner>(),
                 ModContent.TileType<ProvidenceRoomDoorPedestal>(),

@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Content.Items.Weapons.Melee;
+using InfernumMode.Content.Tiles;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -20,8 +21,8 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            // TODO: Check whether the extraInfo is equal to the shrine tile ID.
-            CurrentCompletion++;
+            if (extraInfo == ModContent.TileType<EggSwordShrine>())
+                CurrentCompletion++;
         }
 
         public override void OnCompletion(Player player)

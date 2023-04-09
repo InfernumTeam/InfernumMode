@@ -38,7 +38,7 @@ namespace InfernumMode.Content.Tiles
         }
 
         // This tile should not be destroyed by any natural means.
-        // If someone somehow destroys it (such as with those Fargos autoplatforms), tough luck for them.
+        // If someone somehow destroys it (such as with those Fargos autoplatforms), tough luck for them. They can cheat in the Searune.
         public override bool CanExplode(int i, int j) => false;
 
         public override bool CanKillTile(int i, int j, ref bool blockDamaged) => false;

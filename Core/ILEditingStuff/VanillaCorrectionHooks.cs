@@ -1176,7 +1176,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void DisableWaterDrawing(On.Terraria.Main.orig_DrawWaters orig, Main self, bool isBackground)
         {
-            if (InfernumMode.CanUseCustomAIs && Main.LocalPlayer.Calamity().ZoneAbyssLayer4 || InfernumConfig.Instance.ReducedGraphicsConfig)
+            if (InfernumMode.CanUseCustomAIs && Main.LocalPlayer.Calamity().ZoneAbyssLayer4 && InfernumConfig.Instance.ReducedGraphicsConfig)
                 return;
 
             orig(self, isBackground);

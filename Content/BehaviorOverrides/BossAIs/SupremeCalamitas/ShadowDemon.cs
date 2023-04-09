@@ -192,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 else
                     NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * 11f, 0.2f);
 
-                int transitionDelay = shootCounter == 0f ? 150 : 105;
+                int transitionDelay = shootCounter == 0f ? 210 : 105;
                 if (attackTimer >= transitionDelay)
                 {
                     attackSubstate = 1f;
@@ -258,7 +258,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public void DoBehavior_ShadowGigablastsAndCharges(NPC scal, ref float attackTimer)
         {
-            int hoverTime = 54;
+            int hoverTime = 67;
             int chargeTime = 56;
             int chargeCount = 5;
             int boltReleaseRate = 8;

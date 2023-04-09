@@ -19,6 +19,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     ProfanedGarden.Generate(progress, config);
                 }));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Desert Digout Area", LostColosseumEntrance.Generate));
+                tasks.Insert(++finalCleanupIndex, new PassLegacy("Hiding eggs", EggShrineGeneration.Generate));                
             }
         }
     }

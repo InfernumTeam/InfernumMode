@@ -87,12 +87,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                         for (int i = 0; i < 27; i++)
                         {
                             Vector2 icicleVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * 8.4f;
-                            Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f);
+                            Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f, -1, 0f, 1f);
                         }
                         for (int i = 0; i < 14; i++)
                         {
                             Vector2 icicleVelocity = (MathHelper.TwoPi * i / 14f).ToRotationVector2() * 16f;
-                            Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f);
+                            Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f, -1, 0f, 1f);
                         }
                     }
 

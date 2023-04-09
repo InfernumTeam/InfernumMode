@@ -1,3 +1,4 @@
+using CalamityMod.NPCs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,6 +31,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.Opacity = 0f;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 360;
+            if (CalamityGlobalNPC.adultEidolonWyrmHead != -1)
+                CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()
@@ -39,6 +42,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Fade in and out.
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 32f, Projectile.timeLeft, true);
+
+            if (Projectile.ai[1] == 1f && Projectile.velocity.Length() < 39f)
+                Projectile.velocity *= 1.021f;
 
             Time++;
         }

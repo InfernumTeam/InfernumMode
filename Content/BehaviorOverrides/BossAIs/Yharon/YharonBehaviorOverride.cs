@@ -5,6 +5,7 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -1636,7 +1637,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     npc.life = 1;
 
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
-                if (lifeRatio < 0.004f && pulseDeathEffectCooldown <= 0)
+                if (lifeRatio < 0.004f && pulseDeathEffectCooldown <= 0 && attackTimer >= preAttackTime + 180f)
                 {
                     pulseDeathEffectCooldown = 8f;
 
@@ -1668,11 +1669,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     npc.netUpdate = true;
                 }
 
+                // Do some camera pan effects.
+                if (Main.LocalPlayer.WithinRange(target.Center, 8400f))
+                {
+                    float cameraPanInterpolant = Utils.GetLerpValue(0f, 8f, attackTimer - preAttackTime, true) * Utils.GetLerpValue(180f, 175f, attackTimer - preAttackTime, true);
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = cameraPanInterpolant;
+                    Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
+
+                    // Emit a strong roar.
+                    if (attackTimer == preAttackTime + 96f)
+                    {
+                        ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 42);
+                        SoundEngine.PlaySound(YharonBoss.DeathSound with { Volume = 4f });
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+                    }
+                }
+
                 // Emit very strong fireballs.
-                if (Main.myPlayer == target.whoAmI && attackTimer > preAttackTime + 100f)
+                if (Main.myPlayer == target.whoAmI && attackTimer > preAttackTime + 180f)
                 {
                     for (int i = 0; i < 3; i++)
-                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(19f, 19f), ModContent.ProjectileType<FlareBomb>(), 640, 0f, target.whoAmI, -1f);
+                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(16f, 16f), ModContent.ProjectileType<FlareBomb>(), 640, 0f, target.whoAmI, -1f);
                 }
 
                 if (npc.life <= 0)

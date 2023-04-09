@@ -1938,9 +1938,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             int gigablastBulletHellDuration = 1050;
             int baseGigaReleaseRate = 75;
-            int dartBulletHellReleaseRate = 54;
+            int dartBulletHellReleaseRate = 60;
             float dartBulletHellWallArea = 420f;
-            float dartBulletHellGapArea = 48f;
+            float dartBulletHellGapArea = 42f;
 
             ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[0];
             ref float teleportCountdown = ref npc.Infernum().ExtraAI[1];

@@ -149,6 +149,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
         }
 
+        public override bool? CanDamage() => Projectile.velocity != Vector2.Zero ? null : false;
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(Projectile.Center, targetHitbox, Radius * 0.85f);
     }
 }

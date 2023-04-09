@@ -130,7 +130,7 @@ namespace InfernumMode.Core.Balancing
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 936000,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2960000 : 1776500,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 1618950 : 968420,
-            [ModContent.NPCType<AdultEidolonWyrmHead>()] = 1675000,
+            [ModContent.NPCType<AdultEidolonWyrmHead>()] = 1325000,
             [ModContent.NPCType<ThanatosHead>()] = 2400000,
             [ModContent.NPCType<AresBody>()] = 2250000,
             [ModContent.NPCType<Artemis>()] = 2400000,

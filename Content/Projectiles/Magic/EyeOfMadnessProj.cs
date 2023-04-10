@@ -47,6 +47,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (Time % 6f == 5f)
                 ReleaseThings();
 
+            Owner.ChangeDir(Projectile.velocity.X.DirectionalSign());
             Projectile.spriteDirection = Owner.direction;
             Projectile.Center = (Owner.Center + Vector2.UnitX * Owner.direction * 12f).Floor();
             Projectile.timeLeft = 2;
@@ -73,6 +74,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawnPosition, shootVelocity, ModContent.ProjectileType<ShadowTendril>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
 
             AttackTimer = 0f;
+            Projectile.velocity = Projectile.SafeDirectionTo(Main.MouseWorld) * 0.01f;
             Projectile.netUpdate = true;
         }
 

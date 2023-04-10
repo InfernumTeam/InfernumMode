@@ -54,8 +54,9 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (Projectile.localAI[0] >= Main.projFrames[Projectile.type] * 10f)
                 Projectile.localAI[0] = 0f;
 
+            Owner.ChangeDir(Projectile.velocity.X.DirectionalSign());
             AdjustPlayerValues();
-            Projectile.Center = Owner.Center + (Owner.compositeFrontArm.rotation + MathHelper.PiOver2).ToRotationVector2() * 14f;
+            Projectile.Center = Owner.Center + (Owner.compositeFrontArm.rotation + MathHelper.PiOver2).ToRotationVector2() * 14f - Vector2.UnitY * 4f;
             Projectile.timeLeft = 2;
             AttackTimer++;
             Time++;
@@ -80,6 +81,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawnPosition, shootVelocity, ModContent.ProjectileType<ShadowIllusion>(), Projectile.damage, Projectile.knockBack, Projectile.owner, ShootIntensity);
 
             AttackTimer = 0f;
+            Projectile.velocity = Projectile.SafeDirectionTo(Main.MouseWorld) * 0.01f;
             Projectile.netUpdate = true;
         }
 

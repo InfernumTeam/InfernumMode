@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Projectiles.Magic;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
@@ -74,13 +75,30 @@ namespace InfernumMode.Common.Graphics
 
         internal static void DrawShadowProjectiles()
         {
+            // For some reason mod reloads make the game temporarily refuse to acknowledge the fact that globals should exist on projectiles???
+            // I don't know what the source of the problem is but this should address it.
+            static bool hasInfernumGlobalProj(Projectile projectile)
+            {
+                var enumerator = projectile.Globals.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    var globalProjectile = enumerator.Current;
+                    if (globalProjectile.Instance is GlobalProjectileOverrides)
+                        return true;
+                }
+                return false;
+            }
+
             // Draw regular projectiles.
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].ModProjectile is null)
                     continue;
 
-                if (!Main.projectile[i].active || !Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is IAdditiveDrawer)
+                if (!Main.projectile[i].active || !hasInfernumGlobalProj(Main.projectile[i]))
+                    continue;
+
+                if (!Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is IAdditiveDrawer)
                     continue;
 
                 Main.instance.DrawProj(i);
@@ -94,7 +112,10 @@ namespace InfernumMode.Common.Graphics
                 if (Main.projectile[i].ModProjectile is null)
                     continue;
 
-                if (!Main.projectile[i].active || !Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is not IAdditiveDrawer)
+                if (!Main.projectile[i].active || !hasInfernumGlobalProj(Main.projectile[i]))
+                    continue;
+
+                if (!Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is not IAdditiveDrawer)
                     continue;
 
                 Main.instance.DrawProj(i);

@@ -67,6 +67,12 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             set;
         }
 
+        private static bool ShouldCreateGif
+        {
+            get;
+            set;
+        }
+
         // If on a non-Windows operating system, don't use this system. Fundamental parts are not guaranteed to work outside of it.
         // Also it doesn't run on servers, obviously.
         public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT;
@@ -146,6 +152,18 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             cancelThread?.Dispose();
         }
 
+        public override void PostUpdateEverything()
+        {
+            if (RecordCountdown >= 1)
+            {
+                RecordCountdown--;
+
+                // If the countdown has decreased to zero, mark the GIF as ready to create.
+                if (RecordCountdown == 0)
+                    ShouldCreateGif = true;
+            }
+        }
+
         private static void RegenerateHandles()
         {
             if (!IsSupported)
@@ -191,21 +209,20 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             CaptureWidth = (int)(Main.screenWidth * 0.45f);
             CaptureHeight = (int)(Main.screenHeight * 0.45f);
 
-            if (RecordCountdown >= 1)
+            if (RecordCountdown > 0)
             {
-                RecordCountdown--;
-
                 // Append to the frames. For the sake of performance this happens on frame intervals instead of every frame.
                 if (RecordCountdown % RecordingFrameSkip == 0)
                     frames.Add(GetScreenBitmap());
+            }
 
-                // Prepare the gif file once the recording countdown is done.
-                if (RecordCountdown <= 0)
-                {
-                    cancelThread?.Dispose();
-                    cancelThread = new();
-                    new Thread(() => CreateGif(cancelThread.Token)).Start();
-                }
+            // Prepare the gif file if it should be done.
+            if (ShouldCreateGif)
+            {
+                ShouldCreateGif = false;
+                cancelThread?.Dispose();
+                cancelThread = new();
+                new Thread(() => CreateGif(cancelThread.Token)).Start();
             }
         }
 

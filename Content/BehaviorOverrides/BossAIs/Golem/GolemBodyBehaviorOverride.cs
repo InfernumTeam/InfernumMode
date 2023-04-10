@@ -46,9 +46,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.Golem;
 
-        public static int ArenaWidth = 115;
+        public const int ArenaWidth = 115;
 
-        public static int ArenaHeight = 105;
+        public const int ArenaHeight = 105;
 
         public const int AttacksNotToPool = 4; // The last X states in GolemAttackState should not be selected as attacks during the fight
 
@@ -932,7 +932,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             int fistSlamTime = 45;
             int spikeWaveCreationTime = 420;
             int spikeTrapCreationRate = 56;
-            int fireCrystalReleaseRate = 72;
             float fistSlamInterpolant = 1f;
 
             if (inPhase2)

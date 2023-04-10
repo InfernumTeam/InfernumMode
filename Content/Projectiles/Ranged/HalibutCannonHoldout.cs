@@ -50,7 +50,6 @@ namespace InfernumMode.Content.Projectiles.Ranged
             Projectile.Center = ownerCenter;
             AdjustPlayerValues();
 
-            float holdDistance = 20f;
             Vector2 aimDirection = Owner.SafeDirectionTo(Main.MouseWorld);
             Projectile.rotation = aimDirection.ToRotation();
 

@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
-using Terraria.Chat;
 using Terraria.GameContent;
 using Terraria.UI.Chat;
 
@@ -15,16 +16,24 @@ namespace InfernumMode.Content.Credits
 
         public Texture2D[] Textures;
 
+        public string Header;
+
         public string Names;
+
+        public Color HeaderColor;
 
         private readonly bool BaseCredits;
 
-        public CreditAnimationObject(Vector2 center, Vector2 velocity, Texture2D[] textures, string names, bool baseCredits)
+        public Vector2 TextCenter => Center + new Vector2(0f, 230f);
+
+        public CreditAnimationObject(Vector2 center, Vector2 velocity, Texture2D[] textures, string header, string names, Color headerColor, bool baseCredits)
         {
             Center = center;
             Velocity = velocity;
             Textures = textures;
+            Header = header;
             Names = names;
+            HeaderColor = headerColor;
             BaseCredits = baseCredits;
         }
 
@@ -74,13 +83,23 @@ namespace InfernumMode.Content.Credits
 
         private void DrawNames(float opacity)
         {
-            string[] cutUpString = Names.Split("\n");
-            float stringHeight = FontAssets.MouseText.Value.MeasureString(cutUpString[0]).Y + 40f;
-            for (int i = 0; i < cutUpString.Length; i++)
+            IEnumerable<string> cutUpString = Names.Split("\n").Prepend(Header);
+            float stringHeight = FontAssets.MouseText.Value.MeasureString(cutUpString.ElementAt(0)).Y;
+            for (int i = 0; i < cutUpString.Count(); i++)
             {
-                float stringWidth = FontAssets.MouseText.Value.MeasureString(cutUpString[i]).X * 0.5f;
-                Vector2 drawPos = Center + new Vector2(-stringWidth, stringHeight * i);
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, cutUpString[i], drawPos, Color.White * opacity, 0f, Vector2.Zero, Vector2.One);
+                float stringWidth = FontAssets.MouseText.Value.MeasureString(cutUpString.ElementAt(i)).X * 0.5f;
+                Vector2 drawPos = TextCenter + new Vector2(-stringWidth * 0.5f, stringHeight * i);
+                Color textColor = Color.White;
+                Vector2 scale = Vector2.One;
+
+                if (i is 0)
+                {
+                    textColor = HeaderColor;
+                    scale *= 1.2f;
+                }
+
+                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, cutUpString.ElementAt(i), drawPos, textColor * opacity, 0f, 
+                    new Vector2(stringWidth * 0.5f, stringHeight * 0.5f), scale);
             }
         }
     }

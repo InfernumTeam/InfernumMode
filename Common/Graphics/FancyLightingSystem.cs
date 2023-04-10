@@ -44,17 +44,15 @@ namespace InfernumMode.Common.Graphics
         public override void Load()
         {
             Main.OnResolutionChanged += ResizeRenderTargets;
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture += DrawRTStuff;
         }
 
         public override void Unload()
         {
             Main.OnResolutionChanged -= ResizeRenderTargets;
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture -= DrawRTStuff;
             DisposeOfTargets();
         }
 
-        private void ResizeRenderTargets(Vector2 obj)
+        private static void ResizeRenderTargets(Vector2 obj)
         {
             // Ensure it is correctly disposed.
             if (LightRenderTarget != null && !LightRenderTarget.IsDisposed)
@@ -110,27 +108,25 @@ namespace InfernumMode.Common.Graphics
             RaymarchingVoronoiTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
         }
 
-        private void DrawRTStuff(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
+        internal static RenderTarget2D DrawRTStuff(RenderTarget2D screenTarget1)
         {
             // This has its own config due to being mildly demanding.
             if (!InfernumConfig.Instance.FancyLighting)
-            {
-                orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
-                return;
-            }
+                return screenTarget1;
 
             // Ensure these are all set.
             if (LightRenderTarget == null || ScreenCaptureTarget == null || ShadowRenderTarget == null || DownscaledBloomTarget == null
                 || TempBloomTarget == null || RaymarchingOccludersTarget == null || RaymarchingLightsTarget == null || RaymarchingOccluderDisplacementFieldTarget == null
                 || RaymarchingLightDisplacementFieldTarget == null || TempRaymarchingDisplacementFieldTarget == null || RaymarchingVoronoiTarget == null)
                 ResizeRenderTargets(Vector2.Zero);
+
             UseRaymarching = false;
-            // TODO: Fix. Doesn't work properly but its 6 am and i cannot be bothered to do any more today.
+
+            // This is unfinished, and it's unlikely i will finish it. It will remain here inactive in the code unless/until i decide to remove it.
             if (UseRaymarching)
             {
-                DoRaymarching(Main.spriteBatch, screenTarget1, screenTarget2);
-                orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
-                return;
+                DoRaymarching(Main.spriteBatch, screenTarget1);
+                return screenTarget1;
             }
 
             // Save the current screen. This will be redrawn later.
@@ -148,12 +144,14 @@ namespace InfernumMode.Common.Graphics
             // Do the final drawing.
             DoFinalDrawing(Main.spriteBatch, screenTarget1);
 
-            // Draw Bloom.
-            DoBloomEffect(Main.spriteBatch, screenTarget1);
-            orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
+            // Draw Bloom, only if the saturation bloom is not active.
+            if (!ScreenSaturationBlurSystem.ShouldEffectBeActive)
+                DoBloomEffect(Main.spriteBatch, screenTarget1);
+
+            return screenTarget1;
         }
 
-        private static void DoRaymarching(SpriteBatch spriteBatch, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2)
+        private static void DoRaymarching(SpriteBatch spriteBatch, RenderTarget2D screenTarget1)
         {
             // For testing purposes, setup the two RTs
             RaymarchingOccludersTarget.SwapToRenderTarget(Color.Transparent);
@@ -335,7 +333,7 @@ namespace InfernumMode.Common.Graphics
             spriteBatch.End();
 
             // Swap to the screen target temporarily, and draw the shadow target several times additively at increasing scales to get accurate dark zones to use as shadows.
-            screenTarget.SwapToRenderTarget(Color.Black);
+            screenTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
             Vector2 drawPosOrigin = GetSunPosition(screenTarget);
@@ -367,7 +365,7 @@ namespace InfernumMode.Common.Graphics
             spriteBatch.End();
 
             // Draw the shadows to the actual shadow render target.
-            ShadowRenderTarget.SwapToRenderTarget(Color.Black);
+            ShadowRenderTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             spriteBatch.Draw(screenTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
@@ -376,7 +374,7 @@ namespace InfernumMode.Common.Graphics
         private static void DoFinalDrawing(SpriteBatch spriteBatch, RenderTarget2D screenTarget)
         {
             // Reset the base screen target to the captured one before any changes happen.
-            screenTarget.SwapToRenderTarget(Color.Black);
+            screenTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             spriteBatch.Draw(ScreenCaptureTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
@@ -394,7 +392,7 @@ namespace InfernumMode.Common.Graphics
         private static void DoBloomEffect(SpriteBatch spriteBatch, RenderTarget2D screenTarget)
         {
             // Swap to the downscaled bloom target and store a filtered pass of the screen.
-            DownscaledBloomTarget.SwapToRenderTarget(Color.Black);
+            DownscaledBloomTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             Effect bloomEffect = InfernumEffectsRegistry.BloomShader.GetShader().Shader;
             bloomEffect.Parameters["filterThreshold"].SetValue(0.99f);
@@ -411,7 +409,7 @@ namespace InfernumMode.Common.Graphics
             for (int i = 0; i < BloomPasses; i++)
             {
                 // Swap to the temp target.
-                TempBloomTarget.SwapToRenderTarget(Color.Black);
+                TempBloomTarget.SwapToRenderTarget(Color.Transparent);
 
                 // Perform the horizontal pass first.
                 bloomEffect.Parameters["horizontal"].SetValue(true);
@@ -419,7 +417,7 @@ namespace InfernumMode.Common.Graphics
                 spriteBatch.Draw(DownscaledBloomTarget, Vector2.Zero, Color.White);
 
                 // Then draw it to the main target and do the vertical pass. Ensure the already blurred one is drawn through.
-                DownscaledBloomTarget.SwapToRenderTarget(Color.Black);
+                DownscaledBloomTarget.SwapToRenderTarget(Color.Transparent);
                 bloomEffect.Parameters["horizontal"].SetValue(false);
                 bloomEffect.CurrentTechnique.Passes["BlurPass"].Apply();
                 spriteBatch.Draw(TempBloomTarget, Vector2.Zero, Color.White);
@@ -427,13 +425,18 @@ namespace InfernumMode.Common.Graphics
             spriteBatch.End();
 
             // Swap back to the screen target, and perform the bloom blending.
-            screenTarget.SwapToRenderTarget(Color.Black);
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+            LightRenderTarget.SwapToRenderTarget(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             bloomEffect.Parameters["bloomScene"].SetValue(DownscaledBloomTarget);
             bloomEffect.Parameters["downsampledSize"].SetValue(1f);
             bloomEffect.Parameters["bloomIntensity"].SetValue(1.1f);
             bloomEffect.CurrentTechnique.Passes["BloomPass"].Apply();
             spriteBatch.Draw(screenTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0);
+            spriteBatch.End();
+
+            screenTarget.SwapToRenderTarget();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+            spriteBatch.Draw(LightRenderTarget, Vector2.Zero, Color.White);
             spriteBatch.End();
         }
 

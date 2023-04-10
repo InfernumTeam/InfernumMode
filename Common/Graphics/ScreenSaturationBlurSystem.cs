@@ -87,7 +87,6 @@ namespace InfernumMode.Common.Graphics
         {
             On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
             {
@@ -122,11 +121,10 @@ namespace InfernumMode.Common.Graphics
             orig(self, gameTime);
         }
 
-        private void GetFinalScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
+        internal static RenderTarget2D GetFinalScreenShader(RenderTarget2D screenTarget1)
         {
             // Copy the contents of the screen target in the final screen target.
-            Main.instance.GraphicsDevice.SetRenderTarget(FinalScreenTarget);
-            Main.instance.GraphicsDevice.Clear(Color.Transparent);
+            FinalScreenTarget.SwapToRenderTarget();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, Color.White);
             Main.spriteBatch.End();
@@ -135,8 +133,6 @@ namespace InfernumMode.Common.Graphics
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
             Main.instance.GraphicsDevice.SetRenderTarget(null);
-
-            orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -161,6 +157,8 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.End();
             if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
                 Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
+
+            return screenTarget1;
         }
 
         internal static void DrawAdditiveCache()

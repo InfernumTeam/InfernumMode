@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Common.Graphics.AttemptRecording;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -32,6 +33,30 @@ namespace InfernumMode.Content.Credits
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
         private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4 };
+
+        private static readonly string[] Headers = { "Programmers", "Musicians", "Artists", "Testers", "Testers", "Testers", "Testers"};
+
+        private static readonly Color[] HeaderColors = 
+        { 
+            new(212, 56, 34), 
+            new(143, 11, 139), 
+            new(80, 105, 185), 
+            new(0, 148, 75), 
+            new(0, 148, 75), 
+            new(0, 148, 75), 
+            new(0, 148, 75)
+        };
+
+        private static readonly ScreenCapturer.RecordingBoss[] Bosses = 
+        { 
+            ScreenCapturer.RecordingBoss.KingSlime, 
+            ScreenCapturer.RecordingBoss.WoF, 
+            ScreenCapturer.RecordingBoss.Calamitas, 
+            ScreenCapturer.RecordingBoss.Vassal,
+            ScreenCapturer.RecordingBoss.Provi,
+            ScreenCapturer.RecordingBoss.Draedon,
+            ScreenCapturer.RecordingBoss.SCal
+        };
 
         public const int TotalGIFs = 6;
 
@@ -70,8 +95,8 @@ namespace InfernumMode.Content.Credits
 
         internal static void BeginCredits()
         {
-            // Return if the credits are already playing.
-            if (CreditsPlaying)
+            // Return if the credits are already playing, or have completed for this player.
+            if (CreditsPlaying) //|| Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed)
                 return;
 
             // Else, mark them as playing.
@@ -87,7 +112,7 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // TODO -- Make this variable based on the amount of frames in the gif.
-            float gifTime = ScreenCapturer.BaseRecordCountdownLength;
+            float gifTime = ScreenCapturer.BaseRecordCountdownLength / ScreenCapturer.RecordingFrameSkip;
             float disposeTime = 60f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
@@ -95,10 +120,9 @@ namespace InfernumMode.Content.Credits
             switch (CurrentState)
             {
                 case CreditState.LoadingTextures:
-                    // The textures must be loaded for each gif, do this all at once here and wait the allocated time to ensure they've all loaded, and to give
-                    // the player time to enjoy the victory.
+                    // The textures must be loaded for each gif, however doing them all at once causes major lag. So, it is split up throughout the credits.
                     if (CreditsTimer == 0)
-                        Main.QueueMainThreadAction(SetupObjects);
+                        Main.RunOnMainThread(() => SetupObjects(0));
 
                     if (CreditsTimer >= gifTime)
                     {
@@ -116,6 +140,7 @@ namespace InfernumMode.Content.Credits
                         // Dispose of the textures partway into the next gif, to ensure that it does not try to do it while they are in use.
                         if (CreditsTimer == disposeTime && CreditGIFs.IndexInRange(ActiveGifIndex - 1))
                         {
+                            Main.RunOnMainThread(() => SetupObjects(ActiveGifIndex + 1));
                             // Dispose of all the textures.
                             CreditGIFs[ActiveGifIndex - 1]?.DisposeTextures();
                             CreditGIFs[ActiveGifIndex - 1] = null;
@@ -148,6 +173,8 @@ namespace InfernumMode.Content.Credits
                             CreditGIFs[ActiveGifIndex]?.DisposeTextures();
                             CreditGIFs[ActiveGifIndex] = null;
                         }
+                        // Mark the credits as completed.
+                        Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed = true;
                         CreditsPlaying = false;
                     }
                     break;
@@ -165,7 +192,7 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // TODO -- Make this variable based on the amount of frames in the gif.
-            float gifTime = ScreenCapturer.BaseRecordCountdownLength;
+            float gifTime = ScreenCapturer.BaseRecordCountdownLength / ScreenCapturer.RecordingFrameSkip;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
 
@@ -183,26 +210,17 @@ namespace InfernumMode.Content.Credits
             }
         }
 
-        private static void SetupObjects()
+        private static void SetupObjects(int index)
         {
-            CreditGIFs = new CreditAnimationObject[TotalGIFs];
+            if (index is 0)
+                CreditGIFs = new CreditAnimationObject[TotalGIFs];
 
-            for (int i = 0; i < TotalGIFs; i++)
-            {
-                ScreenCapturer.RecordingBoss boss = i switch
-                {
-                    0 => ScreenCapturer.RecordingBoss.KingSlime,
-                    1 => ScreenCapturer.RecordingBoss.WoF,
-                    2 => ScreenCapturer.RecordingBoss.Calamitas,
-                    3 => ScreenCapturer.RecordingBoss.Vassal,
-                    4 => ScreenCapturer.RecordingBoss.Provi,
-                    5 => ScreenCapturer.RecordingBoss.Draedon,
-                    _ => ScreenCapturer.RecordingBoss.SCal
-                };
-                
-                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(boss, out bool baseCreditsUsed);
-                CreditGIFs[i] = new CreditAnimationObject(new(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), -Vector2.UnitY * 0.05f, textures, Names[i], baseCreditsUsed);
-            }
+            // Leave if the index is out of the range.
+            if (!CreditGIFs.IndexInRange(index))
+                return;
+         
+            Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses[index], out bool baseCreditsUsed);
+            CreditGIFs[index] = new CreditAnimationObject(new(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), -Vector2.UnitY * 0.05f, textures, Headers[index], Names[index], HeaderColors[index], baseCreditsUsed);            
         }
     }
 }

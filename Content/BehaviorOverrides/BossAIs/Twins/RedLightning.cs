@@ -1,6 +1,5 @@
 using CalamityMod;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,8 +14,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
     public class RedLightning : ModProjectile
     {
-        internal PrimitiveTrailCopy LightningDrawer;
-
         public const float LightningTurnRandomnessFactor = 1.35f;
         public ref float InitialVelocityAngle => ref Projectile.ai[0];
         // Technically not a ratio, and more of a seed, but it is used in a 0-2pi squash

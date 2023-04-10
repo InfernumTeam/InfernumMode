@@ -81,13 +81,11 @@ namespace InfernumMode.Common.Graphics
 
         public override void Load()
         {
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture += DrawBlurEffect;
             Main.OnResolutionChanged += ResizeRenderTarget;
         }
 
         public override void Unload()
         {
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture -= DrawBlurEffect;
             Main.OnResolutionChanged -= ResizeRenderTarget;
         }
 
@@ -118,10 +116,8 @@ namespace InfernumMode.Common.Graphics
             }
         }
 
-        private void DrawBlurEffect(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, Terraria.Graphics.Effects.FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Microsoft.Xna.Framework.Color clearColor)
+        internal static RenderTarget2D DrawBlurEffect(RenderTarget2D screenTarget1)
         {
-            orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
-
             if (BlurActive)
             {
                 if (BlurRenderTarget is null)
@@ -130,11 +126,11 @@ namespace InfernumMode.Common.Graphics
                 // Draw the screen contents to the blur render target.
                 BlurRenderTarget.SwapToRenderTarget();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                Main.spriteBatch.Draw(Main.screenTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
+                Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();
 
                 // Reset the render target.
-                Main.instance.GraphicsDevice.SetRenderTarget(null);
+                screenTarget1.SwapToRenderTarget();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
                 // Draw the blur render target 7 times, getting progressively larger and more transparent.
@@ -166,11 +162,11 @@ namespace InfernumMode.Common.Graphics
                 // Draw the screen contents to the blur render target.
                 FlashRenderTarget.SwapToRenderTarget();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                Main.spriteBatch.Draw(Main.screenTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
+                Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();
 
                 // Reset the render target.
-                Main.instance.GraphicsDevice.SetRenderTarget(null);
+                screenTarget1.SwapToRenderTarget();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
                 Color drawColor = new(1f, 1f, 1f, MathHelper.Clamp(MathHelper.Lerp(0.5f, 1f, (1f - FlashLifetimeRatio) * FlashIntensity), 0f, 1f));
@@ -183,9 +179,11 @@ namespace InfernumMode.Common.Graphics
                     Main.spriteBatch.Draw(FlashRenderTarget, FlashPosition - Main.screenPosition, frameOffset, drawColor, 0f, origin, 1f, SpriteEffects.None, 0f);
                 Main.spriteBatch.End();
             }
+
+            return screenTarget1;
         }
 
-        private void ResizeRenderTarget(Vector2 obj)
+        private static void ResizeRenderTarget(Vector2 obj)
         {
             BlurRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
             FlashRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);

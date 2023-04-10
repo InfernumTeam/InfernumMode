@@ -1554,7 +1554,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float flySpeed = 25f;
                 float maxMoveToCenterTime = 120f;
                 float fireballCount = 22f;
-                float fireballSpeed = 1.5f;
+                float fireballSpeed = 1.25f;
                 float fireballReleaseRate = 35;
                 float endOfAttackWait = 160f;
 

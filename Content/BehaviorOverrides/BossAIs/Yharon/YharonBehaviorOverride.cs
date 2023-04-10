@@ -1683,7 +1683,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     if (attackTimer == preAttackTime + 96f)
                     {
                         ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 42);
-                        SoundEngine.PlaySound(YharonBoss.DeathSound with { Volume = 4f });
+                        SoundEngine.PlaySound(YharonBoss.DeathSound with { Volume = 4f, Pitch = -0.15f });
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);

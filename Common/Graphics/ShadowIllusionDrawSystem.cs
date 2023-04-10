@@ -77,6 +77,9 @@ namespace InfernumMode.Common.Graphics
             // Draw regular projectiles.
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
+                if (Main.projectile[i].ModProjectile is null)
+                    continue;
+
                 if (!Main.projectile[i].active || !Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is IAdditiveDrawer)
                     continue;
 
@@ -88,6 +91,9 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
+                if (Main.projectile[i].ModProjectile is null)
+                    continue;
+
                 if (!Main.projectile[i].active || !Main.projectile[i].Infernum().DrawAsShadow || Main.projectile[i].ModProjectile is not IAdditiveDrawer)
                     continue;
 

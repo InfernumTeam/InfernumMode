@@ -202,7 +202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 if (attackTimer > attackDelay)
                 {
-                    float spinSpeed = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 180f;
+                    float spinSpeed = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 205f;
 
                     target.Infernum_Camera().CurrentScreenShakePower = 1.5f;
 
@@ -235,9 +235,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             float flyAcceleration = 1.022f;
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {
-                slashAnticipationTime -= 40;
-                slashTime -= 5;
-                redirectTime -= 6;
+                slashAnticipationTime -= 54;
+                slashTime -= 7;
+                redirectTime -= 7;
                 chargeTime -= 21;
                 slashCount += 3;
                 flyAcceleration += 0.008f;
@@ -288,6 +288,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (npc.type == ModContent.NPCType<AresBody>())
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 280f;
+                if (target.velocity.Y < 0f)
+                    hoverDestination.Y += target.velocity.Y * 20f;
+
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.072f;
                 if (wrappedAresAttackTimer >= slashAnticipationTime)
                     idealVelocity.X = 0f;

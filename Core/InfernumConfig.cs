@@ -35,7 +35,7 @@ namespace InfernumMode.Core
         [SliderColor(224, 165, 56, 128)]
         [Range(0f, 1f)]
         [DefaultValue(0f)]
-        [Tooltip("How intense color saturation bloom effects should be. Such effects are disabled when this value is zero.")]
+        [Tooltip("How intense color saturation bloom effects should be. Such effects are disabled when this value is zero. Be warned that high values may be overwhelming.")]
         public float SaturationBloomIntensity { get; set; }
 
         [Label("Screen Overlays")]

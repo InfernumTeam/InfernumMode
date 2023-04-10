@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 bombShootVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 23f;
+                Vector2 bombShootVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 19.5f;
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                 {

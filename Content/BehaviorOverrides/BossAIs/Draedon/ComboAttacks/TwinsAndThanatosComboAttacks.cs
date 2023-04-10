@@ -49,6 +49,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int exoTwinShootRate = 60;
             float exoTwinsBlastShootSpeed = 13f;
             float thanatosFlySpeedFactor = 1.02f;
+            if (attackTimer <= 60f)
+                thanatosFlySpeedFactor *= Utils.GetLerpValue(-15f, 60f, attackTimer, true);
 
             // Halt attacking if Artemis and Apollo are busy entering their second phase.
             if (ExoTwinsAreEnteringSecondPhase)
@@ -176,6 +178,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             // As a result, if that happens, the attack is simply terminated early and laser beams/telegraphs are all destroyed.
             if (ExoTwinsAreEnteringSecondPhase)
             {
+                if (npc.type == ModContent.NPCType<ThanatosHead>())
+                    npc.damage = 0;
+
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<ArtemisDeathrayTelegraph>(), ModContent.ProjectileType<ArtemisSweepLaserbeam>());
                 return true;
             }

@@ -534,11 +534,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            int attackTime = 1136;
+            int attackTime = 936;
             if (ExoMechManagement.CurrentAresPhase >= 5)
-                attackTime = 1350;
+                attackTime = 1150;
             if (ExoMechManagement.CurrentAresPhase >= 6)
-                attackTime = 1260;
+                attackTime = 1050;
 
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 410f;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);

@@ -313,19 +313,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (wrappedAttackTimer < bombHoverTime && !npc.WithinRange(target.Center, 600f))
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 11f;
-                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.037f);
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.06f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
             }
             if (npc.velocity.Length() > 11.5f)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 11.49f;
-            if (!npc.WithinRange(target.Center, 920f))
-                npc.Center = npc.Center.MoveTowards(target.Center, 15f);
 
             // Create the bomb.
             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 1f && !bombExists)
             {
                 if (bombLaunchCounter < bombLaunchCount)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, bombID, 600, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(target.Center) * 15f, Vector2.Zero, bombID, 600, 0f);
                 else
                 {
                     SelectNextAttack(npc);

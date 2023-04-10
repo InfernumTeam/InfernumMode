@@ -244,6 +244,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Reset various things every frame.
             npc.dontTakeDamage = false;
+            npc.chaseable = true;
             npc.defDamage = 550;
             npc.damage = npc.defDamage;
 
@@ -1047,6 +1048,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Don't let the attack cycle timer increment if still swimming.
             if (attackTimer < swimTime)
                 attackCycleTimer = 0f;
+
+            // Disable homing effects.
+            npc.chaseable = false;
 
             // Swim away from the target. If they're close to the bottom of the abyss, swim up. Otherwise, swim down.
             if (verticalSwimDirection == 0f)

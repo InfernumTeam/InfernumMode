@@ -81,6 +81,15 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return false;
             }
 
+            // Despawn if the player has left the final layer of the abyss.
+            if (!target.Calamity().ZoneAbyssLayer4)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 27f, 0.1f);
+                if (!npc.WithinRange(target.Center, 1200f))
+                    npc.active = false;
+                return false;
+            }
+
             switch (currentAttack)
             {
                 case ReaperSharkAttackState.StalkTarget:

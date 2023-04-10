@@ -2184,7 +2184,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                         for (float dx = 0f; dx < dartBulletHellWallArea; dx += dartBulletHellGapArea)
                         {
-                            Vector2 dartSpawnPosition = new(x + dx, npc.Infernum().Arena.Top);
+                            Vector2 dartSpawnPosition = new(x + dx + Main.rand.NextFloatDirection() * 4f, npc.Infernum().Arena.Top + Main.rand.NextFloatDirection() * 8f);
                             if (dartSpawnPosition.X >= npc.Infernum().Arena.Right)
                                 continue;
 

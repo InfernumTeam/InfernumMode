@@ -159,8 +159,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             int shootTime = 420;
             int soulShootRate = 55;
             int soulCount = 9;
-            int projectileFireThreshold = isCataclysm ? 75 : 60;
-            float regularShotSpeed = 11f;
+            int projectileFireThreshold = isCataclysm ? 105 : 85;
+            float regularShotSpeed = 9.5f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float shootIncrement = MathHelper.Lerp(1.85f, 3.1f, 1f - lifeRatio);
             if (lifeRatio < 0.5f)
@@ -215,7 +215,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int i = 0; i < soulCount; i++)
                     {
-                        Vector2 soulVelocity = (MathHelper.TwoPi * i / soulCount).ToRotationVector2() * 10f;
+                        Vector2 soulVelocity = (MathHelper.TwoPi * i / soulCount).ToRotationVector2() * 8.5f;
                         Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<LostSoulProj>(), 550, 0f);
                     }
                 }

@@ -1618,7 +1618,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 int preAttackTime = totalCharges * chargeCycleTime + totalTimeSpentPerCarpetBomb + totalBerserkCharges * 45;
                 ref float pulseDeathEffectCooldown = ref npc.Infernum().ExtraAI[1];
 
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.035f, 0.2f);
                 if (finalAttackCompletionState != 1f)
                 {
                     npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
@@ -1668,6 +1667,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     hasCreatedExplosionFlag = 1f;
                     npc.netUpdate = true;
                 }
+
+                // Determine the opacity.
+                float idealOpacity = Utils.Remap(attackTimer - preAttackTime, 150f, 420f, 1f, 0.035f);
+                npc.Opacity = MathHelper.Lerp(npc.Opacity, idealOpacity, 0.2f);
 
                 // Do some camera pan effects.
                 if (Main.LocalPlayer.WithinRange(target.Center, 8400f))

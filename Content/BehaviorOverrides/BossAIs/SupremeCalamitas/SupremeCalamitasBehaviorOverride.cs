@@ -563,7 +563,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             int condemnationChargePuffRate = 15;
             int fanShootTime = 52;
             int shootRate = 2;
-            int shootCount = 3;
+            int shootCount = 2;
             bool dartConvergence = false;
             float shootSpeed = 11.25f;
             float angularVariance = 2.94f;
@@ -2318,7 +2318,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (attackTimer >= sitTime)
                 {
                     // Begin the credits if draedon is dead.
-                    if (DownedBossSystem.downedExoMechs)
+                    if (DownedBossSystem.downedExoMechs && false)
                         CreditManager.BeginCredits();
                     npc.active = false;
                     npc.netUpdate = true;

@@ -1,24 +1,18 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Metaballs;
-using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -31,6 +25,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         internal PrimitiveTrailCopy TelegraphDrawer;
 
         internal PrimitiveTrailCopy BeamDrawer;
+
+        public bool DrawBeforeNPCs => true;
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -205,7 +201,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
                 InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.3f);
                 InfernumEffectsRegistry.SideStreakVertexShader.Shader.Parameters["flipY"].SetValue(flipY);
-                
+
                 Vector2 telegraphStartPos = Projectile.Center - Projectile.velocity * 2f;
                 Vector2 telegraphEndPos = Projectile.Center + Projectile.velocity * 1750f;
 

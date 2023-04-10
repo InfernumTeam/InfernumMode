@@ -217,13 +217,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Have a brief period of immortality before attacking to allow for time to uncoil.
-            if (attackDelay < 240f && !performingDeathAnimation)
+            if (attackDelay < 270f && !performingDeathAnimation)
             {
-                npc.dontTakeDamage = true;
-                npc.damage = 0;
+                if (attackDelay < 240f)
+                {
+                    npc.dontTakeDamage = true;
+                    npc.damage = 0;
+                }
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 attackDelay++;
-                DoProjectileShootInterceptionMovement(npc, target, Utils.GetLerpValue(270f, 100f, attackDelay, true) * 2.5f);
+                DoProjectileShootInterceptionMovement(npc, target, Utils.GetLerpValue(330f, 100f, attackDelay, true) * 1.8f);
                 return false;
             }
 

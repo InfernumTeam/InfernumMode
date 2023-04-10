@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int chargeTime = 480;
             int exoTwinShootRate = 60;
             float exoTwinsBlastShootSpeed = 13f;
-            float thanatosFlySpeedFactor = 1.02f;
+            float thanatosFlySpeedFactor = 0.9f;
             if (attackTimer <= 60f)
                 thanatosFlySpeedFactor *= Utils.GetLerpValue(-15f, 60f, attackTimer, true);
 

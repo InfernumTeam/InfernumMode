@@ -15,7 +15,11 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private static RenderTarget2D pixelRenderTarget;
 
+        private static RenderTarget2D pixelRenderTargetBeforeNPCs;
+
         private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
+
+        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersListBeforeNPCs = new();
         #endregion
 
         #region Overrides
@@ -36,20 +40,27 @@ namespace InfernumMode.Common.Graphics.Primitives
         #endregion
 
         #region Methods
-        private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
+        private static void DrawScaledTarget(RenderTarget2D target, List<IPixelPrimitiveDrawer> pixelPrimitives)
         {
-            orig(self);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Draw the RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.
-            Main.spriteBatch.Draw(pixelRenderTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0f);
             Main.spriteBatch.End();
+        }
+
+        private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
+        {
+            DrawScaledTarget(pixelRenderTargetBeforeNPCs, pixelPrimDrawersListBeforeNPCs);
+            orig(self);
+            DrawScaledTarget(pixelRenderTarget, pixelPrimDrawersList);
         }
 
         private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)
         {
-            // Clear the render target from the previous frame.
+            // Clear the render targets from the previous frame.
             pixelPrimDrawersList.Clear();
+            pixelPrimDrawersListBeforeNPCs.Clear();
 
             // Check every active projectile.
             for (int i = 0; i < Main.projectile.Length; i++)
@@ -58,7 +69,12 @@ namespace InfernumMode.Common.Graphics.Primitives
 
                 // If the projectile is active, a mod projectile, and uses the interface, add it to the list of prims to draw this frame.
                 if (projectile.active && projectile.ModProjectile != null && projectile.ModProjectile is IPixelPrimitiveDrawer pixelPrimitiveProjectile)
-                    pixelPrimDrawersList.Add(pixelPrimitiveProjectile);
+                {
+                    if (pixelPrimitiveProjectile.DrawBeforeNPCs)
+                        pixelPrimDrawersListBeforeNPCs.Add(pixelPrimitiveProjectile);
+                    else
+                        pixelPrimDrawersList.Add(pixelPrimitiveProjectile);
+                }
             }
 
             // Check every active NPC.
@@ -68,11 +84,17 @@ namespace InfernumMode.Common.Graphics.Primitives
 
                 // If the NPC is active, a mod NPC, and uses our interface add it to the list of prims to draw this frame.
                 if (npc.active && npc.ModNPC != null && npc.ModNPC is IPixelPrimitiveDrawer pixelPrimitiveNPC)
-                    pixelPrimDrawersList.Add(pixelPrimitiveNPC);
+                {
+                    if (pixelPrimitiveNPC.DrawBeforeNPCs)
+                        pixelPrimDrawersListBeforeNPCs.Add(pixelPrimitiveNPC);
+                    else
+                        pixelPrimDrawersList.Add(pixelPrimitiveNPC);
+                }
             }
 
             // Draw the prims. The render target gets set here.
             DrawPrimsToRenderTarget(pixelRenderTarget, pixelPrimDrawersList);
+            DrawPrimsToRenderTarget(pixelRenderTargetBeforeNPCs, pixelPrimDrawersListBeforeNPCs);
 
             // Clear the current render target.
             Main.graphics.GraphicsDevice.SetRenderTarget(null);
@@ -114,13 +136,16 @@ namespace InfernumMode.Common.Graphics.Primitives
                     // Render target stuff should be done on the main thread only.
                     Main.QueueMainThreadAction(() =>
                     {
-                        // If it is not null, or already disposed, dispose it.
-                        if (pixelRenderTarget != null && !pixelRenderTarget.IsDisposed)
+                        // If they are not null, or already disposed, dispose them.
+                        if (pixelRenderTarget is not null && !pixelRenderTarget.IsDisposed)
                             pixelRenderTarget.Dispose();
+                        if (pixelRenderTargetBeforeNPCs is not null && !pixelRenderTargetBeforeNPCs.IsDisposed)
+                            pixelRenderTargetBeforeNPCs.Dispose();
 
-                        // Recreate the render target with the current, accurate screen dimensions.
-                        // In this case, we want to halve them to downscale it, pixelating it.
+                        // Recreate the render targets with the current, accurate screen dimensions.
+                        // In this case, we want to halve them to downscale them, performing pixelation.
                         pixelRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
+                        pixelRenderTargetBeforeNPCs = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
                     });
                 }
 

@@ -423,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     npc.velocity.Y += 0.45f * fallAcceleration;
 
                 npc.noTileCollide = npc.Bottom.Y < groundCollisionY;
-                if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 16) && didSlamGroundHitEffects == 0f)
+                if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 48) && didSlamGroundHitEffects == 0f)
                 {
                     SoundEngine.PlaySound(SlimeGodCore.ExitSound, target.Center);
                     didSlamGroundHitEffects = 1f;

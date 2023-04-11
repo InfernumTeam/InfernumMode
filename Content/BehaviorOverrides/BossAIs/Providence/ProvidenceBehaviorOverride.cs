@@ -663,7 +663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float performedEndEffects = ref npc.Infernum().ExtraAI[2];
             ref float ringShootTimer = ref npc.Infernum().ExtraAI[3];
 
-            int waveReleaseRate = GetBPMTimeMultiplier(attackCompletion >= 0.5f ? 1 : 2);
+            int waveReleaseRate = GetBPMTimeMultiplier(2);
             int fireballShootRate = (int)MathHelper.Lerp(14f, 8f, attackCompletion);
             int fireballCircleShootCount = (int)MathHelper.Lerp(12f, 18f, attackCompletion);
             float fireballShootSpeedBoost = (1f - lifeRatio) * 4f + attackCompletion * 4f;

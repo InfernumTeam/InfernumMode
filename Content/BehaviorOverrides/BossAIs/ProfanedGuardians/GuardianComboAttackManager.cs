@@ -1539,7 +1539,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static void DoBehavior_FireballBulletHell(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
             ref float fireballRingsReleased = ref commander.Infernum().ExtraAI[1];
-            float maxFireballRingsToRelease = 10f;
+            float maxFireballRingsToRelease = 11f;
 
             // The commander moves to the center of the arena, creating a border of fire around the himself and periodically releasing
             // near solid rings of fireballs that move outwards to the border.
@@ -1553,7 +1553,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 float flySpeed = 25f;
                 float maxMoveToCenterTime = 120f;
-                float fireballCount = 22f;
+                float fireballCount = 20f;
                 float fireballSpeed = 1.25f;
                 float fireballReleaseRate = 35;
                 float endOfAttackWait = 160f;
@@ -1634,6 +1634,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 });
                                 Utilities.NewProjectileBetter(npc.Center, fireballVelocity, ModContent.ProjectileType<HolyBasicFireball>(), HolySpearDamage, 0f);
                             }
+                            fireballRingsReleased++;
                         }
                     }
                 }
@@ -1798,7 +1799,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             npc.velocity.X += target.Center.DirectionTo(npc.Center).X * 10f;
 
                         // Initialize the dash telegraph.
-                        if (universalAttackTimer >= telegraphWaitTime)
+                        if (universalAttackTimer >= telegraphWaitTime && fireballRingsReleased > 0)
                             drawDashTelegraph = 1;
 
                         // Increase the opacity.

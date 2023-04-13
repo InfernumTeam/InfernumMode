@@ -70,6 +70,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
         public static Filter BloomShader => Filters.Scene["InfernumMode:Bloom"];
         public static Filter CalCloneScreenShader => Filters.Scene["InfernumMode:CalClone"];
+        public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
         public static Filter DisplacementMap => Filters.Scene["InfernumMode:DisplacementMap"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
@@ -257,6 +258,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Credits shader.
+            Ref<Effect> creditShader = new(assets.Request<Effect>("Assets/Effects/Overlays/CreditShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:Credits"] = new Filter(new(creditShader, "CreditPass"), EffectPriority.VeryHigh);
+
             // Raymarching shader.
             Ref<Effect> raymarchingShader = new(assets.Request<Effect>("Assets/Effects/Overlays/RaymarchingShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Raymarching"] = new Filter(new(raymarchingShader, "RaymarchPass"), EffectPriority.VeryHigh);

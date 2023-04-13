@@ -1,4 +1,6 @@
-﻿using InfernumMode.Common.Graphics.AttemptRecording;
+﻿using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -58,7 +60,7 @@ namespace InfernumMode.Content.Credits
             ScreenCapturer.RecordingBoss.SCal
         };
 
-        public const int TotalGIFs = 6;
+        public const int TotalGIFs = 7;
 
         public const string Artists = "Arix\nFreeman\nIbanPlay\nPengolin\nReika\nSpicySpaceSnake";
 
@@ -73,10 +75,6 @@ namespace InfernumMode.Content.Credits
         public const string Testers3 = "Nutella\nMatthionine\nMyra\nPiky\nPurpleMattik";
 
         public const string Testers4 = "Smh\nShade\nShadine\nTeiull";
-
-        public override void Load() => On.Terraria.Main.DrawInfernoRings += DrawCredits;
-
-        public override void Unload() => On.Terraria.Main.DrawInfernoRings -= DrawCredits;
 
         public override void PostUpdateDusts() => UpdateCredits();
 
@@ -138,12 +136,15 @@ namespace InfernumMode.Content.Credits
                             CreditGIFs[ActiveGifIndex]?.Update();
 
                         // Dispose of the textures partway into the next gif, to ensure that it does not try to do it while they are in use.
-                        if (CreditsTimer == disposeTime && CreditGIFs.IndexInRange(ActiveGifIndex - 1))
+                        if (CreditsTimer == disposeTime)
                         {
                             Main.RunOnMainThread(() => SetupObjects(ActiveGifIndex + 1));
-                            // Dispose of all the textures.
-                            CreditGIFs[ActiveGifIndex - 1]?.DisposeTextures();
-                            CreditGIFs[ActiveGifIndex - 1] = null;
+                            if (CreditGIFs.IndexInRange(ActiveGifIndex - 1))
+                            {
+                                // Dispose of all the textures.
+                                CreditGIFs[ActiveGifIndex - 1]?.DisposeTextures();
+                                CreditGIFs[ActiveGifIndex - 1] = null;
+                            }
                         }
 
                         if (CreditsTimer >= gifTime)
@@ -183,13 +184,22 @@ namespace InfernumMode.Content.Credits
             CreditsTimer++;
         }
 
-        private void DrawCredits(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
+        internal static void DrawCredits()
         {
-            orig(self);
-
             // Only draw if the credits are playing.
             if (!CreditsPlaying || CurrentState != CreditState.Playing)
                 return;
+
+            // This is already ended.
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            Effect creditEffect = InfernumEffectsRegistry.CreditShader.GetShader().Shader;
+            creditEffect.Parameters["noiseTexture"].SetValue(InfernumTextureRegistry.BlurryPerlinNoise.Value);
+            creditEffect.Parameters["lerpColor"].SetValue(Color.SaddleBrown.ToVector3());
+            creditEffect.Parameters["lerpColorAmount"].SetValue(0.3f);
+            creditEffect.Parameters["noiseScale"].SetValue(0.4f);
+            creditEffect.Parameters["noiseIntensity"].SetValue(0.2f);
+            creditEffect.CurrentTechnique.Passes["CreditPass"].Apply();
 
             // TODO -- Make this variable based on the amount of frames in the gif.
             float gifTime = ScreenCapturer.BaseRecordCountdownLength / ScreenCapturer.RecordingFrameSkip;
@@ -208,6 +218,9 @@ namespace InfernumMode.Content.Credits
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
                     CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer / ScreenCapturer.RecordingFrameSkip, opacity);
             }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
         }
 
         private static void SetupObjects(int index)

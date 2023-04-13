@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -55,6 +56,11 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         public const int RecordingFrameSkip = 3;
 
+        // This is so people do not see .comgif files and get concerned that they have a virus or something.
+        public const string InfoFileContents = "The weird files stored here are compressed .GIF files. These are created and used by InfernumMode, and are decompressed when needed by the mod.\n" +
+            "If you wish to verify this, you can extract the mod in-game and check out 'InfernumMode/Common/Graphics/AttemptRecording/ScreenCapturer'.\n" +
+            "Be aware it may spoil you if you have not completed the mod yet. - Toasty";
+
         public static int RecordCountdown
         {
             get;
@@ -77,10 +83,14 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         // Also it doesn't run on servers, obviously.
         public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT;
 
-        // The GIFs are saved in a folder for the player, to ensure duplicate gifs are not saved per player.
+        // The GIFs are saved in player specific folders, to ensure duplicate gifs are not saved per player.
         public static string FolderPath => $"{Main.SavePath}/BossFootage/{Main.LocalPlayer.name}";
 
-        public const string FileExtension = ".gif";
+        public static string InfoFilePath => $"{Main.SavePath}/BossFootage/README.txt";
+
+        // This is named this due to being compressed, it will not be playable via normal GIF players so having it appear like a normal
+        // .gif file would be misleading and cause potential confusion.
+        public const string FileExtension = ".compgif";
 
         public static int CaptureWidth
         {
@@ -288,6 +298,14 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 return;
             }
 
+            // Check to see if the readme exists, and create it if not.
+            if (!File.Exists(InfoFilePath))
+            {
+                using FileStream fileStream2 = File.Create(InfoFilePath);
+                using BinaryWriter binaryWriter = new(fileStream2);
+                binaryWriter.Write(InfoFileContents);
+            }
+
             string filePath = $"{FolderPath}/{GetStringFromBoss(CurrentBoss)}{FileExtension}";
             string directory = Path.GetDirectoryName(filePath);
             AnimatedGifEncoder e = new();
@@ -311,6 +329,11 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             e.Finish();
 
             byte[] data = stream.ToArray();
+            using var gZipMem = new MemoryStream(data.Length);
+            using (var gZip = new GZipStream(gZipMem, CompressionLevel.Optimal))
+                gZip.Write(data, 0, data.Length);
+
+            data = gZipMem.ToArray();
             fileStream.Write(data);
         }
 
@@ -322,38 +345,61 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             string filePath = $"{FolderPath}/{GetStringFromBoss(bossFootageToLoad)}{FileExtension}";
 
-            Image gif;
-            // Load the gif and set the frame count.
             if (File.Exists(filePath))
-                gif = Image.FromFile(filePath);
+            {
+                // Read the compressed data.
+                try
+                {
+                    var compressedData = File.ReadAllBytes(filePath);
+
+                    // Create a memory stream from it.
+                    using MemoryStream memoryStream = new(compressedData);
+                    using MemoryStream decompressionStream = new();
+
+                    // Decompress the stream.
+                    using var gZip = new GZipStream(memoryStream, CompressionMode.Decompress);
+
+                    // Copy it to a new stream.
+                    gZip.CopyTo(decompressionStream);
+
+                    // Ensure the position is at the beginning.
+                    decompressionStream.Position = 0;
+
+                    // Load the gif from the new, decompressed stream.
+                    using Bitmap gif = (Bitmap)Image.FromStream(decompressionStream);
+
+                    // Get the GUID for the frame dimension of the GIF (which is used to specify the frame dimension when accessing individual frames).
+                    FrameDimension dimension = new(gif.FrameDimensionsList[0]);
+
+                    // Get the total number of frames in the GIF.
+                    int frameCount = gif.GetFrameCount(dimension);
+                    Texture2D[] textures = new Texture2D[frameCount];
+
+                    // Loop through each frame and add it to the array.
+                    for (int i = 0; i < frameCount; i++)
+                    {
+                        // Set the active frame of the GIF to the current frame.
+                        gif.SelectActiveFrame(dimension, i);
+
+                        // Create a new Bitmap instance and copy the current frame into it.
+                        Bitmap bitmap = new(gif.Width, gif.Height);
+                        SystemGraphics graphics = SystemGraphics.FromImage(bitmap);
+                        graphics.DrawImage(gif, System.Drawing.Point.Empty);
+                        textures[i] = GetTextureFromImage(bitmap);
+                    }
+                    return textures;
+                }
+                catch (IOException)
+                {
+                    // Return this if the file is in use.
+                    return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
+                }
+            }
             else
             {
                 baseCreditsUsed = true;
                 return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
             }
-
-            // Get the GUID for the frame dimension of the GIF (which is used to specify the frame dimension when accessing individual frames).
-            FrameDimension dimension = new(gif.FrameDimensionsList[0]);
-
-            // Get the total number of frames in the GIF.
-            int frameCount = gif.GetFrameCount(dimension);
-            Texture2D[] textures = new Texture2D[frameCount];
-
-            // Loop through each frame and add it to the array.
-            for (int i = 0; i < frameCount; i++)
-            {
-                // Set the active frame of the GIF to the current frame.
-                gif.SelectActiveFrame(dimension, i);
-
-                // Create a new Bitmap instance and copy the current frame into it.
-                Bitmap bitmap = new(gif.Width, gif.Height);
-                SystemGraphics graphics = SystemGraphics.FromImage(bitmap);
-                graphics.DrawImage(gif, System.Drawing.Point.Empty);
-                textures[i] = GetTextureFromImage(bitmap);
-            }
-
-            gif.Dispose();
-            return textures;
         }
 
         // Adapted from https://gamedev.stackexchange.com/questions/6440/bitmap-to-texture2d-problem-with-colors

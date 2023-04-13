@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Content.Credits;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
@@ -28,6 +29,9 @@ namespace InfernumMode.Common.Graphics
 
             // Draw the saturation effects.
             screenTarget1 = ScreenSaturationBlurSystem.GetFinalScreenShader(screenTarget1);
+
+            // Draw the credits. This is done here so they do not get affected by the above.
+            CreditManager.DrawCredits();
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }

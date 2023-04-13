@@ -40,7 +40,7 @@ namespace InfernumMode.Common.Graphics.Primitives
         #endregion
 
         #region Methods
-        private static void DrawScaledTarget(RenderTarget2D target, List<IPixelPrimitiveDrawer> pixelPrimitives)
+        private static void DrawScaledTarget(RenderTarget2D target)
         {
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -51,9 +51,9 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
         {
-            DrawScaledTarget(pixelRenderTargetBeforeNPCs, pixelPrimDrawersListBeforeNPCs);
+            DrawScaledTarget(pixelRenderTargetBeforeNPCs);
             orig(self);
-            DrawScaledTarget(pixelRenderTarget, pixelPrimDrawersList);
+            DrawScaledTarget(pixelRenderTarget);
         }
 
         private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)

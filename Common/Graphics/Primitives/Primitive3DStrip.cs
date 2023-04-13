@@ -15,7 +15,7 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         internal Asset<Texture2D> BandTexture;
 
-        internal BasicEffect BaseEffect;
+        internal static BasicEffect BaseEffect;
 
         public delegate float VertexHeightFunction(float completionRatio);
 
@@ -36,7 +36,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             UpdateBaseEffect(out _, out _);
         }
 
-        public void UpdateBaseEffect(out Matrix effectProjection, out Matrix effectView)
+        public static void UpdateBaseEffect(out Matrix effectProjection, out Matrix effectView)
         {
             CalamityUtils.CalculatePerspectiveMatricies(out effectView, out effectProjection);
             BaseEffect.View = effectView;

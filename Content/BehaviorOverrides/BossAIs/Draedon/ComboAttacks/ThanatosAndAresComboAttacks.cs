@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 // Select segment shoot attributes.
                 int segmentShootDelay = 115;
-                if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+                if (attackTimer > attackDelay && attackTimer <= attackDelay + attackTime - 150f && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
                 {
                     totalSegmentsToFire = 24f;
                     segmentFireTime = 92f;

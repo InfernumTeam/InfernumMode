@@ -76,6 +76,10 @@ namespace InfernumMode.Content.Credits
 
         public const string Testers4 = "Smh\nShade\nShadine\nTeiull";
 
+        public override void Load() => Main.OnPostDraw += DrawCredits;
+
+        public override void Unload() => Main.OnPostDraw -= DrawCredits;
+
         public override void PostUpdateDusts() => UpdateCredits();
 
         internal static void StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss boss)
@@ -184,22 +188,14 @@ namespace InfernumMode.Content.Credits
             CreditsTimer++;
         }
 
-        internal static void DrawCredits()
+        private static void DrawCredits(GameTime gameTime)
         {
             // Only draw if the credits are playing.
             if (!CreditsPlaying || CurrentState != CreditState.Playing)
                 return;
 
             // This is already ended.
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-
-            Effect creditEffect = InfernumEffectsRegistry.CreditShader.GetShader().Shader;
-            creditEffect.Parameters["noiseTexture"].SetValue(InfernumTextureRegistry.BlurryPerlinNoise.Value);
-            creditEffect.Parameters["lerpColor"].SetValue(Color.SaddleBrown.ToVector3());
-            creditEffect.Parameters["lerpColorAmount"].SetValue(0.3f);
-            creditEffect.Parameters["noiseScale"].SetValue(0.4f);
-            creditEffect.Parameters["noiseIntensity"].SetValue(0.2f);
-            creditEffect.CurrentTechnique.Passes["CreditPass"].Apply();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
             // TODO -- Make this variable based on the amount of frames in the gif.
             float gifTime = ScreenCapturer.BaseRecordCountdownLength / ScreenCapturer.RecordingFrameSkip;
@@ -216,11 +212,15 @@ namespace InfernumMode.Content.Credits
                     opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
 
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                    CreditGIFs[ActiveGifIndex]?.Draw(CreditsTimer / ScreenCapturer.RecordingFrameSkip, opacity);
+                {
+                    CreditGIFs[ActiveGifIndex]?.DrawGIF(CreditsTimer / ScreenCapturer.RecordingFrameSkip, opacity);
+                    Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+
+                    CreditGIFs[ActiveGifIndex]?.DrawNames(opacity);
+                }
             }
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
         }
 
         private static void SetupObjects(int index)

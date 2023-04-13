@@ -30,9 +30,6 @@ namespace InfernumMode.Common.Graphics
             // Draw the saturation effects.
             screenTarget1 = ScreenSaturationBlurSystem.GetFinalScreenShader(screenTarget1);
 
-            // Draw the credits. This is done here so they do not get affected by the above.
-            CreditManager.DrawCredits();
-
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }
     }

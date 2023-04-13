@@ -1,4 +1,5 @@
-﻿using InfernumMode.Common.Graphics.AttemptRecording;
+﻿using InfernumMode.Assets.Effects;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -57,19 +58,26 @@ namespace InfernumMode.Content.Credits
             Center.Y = MathHelper.Clamp(Center.Y, 0f, Main.screenHeight);
         }
 
-        public void Draw(int textureIndex, float opacity)
+
+        public void DrawGIF(int textureIndex, float opacity)
         {
+            float noiseIntensity = 0.4f;
             if (BaseCredits)
+            {
                 textureIndex = 0;
+                noiseIntensity = 0.2f;
+            }
             else if (textureIndex >= Textures.Length)
                 textureIndex = Textures.Length - 1;
 
-            DrawGIF(textureIndex, opacity);
-            DrawNames(opacity);
-        }
+            Effect creditEffect = InfernumEffectsRegistry.CreditShader.GetShader().Shader;
+            creditEffect.Parameters["lerpColor"].SetValue(Color.SandyBrown.ToVector3());
+            creditEffect.Parameters["lerpColorAmount"].SetValue(0.5f);
+            creditEffect.Parameters["noiseScale"].SetValue(3f);
+            creditEffect.Parameters["noiseIntensity"].SetValue(noiseIntensity);
+            creditEffect.Parameters["overallOpacity"].SetValue(opacity);
+            creditEffect.CurrentTechnique.Passes["CreditPass"].Apply();
 
-        private void DrawGIF(int textureIndex, float opacity)
-        {
             Texture2D texture = Textures[textureIndex];
 
             if (texture != null && !texture.IsDisposed)
@@ -78,11 +86,11 @@ namespace InfernumMode.Content.Credits
                 if (texture.Height >= 120f)
                     scale *= 120f / texture.Height;
 
-                Main.spriteBatch.Draw(texture, Center, null, Color.White * opacity, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, Center, null, Color.White, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
         }
 
-        private void DrawNames(float opacity)
+        public void DrawNames(float opacity)
         {
             IEnumerable<string> cutUpString = Names.Split("\n").Prepend(Header);
             float stringHeight = FontAssets.MouseText.Value.MeasureString(cutUpString.ElementAt(0)).Y;

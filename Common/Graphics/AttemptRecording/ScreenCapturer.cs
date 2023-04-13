@@ -321,6 +321,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             e.Start(stream);
             e.SetDelay(0);
             e.SetRepeat(0);
+
+            // This takes quite a while to complete, 
             for (int i = 0; i < frames.Count; i++)
             {
                 if (token.IsCancellationRequested)

@@ -6,9 +6,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
 {
     public class EggSparkle : RaritySparkle
     {
-        public EggSparkle(SparkleType type, int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
+        public EggSparkle(int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
         {
-            Type = type;
             Lifetime = lifetime;
             Scale = 0;
             MaxScale = scale;

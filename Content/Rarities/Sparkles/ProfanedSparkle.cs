@@ -7,9 +7,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
 {
     public class ProfanedSparkle : RaritySparkle
     {
-        public ProfanedSparkle(SparkleType type, int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
+        public ProfanedSparkle(int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
         {
-            Type = type;
             Lifetime = lifetime;
             Scale = 0;
             MaxScale = scale;

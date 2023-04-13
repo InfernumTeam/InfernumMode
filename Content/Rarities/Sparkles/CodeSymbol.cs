@@ -14,9 +14,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
             set;
         }
 
-        public CodeSymbol(SparkleType type, int lifetime, float scale, Vector2 position, Vector2 velocity)
+        public CodeSymbol(int lifetime, float scale, Vector2 position, Vector2 velocity)
         {
-            Type = type;
             Lifetime = lifetime;
             Scale = 0;
             MaxScale = scale;

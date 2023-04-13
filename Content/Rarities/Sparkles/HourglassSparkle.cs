@@ -14,9 +14,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
 
         private readonly float DirectionMultiplier;
 
-        public HourglassSparkle(SparkleType type, int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
+        public HourglassSparkle(int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
         {
-            Type = type;
             Lifetime = lifetime;
             Scale = 0;
             MaxScale = scale;

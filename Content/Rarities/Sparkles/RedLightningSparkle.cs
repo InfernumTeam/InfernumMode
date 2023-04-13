@@ -6,9 +6,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
 {
     public class RedLightningSparkle : RaritySparkle
     {
-        public RedLightningSparkle(SparkleType type, int lifetime, float scale, float initialRotation, Vector2 position, Vector2 velocity)
+        public RedLightningSparkle(int lifetime, float scale, float initialRotation, Vector2 position, Vector2 velocity)
         {
-            Type = type;
             Lifetime = lifetime;
             Scale = 0f;
             MaxScale = scale;

@@ -6,9 +6,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
 {
     public class BubbleSparkle : RaritySparkle
     {
-        public BubbleSparkle(SparkleType type, int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
+        public BubbleSparkle(int lifetime, float scale, float initialRotation, float rotationSpeed, Vector2 position, Vector2 velocity)
         {
-            Type = type;
             Lifetime = lifetime;
             Scale = 0;
             MaxScale = scale;

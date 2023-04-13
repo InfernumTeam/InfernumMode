@@ -73,7 +73,7 @@ namespace InfernumMode.Content.Rarities
                         scale = Main.rand.NextFloat(0.25f * 0.5f, 0.25f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = Vector2.UnitY * Main.rand.NextBool().ToDirectionInt() * Main.rand.NextFloat(0.05f, 0.15f);
-                        sparklesList.Add(new HourglassSparkle(sparkleType, lifetime, scale, 0f, 0f, position, Vector2.Zero));
+                        sparklesList.Add(new HourglassSparkle(lifetime, scale, 0f, 0f, position, Vector2.Zero));
                         break;
 
                     case SparkleType.ProfanedSparkle:
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.Rarities
                         initialRotation = Main.rand.NextFloat(0f, MathHelper.TwoPi);
                         rotationSpeed = Main.rand.NextFloat(-0.03f, 0.03f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
-                        sparklesList.Add(new ProfanedSparkle(sparkleType, lifetime, scale, initialRotation, rotationSpeed, position, Vector2.Zero));
+                        sparklesList.Add(new ProfanedSparkle(lifetime, scale, initialRotation, rotationSpeed, position, Vector2.Zero));
                         break;
 
                     case SparkleType.RelicSparkle:
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.Rarities
                         rotationSpeed = Main.rand.NextFloat(-0.03f, 0.03f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = (-Vector2.UnitY * Main.rand.NextFloat(0.05f, 0.15f)).RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f));
-                        sparklesList.Add(new RelicSparkle(sparkleType, lifetime, scale, initialRotation, rotationSpeed, position, velocity));
+                        sparklesList.Add(new RelicSparkle(lifetime, scale, initialRotation, rotationSpeed, position, velocity));
                         break;
                     case SparkleType.EggSparkle:
                     case SparkleType.VassalSparkle:
@@ -101,16 +101,16 @@ namespace InfernumMode.Content.Rarities
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.4f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = Vector2.UnitY * Main.rand.NextFloat(0.1f, 0.25f);
                         if (sparkleType == SparkleType.VassalSparkle)
-                            sparklesList.Add(new VassalSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
+                            sparklesList.Add(new VassalSparkle(lifetime, scale, 0f, 0f, position, velocity));
                         else
-                            sparklesList.Add(new EggSparkle(sparkleType, lifetime, scale, 0f, 0f, position, velocity));
+                            sparklesList.Add(new EggSparkle(lifetime, scale, 0f, 0f, position, velocity));
                         break;
                     case SparkleType.CodeSymbols:
                         lifetime = Main.rand.Next(30, 42);
                         scale = Main.rand.NextFloat(0.8f, 1f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f))) + Vector2.UnitY * 5f;
                         velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f)) * Main.rand.NextFloat(0.15f, 0.5f);
-                        sparklesList.Add(new CodeSymbol(sparkleType, lifetime, scale, position, velocity));
+                        sparklesList.Add(new CodeSymbol(lifetime, scale, position, velocity));
                         break;
                     case SparkleType.RedLightningSparkle:
                         lifetime = Main.rand.Next(35, 48);
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.Rarities
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = position.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.15f) * Main.rand.NextFloat(0.2f, 0.54f);
                         velocity.Y -= 0.14f;
-                        sparklesList.Add(new RedLightningSparkle(sparkleType, lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, position, velocity));
+                        sparklesList.Add(new RedLightningSparkle(lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, position, velocity));
                         break;
                     case SparkleType.PuritySparkle:
                         lifetime = (int)Main.rand.NextFloat(70f - 25f, 70f);
@@ -126,7 +126,7 @@ namespace InfernumMode.Content.Rarities
                         initialRotation = Main.rand.NextFloat(0f, MathHelper.TwoPi);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = (-Vector2.UnitY * Main.rand.NextFloat(0.05f, 0.15f)).RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
-                        sparklesList.Add(new PuritySparkle(sparkleType, lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, 0f, position, velocity));
+                        sparklesList.Add(new PuritySparkle(lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, 0f, position, velocity));
                         break;
                     case SparkleType.MusicNotes:
                         lifetime = Main.rand.Next(50, 105);
@@ -135,7 +135,7 @@ namespace InfernumMode.Content.Rarities
                         velocity = position.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.15f) * Main.rand.NextFloat(0.125f, 0.432f);
                         velocity.Y -= 0.25f;
                         velocity *= 0.4f;
-                        sparklesList.Add(new MusicNoteSymbol(sparkleType, lifetime, scale, position, velocity));
+                        sparklesList.Add(new MusicNoteSymbol(lifetime, scale, position, velocity));
                         break;
                     case SparkleType.BubbleSparkle:
                         lifetime = (int)Main.rand.NextFloat(90f, 120f);
@@ -144,7 +144,7 @@ namespace InfernumMode.Content.Rarities
                         rotationSpeed = Main.rand.NextFloat(0.01f, 0.03f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.5f)));
                         velocity = (-Vector2.UnitY * Main.rand.NextFloat(0.05f, 0.15f)).RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
-                        sparklesList.Add(new BubbleSparkle(sparkleType, lifetime, scale, initialRotation, rotationSpeed, position, velocity));
+                        sparklesList.Add(new BubbleSparkle(lifetime, scale, initialRotation, rotationSpeed, position, velocity));
                         break;
                     case SparkleType.CyanLightningSparkle:
                         for (int i = 0; i < 2; i++)
@@ -154,7 +154,7 @@ namespace InfernumMode.Content.Rarities
                             position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                             velocity = position.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.15f) * Main.rand.NextFloat(0.1f, 0.3f);
                             velocity.Y -= 0.1f;
-                            sparklesList.Add(new CyanLightningSparkle(sparkleType, lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, position, velocity));
+                            sparklesList.Add(new CyanLightningSparkle(lifetime, scale, velocity.ToRotation() + MathHelper.PiOver2, position, velocity));
                         }
                         break;
                 }

@@ -7,7 +7,6 @@ namespace InfernumMode.Content.Rarities.Sparkles
 {
     public class RaritySparkle
     {
-        public SparkleType Type;
         public int Time;
         public int Lifetime;
         public float MaxScale;

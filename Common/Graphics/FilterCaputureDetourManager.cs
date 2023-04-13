@@ -27,9 +27,6 @@ namespace InfernumMode.Common.Graphics
             // Draw lighting effects.
             screenTarget1 = FancyLightingSystem.DrawRTStuff(screenTarget1);
 
-            // Draw the saturation effects.
-            screenTarget1 = ScreenSaturationBlurSystem.GetFinalScreenShader(screenTarget1);
-
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }
     }

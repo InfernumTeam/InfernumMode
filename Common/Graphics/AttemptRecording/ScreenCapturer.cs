@@ -161,6 +161,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         {
             FreeHandles();
             cancelThread?.Dispose();
+            cancelThread = new();
         }
 
         public override void PostUpdateEverything()

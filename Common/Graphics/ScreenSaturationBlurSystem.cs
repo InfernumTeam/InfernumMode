@@ -75,18 +75,19 @@ namespace InfernumMode.Common.Graphics
 
         public static int TotalBlurIterations => 1;
 
-        public static float DownscaleFactor => 32f;
+        public static float DownscaleFactor => 48f;
 
-        public static float BlurBrightnessFactor => 4.5f;
+        public static float BlurBrightnessFactor => 120f;
 
-        public static float BlurBrightnessExponent => 1.93f;
+        public static float BlurBrightnessExponent => 4f;
 
-        public static float BlurSaturationBiasInterpolant => 0.3f;
+        public static float BlurSaturationBiasInterpolant => 0.15f;
 
         public override void OnModLoad()
         {
             On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
+            On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
             {
@@ -121,7 +122,7 @@ namespace InfernumMode.Common.Graphics
             orig(self, gameTime);
         }
 
-        internal static RenderTarget2D GetFinalScreenShader(RenderTarget2D screenTarget1)
+        internal static void GetFinalScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
         {
             // Copy the contents of the screen target in the final screen target.
             FinalScreenTarget.SwapToRenderTarget();
@@ -133,6 +134,8 @@ namespace InfernumMode.Common.Graphics
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
             Main.instance.GraphicsDevice.SetRenderTarget(null);
+
+            orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -157,8 +160,6 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.End();
             if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
                 Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
-
-            return screenTarget1;
         }
 
         internal static void DrawAdditiveCache()
@@ -236,6 +237,7 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
             Main.spriteBatch.Draw(DownscaledBloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, DownscaleFactor, 0, 0f);
 
+            Main.spriteBatch.ExitShaderRegion();
             while (ThingsToBeManuallyBlurred.Count > 0)
             {
                 ThingsToBeManuallyBlurred[0].Draw(Main.spriteBatch);

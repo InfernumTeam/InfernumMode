@@ -74,6 +74,9 @@ float4 Filter(float2 coords : TEXCOORD0) : COLOR0
     float blurLuminosity = (blurColor.r + blurColor.g + blurColor.b) / 3;
     float luminosity = (color.r + color.g + color.b) / 3;
     
+    if (onlyShowBlurMap)
+        return blurColor;
+    
     // Bias blur values towards higher saturations.
     float3 blurHsv = rgb2hsv(blurColor.rgb);
     blurHsv.y = saturate(blurHsv.y + blurSaturationBiasInterpolant * InverseLerp(0.24, 0.32, blurLuminosity) * InverseLerp(0.28, 0.36, luminosity));
@@ -85,9 +88,6 @@ float4 Filter(float2 coords : TEXCOORD0) : COLOR0
     colorHsv.y = saturate(colorHsv.y + maxSaturationAdditive * blurLuminosity);
     color = float4(hsv2rgb(colorHsv), 1);
     color = 1 - exp(-color);
-    
-    if (onlyShowBlurMap)
-        return blurColor;
     
     return color + pow(blurColor, blurExponent) * blurAdditiveBrightness;
 }

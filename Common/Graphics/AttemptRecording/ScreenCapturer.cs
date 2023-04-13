@@ -86,7 +86,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         // The GIFs are saved in player specific folders, to ensure duplicate gifs are not saved per player.
         public static string FolderPath => $"{Main.SavePath}/BossFootage/{Main.LocalPlayer.name}";
 
-        public const float DownscaleFactor = 2.5f;
+        public const float DownscaleFactor = 3f;
 
         public static string InfoFilePath => $"{Main.SavePath}/BossFootage/README.txt";
         // This is named this due to being compressed, it will not be playable via normal GIF players so having it appear like a normal
@@ -326,7 +326,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             // This takes quite a while to complete, 
             for (int i = 0; i < frames.Count; i++)
             {
-                if (token.IsCancellationRequested)
+                if (token.IsCancellationRequested || i >= frames.Count)
                     return;
 
                 e.AddFrame(frames[i]);

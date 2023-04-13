@@ -342,6 +342,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 Main.blockInput = false;
             }
 
+            // Become pissed once the Great Sand Shark is dead.
+            if (BereftVassalComboAttackManager.FightState == BereftVassalFightState.EnragedBereftVassal && CurrentAttack != BereftVassalAttackType.SummonGreatSandShark && NPC.ai[2] == 0f)
+            {
+                SelectNextAttack();
+                CurrentAttack = BereftVassalAttackType.TransitionToFinalPhase;
+                NPC.ai[2] = 1f;
+            }
+
             // Create a sandstorm when in the last phase.
             if (Enraged)
                 CreateSandstormParticle(Target.Center.X < NPC.Center.X);

@@ -80,6 +80,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         // The GIFs are saved in a folder for the player, to ensure duplicate gifs are not saved per player.
         public static string FolderPath => $"{Main.SavePath}/BossFootage/{Main.LocalPlayer.name}";
 
+        public const float DownscaleFactor = 2.5f;
+
         public const string FileExtension = ".gif";
 
         public static int CaptureWidth
@@ -246,7 +248,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             // If the copy was successful, create a new bitmap from the handle.
             if (success)
             {
-                Bitmap bitmap = Image.FromHbitmap(bitmapScreenHandle);
+                var downscaledSize = new Size((int)(CaptureWidth / DownscaleFactor), (int)(CaptureHeight / DownscaleFactor));
+                Bitmap bitmap = new(Image.FromHbitmap(bitmapScreenHandle), downscaledSize);
 
                 // Clean up unmanaged resources.
                 SelectObject(compatibleDevideContextHandle, oldBitmap);

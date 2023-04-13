@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Common.Graphics.AttemptRecording;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,9 +74,9 @@ namespace InfernumMode.Content.Credits
 
             if (texture != null && !texture.IsDisposed)
             {
-                Vector2 scale = Vector2.One;
-                if (texture.Width >= 640)
-                    scale *= 640f / texture.Width;
+                Vector2 scale = Vector2.One * ScreenCapturer.DownscaleFactor;
+                if (texture.Height >= 120f)
+                    scale *= 120f / texture.Height;
 
                 Main.spriteBatch.Draw(texture, Center, null, Color.White * opacity, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }

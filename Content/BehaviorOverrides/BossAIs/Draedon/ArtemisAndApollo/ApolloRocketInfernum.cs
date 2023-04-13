@@ -168,6 +168,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             SpriteEffects direction = SpriteEffects.None;
             if (Projectile.spriteDirection == -1)
                 direction = SpriteEffects.FlipHorizontally;
+            Utilities.DrawBackglow(Projectile, Color.Lime with { A = 0 }, 4f, frame);
             Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, Projectile.scale, direction, 0f);
             return false;
         }

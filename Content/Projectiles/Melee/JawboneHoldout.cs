@@ -101,7 +101,6 @@ namespace InfernumMode.Content.Projectiles.Melee
             }
             float interpolant = MathF.Sin(GetSwingOffsetAngle(SwingCompletion) * MathF.PI) * 0.5f + 0.5f;
             BladeDistance = MathHelper.Lerp(100f, 170f, interpolant);
-            Main.NewText(interpolant);
             AdjustPlayerValues();
             Projectile.spriteDirection = Projectile.direction = Projectile.velocity.X.DirectionalSign();
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Lerp(SwingWidth / 2f * SwingDirection, (0f - SwingWidth) / 2f * SwingDirection, GetSwingOffsetAngle(SwingCompletion));

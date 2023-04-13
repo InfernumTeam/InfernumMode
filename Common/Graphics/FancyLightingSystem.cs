@@ -1,12 +1,15 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using CalamityMod.NPCs.ExoMechs;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics
@@ -145,7 +148,7 @@ namespace InfernumMode.Common.Graphics
             DoFinalDrawing(Main.spriteBatch, screenTarget1);
 
             // Draw Bloom, only if the saturation bloom is not active.
-            if (!ScreenSaturationBlurSystem.ShouldEffectBeActive)
+            if (!InfernumMode.CanUseCustomAIs || !Main.npc.Any(n => n.active && (n.type == ModContent.NPCType<Draedon>() || n.type == NPCID.HallowBoss)))
                 DoBloomEffect(Main.spriteBatch, screenTarget1);
 
             return screenTarget1;

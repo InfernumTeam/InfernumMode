@@ -36,7 +36,7 @@ namespace InfernumMode.Content.Credits
 
         private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4 };
 
-        private static readonly string[] Headers = { "Programmers", "Musicians", "Artists", "Testers", "Testers", "Testers", "Testers"};
+        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers"};
 
         private static readonly Color[] HeaderColors = 
         { 
@@ -114,8 +114,8 @@ namespace InfernumMode.Content.Credits
                 return;
 
             // TODO -- Make this variable based on the amount of frames in the gif.
-            float gifTime = ScreenCapturer.BaseRecordCountdownLength / ScreenCapturer.RecordingFrameSkip;
-            float disposeTime = 60f;
+            float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
+            float disposeTime = 1f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
 
@@ -126,7 +126,7 @@ namespace InfernumMode.Content.Credits
                     if (CreditsTimer == 0)
                         Main.RunOnMainThread(() => SetupObjects(0));
 
-                    if (CreditsTimer >= gifTime)
+                    if (CreditsTimer >= 240f)
                     {
                         CurrentState = CreditState.Playing;
                         CreditsTimer = 0;
@@ -198,7 +198,7 @@ namespace InfernumMode.Content.Credits
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
             // TODO -- Make this variable based on the amount of frames in the gif.
-            float gifTime = ScreenCapturer.BaseRecordCountdownLength / ScreenCapturer.RecordingFrameSkip;
+            float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
 
@@ -213,7 +213,7 @@ namespace InfernumMode.Content.Credits
 
                 if (CreditGIFs.IndexInRange(ActiveGifIndex))
                 {
-                    CreditGIFs[ActiveGifIndex]?.DrawGIF(CreditsTimer / ScreenCapturer.RecordingFrameSkip, opacity);
+                    CreditGIFs[ActiveGifIndex]?.DrawGIF(CreditsTimer / 3, opacity);
                     Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
                     CreditGIFs[ActiveGifIndex]?.DrawNames(opacity);
@@ -233,7 +233,7 @@ namespace InfernumMode.Content.Credits
                 return;
          
             Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses[index], out bool baseCreditsUsed);
-            CreditGIFs[index] = new CreditAnimationObject(new(Main.screenWidth * 0.5f, Main.screenHeight * 0.3f), -Vector2.UnitY * 0.05f, textures, Headers[index], Names[index], HeaderColors[index], baseCreditsUsed);            
+            CreditGIFs[index] = new CreditAnimationObject(-Vector2.UnitY * 0.075f, textures, Headers[index], Names[index], HeaderColors[index], index % 2 == 1, baseCreditsUsed);            
         }
     }
 }

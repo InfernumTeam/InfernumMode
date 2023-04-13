@@ -31,7 +31,7 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
     
     // Create random "film grain" based noise on the image.
     float noise = noise2(uv * noiseScale) * noiseIntensity;
-    color -= noise;
+    color += noise;
     
     float opacity = 1;
     if (distanceFromCenter > 0.9)

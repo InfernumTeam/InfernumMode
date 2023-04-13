@@ -424,7 +424,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 // results in the textures r and b channels being swapped which is not ideal.
                 Parallel.For(0, imgData.Length, i =>
                 {
-                    imgData[i] = ((byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000));
+                    imgData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
                 });
 
                 // Unlock the bits.

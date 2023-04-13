@@ -24,18 +24,21 @@ namespace InfernumMode.Content.Credits
 
         public Color HeaderColor;
 
+        public bool SwapSides;
+
         private readonly bool BaseCredits;
 
-        public Vector2 TextCenter => Center + new Vector2(0f, 230f);
+        public Vector2 TextCenter => new(Main.screenWidth * (SwapSides ? 0.35f : 0.65f), Center.Y);
 
-        public CreditAnimationObject(Vector2 center, Vector2 velocity, Texture2D[] textures, string header, string names, Color headerColor, bool baseCredits)
+        public CreditAnimationObject(Vector2 velocity, Texture2D[] textures, string header, string names, Color headerColor, bool swapSides, bool baseCredits)
         {
-            Center = center;
+            Center = new(Main.screenWidth * (swapSides ? 0.7f : 0.3f), Main.screenHeight * 0.5f);
             Velocity = velocity;
             Textures = textures;
             Header = header;
             Names = names;
             HeaderColor = headerColor;
+            SwapSides = swapSides;
             BaseCredits = baseCredits;
         }
 
@@ -61,54 +64,82 @@ namespace InfernumMode.Content.Credits
 
         public void DrawGIF(int textureIndex, float opacity)
         {
-            float noiseIntensity = 0.4f;
+            // Get the noise intensity.
+            float noiseIntensity = 0.1f;
+            // If the base credits are in use, a single image is used and the noise intensity is lowered as a result.
             if (BaseCredits)
             {
                 textureIndex = 0;
-                noiseIntensity = 0.2f;
+                noiseIntensity = 0.05f;
             }
+
+            // Ensure the texture index remains in bounds.
             else if (textureIndex >= Textures.Length)
                 textureIndex = Textures.Length - 1;
 
+            // Setup the credits shader parameters. This gives them an ol' timey look.
             Effect creditEffect = InfernumEffectsRegistry.CreditShader.GetShader().Shader;
             creditEffect.Parameters["lerpColor"].SetValue(Color.SandyBrown.ToVector3());
-            creditEffect.Parameters["lerpColorAmount"].SetValue(0.5f);
+            creditEffect.Parameters["lerpColorAmount"].SetValue(0.3f);
             creditEffect.Parameters["noiseScale"].SetValue(3f);
             creditEffect.Parameters["noiseIntensity"].SetValue(noiseIntensity);
             creditEffect.Parameters["overallOpacity"].SetValue(opacity);
             creditEffect.CurrentTechnique.Passes["CreditPass"].Apply();
 
+            // Get the current frame from the textures.
             Texture2D texture = Textures[textureIndex];
 
+            // Ensure that is is valid and non disposed before trying to draw to avoid errors. This is because they are disposed after use due to the sheer amount of them.
             if (texture != null && !texture.IsDisposed)
             {
+                // Get the scale.
                 Vector2 scale = Vector2.One * ScreenCapturer.DownscaleFactor;
                 if (texture.Height >= 120f)
                     scale *= 120f / texture.Height;
-
+                
+                // Draw the frame.
                 Main.spriteBatch.Draw(texture, Center, null, Color.White, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
         }
 
         public void DrawNames(float opacity)
         {
+            // Split up the names into new lines per name.
             IEnumerable<string> cutUpString = Names.Split("\n").Prepend(Header);
-            float stringHeight = FontAssets.MouseText.Value.MeasureString(cutUpString.ElementAt(0)).Y;
+            // Get the height. This is done for the first one only, so the gap inbetween each name is the same.
+            float stringHeight = FontAssets.DeathText.Value.MeasureString(cutUpString.ElementAt(0)).Y;
+
             for (int i = 0; i < cutUpString.Count(); i++)
             {
-                float stringWidth = FontAssets.MouseText.Value.MeasureString(cutUpString.ElementAt(i)).X * 0.5f;
-                Vector2 drawPos = TextCenter + new Vector2(-stringWidth * 0.5f, stringHeight * i);
-                Color textColor = Color.White;
-                Vector2 scale = Vector2.One;
+                float stringWidth = FontAssets.DeathText.Value.MeasureString(cutUpString.ElementAt(i)).X * 0.5f;
 
+                // Get the draw position using the text center, and offseting the Y position based on the number of names to center it. The latter half calculates the distance travelled by velocity.
+                Vector2 drawPos = new(TextCenter.X, Main.screenHeight * (0.5f - 0.02f * cutUpString.Count()) - (Main.screenHeight * 0.5f - TextCenter.Y));
+                // Center the text and lower it based on its position in the name list.
+                drawPos += new Vector2(-stringWidth * 0.5f, stringHeight * 0.9f * i);
+                Color textColor = Color.White;
+
+                // The backglow alternates throughout every color.
+                float hue = Main.GlobalTimeWrappedHourly * 0.02f % 1f;
+                if (hue < 0f)
+                    hue += 1f;
+
+                Color backglowColor = Main.hslToRgb(hue, 1f, 0.5f);
+                Vector2 scale = Vector2.One * 0.8f;
+                // Properly center the text.
+                Vector2 origin = new(stringWidth * 0.5f, stringHeight * 0.5f);
+
+                // The header has some attributes changed to make it stand out from the names.
                 if (i is 0)
                 {
-                    textColor = HeaderColor;
-                    scale *= 1.2f;
+                    textColor = Color.Lerp(HeaderColor, Color.White, 0.7f);
+                    backglowColor = HeaderColor;
+                    scale *= 1.1f;
                 }
 
-                ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.MouseText.Value, cutUpString.ElementAt(i), drawPos, textColor * opacity, 0f, 
-                    new Vector2(stringWidth * 0.5f, stringHeight * 0.5f), scale);
+                // Draw the backglow, then the name.
+                ChatManager.DrawColorCodedStringShadow(Main.spriteBatch, FontAssets.DeathText.Value, cutUpString.ElementAt(i), drawPos, backglowColor * 0.25f * opacity, 0f, origin, scale);
+                ChatManager.DrawColorCodedString(Main.spriteBatch, FontAssets.DeathText.Value, cutUpString.ElementAt(i), drawPos, textColor * opacity, 0f, origin, scale);
             }
         }
     }

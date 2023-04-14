@@ -70,6 +70,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumCyanSparkRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumScarletSparkleRarity>())
+                {
+                    InfernumScarletSparkleRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

@@ -1,5 +1,5 @@
-﻿using CalamityMod.Items.Weapons.Rogue;
-using InfernumMode.Content.Projectiles;
+﻿using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.Items
             Item.shoot = ModContent.ProjectileType<BrimstoneCrescentStaffProj>();
 
             Item.value = ItemRarityID.LightPurple;
-            //Item.rare = ModContent.RarityType<InfernumRedSparkRarity>();
+            Item.rare = ModContent.RarityType<InfernumScarletSparkleRarity>();
             Item.Infernum_Tooltips().DeveloperItem = true;
         }
 

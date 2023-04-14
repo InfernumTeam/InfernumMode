@@ -6,5 +6,4 @@ hideCode=false
 hideResources=false
 includeSource = true
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
-homepage = https://discord.gg/cKh6nyrSE7
 dllReferences = Gif

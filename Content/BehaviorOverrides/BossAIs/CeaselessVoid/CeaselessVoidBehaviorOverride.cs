@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = Vector2.Lerp(npc.Center, target.Center, lookAtTargetInterpolant);
             }
 
-            if (!phase3 && Chains is not null)
+            if (!phase3 && Chains is not null && npc.ai[3] == 0f)
                 npc.Center = Chains[0][0].position;
 
             switch ((CeaselessVoidAttackType)(int)attackType)
@@ -525,11 +525,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 hasCreatedDarkEnergy = 1f;
                 npc.netUpdate = true;
             }
-
-            // Approach the target if they're too far away.
-            float hoverSpeedInterpolant = Utils.Remap(npc.Distance(target.Center), DarkEnergyOffsetRadius + 120f, DarkEnergyOffsetRadius + 600f, 0f, 0.084f);
-            if (hoverSpeedInterpolant > 0f)
-                npc.Center = Vector2.Lerp(npc.Center, target.Center, hoverSpeedInterpolant);
 
             // Disable damage.
             npc.dontTakeDamage = true;

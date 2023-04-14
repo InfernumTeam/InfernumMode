@@ -106,7 +106,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 replaceTooltipText("Tooltip1", summoningText);
             }
 
-            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<RuneofKos>())
+            if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<RuneofKos>() && WorldSaveSystem.ForbiddenArchiveCenter.X != 0)
             {
                 TooltipLine developerLine = new(Mod, "CVWarning", CalamityUtils.ColorMessage("The Ceaseless Void can only be fought in the Archives", Color.Magenta));
                 tooltips.Add(developerLine);

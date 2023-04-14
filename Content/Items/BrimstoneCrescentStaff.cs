@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Items.Weapons.Rogue;
 using InfernumMode.Content.Projectiles;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -8,12 +9,26 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items
 {
-    public class BrimstoneCrescentStaff : RogueWeapon
+    public class BrimstoneCrescentStaff : ModItem
     {
+        public static int SpinTime => 54;
+
+        public static int RaiseUpwardsTime => 27;
+
+        public static int DebuffTime => 15;
+
+        public static int ExplosionBaseDamage => 960;
+
+        public static float ForcefieldDRMultiplier => 0.66f;
+
+        public static float DamageMultiplier => 0.5f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Crescent Staff");
-            Tooltip.SetDefault("todo");
+            Tooltip.SetDefault($"Using the staff toggles a powerful forcefield that provides a universal {MathF.Round(ForcefieldDRMultiplier * 100f):N2}% DR\n" +
+                "Hits that are applied to you while the forcefield is up release a violent explosion that hurts nearby enemies\n" +
+                $"When the forcefield is activated, and for {DebuffTime} seconds afterwards, your damage output is reduced by {MathF.Round((1f - DamageMultiplier) * 100f):N2}%");
             SacrificeTotal = 1;
         }
 
@@ -28,7 +43,7 @@ namespace InfernumMode.Content.Items
             Item.useTime = 20;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.UseSound = SoundID.Item1;
-            Item.autoReuse = true;
+            Item.autoReuse = false;
             Item.shoot = ModContent.ProjectileType<BrimstoneCrescentStaffProj>();
 
             Item.value = ItemRarityID.LightPurple;

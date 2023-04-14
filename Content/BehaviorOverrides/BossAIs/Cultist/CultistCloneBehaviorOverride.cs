@@ -1,3 +1,4 @@
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -73,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             CultistBehaviorOverride.ExtraDrawcode(npc);
-            CultistBehaviorOverride.DrawShield(npc, true);
+            CultistBehaviorOverride.DrawForcefield(npc.Center - Main.screenPosition, npc.Opacity * 0.55f, Color.DeepSkyBlue, InfernumTextureRegistry.WavyNoise.Value);
             return true;
         }
 

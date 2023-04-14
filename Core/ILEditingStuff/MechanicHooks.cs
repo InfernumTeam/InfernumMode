@@ -14,8 +14,10 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Schematics;
 using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -356,14 +358,18 @@ namespace InfernumMode.Core.ILEditingStuff
                 orig(self);
                 return;
             }
+
             // Draw the render target, optionally with a dye shader.
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
-            float shieldScale = 0.3f * Main.LocalPlayer.GetModPlayer<SealocketPlayer>().ForcefieldOpacity;
+            float shieldScale = Main.LocalPlayer.GetModPlayer<SealocketPlayer>().ForcefieldOpacity * 0.3f;
             Vector2 shieldSize = Vector2.One * shieldScale * 512f;
             Rectangle shaderArea = Utils.CenteredRectangle(PlayerForcefieldTarget.Size(), shieldSize);
-            ForcefieldShader?.Apply(null, new(PlayerForcefieldTarget, Vector2.Zero, shaderArea, Color.White));
+            SealocketPlayer sealocketPlayer = Main.LocalPlayer.GetModPlayer<SealocketPlayer>();
+
+            if (sealocketPlayer.ForcefieldOpacity >= 0.01f && sealocketPlayer.ForcefieldDissipationInterpolant < 0.99f)
+                ForcefieldShader?.Apply(null, new(PlayerForcefieldTarget, Vector2.Zero, shaderArea, Color.White));
             Main.spriteBatch.Draw(PlayerForcefieldTarget, Main.LocalPlayer.Center - Main.screenPosition, null, Color.White, 0f, PlayerForcefieldTarget.Size() * 0.5f, 1f, 0, 0f);
 
             Main.spriteBatch.ExitShaderRegion();
@@ -411,14 +417,26 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static void DrawForcefield(Player player)
         {
-            SealocketPlayer modPlayer = player.GetModPlayer<SealocketPlayer>();
-            modPlayer.ForcefieldOpacity = 1f;
-            if (modPlayer.ForcefieldOpacity <= 0.01f || modPlayer.ForcefieldDissipationInterpolant >= 0.99f)
-                return;
+            SealocketPlayer sealocketPlayer = player.GetModPlayer<SealocketPlayer>();
+            BrimstoneCrescentForcefieldPlayer crescentPlayer = player.GetModPlayer<BrimstoneCrescentForcefieldPlayer>();
 
-            float forcefieldOpacity = (1f - modPlayer.ForcefieldDissipationInterpolant) * modPlayer.ForcefieldOpacity;
+            sealocketPlayer.ForcefieldOpacity = 1f;
+
+            // Draw the sealocket forcefield.
             Vector2 forcefieldDrawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f + Vector2.UnitY * player.gfxOffY;
-            BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, modPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+            if (sealocketPlayer.ForcefieldOpacity >= 0.01f && sealocketPlayer.ForcefieldDissipationInterpolant < 0.99f)
+            {
+                float forcefieldOpacity = (1f - sealocketPlayer.ForcefieldDissipationInterpolant) * sealocketPlayer.ForcefieldOpacity;
+                BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, sealocketPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+            }
+
+            // Draw the Brimstone Crescent forcefield.
+            if (crescentPlayer.ForcefieldStrengthInterpolant > 0f)
+            {
+                float scale = MathHelper.Lerp(0.55f, 1.5f, 1f - crescentPlayer.ForcefieldStrengthInterpolant);
+                Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * crescentPlayer.ForcefieldStrengthInterpolant;
+                CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.FireNoise.Value, scale);
+            }
         }
 
         public void Load()

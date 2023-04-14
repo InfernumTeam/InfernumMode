@@ -1524,36 +1524,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 Main.spriteBatch.ExitShaderRegion();
 
             if (!dying)
-                DrawShield(npc);
+                DrawForcefield(npc.Center - Main.screenPosition, npc.Opacity, Color.DeepSkyBlue, InfernumTextureRegistry.WavyNoise.Value);
             return false;
         }
 
-        public static void DrawShield(NPC npc, bool clone = false)
+        public static void DrawForcefield(Vector2 drawPosition, float opacity, Color color, Texture2D noise, float scaleFactor = 1f)
         {
             Texture2D invis = InfernumTextureRegistry.Invisible.Value;
-            Texture2D noise = InfernumTextureRegistry.WavyNoise.Value;
             float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
             float eased = CalamityUtils.PolyInOutEasing(interpolant, 1);
             float scale = MathHelper.Lerp(0.95f, 1.05f, eased);
             float noiseScale = MathHelper.Lerp(1.55f, 1.45f, eased);
             float fresnelScale = MathHelper.Lerp(0.85f, 1.15f, eased);
-            ref float angle = ref npc.Infernum().ExtraAI[10];
             Vector2 noiseDirection = -Vector2.UnitX;
 
             Effect shield = InfernumEffectsRegistry.CultistShieldShader.Shader;
             shield.Parameters["sampleTexture2"].SetValue(noise);
-            shield.Parameters["mainColor"].SetValue(Color.DeepSkyBlue.ToVector3());
+            shield.Parameters["mainColor"].SetValue(color.ToVector3());
             shield.Parameters["noiseScale"].SetValue(noiseScale);
             shield.Parameters["noiseDirection"].SetValue(noiseDirection);
             shield.Parameters["resolution"].SetValue(new Vector2(130f));
             shield.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            shield.Parameters["fresnelPower"].SetValue(9f * fresnelScale);
+            shield.Parameters["fresnelPower"].SetValue(fresnelScale * 9f);
             shield.Parameters["scrollSpeed"].SetValue(0.345f);
             shield.Parameters["fill"].SetValue(0.1f);
-            shield.Parameters["opacity"].SetValue(npc.Opacity * (clone ? 0.55f : 1f));
+            shield.Parameters["opacity"].SetValue(opacity);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, Main.Rasterizer, shield, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(invis, npc.Center - Main.screenPosition, null, Color.White, 0f, invis.Size() * 0.5f, npc.scale * 150f * scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(invis, drawPosition, null, Color.White, 0f, invis.Size() * 0.5f, scale * scaleFactor * 150f, SpriteEffects.None, 0f);
             Main.spriteBatch.ExitShaderRegion();
         }
 

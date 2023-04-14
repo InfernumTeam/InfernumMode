@@ -407,7 +407,6 @@ namespace InfernumMode.GlobalInstances
             BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
         }
 
-
         public override bool CheckDead(NPC npc)
         {
             if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumCheckDeadOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCCheckDeadDelegate value))

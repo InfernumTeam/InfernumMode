@@ -37,6 +37,12 @@ namespace InfernumMode.Common.Graphics
             On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
         }
 
+        public override void OnModUnload()
+        {
+            Main.OnPreDraw -= PrepareAEWTargets;
+            On.Terraria.Main.SetDisplayMode -= ResetTargetSizes;
+        }
+
         private void ResetTargetSizes(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
             if (ShadowDrawTarget is not null && width == ShadowDrawTarget.Width && height == ShadowDrawTarget.Height)

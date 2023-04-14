@@ -5,6 +5,7 @@ using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using System.Threading;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -36,24 +37,24 @@ namespace InfernumMode.Content.Credits
 
         private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4 };
 
-        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers"};
+        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers" };
 
-        private static readonly Color[] HeaderColors = 
-        { 
-            new(212, 56, 34), 
-            new(143, 11, 139), 
-            new(80, 105, 185), 
-            new(0, 148, 75), 
-            new(0, 148, 75), 
-            new(0, 148, 75), 
+        private static readonly Color[] HeaderColors =
+        {
+            new(212, 56, 34),
+            new(143, 11, 139),
+            new(80, 105, 185),
+            new(0, 148, 75),
+            new(0, 148, 75),
+            new(0, 148, 75),
             new(0, 148, 75)
         };
 
-        private static readonly ScreenCapturer.RecordingBoss[] Bosses = 
-        { 
-            ScreenCapturer.RecordingBoss.KingSlime, 
-            ScreenCapturer.RecordingBoss.WoF, 
-            ScreenCapturer.RecordingBoss.Calamitas, 
+        private static readonly ScreenCapturer.RecordingBoss[] Bosses =
+        {
+            ScreenCapturer.RecordingBoss.KingSlime,
+            ScreenCapturer.RecordingBoss.WoF,
+            ScreenCapturer.RecordingBoss.Calamitas,
             ScreenCapturer.RecordingBoss.Vassal,
             ScreenCapturer.RecordingBoss.Provi,
             ScreenCapturer.RecordingBoss.Draedon,
@@ -231,9 +232,12 @@ namespace InfernumMode.Content.Credits
             // Leave if the index is out of the range.
             if (!CreditGIFs.IndexInRange(index))
                 return;
-         
-            Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses[index], out bool baseCreditsUsed);
-            CreditGIFs[index] = new CreditAnimationObject(-Vector2.UnitY * 0.075f, textures, Headers[index], Names[index], HeaderColors[index], index % 2 == 1, baseCreditsUsed);            
+
+            new Thread(() =>
+            {
+                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses[index], out bool baseCreditsUsed);
+                CreditGIFs[index] = new CreditAnimationObject(-Vector2.UnitY * 0.075f, textures, Headers[index], Names[index], HeaderColors[index], index % 2 == 1, baseCreditsUsed);
+            }).Start();
         }
     }
 }

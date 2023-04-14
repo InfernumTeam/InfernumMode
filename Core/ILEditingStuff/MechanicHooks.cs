@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
@@ -565,11 +566,11 @@ namespace InfernumMode.Core.ILEditingStuff
                             ceaselessVoid.netUpdate = true;
                         }
                     }
-                    else if (!InfernumMode.CanUseCustomAIs)
+                    else if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter.X == 0)
                     {
                         SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<CeaselessVoid>());
+                            CalamityUtils.SpawnBossBetter(player.Center, ModContent.NPCType<CeaselessVoid>(), new ExactPositionBossSpawnContext(), (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl, 0f, 0f, 1f);
                         else
                             NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<CeaselessVoid>());
                     }

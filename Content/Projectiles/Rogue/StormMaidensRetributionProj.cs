@@ -313,7 +313,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             return true;
         }
 
-        // Don't do damage while aiming, to prevent "poking" strats where massive damage is acquired from just sitting on top of enemies with it.
+        // Don't do damage while aiming, to prevent "poking" strats where massive damage is acquired from just sitting on top of enemies with the spear.
         public override bool? CanDamage() => CurrentState != BehaviorState.Aim;
     }
 }

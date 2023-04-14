@@ -266,6 +266,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 }
             }
 
+            // Make the player emit a lot of light.
+            Lighting.AddLight(target.Center, Vector3.One * 4f);
+
             switch ((AEWAttackType)attackType)
             {
                 // Spawn animation states.

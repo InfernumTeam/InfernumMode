@@ -1,6 +1,7 @@
 using Gif.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using NVorbis.Contracts;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using SystemGraphics = System.Drawing.Graphics;
@@ -390,7 +392,14 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                         Bitmap bitmap = new(gif.Width, gif.Height);
                         SystemGraphics graphics = SystemGraphics.FromImage(bitmap);
                         graphics.DrawImage(gif, System.Drawing.Point.Empty);
-                        textures[i] = GetTextureFromImage(bitmap);
+
+                        int localIndex = i;
+                        var imageColors = GetColorsFromImage(bitmap);
+                        Main.QueueMainThreadAction(() =>
+                        {
+                            textures[localIndex] = new(Main.instance.GraphicsDevice, bitmap.Width, bitmap.Height);
+                            textures[localIndex].SetData(imageColors);
+                        });
                     }
                     return textures;
                 }
@@ -408,10 +417,11 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         }
 
         // Adapted from https://gamedev.stackexchange.com/questions/6440/bitmap-to-texture2d-problem-with-colors
-        private static Texture2D GetTextureFromImage(Bitmap bitmap)
+        private static uint[] GetColorsFromImage(Bitmap bitmap)
         {
             // Create a new, empty texture.
-            Texture2D texture = new(Main.instance.GraphicsDevice, bitmap.Width, bitmap.Height);
+            Texture2D texture = TextureAssets.MagicPixel.Value;
+
             // Create an array of the bitmap size.
             uint[] imgData = new uint[bitmap.Width * bitmap.Height];
             unsafe
@@ -422,17 +432,13 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
                 // Loop through each pixel, and set it to the bitmap's info. This also swaps the BGRA of the bitmap to RGBA which the texture2d uses. Not doing this
                 // results in the textures r and b channels being swapped which is not ideal.
-                Parallel.For(0, imgData.Length, i =>
-                {
+                for (int i = 0; i < imgData.Length; i++)
                     imgData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
-                });
 
                 // Unlock the bits.
                 bitmap.UnlockBits(origdata);
             }
-            // Set the textures data, and return it.
-            texture.SetData(imgData);
-            return texture;
+            return imgData;
         }
 
         internal static string GetStringFromBoss(RecordingBoss boss)

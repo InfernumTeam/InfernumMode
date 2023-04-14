@@ -26,9 +26,9 @@ namespace InfernumMode.Content.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Crescent Staff");
-            Tooltip.SetDefault($"Using the staff toggles a powerful forcefield that provides a universal {MathF.Round(ForcefieldDRMultiplier * 100f):N2}% DR\n" +
+            Tooltip.SetDefault($"Using the staff toggles a powerful forcefield that provides a universal {MathF.Round(ForcefieldDRMultiplier * 100f)}% DR\n" +
                 "Hits that are applied to you while the forcefield is up release a violent explosion that hurts nearby enemies\n" +
-                $"When the forcefield is activated, and for {DebuffTime} seconds afterwards, your damage output is reduced by {MathF.Round((1f - DamageMultiplier) * 100f):N2}%");
+                $"When the forcefield is activated, and for {DebuffTime} seconds afterwards, your damage output is reduced by {MathF.Round((1f - DamageMultiplier) * 100f)}%");
             SacrificeTotal = 1;
         }
 

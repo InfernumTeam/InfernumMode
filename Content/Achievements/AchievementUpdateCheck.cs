@@ -5,6 +5,7 @@
         None,
         ItemPickup,
         NPCKill,
+        ProjectileKill,
         PlayerDeath,
         PlayerUpdate,
         TileBreak

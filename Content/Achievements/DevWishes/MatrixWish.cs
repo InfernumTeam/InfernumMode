@@ -15,7 +15,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "To experiment is to fail. To fail is to learn. To learn is to advance\n" +
                 "[c/777777:Defeat every single boss and Exo Mech combination]";
             TotalCompletion = 1;
-            PositionInMainList = 12;
+            PositionInMainList = 14;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
             IsDevWish = true;
         }

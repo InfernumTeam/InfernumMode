@@ -2,6 +2,7 @@
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -87,59 +88,60 @@ namespace InfernumMode.Content.Tiles.Abyss
             // Cached for performance reasons. Profiling revealed that all of the LocalPlayer/Center getters were causing slowdowns.
             Vector2 playerCenter = Main.LocalPlayer.Center;
 
-            for (int dx = -70; dx < 70; dx++)
+            int width = (int)MathF.Ceiling(Main.screenWidth / 22) + 2;
+            int height = (int)MathF.Ceiling(Main.screenHeight / 22) + 2;
+            for (int k = 0; k < width * height; k++)
             {
-                for (int dy = -50; dy < 50; dy++)
+                int dx = k % width - width / 2;
+                int dy = k / width - height / 2;
+                int i = (int)(playerCenter.X / 16f + dx);
+                int j = (int)(playerCenter.Y / 16f + dy);
+                Point p = new(i, j);
+                if (!WorldGen.InWorld(i, j, 1))
+                    continue;
+
+                Tile t = Main.tile[p];
+                if (t.TileType != crystalID)
                 {
-                    int i = (int)(playerCenter.X / 16f + dx);
-                    int j = (int)(playerCenter.Y / 16f + dy);
-                    Point p = new(i, j);
-                    if (!WorldGen.InWorld(i, j, 1))
-                        continue;
+                    if (CrystalCache.ContainsKey(p))
+                        CrystalCache.Remove(p);
+                    continue;
+                }
 
-                    Tile t = Main.tile[p];
-                    if (t.TileType != crystalID)
+                // Create a crystal drawer if one does not exist yet. This will also create the crystal's mesh.
+                if (!CrystalCache.ContainsKey(p))
+                {
+                    float offsetDirection = 0f;
+                    Tile top = CalamityUtils.ParanoidTileRetrieval(p.X, p.Y - 1);
+                    Tile left = CalamityUtils.ParanoidTileRetrieval(p.X - 1, p.Y);
+                    Tile right = CalamityUtils.ParanoidTileRetrieval(p.X + 1, p.Y);
+                    if (top.HasTile && top.Slope == SlopeType.Solid && !top.IsHalfBlock && WorldGen.SolidTile(top))
+                        offsetDirection = MathHelper.Pi;
+                    else if (left.HasTile && left.Slope == SlopeType.Solid && !left.IsHalfBlock && WorldGen.SolidTile(left))
+                        offsetDirection = MathHelper.PiOver2;
+                    else if (right.HasTile && right.Slope == SlopeType.Solid && !right.IsHalfBlock && WorldGen.SolidTile(right))
+                        offsetDirection = -MathHelper.PiOver2;
+
+                    float baseDistance = MathHelper.Lerp(40f, 64f, (i * 0.13f + j * 3.84f) % 1f);
+                    if ((i * 2 + j * 3) % 7 == 0)
+                        baseDistance *= 1.6f;
+
+                    CrystalCache[p] = new()
                     {
-                        if (CrystalCache.ContainsKey(p))
-                            CrystalCache.Remove(p);
-                        continue;
-                    }
-
-                    // Create a crystal drawer if one does not exist yet. This will also create the crystal's mesh.
-                    if (!CrystalCache.ContainsKey(p))
-                    {
-                        float offsetDirection = 0f;
-                        Tile top = CalamityUtils.ParanoidTileRetrieval(p.X, p.Y - 1);
-                        Tile left = CalamityUtils.ParanoidTileRetrieval(p.X - 1, p.Y);
-                        Tile right = CalamityUtils.ParanoidTileRetrieval(p.X + 1, p.Y);
-                        if (top.HasTile && top.Slope == SlopeType.Solid && !top.IsHalfBlock && WorldGen.SolidTile(top))
-                            offsetDirection = MathHelper.Pi;
-                        else if (left.HasTile && left.Slope == SlopeType.Solid && !left.IsHalfBlock && WorldGen.SolidTile(left))
-                            offsetDirection = MathHelper.PiOver2;
-                        else if (right.HasTile && right.Slope == SlopeType.Solid && !right.IsHalfBlock && WorldGen.SolidTile(right))
-                            offsetDirection = -MathHelper.PiOver2;
-
-                        float baseDistance = MathHelper.Lerp(40f, 64f, (i * 0.13f + j * 3.84f) % 1f);
-                        if ((i * 2 + j * 3) % 7 == 0)
-                            baseDistance *= 1.6f;
-
-                        CrystalCache[p] = new()
-                        {
-                            Seed = p.X + p.Y * 3111,
-                            MaxDistanceBeforeCutoff = baseDistance,
-                            DistanceUsedForBase = baseDistance,
-                            BranchMaxBendFactor = 0.076f,
-                            BranchTurnAngleVariance = 0.11f,
-                            MinBranchLength = 85f,
-                            BaseWidth = 10f,
-                            ChanceToCreateNewBranches = 0f,
-                            VerticalStretchFactor = 1f,
-                            BranchGrowthWidthDecay = 0.6f,
-                            MaxCutoffBranchesPerBranch = 2,
-                            BaseDirection = offsetDirection + MathHelper.Lerp(-0.41f, 0.41f, (p.X + p.Y) * 0.1854f % 1f),
-                            IcicleColor = Color.LightCyan * 0.3f
-                        };
-                    }
+                        Seed = p.X + p.Y * 3111,
+                        MaxDistanceBeforeCutoff = baseDistance,
+                        DistanceUsedForBase = baseDistance,
+                        BranchMaxBendFactor = 0.076f,
+                        BranchTurnAngleVariance = 0.11f,
+                        MinBranchLength = 85f,
+                        BaseWidth = 10f,
+                        ChanceToCreateNewBranches = 0f,
+                        VerticalStretchFactor = 1f,
+                        BranchGrowthWidthDecay = 0.6f,
+                        MaxCutoffBranchesPerBranch = 2,
+                        BaseDirection = offsetDirection + MathHelper.Lerp(-0.41f, 0.41f, (p.X + p.Y) * 0.1854f % 1f),
+                        IcicleColor = Color.LightCyan * 0.3f
+                    };
                 }
             }
         }

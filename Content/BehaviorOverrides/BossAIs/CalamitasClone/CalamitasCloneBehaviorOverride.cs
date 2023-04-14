@@ -95,6 +95,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public const int FrameVariantIndex = 12;
 
+        public const int FoughtInUnderworldIndex = 13;
+
         public static Primitive3DStrip HexStripDrawer
         {
             get;
@@ -213,6 +215,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             ref float forcefieldScale = ref npc.Infernum().ExtraAI[ForcefieldScaleIndex];
             ref float drawCharredForm = ref npc.Infernum().ExtraAI[DrawCharredFormIndex];
             ref float frameVariant = ref npc.Infernum().ExtraAI[FrameVariantIndex];
+            ref float foughtInUnderworld = ref npc.Infernum().ExtraAI[FoughtInUnderworldIndex];
+
+            // Check if the player is fighting in the underworld.
+            if (!target.ZoneUnderworldHeight && attackType != (int)CloneAttackType.SpawnAnimation)
+                foughtInUnderworld = 0f;
 
             // Apply hexes to the target.
             if (GetHexNames(out string hexName, out string hexName2))
@@ -317,7 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             switch ((CloneAttackType)(int)attackType)
             {
                 case CloneAttackType.SpawnAnimation:
-                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation, ref forcefieldScale, ref frameVariant);
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref backgroundEffectIntensity, ref blackFormInterpolant, ref eyeGleamInterpolant, ref armRotation, ref forcefieldScale, ref frameVariant, ref foughtInUnderworld);
                     break;
                 case CloneAttackType.WandFireballs:
                     DoBehavior_WandFireballs(npc, target, ref attackTimer, ref armRotation, ref frameVariant);
@@ -396,7 +403,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             return true;
         }
 
-        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation, ref float forcefieldScale, ref float frameVariant)
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float backgroundEffectIntensity, ref float blackFormInterpolant, ref float eyeGleamInterpolant, ref float armRotation, ref float forcefieldScale, ref float frameVariant, ref float foughtInUnderworld)
         {
             int blackFadeoutTime = 30;
             int blackFadeinTime = 6;
@@ -461,6 +468,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
                     npc.velocity.Y -= 14f;
                     Collision.HitTiles(npc.TopLeft, Vector2.UnitY * -12f, npc.width, npc.height + 100);
+                    foughtInUnderworld = 1f;
                     SelectNextAttack(npc);
                 }
             }

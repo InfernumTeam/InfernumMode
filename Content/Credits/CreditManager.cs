@@ -109,6 +109,12 @@ namespace InfernumMode.Content.Credits
             CreditsPlaying = true;
         }
 
+        internal static void StopAbruptly()
+        {
+            CurrentState = CreditState.FinalizingDisposing;
+            CreditsTimer = 0;
+        }
+
         private static void UpdateCredits()
         {
             if (!CreditsPlaying)

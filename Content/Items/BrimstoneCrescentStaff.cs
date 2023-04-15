@@ -17,11 +17,11 @@ namespace InfernumMode.Content.Items
 
         public static int DebuffTime => 15;
 
-        public static int ExplosionBaseDamage => 960;
+        public static int ExplosionBaseDamage => 600;
 
         public static float ForcefieldDRMultiplier => 0.66f;
 
-        public static float DamageMultiplier => 0.5f;
+        public static float DamageMultiplier => 0.33f;
 
         public override void SetStaticDefaults()
         {

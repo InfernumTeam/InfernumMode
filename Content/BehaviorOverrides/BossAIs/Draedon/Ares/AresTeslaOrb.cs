@@ -12,9 +12,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresTeslaOrb : ModProjectile
     {
-        public ref float Identity => ref Projectile.ai[0];
         public PrimitiveTrail LightningDrawer;
+
         public PrimitiveTrail LightningBackgroundDrawer;
+
+        public ref float Identity => ref Projectile.ai[0];
+
+        public static float DetatchmentDistance => 900f;
 
         public override void SetStaticDefaults()
         {
@@ -76,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (CalamityGlobalNPC.draedonExoMechPrime < 0 || !Main.npc[CalamityGlobalNPC.draedonExoMechPrime].active)
                 return null;
 
-            float detachDistance = 1420f;
+            float detachDistance = DetatchmentDistance;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].type != Projectile.type || Main.projectile[i].ai[0] != Identity + 1f || !Main.projectile[i].active)

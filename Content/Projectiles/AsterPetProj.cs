@@ -199,7 +199,8 @@ namespace InfernumMode.Content.Projectiles
                 Projectile.velocity *= 0.8f;
 
             // Use flying frames.
-            Projectile.frame = 0;
+            Projectile.frameCounter++;
+            Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
 
             // Prevent natural tile collision.
             Projectile.tileCollide = false;

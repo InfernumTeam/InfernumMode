@@ -219,7 +219,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
         public void DrawSummoningCircle()
         {
             float scale = SummoningCircleScale * Projectile.scale * 2f;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 drawPosition = Owner.Center + Vector2.UnitY * Owner.gfxOffY - Main.screenPosition;
             Texture2D magicCircleTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/RancorMagicCircle").Value;
             Texture2D magicCircleTextureBlurred = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/RancorMagicCircleGlowmask").Value;
 

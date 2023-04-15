@@ -26,6 +26,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
+        public bool SheepGodPet
+        {
+            get;
+            set;
+        }
+
         public bool IsPettingSomething => ProjectileThatsBeingPetted != -1;
 
         public Vector2 PlayerPositionWhenPetting
@@ -41,6 +47,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             BronzePet = false;
             AsterPet = false;
+            SheepGodPet = false;
         }
 
         public override void PostUpdate()

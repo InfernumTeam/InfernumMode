@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Buffs
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Calamity Bumblebirb Circa 2018");
-            Description.SetDefault("meme");
+            Description.SetDefault("Did you know that you can pet the birb in Terraria?");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

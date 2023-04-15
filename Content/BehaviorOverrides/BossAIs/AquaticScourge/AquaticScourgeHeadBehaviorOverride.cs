@@ -61,6 +61,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public const int AttackCycleIndex = 9;
 
+        public const int AcidMeterEverReachedHalfIndex = 10;
+
         public static float PoisonChargeUpSpeedFactor => 0.333f;
 
         public static float PoisonChargeUpSpeedFactorFinalPhase => 10f;
@@ -109,6 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float attackDelay = ref npc.Infernum().ExtraAI[5];
             ref float initializedFlag = ref npc.Infernum().ExtraAI[6];
             ref float acidVerticalLine = ref npc.Infernum().ExtraAI[AcidVerticalLineIndex];
+            ref float acidMeterEverReachedHalf = ref npc.Infernum().ExtraAI[AcidMeterEverReachedHalfIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -153,6 +156,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Be enraged.
             npc.Calamity().CurrentlyEnraged = enraged;
             npc.dontTakeDamage = enraged;
+
+            // Check if the player's acid meter has reached half.
+            if (attackTimer != (int)AquaticScourgeAttackType.SpawnAnimation && target.Calamity().SulphWaterPoisoningLevel >= 0.5f && (acidMeterEverReachedHalf == 0f || enraged))
+            {
+                acidMeterEverReachedHalf = 1f;
+                npc.netUpdate = true;
+            }
 
             switch ((AquaticScourgeAttackType)attackType)
             {

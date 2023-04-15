@@ -213,7 +213,7 @@ namespace InfernumMode.Content.Projectiles
 
             // Return to walking if close to the target and ground.
             // Fly towards the owner if they're super far away or if there are obstacles in the way.
-            if (!Collision.CanHitLine(Projectile.Center, 1, 1, Projectile.Center + Vector2.UnitY * 300f, 1, 1) && Projectile.WithinRange(hoverDestination, 240f))
+            if (!Collision.CanHitLine(Projectile.Center, 1, 1, Projectile.Center + Vector2.UnitY * 300f, 1, 1) && Projectile.WithinRange(hoverDestination, 240f) && !Collision.SolidCollision(Projectile.TopLeft, Projectile.width, Projectile.height))
             {
                 AIState = AsterAIState.WalkToOwner;
                 Time = 0f;

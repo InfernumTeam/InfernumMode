@@ -543,13 +543,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         #endregion AI Utility Methods
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Many layered platforms can help greatly to avoid the exploding Cursed Flames!";
-            yield return n => "A dash and a hook can greatly help with reacting to the Eaters bursts of speed!";
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (hatGirl)
+                    return "Many layered platforms can help greatly to avoid the exploding Cursed Flames!";
+
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "A dash and a hook can greatly help with reacting to the Eaters bursts of speed!";
+
+                return string.Empty;
+            };
+
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "I guess it eats more than just worlds.";
                 return string.Empty;
             };

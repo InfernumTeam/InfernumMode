@@ -609,7 +609,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             // Release magic from the mouth as a telegraph.
             if (attackTimer < attackDelay)
             {
-                Dust magic = Dust.NewDustDirect(npc.Bottom - new Vector2(npc.width * 0.5f, 30f), npc.width, 16, 264);
+                Dust magic = Dust.NewDustDirect(npc.Bottom - new Vector2(npc.width * 0.5f, 30f), npc.width, 16, DustID.PortalBoltTrail);
                 magic.velocity = Main.rand.NextFloat(-0.43f, 0.43f).ToRotationVector2() * Main.rand.NextFloat(2f, 8f);
                 magic.velocity.X *= Main.rand.NextBool().ToDirectionInt();
                 magic.scale = Main.rand.NextFloat(1f, 1.4f);
@@ -822,18 +822,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Contrary to what you may think, running into the shadowflame walls will not work, take it slow!";
             yield return n =>
             {
-                if (n.life < n.lifeMax * Phase2LifeRatio)
+                if (hatGirl)
+                    return "Contrary to what you may think, running into the shadowflame walls will not work, take it slow!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (n.life < n.lifeMax * Phase2LifeRatio && hatGirl)
                     return "Don't panic when Skeletron does his barrages of hand fireballs! Just jump and stay calm!";
                 return string.Empty;
             };
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "Geeettttttt DUNKED ON!!!";
                 return string.Empty;
             };

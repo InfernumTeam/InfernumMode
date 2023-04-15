@@ -28,7 +28,7 @@ namespace InfernumMode
 
         public static EelSwallowEffectPlayer Infernum_Eel(this Player player) => player.GetModPlayer<EelSwallowEffectPlayer>();
 
-        public static HatGirlTipsPlayer Infernum_HatGirl(this Player player) => player.GetModPlayer<HatGirlTipsPlayer>();
+        public static TipsPlayer Infernum_Tips(this Player player) => player.GetModPlayer<TipsPlayer>();
 
         public static PetsPlayer Infernum_Pet(this Player player) => player.GetModPlayer<PetsPlayer>();
 

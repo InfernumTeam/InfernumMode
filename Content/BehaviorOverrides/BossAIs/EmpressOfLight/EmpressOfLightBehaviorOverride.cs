@@ -2201,5 +2201,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             return false;
         }
         #endregion Death Effects
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        {
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "You know, I was already quite partial to rainbows, but this things attacks have killer looks- oh. Poor choice of words, then.";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

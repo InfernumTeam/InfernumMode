@@ -1,3 +1,4 @@
+using InfernumMode.Content.Items.Pets;
 using InfernumMode.Core.OverridingSystem;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
 {
-    public class HatGirlTipsManager : ModSystem
+    public class TipsManager : ModSystem
     {
         internal static NPC BossBeingFought;
 
@@ -31,14 +32,14 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PostUpdateEverything()
         {
-            if (!Main.LocalPlayer.dead && !Main.LocalPlayer.Infernum_HatGirl().HatGirlShouldGiveAdvice)
+            if (!Main.LocalPlayer.dead && !Main.LocalPlayer.Infernum_Tips().ShouldDisplayTips)
             {
                 NPC foughtBoss = Utilities.CurrentlyFoughtBoss;
                 BossBeingFought = foughtBoss is null ? null : foughtBoss.Clone() as NPC;
             }
         }
 
-        public static string SelectTip()
+        public static string SelectTip(bool hatGirl)
         {
             if (BossBeingFought is null)
                 return string.Empty;
@@ -49,7 +50,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             bossInfo = NPCBehaviorOverride.BehaviorOverrides[bossInfo.NPCIDToDeferToForTips ?? bossInfo.NPCOverrideType];
 
             // This func evaluates the state of the NPC in question, after it died.
-            IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips();
+            IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips(hatGirl);
+            if (!hatGirl && !potentialTips.Any())
+                potentialTips = potentialTips.Append(n => Main.rand.Next(RisingWarriorsSoulstone.GenericThingsToSayOnDeath));
+
             var possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t) && !SaidText.Contains(t)).ToList();
             if (potentialTips is null || !potentialTips.Any() || possibleThingsToSay.Count <= 0)
                 return string.Empty;

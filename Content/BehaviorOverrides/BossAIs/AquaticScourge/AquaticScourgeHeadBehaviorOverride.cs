@@ -1446,5 +1446,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         }
 
         #endregion AI Utility Methods
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        {
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "Did you even take a moment to consider you are pulling me down there with you into that acidic water...? Mate, that stuff BURNS!";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

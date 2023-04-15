@@ -1,23 +1,17 @@
 using CalamityMod;
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
-using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using Terraria;
-using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 
@@ -204,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Draw two spinning gleams over the crystal.
             Texture2D gleamTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
-            Vector2 gleamOrigin = gleamTexture.Size() * 0.5f;       
+            Vector2 gleamOrigin = gleamTexture.Size() * 0.5f;
             float gleamScale = MathHelper.Lerp(2.2f, 2.4f, scaleSine);
             float gleamRotation = MathHelper.Pi * Main.GlobalTimeWrappedHourly * 2f;
             Main.spriteBatch.Draw(gleamTexture, drawPosition, null, finalColor, gleamRotation, gleamOrigin, gleamScale, 0, 0f);

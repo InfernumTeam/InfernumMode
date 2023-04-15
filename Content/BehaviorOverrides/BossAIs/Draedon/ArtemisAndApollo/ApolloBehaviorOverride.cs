@@ -2115,9 +2115,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "The Exo-Twins are magnificently in-sync, try finding a rythem to outsmart them!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "The Exo-Twins are magnificently in-sync, try finding a rhythm to outsmart them?";
+
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

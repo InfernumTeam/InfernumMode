@@ -1288,9 +1288,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         #endregion Drawing
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "That serpent is really fast! Good mobility will be important to defeat it!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "That serpent is really fast! Good mobility will be important to defeat it!";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

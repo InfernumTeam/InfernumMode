@@ -989,10 +989,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Move as little as possible while it's above you. That should calm down its spastic jittering!";
-            yield return n => "Watch for the gaps in the icicles around Cryogen, they're a great indicator of where a safe spot is!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Move as little as possible while it's above you. That should calm down its spastic jittering!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Watch for the gaps in the icicles around Cryogen, they're a great indicator of where a safe spot is!";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

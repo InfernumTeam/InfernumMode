@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Credits
 
         public override int Music => SetMusic();
 
-        private static int SetMusic()
+        internal static int SetMusic()
         {
             if (InfernumMode.MusicModIsActive)
                 return MusicLoader.GetMusicSlot(InfernumMode.InfernumMusicMod, "Sounds/Music/TitleScreen");

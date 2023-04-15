@@ -83,6 +83,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
+        public static Filter RaindropShader => Filters.Scene["InfernumMode:Raindrops"];
         public static Filter RaymarchingShader => Filters.Scene["InfernumMode:Raymarching"];
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
@@ -258,6 +259,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Raindrop shader.
+            Ref<Effect> rainShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/RaindropShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:Raindrops"] = new Filter(new(rainShader, "RainPass"), EffectPriority.VeryHigh);
+
             // Credits shader.
             Ref<Effect> creditShader = new(assets.Request<Effect>("Assets/Effects/Overlays/CreditShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Credits"] = new Filter(new(creditShader, "CreditPass"), EffectPriority.VeryHigh);

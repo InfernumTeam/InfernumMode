@@ -745,10 +745,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
-        {
-            yield return n => "The more you hurt it, the more probes it will spawn. Don't bite off more than you can chew!";
-        }
         #endregion Tips
     }
 }

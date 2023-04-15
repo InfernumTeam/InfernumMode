@@ -18,7 +18,6 @@ namespace InfernumMode.Content.Projectiles
             Flying,
             DescendToGround,
             SitDown,
-            WalkAround,
             BeingPet
         }
 

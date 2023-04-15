@@ -577,21 +577,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
             yield return n =>
             {
-                if (NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2)
+                if (NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2 && hatGirl)
                     return "Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!";
                 return string.Empty;
             };
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "Squib emoji";
                 return string.Empty;
             };
-            yield return n => "Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!";
         }
     }
 }

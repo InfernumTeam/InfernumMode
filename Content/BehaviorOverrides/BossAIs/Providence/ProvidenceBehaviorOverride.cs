@@ -2648,9 +2648,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (!hatGirl && !IsEnraged)
+                    return "Orange is BORING! Fight that goddess during night time. I wanna see brains.";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

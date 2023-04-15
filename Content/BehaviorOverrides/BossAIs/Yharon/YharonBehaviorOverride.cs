@@ -2002,12 +2002,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
             yield return n =>
             {
-                if (n.life < n.lifeMax * Subphase8LifeRatio)
+                if (n.life < n.lifeMax * Subphase8LifeRatio && hatGirl)
                     return "AND IF I SHOULD DIE BEFORE YOU CONTINUEE, YOU SHALL HAV-... Wait, you died? Come on, I was on a roll here!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "So THAT'S the dragon I hear people talkin' about? Thought he'd be cuter. Nice 'n fluffy though.";
+
                 return string.Empty;
             };
         }

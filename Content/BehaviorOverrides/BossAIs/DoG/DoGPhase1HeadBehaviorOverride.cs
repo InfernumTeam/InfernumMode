@@ -518,7 +518,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
             yield return n =>
             {
@@ -526,6 +526,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     return "A dashing accessory would be reeaaaally helpful here...";
                 else if (!Main.LocalPlayer.HasShieldBash())
                     return "Being able to face it head on with a ram sounds like a good idea, don't you think?";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "Maybe you should stop feeding that oversized worm and actually get to work properly killing it, hey?";
+
                 return string.Empty;
             };
         }

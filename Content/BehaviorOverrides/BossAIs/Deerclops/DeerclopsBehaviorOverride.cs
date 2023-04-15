@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 while (dustCount > 0f)
                 {
                     dustCount -= 1f;
-                    Dust.NewDustDirect(npc.position, npc.width, npc.height, 109, 0f, -3f, 0, default, 1.4f).noGravity = true;
+                    Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Asphalt, 0f, -3f, 0, default, 1.4f).noGravity = true;
                 }
             }
 
@@ -1279,13 +1279,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!";
-            yield return n => "The Deerclops will follow a set pattern, learn it to gain the upper hand!";
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (hatGirl)
+                    return "Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "The Deerclops will follow a set pattern, learn it to gain the upper hand!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "Deer god...";
                 return string.Empty;
             };

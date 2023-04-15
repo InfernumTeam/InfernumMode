@@ -69,24 +69,24 @@ namespace InfernumMode.Content.Projectiles
 
         public static void SayThingWhileOwnerIsAlive(Player owner, string text)
         {
-            if (owner.dead || !owner.active || owner.ownedProjectileCounts[ModContent.ProjectileType<HatGirl>()] <= 0)
+            if (owner.dead || !owner.active || (owner.ownedProjectileCounts[ModContent.ProjectileType<HatGirl>()] <= 0 && owner.ownedProjectileCounts[ModContent.ProjectileType<AsterPetProj>()] <= 0))
                 return;
 
-            if (HatGirlTipsManager.SaidText.Contains(text))
+            if (TipsManager.SaidText.Contains(text))
                 return;
 
-            foreach (Projectile hatGirl in Utilities.AllProjectilesByID(ModContent.ProjectileType<HatGirl>()))
+            foreach (Projectile pet in Utilities.AllProjectilesByID(ModContent.ProjectileType<HatGirl>(), ModContent.ProjectileType<AsterPetProj>()))
             {
-                if (hatGirl.owner != owner.whoAmI)
+                if (pet.owner != owner.whoAmI)
                     continue;
 
-                hatGirl.Center = owner.Center;
-                hatGirl.netUpdate = true;
+                pet.Center = owner.Center;
+                pet.netUpdate = true;
             }
 
-            owner.Infernum_HatGirl().HatGirlShouldGiveAdvice = true;
-            HatGirlTipsManager.PotentialTipToUse = text;
-            HatGirlTipsManager.SaidText.Add(text);
+            owner.Infernum_Tips().ShouldDisplayTips = true;
+            TipsManager.PotentialTipToUse = text;
+            TipsManager.SaidText.Add(text);
         }
 
         public override void AI()
@@ -97,19 +97,19 @@ namespace InfernumMode.Content.Projectiles
                 Projectile.active = false;
                 return;
             }
-            HatGirlTipsPlayer modPlayer = Owner.Infernum_HatGirl();
+            TipsPlayer modPlayer = Owner.Infernum_Tips();
             if (Owner.dead)
             {
                 modPlayer.HatGirl = false;
-                modPlayer.HatGirlShouldGiveAdvice = true;
+                modPlayer.ShouldDisplayTips = true;
             }
             if (modPlayer.HatGirl)
                 Projectile.timeLeft = 2;
 
             // Give some advice if the player died to a boss.
-            if (Main.myPlayer == Projectile.owner && modPlayer.HatGirlShouldGiveAdvice && !Owner.dead)
+            if (Main.myPlayer == Projectile.owner && modPlayer.ShouldDisplayTips && !Owner.dead)
             {
-                string tipText = HatGirlTipsManager.PotentialTipToUse;
+                string tipText = TipsManager.PotentialTipToUse;
                 if (!string.IsNullOrEmpty(tipText))
                 {
                     Color messageColor = Color.DeepPink;
@@ -129,10 +129,10 @@ namespace InfernumMode.Content.Projectiles
                         Main.combatText[textIndex].lifeTime *= 3;
                     }
 
-                    Owner.Infernum_HatGirl().HatGirlShouldGiveAdvice = false;
+                    Owner.Infernum_Tips().ShouldDisplayTips = false;
                     TalkAnimationCounter = 1f;
 
-                    HatGirlTipsManager.SaidText.Add(tipText);
+                    TipsManager.SaidText.Add(tipText);
                 }
             }
 

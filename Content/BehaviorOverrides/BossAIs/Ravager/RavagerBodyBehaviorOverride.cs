@@ -942,9 +942,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         #endregion Drawing
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Some of Ravager's attacks reward you for staying close. Try not to run away!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Some of Ravager's attacks reward you for staying close. Try not to run away!";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

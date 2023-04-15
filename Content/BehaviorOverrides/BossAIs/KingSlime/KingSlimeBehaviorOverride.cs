@@ -368,7 +368,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             // Release slime dust to accompany the despawn behavior.
             for (int i = 0; i < 30; i++)
             {
-                Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
+                Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, DustID.TintableDust, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
                 slime.noGravity = true;
                 slime.velocity *= 0.5f;
             }
@@ -514,7 +514,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 // Release slime dust to accompany the teleport
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
+                    Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, DustID.TintableDust, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
                     slime.noGravity = true;
                     slime.velocity *= 0.5f;
                 }
@@ -672,13 +672,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Try to learn King Slime's jump pattern! It could help you plan your next move better.";
-            yield return n => "With a jump that high, I wonder if you could duck beneath him?";
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (hatGirl)
+                    return "Try to learn King Slime's jump cycle! It could help you plan your next move better.";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "With a jump that high, I wonder if you could duck beneath him?";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
                     return "Quite a sticky situation you had to deal with...";
                 return string.Empty;
             };

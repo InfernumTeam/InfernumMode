@@ -20,6 +20,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
+        public bool AsterPet
+        {
+            get;
+            set;
+        }
+
         public bool IsPettingSomething => ProjectileThatsBeingPetted != -1;
 
         public Vector2 PlayerPositionWhenPetting
@@ -34,6 +40,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override void ResetEffects()
         {
             BronzePet = false;
+            AsterPet = false;
         }
 
         public override void PostUpdate()

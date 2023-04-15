@@ -1664,10 +1664,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Best to keep close during these Exo Overload attacks, otherwise you may have trouble keeping up with the spin!";
-            yield return n => "Ares' has one hell of a supercomputer, those arms are super predictive! Maybe you can use that to your advantage?";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Best to keep close during these Exo Overload attacks, otherwise you may have trouble keeping up with the spin!";
+
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Ares' has one hell of a supercomputer, those arms are super predictive! Maybe you can use that to your advantage?";
+
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

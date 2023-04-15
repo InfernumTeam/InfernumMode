@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "The witch's sins could never be fully atoned\n" +
                 $"[c/777777:Defeat the {CalamitasCloneBehaviorOverride.CustomName} in the underworld]";
             TotalCompletion = 1;
-            PositionInMainList = 10;
+            PositionInMainList = 11;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
             IsDevWish = true;
         }

@@ -246,10 +246,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         #endregion AI
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
-        {
-            yield return n => "Try to not move too far away when the Weaver spins in place, so you can see the bolts before they accelerate too much!";
-        }
         #endregion Tips
     }
 }

@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -171,9 +170,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion Frames and Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Having trouble dodging during the spin? Three can play at that game, Spin!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Having trouble dodging during the spin? Three can play at that game, Spin!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "SPIN TO WIN! SPIN TO WIN! SPIN TO WIN! SPIN TO WIN!";
+                return string.Empty;
+            };
         }
         #endregion Tips
 

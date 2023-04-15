@@ -557,19 +557,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         }
         #endregion
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "The Scourge usually roars when it's about to whip up a sandstorm, get to high grounds!";
-            yield return n => "A Hook may prove useful to quickly get out of the Scourge's mandibles!";
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (hatGirl)
+                    return "The Scourge usually roars when it's about to whip up a sandstorm, get to high grounds!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "A Hook may prove useful to quickly get out of the Scourge's mandibles!";
+                return string.Empty;
+            };
+
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "I loath sand, its grainy and itchy and sticks to every part of my feet.";
                 return string.Empty;
             };
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "You better have dessert for me after this...";
                 return string.Empty;
             };

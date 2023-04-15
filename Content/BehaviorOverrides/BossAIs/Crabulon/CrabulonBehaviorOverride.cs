@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             npc.damage = 0;
 
             // Idly emit mushroom dust off of Crabulon.
-            Dust spore = Dust.NewDustDirect(npc.position, npc.width, npc.height, 56);
+            Dust spore = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.BlueFairy);
             spore.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.4f, 2.7f);
             spore.noGravity = true;
             spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.GetLerpValue(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
@@ -267,7 +267,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                         for (int i = 0; i < 36; i++)
                         {
                             Vector2 dustSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, i / 36f);
-                            Dust stompMushroomDust = Dust.NewDustDirect(dustSpawnPosition, 4, 4, 56);
+                            Dust stompMushroomDust = Dust.NewDustDirect(dustSpawnPosition, 4, 4, DustID.BlueFairy);
                             stompMushroomDust.velocity = Vector2.UnitY * Main.rand.NextFloatDirection() * npc.velocity.Length() * 0.5f;
                             stompMushroomDust.scale = 1.8f;
                             stompMushroomDust.fadeIn = 1.2f;
@@ -773,13 +773,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         #endregion Frames and Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => $"Crabulon will only launch spores every {Utilities.AddOrdinalSuffix(MushroomStompBarrageInterval)} jump, better keep count!";
-            yield return n => "Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!";
             yield return n =>
             {
-                if (HatGirlTipsManager.ShouldUseJokeText)
+                if (hatGirl)
+                    return $"Crabulon will only launch spores every {Utilities.AddOrdinalSuffix(MushroomStompBarrageInterval)} jump, better keep count!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!";
+                return string.Empty;
+            };
+
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText && hatGirl)
                     return "There isnt Mushroom for the three of us, and I can tell who won the roullete.";
                 return string.Empty;
             };

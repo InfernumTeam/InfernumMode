@@ -331,7 +331,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (Main.netMode != NetmodeID.MultiplayerClient && inPhase3 && phase3TransitionTimer < 90f)
             {
                 phase3TransitionTimer++;
-                if (phase3TransitionTimer == 45f && HatGirlTipsManager.ShouldUseJokeText)
+                if (phase3TransitionTimer == 45f && TipsManager.ShouldUseJokeText)
                     HatGirl.SayThingWhileOwnerIsAlive(target, "You're gonna have a bad time...");
             }
 
@@ -1895,9 +1895,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
         }
 
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Golem's eye color will change depending on it's attack. Keep your own eyes peeled!";
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Golem's eye color will change depending on it's attack. Keep your own eyes peeled!";
+
+                return string.Empty;
+            };
         }
     }
 }

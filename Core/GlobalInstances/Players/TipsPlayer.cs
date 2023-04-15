@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Players
 {
-    public class HatGirlTipsPlayer : ModPlayer
+    public class TipsPlayer : ModPlayer
     {
         public bool HatGirl
         {
@@ -12,7 +12,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
-        public bool HatGirlShouldGiveAdvice
+        public bool ShouldDisplayTips
         {
             get;
             set;
@@ -22,7 +22,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            HatGirlTipsManager.PotentialTipToUse = HatGirlTipsManager.SelectTip();
+            TipsManager.PotentialTipToUse = TipsManager.SelectTip(HatGirl);
         }
     }
 }

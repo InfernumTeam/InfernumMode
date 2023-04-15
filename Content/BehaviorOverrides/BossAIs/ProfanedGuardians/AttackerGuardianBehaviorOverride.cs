@@ -280,7 +280,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.checkDead();
                 npc.active = false;
             }
-        }     
+        }
         #endregion AI and Behaviors
 
         #region Draw Effects
@@ -654,10 +654,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips()
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
-            yield return n => "Stay away from those energy fields! Being too close to them will hurt you!";
-            yield return n => "Going in a tight circular pattern helps with the attacker guardian's spears!";
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "I have a weird craving for round pastries right about now...";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

@@ -92,6 +92,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         public const float DownscaleFactor = 3f;
 
         public static string InfoFilePath => $"{Main.SavePath}/BossFootage/README.txt";
+
         // This is named this due to being compressed, it will not be playable via normal GIF players so having it appear like a normal
         // .gif file would be misleading and cause potential confusion.
         public const string FileExtension = ".compgif";
@@ -307,6 +308,12 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
             // Check to see if the readme exists, and create it if not.
             if (!File.Exists(InfoFilePath))
             {
+                string fileInfoDirectory = Path.GetDirectoryName(InfoFilePath);
+
+                // Create the directory if necessary.
+                if (!Directory.Exists(fileInfoDirectory))
+                    Directory.CreateDirectory(fileInfoDirectory);
+
                 using FileStream fileStream2 = File.Create(InfoFilePath);
                 using BinaryWriter binaryWriter = new(fileStream2);
                 binaryWriter.Write(InfoFileContents);

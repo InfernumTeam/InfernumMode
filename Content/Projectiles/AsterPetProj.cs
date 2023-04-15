@@ -102,6 +102,7 @@ namespace InfernumMode.Content.Projectiles
                     break;
             }
 
+            Time++;
             Projectile.gfxOffY = 6;
         }
 
@@ -236,9 +237,12 @@ namespace InfernumMode.Content.Projectiles
             }
 
             // Use petting frames.
-            Projectile.frameCounter++;
-            Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
-            Projectile.spriteDirection = -Owner.direction;
+            if (Time >= 3f)
+            {
+                Projectile.frameCounter++;
+                Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
+                Projectile.spriteDirection = -Owner.direction;
+            }
 
             // Sit down as usual again if the owner stopped giving pets.
             if (Main.myPlayer == Projectile.owner && Owner.Infernum_Pet().ProjectileThatsBeingPetted != Projectile.whoAmI)
@@ -251,7 +255,7 @@ namespace InfernumMode.Content.Projectiles
             }
 
             Player.CompositeArmStretchAmount stretch = Player.CompositeArmStretchAmount.ThreeQuarters;
-            if (Owner.miscCounter % 14 / 7 == 1)
+            if (Owner.miscCounter % 14 >= 7)
                 stretch = Player.CompositeArmStretchAmount.Full;
             Owner.SetCompositeArmBack(true, stretch, -MathHelper.TwoPi * Owner.direction * 0.27f);
         }

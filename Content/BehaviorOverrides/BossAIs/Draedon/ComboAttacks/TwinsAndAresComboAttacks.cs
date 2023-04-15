@@ -159,6 +159,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
+                            if (!deathraysHaveBeenFired)
+                            {
+                                attackSubstate = 0f;
+                                generalAttackTimer = 0f;
+                            }
+
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 270f))
                             {
                                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, npc.Center);
@@ -251,6 +257,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.8f);
                             npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.4f);
 
+                            if (!deathraysHaveBeenFired)
+                            {
+                                attackSubstate = 0f;
+                                generalAttackTimer = 0f;
+                            }
+
                             // Charge once sufficiently slowed down.
                             if (npc.velocity.Length() < 1.25f)
                             {
@@ -275,6 +287,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             // Slow down a bit.
                             if (npc.velocity.Length() > apolloChargeSpeed * 0.6f)
                                 npc.velocity *= 0.98f;
+
+                            if (!deathraysHaveBeenFired)
+                            {
+                                attackSubstate = 0f;
+                                generalAttackTimer = 0f;
+                            }
 
                             if (generalAttackTimer < 50f)
                             {
@@ -479,7 +497,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     DoLaughEffect(npc, target);
             }
 
-            return attackTimer >= (redirectTime + chargeupTime + laserTelegraphTime + laserSpinTime) * laserBurstCount;
+            bool doneAttacking = attackTimer >= (redirectTime + chargeupTime + laserTelegraphTime + laserSpinTime) * laserBurstCount;
+            if (doneAttacking)
+                ClearAwayTransitionProjectiles();
+
+            return doneAttacking;
         }
 
         public static bool DoBehavior_AresTwins_CircleAttack(NPC npc, Player target, ref float attackTimer, ref float frame)
@@ -583,7 +605,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         frame += 60f;
                 }
             }
-            return attackTimer > attackDelay + normalTwinsAttackTime;
+            bool doneAttacking = attackTimer > attackDelay + normalTwinsAttackTime;
+            if (doneAttacking)
+                ClearAwayTransitionProjectiles();
+            return doneAttacking;
         }
     }
 }

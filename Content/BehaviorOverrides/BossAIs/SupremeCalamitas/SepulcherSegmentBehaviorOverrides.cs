@@ -41,7 +41,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.netAlways = true;
             npc.dontCountMe = true;
             npc.HitSound = SoundID.DD2_SkeletonHurt with { Volume = 0.925f };
-            npc.Calamity().DR = 0.56f;
         }
 
         public static bool DoAI(NPC npc)
@@ -68,6 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.defDamage = 200;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             npc.defense = 20;
+            npc.Calamity().DR = 0.56f;
 
             npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
             npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;

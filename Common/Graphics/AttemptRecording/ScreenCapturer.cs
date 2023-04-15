@@ -61,7 +61,8 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         // This is so people do not see .comgif files and get concerned that they have a virus or something.
         public const string InfoFileContents = "The weird files stored here are compressed .GIF files. These are created and used by InfernumMode, and are decompressed when needed by the mod.\n" +
             "If you wish to verify this, you can extract the mod in-game and check out 'InfernumMode/Common/Graphics/AttemptRecording/ScreenCapturer'.\n" +
-            "Be aware it may spoil you if you have not completed the mod yet. - Toasty";
+            "Be aware it may spoil you if you have not completed the mod yet.\n" +
+            "You can also safely delete any of these files without breaking anything, if you wish to not have the space taken up. - Toasty";
 
         public static int RecordCountdown
         {

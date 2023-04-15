@@ -19,13 +19,14 @@ float2 Drops(float2 uv, float seed)
 {
     // Shift the Y value.
     uv.y += Random1(0.5, seed);
+    
     uv *= cellResolution;
     
     // Shift the X value by the row.
     float rowIndex = floor(uv.y);
     uv.x += Random1(rowIndex, seed + 1654.2);
     
-    // Modify the Y value by time and a random amount, to simulate them falling.
+        // Modify the Y value by time and a random amount, to simulate them falling.
     uv.y -= time * (0.01 + 0.1 * Random1(rowIndex, seed + 867.65));
     
     // Get the index and the coords for the current cell.

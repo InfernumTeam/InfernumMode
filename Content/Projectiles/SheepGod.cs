@@ -54,7 +54,7 @@ namespace InfernumMode.Content.Projectiles
             // Drift towards the owner. The speed at which the sheep god moves increases based on darkness.
             float brightness = Lighting.Brightness((int)(Owner.Center.X / 16f), (int)(Owner.Center.Y / 16f));
             float darknessInterpolant = Utils.GetLerpValue(0.54f, 0.01f, brightness, true);
-            float flySpeed = MathHelper.SmoothStep(0.3f, 3.33f, darknessInterpolant);
+            float flySpeed = MathHelper.SmoothStep(0.3f, 5.2f, darknessInterpolant);
             if (Owner.HasBuff<Sleepy>())
                 flySpeed *= 0.2f;
 
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.Projectiles
                 }
 
                 // Give the player the (de)buffs.
-                Owner.Calamity().adrenaline = MathHelper.Clamp(Owner.Calamity().adrenaline + 50f, 0f, 100f);
+                Owner.Calamity().adrenaline = MathHelper.Clamp(Owner.Calamity().adrenaline + 20f, 0f, 100f);
                 if (!Owner.Calamity().shatteredCommunity)
                     Owner.Calamity().rage = 100f;
                 Owner.AddBuff(ModContent.BuffType<Sleepy>(), 300);

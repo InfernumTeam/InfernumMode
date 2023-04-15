@@ -105,7 +105,13 @@ namespace InfernumMode.Common.Graphics
             c.GotoPrev(MoveType.After, i => i.MatchStloc(out localIndex));
 
             c.Emit(OpCodes.Ldloc, localIndex);
-            c.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs && !Main.mapFullscreen);
+            c.EmitDelegate(() =>
+            {
+                bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs;
+                bool shadowProjectilesExist = ShadowIllusionDrawSystem.ShadowProjectilesExist;
+                bool secondaryCondition = fightingAEW || shadowProjectilesExist;
+                return secondaryCondition && !Main.mapFullscreen;
+            });
             c.Emit(OpCodes.Or);
             c.Emit(OpCodes.Stloc, localIndex);
         }

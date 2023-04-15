@@ -1091,7 +1091,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class MakeDungeonSpawnAtLeftSideHook : IHookEdit
     {
-        // This is so fucking hideous but the alternative is IL editing on anonymous methods.
+        // This is so hideous but the alternative is IL editing on anonymous methods.
         internal static bool ReturnZeroInRandomness = false;
 
         public void Load()

@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             NPC.npcSlots = 25f;
             NPC.aiStyle = AIType = -1;
             NPC.damage = 335;
-            NPC.width = NPC.height = 60;
+            NPC.width = NPC.height = 50;
             NPC.lifeMax = 20000;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;

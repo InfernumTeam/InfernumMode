@@ -67,7 +67,7 @@ namespace InfernumMode.Content.Projectiles
             // Fade out based on distance.
             Projectile.Opacity = Utils.GetLerpValue(720f, 300f, Projectile.Distance(Owner.Center), true);
 
-            // Temporarily disappear, make the player fall asleep, and provide adrenaline/rage if the sheep god touches the owner.
+            // Temporarily disappear, make the player fall asleep, and provide adrenaline if the sheep god touches the owner.
             if (Projectile.Hitbox.Intersects(Owner.Hitbox))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, Owner.Center);
@@ -81,8 +81,6 @@ namespace InfernumMode.Content.Projectiles
 
                 // Give the player the (de)buffs.
                 Owner.Calamity().adrenaline = MathHelper.Clamp(Owner.Calamity().adrenaline + 20f, 0f, 100f);
-                if (!Owner.Calamity().shatteredCommunity)
-                    Owner.Calamity().rage = 100f;
                 Owner.AddBuff(ModContent.BuffType<Sleepy>(), 300);
 
                 Projectile.Center = Owner.Center - Vector2.UnitY * 950f + Main.rand.NextVector2Circular(80f, 80f);

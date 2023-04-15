@@ -508,7 +508,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int artemisLaserbeamCountPerBurst = 8;
             int delayBetweenLaserbeams = 5;
             int artemisFastRedirectTime = 42;
-            int totalLaserBurstCount = 4;
+            int totalLaserBurstCount = 3;
             int apolloFireballReleaseRate = 13;
             float apolloFireballExplosionRadius = 360f;
             float apolloPlasmaFireballSpeed = 18f;

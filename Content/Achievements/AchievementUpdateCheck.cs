@@ -8,6 +8,7 @@
         ProjectileKill,
         PlayerDeath,
         PlayerUpdate,
-        TileBreak
+        TileBreak,
+        NightmareCatcher
     }
 }

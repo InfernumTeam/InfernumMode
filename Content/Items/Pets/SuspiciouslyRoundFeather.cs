@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Items.Pets
             Item.height = 30;
 
             Item.value = Item.sellPrice(0, 5, 0, 0);
-            Item.rare = ModContent.RarityType<InfernumHatgirlRarity>();
+            Item.rare = ModContent.RarityType<InfernumRedSparkRarity>();
 
             Item.shoot = ModContent.ProjectileType<BronzePetProj>();
             Item.buffType = ModContent.BuffType<BronzePetBuff>();

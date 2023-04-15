@@ -268,8 +268,11 @@ namespace InfernumMode.Content.Projectiles
             }
 
             // Use petting frames.
-            FrameState = BirbFrameState.BeingPet;
-            Projectile.spriteDirection = Owner.direction;
+            if (Time >= 3f)
+            {
+                FrameState = BirbFrameState.BeingPet;
+                Projectile.spriteDirection = Owner.direction;
+            }
 
             // Sit down as usual again if the owner stopped giving pets.
             if (Main.myPlayer == Projectile.owner && Owner.Infernum_Pet().ProjectileThatsBeingPetted != Projectile.whoAmI)

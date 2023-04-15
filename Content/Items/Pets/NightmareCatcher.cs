@@ -31,6 +31,7 @@ namespace InfernumMode.Content.Items.Pets
 
             Item.value = Item.sellPrice(gold: 10);
 
+            Item.rare = ModContent.RarityType<InfernumRedSparkRarity>();
             Item.shoot = ModContent.ProjectileType<SheepGod>();
             Item.buffType = ModContent.BuffType<SheepGodBuff>();
             Item.Infernum_Tooltips().DeveloperItem = true;

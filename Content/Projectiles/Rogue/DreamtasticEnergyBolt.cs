@@ -108,10 +108,10 @@ namespace InfernumMode.Content.Projectiles.Rogue
             return width * MaxWidth;
         }
 
-        public static Color TrailColor(float completionRatio)
+        public Color TrailColor(float completionRatio)
         {
             float colorInterpolant = completionRatio;
-            return Color.Lerp(Color.Fuchsia, Color.Cyan, colorInterpolant);
+            return Color.Lerp(Color.Fuchsia, Color.Cyan, colorInterpolant) * Utils.GetLerpValue(1.2f, 5f, Projectile.velocity.Length(), true);
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

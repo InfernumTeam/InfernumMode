@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Particles;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -7,6 +8,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles
@@ -40,7 +42,7 @@ namespace InfernumMode.Content.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.width = 40;
+            Projectile.width = 26;
             Projectile.height = 52;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
@@ -54,6 +56,13 @@ namespace InfernumMode.Content.Projectiles
             {
                 Projectile.active = false;
                 return;
+            }
+
+            // Bark on the first frame.
+            if (Projectile.localAI[0] == 0f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.AsterBarkSound, Projectile.Center);
+                Projectile.localAI[0] = 1f;
             }
 
             HandlePetVariables();
@@ -280,6 +289,17 @@ namespace InfernumMode.Content.Projectiles
         {
             fallThrough = !Projectile.WithinRange(Owner.Center, 180f);
             return true;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.position.X -= 5f;
+            return true;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Projectile.position.X += 5f;
         }
     }
 }

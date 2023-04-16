@@ -140,7 +140,7 @@ namespace InfernumMode.Content.Tiles
             if (!SoundEngine.TryGetActiveSound(ShimmerID, out var _))
             {
                 if (!WorldSaveSystem.HasProvidenceDoorShattered)
-                    ShimmerID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.2f }, bottom);
+                    ShimmerID = SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceDoorShimmerSoundLoop with { Volume = 0.1f }, bottom);
             }
         }
 

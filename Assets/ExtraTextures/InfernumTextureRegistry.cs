@@ -2,8 +2,8 @@
 using ReLogic.Content;
 using Terraria.ModLoader;
 
-// In the base namespace for convience with how often textures are used with newer visuals.
-// Please maintain Type -> Alphabetical order.
+// This is in the base namespace for convience with how often textures are used with newer visuals.
+// Please maintain Type -> Alphabetical order when adding new textures to the registry.
 namespace InfernumMode.Assets.ExtraTextures
 {
     public static class InfernumTextureRegistry

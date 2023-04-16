@@ -104,7 +104,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public float TrailWidth(float completionRatio)
         {
-            float width = Utils.GetLerpValue(1f, 0.4f, completionRatio, true) * MathF.Sin(MathF.Acos(Utils.GetLerpValue(0.3f, 0f, completionRatio, true))) * Projectile.scale;
+            float tipInterpolant = MathF.Sqrt(1f - MathF.Pow(Utils.GetLerpValue(0.3f, 0f, completionRatio, true), 2f));
+            float width = Utils.GetLerpValue(1f, 0.4f, completionRatio, true) * tipInterpolant * Projectile.scale;
             return width * MaxWidth;
         }
 

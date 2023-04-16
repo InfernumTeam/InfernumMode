@@ -31,7 +31,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public ref float Time => ref Projectile.localAI[0];
 
-        public override string Texture => "InfernumMode/Content/Items/Weapons/Rogue/WanderersShell";
+        public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public override void SetStaticDefaults()
         {

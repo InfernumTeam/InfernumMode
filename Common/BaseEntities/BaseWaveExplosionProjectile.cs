@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -35,7 +36,7 @@ namespace InfernumMode.Common.BaseEntities
 
         public abstract Color DetermineExplosionColor(float lifetimeCompletionRatio);
 
-        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+        public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 

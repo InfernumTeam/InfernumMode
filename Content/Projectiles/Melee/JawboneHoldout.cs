@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Melee;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

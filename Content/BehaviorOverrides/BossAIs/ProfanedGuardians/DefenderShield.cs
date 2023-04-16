@@ -3,11 +3,8 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 

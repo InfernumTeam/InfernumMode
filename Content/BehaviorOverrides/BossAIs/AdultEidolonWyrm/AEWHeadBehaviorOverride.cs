@@ -9,7 +9,6 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Players;

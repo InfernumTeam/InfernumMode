@@ -1,9 +1,7 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
@@ -11,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;

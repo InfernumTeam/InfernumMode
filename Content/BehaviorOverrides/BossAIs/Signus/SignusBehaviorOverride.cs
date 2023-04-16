@@ -4,7 +4,6 @@ using CalamityMod.NPCs;
 using CalamityMod.UI;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

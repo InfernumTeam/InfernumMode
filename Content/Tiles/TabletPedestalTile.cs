@@ -1,9 +1,3 @@
-using CalamityMod.Events;
-using CalamityMod.Items.Materials;
-using CalamityMod.Items.SummonItems;
-using CalamityMod.NPCs.AstrumDeus;
-using CalamityMod.Projectiles.Boss;
-using CalamityMod;
 using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,7 +6,6 @@ using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using InfernumMode.Content.Items.Pets;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Generic;
 
 namespace InfernumMode.Content.Tiles

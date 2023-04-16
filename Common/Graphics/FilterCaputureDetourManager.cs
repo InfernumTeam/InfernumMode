@@ -1,5 +1,4 @@
-﻿using InfernumMode.Content.Credits;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;

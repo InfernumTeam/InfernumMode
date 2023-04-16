@@ -9,7 +9,6 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

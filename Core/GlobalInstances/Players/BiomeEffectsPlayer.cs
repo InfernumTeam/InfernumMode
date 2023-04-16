@@ -4,7 +4,6 @@ using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Biomes;
 using InfernumMode.Content.Subworlds;
-using InfernumMode.Content.Tiles;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

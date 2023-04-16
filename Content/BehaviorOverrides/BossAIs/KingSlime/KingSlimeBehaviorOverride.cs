@@ -7,7 +7,6 @@ using InfernumMode.Common;
 using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Credits;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

@@ -1,7 +1,6 @@
 using Gif.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using NVorbis.Contracts;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;

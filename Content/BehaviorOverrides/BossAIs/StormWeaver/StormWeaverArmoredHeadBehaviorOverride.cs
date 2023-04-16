@@ -1,12 +1,9 @@
 using CalamityMod;
 using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

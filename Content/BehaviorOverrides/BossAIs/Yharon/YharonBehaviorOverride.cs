@@ -6,7 +6,6 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;

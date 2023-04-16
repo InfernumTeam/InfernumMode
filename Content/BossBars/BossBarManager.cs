@@ -5,15 +5,12 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.UI;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.GameContent.UI.BigProgressBar;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Core;
 
 namespace InfernumMode.Content.BossBars
 {

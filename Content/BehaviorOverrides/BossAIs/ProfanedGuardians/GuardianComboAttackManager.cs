@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
@@ -9,7 +8,6 @@ using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
-using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;

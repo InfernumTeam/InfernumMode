@@ -1,5 +1,4 @@
-﻿using InfernumMode.Content.Projectiles;
-using InfernumMode.Content.Projectiles.Generic;
+﻿using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using System;

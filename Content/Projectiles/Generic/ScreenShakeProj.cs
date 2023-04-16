@@ -1,12 +1,13 @@
 using CalamityMod;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using System.IO;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class ScreenShakeProj : ModProjectile
     {
@@ -25,6 +26,8 @@ namespace InfernumMode.Content.Projectiles
         public Filter ScreenShader => UseSecondaryVariant ? InfernumEffectsRegistry.ScreenShakeScreenShader2 : InfernumEffectsRegistry.ScreenShakeScreenShader;
 
         public const int Lifetime = 105;
+
+        public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Screen Shake");
 

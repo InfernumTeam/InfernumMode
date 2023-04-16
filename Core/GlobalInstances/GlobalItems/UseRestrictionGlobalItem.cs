@@ -7,6 +7,7 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;

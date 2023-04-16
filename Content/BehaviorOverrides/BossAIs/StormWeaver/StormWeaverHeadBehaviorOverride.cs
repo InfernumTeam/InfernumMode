@@ -4,6 +4,7 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;

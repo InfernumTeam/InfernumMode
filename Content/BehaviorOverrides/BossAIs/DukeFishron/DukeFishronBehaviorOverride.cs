@@ -6,6 +6,7 @@ using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

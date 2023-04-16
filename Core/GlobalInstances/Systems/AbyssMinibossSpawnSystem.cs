@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;
 using Terraria;

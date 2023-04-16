@@ -1,5 +1,6 @@
 ﻿using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;

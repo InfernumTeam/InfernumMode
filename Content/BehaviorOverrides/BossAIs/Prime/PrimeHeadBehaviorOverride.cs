@@ -10,6 +10,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -272,7 +273,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             cannonsShouldNotFire = npc.WithinRange(target.Center, 160f).ToInt();
 
             // Calculate the cannon attack timer.
-            GetCannonAttributesByAttack(attackType, npc, out _, out _, out int shootCycleTime);
+            GetCannonAttributesByAttack(attackType, out _, out _, out int shootCycleTime);
 
             npc.Infernum().ExtraAI[CannonCycleTimerIndex] = wrappedAttackTimer % shootCycleTime;
 
@@ -859,7 +860,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             npc.netUpdate = true;
         }
 
-        public static void GetCannonAttributesByAttack(PrimeAttackType attackState, NPC head, out int telegraphTime, out int totalShootTime, out int shootCycleTime)
+        public static void GetCannonAttributesByAttack(PrimeAttackType attackState, out int telegraphTime, out int totalShootTime, out int shootCycleTime)
         {
             telegraphTime = GenericCannonTelegraphTime;
             totalShootTime = GenericCannonShootTime;
@@ -883,7 +884,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             PrimeAttackType attackState = (PrimeAttackType)head.ai[0];
             ref float cannonAttackTimer = ref head.Infernum().ExtraAI[CannonCycleTimerIndex];
 
-            GetCannonAttributesByAttack(attackState, head, out int telegraphTime, out _, out int shootCycleTime);
+            GetCannonAttributesByAttack(attackState, out int telegraphTime, out _, out int shootCycleTime);
 
             // All cannons can fire once their collective HP is below a certain life threshold while performing the generic attack.
             bool meleeCannon = cannon.type is NPCID.PrimeVice or NPCID.PrimeSaw;

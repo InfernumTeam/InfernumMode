@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;

@@ -8,7 +8,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Events;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class DisenchantedTabletProj : ModProjectile
     {

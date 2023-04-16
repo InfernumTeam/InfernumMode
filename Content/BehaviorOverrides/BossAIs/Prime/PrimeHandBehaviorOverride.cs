@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             NPC head = Main.npc[headIndex];
             PrimeAttackType attackState = (PrimeAttackType)head.ai[0];
-            GetCannonAttributesByAttack(attackState, head, out int telegraphTime, out _, out _);
+            GetCannonAttributesByAttack(attackState, out int telegraphTime, out _, out _);
 
             float wrappedAttackTimer = head.Infernum().ExtraAI[CannonCycleTimerIndex] - telegraphTime;
             ref float telegraphIntensity = ref npc.localAI[0];

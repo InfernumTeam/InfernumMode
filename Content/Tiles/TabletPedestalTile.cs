@@ -13,6 +13,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using InfernumMode.Content.Items.Pets;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Generic;
 
 namespace InfernumMode.Content.Tiles
 {

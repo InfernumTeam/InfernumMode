@@ -11,6 +11,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;

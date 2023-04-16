@@ -24,6 +24,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;

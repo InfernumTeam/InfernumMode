@@ -126,12 +126,13 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public override bool PreDraw(ref Color lightColor)
         {
+            float bloomScale = Utils.GetLerpValue(0.8f, 2.4f, Projectile.velocity.Length(), true) * Projectile.scale;
             Texture2D bloomTexture = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
             Color mainColor = MulticolorLerp((Main.GlobalTimeWrappedHourly * 0.5f + Projectile.whoAmI * 0.12f) % 1, Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
 
             // Draw the bloom under the trail.
-            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[2] + Projectile.Size * 0.5f - Main.screenPosition, null, (mainColor * 0.1f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, 1.3f * Projectile.scale, 0, 0);
-            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[1] + Projectile.Size * 0.5f - Main.screenPosition, null, (mainColor * 0.5f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, 0.34f * Projectile.scale, 0, 0);
+            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[2] + Projectile.Size * 0.5f - Main.screenPosition, null, (mainColor * 0.1f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, bloomScale * 1.3f, 0, 0);
+            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[1] + Projectile.Size * 0.5f - Main.screenPosition, null, (mainColor * 0.5f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, bloomScale * 0.34f, 0, 0);
 
             // Initialize the trail drawer.
             var trailShader = GameShaders.Misc["CalamityMod:ExobladePierce"];
@@ -145,8 +146,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 45);
 
             // Draw the bloom above the trail.
-            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[2] + Projectile.Size * 0.5f - Main.screenPosition, null, (Color.White * 0.2f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, Projectile.scale * 1.2f, 0, 0);
-            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[1] + Projectile.Size * 0.5f - Main.screenPosition, null, (Color.White * 0.5f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, Projectile.scale * 0.44f, 0, 0);
+            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[2] + Projectile.Size * 0.5f - Main.screenPosition, null, (Color.White * 0.2f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, bloomScale * 1.2f, 0, 0);
+            Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[1] + Projectile.Size * 0.5f - Main.screenPosition, null, (Color.White * 0.5f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, bloomScale * 0.44f, 0, 0);
             return false;
         }
     }

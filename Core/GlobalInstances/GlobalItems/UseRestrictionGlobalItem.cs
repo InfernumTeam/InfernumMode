@@ -69,7 +69,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 return false;
 
             bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
-            if (inAbyss && item.type == ItemID.RecallPotion)
+            if (inAbyss && (item.type is ItemID.RecallPotion or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch))
                 return false;
 
             return base.CanUseItem(item, player);
@@ -79,9 +79,14 @@ namespace InfernumMode.GlobalInstances.GlobalItems
         {
             // Disable magic mirror teleportation effects in the lower layers of the abyss.
             bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
-            bool spawnTeleportingItem = item.type is ItemID.MagicMirror or ItemID.CellPhone or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch;
-            if (spawnTeleportingItem && inAbyss && player.itemTime < item.useTime / 2)
+            bool spawnTeleportingItem = item.type is ItemID.MagicMirror or ItemID.CellPhone;
+            if (spawnTeleportingItem && inAbyss)
+            {
+                if (player.itemAnimation >= item.useAnimation - 2)
+                    CombatText.NewText(player.Hitbox, Color.Navy, "The pressure is too strong to escape!", true);
                 player.itemTime = item.useTime / 2 - 1;
+            }
+
             return base.UseItem(item, player);
         }
 

@@ -1,11 +1,9 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Content.Projectiles.Magic;
 using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -13,6 +11,12 @@ namespace InfernumMode.Common.Graphics
 {
     public class ShadowIllusionDrawSystem : ModSystem
     {
+        public static bool ShadowProjectilesExist
+        {
+            get;
+            set;
+        }
+
         public static RenderTarget2D ShadowDrawTarget
         {
             get;
@@ -111,6 +115,7 @@ namespace InfernumMode.Common.Graphics
             }
 
             // Draw additive effects.
+            ShadowProjectilesExist = false;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -125,6 +130,7 @@ namespace InfernumMode.Common.Graphics
                     continue;
 
                 Main.instance.DrawProj(i);
+                ShadowProjectilesExist = true;
             }
         }
 

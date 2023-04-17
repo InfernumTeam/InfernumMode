@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "Their tears blend with the raindrops, mourning over all that couldn't be\n" +
                 $"[c/777777:Defeat the Exo Mechs and Calamitas and find the spear near your spawn point during the rain]";
             TotalCompletion = 1;
-            PositionInMainList = 14;
+            PositionInMainList = 15;
             UpdateCheck = AchievementUpdateCheck.ProjectileKill;
             IsDevWish = true;
         }

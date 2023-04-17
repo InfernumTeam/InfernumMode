@@ -12,6 +12,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;

@@ -13,7 +13,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class ProvidenceSummonerProjectile : ModProjectile
     {

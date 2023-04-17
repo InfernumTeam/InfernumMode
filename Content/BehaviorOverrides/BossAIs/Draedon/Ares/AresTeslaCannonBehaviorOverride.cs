@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void ShootProjectiles(NPC npc, Vector2 endOfCannon, Vector2 aimDirection)
         {
             int teslaOrbDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + DraedonBehaviorOverride.StrongerNormalShotDamage;
-            float orbShootSpeed = 8.5f;
+            float orbShootSpeed = 8f;
             ref float orbCounter = ref npc.ai[OrbCounterIndex];
 
             // Shoot slower if pointing downward.

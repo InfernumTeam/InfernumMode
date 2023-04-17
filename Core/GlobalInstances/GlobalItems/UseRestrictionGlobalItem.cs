@@ -6,7 +6,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
@@ -19,7 +19,6 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 {
     public class UseRestrictionGlobalItem : GlobalItem
     {
-
         public static bool DisplayTeleportDenialText(Player player, Item item, bool isDoG)
         {
             if (!player.chaosState)
@@ -54,13 +53,13 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) || Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
                     return DisplayTeleportDenialText(player, item, false);
                 if (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
-                    return DisplayTeleportDenialText(player, item, true);             
+                    return DisplayTeleportDenialText(player, item, true);
             }
 
             if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedCore>() || item.type == ModContent.ItemType<SandstormsCore>()))
                 return false;
 
-            // Only allow this to be used in the correct area.
+            // Only allow the profaned shard to be used in the correct area.
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedShard>())
                 return player.Hitbox.Intersects(GuardianComboAttackManager.ShardUseisAllowedArea) && !WeakReferenceSupport.InAnySubworld();
 
@@ -69,7 +68,26 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             if (illegalItemForArena && inArena)
                 return false;
 
+            bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
+            if (inAbyss && (item.type is ItemID.RecallPotion or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch))
+                return false;
+
             return base.CanUseItem(item, player);
+        }
+
+        public override bool? UseItem(Item item, Player player)
+        {
+            // Disable magic mirror teleportation effects in the lower layers of the abyss.
+            bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
+            bool spawnTeleportingItem = item.type is ItemID.MagicMirror or ItemID.CellPhone;
+            if (spawnTeleportingItem && inAbyss)
+            {
+                if (player.itemAnimation >= item.useAnimation - 2)
+                    CombatText.NewText(player.Hitbox, Color.Navy, "The pressure is too strong to escape!", true);
+                player.itemTime = item.useTime / 2 - 1;
+            }
+
+            return base.UseItem(item, player);
         }
 
         public override void UpdateInventory(Item item, Player player)

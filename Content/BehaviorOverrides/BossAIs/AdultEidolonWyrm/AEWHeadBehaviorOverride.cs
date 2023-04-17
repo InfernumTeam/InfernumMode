@@ -9,7 +9,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -247,6 +247,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.chaseable = true;
             npc.defDamage = 550;
             npc.damage = npc.defDamage;
+            npc.Calamity().DR = 0.3f;
 
             // This is necessary to allow the boss effects buff to be applied.
             npc.Calamity().KillTime = 1;
@@ -715,6 +716,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Look at the player before attacking.
             if (attackTimer < attackDelay)
             {
+                npc.Calamity().DR = 0.9f;
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.24f);
                 return;
             }

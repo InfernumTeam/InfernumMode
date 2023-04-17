@@ -4,7 +4,7 @@ using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -239,7 +239,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     DoAttack_FeatherSpreadRelease(npc, target, ref attackTimer, ref frameType, ref flapRate);
                     break;
                 case DragonfollyAttackType.PlasmaBursts:
-                    DoAttack_ReleasePlasmaBursts(npc, target, ref attackTimer, ref fadeToRed, ref frameType, ref flapRate);
+                    DoAttack_ReleasePlasmaBursts(npc, ref attackTimer, ref frameType);
                     break;
                 case DragonfollyAttackType.ElectricOverload:
                     DoAttack_ElectricOverload(npc, target, ref attackTimer, ref frameType, ref flapRate);
@@ -804,7 +804,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             }
         }
 
-        public static void DoAttack_ReleasePlasmaBursts(NPC npc, Player target, ref float attackTimer, ref float fadeToRed, ref float frameType, ref float flapRate)
+        public static void DoAttack_ReleasePlasmaBursts(NPC npc, ref float attackTimer, ref float frameType)
         {
             if (NPC.CountNPCS(ModContent.NPCType<RedPlasmaEnergy>()) >= 3)
                 SelectNextAttack(npc);

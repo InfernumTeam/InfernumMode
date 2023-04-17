@@ -8,7 +8,6 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using Terraria.Graphics;
 using CalamityMod.NPCs;
-using CalamityMod;
 using Terraria.Audio;
 using Terraria.ID;
 

@@ -4,7 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

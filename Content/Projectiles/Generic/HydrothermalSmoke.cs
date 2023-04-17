@@ -7,7 +7,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class HydrothermalSmoke : ModProjectile, IAdditiveDrawer
     {
@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Projectiles
         {
             DisplayName.SetDefault("Steam");
 
-            // This prevents the smoke from creating a universal distortion wherever it lands, thus making the vents look weird.
+            // This prevents the smoke from creating a water distortion wherever it lands, thus making the vents look weird.
             ProjectileID.Sets.NoLiquidDistortion[Type] = true;
         }
 

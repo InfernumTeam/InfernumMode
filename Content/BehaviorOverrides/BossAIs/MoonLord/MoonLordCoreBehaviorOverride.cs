@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;

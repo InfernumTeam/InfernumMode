@@ -7,7 +7,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -21,7 +20,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class GuardiansSummonerProjectile : ModProjectile
     {

@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                     if (!Main.rand.NextBool(3))
                         continue;
 
-                    Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 27, npc.velocity.X * 1f, 0f, 100, default, 1f);
+                    Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Shadowflame, npc.velocity.X * 1f, 0f, 100, default, 1f);
                     magic.scale = 0.55f;
                     magic.fadeIn = 0.7f;
                     magic.velocity *= npc.Size.Length() / 400f;

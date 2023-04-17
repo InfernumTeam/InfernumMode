@@ -1,6 +1,6 @@
 ﻿using CalamityMod.Items.Materials;
 using InfernumMode.Content.Buffs;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -9,13 +9,13 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Pets
 {
-    public class BronzePetItem : ModItem
+    public class SuspiciouslyRoundFeather : ModItem
     {
         public override void SetStaticDefaults()
         {
             SacrificeTotal = 1;
-            DisplayName.SetDefault("lol");
-            Tooltip.SetDefault("lol 2");
+            DisplayName.SetDefault("Suspiciously Round Feather");
+            Tooltip.SetDefault("Summons an old friend");
         }
         public override void SetDefaults()
         {
@@ -28,11 +28,10 @@ namespace InfernumMode.Content.Items.Pets
             Item.height = 30;
 
             Item.value = Item.sellPrice(0, 5, 0, 0);
-            Item.rare = ModContent.RarityType<InfernumHatgirlRarity>();
+            Item.rare = ModContent.RarityType<InfernumRedSparkRarity>();
 
             Item.shoot = ModContent.ProjectileType<BronzePetProj>();
             Item.buffType = ModContent.BuffType<BronzePetBuff>();
-            //Item.UseSound = SoundID.Meowmere;
             Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
@@ -45,8 +44,9 @@ namespace InfernumMode.Content.Items.Pets
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DesertFeather>(), 3);
-            recipe.AddIngredient(ItemID.ChickenNugget, 2);
+            recipe.AddIngredient(ModContent.ItemType<DesertFeather>(), 2);
+            recipe.AddIngredient(ItemID.Feather, 2);
+            recipe.AddIngredient(ItemID.ChickenNugget);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

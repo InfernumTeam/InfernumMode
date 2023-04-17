@@ -2,7 +2,6 @@
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
-using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

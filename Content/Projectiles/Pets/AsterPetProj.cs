@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Particles;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -7,9 +8,10 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Pets
 {
     public class AsterPetProj : ModProjectile
     {
@@ -40,7 +42,7 @@ namespace InfernumMode.Content.Projectiles
 
         public override void SetDefaults()
         {
-            Projectile.width = 40;
+            Projectile.width = 26;
             Projectile.height = 52;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
@@ -54,6 +56,13 @@ namespace InfernumMode.Content.Projectiles
             {
                 Projectile.active = false;
                 return;
+            }
+
+            // Bark on the first frame.
+            if (Projectile.localAI[0] == 0f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.AsterBarkSound, Projectile.Center);
+                Projectile.localAI[0] = 1f;
             }
 
             HandlePetVariables();
@@ -102,6 +111,7 @@ namespace InfernumMode.Content.Projectiles
                     break;
             }
 
+            Time++;
             Projectile.gfxOffY = 6;
         }
 
@@ -199,7 +209,8 @@ namespace InfernumMode.Content.Projectiles
                 Projectile.velocity *= 0.8f;
 
             // Use flying frames.
-            Projectile.frame = 0;
+            Projectile.frameCounter++;
+            Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
 
             // Prevent natural tile collision.
             Projectile.tileCollide = false;
@@ -235,9 +246,12 @@ namespace InfernumMode.Content.Projectiles
             }
 
             // Use petting frames.
-            Projectile.frameCounter++;
-            Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
-            Projectile.spriteDirection = -Owner.direction;
+            if (Time >= 3f)
+            {
+                Projectile.frameCounter++;
+                Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
+                Projectile.spriteDirection = -Owner.direction;
+            }
 
             // Sit down as usual again if the owner stopped giving pets.
             if (Main.myPlayer == Projectile.owner && Owner.Infernum_Pet().ProjectileThatsBeingPetted != Projectile.whoAmI)
@@ -250,7 +264,7 @@ namespace InfernumMode.Content.Projectiles
             }
 
             Player.CompositeArmStretchAmount stretch = Player.CompositeArmStretchAmount.ThreeQuarters;
-            if (Owner.miscCounter % 14 / 7 == 1)
+            if (Owner.miscCounter % 14 >= 7)
                 stretch = Player.CompositeArmStretchAmount.Full;
             Owner.SetCompositeArmBack(true, stretch, -MathHelper.TwoPi * Owner.direction * 0.27f);
         }
@@ -275,6 +289,17 @@ namespace InfernumMode.Content.Projectiles
         {
             fallThrough = !Projectile.WithinRange(Owner.Center, 180f);
             return true;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.position.X -= 5f;
+            return true;
+        }
+
+        public override void PostDraw(Color lightColor)
+        {
+            Projectile.position.X += 5f;
         }
     }
 }

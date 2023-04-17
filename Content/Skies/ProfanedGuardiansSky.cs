@@ -1,19 +1,13 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
-using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Projectiles.Wayfinder;
-using InfernumMode.Core;
-using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
-using InfernumMode.Content.Skies;
 
 namespace InfernumMode.Content.Skies
 {

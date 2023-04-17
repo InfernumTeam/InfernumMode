@@ -1,7 +1,5 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
@@ -9,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;

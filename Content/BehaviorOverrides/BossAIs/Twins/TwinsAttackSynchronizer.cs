@@ -9,7 +9,7 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
@@ -370,7 +370,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 if (npc.type == NPCID.Spazmatism)
                     DoBehavior_SpazmatismAlone(npc, ref chargingFlag);
                 else
-                    DoBehavior_RetinazerAlone(npc, ref chargingFlag);
+                    DoBehavior_RetinazerAlone(npc);
 
                 // Progress with the charge animation.
                 chargeFlameTimer = MathHelper.Clamp(chargeFlameTimer + (chargingFlag == 1f ? 1f : -3f), 0f, 15f);
@@ -395,7 +395,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     DoBehavior_FlamethrowerBurst(npc, isSpazmatism, isRetinazer, ref afterimageInterpolant);
                     break;
                 case TwinsAttackState.ChaoticFireAndDownwardLaser:
-                    if (!DoBehavior_ChaoticFireAndDownwardLaser(npc, isSpazmatism, ref chargingFlag))
+                    if (!DoBehavior_ChaoticFireAndDownwardLaser(npc, isSpazmatism))
                         return false;
                     break;
                 case TwinsAttackState.LazilyObserve:
@@ -860,7 +860,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public static bool DoBehavior_ChaoticFireAndDownwardLaser(NPC npc, bool isSpazmatism, ref float chargingFlag)
+        public static bool DoBehavior_ChaoticFireAndDownwardLaser(NPC npc, bool isSpazmatism)
         {
             int shootDelay = 60;
             int attackDuration = 540;
@@ -1116,7 +1116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             AgileLaserbeamSweeps,
         }
 
-        public static void DoBehavior_RetinazerAlone(NPC npc, ref float chargingFlag)
+        public static void DoBehavior_RetinazerAlone(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             Vector2 endOfLaserCannon = npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 80f;

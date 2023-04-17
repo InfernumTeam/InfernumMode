@@ -1,6 +1,4 @@
-﻿using InfernumMode.Assets.Effects;
-using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics.AttemptRecording;
+﻿using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

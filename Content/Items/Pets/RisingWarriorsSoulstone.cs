@@ -1,5 +1,6 @@
 ﻿using InfernumMode.Content.Buffs;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace InfernumMode.Content.Items.Pets
             "You should give me your gear so I can show you how it's done.",
             "Awesome. Now try again. I wanna see the bloodshed.",
             "What, you want me to help you during the fight? Sorry, I'm just here for style points.",
-            "Oh yeah, this boss was balanced to screw specifically you and JUST you over. Cruel world, I know.",
+            "Oh yeah, this boss was balanced to screw specifically you and JUST you over. Cruel world, I know.", // I agree.
             "...eh? Oh sorry sorry, was just vibin' to the boss music! Uh, sorry for your death, try again, I guess.",
             "Wow, you... lasted longer than I thought you would!",
             "I'm wondering if... maybe you need a break.",
@@ -69,7 +70,7 @@ namespace InfernumMode.Content.Items.Pets
             Item.scale = 0.5f;
 
             Item.value = Item.sellPrice(gold: 10);
-            //Item.rare = ModContent.RarityType<InfernumHatgirlRarity>();
+            Item.rare = ModContent.RarityType<InfernumPurpleBackglowRarity>();
 
             Item.shoot = ModContent.ProjectileType<AsterPetProj>();
             Item.buffType = ModContent.BuffType<AsterPetBuff>();

@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;

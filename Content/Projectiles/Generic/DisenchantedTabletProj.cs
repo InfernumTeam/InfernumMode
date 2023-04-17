@@ -8,7 +8,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Events;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class DisenchantedTabletProj : ModProjectile
     {
@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Projectiles
         public override void AI()
         {
             // Rise upward.
-            float upwardRiseSpeed = Utils.Remap(Time, 30f, 96f, 5f, 0f);
+            float upwardRiseSpeed = Utils.Remap(Time, 30f, 96f, 2.7f, 0f);
             Projectile.velocity = -Vector2.UnitY * upwardRiseSpeed;
 
             // Release inward pulses and emit energy after movement ceases.

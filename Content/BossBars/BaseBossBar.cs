@@ -5,8 +5,6 @@ using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -16,7 +14,7 @@ using static InfernumMode.Content.BossBars.BossBarManager;
 
 namespace InfernumMode.Content.BossBars
 {
-	// A lot of this is yoinked from BossHPUI in base Calamity, considering they function pretty much the same internally.
+    // A lot of this is yoinked from BossHPUI in base Calamity, considering they function pretty much the same internally.
     public class BaseBossBar
     {
         #region Fields/Properties

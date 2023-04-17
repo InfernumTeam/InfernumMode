@@ -1,11 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.IO;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
-
-namespace InfernumMode.Content.Tiles
+﻿namespace InfernumMode.Content.Tiles
 {
     //public class GuardiansPlaqueTileEntity : ModTileEntity
     //{

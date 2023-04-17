@@ -3,7 +3,7 @@ using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;

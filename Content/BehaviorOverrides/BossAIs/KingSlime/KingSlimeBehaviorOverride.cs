@@ -7,7 +7,7 @@ using InfernumMode.Common;
 using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Credits;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -54,9 +54,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public const float DespawnDistance = 4700f;
 
-        public const float MaxScale = 3f;
+        public const float MaxScale = 2.3f;
 
-        public const float MinScale = 1.85f;
+        public const float MinScale = 1.1f;
 
         public static Vector2 HitboxScaleFactor => new(128f, 88f);
 
@@ -394,14 +394,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         public static void DoBehavior_SmallJump(NPC npc, ref Player target, ref float attackTimer)
         {
             ref float postJumpTimer = ref npc.Infernum().ExtraAI[0];
+            ref float stuckTimer = ref npc.Infernum().ExtraAI[1];
 
-            if (Math.Abs(npc.velocity.Y) < 0.31f)
+            if (Math.Abs(npc.velocity.Y) < 0.31f || stuckTimer >= 60f)
             {
                 npc.velocity.X *= 0.8f;
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
 
-                if (attackTimer == 25f && postJumpTimer == 0f)
+                if ((attackTimer == 25f || stuckTimer >= 60f) && postJumpTimer == 0f)
                 {
                     target = Main.player[npc.target];
                     float jumpSpeed = MathHelper.Lerp(8.25f, 14f, Utils.GetLerpValue(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
@@ -410,8 +411,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     npc.velocity = new Vector2(npc.direction * 8.5f, -jumpSpeed);
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 2.4f;
+                    npc.position.Y -= 8f;
 
                     postJumpTimer = 1f;
+                    attackTimer = 35f;
+                    stuckTimer = 0f;
                     npc.netUpdate = true;
                 }
 
@@ -427,19 +431,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 npc.noTileCollide = postJumpTimer < 30f;
                 postJumpTimer++;
             }
+
+            stuckTimer++;
         }
 
         public static void DoBehavior_LargeJump(NPC npc, ref Player target, ref float attackTimer, bool performingDeathAnimation = false)
         {
             ref float postJumpTimer = ref npc.Infernum().ExtraAI[0];
+            ref float stuckTimer = ref npc.Infernum().ExtraAI[1];
 
-            if (Math.Abs(npc.velocity.Y) < 0.31f)
+            if (Math.Abs(npc.velocity.Y) < 0.31f || stuckTimer >= 60f)
             {
                 npc.velocity.X *= 0.8f;
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
 
-                if (attackTimer == 35f && postJumpTimer == 0f)
+                if ((attackTimer == 35f || stuckTimer >= 60f) && postJumpTimer == 0f)
                 {
                     target = Main.player[npc.target];
                     float jumpSpeed = MathHelper.Lerp(10f, 26f, Utils.GetLerpValue(40f, 480f, Math.Abs(target.Center.Y - npc.Center.Y), true));
@@ -448,8 +455,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 1.5f;
+                    npc.position.Y -= 8f;
 
                     postJumpTimer = 1f;
+                    attackTimer = 35f;
+                    stuckTimer = 0f;
                     npc.netUpdate = true;
                 }
 
@@ -489,6 +499,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 npc.noTileCollide = postJumpTimer < 30f;
                 postJumpTimer++;
             }
+            stuckTimer++;
         }
 
         public static void DoBehavior_Teleport(NPC npc, Player target, float idealScale, ref float attackTimer, ref float teleportDirection)

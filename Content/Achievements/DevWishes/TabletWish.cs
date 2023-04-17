@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "Not all beasts are monsters\n" +
                 $"[c/777777:Defeat the Aquatic Scourge without ever letting the acid meter exceed 50% during the battle]";
             TotalCompletion = 1;
-            PositionInMainList = 10;
+            PositionInMainList = 11;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
             IsDevWish = true;
         }

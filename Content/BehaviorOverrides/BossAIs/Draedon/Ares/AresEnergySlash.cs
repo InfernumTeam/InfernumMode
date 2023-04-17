@@ -5,7 +5,6 @@ using CalamityMod;
 using System.Collections.Generic;
 using InfernumMode.Assets.Effects;
 using Microsoft.Xna.Framework.Graphics;
-using CalamityMod.DataStructures;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {

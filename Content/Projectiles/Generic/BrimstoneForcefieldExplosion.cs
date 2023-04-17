@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class BrimstoneForcefieldExplosion : BaseMassiveExplosionProjectile
     {

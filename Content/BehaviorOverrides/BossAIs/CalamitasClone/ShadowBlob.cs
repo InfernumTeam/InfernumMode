@@ -1,7 +1,6 @@
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Common.Graphics.Metaballs;
-using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

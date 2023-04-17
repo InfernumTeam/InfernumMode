@@ -5,7 +5,6 @@ using CalamityMod.NPCs.Ravager;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Core.OverridingSystem;

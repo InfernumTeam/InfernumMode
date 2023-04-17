@@ -55,7 +55,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (!hatGirl && !possibleThingsToSay.Any())
                 possibleThingsToSay.AddRange(RisingWarriorsSoulstone.GenericThingsToSayOnDeath.Where(s => !SaidText.Contains(s)));
 
-            if (potentialTips is null || !potentialTips.Any() || possibleThingsToSay.Count <= 0)
+            if (!possibleThingsToSay.Any())
                 return string.Empty;
 
             return possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count));

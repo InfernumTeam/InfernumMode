@@ -77,9 +77,9 @@ namespace InfernumMode.Common.Graphics
 
         public static float DownscaleFactor => 48f;
 
-        public static float BlurBrightnessFactor => 120f;
+        public static float BlurBrightnessFactor => 84f;
 
-        public static float BlurBrightnessExponent => 4f;
+        public static float BlurBrightnessExponent => 4.3f;
 
         public static float BlurSaturationBiasInterpolant => 0.15f;
 
@@ -105,7 +105,13 @@ namespace InfernumMode.Common.Graphics
             c.GotoPrev(MoveType.After, i => i.MatchStloc(out localIndex));
 
             c.Emit(OpCodes.Ldloc, localIndex);
-            c.EmitDelegate(() => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs && !Main.mapFullscreen);
+            c.EmitDelegate(() =>
+            {
+                bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs;
+                bool shadowProjectilesExist = ShadowIllusionDrawSystem.ShadowProjectilesExist;
+                bool secondaryCondition = fightingAEW || shadowProjectilesExist;
+                return secondaryCondition && !Main.mapFullscreen;
+            });
             c.Emit(OpCodes.Or);
             c.Emit(OpCodes.Stloc, localIndex);
         }

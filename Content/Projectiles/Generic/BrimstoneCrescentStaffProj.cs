@@ -1,5 +1,4 @@
 ﻿using CalamityMod.Particles;
-using CalamityMod;
 using InfernumMode.Content.Items;
 using Microsoft.Xna.Framework;
 using System;
@@ -11,7 +10,7 @@ using Terraria.Audio;
 using InfernumMode.Assets.Sounds;
 using Terraria.ID;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Content.Projectiles.Generic
 {
     public class BrimstoneCrescentStaffProj : ModProjectile
     {

@@ -116,6 +116,7 @@ namespace InfernumMode.Core.Balancing
                 // Supreme Calamitas.
                 new NPCBalancingChange(NPCType<SepulcherBody>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
                 new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
+                new NPCBalancingChange(NPCType<SoulSeekerSupreme>(), Do(new TrueMeleeBalancingRule(0.45f))),
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),
             };
         }

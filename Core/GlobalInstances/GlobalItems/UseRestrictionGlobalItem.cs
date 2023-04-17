@@ -6,6 +6,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;

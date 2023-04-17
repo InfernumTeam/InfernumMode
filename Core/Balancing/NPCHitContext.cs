@@ -8,6 +8,7 @@ namespace InfernumMode.Core.Balancing
     {
         public int Pierce;
         public int Damage;
+        public int? ProjectileIndex;
         public int? ProjectileType;
         public bool IsStealthStrike;
         public ClassType? Class;
@@ -35,6 +36,7 @@ namespace InfernumMode.Core.Balancing
                 Pierce = proj.penetrate,
                 Damage = proj.damage,
                 ProjectileType = proj.type,
+                ProjectileIndex = proj.whoAmI,
                 Class = classType,
                 IsStealthStrike = proj.active && proj.Calamity().stealthStrike,
                 DamageSource = DamageSourceType.FriendlyProjectile

@@ -19,6 +19,10 @@ namespace InfernumMode.Content.Items
 
         public static int ExplosionBaseDamage => 600;
 
+        public static int MaxForcefieldHits => 3;
+
+        public static int ForcefieldCreationDelayAfterBreak => 15;
+
         public static float ForcefieldDRMultiplier => 0.66f;
 
         public static float DamageMultiplier => 0.33f;
@@ -28,7 +32,8 @@ namespace InfernumMode.Content.Items
             DisplayName.SetDefault("Brimstone Crescent Staff");
             Tooltip.SetDefault($"Using the staff toggles a powerful forcefield that provides a universal {MathF.Round(ForcefieldDRMultiplier * 100f)}% DR\n" +
                 "Hits that are applied to you while the forcefield is up release a violent explosion that hurts nearby enemies\n" +
-                $"When the forcefield is activated, and for {DebuffTime} seconds afterwards, your damage output is reduced by {MathF.Round((1f - DamageMultiplier) * 100f)}%");
+                $"When the forcefield is activated, and for {DebuffTime} seconds afterwards, your damage output is reduced by {MathF.Round((1f - DamageMultiplier) * 100f)}%\n" +
+                $"The forcefield breaks after {MaxForcefieldHits} hits. After it breaks, you cannot recreate it until {ForcefieldCreationDelayAfterBreak} seconds have passed");
             SacrificeTotal = 1;
         }
 

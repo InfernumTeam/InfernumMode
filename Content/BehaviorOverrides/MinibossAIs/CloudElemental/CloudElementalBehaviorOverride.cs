@@ -39,6 +39,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             npc.knockBackResist = 0;
             npc.damage = BaseContactDamage;
 
+            // Why is this debuff.
+            if (target.HasBuff(BuffID.Electrified))
+                target.ClearBuff(BuffID.Electrified);
 
             // Set variables.
             ref float attackTimer = ref npc.ai[0];

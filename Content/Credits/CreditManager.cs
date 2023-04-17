@@ -115,9 +115,14 @@ namespace InfernumMode.Content.Credits
             CreditsTimer = 0;
         }
 
+        public static bool ShouldPause()
+        {
+            return Main.mapFullscreen || Main.inFancyUI || Main.gamePaused;
+        }
+
         private static void UpdateCredits()
         {
-            if (!CreditsPlaying)
+            if (!CreditsPlaying || ShouldPause())
                 return;
 
             // TODO -- Make this variable based on the amount of frames in the gif.
@@ -198,7 +203,7 @@ namespace InfernumMode.Content.Credits
         private static void DrawCredits(GameTime gameTime)
         {
             // Only draw if the credits are playing.
-            if (!CreditsPlaying || CurrentState != CreditState.Playing)
+            if (!CreditsPlaying || CurrentState != CreditState.Playing || ShouldPause())
                 return;
 
             // This is already ended.

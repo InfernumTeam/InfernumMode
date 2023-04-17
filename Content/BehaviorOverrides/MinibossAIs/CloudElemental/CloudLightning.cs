@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public const int TelegraphTotalTime = 30;
 
-        public const int LightningTime = 60;
+        public const int LightningTime = 45;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 

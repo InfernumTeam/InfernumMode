@@ -119,7 +119,7 @@ namespace InfernumMode.Content.MainMenu
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
-            HandleBoids();
+            //HandleBoids();
             HandleRaindrops();
 
             spriteBatch.End();

@@ -2294,9 +2294,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         float xAmount = MathHelper.Lerp(1.2f, 0f, interpolant);
                         npc.velocity.X += npc.SafeDirectionTo(target.Center).X * xAmount;
                         npc.velocity.Y += 0.35f;
-
-                        // Set the aim telegraph.
                     }
+
+                    // Charge at the target.
                     else if (universalAttackTimer >= aimTime)
                     {
                         npc.velocity = npc.SafeDirectionTo(target.Center) * aimedChargeSpeed;
@@ -2378,13 +2378,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             GeneralParticleHandler.SpawnParticle(fireExplosion);
                         }
 
+
                         for (int i = 0; i < 70; i++)
                             FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + Main.rand.NextVector2Circular(150f, 150f), Main.rand.NextFloat(52f, 85f));
 
-                        // Spawn a large crack.
+                        // Spawn crosses/rocks.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            //Utilities.NewProjectileBetter(impactCenter, Vector2.Zero, ModContent.ProjectileType<ProfanedCrack>(), 0, 0f);
                             float crossCount = 24f;
                             for (int j = 0; j < crossCount; j++)
                             {

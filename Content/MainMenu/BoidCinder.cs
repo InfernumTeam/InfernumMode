@@ -22,7 +22,7 @@ namespace InfernumMode.Content.MainMenu
 
         public float SeperateCoeffecient = 0.51f;
         public float AlignCoeffecient = 0.45f;
-        public float ClumpCoeffecient = 0.55f;
+        public float ClumpCoeffecient = 0.85f;
         public float Radius = 50f;
         public float SeperateDistanceScalar = 42f;
         public float SchoolSize = 10f;

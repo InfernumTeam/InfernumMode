@@ -44,6 +44,8 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public static Player Player => Main.LocalPlayer;
 
+        private Vector2 DefaultPlayerPosition;
+
         public float FireballScale
         {
             get => Projectile.Opacity;
@@ -81,6 +83,8 @@ namespace InfernumMode.Content.Projectiles.Generic
             {
                 Player.Infernum_Camera().ScreenFocusHoldInPlaceTime = Lifetime;
 
+                DefaultPlayerPosition = Player.Center;
+
                 // If infernum is not enabled, just spawn the guardians.
                 if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.InfernumMode)
                 {
@@ -90,6 +94,8 @@ namespace InfernumMode.Content.Projectiles.Generic
                 }
 
             }
+
+            Player.Center = DefaultPlayerPosition;
 
             float particleCircleSize = MathHelper.Lerp(500f, 200f, Time / SpawnTime);
             int rockSpawnRate = (int)MathHelper.Lerp(3f, 1f, Time / SpawnTime);

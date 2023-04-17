@@ -10,6 +10,7 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -49,7 +50,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
         {
             if (InfernumMode.CanUseCustomAIs && item.type == ItemID.RodofDiscord)
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))
+                if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) || Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
                     return DisplayTeleportDenialText(player, item, false);
                 if (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
                     return DisplayTeleportDenialText(player, item, true);

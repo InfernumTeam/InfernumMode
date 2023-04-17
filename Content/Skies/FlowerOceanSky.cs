@@ -97,6 +97,7 @@ namespace InfernumMode.Content.Skies
 
         private readonly List<Godray> Rays = new();
         private readonly List<Cinder> Cinders = new();
+        public static readonly List<FishBoid> Fishes = new();
         private float intensity;
         private bool isActive;
 
@@ -155,6 +156,7 @@ namespace InfernumMode.Content.Skies
                 // Draw the moon.
                 DrawMoon(spriteBatch);
             }
+            DrawFish();
             DrawCinders(spriteBatch, minDepth, maxDepth);
         }
 
@@ -253,6 +255,26 @@ namespace InfernumMode.Content.Skies
             float yTimeOffset = MathF.Pow((float)(Main.time / 32400f - 0.5f) * 2.0f, 2.0f);
             int yPos = (int)(sceneArea.bgTopY + yTimeOffset * 230.0 + 100.0);
             return new Vector2(xPos, yPos + Main.moonModY) + sceneArea.SceneLocalScreenPositionOffset;
+        }
+
+        public void DrawFish()
+        {
+            int maxBoids = 200;
+            // Setup the boids if none are present, when the mod loads.
+
+            Rectangle spawnRectangle = new(50, 50, Main.screenWidth - 50, Main.screenHeight - 50);
+            if (Main.rand.NextBool(2) && Fishes.Count < maxBoids)
+                Fishes.Add(new(Main.rand.Next(600, 1200), Main.rand.NextFloat(0.15f, 0.2f), Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloat(-Main.screenWidth * 0.8f, Main.screenWidth * 0.8f),
+                        Main.rand.NextFloat(-Main.screenHeight * 0.8f, Main.screenHeight * 0.8f)), 
+                        Main.rand.NextFloat(MathF.Tau).ToRotationVector2() * Main.rand.NextFloat(2f, 4f)));
+
+            Fishes.RemoveAll(f => f.Time >= f.Lifetime);
+
+            foreach (var Fish in Fishes)
+            {
+                Fish.Update();
+                Fish.Draw();
+            }
         }
 
         public void DrawCinders(SpriteBatch spriteBatch, float minDepth, float maxDepth)

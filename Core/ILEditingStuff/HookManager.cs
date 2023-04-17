@@ -376,6 +376,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator DisplayCodebreakerCommunicationPanel
+        {
+            add => HookEndpointManager.Modify(typeof(CodebreakerUI).GetMethod("DisplayCommunicationPanel", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CodebreakerUI).GetMethod("DisplayCommunicationPanel", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event ILContext.Manipulator RuneOfKosCanUseItem
         {
             add => HookEndpointManager.Modify(typeof(RuneofKos).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);

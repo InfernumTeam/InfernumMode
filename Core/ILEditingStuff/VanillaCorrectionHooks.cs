@@ -19,6 +19,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
+using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -1129,13 +1130,19 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Load()
         {
             if (DraetingSimSystem.ShouldEnableDraedonDialog)
+            {
                 DrawCodebreakerUI += ChangeTalkCondition;
+                DisplayCodebreakerCommunicationPanel += DrawCustomDialogPanel;
+            }
         }
 
         public void Unload()
         {
             if (DraetingSimSystem.ShouldEnableDraedonDialog)
+            {
                 DrawCodebreakerUI -= ChangeTalkCondition;
+                DisplayCodebreakerCommunicationPanel -= DrawCustomDialogPanel;
+            }
         }
 
         private void ChangeTalkCondition(ILContext il)
@@ -1149,6 +1156,13 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.GotoPrev(MoveType.After, i => i.MatchLdcI4(0));
             cursor.Emit(OpCodes.Pop);
             cursor.EmitDelegate(() => DownedBossSystem.downedExoMechs.ToInt());
+        }
+
+        private void DrawCustomDialogPanel(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.EmitDelegate(InfernumDraedonDialog.DisplayCommunicationPanel);
+            cursor.Emit(OpCodes.Ret);
         }
     }
 

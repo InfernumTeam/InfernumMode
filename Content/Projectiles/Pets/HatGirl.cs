@@ -69,13 +69,13 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public static void SayThingWhileOwnerIsAlive(Player owner, string text)
         {
-            if (owner.dead || !owner.active || (owner.ownedProjectileCounts[ModContent.ProjectileType<HatGirl>()] <= 0 && owner.ownedProjectileCounts[ModContent.ProjectileType<AsterPetProj>()] <= 0))
+            if (owner.dead || !owner.active || owner.ownedProjectileCounts[ModContent.ProjectileType<HatGirl>()] <= 0)
                 return;
 
             if (TipsManager.SaidText.Contains(text))
                 return;
 
-            foreach (Projectile pet in Utilities.AllProjectilesByID(ModContent.ProjectileType<HatGirl>(), ModContent.ProjectileType<AsterPetProj>()))
+            foreach (Projectile pet in Utilities.AllProjectilesByID(ModContent.ProjectileType<HatGirl>()))
             {
                 if (pet.owner != owner.whoAmI)
                     continue;

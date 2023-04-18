@@ -9,6 +9,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -609,7 +610,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 float armRotation = npc.localAI[0] * npc.spriteDirection - MathHelper.PiOver4;
                 float armSquishFactor = 1f - Utils.GetLerpValue(0.3f, 0.9f, npc.localAI[0], true) * Utils.GetLerpValue(MathHelper.Pi - 0.3f, MathHelper.Pi - 0.9f, npc.localAI[0], true) * 0.33f;
                 Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CatastropheArm").Value;
-                Vector2 armTextureDrawPosition = mainDrawPosition + new Vector2(npc.spriteDirection * -6f, -33f).RotatedBy(npc.rotation) * npc.scale;
+                Vector2 armTextureDrawPosition = mainDrawPosition + new Vector2(npc.spriteDirection * -12f, MathF.Cos(armRotation) * -8f - 40f).RotatedBy(npc.rotation) * npc.scale;
                 Vector2 armOrigin = armTexture.Size() * 0f;
                 Vector2 armScale = new Vector2(armSquishFactor, 1f + (1f - armSquishFactor) * 1.45f) * npc.scale;
                 if (npc.spriteDirection == -1)

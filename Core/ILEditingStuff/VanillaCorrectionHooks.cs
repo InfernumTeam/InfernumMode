@@ -5,6 +5,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ProfanedGuardians;
@@ -16,6 +17,7 @@ using CalamityMod.TileEntities;
 using CalamityMod.World;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
@@ -1194,6 +1196,20 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
 
             orig(self, isBackground);
+        }
+    }
+
+    public class ChangeCalCloneNameHook : IHookEdit
+    {
+        public void Load() => On.Terraria.NPC.DoDeathEvents_DropBossPotionsAndHearts += ChangeName;
+
+        public void Unload() => On.Terraria.NPC.DoDeathEvents_DropBossPotionsAndHearts -= ChangeName;
+
+        private void ChangeName(On.Terraria.NPC.orig_DoDeathEvents_DropBossPotionsAndHearts orig, NPC npc, ref string typeName)
+        {
+            orig(npc, ref typeName);
+            if (npc.type == ModContent.NPCType<CalamitasClone>() && InfernumMode.CanUseCustomAIs)
+                typeName = $"The {CalamitasCloneBehaviorOverride.CustomName}";
         }
     }
 }

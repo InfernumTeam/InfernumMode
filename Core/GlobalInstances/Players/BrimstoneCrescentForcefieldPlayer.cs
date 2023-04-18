@@ -13,6 +13,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
 {
     public class BrimstoneCrescentForcefieldPlayer : ModPlayer
     {
+        public int ForcefieldHits
+        {
+            get;
+            set;
+        }
+
         public float ForcefieldStrengthInterpolant
         {
             get;
@@ -46,7 +52,18 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 int explosionDamage = (int)Player.GetBestClassDamage().ApplyTo(ExplosionBaseDamage);
                 if (Main.myPlayer == Player.whoAmI)
                     Projectile.NewProjectile(Player.GetSource_OnHurt(Player), Player.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneForcefieldExplosion>(), explosionDamage, 0f, Player.whoAmI, 0f, 100f);
+
+                // Break the forcefield once it incurs enough hits.
+                ForcefieldHits++;
+                if (ForcefieldHits >= MaxForcefieldHits)
+                {
+                    Player.AddBuff(ModContent.BuffType<BrimstoneExhaustion>(), CalamityUtils.SecondsToFrames(ForcefieldCreationDelayAfterBreak));
+                    ForcefieldHits = 0;
+                    ForcefieldIsActive = false;
+                }
             }
+            else
+                ForcefieldHits = 0;
 
             return true;
         }

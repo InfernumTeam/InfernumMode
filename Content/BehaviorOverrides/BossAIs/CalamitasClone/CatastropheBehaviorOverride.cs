@@ -24,12 +24,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
         #region Frames and Drawcode
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            int xFrame = 0;
-            int yFrame = 0;
-            npc.frame.Width = 82;
-            npc.frame.Height = 172;
-            npc.frame.X = xFrame * npc.frame.Width;
-            npc.frame.Y = yFrame * npc.frame.Height;
+            ref float currentFrame = ref npc.localAI[1];
+            npc.frameCounter += 0.15;
+            if (npc.frameCounter >= 1D)
+            {
+                currentFrame = (currentFrame + 1f) % 6f;
+                npc.frameCounter = 0D;
+            }
+
+            npc.frame.Width = 196;
+            npc.frame.Height = 198;
+            npc.frame.X = 0;
+            npc.frame.Y = (int)currentFrame * npc.frame.Height;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => CataclysmBehaviorOverride.DrawBrother(npc, spriteBatch, lightColor);

@@ -159,6 +159,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static float ArmLength => 12f;
 
+        public static Color TextColor => Color.Lerp(Color.MediumPurple, Color.Black, 0.32f);
+
         // TODO -- Technically renaming all of the internal code references to match these renames is the correct move. If that's desired, it can be done.
         // It's pretty far from high priority, though, and I'm fine with it just being left as CalClone in the source code.
         public const string CustomName = "Forgotten Shadow of Calamitas";
@@ -1313,7 +1315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             if (attackTimer == rumbleTime - 5f)
-                Utilities.DisplayText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", Color.Orange);
+                Utilities.DisplayText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", TextColor);
 
             // Have CalClone teleport away and summon the brothers.
             if (attackTimer == rumbleTime)
@@ -1400,7 +1402,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
                 if (attackTimer <= 0f)
                 {
                     SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
-                    Utilities.DisplayText("I'm just getting started!", Color.Orange);
+                    Utilities.DisplayText("I'm just getting started!", TextColor);
                 }
 
                 int[] projectilesToDelete = new int[]
@@ -1651,7 +1653,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (attackTimer == textDelay)
             {
-                Utilities.DisplayText("I'm not done yet! Brace yourself for my strongest hex!", Color.Orange);
+                Utilities.DisplayText("I'm not done yet! Brace yourself for my strongest hex!", TextColor);
                 SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayChargeSound);
             }
 
@@ -1707,7 +1709,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (attackTimer == textDelay + chargeUpTime + 32f)
             {
-                Utilities.DisplayText("Oh.", Color.Orange);
+                Utilities.DisplayText("Oh.", TextColor);
                 drawCharredForm = 1f;
                 npc.netUpdate = true;
             }

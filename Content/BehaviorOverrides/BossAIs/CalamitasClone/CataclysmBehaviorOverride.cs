@@ -555,12 +555,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             npc.frameCounter += 0.15;
             if (npc.frameCounter >= 1D)
             {
-                currentFrame = (currentFrame + 1f) % 4f;
+                currentFrame = (currentFrame + 1f) % 6f;
                 npc.frameCounter = 0D;
             }
 
-            npc.frame.Width = 118;
-            npc.frame.Height = 178;
+            npc.frame.Width = 128;
+            npc.frame.Height = 208;
             npc.frame.X = 0;
             npc.frame.Y = (int)currentFrame * npc.frame.Height;
         }
@@ -634,7 +634,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
             else
             {
                 texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CataclysmGlowmask").Value;
-                spriteBatch.Draw(texture, mainDrawPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 12f, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                spriteBatch.Draw(texture, mainDrawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
                 CataclysmEnergyDrawer.DrawBloom(npc.Center);

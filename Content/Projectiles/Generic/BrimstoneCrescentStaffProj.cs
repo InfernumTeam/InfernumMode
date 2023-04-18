@@ -9,6 +9,7 @@ using InfernumMode.Common.Graphics.Particles;
 using Terraria.Audio;
 using InfernumMode.Assets.Sounds;
 using Terraria.ID;
+using InfernumMode.Content.Buffs;
 
 namespace InfernumMode.Content.Projectiles.Generic
 {
@@ -133,6 +134,8 @@ namespace InfernumMode.Content.Projectiles.Generic
             if (Time >= BrimstoneCrescentStaff.RaiseUpwardsTime)
             {
                 Owner.GetModPlayer<BrimstoneCrescentForcefieldPlayer>().ForcefieldIsActive = !Owner.GetModPlayer<BrimstoneCrescentForcefieldPlayer>().ForcefieldIsActive;
+                if (Owner.HasBuff<BrimstoneExhaustion>())
+                    Owner.GetModPlayer<BrimstoneCrescentForcefieldPlayer>().ForcefieldIsActive = false;
 
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Owner.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalCloneTeleportSound, Owner.Center);

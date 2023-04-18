@@ -102,7 +102,12 @@ namespace InfernumMode.Core.GlobalInstances
 
             // Have CalClone and her brothers use a custom map icon.
             if (npc.type == ModContent.NPCType<CalamitasClone>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalCloneMapIcon");
+            {
+                if (npc.Opacity <= 0f)
+                    index = -1;
+                else
+                    index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalCloneMapIcon");
+            }
             if (npc.type == ModContent.NPCType<Cataclysm>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CataclysmMapIcon");
             if (npc.type == ModContent.NPCType<Catastrophe>())

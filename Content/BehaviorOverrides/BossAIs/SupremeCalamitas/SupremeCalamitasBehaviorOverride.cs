@@ -830,7 +830,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         Vector2 energySpawnPosition = npc.Center + Main.rand.NextVector2Circular(32f, 32f) + npc.velocity * 3.5f;
                         Vector2 energyVelocity = -npc.velocity.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(6f, 10f);
-                        Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f, hueShift: 0.05f);
+                        Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.OrangeRed, 30, 3.4f, 4.5f, hueShift: Main.rand.NextFloat(0.002f, 0.011f));
                         GeneralParticleHandler.SpawnParticle(energyLeak);
                     }
                 }
@@ -909,7 +909,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create an explosion effect prior to firing.
             if (attackTimer == shootDelay)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalamitousEnergyBurstSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
@@ -1021,7 +1021,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create an explosion effect prior to firing.
             if (attackTimer == chargeupTime)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalamitousEnergyBurstSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(explosion =>
@@ -1455,9 +1455,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create the laserbeam.
             if (jewelRef != null && attackTimer == jewelChargeupTime)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
-                SoundEngine.PlaySound(HolyBlast.ImpactSound, npc.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalamitousEnergyBurstSound with { Pitch = 0.2f }, npc.Center);
 
                 // Store the jewel's rotation.
                 laserDirection = jewelRef.rotation;

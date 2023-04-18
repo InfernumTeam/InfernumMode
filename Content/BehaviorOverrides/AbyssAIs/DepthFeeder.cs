@@ -140,12 +140,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Clamp velocities.
-            if (NPC.velocity.Length() < 1.6f)
-                NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * 1.6f;
+            NPC.velocity = NPC.velocity.ClampMagnitude(1.6f, 7f);
             if (NPC.velocity.Length() < 3.45f)
                 NPC.velocity *= 1.024f;
-            if (NPC.velocity.Length() > 7f)
-                NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * 7f;
 
             // Define rotation.
             NPC.rotation = NPC.velocity.ToRotation();

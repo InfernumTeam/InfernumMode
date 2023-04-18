@@ -78,6 +78,25 @@ namespace InfernumMode.Core.Balancing
         public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
     }
 
+    public class TrueMeleeBalancingRule : IBalancingRule
+    {
+        public float DamageMultiplier;
+        public TrueMeleeBalancingRule(float damageMultiplier)
+        {
+            DamageMultiplier = damageMultiplier;
+        }
+
+        public bool AppliesTo(NPC npc, NPCHitContext hitContext)
+        {
+            if (hitContext.DamageSource == DamageSourceType.FriendlyProjectile)
+                return Main.projectile[hitContext.ProjectileIndex.Value].IsTrueMelee();
+
+            return hitContext.DamageSource == DamageSourceType.TrueMeleeSwing;
+        }
+
+        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+    }
+
     public class NPCSpecificRequirementBalancingRule : IBalancingRule
     {
         public NPCApplicationRequirement Requirement;

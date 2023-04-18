@@ -316,7 +316,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CanHitPlayer(npc, target, ref cooldownSlot);
 
-            if (npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>() || npc.type == ModContent.NPCType<DarkEnergy>())
+            if (npc.type == NPCID.KingSlime || npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>() || npc.type == ModContent.NPCType<DarkEnergy>())
                 cooldownSlot = ImmunityCooldownID.Bosses;
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())

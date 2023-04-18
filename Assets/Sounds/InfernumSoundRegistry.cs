@@ -61,6 +61,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle CalCloneTeleportSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/CalamitasCloneTeleport");
 
+        public static readonly SoundStyle CalamitousEnergyBurstSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/CalamitousEnergyBurst");
+
         public static readonly SoundStyle CeaselessVoidChainSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidChain", 2);
 
         public static readonly SoundStyle CeaselessVoidEnergyTorrentSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidEnergyTorrent");

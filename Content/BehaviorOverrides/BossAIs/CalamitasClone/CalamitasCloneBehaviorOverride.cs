@@ -159,7 +159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static float ArmLength => 12f;
 
-        public static Color TextColor => Color.Lerp(Color.MediumPurple, Color.Black, 0.4f);
+        public static Color TextColor => Color.Lerp(Color.MediumPurple, Color.Black, 0.32f);
 
         // TODO -- Technically renaming all of the internal code references to match these renames is the correct move. If that's desired, it can be done.
         // It's pretty far from high priority, though, and I'm fine with it just being left as CalClone in the source code.

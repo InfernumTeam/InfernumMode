@@ -350,7 +350,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void DrawForcefields(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
         {
-            Main.LocalPlayer.Infernum_CalCloneHex().DrawAllHexes();
+            Main.LocalPlayer.Infernum_CalShadowHex().DrawAllHexes();
 
             if (PlayerForcefieldTarget is null)
             {

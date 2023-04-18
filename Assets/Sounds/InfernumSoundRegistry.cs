@@ -57,9 +57,9 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle CalThunderStrikeSound = new("CalamityMod/Sounds/Custom/ThunderStrike");
 
-        public static readonly SoundStyle CalCloneDissipateSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/CalamitasCloneDissipate");
+        public static readonly SoundStyle CalShadowDissipateSound = new("InfernumMode/Assets/Sounds/Custom/CalShadow/CalamitasShadowDissipate");
 
-        public static readonly SoundStyle CalCloneTeleportSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/CalamitasCloneTeleport");
+        public static readonly SoundStyle CalShadowTeleportSound = new("InfernumMode/Assets/Sounds/Custom/CalShadow/CalamitasShadowTeleport");
 
         public static readonly SoundStyle CalamitousEnergyBurstSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/CalamitousEnergyBurst");
 
@@ -97,9 +97,9 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
 
-        public static readonly SoundStyle EntropyRayChargeSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/EntropyRayCharge");
+        public static readonly SoundStyle EntropyRayChargeSound = new("InfernumMode/Assets/Sounds/Custom/CalShadow/EntropyRayCharge");
 
-        public static readonly SoundStyle EntropyRayFireSound = new("InfernumMode/Assets/Sounds/Custom/CalClone/EntropyRayFire");
+        public static readonly SoundStyle EntropyRayFireSound = new("InfernumMode/Assets/Sounds/Custom/CalShadow/EntropyRayFire");
 
         public static readonly SoundStyle ExoMechFinalPhaseSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ExoMechFinalPhaseChargeup");
 

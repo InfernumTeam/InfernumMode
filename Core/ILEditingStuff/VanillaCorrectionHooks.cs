@@ -17,7 +17,7 @@ using CalamityMod.TileEntities;
 using CalamityMod.World;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
@@ -51,13 +51,13 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         internal static List<int> InvalidGoreIDs => new()
         {
-            // AdulT Eidolon Wyrm
+            // Adult Eidolon Wyrm
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type,
 
-            // Calamitas Clone.
+            // Calamitas' Shadow.
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type,
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas2").Type,
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type,
@@ -1209,7 +1209,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             orig(npc, ref typeName);
             if (npc.type == ModContent.NPCType<CalamitasClone>() && InfernumMode.CanUseCustomAIs)
-                typeName = $"The {CalamitasCloneBehaviorOverride.CustomName}";
+                typeName = $"The {CalamitasShadowBehaviorOverride.CustomName}";
         }
     }
 }

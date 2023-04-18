@@ -56,7 +56,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             if (item.type == ItemID.SkeletronPrimeBossBag)
                 addInfernumExclusiveItem(ItemID.SoulofFright, 30);
 
-            // Calamitas Clone drops 25 extra ashes of calamity.
+            // Calamitas' Shadow drops 25 extra ashes of calamity.
             if (item.type == ModContent.ItemType<CalamitasCloneBag>())
                 addInfernumExclusiveItem(ModContent.ItemType<AshesofCalamity>(), 25);
 

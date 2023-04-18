@@ -1,6 +1,6 @@
 using CalamityMod;
 using CalamityMod.Items.SummonItems;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -96,7 +96,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<EyeofDesolation>())
             {
-                string summoningText = $"Summons the {CalamitasCloneBehaviorOverride.CustomName} when used during nighttime";
+                string summoningText = $"Summons the {CalamitasShadowBehaviorOverride.CustomName} when used during nighttime";
                 replaceTooltipText("Tooltip1", summoningText);
             }
 

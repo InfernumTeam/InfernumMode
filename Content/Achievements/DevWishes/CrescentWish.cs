@@ -1,5 +1,5 @@
 ﻿using CalamityMod.NPCs.CalClone;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.Items;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
         {
             Name = "Post-apocalyptic";
             Description = "The witch's sins could never be fully atoned\n" +
-                $"[c/777777:Defeat the {CalamitasCloneBehaviorOverride.CustomName} in the underworld]";
+                $"[c/777777:Defeat the {CalamitasShadowBehaviorOverride.CustomName} in the underworld]";
             TotalCompletion = 1;
             PositionInMainList = 12;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
@@ -23,7 +23,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (Main.npc[extraInfo].type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode && Main.npc[extraInfo].Infernum().ExtraAI[CalamitasCloneBehaviorOverride.FoughtInUnderworldIndex] == 1f)
+            if (Main.npc[extraInfo].type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode && Main.npc[extraInfo].Infernum().ExtraAI[CalamitasShadowBehaviorOverride.FoughtInUnderworldIndex] == 1f)
                 CurrentCompletion = TotalCompletion;
         }
 

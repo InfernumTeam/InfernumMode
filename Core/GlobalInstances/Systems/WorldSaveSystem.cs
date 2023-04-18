@@ -180,6 +180,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
+        public static Point BlossomGardenCenter
+        {
+            get;
+            set;
+        }
+
         public const int LostColosseumPortalAnimationTime = 150;
 
         public override void SaveWorldData(TagCompound tag)
@@ -236,6 +242,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             tag["ForbiddenArchiveCenterX"] = ForbiddenArchiveCenter.X;
             tag["ForbiddenArchiveCenterY"] = ForbiddenArchiveCenter.Y;
+            tag["BlossomGardenCenterX"] = BlossomGardenCenter.X;
+            tag["BlossomGardenCenterY"] = BlossomGardenCenter.Y;
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -271,6 +279,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             WayfinderGateLocation = new(tag.GetFloat("DreamgateLocationX"), tag.GetFloat("DreamgateLocationY"));
 
             ForbiddenArchiveCenter = new(tag.GetInt("ForbiddenArchiveCenterX"), tag.GetInt("ForbiddenArchiveCenterY"));
+
+            BlossomGardenCenter = new(tag.GetInt("BlossomGardenCenterX"), tag.GetInt("BlossomGardenCenterY"));
         }
     }
 }

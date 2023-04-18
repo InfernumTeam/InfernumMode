@@ -19,6 +19,7 @@ namespace InfernumMode.Content.Schematics
             TileMaps["LostColosseum"] = LoadInfernumSchematic("Content/Schematics/LostColosseum.csch");
             TileMaps["LostColosseumEntrance"] = LoadInfernumSchematic("Content/Schematics/LostColosseumEntrance.csch");
             TileMaps["LostColosseumExit"] = LoadInfernumSchematic("Content/Schematics/LostColosseumExit.csch");
+            TileMaps["BlossomGarden"] = LoadInfernumSchematic("Content/Schematics/BlossomGarden.csch");
         }
 
         public static SchematicMetaTile[,] LoadInfernumSchematic(string filename)

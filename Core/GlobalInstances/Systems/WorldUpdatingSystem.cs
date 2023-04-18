@@ -94,9 +94,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     Projectile.NewProjectileDirect(Entity.GetSource_None(), WorldSaveSystem.WayfinderGateLocation, Vector2.Zero, wayfinderGateID, 0, 0, Main.myPlayer);
             }
 
-            Point point = WorldSaveSystem.BlossomGardenCenter;
-            Main.LocalPlayer.Center = point.ToWorldCoordinates(0.0f, 0.0f);
-
             // Make the lost colosseum portal animation timer play if it isn't finished.
             WorldSaveSystem.LostColosseumPortalAnimationTimer = Utils.Clamp(WorldSaveSystem.LostColosseumPortalAnimationTimer + 1, 0, WorldSaveSystem.LostColosseumPortalAnimationTime);
         }

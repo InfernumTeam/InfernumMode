@@ -12,6 +12,7 @@
         PuritySparkle,
         MusicNotes,
         BubbleSparkle,
-        CyanLightningSparkle
+        CyanLightningSparkle,
+        SakuraSparkle
     }
 }

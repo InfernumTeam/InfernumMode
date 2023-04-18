@@ -18,6 +18,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
         public Color DrawColor;
         public Texture2D Texture;
         public Rectangle? BaseFrame;
+        public bool UseSingleFrame;
 
         public float TimeLeft => Lifetime - Time;
 
@@ -66,8 +67,13 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Rectangle? frame = null;
             if (BaseFrame.HasValue)
             {
-                int animationFrame = (int)Math.Floor(Time / ((float)Lifetime / 6));
-                frame = new Rectangle(0, BaseFrame.Value.Y * animationFrame, BaseFrame.Value.Width, BaseFrame.Value.Height);
+                if (UseSingleFrame)
+                    frame = BaseFrame.Value;
+                else
+                {
+                    int animationFrame = (int)Math.Floor(Time / ((float)Lifetime / 6));
+                    frame = new Rectangle(0, BaseFrame.Value.Y * animationFrame, BaseFrame.Value.Width, BaseFrame.Value.Height);
+                }
             }
             Color drawColor = DrawColor;
             drawColor.A = 0;

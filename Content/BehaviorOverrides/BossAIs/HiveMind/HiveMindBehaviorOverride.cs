@@ -416,7 +416,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             if (attackTimer <= teleportDelay)
             {
                 Vector2 teleportPosition = target.Center + new Vector2(teleportOffsetX, teleportOffsetY);
-                CreateTeleportTelegraph(teleportPosition);
+                CreateTeleportTelegraph(teleportPosition, 0.65f);
 
                 npc.Opacity = Utils.GetLerpValue(teleportDelay - 16f, 0f, attackTimer, true);
                 npc.velocity *= 0.94f;
@@ -896,10 +896,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);
         }
 
-        public static void CreateTeleportTelegraph(Vector2 teleportPosition)
+        public static void CreateTeleportTelegraph(Vector2 teleportPosition, float cloudOpacity = 1f)
         {
             Color fireColor = Main.rand.NextBool() ? Color.Purple : Color.Lime;
-            CloudParticle noxiousCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
+            CloudParticle noxiousCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor * cloudOpacity, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
             GeneralParticleHandler.SpawnParticle(noxiousCloud);
 
             Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), 75);

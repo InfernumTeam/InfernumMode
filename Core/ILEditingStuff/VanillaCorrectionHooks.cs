@@ -49,7 +49,7 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public class ReplaceGoresHook : IHookEdit
     {
-        internal static List<int> InvalidGoreIDs => new()
+        internal static List<int> InvalidGoreIDs = new()
         {
             // Adult Eidolon Wyrm
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type,
@@ -101,7 +101,7 @@ namespace InfernumMode.Core.ILEditingStuff
             GoreID.HallowBoss7,
         };
 
-        internal static Dictionary<int, int> ReplacementTable => new()
+        internal static Dictionary<int, int> ReplacementTable = new()
         {
             // Devourer of Gods.
             [InfernumMode.CalamityMod.Find<ModGore>("DoGS").Type] = InfernumMode.Instance.Find<ModGore>("DoG1").Type,

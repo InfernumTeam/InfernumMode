@@ -51,11 +51,23 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         internal static List<int> InvalidGoreIDs = new()
         {
-            // Adult Eidolon Wyrm
+            // Adult Eidolon Wyrm.
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type,
+
+            // Aquatic Scourge.
+            InfernumMode.CalamityMod.Find<ModGore>("ASBody").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASBody2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASBody3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASBody4").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASBodyAlt").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASBodyAlt2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASBodyAlt3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASHead").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASTail").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ASTail2").Type,
 
             // Calamitas' Shadow.
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type,

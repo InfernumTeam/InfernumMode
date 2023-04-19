@@ -12,14 +12,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Gore");
+            Main.projFrames[Type] = 3;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 18;
-            Projectile.height = 20;
+            Projectile.width = 24;
+            Projectile.height = 24;
             Projectile.hostile = true;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
@@ -38,6 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (Projectile.localAI[0] == 0f)
             {
                 Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.frame = Main.rand.Next(Main.projFrames[Type]);
                 Projectile.localAI[0] = 1f;
             }
 

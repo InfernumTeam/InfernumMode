@@ -64,6 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.chaseable = headSegment.chaseable;
             npc.noTileCollide = headSegment.noTileCollide;
             npc.gfxOffY = headSegment.gfxOffY;
+            npc.Opacity = headSegment.Opacity;
             npc.Calamity().newAI[0] = npc.chaseable.ToInt();
             npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.4f);
 
@@ -100,12 +101,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.Center = AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex + 1].position;
                 npc.rotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + MathHelper.PiOver2;
 
-                // Release blood if in water.
-                if (Collision.WetCollision(npc.Top, npc.width, npc.height) && Main.rand.NextBool(560) && npc.localAI[1] <= 0.4f)
+                // Release blood if in water. If the flesh is eaten, release acid instead as it disappears.
+                if (Collision.WetCollision(npc.Top, npc.width, npc.height))
                 {
-                    float bloodOpacity = 0.7f;
-                    CloudParticle bloodCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.Red * bloodOpacity, Color.DarkRed * bloodOpacity, 270, Main.rand.NextFloat(1.9f, 2.12f));
-                    GeneralParticleHandler.SpawnParticle(bloodCloud);
+                    if (npc.localAI[1] <= 0.4f && Main.rand.NextBool(560))
+                    {
+                        float bloodOpacity = 0.7f;
+                        CloudParticle bloodCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.Red * bloodOpacity, Color.DarkRed * bloodOpacity, 270, Main.rand.NextFloat(1.9f, 2.12f));
+                        GeneralParticleHandler.SpawnParticle(bloodCloud);
+                    }
+                    else if (npc.localAI[1] >= 0.9f && Main.rand.NextFloat() <= npc.Opacity * 0.02f)
+                    {
+                        float acidOpacity = 0.8f;
+                        CloudParticle bloodCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.YellowGreen * acidOpacity, Color.Olive * acidOpacity * 0.7f, 120, Main.rand.NextFloat(1.9f, 2.12f));
+                        GeneralParticleHandler.SpawnParticle(bloodCloud);
+                    }
                 }
 
                 // Spawn leeches that will eat away at the segment.

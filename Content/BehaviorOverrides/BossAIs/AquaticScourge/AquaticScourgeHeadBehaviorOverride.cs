@@ -114,6 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
+            ref float jawRotation = ref npc.localAI[2];
             ref float generalTimer = ref npc.ai[1];
             ref float attackType = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[3];
@@ -210,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.DeathAnimation:
-                    DoBehavior_DeathAnimation(npc, target, ref attackTimer);
+                    DoBehavior_DeathAnimation(npc, target, ref jawRotation, ref attackTimer);
                     break;
             }
 
@@ -1034,7 +1035,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoBehavior_EnterFinalPhase(NPC npc, Player target, ref float attackTimer, ref float acidVerticalLine)
         {
-            ref float rumbleSoundSlot = ref npc.localAI[2];
+            ref float rumbleSoundSlot = ref npc.localAI[3];
 
             // Intiialize the acid vertical line.
             // It will try to spawn a set distance below the player for the sake of fair time in being able to get out of the water, but if they're so
@@ -1276,12 +1277,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float jawRotation, ref float attackTimer)
         {
             int goreSpitTime = 420;
+            int disappearTime = 1200;
             ref float goreSpitCountdown = ref npc.Infernum().ExtraAI[0];
             ref float doneSpitting = ref npc.Infernum().ExtraAI[1];
             ref float totalSpawnedLeeches = ref npc.Infernum().ExtraAI[2];
+            ref float deadTimer = ref npc.Infernum().ExtraAI[3];
 
             // Initial the gore spit countdown. The first spit is consistent, but successive ones are not.
             if (attackTimer <= 1f)
@@ -1322,20 +1325,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 // Release blood and acid particles.
                 for (int i = 0; i < 25; i++)
                 {
+                    Color darkRed = Color.Lerp(Color.DarkRed, Color.Black, Main.rand.NextFloat(0.25f, 0.55f));
                     Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.83f) * Main.rand.NextFloat(6f, 20f);
-                    Particle bloodParticle = new EoCBloodParticle(npc.Center, bloodVelocity, 32, Main.rand.NextFloat(0.9f, 3f), (Main.rand.NextBool(3) ? Color.Crimson : Color.DarkRed) * 0.85f, 9f);
+                    Particle bloodParticle = new EoCBloodParticle(npc.Center, bloodVelocity, 32, Main.rand.NextFloat(0.9f, 3f), darkRed * 0.85f, 9f);
                     GeneralParticleHandler.SpawnParticle(bloodParticle);
                 }
                 for (int i = 0; i < 8; i++)
                 {
+                    Color darkRed = Color.Lerp(Color.DarkRed, Color.Black, Main.rand.NextFloat(0.25f, 0.55f));
                     Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.83f) * Main.rand.NextFloat(7f, 28f);
-                    Particle bloodParticle = new BloodParticle2(npc.Center + bloodVelocity * 5f, bloodVelocity, 32, Main.rand.NextFloat(0.75f, 1.1f), (Main.rand.NextBool(6) ? Color.Purple : Color.DarkRed) * 0.85f);
+                    Particle bloodParticle = new BloodSplashParticle(npc.Center + bloodVelocity * 5f, bloodVelocity, 32, Main.rand.NextFloat(0.75f, 1.1f), darkRed * 0.8f, Main.rand.NextFloat(0.15f, 0.32f));
                     GeneralParticleHandler.SpawnParticle(bloodParticle);
                 }
 
                 // Recoil.
-                npc.position -= npc.velocity.RotatedByRandom(0.6f) * 14f;
+                Vector2 recoilOffset = npc.velocity.RotateRandom(0.6f) * 8f;
+                npc.position -= recoilOffset;
                 npc.velocity *= 0.2f;
+                npc.netUpdate = true;
+
+                // Shove back the first few segments as well as the head, to reduce weird slithering artifacts from the segmenting code.
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (n.realLife == npc.whoAmI && n.ai[3] <= 3f)
+                    {
+                        n.position -= recoilOffset;
+                        n.netUpdate = true;
+                    }
+                }
 
                 // Play some gruesome sounds.
                 SoundEngine.PlaySound(Mauler.RoarSound with { Pitch = 0.2f }, target.Center);
@@ -1352,6 +1370,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 goreSpitCountdown = Main.rand.Next(84, 105);
                 npc.netUpdate = true;
             }
+
+            // Open and close the jaws.
+            float idealJawRotation = Utils.Remap(goreSpitCountdown, 75f, 27f, 0f, MathHelper.Pi / 5f);
 
             // Adhere to gravity when done spitting.
             npc.noGravity = doneSpitting == 0f;
@@ -1376,7 +1397,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 }
             }
             else
+            {
                 WormSegments[0].position = npc.Center;
+                jawRotation = jawRotation.AngleLerp(idealJawRotation, 0.04f).AngleTowards(idealJawRotation, 0.02f);
+            }
+
+            // Begin disappearing after the flesh is eaten off.
+            if (npc.localAI[1] >= 1f)
+            {
+                deadTimer++;
+                npc.Opacity = Utils.GetLerpValue(disappearTime, 0f, deadTimer, true);
+                if (npc.Opacity <= 0f)
+                    npc.active = false;
+            }
         }
 
         #endregion Specific Behaviors
@@ -1679,12 +1712,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             float skeletonInterpolant = npc.localAI[1];
+            float jawRotation = npc.localAI[2];
+            float jawRotationSine = MathF.Sin(jawRotation);
+            float leftJawRotation = npc.rotation - jawRotation;
+            float rightJawRotation = npc.rotation + jawRotation;
+
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-            Texture2D bodyTexture = ModContent.Request<Texture2D>(npc.ModNPC.Texture).Value;
-            Texture2D bodyTextureSkeleton = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeHeadSkeleton").Value;
-            Vector2 origin = bodyTexture.Size() * 0.5f;
-            Main.EntitySpriteDraw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor) * (1f - skeletonInterpolant), npc.rotation, origin, npc.scale, 0, 0);
-            Main.EntitySpriteDraw(bodyTextureSkeleton, drawPosition, null, npc.GetAlpha(lightColor) * skeletonInterpolant, npc.rotation, origin, npc.scale, 0, 0);
+            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeHead").Value;
+            Texture2D jawTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeJaw").Value;
+            Texture2D headTextureSkeleton = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeHeadSkeleton").Value;
+            Vector2 origin = headTexture.Size() * 0.5f;
+            Main.EntitySpriteDraw(headTexture, drawPosition, null, npc.GetAlpha(lightColor) * (1f - skeletonInterpolant), npc.rotation, origin, npc.scale, 0, 0);
+            Main.EntitySpriteDraw(headTextureSkeleton, drawPosition, null, npc.GetAlpha(lightColor) * skeletonInterpolant, npc.rotation, origin, npc.scale, 0, 0);
+
+            // Draw the jaws.
+            Vector2 leftJawOrigin = new Vector2(1f, 0.5f) * jawTexture.Size();
+            Vector2 rightJawOrigin = new Vector2(0f, 0.5f) * jawTexture.Size();
+            Vector2 jawDrawPosition = drawPosition + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * (jawRotationSine * 12f + 11f);
+            Vector2 leftJawDrawPosition = jawDrawPosition - npc.rotation.ToRotationVector2() * jawRotationSine * 30f;
+            Vector2 rightJawDrawPosition = jawDrawPosition + npc.rotation.ToRotationVector2() * jawRotationSine * 30f;
+            Main.EntitySpriteDraw(jawTexture, leftJawDrawPosition, null, npc.GetAlpha(lightColor), leftJawRotation, leftJawOrigin, npc.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(jawTexture, rightJawDrawPosition, null, npc.GetAlpha(lightColor), rightJawRotation, rightJawOrigin, npc.scale, SpriteEffects.FlipHorizontally, 0);
+
             return false;
         }
         #endregion Drawcode

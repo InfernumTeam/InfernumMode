@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
             explosionColor = Color.Lerp(explosionColor, Color.White, Projectile.Opacity * 0.2f);
-            explosionColor *= Projectile.Opacity * 0.5f;
+            explosionColor *= Projectile.Opacity * 0.4f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < (int)MathHelper.Lerp(3f, 6f, Projectile.Opacity); i++)

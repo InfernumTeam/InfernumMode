@@ -69,7 +69,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
         public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
         public static Filter BloomShader => Filters.Scene["InfernumMode:Bloom"];
-        public static Filter CalCloneScreenShader => Filters.Scene["InfernumMode:CalClone"];
+        public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
         public static Filter DisplacementMap => Filters.Scene["InfernumMode:DisplacementMap"];
@@ -314,9 +314,9 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Deus"] = new DeusSky();
 
-            // Calamitas Clone.
-            Filters.Scene["InfernumMode:CalClone"] = new Filter(new CalCloneScreenShaderData("FilterMiniTower").UseOpacity(0f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:CalClone"] = new CalCloneSky();
+            // Calamitas' Shadow.
+            Filters.Scene["InfernumMode:CalShadow"] = new Filter(new CalShadowScreenShaderData("FilterMiniTower").UseOpacity(0f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:CalShadow"] = new CalShadowSky();
 
             // Dragonfolly.
             Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);

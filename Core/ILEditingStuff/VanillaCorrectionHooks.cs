@@ -17,7 +17,7 @@ using CalamityMod.TileEntities;
 using CalamityMod.World;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
@@ -49,15 +49,15 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public class ReplaceGoresHook : IHookEdit
     {
-        internal static List<int> InvalidGoreIDs => new()
+        internal static List<int> InvalidGoreIDs = new()
         {
-            // AdulT Eidolon Wyrm
+            // Adult Eidolon Wyrm
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult2").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult3").Type,
             InfernumMode.CalamityMod.Find<ModGore>("WyrmAdult4").Type,
 
-            // Calamitas Clone.
+            // Calamitas' Shadow.
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas").Type,
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas2").Type,
             InfernumMode.CalamityMod.Find<ModGore>("Calamitas3").Type,
@@ -78,44 +78,66 @@ namespace InfernumMode.Core.ILEditingStuff
             InfernumMode.CalamityMod.Find<ModGore>("Catastrophe3").Type,
             InfernumMode.CalamityMod.Find<ModGore>("Catastrophe4").Type,
             InfernumMode.CalamityMod.Find<ModGore>("Catastrophe5").Type,
+
+            // Cultist.
+            GoreID.Cultist1,
+            GoreID.Cultist2,
+            GoreID.CultistBoss1,
+            GoreID.CultistBoss2,
+
+            // Deerclops,
+            GoreID.DeerclopsHead,
+            GoreID.DeerclopsAntler,
+            GoreID.DeerclopsBody,
+            GoreID.DeerclopsLeg,
+
+            // Empress of Light.
+            GoreID.HallowBoss1,
+            GoreID.HallowBoss2,
+            GoreID.HallowBoss3,
+            GoreID.HallowBoss4,
+            GoreID.HallowBoss5,
+            GoreID.HallowBoss6,
+            GoreID.HallowBoss7,
+        };
+
+        internal static Dictionary<int, int> ReplacementTable = new()
+        {
+            // Devourer of Gods.
+            [InfernumMode.CalamityMod.Find<ModGore>("DoGS").Type] = InfernumMode.Instance.Find<ModGore>("DoG1").Type,
+            [InfernumMode.CalamityMod.Find<ModGore>("DoGS2").Type] = InfernumMode.Instance.Find<ModGore>("DoG2").Type,
+            [InfernumMode.CalamityMod.Find<ModGore>("DoGS3").Type] = InfernumMode.Instance.Find<ModGore>("DoG3").Type,
+            [InfernumMode.CalamityMod.Find<ModGore>("DoGS4").Type] = InfernumMode.Instance.Find<ModGore>("DoG4").Type,
+            [InfernumMode.CalamityMod.Find<ModGore>("DoGS5").Type] = InfernumMode.Instance.Find<ModGore>("DoG5").Type,
+            [InfernumMode.CalamityMod.Find<ModGore>("DoGS6").Type] = InfernumMode.Instance.Find<ModGore>("DoG6").Type,
+
+            // Duke Fishron. These IDs do not have a corresponding GoreID constant.
+            [573] = InfernumMode.Instance.Find<ModGore>("DukeFishronGore1").Type,
+            [574] = InfernumMode.Instance.Find<ModGore>("DukeFishronGore3").Type,
+            [575] = InfernumMode.Instance.Find<ModGore>("DukeFishronGore2").Type,
+            [576] = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type,
         };
 
         internal static int AlterGores(On.Terraria.Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             // Do not spawn gores on the server.
             if (Main.netMode == NetmodeID.Server || Main.gamePaused)
-                return 600;
-
-            if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
-                return Main.maxDust;
-
-            if (InfernumMode.CanUseCustomAIs && Type >= GoreID.HallowBoss1 && Type <= GoreID.HallowBoss7)
-                return Main.maxDust;
-
-            if (InfernumMode.CanUseCustomAIs && Type >= GoreID.DeerclopsHead && Type <= GoreID.DeerclopsLeg)
-                return Main.maxDust;
+                return Main.maxGore;
 
             if (InfernumMode.CanUseCustomAIs)
             {
                 for (int i = 2; i <= 4; i++)
                 {
                     if (Type == InfernumMode.CalamityMod.Find<ModGore>("Hive" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("Hive").Type)
-                        return Main.maxDust;
+                        return Main.maxGore;
 
                     else if (Type == InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossA" + i).Type || Type == InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossA").Type)
-                        return Main.maxDust;
+                        return Main.maxGore;
                 }
             }
 
-            if (InfernumMode.CanUseCustomAIs && Type == 573)
-                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore1").Type;
-            if (InfernumMode.CanUseCustomAIs && Type == 574)
-                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore3").Type;
-            if (InfernumMode.CanUseCustomAIs && Type == 575)
-                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore2").Type;
-            if (InfernumMode.CanUseCustomAIs && Type == 576)
-                Type = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type;
-
+            if (InfernumMode.CanUseCustomAIs && ReplacementTable.TryGetValue(Type, out int replacementGoreID))
+                Type = replacementGoreID;
             if (InfernumMode.CanUseCustomAIs && InvalidGoreIDs.Contains(Type))
                 return Main.maxGore;
 
@@ -1209,7 +1231,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             orig(npc, ref typeName);
             if (npc.type == ModContent.NPCType<CalamitasClone>() && InfernumMode.CanUseCustomAIs)
-                typeName = $"The {CalamitasCloneBehaviorOverride.CustomName}";
+                typeName = $"The {CalamitasShadowBehaviorOverride.CustomName}";
         }
     }
 }

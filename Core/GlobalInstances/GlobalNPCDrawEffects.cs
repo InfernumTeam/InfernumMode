@@ -9,7 +9,7 @@ using CalamityMod.NPCs.Polterghast;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
@@ -100,18 +100,18 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == NPCID.BloodNautilus)
                 index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
 
-            // Have CalClone and her brothers use a custom map icon.
+            // Have Calamitas' shadow and her brothers use a custom map icon.
             if (npc.type == ModContent.NPCType<CalamitasClone>())
             {
                 if (npc.Opacity <= 0f)
                     index = -1;
                 else
-                    index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CalCloneMapIcon");
+                    index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CalShadowMapIcon");
             }
             if (npc.type == ModContent.NPCType<Cataclysm>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CataclysmMapIcon");
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CataclysmMapIcon");
             if (npc.type == ModContent.NPCType<Catastrophe>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasClone/CatastropheMapIcon");
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheMapIcon");
 
             // Have Sepulcher use a custom map icon.
             if (npc.type == ModContent.NPCType<SepulcherHead>())
@@ -249,11 +249,11 @@ namespace InfernumMode.Core.GlobalInstances
                 return;
 
             if (npc.type == ModContent.NPCType<CalamitasClone>())
-                typeName = $"The {CalamitasCloneBehaviorOverride.CustomName}";
+                typeName = $"The {CalamitasShadowBehaviorOverride.CustomName}";
             if (npc.type == ModContent.NPCType<Cataclysm>())
-                typeName = CalamitasCloneBehaviorOverride.CustomNameCataclysm;
+                typeName = CalamitasShadowBehaviorOverride.CustomNameCataclysm;
             if (npc.type == ModContent.NPCType<Catastrophe>())
-                typeName = CalamitasCloneBehaviorOverride.CustomNameCatastrophe;
+                typeName = CalamitasShadowBehaviorOverride.CustomNameCatastrophe;
         }
         #endregion Name Manipulation
     }

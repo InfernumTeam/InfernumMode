@@ -138,7 +138,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                     Owner.GetModPlayer<BrimstoneCrescentForcefieldPlayer>().ForcefieldIsActive = false;
 
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Owner.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalCloneTeleportSound, Owner.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalShadowTeleportSound, Owner.Center);
                 for (int i = 0; i < 36; i++)
                 {
                     Color fireColor = Color.Lerp(Color.OrangeRed, Color.Orange, Main.rand.NextFloat());

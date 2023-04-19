@@ -207,6 +207,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 SoundEngine.PlaySound(PolterghastBoss.P2Sound with { Volume = 3f }, target.Center);
                 currentPhase = 1f;
+                legToManuallyControlIndex = 0f;
                 npc.netUpdate = true;
             }
             if (currentPhase == 1f && phase3)
@@ -216,6 +217,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 SoundEngine.PlaySound(PolterghastBoss.P3Sound with { Volume = 3f }, target.Center);
                 currentPhase = 2f;
+                legToManuallyControlIndex = 0f;
                 npc.netUpdate = true;
             }
 

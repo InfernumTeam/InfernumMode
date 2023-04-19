@@ -1,4 +1,4 @@
-﻿using InfernumMode.Content.Rarities.InfernumRarities;
+﻿using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -6,42 +6,35 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.MainMenu
 {
-    public class Raindroplet
+    public class GlowingEmber
     {
         public int Time;
         public int Lifetime;
-        public int Variant;
         public float MaxScale;
         public float Scale;
         public float Rotation;
         public float RotationSpeed;
-        public float Depth;
         public Vector2 Position;
         public Vector2 Velocity;
+        public Vector2 DistortScale;
         public Color DrawColor;
         public Texture2D Texture;
-        public Rectangle BaseFrame;
+
+        public static Texture2D BloomTexture => ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
 
         public float TimeLeft => Lifetime - Time;
 
-        public const int FrameWidth = 4;
-        public const int FrameHeight = 42;
-
-        public const int MaxFrames = 3;
-
-        public Raindroplet(int lifetime, float scale, float initialRotation, Vector2 position, Vector2 velocity)
+        public GlowingEmber(Vector2 position, Vector2 velocity, Color drawColor, float rotation, float rotationSpeed, float maxScale, int lifetime)
         {
-            Lifetime = lifetime;
-            Scale = 0f;
-            MaxScale = scale;
-            Rotation = initialRotation;
             Position = position;
             Velocity = velocity;
-            DrawColor = Color.White;
-            Texture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaReplacements/RainAstral").Value;
-            Depth = Main.rand.NextFloat(1.3f, 3f);
-            Variant = Main.rand.Next(0, MaxFrames);
-            BaseFrame = new(FrameWidth * Variant, 0, 2, FrameHeight);
+            DrawColor = drawColor;
+            Rotation = rotation;
+            RotationSpeed = rotationSpeed;
+            MaxScale = maxScale;
+            Lifetime = lifetime;
+            DistortScale = new(Main.rand.NextFloat(0.8f, 2.2f), Main.rand.NextFloat(0.8f, 2.2f));
+            Texture = InfernumTextureRegistry.BigGreyscaleCircle.Value;
         }
 
         public void Update()
@@ -66,9 +59,8 @@ namespace InfernumMode.Content.MainMenu
             Rectangle screen = new(-1000, -1000, 4000, 4000);
             if (screen.Contains((int)Position.X, (int)Position.Y))
             {
-                Vector2 origin = BaseFrame.Size() * 0.5f;
-                float opacity = 0.7f;
-                Main.spriteBatch.Draw(Texture, Position, BaseFrame, DrawColor with { A = 50 } * opacity, Velocity.ToRotation() + MathHelper.PiOver2, origin, Scale * new Vector2(0.5f, 1.4f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(BloomTexture, Position, null, Color.DarkMagenta * 0.7f, Rotation, BloomTexture.Size() * 0.5f, Scale * 0.2f * DistortScale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Texture, Position, null, DrawColor, Rotation, Texture.Size() * 0.5f, Scale * 0.016f * DistortScale, SpriteEffects.None, 0f);
             }
         }
     }

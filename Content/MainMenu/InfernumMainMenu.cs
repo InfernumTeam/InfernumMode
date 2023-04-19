@@ -19,6 +19,8 @@ namespace InfernumMode.Content.MainMenu
 
         internal List<Raindroplet> RainDroplets;
 
+        internal List<GlowingEmber> Embers;
+
         private int TimeTilNextFlash;
 
         public override string DisplayName => "Infernum Style";
@@ -43,11 +45,13 @@ namespace InfernumMode.Content.MainMenu
         public override void Load()
         {
             RainDroplets = new();
+            Embers = new();
         }
 
         public override void Unload()
         {
             RainDroplets = null;
+            Embers = null;
         }      
 
         private void HandleRaindrops()
@@ -56,12 +60,16 @@ namespace InfernumMode.Content.MainMenu
             RainDroplets.RemoveAll(r => r.Time >= r.Lifetime);
 
             float maxDroplets = 300f;
-            Rectangle spawnRectangle = new(0, -200, Main.screenWidth, (int)(Main.screenHeight * 0.3f));
+            Rectangle spawnRectangle = new(0, -200, (int)(Main.screenWidth * 1.1f), (int)(Main.screenHeight * 0.3f));
 
             // Randomly spawn symbols.
             if (RainDroplets.Count < maxDroplets)
-                RainDroplets.Add(new Raindroplet(Main.rand.Next(300, 300), Main.rand.NextFloat(0.35f, 0.85f), 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
-                    Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(9f, 15f)));
+            {
+                float scaleScalar = Main.rand.NextFloat(1f, 4f);
+                Vector2 velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(15f, 22f);
+                RainDroplets.Add(new Raindroplet(Main.rand.Next(300, 300), Main.rand.NextFloat(0.35f, 0.85f) * scaleScalar, 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
+                   velocity));
+            }
 
             foreach (var rain in RainDroplets)
             {
@@ -76,12 +84,34 @@ namespace InfernumMode.Content.MainMenu
             {
                 TimeTilNextFlash = Main.rand.Next(240, 480);
                 LightningFlash.TimeLeft = 35;
-                float distanceModifier = Main.rand.NextFloat();
+                float distanceModifier = Main.rand.NextFloat(0.2f, 1f);
                 LightningFlash.SoundTime = (int)(LightningFlash.TimeLeft * distanceModifier);
                 LightningFlash.DistanceModifier = distanceModifier;
             }
+
             TimeTilNextFlash = (int)MathHelper.Clamp(TimeTilNextFlash - 1, 0f, int.MaxValue);
             LightningFlash.Draw(drawOffset, scale);
+        }
+
+        private void HandleEmbers()
+        {
+            Embers.RemoveAll(e => e.Time >= e.Lifetime);
+
+            float maxEmbers = 100f;
+            Rectangle spawnRectangle = new(0, (int)(Main.screenHeight * 1.1f), Main.screenWidth, (int)(Main.screenHeight * 0.1f));
+            if (Main.rand.NextBool(3) && Embers.Count < maxEmbers)
+            {
+                Vector2 position = Main.rand.NextVector2FromRectangle(spawnRectangle);
+                Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f)) * Main.rand.NextFloat(1.5f, 3f);
+                Color color = Color.Lerp(Color.Pink, Color.Magenta, Main.rand.NextFloat());
+                Embers.Add(new GlowingEmber(position, velocity, color, Main.rand.NextFloat(MathF.Tau), Main.rand.NextFloat(0f, 0.05f), Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(300, 420)));
+            }
+
+            foreach (var ember in Embers)
+            {
+                ember.Update();
+                ember.Draw();
+            }
         }
 
         public override bool PreDrawLogo(SpriteBatch spriteBatch, ref Vector2 logoDrawCenter, ref float logoRotation, ref float logoScale, ref Color drawColor)
@@ -115,10 +145,18 @@ namespace InfernumMode.Content.MainMenu
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
-            HandleRaindrops();
-
             if (InfernumConfig.Instance.FlashbangOverlays)
                 HandleLightning(drawOffset, scale);
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+
+            HandleEmbers();
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+
+            HandleRaindrops();
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);

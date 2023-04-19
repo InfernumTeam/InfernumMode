@@ -26,9 +26,6 @@ float2 Drops(float2 uv, float seed)
     float rowIndex = floor(uv.y);
     uv.x += Random1(rowIndex, seed + 1654.2);
     
-        // Modify the Y value by time and a random amount, to simulate them falling.
-    uv.y -= time * (0.01 + 0.1 * Random1(rowIndex, seed + 867.65));
-    
     // Get the index and the coords for the current cell.
     float2 cellIndex = floor(uv);
     float2 cellUv = frac(uv);

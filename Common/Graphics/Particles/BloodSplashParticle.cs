@@ -27,6 +27,7 @@ namespace InfernumMode.Common.Graphics.Particles
             Lifetime = lifetime;
             Color = InitialColor = color;
             Gravity = gravity;
+            Rotation = Velocity.ToRotation();
         }
 
         public override void Update()
@@ -34,7 +35,6 @@ namespace InfernumMode.Common.Graphics.Particles
             Velocity.X *= 0.98f;
             Velocity.Y += Gravity;
             Color = Color.Lerp(InitialColor, Color.Transparent, (float)Math.Pow(LifetimeCompletion, 4D));
-            Rotation = Velocity.ToRotation();
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)

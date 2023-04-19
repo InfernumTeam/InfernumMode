@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
@@ -39,7 +40,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             PerpendicularSpikeBarrage,
             EnterFinalPhase,
             AcidRain,
-            SulphurousTyphoon
+            SulphurousTyphoon,
+            DeathAnimation
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
@@ -62,6 +64,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public const int AttackCycleIndex = 9;
 
         public const int AcidMeterEverReachedHalfIndex = 10;
+
+        public static List<VerletSimulatedSegment> WormSegments
+        {
+            get;
+            set;
+        } = new();
 
         public static float PoisonChargeUpSpeedFactor => 0.333f;
 
@@ -119,6 +127,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
+
+            // Attach the verlet segments to the head.
+            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation)
+                WormSegments[0].position = npc.Center;
 
             // Determine hostility.
             CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
@@ -196,10 +208,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 case AquaticScourgeAttackType.SulphurousTyphoon:
                     DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
                     break;
+                case AquaticScourgeAttackType.DeathAnimation:
+                    DoBehavior_DeathAnimation(npc, target, ref attackTimer);
+                    break;
             }
 
             // Release acid mist based on the vertical line.
-            if (acidVerticalLine != 0f)
+            if (acidVerticalLine != 0f && attackType != (int)AquaticScourgeAttackType.DeathAnimation)
             {
                 if (Main.rand.NextBool(3))
                 {
@@ -243,7 +258,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Update the acid hiss sound every frame.
             UpdateAcidHissSound(npc);
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation)
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             attackTimer++;
             generalTimer++;
 
@@ -1052,7 +1068,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 acidVerticalLine = lineTop;
                 rumbleSound?.Stop();
-                SelectNextAttack(npc);
+
+                if (npc.ai[2] != (int)AquaticScourgeAttackType.DeathAnimation && npc.life >= 2)
+                    SelectNextAttack(npc);
             }
 
             // Make the scourge move upward slowly, not taking or doing damage.
@@ -1257,11 +1275,109 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float attackTimer)
+        {
+            int goreSpitTime = 420;
+            ref float goreSpitCountdown = ref npc.Infernum().ExtraAI[0];
+            ref float doneSpitting = ref npc.Infernum().ExtraAI[1];
+
+            // Initial the gore spit countdown. The first spit is consistent, but successive ones are not.
+            if (attackTimer <= 1f)
+                goreSpitCountdown = 150f;
+
+            // Stay inside of the world.
+            npc.position.X = MathHelper.Clamp(npc.position.X, 600f, Main.maxTilesX * 16f - 600f);
+            npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
+
+            // Approach the player slowly.
+            if (doneSpitting == 0f)
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 5f, 0.1f);
+            else
+                npc.velocity.X *= 0.97f;
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Turn off the boss HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Decrement the gore spit countdown. Once it hits zero, it rerolls with some randomness.
+            goreSpitCountdown--;
+            if (goreSpitCountdown <= 0f && doneSpitting == 0f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // Release gore projectiles.
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 goreVelocity = npc.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.86f) * Main.rand.NextFloat(7.5f, 14f);
+                        Vector2 goreSpawnPosition = npc.Center + goreVelocity * 3f;
+                        Utilities.NewProjectileBetter(goreSpawnPosition, goreVelocity, ModContent.ProjectileType<AquaticScourgeGore>(), 0, 0f);
+                    }
+                }
+
+                // Release blood and acid particles.
+                for (int i = 0; i < 25; i++)
+                {
+                    Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.83f) * Main.rand.NextFloat(6f, 20f);
+                    Particle bloodParticle = new EoCBloodParticle(npc.Center, bloodVelocity, 32, Main.rand.NextFloat(0.9f, 3f), (Main.rand.NextBool(3) ? Color.Crimson : Color.DarkRed) * 0.85f, 9f);
+                    GeneralParticleHandler.SpawnParticle(bloodParticle);
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.83f) * Main.rand.NextFloat(7f, 28f);
+                    Particle bloodParticle = new BloodParticle2(npc.Center + bloodVelocity * 5f, bloodVelocity, 32, Main.rand.NextFloat(0.75f, 1.1f), (Main.rand.NextBool(6) ? Color.Purple : Color.DarkRed) * 0.85f);
+                    GeneralParticleHandler.SpawnParticle(bloodParticle);
+                }
+
+                // Recoil.
+                npc.position -= npc.velocity.RotatedByRandom(0.6f) * 14f;
+                npc.velocity *= 0.2f;
+
+                // Play some gruesome sounds.
+                SoundEngine.PlaySound(Mauler.RoarSound with { Pitch = 0.2f }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeGoreSound, target.Center);
+
+                // Release items.
+                if (attackTimer >= goreSpitTime)
+                {
+                    npc.NPCLoot();
+                    doneSpitting = 1f;
+                    attackTimer = 0f;
+                }
+
+                goreSpitCountdown = Main.rand.Next(84, 105);
+                npc.netUpdate = true;
+            }
+
+            // Adhere to gravity when done spitting.
+            npc.noGravity = doneSpitting == 0f;
+            npc.noTileCollide = doneSpitting == 0f;
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            if (doneSpitting != 0f)
+            {
+                WormSegments[0].locked = false;
+                WormSegments = TileCollisionVerletSimulation(WormSegments, 36f, 8, 6f);
+                npc.boss = false;
+                npc.gfxOffY = 16;
+                npc.Size = Vector2.One * 72f;
+                npc.Calamity().newAI[0] = 0f;
+                npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + MathHelper.PiOver2;
+                npc.Center = WormSegments[0].position;
+            }
+            else
+                WormSegments[0].position = npc.Center;
+        }
+
         #endregion Specific Behaviors
 
         #region AI Utility Methods
         public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)
         {
+            WormSegments.Clear();
+            WormSegments.Add(new(npc.Center, true));
+
             int previousIndex = npc.whoAmI;
             for (int i = 0; i < wormLength; i++)
             {
@@ -1280,8 +1396,64 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 // Force sync the new segment into existence.
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, nextIndex, 0f, 0f, 0f, 0);
 
+                WormSegments.Add(new VerletSimulatedSegment(Main.npc[nextIndex].Center));
+
                 previousIndex = nextIndex;
             }
+        }
+
+        public static List<VerletSimulatedSegment> TileCollisionVerletSimulation(List<VerletSimulatedSegment> segments, float segmentDistance, int loops = 10, float gravity = 0.3f)
+        {
+            // https://youtu.be/PGk0rnyTa1U?t=400 is a good verlet integration chains reference.
+            List<int> groundHitSegments = new();
+            for (int i = segments.Count - 1; i >= 0; i--)
+            {
+                var segment = segments[i];
+                if (!segment.locked)
+                {
+                    Vector2 positionBeforeUpdate = segment.position;
+
+                    // Disallow tile collision.
+                    ulong seed = (ulong)i;
+                    Vector2 gravityForce = Vector2.UnitY * (gravity * (1f - i * 0.01f) + Utils.RandomFloat(ref seed) * 0.3f);
+                    if (!Collision.WetCollision(segment.position, 1, 1))
+                        gravityForce *= 1.6f;
+
+                    Vector2 velocity = Collision.TileCollision(segment.position, gravityForce, (int)segmentDistance, (int)segmentDistance);
+
+                    if (velocity.Distance(gravityForce) >= 0.05f)
+                        groundHitSegments.Add(i);
+
+                    // Add gravity to the segment.
+                    segment.position += velocity;
+
+                    segment.oldPosition = positionBeforeUpdate;
+                }
+            }
+
+            int segmentCount = segments.Count;
+
+            for (int k = 0; k < loops; k++)
+            {
+                for (int j = 0; j < segmentCount - 1; j++)
+                {
+                    VerletSimulatedSegment pointA = segments[j];
+                    VerletSimulatedSegment pointB = segments[j + 1];
+                    Vector2 segmentCenter = (pointA.position + pointB.position) / 2f;
+                    Vector2 segmentDirection = (pointA.position - pointB.position).SafeNormalize(Vector2.UnitY);
+
+                    if (!pointA.locked && !groundHitSegments.Contains(j))
+                        pointA.position = segmentCenter + segmentDirection * segmentDistance / 2f;
+
+                    if (!pointB.locked && !groundHitSegments.Contains(j + 1))
+                        pointB.position = segmentCenter - segmentDirection * segmentDistance / 2f;
+
+                    segments[j] = pointA;
+                    segments[j + 1] = pointB;
+                }
+            }
+
+            return segments;
         }
 
         public static void SelectNextAttack(NPC npc)
@@ -1316,6 +1488,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 nextAttack = AquaticScourgeAttackType.EnterFinalPhase;
                 attackCycleIndex = -1f;
             }
+
+            if (npc.life <= 1)
+                nextAttack = AquaticScourgeAttackType.DeathAnimation;
 
             // Get a new target.
             npc.TargetClosest();
@@ -1439,7 +1614,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 volumeInterpolant = 1f;
 
             // Initialize the sound if necessary.
-            bool shouldStopSound = volumeInterpolant <= 0f || npc.life <= 0 || !npc.active;
+            bool shouldStopSound = volumeInterpolant <= 0f || npc.life <= 0 || !npc.active || npc.ai[2] == (int)AquaticScourgeAttackType.DeathAnimation;
             if (hissSound == 0f && !shouldStopSound)
                 hissSound = SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeAcidHissLoopSound, npc.Center).ToFloat();
 
@@ -1456,6 +1631,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         }
 
         #endregion AI Utility Methods
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            PopAllBubbles();
+            SelectNextAttack(npc);
+
+            // Delete all stray entities.
+            for (int i = 0; i < 3; i++)
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<AcceleratingArcingAcid>(), ModContent.ProjectileType<AcidBubble>(), ModContent.ProjectileType<AquaticScourgeBodySpike>(),
+                    ModContent.ProjectileType<FallingAcid>(), ModContent.ProjectileType<RadiationPulse>(), ModContent.ProjectileType<SulphuricGas>(), ModContent.ProjectileType<SulphuricGasDebuff>(),
+                    ModContent.ProjectileType<SulphuricTornado>(), ModContent.ProjectileType<SulphurousRockRubble>());
+            }
+
+            npc.ai[2] = (int)AquaticScourgeAttackType.DeathAnimation;
+            npc.life = 1;
+            npc.active = true;
+            npc.netUpdate = true;
+            return false;
+        }
+        #endregion Death Effects
 
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)

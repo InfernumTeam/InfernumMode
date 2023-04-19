@@ -228,7 +228,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 }
             }
 
-
             if (deathTimer % flinchInterval == 0)
             {
                 // Move slightly to emulate flinching from something inside the hive.

@@ -15,6 +15,7 @@ using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.UI;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
@@ -381,6 +382,23 @@ namespace InfernumMode.GlobalInstances
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
             if (isDoG && OverridingListManager.Registered<DevourerofGodsHead>())
                 DoGPhase1HeadBehaviorOverride.HandleDoGLifeBasedHitTriggers(npc, realDamage, ref damage);
+
+            bool isAquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeBodyAlt>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
+            if (isAquaticScourge)
+            {
+                NPC head = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
+
+                // Disable damage and start the death animation if the hit would kill the scourge.
+                if (head.life - realDamage <= 1)
+                {
+                    head.life = 0;
+                    head.checkDead();
+                    damage = 0;
+                    npc.dontTakeDamage = true;
+                    return false;
+                }
+                return true;
+            }
 
             if ((npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead) && OverridingListManager.Registered(NPCID.MoonLordCore))
                 MoonLordCoreBehaviorOverride.HandleBodyPartDeathTriggers(npc, realDamage);

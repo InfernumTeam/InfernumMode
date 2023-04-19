@@ -1,5 +1,7 @@
 using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.Particles;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,6 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 return;
             }
 
+            int segmentIndex = (int)npc.ai[3];
             ref float segmentGrowInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float segmentRegrowRate = ref npc.Infernum().ExtraAI[1];
 
@@ -57,36 +60,65 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.damage = headSegment.damage >= 1 ? 60 : 0;
             npc.dontTakeDamage = headSegment.dontTakeDamage;
             npc.chaseable = headSegment.chaseable;
+            npc.noTileCollide = headSegment.noTileCollide;
+            npc.gfxOffY = headSegment.gfxOffY;
             npc.Calamity().newAI[0] = npc.chaseable.ToInt();
             npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.4f);
 
+            // Always use max HP. This doesn't affect the worm as a whole, but it does prevent problems in the death animation where segments otherwise just disappear when killed.
+            npc.lifeMax = headSegment.lifeMax;
+            npc.life = npc.lifeMax;
+
             // Stay behind the previous segment.
-            Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
-            if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
-
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
-
-            // Shudder if the head says to do so.
-            if (headSegment.ai[2] == (int)AquaticScourgeHeadBehaviorOverride.AquaticScourgeAttackType.PerpendicularSpikeBarrage)
+            if (npc.noTileCollide)
             {
-                if (headSegment.Infernum().ExtraAI[3] >= 1f && npc.ai[3] >= 2f)
-                    npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * (float)Math.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
+                Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
+                if (aheadSegment.rotation != npc.rotation)
+                {
+                    float segmentMoveInterpolant = 0.075f;
+                    directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * segmentMoveInterpolant);
+                }
+
+                npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+                npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
+
+                // Shudder if the head says to do so.
+                if (headSegment.ai[2] == (int)AquaticScourgeHeadBehaviorOverride.AquaticScourgeAttackType.PerpendicularSpikeBarrage)
+                {
+                    if (headSegment.Infernum().ExtraAI[3] >= 1f && npc.ai[3] >= 2f)
+                        npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * (float)Math.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
+                }
+
+                AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position = npc.Center;
+            }
+
+            // Follow the verlet segment as directed by the head.
+            else
+            {
+                npc.Center = AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex + 1].position;
+                npc.rotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + MathHelper.PiOver2;
+
+                // Release blood if in water.
+                if (Collision.WetCollision(npc.Top, npc.width, npc.height) && Main.rand.NextBool(560))
+                {
+                    float bloodOpacity = 0.7f;
+                    CloudParticle bloodCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.Red * bloodOpacity, Color.DarkRed * bloodOpacity, 270, Main.rand.NextFloat(1.9f, 2.12f));
+                    GeneralParticleHandler.SpawnParticle(bloodCloud);
+                }
             }
         }
 
         public static IEnumerable<Vector2> GetSpikePositions(NPC npc)
         {
-            yield return npc.Center + new Vector2(16f, 4f).RotatedBy(npc.rotation) * npc.scale;
-            yield return npc.Center + new Vector2(16f, -10f).RotatedBy(npc.rotation) * npc.scale;
-            yield return npc.Center + new Vector2(-18f, 4f).RotatedBy(npc.rotation) * npc.scale;
-            yield return npc.Center + new Vector2(-18f, -10f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + Vector2.UnitY * npc.gfxOffY + new Vector2(16f, 4f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + Vector2.UnitY * npc.gfxOffY + new Vector2(16f, -10f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + Vector2.UnitY * npc.gfxOffY + new Vector2(-18f, 4f).RotatedBy(npc.rotation) * npc.scale;
+            yield return npc.Center + Vector2.UnitY * npc.gfxOffY + new Vector2(-18f, -10f).RotatedBy(npc.rotation) * npc.scale;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
             Texture2D bodyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeBody").Value;
             Texture2D spikeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeBodySpike").Value;
             Vector2 origin = bodyTexture.Size() * 0.5f;

@@ -5,6 +5,7 @@ using CalamityMod.Events;
 using CalamityMod.ILEditing;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.Providence;
@@ -410,6 +411,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator AquaticScourgeSpecialOnKill
+        {
+            add => HookEndpointManager.Modify(typeof(AquaticScourgeHead).GetMethod("SpecialOnKill", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AquaticScourgeHead).GetMethod("SpecialOnKill", Utilities.UniversalBindingFlags), value);
         }
     }
 }

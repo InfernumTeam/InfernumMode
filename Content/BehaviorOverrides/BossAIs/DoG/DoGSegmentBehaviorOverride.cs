@@ -168,6 +168,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             npc.dontTakeDamage = head.dontTakeDamage || npc.Opacity < 0.1f;
             npc.damage = npc.dontTakeDamage || head.damage <= 0 ? 0 : npc.defDamage;
+
+            // Always use max HP. This doesn't affect the worm as a whole, but it does prevent problems in the death animation where segments otherwise just disappear when killed.
             npc.life = npc.lifeMax;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;

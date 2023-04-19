@@ -748,4 +748,52 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
     }
+
+    public class MakeAquaticScourgeSpitOutDropsHook : IHookEdit
+    {
+        private void ThrowItemsOut(On.Terraria.GameContent.ItemDropRules.CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
+        {
+            orig(npc, itemIndex);
+            if (npc.type == ModContent.NPCType<AquaticScourgeHead>() && InfernumMode.CanUseCustomAIs)
+            {
+                Item item = Main.item[itemIndex];
+                item.velocity = npc.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.74f) * Main.rand.NextFloat(9f, 25f);
+
+                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemIndex, 1f, 0f, 0f, 0, 0, 0);
+            }
+        }
+
+        private void RemoveClosestSegmentDrops(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Action<NPC>>(npc =>
+            {
+                if (InfernumMode.CanUseCustomAIs)
+                    return;
+
+                int closestSegmentID = DropHelper.FindClosestWormSegment(npc,
+                    ModContent.NPCType<AquaticScourgeHead>(),
+                    ModContent.NPCType<AquaticScourgeBody>(),
+                    ModContent.NPCType<AquaticScourgeBodyAlt>(),
+                    ModContent.NPCType<AquaticScourgeTail>());
+                npc.position = Main.npc[closestSegmentID].position;
+            });
+            cursor.Emit(OpCodes.Ldc_I4_0);
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public void Load()
+        {
+            On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
+            AquaticScourgeSpecialOnKill += RemoveClosestSegmentDrops;
+        }
+
+        public void Unload()
+        {
+            On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
+            AquaticScourgeSpecialOnKill -= RemoveClosestSegmentDrops;
+        }
+    }
 }

@@ -43,7 +43,7 @@ namespace InfernumMode.Content.Skies
             MaxScale = scale;
             Position = position;
             Velocity = velocity;
-            DrawColor = Color.Lerp(Color.Black, Color.DarkSlateBlue, Main.rand.NextFloat());
+            DrawColor = Color.Lerp(Color.Black, Color.SlateBlue, Main.rand.NextFloat());
             Depth = Main.rand.Next(1, 4);
         }
 

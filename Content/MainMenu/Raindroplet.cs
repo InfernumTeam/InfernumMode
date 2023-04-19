@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.MainMenu
 {
@@ -9,6 +10,7 @@ namespace InfernumMode.Content.MainMenu
     {
         public int Time;
         public int Lifetime;
+        public int Variant;
         public float MaxScale;
         public float Scale;
         public float Rotation;
@@ -18,9 +20,14 @@ namespace InfernumMode.Content.MainMenu
         public Vector2 Velocity;
         public Color DrawColor;
         public Texture2D Texture;
-        public Rectangle? BaseFrame;
+        public Rectangle BaseFrame;
 
         public float TimeLeft => Lifetime - Time;
+
+        public const int FrameWidth = 4;
+        public const int FrameHeight = 42;
+
+        public const int MaxFrames = 3;
 
         public Raindroplet(int lifetime, float scale, float initialRotation, Vector2 position, Vector2 velocity)
         {
@@ -30,9 +37,11 @@ namespace InfernumMode.Content.MainMenu
             Rotation = initialRotation;
             Position = position;
             Velocity = velocity;
-            DrawColor = Color.Lerp(Color.AliceBlue, Color.CornflowerBlue, Main.rand.NextFloat(0.9f));
-            Texture = InfernumVassalRarity.DropletTexture;
+            DrawColor = Color.White;
+            Texture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaReplacements/RainAstral").Value;
             Depth = Main.rand.NextFloat(1.3f, 3f);
+            Variant = Main.rand.Next(0, MaxFrames);
+            BaseFrame = new(FrameWidth * Variant, 0, 2, FrameHeight);
         }
 
         public void Update()
@@ -54,14 +63,11 @@ namespace InfernumMode.Content.MainMenu
 
         public void Draw()
         {
-            Vector2 screenCenter = new(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
             Rectangle screen = new(-1000, -1000, 4000, 4000);
-            Vector2 scale = new(0.66f / Depth, 2.5f / Depth);
-            Vector2 position = (Position - screenCenter) * scale + screenCenter;
-            if (screen.Contains((int)position.X, (int)position.Y))
+            if (screen.Contains((int)Position.X, (int)Position.Y))
             {
-                Vector2 origin = Texture.Size() * 0.5f;
-                Main.spriteBatch.Draw(Texture, position, null, DrawColor with { A = 0 }, 0f, origin, scale * Scale, 0, 0f);
+                Vector2 origin = BaseFrame.Size() * 0.5f;
+                Main.spriteBatch.Draw(Texture, Position, BaseFrame, DrawColor with { A = 50 }, Velocity.ToRotation() + MathHelper.PiOver2, origin, Scale * new Vector2(1f, 1.5f), 0, 0f);
             }
         }
     }

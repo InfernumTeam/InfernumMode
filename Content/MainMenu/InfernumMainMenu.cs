@@ -1,6 +1,7 @@
 ﻿using CalamityMod.MainMenu;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -12,11 +13,13 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.MainMenu
 {
-    internal class InfernumMainMenu : ModMenu
+    public class InfernumMainMenu : ModMenu
     {
-        internal static List<BoidCinder> Boids;
+        public static Texture2D BackgroundTexture => ModContent.Request<Texture2D>("InfernumMode/Content/MainMenu/MenuBackground", AssetRequestMode.ImmediateLoad).Value;
 
-        internal static List<Raindroplet> RainDroplets;
+        internal List<Raindroplet> RainDroplets;
+
+        private int TimeTilNextFlash;
 
         public override string DisplayName => "Infernum Style";
 
@@ -27,6 +30,7 @@ namespace InfernumMode.Content.MainMenu
         public override Asset<Texture2D> MoonTexture => InfernumTextureRegistry.Invisible;
 
         public override Asset<Texture2D> SunTexture => InfernumTextureRegistry.Invisible;
+
         public override int Music => SetMusic();
 
         private static int SetMusic()
@@ -38,88 +42,83 @@ namespace InfernumMode.Content.MainMenu
 
         public override void Load()
         {
-            Boids = new();
             RainDroplets = new();
         }
 
         public override void Unload()
         {
-            Boids = null;
             RainDroplets = null;
-        }
-
-        private void HandleBoids()
-        {
-            Boids.RemoveAll(b => b.Time >= b.Lifetime);
-
-            Rectangle spawnRectangle = new(50, 50, Main.screenWidth - 50, Main.screenHeight - 50);
-            int maxBoids = 200;
-            // Setup the boids if none are present, when the mod loads.
-
-            if (Main.rand.NextBool(2) && Boids.Count < maxBoids)
-                Boids.Add(new(Main.rand.Next(300, 600), Main.rand.NextFloat(0.15f, 0.2f), 0f, Main.rand.NextVector2FromRectangle(spawnRectangle), Main.rand.NextFloat(MathF.Tau).ToRotationVector2() * Main.rand.NextFloat(2f, 4f)));
-            
-
-            foreach (var boid in Boids)
-            {
-                boid.Update();
-                boid.Draw();
-            }
-        }
+        }      
 
         private void HandleRaindrops()
         {
             // Remove all things that should die.
             RainDroplets.RemoveAll(r => r.Time >= r.Lifetime);
 
-            float maxDroplets = 200f;
-            Rectangle spawnRectangle = new(0, 0, 1920, 1080);
+            float maxDroplets = 300f;
+            Rectangle spawnRectangle = new(0, -200, Main.screenWidth, (int)(Main.screenHeight * 0.3f));
 
             // Randomly spawn symbols.
-            if (Main.rand.NextBool(3) && RainDroplets.Count < maxDroplets)
-                RainDroplets.Add(new Raindroplet(Main.rand.Next(150, 250), Main.rand.NextFloat(0.75f, 1.35f), 0f, Main.rand.NextVector2FromRectangle(spawnRectangle), Vector2.UnitY * Main.rand.NextFloat(1f, 3f)));
+            if (RainDroplets.Count < maxDroplets)
+                RainDroplets.Add(new Raindroplet(Main.rand.Next(300, 300), Main.rand.NextFloat(0.35f, 0.85f), 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
+                    Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(9f, 15f)));
 
             foreach (var rain in RainDroplets)
             {
                 rain.Update();
-                //rain.Draw();
+                rain.Draw();
             }
+        }
+
+        private void HandleLightning(Vector2 drawOffset, float scale)
+        {
+            if (TimeTilNextFlash == 0)
+            {
+                TimeTilNextFlash = Main.rand.Next(240, 480);
+                LightningFlash.TimeLeft = 35;
+                float distanceModifier = Main.rand.NextFloat();
+                LightningFlash.SoundTime = (int)(LightningFlash.TimeLeft * distanceModifier);
+                LightningFlash.DistanceModifier = distanceModifier;
+            }
+            TimeTilNextFlash = (int)MathHelper.Clamp(TimeTilNextFlash - 1, 0f, int.MaxValue);
+            LightningFlash.Draw(drawOffset, scale);
         }
 
         public override bool PreDrawLogo(SpriteBatch spriteBatch, ref Vector2 logoDrawCenter, ref float logoRotation, ref float logoScale, ref Color drawColor)
         {
-            Texture2D backgroundTexture = ModContent.Request<Texture2D>("CalamityMod/MainMenu/MenuBackground").Value;
             Vector2 drawOffset = Vector2.Zero;
-            float xScale = (float)Main.screenWidth / backgroundTexture.Width;
-            float yScale = (float)Main.screenHeight / backgroundTexture.Height;
+            float xScale = (float)Main.screenWidth / BackgroundTexture.Width;
+            float yScale = (float)Main.screenHeight / BackgroundTexture.Height;
             float scale = xScale;
+
             if (xScale != yScale)
             {
                 if (yScale > xScale)
                 {
                     scale = yScale;
-                    drawOffset.X -= (backgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
+                    drawOffset.X -= (BackgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
                 }
                 else
-                {
-                    drawOffset.Y -= (backgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
-                }
+                    drawOffset.Y -= (BackgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
             }
+
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
             
             // Apply a raindrop effect to the texture.
             Effect raindrop = InfernumEffectsRegistry.RaindropShader.GetShader().Shader;
             raindrop.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            raindrop.Parameters["cellResolution"].SetValue(20f);
+            raindrop.Parameters["cellResolution"].SetValue(15f);
             raindrop.Parameters["intensity"].SetValue(2f);
             raindrop.CurrentTechnique.Passes["RainPass"].Apply();
-            spriteBatch.Draw(backgroundTexture, drawOffset, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(BackgroundTexture, drawOffset, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
-            //HandleBoids();
             HandleRaindrops();
+
+            if (InfernumConfig.Instance.FlashbangOverlays)
+                HandleLightning(drawOffset, scale);
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);

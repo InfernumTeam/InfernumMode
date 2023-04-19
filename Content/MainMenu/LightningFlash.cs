@@ -31,8 +31,11 @@ namespace InfernumMode.Content.MainMenu
             {
                 timeLeft--;
                 float opacity = timeLeft >= 30 ? 1 - (timeLeft - 30f) / 5f : (timeLeft - 5f) / 30f;
+                // Give the opacity a slight random flicker.
+                opacity *= Main.rand.NextFloat(0.95f, 1.05f);
                 Main.spriteBatch.Draw(InfernumMainMenu.BackgroundTexture, drawOffset, null, Color.LightGray with { A = 0 } * opacity * DistanceModifier, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
+                // Don't play the sound if tabbed out because it is super annoying.
                 if (timeLeft == SoundTime && Main.instance.IsActive)
                     SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { Volume = 0.4f * DistanceModifier, PitchVariance = 0.4f});
             }

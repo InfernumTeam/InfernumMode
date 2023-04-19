@@ -10,6 +10,8 @@ namespace InfernumMode.Assets.ExtraTextures
     {
         public static Asset<Texture2D> Arrow => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/ArrowBlack");
 
+        public static Asset<Texture2D> BigGreyscaleCircle => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/BigGreyscaleCircle");
+
         public static Asset<Texture2D> BinaryLine => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/BinaryLine");
 
         public static Asset<Texture2D> BloomFlare => ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/BloomFlare");

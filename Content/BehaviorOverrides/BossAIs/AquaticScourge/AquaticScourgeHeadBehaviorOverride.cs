@@ -15,6 +15,7 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
@@ -1280,6 +1281,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int goreSpitTime = 420;
             ref float goreSpitCountdown = ref npc.Infernum().ExtraAI[0];
             ref float doneSpitting = ref npc.Infernum().ExtraAI[1];
+            ref float totalSpawnedLeeches = ref npc.Infernum().ExtraAI[2];
 
             // Initial the gore spit countdown. The first spit is consistent, but successive ones are not.
             if (attackTimer <= 1f)
@@ -1365,6 +1367,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.Calamity().newAI[0] = 0f;
                 npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + MathHelper.PiOver2;
                 npc.Center = WormSegments[0].position;
+
+                // Spawn leeches that will eat away at the segment.
+                if (Main.netMode != NetmodeID.MultiplayerClient && totalSpawnedLeeches < 3f && Main.rand.NextBool(36))
+                {
+                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2CircularEdge(180f, 180f), Vector2.Zero, ModContent.ProjectileType<LeechFeeder>(), 0, 0f, -1, npc.whoAmI);
+                    totalSpawnedLeeches++;
+                }
             }
             else
                 WormSegments[0].position = npc.Center;
@@ -1665,5 +1674,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             };
         }
         #endregion Tips
+
+        #region Drawcode
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            float skeletonInterpolant = npc.localAI[1];
+            Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+            Texture2D bodyTexture = ModContent.Request<Texture2D>(npc.ModNPC.Texture).Value;
+            Texture2D bodyTextureSkeleton = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeHeadSkeleton").Value;
+            Vector2 origin = bodyTexture.Size() * 0.5f;
+            Main.EntitySpriteDraw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor) * (1f - skeletonInterpolant), npc.rotation, origin, npc.scale, 0, 0);
+            Main.EntitySpriteDraw(bodyTextureSkeleton, drawPosition, null, npc.GetAlpha(lightColor) * skeletonInterpolant, npc.rotation, origin, npc.scale, 0, 0);
+            return false;
+        }
+        #endregion Drawcode
     }
 }

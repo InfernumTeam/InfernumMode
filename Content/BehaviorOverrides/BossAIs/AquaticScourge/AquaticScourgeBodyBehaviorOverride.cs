@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
@@ -37,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int segmentIndex = (int)npc.ai[3];
             ref float segmentGrowInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float segmentRegrowRate = ref npc.Infernum().ExtraAI[1];
+            ref float totalSpawnedLeeches = ref npc.Infernum().ExtraAI[2];
 
             // Make segments slowly regrow their spikes.
             segmentGrowInterpolant = MathHelper.Clamp(segmentGrowInterpolant + segmentRegrowRate, 0f, 1f);
@@ -99,11 +101,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.rotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + MathHelper.PiOver2;
 
                 // Release blood if in water.
-                if (Collision.WetCollision(npc.Top, npc.width, npc.height) && Main.rand.NextBool(560))
+                if (Collision.WetCollision(npc.Top, npc.width, npc.height) && Main.rand.NextBool(560) && npc.localAI[1] <= 0.4f)
                 {
                     float bloodOpacity = 0.7f;
                     CloudParticle bloodCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.Red * bloodOpacity, Color.DarkRed * bloodOpacity, 270, Main.rand.NextFloat(1.9f, 2.12f));
                     GeneralParticleHandler.SpawnParticle(bloodCloud);
+                }
+
+                // Spawn leeches that will eat away at the segment.
+                if (Main.netMode != NetmodeID.MultiplayerClient && totalSpawnedLeeches < 3f && Main.rand.NextBool(32))
+                {
+                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2CircularEdge(180f, 180f), Vector2.Zero, ModContent.ProjectileType<LeechFeeder>(), 0, 0f, -1, npc.whoAmI);
+                    totalSpawnedLeeches++;
                 }
             }
         }
@@ -118,11 +127,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            float skeletonInterpolant = npc.localAI[1];
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
             Texture2D bodyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeBody").Value;
+            Texture2D bodyTextureSkeleton = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeBodySkeleton").Value;
             Texture2D spikeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AquaticScourge/AquaticScourgeBodySpike").Value;
             Vector2 origin = bodyTexture.Size() * 0.5f;
-            Main.EntitySpriteDraw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, 0, 0);
+            Main.EntitySpriteDraw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor) * (1f - skeletonInterpolant), npc.rotation, origin, npc.scale, 0, 0);
+            Main.EntitySpriteDraw(bodyTextureSkeleton, drawPosition, null, npc.GetAlpha(lightColor) * skeletonInterpolant, npc.rotation, origin, npc.scale, 0, 0);
 
             // Draw spikes.
             int index = 0;

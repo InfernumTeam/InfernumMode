@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             Limbs.Update(Polterghast.Center, NPC.Center);
 
-            bool isBeingControlled = Polterghast.Infernum().ExtraAI[9] == NPC.whoAmI;
+            bool isBeingControlled = Polterghast.Infernum().ExtraAI[PolterghastBehaviorOverride.LegToManuallyControlIndexIndex] == NPC.whoAmI;
             float moveSpeed = 28f + Polterghast.velocity.Length() * 1.2f;
 
             // Reposition and move to the ideal position if not being manually controlled in Polter's AI.

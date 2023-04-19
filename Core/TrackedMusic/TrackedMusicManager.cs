@@ -79,12 +79,14 @@ namespace InfernumMode.Core.TrackedMusic
                 if (Main.netMode == NetmodeID.Server)
                     break;
 
+                // Perform some string manipulations to separate the mod and file name out from the path.
                 string modName = path.Split('/').First();
                 string fileName = string.Empty;
                 foreach (string part in path.Split('/').Skip(1))
                     fileName += part + "/";
                 fileName = string.Concat(fileName.Take(fileName.Length - 1)) + ".ogg";
 
+                // Move onto the next path if the track's associated mod is not enabled.
                 if (!ModLoader.TryGetMod(modName, out Mod mod))
                     continue;
 

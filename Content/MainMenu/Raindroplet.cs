@@ -67,7 +67,7 @@ namespace InfernumMode.Content.MainMenu
             if (screen.Contains((int)Position.X, (int)Position.Y))
             {
                 Vector2 origin = BaseFrame.Size() * 0.5f;
-                float opacity = 0.7f;
+                float opacity = 0.5f;
                 Main.spriteBatch.Draw(Texture, Position, BaseFrame, DrawColor with { A = 50 } * opacity, Velocity.ToRotation() + MathHelper.PiOver2, origin, Scale * new Vector2(0.5f, 1.4f), SpriteEffects.None, 0f);
             }
         }

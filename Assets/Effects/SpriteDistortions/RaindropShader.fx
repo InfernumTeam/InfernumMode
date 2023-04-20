@@ -3,6 +3,7 @@
 float time;
 float cellResolution;
 float intensity;
+float sceneBrightness;
 
 float Random1(float value, float seed)
 {
@@ -64,7 +65,7 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
     uv += drops;
     
     // Return the texture with the distorted uv.
-    return tex2D(mainTexture, uv);
+    return tex2D(mainTexture, uv) * sceneBrightness;
 }
 
 technique Technique1

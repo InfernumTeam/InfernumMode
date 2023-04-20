@@ -23,6 +23,8 @@ namespace InfernumMode.Content.MainMenu
 
         private int TimeTilNextFlash;
 
+        public const int FlashTime = 35;
+
         public override string DisplayName => "Infernum Style";
 
         public override ModSurfaceBackgroundStyle MenuBackgroundStyle => ModContent.GetInstance<NullSurfaceBackground>();
@@ -66,7 +68,7 @@ namespace InfernumMode.Content.MainMenu
             if (RainDroplets.Count < maxDroplets)
             {
                 float scaleScalar = Main.rand.NextFloat(1f, 4f);
-                Vector2 velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(15f, 22f);
+                Vector2 velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(22f, 32f);
                 RainDroplets.Add(new Raindroplet(Main.rand.Next(300, 300), Main.rand.NextFloat(0.35f, 0.85f) * scaleScalar, 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
                    velocity));
             }
@@ -83,7 +85,7 @@ namespace InfernumMode.Content.MainMenu
             if (TimeTilNextFlash == 0)
             {
                 TimeTilNextFlash = Main.rand.Next(240, 480);
-                LightningFlash.TimeLeft = 35;
+                LightningFlash.TimeLeft = FlashTime;
                 float distanceModifier = Main.rand.NextFloat(0.2f, 1f);
                 LightningFlash.SoundTime = (int)(LightningFlash.TimeLeft * distanceModifier);
                 LightningFlash.DistanceModifier = distanceModifier;
@@ -140,7 +142,12 @@ namespace InfernumMode.Content.MainMenu
             raindrop.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             raindrop.Parameters["cellResolution"].SetValue(15f);
             raindrop.Parameters["intensity"].SetValue(2f);
+            float sceneBrightness = 1f;
+            if (LightningFlash.TimeLeft > 0)
+                sceneBrightness = MathHelper.Clamp(MathHelper.Lerp(1f, 0f, 0.7f - (float)LightningFlash.TimeLeft / FlashTime), 0f, 1f);
+            raindrop.Parameters["sceneBrightness"].SetValue(1f);
             raindrop.CurrentTechnique.Passes["RainPass"].Apply();
+
             spriteBatch.Draw(BackgroundTexture, drawOffset, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);

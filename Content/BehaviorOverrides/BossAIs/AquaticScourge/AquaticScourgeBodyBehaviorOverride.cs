@@ -39,6 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float segmentGrowInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float segmentRegrowRate = ref npc.Infernum().ExtraAI[1];
             ref float totalSpawnedLeeches = ref npc.Infernum().ExtraAI[2];
+            ref float hasCreatedSplash = ref npc.Infernum().ExtraAI[4];
 
             // Make segments slowly regrow their spikes.
             segmentGrowInterpolant = MathHelper.Clamp(segmentGrowInterpolant + segmentRegrowRate, 0f, 1f);
@@ -99,7 +100,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             else
             {
                 npc.Center = AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex + 1].position;
-                npc.rotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + MathHelper.PiOver2;
+
+                float idealRotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.03f).AngleLerp(idealRotation, 0.05f);
 
                 // Release blood if in water. If the flesh is eaten, release acid instead as it disappears.
                 if (Collision.WetCollision(npc.Top, npc.width, npc.height))
@@ -113,8 +116,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     else if (npc.localAI[1] >= 0.9f && Main.rand.NextFloat() <= npc.Opacity * 0.02f && npc.Opacity <= 0.6f)
                     {
                         float acidOpacity = 0.8f;
-                        CloudParticle bloodCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.YellowGreen * acidOpacity, Color.Olive * acidOpacity * 0.7f, 120, Main.rand.NextFloat(1.9f, 2.12f));
-                        GeneralParticleHandler.SpawnParticle(bloodCloud);
+                        CloudParticle acidCloud = new(npc.Center, Main.rand.NextVector2Circular(4f, 4f), Color.YellowGreen * acidOpacity, Color.Olive * acidOpacity * 0.7f, 120, Main.rand.NextFloat(1.9f, 2.12f));
+                        GeneralParticleHandler.SpawnParticle(acidCloud);
+                    }
+
+                    // Handle splash effects.
+                    if (hasCreatedSplash == 0f)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            float acidOpacity = 0.56f;
+                            CloudParticle acidCloud = new(npc.Center, -Vector2.UnitY.RotatedByRandom(1.23f) * Main.rand.NextFloat(1f, 14f), Color.YellowGreen * acidOpacity, Color.Olive * acidOpacity * 0.7f, 120, Main.rand.NextFloat(1.9f, 2.12f));
+                            GeneralParticleHandler.SpawnParticle(acidCloud);
+                        }
+                        hasCreatedSplash = 1f;
                     }
                 }
 

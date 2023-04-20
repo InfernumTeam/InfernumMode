@@ -1330,6 +1330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float doneSpitting = ref npc.Infernum().ExtraAI[1];
             ref float totalSpawnedLeeches = ref npc.Infernum().ExtraAI[2];
             ref float deadTimer = ref npc.Infernum().ExtraAI[3];
+            ref float hasCreatedSplashSound = ref npc.Infernum().ExtraAI[4];
 
             // Initial the gore spit countdown. The first spit is consistent, but successive ones are not.
             if (attackTimer <= 1f)
@@ -1447,6 +1448,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 {
                     Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2CircularEdge(180f, 180f), Vector2.Zero, ModContent.ProjectileType<LeechFeeder>(), 0, 0f, -1, npc.whoAmI);
                     totalSpawnedLeeches++;
+                }
+
+                // Play a water crash sound if enough segments are in the water and moving.
+                if (hasCreatedSplashSound == 0f)
+                {
+                    int totalMovingSegmentsInWater = 0;
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC n = Main.npc[i];
+                        if (n.active && n.realLife == npc.whoAmI && n.Infernum().ExtraAI[4] >= 1f)
+                            totalMovingSegmentsInWater++;
+                    }
+
+                    if (totalMovingSegmentsInWater >= 7f)
+                    {
+                        ScreenEffectSystem.SetBlurEffect(npc.Center, 0.4f, 15);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeAppearSound, target.Center);
+                        hasCreatedSplashSound = 1f;
+                    }
                 }
             }
             else

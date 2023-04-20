@@ -1295,8 +1295,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
 
             // Approach the player slowly.
+            // The speed over time decreases as an indicator that the scourge is becoming increasingly weak, until it dies.
             if (doneSpitting == 0f)
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 5f, 0.1f);
+            {
+                float approachSpeed = Utils.Remap(attackTimer, 0f, goreSpitTime - 30f, 5f, 0.8f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * approachSpeed, 0.08f);
+            }
             else
                 npc.velocity.X *= 0.97f;
 

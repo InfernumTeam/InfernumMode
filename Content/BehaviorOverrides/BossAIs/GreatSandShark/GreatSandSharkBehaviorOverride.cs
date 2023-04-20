@@ -1,7 +1,10 @@
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
@@ -13,6 +16,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
 
         public const string NewName = "Taurus, the Great Sand Shark";
+
+        public override void Load()
+        {
+            GlobalNPCOverrides.HitEffectsEvent += UseCustomHitSound;
+        }
+
+        private void UseCustomHitSound(NPC npc, int hitDirection, double damage)
+        {
+            // Play GSS' custom hit sound.
+            if (npc.type == ModContent.NPCType<GreatSandSharkNPC>() && npc.soundDelay <= 0)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
+                npc.soundDelay = 11;
+            }
+        }
 
         public override bool PreAI(NPC npc)
         {

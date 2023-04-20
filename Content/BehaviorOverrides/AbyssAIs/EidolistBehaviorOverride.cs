@@ -45,6 +45,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
             npc.chaseable = isHostile == 1f;
 
+            // Disable natural despawning.
+            npc.Infernum().DisableNaturalDespawning = true;
+
             // Don't naturally despawn if in silent worship.
             if (isHostile != 1f)
                 npc.timeLeft = 7200;

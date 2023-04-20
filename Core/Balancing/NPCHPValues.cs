@@ -152,5 +152,30 @@ namespace InfernumMode.Core.Balancing
             }
             return baseHP;
         }
+
+        public static void AdjustMaxHP(NPC npc, ref int maxHP)
+        {
+            // Calculate the amount of extra HP the boss should have based on quantity of players in the world.
+            float hpMultiplier = 1f;
+            float accumulatedFactor = 0.35f;
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                for (int i = 1; i < (npc.Infernum().TotalPlayersAtStart ?? 1); i++)
+                {
+                    hpMultiplier += accumulatedFactor * 0.5f;
+                    accumulatedFactor += (1f - accumulatedFactor) / 3f;
+                }
+            }
+            if (hpMultiplier > 8f)
+                hpMultiplier = (hpMultiplier * 2f + 8f) / 3f;
+
+            if (hpMultiplier > 1000f)
+                hpMultiplier = 1000f;
+
+            maxHP = (int)(maxHP * hpMultiplier);
+
+            // Add more to the HP if the config says so.
+            maxHP += (int)(maxHP * CalamityConfig.Instance.BossHealthBoost * 0.01);
+        }
     }
 }

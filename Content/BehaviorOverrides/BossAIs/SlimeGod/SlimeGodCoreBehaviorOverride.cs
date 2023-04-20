@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.UI;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -34,6 +35,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             VerticalHoverBursts
         }
         #endregion
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.OnKillEvent += MakeSplitSlimesCreateDeathStuff;
+        }
+
+        private void MakeSplitSlimesCreateDeathStuff(NPC npc)
+        {
+            bool bigSlimeGod = npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<CrimulanSGBig>();
+            if (bigSlimeGod && OverridingListManager.Registered(npc.type))
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    int slime = NPC.NewNPC(npc.GetSource_Death(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, ModContent.NPCType<SplitBigSlimeAnimation>());
+                    Main.npc[slime].velocity = Main.rand.NextVector2Circular(8f, 8f);
+                }
+
+                SlimeGodComboAttackManager.SelectNextAttackSpecific(SlimeGodComboAttackManager.LeaderOfFight);
+            }
+        }
+        #endregion Loading
 
         #region AI
 

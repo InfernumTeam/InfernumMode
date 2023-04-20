@@ -5,6 +5,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -40,6 +41,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             Phase2LifeRatio,
             Phase3LifeRatio
         };
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalSkeletronDeath;
+        }
+
+        private bool DisableNaturalSkeletronDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            if (npc.type == NPCID.SkeletronHead && npc.life - realDamage <= 1)
+            {
+                npc.life = 0;
+                npc.checkDead();
+                damage = 0;
+                npc.dontTakeDamage = true;
+                return false;
+            }
+            return true;
+        }
+        #endregion Loading
 
         #region AI
 

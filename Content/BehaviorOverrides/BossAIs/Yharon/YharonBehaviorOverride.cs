@@ -353,6 +353,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const int InfernadoDamage = 550;
 
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalYharonDeath;
+        }
+
+        private bool DisableNaturalYharonDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            if (npc.type == ModContent.NPCType<YharonBoss>())
+            {
+                if (npc.life - realDamage <= 0)
+                    npc.NPCLoot();
+            }
+            return false;
+        }
+        #endregion Loading
+
         #region AI
 
         public override bool PreAI(NPC npc)

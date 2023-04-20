@@ -32,6 +32,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             npc.dontTakeDamage = true;
             npc.timeLeft = 3600;
 
+            // Disable natural despawning.
+            npc.Infernum().DisableNaturalDespawning = true;
+
             if (animationTime < 200f || phaseChangeCountdown > 0f)
             {
                 Vector2 destination = owner.Center + new Vector2(armDirection * 125f, -285f);

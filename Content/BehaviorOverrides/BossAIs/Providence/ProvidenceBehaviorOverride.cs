@@ -21,6 +21,7 @@ using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.TrackedMusic;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -143,6 +144,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         #endregion
 
         public override int NPCOverrideType => ModContent.NPCType<ProvidenceBoss>();
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.OnKillEvent += DetermineNightDefeatStatus;
+        }
+
+        private void DetermineNightDefeatStatus(NPC npc)
+        {
+            // Determine whether Providence was defeated at night first. Her infernal relic will give a baffled comment if this happens.
+            if (npc.type == ModContent.NPCType<ProvidenceBoss>())
+            {
+                if (!Main.dayTime && !WorldSaveSystem.HasBeatenInfernumProvRegularly)
+                    WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = true;
+                WorldSaveSystem.HasBeatenInfernumProvRegularly = true;
+                CalamityNetcode.SyncWorld();
+            }
+        }
+        #endregion Loading
 
         #region AI
 

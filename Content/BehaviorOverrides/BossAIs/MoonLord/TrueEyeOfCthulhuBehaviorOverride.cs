@@ -43,6 +43,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilScale = ref npc.localAI[2];
             ref float enrageTimer = ref npc.Infernum().ExtraAI[5];
 
+            // Disable natural despawning.
+            npc.Infernum().DisableNaturalDespawning = true;
+
             // Define an initial group index.
             if (groupIndex == 0f)
             {

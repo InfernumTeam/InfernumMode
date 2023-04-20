@@ -18,6 +18,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             npc.spriteDirection = idealDirection;
             npc.noTileCollide = true;
 
+            // Disable natural despawning.
+            npc.Infernum().DisableNaturalDespawning = true;
+
             Player target = Main.player[npc.target];
 
             ref float direction = ref npc.ai[0];

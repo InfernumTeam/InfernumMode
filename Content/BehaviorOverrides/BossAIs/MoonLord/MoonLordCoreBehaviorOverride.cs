@@ -3,9 +3,11 @@ using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Tiles;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -114,6 +116,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Phase2LifeRatio,
             Phase3LifeRatio
         };
+
+        public override void Load()
+        {
+            GlobalNPCOverrides.OnKillEvent += GenerateProfanedTempleIfNecessary;
+            GlobalNPCOverrides.StrikeNPCEvent += HandleMLBodyPhaseTriggers;
+        }
+
+        private void GenerateProfanedTempleIfNecessary(NPC npc)
+        {
+            // Create a profaned temple after the moon lord is killed if it doesn't exist yet, for backwards world compatibility reasons.
+            if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine && !WeakReferenceSupport.InAnySubworld())
+            {
+                Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
+                ProfanedGarden.Generate(new(), new(new()));
+                WorldSaveSystem.HasGeneratedProfanedShrine = true;
+            }
+        }
+
+        private bool HandleMLBodyPhaseTriggers(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead)
+                HandleBodyPartDeathTriggers(npc, realDamage);
+            return true;
+        }
 
         public override bool PreAI(NPC npc)
         {

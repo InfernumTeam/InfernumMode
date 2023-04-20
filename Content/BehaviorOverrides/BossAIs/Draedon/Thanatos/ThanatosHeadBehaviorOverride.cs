@@ -15,6 +15,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -65,6 +66,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             ExoMechManagement.Phase4LifeRatio
         };
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.StrikeNPCEvent += AddDamageMultiplier;
+        }
+
+        private bool AddDamageMultiplier(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            // Make Thanatos' head take a flat multiplier in terms of final damage, as a means of allowing direct hits to be effective.
+            if (npc.type == ModContent.NPCType<ThanatosHead>())
+            {
+                damage = (int)(damage * FlatDamageBoostFactor);
+                if (npc.Calamity().DR > 0.999f)
+                {
+                    damage = 0D;
+                    return false;
+                }
+            }
+            return true;
+        }
+        #endregion Loading
 
         #region Netcode Syncs
 

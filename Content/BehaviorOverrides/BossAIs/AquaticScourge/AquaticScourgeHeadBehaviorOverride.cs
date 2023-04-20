@@ -14,6 +14,7 @@ using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -46,6 +47,47 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.HitEffectsEvent += UpdateAcidHissSound;
+            GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalASDeath;
+        }
+
+        private void UpdateAcidHissSound(NPC npc, int hitDirection, double damage)
+        {
+            // Ensure that the Aquatic Scourge stops the hissing sound if it's unexpectedly killed.
+            bool aquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
+            if (aquaticScourge && npc.life <= 0f)
+            {
+                NPC head = npc;
+                if (head.realLife >= 0)
+                    head = Main.npc[head.realLife];
+                UpdateAcidHissSound(head);
+            }
+        }
+
+        private bool DisableNaturalASDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            bool isAquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeBodyAlt>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
+            if (isAquaticScourge)
+            {
+                NPC head = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
+
+                // Disable damage and start the death animation if the hit would kill the scourge.
+                if (head.life - realDamage <= 1)
+                {
+                    head.life = 0;
+                    head.checkDead();
+                    damage = 0;
+                    npc.dontTakeDamage = true;
+                    return false;
+                }
+            }
+            return true;
+        }
+        #endregion Loading
 
         #region AI
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -142,6 +184,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.chaseable = true;
             npc.dontTakeDamage = false;
             npc.Calamity().newAI[0] = 1f;
+
+            // Disable natural despawning.
+            npc.Infernum().DisableNaturalDespawning = true;
 
             // If there still was no valid target, swim away.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -1334,11 +1379,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Particle bloodParticle = new EoCBloodParticle(npc.Center, bloodVelocity, 32, Main.rand.NextFloat(0.9f, 3f), darkRed * 0.85f, 9f);
                     GeneralParticleHandler.SpawnParticle(bloodParticle);
                 }
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 9; i++)
                 {
+                    float bloodScale = Main.rand.NextFloat(0.75f, 1.1f) * Utils.Remap(attackTimer, 0f, goreSpitTime - 45f, 1f, 1.24f);
                     Color darkRed = Color.Lerp(Color.DarkRed, Color.Black, Main.rand.NextFloat(0.25f, 0.55f));
                     Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.83f) * Main.rand.NextFloat(7f, 28f);
-                    Particle bloodParticle = new BloodSplashParticle(npc.Center + bloodVelocity * 5f, bloodVelocity, 32, Main.rand.NextFloat(0.75f, 1.1f), darkRed * 0.8f, Main.rand.NextFloat(0.15f, 0.32f));
+                    Particle bloodParticle = new BloodSplashParticle(npc.Center + bloodVelocity * bloodScale * 5f, bloodVelocity, 32, bloodScale, darkRed * 0.8f, Main.rand.NextFloat(0.27f, 0.75f));
                     GeneralParticleHandler.SpawnParticle(bloodParticle);
                 }
 

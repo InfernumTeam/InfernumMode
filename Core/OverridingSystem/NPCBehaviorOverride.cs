@@ -48,6 +48,9 @@ namespace InfernumMode.Core.OverridingSystem
                 if (checkDeadMethod is not null && checkDeadMethod.DeclaringType != typeof(NPCBehaviorOverride))
                     OverridingListManager.InfernumCheckDeadOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCCheckDeadDelegate(n => (bool)checkDeadMethod.Invoke(instance, new object[] { n }));
 
+                // Call the load hook.
+                instance.Load();
+
                 BehaviorOverrides[instance.NPCOverrideType] = instance;
             }
         }
@@ -67,6 +70,8 @@ namespace InfernumMode.Core.OverridingSystem
                 TipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips(false).ToArray().Fuse(instance.GetTips(true).ToArray()).ToList();
             }
         }
+
+        public virtual void Load() { }
 
         public virtual void SendExtraData(NPC npc, ModPacket writer) { }
 

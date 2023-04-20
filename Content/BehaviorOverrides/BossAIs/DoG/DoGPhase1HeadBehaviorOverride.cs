@@ -4,10 +4,12 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -155,6 +157,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             DoGPhase2HeadBehaviorOverride.FinalPhaseLifeRatio
         };
 
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.StrikeNPCEvent += UpdateLifeTriggers;
+        }
+
+        private bool UpdateLifeTriggers(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            // Make DoG enter the second phase once ready.
+            bool isDoG = npc.type == ModContent.NPCType<DoGHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            return !isDoG || HandleDoGLifeBasedHitTriggers(npc, realDamage, ref damage);
+        }
+
         public static bool HandleDoGLifeBasedHitTriggers(NPC npc, double realDamage, ref double damage)
         {
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
@@ -182,6 +197,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
             return true;
         }
+        #endregion Loading
 
         #region AI
         public override bool PreAI(NPC npc)

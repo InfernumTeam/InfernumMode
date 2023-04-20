@@ -6,8 +6,10 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -71,6 +73,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Stardust.
             new(0, 170, 221)
         };
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.OnKillEvent += GenerateColosseumEntranceIfNecessary;
+        }
+
+        private void GenerateColosseumEntranceIfNecessary(NPC npc)
+        {
+            // Create a lost colosseum entrance after the cultist is killed if it doesn't exist yet, for backwards world compatibility reasons.
+            if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance && !WeakReferenceSupport.InAnySubworld())
+            {
+                Utilities.DisplayText("Mysterious ruins have materialized in the heart of the desert!", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
+                LostColosseumEntrance.Generate(new(), new(new()));
+                WorldSaveSystem.HasGeneratedColosseumEntrance = true;
+            }
+        }
+        #endregion Loading
 
         #region AI
 

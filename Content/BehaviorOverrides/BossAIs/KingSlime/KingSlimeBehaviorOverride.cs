@@ -115,6 +115,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 npc.localAI[2] = 1f;
             }
 
+            // Disable natural despawning.
+            npc.Infernum().DisableNaturalDespawning = true;
+
             if (npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
                 CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.KingSlime);

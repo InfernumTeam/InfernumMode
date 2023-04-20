@@ -1,4 +1,5 @@
 using CalamityMod.Items.Weapons.Ranged;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -15,6 +16,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public override float PredictivenessFactor => 15.5f;
 
         public override Color TelegraphColor => Color.Yellow;
+
+        public override void Load()
+        {
+            GlobalNPCOverrides.HitEffectsEvent += UpdateSawSound;
+        }
+
+        private void UpdateSawSound(NPC npc, int hitDirection, double damage)
+        {
+            // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
+            if (npc.type == NPCID.PrimeSaw && npc.life <= 0)
+                PrimeViceBehaviorOverride.DoBehavior_SlowSparkShrapnelMeleeCharges(npc, Main.player[npc.target]);
+        }
 
         public override void PerformAttackBehaviors(NPC npc, PrimeAttackType attackState, Player target, float attackTimer, Vector2 cannonDirection)
         {

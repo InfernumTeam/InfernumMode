@@ -1382,10 +1382,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 WormSegments[0].locked = false;
                 WormSegments = TileCollisionVerletSimulation(WormSegments, 36f, 8, 6f);
-                npc.boss = false;
                 npc.gfxOffY = 16;
                 npc.Size = Vector2.One * 72f;
+
+                // Disable boss effects.
                 npc.Calamity().newAI[0] = 0f;
+                npc.boss = false;
+
                 npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + MathHelper.PiOver2;
                 npc.Center = WormSegments[0].position;
 

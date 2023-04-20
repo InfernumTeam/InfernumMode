@@ -400,6 +400,15 @@ namespace InfernumMode.GlobalInstances
                 return true;
             }
 
+            if (npc.type == NPCID.SkeletronHead && npc.life - realDamage <= 1)
+            {
+                npc.life = 0;
+                npc.checkDead();
+                damage = 0;
+                npc.dontTakeDamage = true;
+                return false;
+            }
+
             if ((npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead) && OverridingListManager.Registered(NPCID.MoonLordCore))
                 MoonLordCoreBehaviorOverride.HandleBodyPartDeathTriggers(npc, realDamage);
 

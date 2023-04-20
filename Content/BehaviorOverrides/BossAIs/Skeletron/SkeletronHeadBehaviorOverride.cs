@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 npc.rotation = npc.velocity.X * 0.04f;
             }
 
-            if (animationChargeTimer <= 0f)
+            if (animationChargeTimer <= 0f || attackState == (int)SkeletronAttackType.DeathAnimation)
             {
                 // Do phase transition effects as needed.
                 if (phaseChangeCountdown > 0f && attackState != (int)SkeletronAttackType.DeathAnimation)
@@ -797,8 +797,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         #region Death Effects
         public override bool CheckDead(NPC npc)
         {
-            npc.ai[0] = (int)SkeletronAttackType.DeathAnimation;
-            npc.ai[1] = 0f;
+            if (npc.ai[0] != (int)SkeletronAttackType.DeathAnimation)
+            {
+                npc.ai[0] = (int)SkeletronAttackType.DeathAnimation;
+                npc.ai[1] = 0f;
+            }
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 

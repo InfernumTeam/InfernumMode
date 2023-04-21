@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 {
-    // This is completely useless as it no longer spawns an enemy. However, it remains as a testimant to how difficult EoW
+    // This is completely useless as it no longer spawns an enemy. However, it remains as a testament to how difficult EoW
     // is to try to make any sort of decent fight from.
     public class ShadowOrb : ModProjectile
     {

@@ -229,6 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.dontTakeDamage = enraged;
 
             // Check if the player's acid meter has reached half.
+            // This is used to determine if the player will receive a special dev wish item.
             if (attackTimer != (int)AquaticScourgeAttackType.SpawnAnimation && target.Calamity().SulphWaterPoisoningLevel >= 0.5f && (acidMeterEverReachedHalf == 0f || enraged))
             {
                 acidMeterEverReachedHalf = 1f;

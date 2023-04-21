@@ -238,8 +238,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == NPCID.PrimeSaw && localTimer % sparkReleaseRate == sparkReleaseRate - 1f)
                 {
                     int sparkID = ModContent.ProjectileType<SawSpark>();
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -7f, sparkID, 165, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 7f, sparkID, 165, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -7f, sparkID, SawSparkDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 7f, sparkID, SawSparkDamage, 0f);
                 }
 
                 float volumeInterpolant = Utils.GetLerpValue(195f, 150f, localTimer, true);

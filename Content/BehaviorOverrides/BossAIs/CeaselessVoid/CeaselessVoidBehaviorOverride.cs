@@ -1699,7 +1699,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     ModContent.ProjectileType<CeaselessVortex>(),
                     ModContent.ProjectileType<CeaselessVortexTear>(),
                     ModContent.ProjectileType<ConvergingDungeonRubble>(),
-                    ModContent.ProjectileType<DarkEnergyBolt>(),
                     ModContent.ProjectileType<OtherworldlyBolt>(),
                     ModContent.ProjectileType<SpinningDarkEnergy>(),
                     ModContent.ProjectileType<TelegraphedOtherwordlyBolt>()

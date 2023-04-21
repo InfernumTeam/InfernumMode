@@ -61,6 +61,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         // This exists primarily for mecha mayhem compatibility.
         public static bool CanPerformCameraEffects => !NPC.AnyNPCs(NPCID.TheDestroyer) && !NPC.AnyNPCs(NPCID.Spazmatism) && !NPC.AnyNPCs(NPCID.Retinazer);
 
+        public const int MetalSpikeDamage = 135;
+
+        public const int SkullDamage = 135;
+
+        public const int SmallLaserDamage = 135;
+
+        public const int ElectricBoltDamage = 140;
+
+        public const int MissileDamage = 140;
+
+        public const int TeslaBombDamage = 140;
+
+        public const int SawSparkDamage = 150;
+
+        public const int TeslaCloudDamage = 150;
+
+        public const int DeathrayDamage = 250;
+
         public const int CannonsShouldNotFireIndex = 0;
 
         public const int CannonCycleTimerIndex = 1;
@@ -333,7 +351,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         if (BossRushEvent.BossRushActive)
                             spikeVelocity *= 3f;
 
-                        Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 12f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 135, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 12f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), MetalSpikeDamage, 0f);
                     }
                 }
                 SoundEngine.PlaySound(SoundID.Item101, target.Center);
@@ -379,7 +397,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         rocketVelocity.Y = -1f;
                     rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * rocketVelocity.Length(), 0.96f);
                     rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), 150, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), MissileDamage, 0f);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 12f == 11f && !AnyArms)
@@ -388,7 +406,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     idealVelocity += Main.rand.NextVector2Circular(2f, 2f);
                     Vector2 spawnPosition = npc.Center + idealVelocity * 3f;
 
-                    int skull = Utilities.NewProjectileBetter(spawnPosition, idealVelocity, ProjectileID.Skull, 160, 0f, Main.myPlayer, -1f, 0f);
+                    int skull = Utilities.NewProjectileBetter(spawnPosition, idealVelocity, ProjectileID.Skull, SkullDamage, 0f, Main.myPlayer, -1f, 0f);
                     Main.projectile[skull].ai[0] = -1f;
                     Main.projectile[skull].timeLeft = 300;
                 }
@@ -454,7 +472,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                             for (int i = 0; i < 11; i++)
                             {
                                 Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 10f)) * 8f;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), 135, 0f);
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), MetalSpikeDamage, 0f);
                             }
                         }
                         SoundEngine.PlaySound(SoundID.Item101, target.Center);
@@ -570,7 +588,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         {
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
                             Vector2 individualLaserDirection = (MathHelper.TwoPi * i / 12f).ToRotationVector2();
-                            Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<EvenlySpreadPrimeLaserRay>(), 230, 0f, -1, 0f, npc.whoAmI);
+                            Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<EvenlySpreadPrimeLaserRay>(), DeathrayDamage, 0f, -1, 0f, npc.whoAmI);
                         }
                     }
                 }
@@ -593,7 +611,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         for (int i = 0; i < 12; i++)
                         {
                             Vector2 electricityVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 12f + offsetAngle) * (shootSpeedAdditive + 9f);
-                            Utilities.NewProjectileBetter(mouthPosition, electricityVelocity, ProjectileID.MartianTurretBolt, 155, 0f);
+                            Utilities.NewProjectileBetter(mouthPosition, electricityVelocity, ProjectileID.MartianTurretBolt, ElectricBoltDamage, 0f);
                         }
                     }
                 }
@@ -603,7 +621,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 8f);
-                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), 155, 0f);
+                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), MissileDamage, 0f);
                     }
                 }
             }
@@ -640,7 +658,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     for (int i = 0; i < bombCount; i++)
                     {
                         Vector2 bombSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(400f, 1550f);
-                        int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<TeslaBomb>(), 160, 0f);
+                        int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<TeslaBomb>(), TeslaBombDamage, 0f);
                         if (Main.projectile.IndexInRange(bomb))
                         {
                             Main.projectile[bomb].ai[0] = Main.rand.Next(45, 70);
@@ -721,70 +739,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             }
         }
 
-        public static void DoBehavior_CarpetBombLaserCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
-        {
-            int chargeCount = 3;
-            int hoverTime = AnyArms ? 120 : 60;
-            int chargeTime = AnyArms ? 72 : 45;
-            float hoverSpeed = AnyArms ? 14f : 33f;
-            float chargeSpeed = AnyArms ? 15f : 24.5f;
-
-            // Have a bit longer of a delay for the first charge.
-            if (attackTimer < hoverTime + chargeTime)
-                hoverTime += 20;
-
-            float wrappedTime = attackTimer % (hoverTime + chargeTime);
-
-            if (BossRushEvent.BossRushActive)
-            {
-                hoverSpeed *= 1.3f;
-                chargeSpeed *= 1.6f;
-            }
-
-            if (!AnyArms)
-                chargeSpeed += (1f - lifeRatio) * 10f;
-
-            if (wrappedTime < hoverTime - 15f)
-            {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 365f, -300f);
-                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed)) / 8f;
-
-                if (npc.WithinRange(target.Center, 150f))
-                {
-                    npc.Center = target.Center - npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 150f;
-                    npc.velocity = Vector2.Zero;
-                }
-                npc.rotation = npc.velocity.X * 0.04f;
-                frameType = (int)PrimeFrameType.ClosedMouth;
-            }
-            else if (wrappedTime < hoverTime)
-            {
-                npc.velocity *= 0.94f;
-                npc.rotation = npc.velocity.X * 0.04f;
-                frameType = (int)PrimeFrameType.OpenMouth;
-            }
-            else
-            {
-                if (wrappedTime == hoverTime + 1f)
-                {
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                    npc.velocity.Y -= 10f;
-                    npc.netUpdate = true;
-
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
-                }
-
-                // Release lasers upward.
-                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 6f == 5f)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -16f, ModContent.ProjectileType<ScavengerLaser>(), 165, 0f);
-
-                frameType = (int)PrimeFrameType.Spikes;
-                npc.rotation += npc.velocity.Length() * 0.018f;
-            }
-
-            if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 20)
-                SelectNextAttack(npc);
-        }
         #endregion Specific Attacks
 
         #region General Helper Functions

@@ -1096,7 +1096,8 @@ namespace InfernumMode.Core.ILEditingStuff
 
             cursor.EmitDelegate(() =>
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
+                int aquaticScourgeIndex = NPC.FindFirstNPC(ModContent.NPCType<AquaticScourgeHead>());
+                if (aquaticScourgeIndex >= 0 && Main.npc[aquaticScourgeIndex].ai[2] != (int)AquaticScourgeHeadBehaviorOverride.AquaticScourgeAttackType.DeathAnimation && InfernumMode.CanUseCustomAIs)
                 {
                     NPC scourge = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AquaticScourgeHead>())];
                     Player player = Main.LocalPlayer;

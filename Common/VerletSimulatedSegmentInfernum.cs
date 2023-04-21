@@ -34,8 +34,8 @@ namespace InfernumMode.Common
                     Vector2 positionBeforeUpdate = segment.position;
 
                     // Disallow tile collision.
-                    gravity *= MathHelper.Lerp(1f, 1.05f, i / (float)segments.Count);
-                    float maxFallSpeed = MathHelper.Lerp(19f, 23f, i / (float)segments.Count);
+                    gravity *= MathHelper.Lerp(1f, 1.02f, i / (float)segments.Count);
+                    float maxFallSpeed = 19f;
                     Vector2 gravityForce = Vector2.UnitY * gravity;
                     if (Collision.WetCollision(segment.position, 1, 1))
                     {
@@ -50,7 +50,7 @@ namespace InfernumMode.Common
 
                     Vector2 velocity = Collision.TileCollision(segment.position, newVelocity, (int)segmentDistance, (int)segmentDistance);
 
-                    if (velocity.Distance(newVelocity) >= 0.05f)
+                    if (velocity.Distance(newVelocity) >= 0.15f)
                     {
                         groundHitSegments.Add(i);
                         segment.locked = true;

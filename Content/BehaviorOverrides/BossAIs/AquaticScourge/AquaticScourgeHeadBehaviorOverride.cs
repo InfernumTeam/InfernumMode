@@ -1445,7 +1445,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (timeAfterSpitting != 0f)
             {
                 WormSegments[0].locked = false;
-                WormSegments = VerletSimulatedSegmentInfernum.TileCollisionVerletSimulation(WormSegments, 38f, 18, 0.14f);
+                WormSegments = VerletSimulatedSegmentInfernum.TileCollisionVerletSimulation(WormSegments, 36f, 18, 0.14f);
                 npc.gfxOffY = 16;
                 npc.Size = Vector2.One * 72f;
 

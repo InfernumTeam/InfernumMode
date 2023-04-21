@@ -2316,7 +2316,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (attackTimer >= sitTime)
                 {
                     // Begin the credits if draedon is dead.
-                    if (DownedBossSystem.downedExoMechs && false)
+                    if (DownedBossSystem.downedExoMechs)
                         CreditManager.BeginCredits();
                     npc.active = false;
                     npc.netUpdate = true;

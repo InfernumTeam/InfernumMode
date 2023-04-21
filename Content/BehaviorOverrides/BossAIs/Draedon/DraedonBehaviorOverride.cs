@@ -567,7 +567,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 if (hologramEffectTimer <= 0f)
                 {
                     // Begin the credits if scal is dead.
-                    if (DownedBossSystem.downedCalamitas && false)
+                    if (DownedBossSystem.downedCalamitas)
                         CreditManager.BeginCredits();
                     npc.active = false;
                 }

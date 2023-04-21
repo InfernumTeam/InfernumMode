@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public const int AcidMeterEverReachedHalfIndex = 10;
 
-        public static List<VerletSimulatedSegment> WormSegments
+        public static List<VerletSimulatedSegmentInfernum> WormSegments
         {
             get;
             set;
@@ -1327,7 +1327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int goreSpitTime = 420;
             int disappearTime = 1200;
             ref float goreSpitCountdown = ref npc.Infernum().ExtraAI[0];
-            ref float doneSpitting = ref npc.Infernum().ExtraAI[1];
+            ref float timeAfterSpitting = ref npc.Infernum().ExtraAI[1];
             ref float totalSpawnedLeeches = ref npc.Infernum().ExtraAI[2];
             ref float deadTimer = ref npc.Infernum().ExtraAI[3];
             ref float hasCreatedSplashSound = ref npc.Infernum().ExtraAI[4];
@@ -1342,10 +1342,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Approach the player slowly.
             // The speed over time decreases as an indicator that the scourge is becoming increasingly weak, until it dies.
-            if (doneSpitting == 0f)
+            if (timeAfterSpitting == 0f)
             {
-                float approachSpeed = Utils.Remap(attackTimer, 0f, goreSpitTime - 30f, 5f, 0.8f);
+                float approachSpeed = Utils.Remap(attackTimer, 0f, goreSpitTime - 30f, 7f, 0.8f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * approachSpeed, 0.08f);
+                if (npc.velocity.Length() > approachSpeed)
+                    npc.velocity *= 0.94f;
             }
             else
                 npc.velocity.X *= 0.97f;
@@ -1359,7 +1361,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Decrement the gore spit countdown. Once it hits zero, it rerolls with some randomness.
             goreSpitCountdown--;
-            if (goreSpitCountdown <= 0f && doneSpitting == 0f)
+            if (goreSpitCountdown <= 0f && timeAfterSpitting == 0f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1414,7 +1416,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (attackTimer >= goreSpitTime)
                 {
                     npc.NPCLoot();
-                    doneSpitting = 1f;
+                    timeAfterSpitting = 1f;
                     attackTimer = 0f;
                 }
 
@@ -1426,13 +1428,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             float idealJawRotation = Utils.Remap(goreSpitCountdown, 75f, 27f, 0f, MathHelper.Pi / 5f);
 
             // Adhere to gravity when done spitting.
-            npc.noGravity = doneSpitting == 0f;
-            npc.noTileCollide = doneSpitting == 0f;
+            npc.noGravity = timeAfterSpitting == 0f;
+            npc.noTileCollide = timeAfterSpitting == 0f;
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-            if (doneSpitting != 0f)
+            if (timeAfterSpitting != 0f)
             {
                 WormSegments[0].locked = false;
-                WormSegments = TileCollisionVerletSimulation(WormSegments, 36f, 8, 6f);
+                WormSegments = VerletSimulatedSegmentInfernum.TileCollisionVerletSimulation(WormSegments, 38f, 18, 0.14f);
                 npc.gfxOffY = 16;
                 npc.Size = Vector2.One * 72f;
 
@@ -1441,7 +1443,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.boss = false;
 
                 npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + MathHelper.PiOver2;
-                npc.Center = WormSegments[0].position;
+
+                if (timeAfterSpitting >= 2f)
+                    npc.Center = WormSegments[0].position;
 
                 // Spawn leeches that will eat away at the segment.
                 if (Main.netMode != NetmodeID.MultiplayerClient && totalSpawnedLeeches < 3f && Main.rand.NextBool(36))
@@ -1468,6 +1472,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         hasCreatedSplashSound = 1f;
                     }
                 }
+                timeAfterSpitting++;
             }
             else
             {
@@ -1491,7 +1496,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)
         {
             WormSegments.Clear();
-            WormSegments.Add(new(npc.Center, true));
+            WormSegments.Add(new(npc.Center, Vector2.UnitY * 0.25f, true));
 
             int previousIndex = npc.whoAmI;
             for (int i = 0; i < wormLength; i++)
@@ -1511,64 +1516,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 // Force sync the new segment into existence.
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, nextIndex, 0f, 0f, 0f, 0);
 
-                WormSegments.Add(new VerletSimulatedSegment(Main.npc[nextIndex].Center));
+                WormSegments.Add(new VerletSimulatedSegmentInfernum(Main.npc[nextIndex].Center, Main.rand.NextVector2Circular(0.004f, 0.25f)));
 
                 previousIndex = nextIndex;
             }
-        }
-
-        public static List<VerletSimulatedSegment> TileCollisionVerletSimulation(List<VerletSimulatedSegment> segments, float segmentDistance, int loops = 10, float gravity = 0.3f)
-        {
-            // https://youtu.be/PGk0rnyTa1U?t=400 is a good verlet integration chains reference.
-            List<int> groundHitSegments = new();
-            for (int i = segments.Count - 1; i >= 0; i--)
-            {
-                var segment = segments[i];
-                if (!segment.locked)
-                {
-                    Vector2 positionBeforeUpdate = segment.position;
-
-                    // Disallow tile collision.
-                    ulong seed = (ulong)i;
-                    Vector2 gravityForce = Vector2.UnitY * (gravity * (1f - i * 0.01f) + Utils.RandomFloat(ref seed) * 0.3f);
-                    if (!Collision.WetCollision(segment.position, 1, 1))
-                        gravityForce *= 1.6f;
-
-                    Vector2 velocity = Collision.TileCollision(segment.position, gravityForce, (int)segmentDistance, (int)segmentDistance);
-
-                    if (velocity.Distance(gravityForce) >= 0.05f)
-                        groundHitSegments.Add(i);
-
-                    // Add gravity to the segment.
-                    segment.position += velocity;
-
-                    segment.oldPosition = positionBeforeUpdate;
-                }
-            }
-
-            int segmentCount = segments.Count;
-
-            for (int k = 0; k < loops; k++)
-            {
-                for (int j = 0; j < segmentCount - 1; j++)
-                {
-                    VerletSimulatedSegment pointA = segments[j];
-                    VerletSimulatedSegment pointB = segments[j + 1];
-                    Vector2 segmentCenter = (pointA.position + pointB.position) / 2f;
-                    Vector2 segmentDirection = (pointA.position - pointB.position).SafeNormalize(Vector2.UnitY);
-
-                    if (!pointA.locked && !groundHitSegments.Contains(j))
-                        pointA.position = segmentCenter + segmentDirection * segmentDistance / 2f;
-
-                    if (!pointB.locked && !groundHitSegments.Contains(j + 1))
-                        pointB.position = segmentCenter - segmentDirection * segmentDistance / 2f;
-
-                    segments[j] = pointA;
-                    segments[j + 1] = pointB;
-                }
-            }
-
-            return segments;
         }
 
         public static void SelectNextAttack(NPC npc)

@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.Calamity().unbreakableDR = true;
             npc.chaseable = false;
             npc.defense = 0;
-            npc.takenDamageMultiplier = 5.6f;
+            npc.takenDamageMultiplier = 3.2f;
 
             if (frameType == (int)ThanatosFrameType.Open)
             {

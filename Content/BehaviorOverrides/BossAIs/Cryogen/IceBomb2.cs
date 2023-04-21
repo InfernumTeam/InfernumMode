@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             for (int i = 0; i < 5; i++)
             {
                 Vector2 spikeVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.43f, 0.43f, i / 4f)) * 12f;
-                Utilities.NewProjectileBetter(Projectile.Center, spikeVelocity, ModContent.ProjectileType<IceRain2>(), 120, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, spikeVelocity, ModContent.ProjectileType<IceRain2>(), CryogenBehaviorOverride.IceRainDamage, 0f);
             }
         }
 

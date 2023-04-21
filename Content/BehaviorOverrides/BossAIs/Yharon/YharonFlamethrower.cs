@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (Main.netMode != NetmodeID.MultiplayerClient && Time % 2f == 1f)
             {
                 Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).RotatedByRandom(0.27f) * Main.rand.NextFloat(34f, 44f);
-                Utilities.NewProjectileBetter(Projectile.Center, meteorShootVelocity, ModContent.ProjectileType<RedirectingYharonMeteor>(), 450, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, meteorShootVelocity, ModContent.ProjectileType<RedirectingYharonMeteor>(), YharonBehaviorOverride.RegularFireballDamage, 0f);
             }
 
             // Cast lights.
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 6, 0f, 0f, 0, default, 1f);
+                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0f, 0f, 0, default, 1f);
                     fire.fadeIn = 1.5f;
                     fire.velocity = flameDirection.RotatedBy(Main.rand.NextFloatDirection() * FlameRotation * 2f) * Main.rand.NextFloat(0.5f, 3f) * FireMaxLength / 27f;
                     fire.velocity += Owner.velocity * 2f;
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 smoke.velocity += flameDirection * 4f;
             }
 
-            Dust smokeDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 31, 0f, 0f, 0, default, 1f);
+            Dust smokeDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 0, default, 1f);
             smokeDust.fadeIn = 1.5f;
             smokeDust.scale = 0.4f;
             smokeDust.velocity = flameDirection.RotatedBy(Main.rand.NextFloatDirection() * MathHelper.Pi / 8f) * (0.5f + Main.rand.NextFloat() * 2.5f) * 15f;

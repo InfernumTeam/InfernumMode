@@ -351,7 +351,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         // The closer to 1 this value is, the quicker his charges will be.
         public const float PostChargeDecelerationFactor = 0.42f;
 
+        public const int RegularFireballDamage = 500;
+
+        public const int FlamethrowerDamage = 550;
+
         public const int InfernadoDamage = 550;
+
+        public const int HeatFlashFireballDamage = 575;
+
+        public const int DeathAnimationFireballDamage = 600;
+
+        public const int FlameVortexDamage = 750;
 
         #region Loading
         public override void Load()
@@ -875,7 +885,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 fireIntensity = MathHelper.Max(fireIntensity, Utils.GetLerpValue(chargeDelay + chargeTime - 1f, chargeDelay + chargeTime - 8f, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Circular(16f, 16f), npc.velocity * 0.3f, ModContent.ProjectileType<LingeringDragonFlames>(), 500, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Circular(16f, 16f), npc.velocity * 0.3f, ModContent.ProjectileType<LingeringDragonFlames>(), RegularFireballDamage, 0f);
             }
 
             // Slow down after sufficiently far away from the target.
@@ -1006,7 +1016,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     Vector2 fireballShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.37f) * 28f;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(fireball => fireball.tileCollide = false);
-                    Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ModContent.ProjectileType<HomingFireball>(), 450, 0f);
+                    Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ModContent.ProjectileType<HomingFireball>(), RegularFireballDamage, 0f);
 
                     int numberOfParticles = 6;
                     for (int i = 0; i < numberOfParticles; i++)
@@ -1067,7 +1077,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 SoundEngine.PlaySound(YharonBoss.FireSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), 540, 0f, -1, 0f, npc.whoAmI);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlamethrower>(), FlamethrowerDamage, 0f, -1, 0f, npc.whoAmI);
             }
 
             // Slow down once the flamethrower is gone.
@@ -1152,7 +1162,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     {
                         float angle = MathHelper.TwoPi / 28f * i;
                         float speed = Main.rand.NextFloat(12f, 15f);
-                        Utilities.NewProjectileBetter(npc.Center + angle.ToRotationVector2() * 40f, angle.ToRotationVector2() * speed, ModContent.ProjectileType<FlareBomb>(), 540, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + angle.ToRotationVector2() * 40f, angle.ToRotationVector2() * speed, ModContent.ProjectileType<FlareBomb>(), RegularFireballDamage, 0f);
                     }
 
                     for (int i = 0; i < 3; i++)
@@ -1218,7 +1228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 int fireballReleaseRate = morePowerfulMeteors ? 4 : 7;
                 if (attackTimer % fireballReleaseRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + npc.velocity * 3f, npc.velocity, ModContent.ProjectileType<YharonFireball>(), 515, 0f, Main.myPlayer, 0f, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + npc.velocity * 3f, npc.velocity, ModContent.ProjectileType<YharonFireball>(), RegularFireballDamage, 0f, Main.myPlayer, 0f, 0f);
             }
             if (attackTimer >= splittingMeteorRiseTime + splittingMeteorBombTime)
                 SelectNextAttack(npc, ref attackType);
@@ -1302,7 +1312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float angleFromTarget = angle.ToRotationVector2().AngleBetween(target.velocity);
-                            Utilities.NewProjectileBetter(target.Center + angle.ToRotationVector2() * outwardness, Vector2.Zero, ModContent.ProjectileType<YharonHeatFlashFireball>(), 595, 0f, Main.myPlayer);
+                            Utilities.NewProjectileBetter(target.Center + angle.ToRotationVector2() * outwardness, Vector2.Zero, ModContent.ProjectileType<YharonHeatFlashFireball>(), HeatFlashFireballDamage, 0f, Main.myPlayer);
 
                             // Create a cluster of flames that appear in the direction the target is currently moving.
                             // This makes it harder to maneuver through the burst.
@@ -1311,7 +1321,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                                 for (int j = 0; j < Main.rand.Next(11, 17 + 1); j++)
                                 {
                                     float newAngle = angle + Main.rand.NextFloatDirection() * angleFromTarget;
-                                    Utilities.NewProjectileBetter(target.Center + newAngle.ToRotationVector2() * outwardness, Vector2.Zero, ModContent.ProjectileType<YharonHeatFlashFireball>(), 595, 0f, Main.myPlayer);
+                                    Utilities.NewProjectileBetter(target.Center + newAngle.ToRotationVector2() * outwardness, Vector2.Zero, ModContent.ProjectileType<YharonHeatFlashFireball>(), HeatFlashFireballDamage, 0f, Main.myPlayer);
                                 }
                             }
                         }
@@ -1376,7 +1386,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 for (int i = 0; i < totalFlameVortices; i++)
                 {
                     float angle = MathHelper.TwoPi * i / totalFlameVortices;
-                    Utilities.NewProjectileBetter(target.Center + angle.ToRotationVector2() * 1780f, Vector2.Zero, ModContent.ProjectileType<VortexOfFlame>(), 800, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(target.Center + angle.ToRotationVector2() * 1780f, Vector2.Zero, ModContent.ProjectileType<VortexOfFlame>(), FlameVortexDamage, 0f, Main.myPlayer);
                     Utilities.NewProjectileBetter(target.Center, angle.ToRotationVector2(), ModContent.ProjectileType<VortexTelegraphBeam>(), 0, 0f, -1, 0f, 1780f);
                 }
             }
@@ -1387,11 +1397,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 float horizontalOffset = (attackTimer - flameVortexSpawnDelay) / 7f * 205f + 260f;
                 Vector2 fireballSpawnPosition = npc.Center + new Vector2(horizontalOffset, -90f);
                 if (!target.WithinRange(fireballSpawnPosition, 350f))
-                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), RegularFireballDamage, 0f, Main.myPlayer);
 
                 fireballSpawnPosition = npc.Center + new Vector2(-horizontalOffset, -90f);
                 if (!target.WithinRange(fireballSpawnPosition, 350f))
-                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), RegularFireballDamage, 0f, Main.myPlayer);
             }
             if (attackTimer > flameVortexSpawnDelay + totalFlameWaves * 7)
                 SelectNextAttack(npc, ref attackType);
@@ -1559,7 +1569,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
 
                     if (adjustedAttackTimer % fireballReleaseRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(npc.Center + npc.velocity * 3f, npc.velocity, ModContent.ProjectileType<YharonFireball>(), 565, 0f, Main.myPlayer, 0f, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + npc.velocity * 3f, npc.velocity, ModContent.ProjectileType<YharonFireball>(), RegularFireballDamage, 0f, Main.myPlayer, 0f, 0f);
 
                     if (adjustedAttackTimer >= splittingMeteorRiseTime + splittingMeteorBombTime && totalMeteorBomings < 3)
                     {
@@ -1711,7 +1721,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 if (Main.myPlayer == target.whoAmI && attackTimer > preAttackTime + 180f)
                 {
                     for (int i = 0; i < 3; i++)
-                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(16f, 16f), ModContent.ProjectileType<FlareBomb>(), 640, 0f, target.whoAmI, -1f);
+                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(16f, 16f), ModContent.ProjectileType<FlareBomb>(), DeathAnimationFireballDamage, 0f, target.whoAmI, -1f);
                 }
 
                 if (npc.life <= 0)

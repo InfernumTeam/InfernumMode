@@ -71,23 +71,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 int petalCount = 2;
-                int petalDamage = 135;
                 float petalShootSpeed = 10f;
                 if (BossRushEvent.BossRushActive)
                 {
                     petalCount = 3;
                     petalShootSpeed = 14f;
                 }
-
                 if (SpawnedWhileAngry)
                 {
                     petalShootSpeed *= 1.6f;
                     petalCount = 5;
                 }
+
                 for (int i = 0; i < petalCount; i++)
                 {
                     Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.68f, 0.68f, i / (float)petalCount)) * petalShootSpeed;
-                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<BrimstonePetal>(), petalDamage, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<BrimstonePetal>(), BrimstoneElementalBehaviorOverride.BrimstonePetalDamage, 0f);
                 }
             }
         }

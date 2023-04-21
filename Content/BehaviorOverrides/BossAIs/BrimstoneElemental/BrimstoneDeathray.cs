@@ -75,7 +75,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     return;
 
-                int petalDamage = 130;
                 for (float petalOffset = 20f; petalOffset < LaserLength; petalOffset += 165f)
                 {
                     Vector2 petalSpawnPosition = OwnerEyePosition + Projectile.velocity * petalOffset;
@@ -84,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         Vector2 petalVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * i) * 8f;
                         if (BossRushEvent.BossRushActive)
                             petalVelocity *= 1.85f;
-                        Utilities.NewProjectileBetter(petalSpawnPosition, petalVelocity, ModContent.ProjectileType<BrimstonePetal2>(), petalDamage, 0f);
+                        Utilities.NewProjectileBetter(petalSpawnPosition, petalVelocity, ModContent.ProjectileType<BrimstonePetal2>(), BrimstoneElementalBehaviorOverride.BrimstonePetalDamage, 0f);
                     }
                 }
             }

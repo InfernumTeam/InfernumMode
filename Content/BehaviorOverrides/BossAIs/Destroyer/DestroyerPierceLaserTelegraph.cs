@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity.SafeNormalize(-Vector2.UnitY), ModContent.ProjectileType<DestroyerPierceLaser>(), 120, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity.SafeNormalize(-Vector2.UnitY), ModContent.ProjectileType<DestroyerPierceLaser>(), DestroyerHeadBehaviorOverride.PierceLaserbeamDamage, 0f);
         }
     }
 }

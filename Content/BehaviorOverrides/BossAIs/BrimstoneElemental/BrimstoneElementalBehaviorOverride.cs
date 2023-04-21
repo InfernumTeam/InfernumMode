@@ -58,6 +58,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         #region AI
 
+        public const int BrimstoneFireballDamage = 135;
+
+        public const int BrimstoneHellblastDamage = 135;
+
+        public const int BrimstonePetalDamage = 135;
+
+        public const int BrimstoneSkullDamage = 135;
+
+        public const int DeathrayBackPetalDamage = 175;
+
+        public const int BrimstoneDeathrayDamage = 225;
+
         public const float BaseDR = 0.12f;
 
         public const float InvincibleDR = 0.99999f;
@@ -262,10 +274,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         SoundEngine.PlaySound(SoundID.Item20, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int skullDamage = (int)((1f - lifeRatio) * 35f) + 125;
                             float shootDelay = pissedOff || BossRushEvent.BossRushActive ? -8f : (attackTimer - bombardTime) / 5f;
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * skullShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f, -1, shootDelay);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), BrimstoneSkullDamage, 0f, -1, shootDelay);
                         }
                     }
 
@@ -466,7 +477,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         {
                             // Release waving skulls.
                             int skullCount = (int)MathHelper.Lerp(5f, 11f, 1f - lifeRatio);
-                            int skullDamage = (int)((1f - lifeRatio) * 35f) + 125;
                             float skullShootSpeed = 10f;
 
                             if (pissedOff)
@@ -481,7 +491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             {
                                 float offsetAngle = MathHelper.Lerp(-0.98f, 0.98f, i / (float)(skullCount - 1f));
                                 Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * skullShootSpeed;
-                                Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneSkull>(), skullDamage, 0f);
+                                Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneSkull>(), BrimstoneSkullDamage, 0f);
                             }
 
                             // And hellblasts.
@@ -489,7 +499,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             {
                                 float offsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
                                 Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(0.8f, 1.6f);
-                                Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), skullDamage, 0f);
+                                Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), BrimstoneHellblastDamage, 0f);
                             }
                         }
 
@@ -572,13 +582,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 SoundEngine.PlaySound(SoundID.Item100, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireDamage = 130;
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 shootDirection = Main.rand.NextVector2Unit();
                         Vector2 fireSpawnPosition = npc.Center + npc.Size * shootDirection * 0.45f;
                         Vector2 fireShootVelocity = shootDirection * shootSpeedFactor * 12f;
-                        Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<BrimstoneFireball>(), fireDamage, 0f);
+                        Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<BrimstoneFireball>(), BrimstoneFireballDamage, 0f);
                     }
 
                     // Sometimes release predictive darts.
@@ -589,7 +598,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         {
                             float offsetAngle = MathHelper.Lerp(-0.64f, 0.64f, i / (float)(dartCount - 1f));
                             Vector2 dartVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 25f).RotatedBy(offsetAngle) * shootSpeedFactor * 14f;
-                            Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstonePetal2>(), fireDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstonePetal2>(), BrimstonePetalDamage, 0f);
                         }
                     }
                 }
@@ -702,7 +711,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         npc.velocity = Vector2.Zero;
 
-                        int laserbeamDamage = 215;
                         if (wrappedTime % 120f == 119f)
                         {
                             SoundEngine.PlaySound(InfernumSoundRegistry.BrimstoneLaser, npc.Center);
@@ -710,14 +718,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.84f, 25);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                                Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), laserbeamDamage, 0f, -1, 0f, npc.whoAmI);
+                                Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneDeathray>(), BrimstoneDeathrayDamage, 0f, -1, 0f, npc.whoAmI);
                         }
 
                         IEnumerable<Projectile> rays = Utilities.AllProjectilesByID(ModContent.ProjectileType<BrimstoneDeathray>());
                         if (Main.netMode != NetmodeID.MultiplayerClient && rays.Any() && Main.rand.NextBool(2))
                         {
                             Projectile deathray = rays.First();
-                            Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), 150, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), DeathrayBackPetalDamage, 0f);
                         }
 
                         if (attackTimer >= attackDuration)

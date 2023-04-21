@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CursedFlameBurst>(), 115, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CursedFlameBurst>(), TwinsAttackSynchronizer.CursedFlameBurstDamage, 0f);
         }
 
         public override bool ShouldUpdatePosition() => false;

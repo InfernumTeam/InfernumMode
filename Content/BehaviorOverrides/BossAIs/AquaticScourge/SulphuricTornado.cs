@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 Vector2 acidSpawnPosition = Projectile.Top + new Vector2(Main.rand.NextFloatDirection() * 100f, Main.rand.NextFloat(250f));
                 Vector2 acidSpawnVelocity = -Vector2.UnitY.RotatedByRandom(1.1f) * new Vector2(1.6f, 1f) * Main.rand.NextFloat(10f, 25f);
-                Utilities.NewProjectileBetter(acidSpawnPosition, acidSpawnVelocity, ModContent.ProjectileType<FallingAcid>(), 140, 0f);
+                Utilities.NewProjectileBetter(acidSpawnPosition, acidSpawnVelocity, ModContent.ProjectileType<FallingAcid>(), AquaticScourgeHeadBehaviorOverride.AcidDropDamage, 0f);
             }
 
             // Handle sound stuff.

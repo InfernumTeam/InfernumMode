@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     {
                         laser.tileCollide = false;
                     });
-                    Utilities.NewProjectileBetter(endOfLaser, laserVelocity, ProjectileID.DeathLaser, 145, 0f);
+                    Utilities.NewProjectileBetter(endOfLaser, laserVelocity, ProjectileID.DeathLaser, TwinsAttackSynchronizer.SmallLaserDamage, 0f);
                 }
                 Utilities.NewProjectileBetter(endOfLaser, Vector2.Zero, ModContent.ProjectileType<LaserGroundShock>(), 0, 0f);
             }

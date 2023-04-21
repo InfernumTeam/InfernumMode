@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             for (int i = 0; i < 35; i++)
             {
                 Vector2 fireVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(14f, 21f);
-                Utilities.NewProjectileBetter(Projectile.Center, fireVelocity, ModContent.ProjectileType<EnergySpark>(), 125, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, fireVelocity, ModContent.ProjectileType<EnergySpark>(), DestroyerHeadBehaviorOverride.EnergySparkDamage, 0f);
             }
         }
     }

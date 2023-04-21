@@ -77,6 +77,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.RegularCharge,
         };
 
+        public const int EnergySparkDamage = 135;
+
+        public const int PierceLaserbeamDamage = 135;
+
+        public const int EnergyBombDamage = 175;
+
         public const int BodySegmentCount = 60;
 
         public const float Phase2LifeRatio = 0.825f;
@@ -568,7 +574,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
                         if (BossRushEvent.BossRushActive)
                             shootVelocity *= 1.56f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 165, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), EnergyBombDamage, 0f);
                     }
                 }
 

@@ -108,6 +108,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public const int AcidMeterEverReachedHalfIndex = 10;
 
+        public const int AcidDropDamage = 135;
+
+        public const int AcidBubbleDamage = 135;
+
+        public const int SulphuricGasDamage = 135;
+
+        public const int BodySpikeDamage = 140;
+
+        public const int SulphurousRockDamage = 140;
+
+        public const int SulphuricTornadoDamage = 250;
+
         public static List<VerletSimulatedSegmentInfernum> WormSegments
         {
             get;
@@ -542,7 +554,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 SoundEngine.PlaySound(SoundID.Item95, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int bubbleDamage = 135;
+                    int bubbleDamage = AcidBubbleDamage;
                     int bubbleID = ModContent.ProjectileType<AcidBubble>();
                     Vector2 bubbleShootVelocity = npc.SafeDirectionTo(target.Center) * bubbleShootSpeed;
                     if (bubbleReleaseCount % 8f == 3f)
@@ -583,8 +595,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (Main.netMode != NetmodeID.MultiplayerClient && charging && attackTimer % 2f == 0f)
             {
                 Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(2f, 6f);
-                Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
-                Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
+                Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
             }
 
             if (doneCharging)
@@ -645,7 +657,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         float acidInterpolant = i / (float)(acidShootCount - 1f);
                         float angularVelocity = MathHelper.Lerp(0.016f, -0.016f, acidInterpolant);
                         Vector2 acidShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-1.09f, 1.09f, acidInterpolant)) * 5f;
-                        Utilities.NewProjectileBetter(npc.Center + acidShootVelocity * 5f, acidShootVelocity, ModContent.ProjectileType<AcceleratingArcingAcid>(), 135, 0f, -1, 0f, angularVelocity);
+                        Utilities.NewProjectileBetter(npc.Center + acidShootVelocity * 5f, acidShootVelocity, ModContent.ProjectileType<AcceleratingArcingAcid>(), AcidDropDamage, 0f, -1, 0f, angularVelocity);
                     }
                 }
             }
@@ -782,14 +794,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         {
                             float rubbleOffsetAngle = MathHelper.Lerp(-rubbleArc, rubbleArc, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.05f;
                             Vector2 rubbleVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(rubbleOffsetAngle) * rubbleShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 3f, rubbleVelocity, ModContent.ProjectileType<SulphurousRockRubble>(), 135, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 3f, rubbleVelocity, ModContent.ProjectileType<SulphurousRockRubble>(), SulphurousRockDamage, 0f);
                         }
 
                         for (float dx = -bubbleAreaCoverage; dx < bubbleAreaCoverage; dx += bubbleSpacing)
                         {
                             float bubbleSpeed = Main.rand.NextFloat(7f, 9f);
                             float verticalOffset = Math.Max(target.velocity.Y * 30f, 0f) + 600f;
-                            Utilities.NewProjectileBetter(target.Center + new Vector2(dx, verticalOffset), -Vector2.UnitY * bubbleSpeed, ModContent.ProjectileType<AcidBubble>(), 135, 0f);
+                            Utilities.NewProjectileBetter(target.Center + new Vector2(dx, verticalOffset), -Vector2.UnitY * bubbleSpeed, ModContent.ProjectileType<AcidBubble>(), AcidBubbleDamage, 0f);
                         }
                     }
 
@@ -809,8 +821,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (Main.netMode != NetmodeID.MultiplayerClient && !insideBlocks && attackTimer % 5f == 0f)
                 {
                     Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0.7f, 3f);
-                    Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), 135, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
                 }
             }
 
@@ -1070,7 +1082,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         rubbleSpawnPosition.Y = target.Center.Y - 980f + Main.rand.NextFloatDirection() * 40f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && !target.WithinRange(rubbleSpawnPosition, 300f))
-                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, projID, 135, 0f);
+                        Utilities.NewProjectileBetter(rubbleSpawnPosition, Vector2.UnitY * 11f, projID, SulphurousRockDamage, 0f);
                 }
             }
 
@@ -1170,7 +1182,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Vector2 bubbleSpawnPosition = target.Bottom + Vector2.UnitY * 660f;
                 if (WorldUtils.Find((target.Bottom + Vector2.UnitY * 300f).ToTileCoordinates(), Searches.Chain(new Searches.Down(40), new CustomTileConditions.IsWaterOrSolid()), out Point result))
                     bubbleSpawnPosition = result.ToWorldCoordinates();
-                Utilities.NewProjectileBetter(bubbleSpawnPosition + Vector2.UnitY * 136f, -Vector2.UnitY * 6f, ModContent.ProjectileType<AcidBubble>(), 140, 0f);
+                Utilities.NewProjectileBetter(bubbleSpawnPosition + Vector2.UnitY * 136f, -Vector2.UnitY * 6f, ModContent.ProjectileType<AcidBubble>(), AcidBubbleDamage, 0f);
             }
 
             // Roar at the start of the first charge.
@@ -1231,7 +1243,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                             for (int i = 0; i < acidPerVomitBurst; i++)
                             {
                                 Vector2 acidVelocity = new Vector2(MathHelper.Lerp(-28f, 28f, i / (float)(acidPerVomitBurst - 1f)), verticalVomitShootSpeed) + Main.rand.NextVector2Circular(0.3f, 0.3f);
-                                Utilities.NewProjectileBetter(npc.Center + acidVelocity, acidVelocity, ModContent.ProjectileType<FallingAcid>(), 140, 0f);
+                                Utilities.NewProjectileBetter(npc.Center + acidVelocity, acidVelocity, ModContent.ProjectileType<FallingAcid>(), AcidDropDamage, 0f);
                             }
                         }
                     }
@@ -1286,7 +1298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 {
                     float tornadoMoveDirection = (target.Center.X < 3000f).ToDirectionInt();
                     Vector2 tornadoSpawnPosition = target.Center + Vector2.UnitY * 500f;
-                    Utilities.NewProjectileBetter(tornadoSpawnPosition, Vector2.UnitY * -3f, ModContent.ProjectileType<SulphuricTornado>(), 250, 0f, -1, 0f, tornadoMoveDirection);
+                    Utilities.NewProjectileBetter(tornadoSpawnPosition, Vector2.UnitY * -3f, ModContent.ProjectileType<SulphuricTornado>(), SulphuricTornadoDamage, 0f, -1, 0f, tornadoMoveDirection);
                 }
                 return;
             }
@@ -1313,10 +1325,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 SoundEngine.PlaySound(SoundID.Item95, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int bubbleDamage = 145;
                     int bubbleID = ModContent.ProjectileType<AcidBubble>();
                     Vector2 bubbleShootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
-                    Utilities.NewProjectileBetter(npc.Center, bubbleShootVelocity, bubbleID, bubbleDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, bubbleShootVelocity, bubbleID, AcidBubbleDamage, 0f);
                     npc.netUpdate = true;
                 }
             }
@@ -1585,7 +1596,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 {
                     Vector2 spikeVelocity = (spikePosition - n.Center).SafeNormalize(Vector2.UnitY) * 4f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(spikePosition, spikeVelocity, ModContent.ProjectileType<AquaticScourgeBodySpike>(), 140, 0f, -1, 120f);
+                        Utilities.NewProjectileBetter(spikePosition, spikeVelocity, ModContent.ProjectileType<AquaticScourgeBodySpike>(), BodySpikeDamage, 0f, -1, 120f);
 
                     // Release blood from the segment.
                     for (int j = 0; j < 3; j++)

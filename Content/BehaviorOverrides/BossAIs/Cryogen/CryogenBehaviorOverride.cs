@@ -22,6 +22,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
     {
         public override int NPCOverrideType => ModContent.NPCType<CryogenBoss>();
 
+        public const int IceRainDamage = 130;
+
+        public const int IceBombDamage = 135;
+
+        public const int IcicleSpikeDamage = 135;
+
+        public const int AuroraSpiritDamage = 140;
+
+        public const int IcePillarDamage = 150;
+
         public const float Phase2LifeRatio = 0.9f;
 
         public const float Phase3LifeRatio = 0.7f;
@@ -344,10 +354,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     for (int i = 0; i < icicleCount; i++)
                     {
                         float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f, -1, icicleFireDirection, npc.whoAmI);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f, -1, icicleFireDirection, npc.whoAmI);
 
                         icicleFireDirection = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f, -1, icicleFireDirection, npc.whoAmI);
                     }
 
                     // Create a seconnd set of rings in later phases.
@@ -362,7 +372,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                                 icicle.ModProjectile<IcicleSpike>().InwardRadiusOffset = 42f;
                                 icicle.ModProjectile<IcicleSpike>().Time = -20f;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f, -1, icicleFireDirection, npc.whoAmI);
                         }
                     }
                 }
@@ -415,13 +425,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     for (int i = 0; i < icicleCount; i++)
                     {
                         Vector2 icicleVelocity = -Vector2.UnitY.RotatedByRandom(angularOffsetRandomness) * Main.rand.NextFloat(7f, 11f);
-                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f, -1, 0f, i / (float)icicleCount * 90f);
+                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), IcicleSpikeDamage, 0f, -1, 0f, i / (float)icicleCount * 90f);
                     }
 
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 icicleVelocity = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * 6f;
-                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), IcicleSpikeDamage, 0f);
                     }
                 }
             }
@@ -450,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % idleBombReleaseRate == idleBombReleaseRate - 1f)
             {
                 Vector2 bombVelocity = npc.SafeDirectionTo(target.Center) * 12f;
-                Utilities.NewProjectileBetter(npc.Center, bombVelocity, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
+                Utilities.NewProjectileBetter(npc.Center, bombVelocity, ModContent.ProjectileType<IceBomb2>(), IceBombDamage, 0f);
             }
 
             // Decide a teleport postion and emit teleport particles there.
@@ -477,7 +487,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 bombVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 11f;
-                    Utilities.NewProjectileBetter(npc.Center, bombVelocity, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, bombVelocity, ModContent.ProjectileType<IceBomb2>(), IceBombDamage, 0f);
                 }
 
                 SoundEngine.PlaySound(SoundID.Item8, npc.Center);
@@ -538,7 +548,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < icicleCount; i++)
                     {
-                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 135, 0f);
+                        int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
@@ -547,7 +557,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                             Main.projectile[icicle].netUpdate = true;
                         }
 
-                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f);
+                        icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
@@ -570,7 +580,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                                 icicle.ModProjectile<IcicleSpike>().InwardRadiusOffset = 42f;
                                 icicle.ModProjectile<IcicleSpike>().Time = -20f;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f, -1, icicleFireDirection, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f, -1, icicleFireDirection, npc.whoAmI);
                         }
                     }
                 }
@@ -582,7 +592,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 for (int i = -1; i <= 1; i += 2)
                 {
                     Vector2 spawnPosition = target.Center + Vector2.UnitX * pillarHorizontalOffset * i;
-                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<IcePillar>(), 130, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<IcePillar>(), IcePillarDamage, 0f);
                 }
                 icePillarCreationTimer = 0f;
                 npc.netUpdate = true;
@@ -633,7 +643,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 icicleShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 4f);
-                        Utilities.NewProjectileBetter(npc.Center + icicleShootVelocity * 4f, icicleShootVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 150, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + icicleShootVelocity * 4f, icicleShootVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), IcicleSpikeDamage, 0f);
                     }
                 }
             }
@@ -752,8 +762,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 7f, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 7f, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 7f, ModContent.ProjectileType<AimedIcicleSpike>(), IcicleSpikeDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 7f, ModContent.ProjectileType<AimedIcicleSpike>(), IcicleSpikeDamage, 0f);
                     }
                 }
 
@@ -808,7 +818,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     spiritVelocity = Vector2.UnitX * Math.Sign(target.Center.X - spiritSpawnPosition.X) * 13.5f;
                 }
 
-                Utilities.NewProjectileBetter(spiritSpawnPosition, spiritVelocity, ModContent.ProjectileType<AuroraSpirit>(), 140, 0f, -1, 0f, dontCurve.ToInt());
+                Utilities.NewProjectileBetter(spiritSpawnPosition, spiritVelocity, ModContent.ProjectileType<AuroraSpirit>(), AuroraSpiritDamage, 0f, -1, 0f, dontCurve.ToInt());
             }
 
             if (attackTimer >= spiritSummonTime + 90f)
@@ -860,7 +870,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     {
                         Vector2 projectileVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(6.5f, 10.5f);
                         Vector2 spawnPosition = npc.Center + projectileVelocity * 4f;
-                        int projectile = Utilities.NewProjectileBetter(spawnPosition, projectileVelocity, projectileType, 135, 0f);
+                        int projectile = Utilities.NewProjectileBetter(spawnPosition, projectileVelocity, projectileType, IcicleSpikeDamage, 0f);
                         if (projectileType == ModContent.ProjectileType<AimedIcicleSpike>() && Main.projectile.IndexInRange(projectile))
                         {
                             Main.projectile[projectile].ai[1] = 15f;

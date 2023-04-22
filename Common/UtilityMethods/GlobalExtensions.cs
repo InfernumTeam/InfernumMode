@@ -1,8 +1,7 @@
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Players;
-using InfernumMode.GlobalInstances;
-using InfernumMode.GlobalInstances.GlobalItems;
 using Terraria;
+using InfernumMode.Core.GlobalInstances.GlobalItems;
 
 namespace InfernumMode
 {

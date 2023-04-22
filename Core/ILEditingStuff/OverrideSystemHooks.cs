@@ -2,7 +2,6 @@ using CalamityMod.NPCs;
 using CalamityMod.Projectiles;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -63,7 +62,7 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                 {
-                    npc.GetGlobalNPC<GlobalNPCDrawEffects>().SetDefaults(npc);
+                    npc.Infernum().SetDefaults(npc);
                 }
             }));
             cursor.Emit(OpCodes.Ret);
@@ -82,7 +81,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 HookList<GlobalNPC> list = (HookList<GlobalNPC>)typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
-                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, screenPosition, drawColor);
+                    return npc.Infernum().PreDraw(npc, spriteBatch, screenPosition, drawColor);
 
                 foreach (GlobalNPC g in list.Enumerate(globalNPCs))
                 {
@@ -112,7 +111,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 }
                 if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                 {
-                    npc.GetGlobalNPC<GlobalNPCDrawEffects>().FindFrame(npc, frameHeight);
+                    npc.Infernum().FindFrame(npc, frameHeight);
                     return;
                 }
                 npc.VanillaFindFrame(frameHeight, npc.isLikeATownNPC, npc.ModNPC?.AnimationType is > 0 ? npc.ModNPC.AnimationType : npc.type);

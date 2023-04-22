@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.Core.GlobalInstances
 {
     public partial class GlobalNPCOverrides : GlobalNPC
     {

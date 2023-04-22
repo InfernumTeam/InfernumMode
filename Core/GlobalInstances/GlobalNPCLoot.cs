@@ -48,7 +48,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.Core.GlobalInstances
 {
     public partial class GlobalNPCOverrides : GlobalNPC
     {

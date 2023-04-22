@@ -4,7 +4,7 @@ using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.GlobalInstances.GlobalItems
+namespace InfernumMode.Core.GlobalInstances.GlobalItems
 {
     public class ChaliceAchievementGlobalItem : GlobalItem
     {

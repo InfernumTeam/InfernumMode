@@ -4,12 +4,11 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Particles;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.GlobalInstances;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -160,7 +159,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #region Loading
         public override void Load()
         {
+            GlobalNPCOverrides.BossHeadSlotEvent += RedefineMapSlotConditions;
             GlobalNPCOverrides.StrikeNPCEvent += UpdateLifeTriggers;
+        }
+
+        private void RedefineMapSlotConditions(NPC npc, ref int index)
+        {
+            bool isDoG = npc.type == ModContent.NPCType<DoGHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG)
+            {
+                if (npc.Opacity <= 0.02f)
+                {
+                    index = -1;
+                    return;
+                }
+
+                bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
+                if (npc.type == ModContent.NPCType<DoGHead>())
+                    index = inPhase2 ? DoGHead.phase2IconIndex : DoGHead.phase1IconIndex;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                    index = inPhase2 ? DevourerofGodsBody.phase2IconIndex : -1;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+                    index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
+            }
         }
 
         private bool UpdateLifeTriggers(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)

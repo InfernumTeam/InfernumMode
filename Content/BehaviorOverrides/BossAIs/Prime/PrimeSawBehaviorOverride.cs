@@ -1,5 +1,5 @@
 using CalamityMod.Items.Weapons.Ranged;
-using InfernumMode.GlobalInstances;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;

@@ -5,6 +5,7 @@ using CalamityMod.UI;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -37,6 +38,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             SummonEntities
         }
         #endregion
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += DisableMapIconWhenInvisible;
+        }
+
+        private void DisableMapIconWhenInvisible(NPC npc, ref int index)
+        {
+            // Make Signus completely invisible on the map when sufficiently faded out.
+            if (npc.type == ModContent.NPCType<SignusBoss>() && npc.Opacity < 0.3f)
+                index = -1;
+        }
+        #endregion Loading
 
         #region AI
 

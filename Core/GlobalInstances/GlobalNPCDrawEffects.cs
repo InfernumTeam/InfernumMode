@@ -1,17 +1,10 @@
 using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
-using CalamityMod.NPCs.Cryogen;
-using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
-using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Polterghast;
-using CalamityMod.NPCs.Signus;
-using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.NPCs.Yharon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
@@ -27,10 +20,8 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances
 {
-    public class GlobalNPCDrawEffects : GlobalNPC
+    public partial class GlobalNPCOverrides : GlobalNPC
     {
-        public override bool InstancePerEntity => true;
-
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
@@ -61,66 +52,7 @@ namespace InfernumMode.Core.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
-            if (isDoG)
-            {
-                if (npc.Opacity <= 0.02f)
-                {
-                    index = -1;
-                    return;
-                }
-
-                bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
-                if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
-                    index = inPhase2 ? DevourerofGodsHead.phase2IconIndex : DevourerofGodsHead.phase1IconIndex;
-                else if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
-                    index = inPhase2 ? DevourerofGodsBody.phase2IconIndex : -1;
-                else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
-                    index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
-            }
-
-            if (npc.type == ModContent.NPCType<DesertScourgeHead>() && npc.Infernum().ExtraAI[DesertScourgeHeadBigBehaviorOverride.HideMapIconIndex] >= 1f)
-                index = -1;
-
-            // Make Anahita completely invisible on the map when sufficiently faded out.
-            if (npc.type == ModContent.NPCType<Anahita>() && npc.Opacity < 0.1f)
-                index = -1;
-
-            // Make Signus completely invisible on the map.
-            if (npc.type == ModContent.NPCType<Signus>())
-                index = -1;
-
-            // Prevent Yharon from showing himself amongst his illusions in Subphase 10.
-            if (npc.type == ModContent.NPCType<Yharon>())
-            {
-                if (npc.life / (float)npc.lifeMax <= 0.05f && npc.Infernum().ExtraAI[2] == 1f)
-                    index = -1;
-            }
-
-            // Have Cryogen use a custom map icon.
-            if (npc.type == ModContent.NPCType<Cryogen>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
-
-            // Have Dreadnautilus use a custom map icon.
-            if (npc.type == NPCID.BloodNautilus)
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
-
-            // Have Calamitas' shadow and her brothers use a custom map icon.
-            if (npc.type == ModContent.NPCType<CalamitasClone>())
-            {
-                if (npc.Opacity <= 0f)
-                    index = -1;
-                else
-                    index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CalShadowMapIcon");
-            }
-            if (npc.type == ModContent.NPCType<Cataclysm>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CataclysmMapIcon");
-            if (npc.type == ModContent.NPCType<Catastrophe>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheMapIcon");
-
-            // Have Sepulcher use a custom map icon.
-            if (npc.type == ModContent.NPCType<SepulcherHead>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon");
+            BossHeadSlotEvent?.Invoke(npc, ref index);
         }
 
         public override void BossHeadRotation(NPC npc, ref float rotation)

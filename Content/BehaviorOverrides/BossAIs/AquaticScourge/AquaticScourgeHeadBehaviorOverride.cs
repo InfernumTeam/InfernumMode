@@ -14,7 +14,7 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.GlobalInstances;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;

@@ -10,7 +10,7 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.GlobalInstances;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -366,7 +366,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         #region Loading
         public override void Load()
         {
+            GlobalNPCOverrides.BossHeadSlotEvent += DisableMapIconDuringDesperation;
             GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalYharonDeath;
+        }
+
+        private void DisableMapIconDuringDesperation(NPC npc, ref int index)
+        {
+            // Prevent Yharon from showing himself amongst his illusions in the desperation phase.
+            if (npc.type == ModContent.NPCType<YharonBoss>())
+            {
+                if (npc.life / (float)npc.lifeMax <= Subphase8LifeRatio && InSecondPhase)
+                    index = -1;
+            }
         }
 
         private bool DisableNaturalYharonDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)

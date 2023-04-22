@@ -418,5 +418,11 @@ namespace InfernumMode.ILEditingStuff
             add => HookEndpointManager.Modify(typeof(AquaticScourgeHead).GetMethod("SpecialOnKill", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(AquaticScourgeHead).GetMethod("SpecialOnKill", Utilities.UniversalBindingFlags), value);
         }
+
+        public static event ILContext.Manipulator CalPlayerProcessTriggers
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityPlayer).GetMethod("ProcessTriggers", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityPlayer).GetMethod("ProcessTriggers", Utilities.UniversalBindingFlags), value);
+        }
     }
 }

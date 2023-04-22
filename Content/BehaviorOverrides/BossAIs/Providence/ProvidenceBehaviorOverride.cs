@@ -170,6 +170,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int CocoonDefense = 600;
 
+        // The defense Providence has when in her cocoon phases is significantly reduced after the attack cycles complete once, to alleviate the need for the player to just sit and wait/dodge, being
+        // unable to do meaningful damage.
         public const int CocoonDefenseAfterFullCycle = 250;
 
         public const int DeathEffectTimerIndex = 5;
@@ -193,6 +195,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public const float HighestLavaHeight = 2284f;
 
         public const float Phase2LifeRatio = 0.7f;
+
+        public const float DeathAnimationLifeRatio = 0.04f;
 
         public static int CrystalShardDamage => IsEnraged ? 450 : 250;
 
@@ -220,7 +224,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static bool SyncAttacksWithMusic => Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;
 
-        public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
+        public static readonly Color[] NightPalette = new[]
+        {
+            new Color(119, 232, 194),
+            new Color(117, 201, 229),
+            new Color(117, 93, 229)
+        };
 
         public static List<ProvidenceAttackSection> Phase1AttackStates => new()
         {
@@ -421,6 +430,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Set the global NPC index to this NPC. Used as a means of lowering the need for loops.
             CalamityGlobalNPC.holyBoss = npc.whoAmI;
 
+            // Despawn if the players are dead or if the time changed.
             if (!target.dead && !shouldDespawnBecauseOfTime)
                 npc.timeLeft = 1800;
             else
@@ -436,115 +446,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 return false;
             }
 
-            // Death effects.
-            if (lifeRatio < 0.04f)
+            // Perform the death animation.
+            if (lifeRatio < DeathAnimationLifeRatio)
             {
-                if (deathEffectTimer == 1)
-                {
-                    AchievementPlayer.ProviDefeated = true;
-
-                    if (wasSummonedAtNight == 1)
-                        AchievementPlayer.NightProviDefeated = true;
-                }
-                npc.Opacity = 1f;
-                npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
-                if (deathEffectTimer == 1f && !Main.dedServ)
-                    SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with { Volume = 1.8f }, target.Center);
-
-                // Delete all fire blenders.
-                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());
-
-                deathEffectTimer++;
-
-                // Delete remaining projectiles with a shockwave.
-                if (deathEffectTimer == 96)
-                {
-                    int[] typesToDelete = new int[]
-                    {
-                        ModContent.ProjectileType<AcceleratingCrystalShard>(),
-                        ModContent.ProjectileType<FallingCrystalShard>(),
-                        ModContent.ProjectileType<HolySunExplosion>(),
-                        ModContent.ProjectileType<ProfanedSpear>(),
-                        ModContent.ProjectileType<HolyBlast>(),
-                    };
-                    Utilities.DeleteAllProjectiles(false, typesToDelete);
-                }
-
-                burnIntensity = MathHelper.Max(burnIntensity, Utils.GetLerpValue(0f, 45f, deathEffectTimer, true));
-                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.04f - 1f, 1f, Utils.GetLerpValue(0f, 435f, deathEffectTimer, true));
-                npc.dontTakeDamage = true;
-                npc.velocity *= 0.9f;
-
-                // Move towards the player if inside of walls, to ensure that the loot is obtainable.
-                if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
-                    npc.Center = npc.Center.MoveTowards(target.Center, 10f);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int shootRate = (int)MathHelper.Lerp(12f, 5f, Utils.GetLerpValue(0f, 250f, deathEffectTimer, true));
-                    if (deathEffectTimer % shootRate == shootRate - 1 || deathEffectTimer == 92f)
-                    {
-                        for (int i = 0; i < 3; i++)
-                        {
-                            int shootType = ModContent.ProjectileType<SwirlingFire>();
-                            if (Main.rand.NextBool(150) && deathEffectTimer >= 110f || deathEffectTimer == 92f)
-                            {
-                                if (deathEffectTimer >= 320f)
-                                {
-                                    shootType = ModContent.ProjectileType<YharonBoom>();
-                                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
-                                }
-                                else
-                                {
-                                    shootType = ModContent.ProjectileType<ProvBoomDeath>();
-                                    ReleaseSparkles(npc.Center, 6, 18f);
-                                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
-                                    SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
-                                }
-                            }
-
-                            Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
-                            if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
-                                shootVelocity *= 1.7f;
-
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
-                        }
-                    }
-                }
-
-                if (deathEffectTimer >= 320f && deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)
-                {
-                    int sparkleCount = (int)MathHelper.Lerp(10f, 30f, Main.gfxQuality);
-                    int boomChance = (int)MathHelper.Lerp(8f, 3f, Main.gfxQuality);
-                    if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(boomChance))
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
-
-                    ReleaseSparkles(npc.Center, sparkleCount, 18f);
-                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
-                    SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
-                }
-
-                if (deathEffectTimer >= 370f)
-                    npc.Opacity *= 0.97f;
-
-                if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectTimer == 400f)
-                {
-                    ReleaseSparkles(npc.Center, 80, 22f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
-                }
-
-                if (deathEffectTimer >= 435f)
-                {
-                    npc.active = false;
-                    if (!target.dead)
-                    {
-                        npc.HitEffect();
-                        npc.NPCLoot();
-                    }
-                    npc.netUpdate = true;
-                    return false;
-                }
-
+                DoBehavior_DeathAnimation(npc, target, deathEffectTimer, wasSummonedAtNight == 1f, ref burnIntensity);
                 return false;
             }
 
@@ -633,6 +538,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_FinalPhaseRadianceBursts(npc, target, arenaTopCenter, localAttackTimer, localAttackDuration, ref lavaHeight, ref hasCompletedCycle);
                     break;
             }
+
+            // Rotate slightly in the direction of horizontal movement.
             npc.rotation = npc.velocity.X * 0.003f;
 
             return false;
@@ -659,7 +566,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Split the attack timer into sections, and then calculate the local attack timer and current attack based on that.
-            // attackTimer isn't used in the queries here since those cannot take ref local variables.
+            // attackTimer isn't used directly in the queries here since lambda expressions cannot take ref local variables.
             var attackSection = attackCycle.FirstOrDefault(a => npc.ai[1] >= a.StartingTime && npc.ai[1] < a.EndingTime);
             if (attackSection.StartingTime == 0 && attackSection.EndingTime == 0)
                 attackSection = attackCycle[0];
@@ -668,6 +575,115 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             int localAttackTimer = (int)(attackTimer - attackSection.StartingTime);
             int localAttackDuration = attackSection.EndingTime - attackSection.StartingTime;
             return new(localAttackTimer, localAttackDuration, currentAttack);
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, float deathEffectTimer, bool wasSummonedAtNight, ref float burnIntensity)
+        {
+            // Mark death effects on the first frame of the animation.
+            if (deathEffectTimer == 1f)
+            {
+                AchievementPlayer.ProviDefeated = true;
+
+                if (wasSummonedAtNight)
+                    AchievementPlayer.NightProviDefeated = true;
+            }
+            npc.Opacity = 1f;
+            npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
+            if (deathEffectTimer == 1f && !Main.dedServ)
+                SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with { Volume = 1.8f }, target.Center);
+
+            // Delete all fire blenders.
+            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());
+
+            deathEffectTimer++;
+
+            // Delete remaining projectiles with a shockwave.
+            if (deathEffectTimer == 96f)
+            {
+                int[] typesToDelete = new int[]
+                {
+                    ModContent.ProjectileType<AcceleratingCrystalShard>(),
+                    ModContent.ProjectileType<FallingCrystalShard>(),
+                    ModContent.ProjectileType<HolySunExplosion>(),
+                    ModContent.ProjectileType<ProfanedSpear>(),
+                    ModContent.ProjectileType<HolyBlast>(),
+                };
+                Utilities.DeleteAllProjectiles(false, typesToDelete);
+            }
+
+            burnIntensity = MathHelper.Max(burnIntensity, Utils.GetLerpValue(0f, 45f, deathEffectTimer, true));
+            npc.life = (int)MathHelper.Lerp(npc.lifeMax * DeathAnimationLifeRatio - 1f, 1f, Utils.GetLerpValue(0f, 435f, deathEffectTimer, true));
+            npc.dontTakeDamage = true;
+            npc.velocity *= 0.9f;
+
+            // Move towards the player if inside of walls, to ensure that the loot is obtainable.
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                npc.Center = npc.Center.MoveTowards(target.Center, 10f);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int shootRate = (int)MathHelper.Lerp(12f, 5f, Utils.GetLerpValue(0f, 250f, deathEffectTimer, true));
+                if (deathEffectTimer % shootRate == shootRate - 1 || deathEffectTimer == 92f)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        int shootType = ModContent.ProjectileType<SwirlingFire>();
+                        if (Main.rand.NextBool(150) && deathEffectTimer >= 110f || deathEffectTimer == 92f)
+                        {
+                            if (deathEffectTimer >= 320f)
+                            {
+                                shootType = ModContent.ProjectileType<YharonBoom>();
+                                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
+                            }
+                            else
+                            {
+                                shootType = ModContent.ProjectileType<ProvBoomDeath>();
+                                ReleaseSparkles(npc.Center, 6, 18f);
+                                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+                            }
+                        }
+
+                        Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
+                        if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
+                            shootVelocity *= 1.7f;
+
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
+                    }
+                }
+            }
+
+            if (deathEffectTimer >= 320f && deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)
+            {
+                int sparkleCount = (int)MathHelper.Lerp(10f, 30f, Main.gfxQuality);
+                int boomChance = (int)MathHelper.Lerp(8f, 3f, Main.gfxQuality);
+                if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(boomChance))
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
+
+                ReleaseSparkles(npc.Center, sparkleCount, 18f);
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+            }
+
+            if (deathEffectTimer >= 370f)
+                npc.Opacity *= 0.97f;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectTimer == 400f)
+            {
+                ReleaseSparkles(npc.Center, 80, 22f);
+                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
+            }
+
+            if (deathEffectTimer >= 435f)
+            {
+                npc.active = false;
+                if (!target.dead)
+                {
+                    npc.HitEffect();
+                    npc.NPCLoot();
+                }
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoBehavior_FireEnergyCharge(NPC npc, Player target, float lifeRatio, int localAttackTimer, int localAttackDuration, ref float drawState, ref float burnIntensity)

@@ -157,10 +157,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Get rid of the dumb edgy on-hit text.
             target.Calamity().dogTextCooldown = 20;
 
-            // Disable teleportations.
-            target.Calamity().normalityRelocator = false;
-            target.Calamity().spectralVeil = false;
-
             // Take more damage than usual.
             npc.takenDamageMultiplier = 2f;
 

@@ -28,6 +28,7 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.GlobalInstances.GlobalItems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -794,6 +795,61 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
             AquaticScourgeSpecialOnKill -= RemoveClosestSegmentDrops;
+        }
+    }
+
+    public class DisableTeleportsInDoGFightHook : IHookEdit
+    {
+        public static bool DisableNextTeleport
+        {
+            get;
+            set;
+        }
+
+        public void Load()
+        {
+            On.Terraria.Player.Teleport += DisableTeleportIfNecessary;
+            CalPlayerProcessTriggers += StopStupidFuckingTeleportEffects;
+        }
+
+        public void Unload()
+        {
+            On.Terraria.Player.Teleport -= DisableTeleportIfNecessary;
+            CalPlayerProcessTriggers -= StopStupidFuckingTeleportEffects;
+        }
+
+        private void DisableTeleportIfNecessary(On.Terraria.Player.orig_Teleport orig, Player self, Vector2 newPos, int Style, int extraInfo)
+        {
+            if (DisableNextTeleport)
+            {
+                UseRestrictionGlobalItem.DisplayTeleportDenialText(self, newPos, self.ActiveItem(), true);
+                DisableNextTeleport = false;
+                return;
+            }
+
+            orig(self, newPos, Style, extraInfo);
+        }
+
+        private void StopStupidFuckingTeleportEffects(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.GotoFinalRet();
+
+            ILLabel finalReturnBranch = cursor.MarkLabel();
+
+            cursor.Goto(0);
+            while (cursor.TryGotoNext(MoveType.Before, i => i.MatchCallOrCallvirt<Player>("Teleport")))
+            {
+                cursor.EmitDelegate(() =>
+                {
+                    if (CalamityGlobalNPC.DoGHead >= 0 && InfernumMode.CanUseCustomAIs)
+                        DisableNextTeleport = true;
+                });
+                cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<Player>("Teleport"));
+
+                cursor.EmitDelegate(() => CalamityGlobalNPC.DoGHead >= 0 && InfernumMode.CanUseCustomAIs);
+                cursor.Emit(OpCodes.Brtrue, finalReturnBranch);
+            }
         }
     }
 }

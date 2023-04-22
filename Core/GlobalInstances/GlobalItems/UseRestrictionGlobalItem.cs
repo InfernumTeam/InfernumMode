@@ -20,14 +20,14 @@ namespace InfernumMode.GlobalInstances.GlobalItems
 {
     public class UseRestrictionGlobalItem : GlobalItem
     {
-        public static bool DisplayTeleportDenialText(Player player, Item item, bool isDoG)
+        public static bool DisplayTeleportDenialText(Player player, Vector2 teleportPosition, Item item, bool isDoG)
         {
             if (!player.chaosState)
             {
                 player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDuration, true);
                 if (isDoG)
                 {
-                    Projectile.NewProjectile(player.GetSource_ItemUse(item), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(item), teleportPosition, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
                     string[] possibleEdgyShitToSay = new string[]
                     {
@@ -40,7 +40,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
                 }
                 else
                 {
-                    Projectile.NewProjectile(player.GetSource_ItemUse(item), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<GuardiansRodFailPulse>(), 0, 0f, player.whoAmI);
+                    Projectile.NewProjectile(player.GetSource_ItemUse(item), teleportPosition, Vector2.Zero, ModContent.ProjectileType<GuardiansRodFailPulse>(), 0, 0f, player.whoAmI);
                     HatGirl.SayThingWhileOwnerIsAlive(player, "The profaned magic seems to be blocking your Rod of Discord!");
                 }
             }
@@ -52,9 +52,9 @@ namespace InfernumMode.GlobalInstances.GlobalItems
             if (InfernumMode.CanUseCustomAIs && item.type == ItemID.RodofDiscord)
             {
                 if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) || Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
-                    return DisplayTeleportDenialText(player, item, false);
+                    return DisplayTeleportDenialText(player, Main.MouseWorld, item, false);
                 if (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
-                    return DisplayTeleportDenialText(player, item, true);
+                    return DisplayTeleportDenialText(player, Main.MouseWorld, item, true);
             }
 
             if (InfernumMode.CanUseCustomAIs && (item.type == ModContent.ItemType<ProfanedCore>() || item.type == ModContent.ItemType<SandstormsCore>()))
@@ -95,7 +95,7 @@ namespace InfernumMode.GlobalInstances.GlobalItems
         {
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<NormalityRelocator>())
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) || NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
+                if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))
                     player.Calamity().normalityRelocator = false;
             }
         }

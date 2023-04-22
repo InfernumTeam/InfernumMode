@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
@@ -12,6 +11,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.GlobalInstances;
@@ -108,6 +108,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public const int AcidMeterEverReachedHalfIndex = 10;
 
+        public const int SkullWasTakenIndex = 11;
+
         public const int AcidDropDamage = 135;
 
         public const int AcidBubbleDamage = 135;
@@ -176,6 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float initializedFlag = ref npc.Infernum().ExtraAI[6];
             ref float acidVerticalLine = ref npc.Infernum().ExtraAI[AcidVerticalLineIndex];
             ref float acidMeterEverReachedHalf = ref npc.Infernum().ExtraAI[AcidMeterEverReachedHalfIndex];
+            ref float skullWasTaken = ref npc.Infernum().ExtraAI[SkullWasTakenIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -269,7 +272,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     DoBehavior_SulphurousTyphoon(npc, target, ref attackTimer);
                     break;
                 case AquaticScourgeAttackType.DeathAnimation:
-                    DoBehavior_DeathAnimation(npc, target, ref jawRotation, ref attackTimer);
+                    DoBehavior_DeathAnimation(npc, target, ref jawRotation, ref attackTimer, ref skullWasTaken);
                     break;
             }
 
@@ -1334,7 +1337,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float jawRotation, ref float attackTimer)
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float jawRotation, ref float attackTimer, ref float skullWasTaken)
         {
             int goreSpitTime = 420;
             int disappearTime = 1200;
@@ -1447,7 +1450,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 WormSegments[0].locked = false;
                 WormSegments = VerletSimulatedSegmentInfernum.TileCollisionVerletSimulation(WormSegments, 36f, 18, 0.14f);
+
+                // Perform visual effects.
                 npc.gfxOffY = 16;
+                npc.hide = skullWasTaken != 0f;
                 npc.Size = Vector2.One * 72f;
 
                 // Disable boss effects.
@@ -1484,6 +1490,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         hasCreatedSplashSound = 1f;
                     }
                 }
+
+                // Allow the target to take the scourge's skull.
+                if (target.Hitbox.Intersects(npc.Hitbox) && skullWasTaken == 0f)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Item.NewItem(npc.GetSource_Death(), target.Hitbox, ModContent.ItemType<AquaticScourgeSkull>());
+
+                    for (int i = 0; i < 15; i++)
+                    {
+                        Color smokeColor = Color.Lerp(Color.SaddleBrown, Color.IndianRed, Main.rand.NextFloat(0.65f));
+                        TimedSmokeParticle smoke = new(npc.Center + Main.rand.NextVector2Circular(36f, 36f), Main.rand.NextVector2Circular(5f, 5f) - Vector2.UnitY * 9f, smokeColor, Color.DarkGray, Main.rand.NextFloat(0.6f, 1.25f), 1f, Main.rand.Next(45, 90), Main.rand.NextFloat(0.02f));
+                        GeneralParticleHandler.SpawnParticle(smoke);
+                    }
+
+                    skullWasTaken = 1f;
+                    npc.netUpdate = true;
+                }
+
                 timeAfterSpitting++;
             }
             else

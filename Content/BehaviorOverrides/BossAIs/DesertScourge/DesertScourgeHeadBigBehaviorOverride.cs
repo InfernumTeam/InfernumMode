@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -21,12 +22,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
     {
         public enum DesertScourgeAttackType
         {
+            SpawnAnimation,
             SandSpit,
             SandRushCharge,
             SandstormParticles,
             GroundSlam,
             SummonVultures
         }
+
+        public const int HideMapIconIndex = 5;
 
         public const float Phase2LifeRatio = 0.55f;
 
@@ -39,20 +43,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             Phase2LifeRatio,
             Phase3LifeRatio
         };
+
         #region AI
         public override bool PreAI(NPC npc)
         {
+            // Reset the contact damage.
             npc.damage = 100;
 
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
+            // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float initializedFlag = ref npc.ai[2];
             ref float enrageTimer = ref npc.ai[3];
+            ref float hideMapIcon = ref npc.Infernum().ExtraAI[HideMapIconIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -79,6 +87,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
             switch ((DesertScourgeAttackType)(int)attackType)
             {
+                case DesertScourgeAttackType.SpawnAnimation:
+                    DoBehavior_SpawnAnimation(npc, target, ref attackTimer, ref hideMapIcon);
+                    break;
                 case DesertScourgeAttackType.SandSpit:
                     DoBehavior_SandSpit(npc, target, enraged, ref attackTimer);
                     break;
@@ -98,6 +109,121 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             attackTimer++;
 
             return false;
+        }
+
+        public static void DoBehavior_SpawnAnimation(NPC npc, Player target, ref float attackTimer, ref float hideMapIcon)
+        {
+            int groundShakeTime = 270;
+            int riseUpTime = 300;
+            int hoverTime = 120;
+            ref float hasReachedSurface = ref npc.Infernum().ExtraAI[0];
+
+            // Make the ground shake and the ground create rising sand particles on the ground at first.
+            if (attackTimer <= groundShakeTime)
+            {
+                // Play a rumble sound.
+                if (attackTimer == 1f)
+                    SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound);
+
+                float groundShakeInterpolant = attackTimer / groundShakeTime;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (Main.rand.NextFloat() >= groundShakeInterpolant + 0.2f)
+                        continue;
+
+                    Vector2 particleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 1200f, -560f));
+                    bool sandBelow = CalamityUtils.ParanoidTileRetrieval((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
+                    if (sandBelow)
+                        Dust.NewDustPerfect(particleSpawnPosition + new Vector2(Main.rand.NextFloatDirection() * 8f, -8f), 32, Main.rand.NextVector2Circular(1.5f, 1.5f) - Vector2.UnitY * 1.5f);
+                }
+
+                // Create screen shake effects.
+                target.Infernum_Camera().CurrentScreenShakePower = MathF.Pow(groundShakeInterpolant, 1.81f) * 10f;
+
+                // Stick below the target.
+                npc.velocity = Vector2.UnitY * -9f;
+                npc.Center = target.Center + Vector2.UnitY * 1020f;
+            }
+
+            // Emerge from the sand.
+            else if (attackTimer <= groundShakeTime + riseUpTime)
+            {
+                if (attackTimer == groundShakeTime + 1f)
+                {
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeAppearSound with { Pitch = -0.7f }, target.Center);
+                }
+
+                float horizontalDestination = target.Center.X + (target.Center.X < npc.Center.X).ToDirectionInt() * 250f;
+
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(new(horizontalDestination, target.Center.Y)).X * 15f, 0.075f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.6f, -25f, 10f);
+
+                // Check if the scourge has reached the surface. If it has, create some particle effects and go to the next substate.
+                bool inTiles = WorldGen.SolidTile(CalamityUtils.ParanoidTileRetrieval((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f)));
+                if (hasReachedSurface == 0f && !inTiles && npc.Center.Y <= target.Bottom.Y + 80f)
+                {
+                    hasReachedSurface = 1f;
+                    attackTimer = groundShakeTime + riseUpTime;
+                    npc.velocity *= new Vector2(0.2f, 0.7f);
+                    npc.netUpdate = true;
+
+                    for (int i = 0; i < 54; i++)
+                    {
+                        Color sandColor = Color.Lerp(Color.SaddleBrown, Color.SandyBrown, Main.rand.NextFloat(0.7f)) * 0.5f;
+                        SmallSmokeParticle sand = new(npc.Center + Main.rand.NextVector2Circular(64f, 64f), Main.rand.NextVector2Circular(10f, 16f) - Vector2.UnitY * 19f, sandColor, Color.Tan, Main.rand.NextFloat(0.7f, 1f), 255f, Main.rand.NextFloatDirection() * 0.015f);
+                        GeneralParticleHandler.SpawnParticle(sand);
+                    }
+                    for (int i = 0; i < 32; i++)
+                    {
+                        Vector2 particleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 1200f, -560f));
+                        bool sandBelow = CalamityUtils.ParanoidTileRetrieval((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
+                        if (sandBelow)
+                        {
+                            Color sandColor = Color.Lerp(Color.SaddleBrown, Color.SandyBrown, Main.rand.NextFloat(0.7f)) * 0.4f;
+                            SmallSmokeParticle sand = new(particleSpawnPosition + Main.rand.NextVector2Circular(10f, 10f), Main.rand.NextVector2Circular(4f, 8f) - Vector2.UnitY * 9f, sandColor, Color.Tan, Main.rand.NextFloat(0.32f, 0.67f), 255f, Main.rand.NextFloatDirection() * 0.015f);
+                            GeneralParticleHandler.SpawnParticle(sand);
+                        }
+                    }
+                }
+            }
+
+            // Hover to the top left/right of the target after emerging from the sand.
+            else
+            {
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * Utils.Remap(npc.Distance(target.Center), 180f, 60f, 12f, 3f);
+                if (attackTimer < groundShakeTime + riseUpTime + hoverTime - 32f)
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.18f).RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi / 92f);
+                else
+                    npc.velocity *= 1.018f;
+
+                // Roar before the attacks begin.
+                if (attackTimer == groundShakeTime + riseUpTime + hoverTime - 32f)
+                {
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
+                    SoundEngine.PlaySound(DesertScourgeHead.RoarSound, target.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 8f;
+                }
+
+                if (attackTimer >= groundShakeTime + riseUpTime + hoverTime)
+                {
+                    hideMapIcon = 0f;
+                    SelectNextAttack(npc);
+                    return;
+                }
+            }
+
+            hideMapIcon = 1f - hasReachedSurface;
+
+            // Disable damage.
+            npc.damage = 0;
+
+            // Disable the boss HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Calculate rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public static void DoBehavior_SandSpit(NPC npc, Player target, bool enraged, ref float attackTimer)
@@ -500,6 +626,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 npc.ai[0] = (int)Main.rand.Next(potentialAttacks);
             while ((int)oldAttack == (int)npc.ai[0] && potentialAttacks.Count >= 2);
 
+            if (oldAttack == DesertScourgeAttackType.SpawnAnimation)
+                npc.ai[0] = (int)DesertScourgeAttackType.SandSpit;
+
             npc.TargetClosest();
             npc.ai[1] = 0f;
             npc.netUpdate = true;
@@ -544,6 +673,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             }
         }
         #endregion
+
         #region Drawing
         public static void CreateSandParticles(NPC npc, Color color, Vector2? velocity = default, Vector2? spawnPosition = null, int lifeTime = 60, float? scale = null)
         {
@@ -556,6 +686,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             GeneralParticleHandler.SpawnParticle(sand);
         }
         #endregion
+
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {

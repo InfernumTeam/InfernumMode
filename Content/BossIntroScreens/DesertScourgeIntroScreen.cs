@@ -1,4 +1,5 @@
 using CalamityMod.NPCs.DesertScourge;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -21,8 +22,12 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "Dried Glutton\nThe Desert Scourge";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHead>());
+        public override bool ShouldBeActive()
+        {
+            int desertScourgeIndex = NPC.FindFirstNPC(ModContent.NPCType<DesertScourgeHead>());
+            return desertScourgeIndex >= 0 && (Main.npc[desertScourgeIndex].ai[0] != (int)DesertScourgeHeadBigBehaviorOverride.DesertScourgeAttackType.SpawnAnimation || Main.npc[desertScourgeIndex].Infernum().ExtraAI[0] >= 1f);
+        }
 
-        public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/DesertScourgeRoar");
+        public override SoundStyle? SoundToPlayWithTextCreation => null;
     }
 }

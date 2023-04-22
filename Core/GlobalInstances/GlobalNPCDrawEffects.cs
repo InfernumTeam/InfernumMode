@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.Cryogen;
+using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
@@ -10,6 +11,7 @@ using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
@@ -76,6 +78,9 @@ namespace InfernumMode.Core.GlobalInstances
                 else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
                     index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
             }
+
+            if (npc.type == ModContent.NPCType<DesertScourgeHead>() && npc.Infernum().ExtraAI[DesertScourgeHeadBigBehaviorOverride.HideMapIconIndex] >= 1f)
+                index = -1;
 
             // Make Anahita completely invisible on the map when sufficiently faded out.
             if (npc.type == ModContent.NPCType<Anahita>() && npc.Opacity < 0.1f)

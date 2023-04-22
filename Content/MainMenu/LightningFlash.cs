@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 
 namespace InfernumMode.Content.MainMenu
 {
@@ -37,7 +38,15 @@ namespace InfernumMode.Content.MainMenu
 
                 // Don't play the sound if tabbed out because it is super annoying.
                 if (timeLeft == SoundTime && Main.instance.IsActive)
-                    SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { Volume = 0.4f * DistanceModifier, PitchVariance = 0.4f});
+                {
+                    SoundStyle thunder = Main.rand.Next(3) switch
+                    {
+                        0 => InfernumSoundRegistry.ThunderRumble,
+                        1 => InfernumSoundRegistry.ThunderRumble2,
+                        _ => InfernumSoundRegistry.ThunderRumble3
+                    };
+                    SoundEngine.PlaySound(thunder with { Volume = 0.75f * DistanceModifier, PitchVariance = 0.4f});
+                }
             }
         }
     }

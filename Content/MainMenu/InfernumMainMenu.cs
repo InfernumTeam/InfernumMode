@@ -99,15 +99,20 @@ namespace InfernumMode.Content.MainMenu
         {
             Embers.RemoveAll(e => e.Time >= e.Lifetime);
 
-            float maxEmbers = 100f;
+            float maxEmbers = 75f;
             Rectangle spawnRectangle = new(0, (int)(Main.screenHeight * 1.1f), Main.screenWidth, (int)(Main.screenHeight * 0.1f));
             if (Main.rand.NextBool(3) && Embers.Count < maxEmbers)
             {
                 Vector2 position = Main.rand.NextVector2FromRectangle(spawnRectangle);
-                Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f)) * Main.rand.NextFloat(1.5f, 3f);
+                Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f)) * Main.rand.NextFloat(1.2f, 2.4f);
                 Color color = Color.Lerp(Color.Pink, Color.Magenta, Main.rand.NextFloat());
-                Embers.Add(new GlowingEmber(position, velocity, color, Main.rand.NextFloat(MathF.Tau), Main.rand.NextFloat(0f, 0.05f), Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(300, 420)));
+                Embers.Add(new GlowingEmber(position, velocity, color, Main.rand.NextFloat(MathF.Tau), Main.rand.NextFloat(0f, 0.025f), Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(300, 420)));
             }
+
+            // Draw a large bloom at the bottom of the screen.
+            Vector2 drawPos = new(Main.screenWidth / 2f, Main.screenHeight);
+            Main.spriteBatch.Draw(GlowingEmber.BloomTexture, drawPos, null, Color.Lerp(Color.Lerp(Color.Pink, Color.Magenta, 0.5f), Color.DarkMagenta, 0.5f) with { A = 0 } * 0.6f, 0f, GlowingEmber.BloomTexture.Size() * 0.5f,
+                new Vector2(15f, 1f), SpriteEffects.None, 0f);
 
             foreach (var ember in Embers)
             {
@@ -155,13 +160,7 @@ namespace InfernumMode.Content.MainMenu
             if (InfernumConfig.Instance.FlashbangOverlays)
                 HandleLightning(drawOffset, scale);
 
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
-
             HandleEmbers();
-
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
             HandleRaindrops();
 

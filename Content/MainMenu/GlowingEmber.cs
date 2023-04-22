@@ -33,7 +33,7 @@ namespace InfernumMode.Content.MainMenu
             RotationSpeed = rotationSpeed;
             MaxScale = maxScale;
             Lifetime = lifetime;
-            DistortScale = new(Main.rand.NextFloat(0.8f, 2.2f), Main.rand.NextFloat(0.8f, 2.2f));
+            DistortScale = new(Main.rand.NextFloat(0.8f, 1.6f), Main.rand.NextFloat(0.8f, 1.6f));
             Texture = Main.rand.Next(3) switch
             {
                 0 => InfernumTextureRegistry.CrispCircle.Value,
@@ -64,8 +64,10 @@ namespace InfernumMode.Content.MainMenu
             Rectangle screen = new(-1000, -1000, 4000, 4000);
             if (screen.Contains((int)Position.X, (int)Position.Y))
             {
-                Main.spriteBatch.Draw(BloomTexture, Position, null, Color.DarkMagenta * 0.7f, Rotation, BloomTexture.Size() * 0.5f, Scale * 0.2f * DistortScale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(Texture, Position, null, Color.Lerp(DrawColor, Color.DarkMagenta, 0.5f) * 0.9f, Rotation, Texture.Size() * 0.5f, Scale * 0.05f * DistortScale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(BloomTexture, Position, null, Color.DarkMagenta with { A = 0 } * 0.9f, Rotation, BloomTexture.Size() * 0.5f, Scale * 0.15f * DistortScale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(BloomTexture, Position, null, Color.Lerp(DrawColor, Color.DarkMagenta, 0.5f) with { A = 0 } * 0.9f, Rotation, BloomTexture.Size() * 0.5f, Scale * 0.075f * DistortScale, SpriteEffects.None, 0f);
+
+                //Main.spriteBatch.Draw(Texture, Position, null, Color.Lerp(DrawColor, Color.DarkMagenta, 0.5f) with { A = 0 } * 0.54f, Rotation, Texture.Size() * 0.5f, Scale * 0.05f * DistortScale, SpriteEffects.None, 0f);
             }
         }
     }

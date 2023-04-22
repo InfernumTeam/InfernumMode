@@ -14,7 +14,6 @@ namespace InfernumMode.Assets.Sounds
         }
 
         #region Bosses and Enemies
-
         public static readonly SoundStyle AEWDeathAnimationSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWDeathAnimation") with { Volume = 1.6f };
 
         public static readonly SoundStyle AEWEnergyCharge = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWEnergyCharge") with { Volume = 1.5f };
@@ -47,7 +46,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle AstrumAureusLaserSound = new("InfernumMode/Assets/Sounds/Custom/AstrumAureus/AureusLaser");
 
-        public static readonly SoundStyle BirbCrySound = new("InfernumMode/Assets/Sounds/Custom/BirbCry");
+        public static readonly SoundStyle BirbCrySound = new("InfernumMode/Assets/Sounds/Custom/Misc/BirbCry");
 
         public static readonly SoundStyle BrimstoneLaser = new("InfernumMode/Assets/Sounds/Custom/BrimstoneElemental/BrimstoneLaser");
 
@@ -91,11 +90,11 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle DestroyerLaserTelegraphSound = new("InfernumMode/Assets/Sounds/Custom/Destroyer/DestroyerLaserTelegraph");
 
-        public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/DevilfishRoar");
+        public static readonly SoundStyle DevilfishRoarSound = new("InfernumMode/Assets/Sounds/Custom/Abyss/DevilfishRoar");
 
         public static readonly SoundStyle DoGLaughSound = new("InfernumMode/Assets/Sounds/Custom/DevourerOfGods/DoGLaugh");
 
-        public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
+        public static readonly SoundStyle EidolistChoirSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Abyss/EidolistChoir") with { IsLooped = true, Volume = 0.425f };
 
         public static readonly SoundStyle EntropyRayChargeSound = new("InfernumMode/Assets/Sounds/Custom/CalShadow/EntropyRayCharge");
 
@@ -129,15 +128,13 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle GuardianSpawnSound = new("InfernumMode/Assets/Sounds/Custom/ProfanedGuardians/GuardiansSpawn");
 
-        public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Assets/Sounds/Custom/GulperEelScream");
+        public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Assets/Sounds/Custom/Abyss/GulperEelScream");
 
         public static readonly SoundStyle KingSlimeDeathAnimation = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/KingSlimeDeathAnimation");
 
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Assets/Sounds/Custom/Leviathan/LeviathanRumble");
 
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Assets/Sounds/Custom/MoonLord/MoonLordIntro");
-
-        public static readonly SoundStyle ModeToggleLaugh = new("InfernumMode/Assets/Sounds/Custom/ModeToggleLaugh");
 
         public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelHit") with { Volume = 1.8f };
 
@@ -191,7 +188,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle QueenSlimeExplosionSound = new("InfernumMode/Assets/Sounds/Custom/QueenSlime/QueenSlimeExplosion");
 
-        public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/ReaperSharkIceBreath");
+        public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/Abyss/ReaperSharkIceBreath");
 
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/SCalBrothersSpawn");
 
@@ -205,7 +202,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle SkeletronHeadBonkSound = new("InfernumMode/Assets/Sounds/Custom/Skeletron/SkeletronHeadBonk");
 
-        public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/SonicBoom") with { Volume = 1.7f };
+        public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Misc/SonicBoom") with { Volume = 1.7f };
 
         public static readonly SoundStyle TerminusLaserbeamSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/TerminusLaserbeam") with { Volume = 1.75f };
 
@@ -255,17 +252,22 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle WayfinderFail = new("InfernumMode/Assets/Sounds/Item/WayfinderFail");
 
         public static readonly SoundStyle WayfinderTeleport = new("InfernumMode/Assets/Sounds/Item/WayfinderTeleport");
-
         #endregion Items
 
         #region Miscellaneous
+        public static readonly SoundStyle InfernumAchievementCompletionSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Misc/InfernumAchievementComplete") with { Volume = 1.5f };
 
-        public static readonly SoundStyle InfernumAchievementCompletionSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/InfernumAchievementComplete") with { Volume = 1.5f };
+        public static readonly SoundStyle ModeToggleLaugh = new("InfernumMode/Assets/Sounds/Custom/Misc/ModeToggleLaugh");
 
-        public static readonly SoundStyle WayfinderGateLoop = new("InfernumMode/Assets/Sounds/Custom/WayfinderGateLoop");
+        public static readonly SoundStyle ThunderRumble = new("InfernumMode/Assets/Sounds/Custom/MainMenu/ThunderRumble");
 
-        public static readonly SoundStyle WayfinderObtainSound = new("InfernumMode/Assets/Sounds/Custom/WayfinderObtainSound");
+        public static readonly SoundStyle ThunderRumble2 = new("InfernumMode/Assets/Sounds/Custom/MainMenu/ThunderRumble2");
 
+        public static readonly SoundStyle ThunderRumble3 = new("InfernumMode/Assets/Sounds/Custom/MainMenu/ThunderRumble3");
+
+        public static readonly SoundStyle WayfinderGateLoop = new("InfernumMode/Assets/Sounds/Custom/Wayfinder/WayfinderGateLoop");
+
+        public static readonly SoundStyle WayfinderObtainSound = new("InfernumMode/Assets/Sounds/Custom/Wayfinder/WayfinderObtainSound");
         #endregion
     }
 }

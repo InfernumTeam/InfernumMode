@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Create segments.
             if (npc.localAI[0] == 0f)
             {
-                AquaticScourgeHeadBehaviorOverride.CreateSegments(npc, 32, ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>());
+                AquaticScourgeHeadBehaviorOverride.CreateSegments(npc, 25, ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>());
                 npc.localAI[0] = 1f;
             }
 
@@ -165,9 +165,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 SoundEngine.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 11; i++)
+                    for (int i = 0; i < 10; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.44f, 0.44f, i / 10f);
+                        float offsetAngle = MathHelper.Lerp(-0.54f, 0.54f, i / 9f);
                         Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 8f;
                         Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 245, 0f);
                     }

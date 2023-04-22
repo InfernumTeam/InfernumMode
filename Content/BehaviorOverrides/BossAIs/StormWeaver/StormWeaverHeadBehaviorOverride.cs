@@ -1,8 +1,10 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles.Pets;
 using Microsoft.Xna.Framework;
 using System;
@@ -23,6 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             LightningCharge,
             StaticChargeup,
             IceStorm,
+            FakeoutCharge,
             StormWeave,
         }
         #endregion
@@ -83,6 +86,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     break;
                 case StormWeaverAttackType.IceStorm:
                     DoAttack_IceStorm(npc, target, ref lightningSkyBrightness, ref attackTimer);
+                    break;
+                case StormWeaverAttackType.FakeoutCharge:
+                    DoAttack_FakeoutCharge(npc, target, ref lightningSkyBrightness, ref attackTimer);
                     break;
                 case StormWeaverAttackType.StormWeave:
                     DoAttack_StormWeave(npc, target, ref lightningSkyBrightness, ref attackTimer);
@@ -193,6 +199,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
                     npc.netUpdate = true;
                 }
+
+                Particle cloud = new CloudParticle(hoverDestination + Main.rand.NextVector2Circular(40f, 40f), Vector2.Zero, Color.LightGray, Color.DarkSlateGray, Main.rand.Next(30, 45), Main.rand.NextFloat(0.8f, 1.2f), true);
+                GeneralParticleHandler.SpawnParticle(cloud);
             }
 
             // Determine a charge velocity to adjust to.
@@ -407,6 +416,94 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 SelectNewAttack(npc);
         }
 
+        public static void DoAttack_FakeoutCharge(NPC npc, Player target, ref float lightningSkyBrightness, ref float attackTimer)
+        {
+            ref float substate = ref npc.Infernum().ExtraAI[0];
+            ref float centerX = ref npc.Infernum().ExtraAI[1];
+            ref float centerY = ref npc.Infernum().ExtraAI[2];
+
+            float circleTime = 150f;
+            float skyBrightenTime = circleTime - 25f;
+            float initialChargeSpeed = 30f;
+            float initialChargeStopDistance = 470f;
+            float secondaryChargeSpeed = 35f;
+            float secondaryChargeLength = 25f;
+            float afterChargeWait = 25f;
+            switch (substate)
+            {
+                case 0:
+                    // Move around the player at distance.
+                    Vector2 hoverDestination = target.Center + (attackTimer / 25f).ToRotationVector2() * 1400;
+                    if (npc.velocity.Length() < 2f)
+                        npc.velocity = Vector2.UnitY * -2.4f;
+
+                    float flySpeed = MathHelper.Lerp(27 * 0.5f, 27, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
+                    flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
+                    npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
+                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
+
+                    if (attackTimer >= skyBrightenTime)
+                        lightningSkyBrightness = MathHelper.Lerp(lightningSkyBrightness, MaxLightningBrightness, 0.25f);
+
+                    if (attackTimer >= circleTime)
+                    {
+                        attackTimer = 0;
+                        substate++;
+                    }
+                    break;
+                case 1:
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * initialChargeSpeed;
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+
+                    centerX = target.Center.X;
+                    centerY = target.Center.Y;
+                    attackTimer = 0;
+                    substate++;
+                    break;
+                case 2:
+                    if (npc.WithinRange(new(centerX, centerY), initialChargeStopDistance) || attackTimer > 90f)
+                    {
+                        npc.velocity *= 0.95f;
+                        if (npc.velocity.Length() < 5.5f)
+                        {
+                            attackTimer = 0;
+                            substate++;
+                        }
+                    }
+                    break;
+                case 3:
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * secondaryChargeSpeed;
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 lightningSpawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.92f) * 150f;
+                            Vector2 lightningVelocity = (target.Center - lightningSpawnPosition).SafeNormalize(Vector2.UnitY) * 6.5f;
+                            int arc = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 255, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                            if (Main.projectile.IndexInRange(arc))
+                                Main.projectile[arc].tileCollide = false;
+                        }
+
+                        NPC tail = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<StormWeaverTail>())];
+                        for (int i = 0; i < 4; i++)
+                        {
+                            float shootOffsetAngle = MathHelper.Lerp(-0.37f, 0.37f, i / 3f);
+                            Vector2 sparkVelocity = tail.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 6.7f;
+                            Utilities.NewProjectileBetter(tail.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
+                        }
+                    }
+                    attackTimer = 0;
+                    substate++;
+                    break;
+                case 4:
+                    if (attackTimer >= afterChargeWait + secondaryChargeLength)
+                        SelectNewAttack(npc);
+                    break;
+            }
+        }
+
         public static void DoAttack_StormWeave(NPC npc, Player target, ref float lightningSkyBrightness, ref float attackTimer)
         {
             int hoverRedirectTime = 240;
@@ -481,7 +578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ref float attackCycle = ref npc.Infernum().ExtraAI[5];
 
             attackCycle++;
-            switch ((int)attackCycle % 5)
+            switch ((int)attackCycle % 6)
             {
                 case 0:
                     attackState = (int)StormWeaverAttackType.NormalMove;
@@ -493,9 +590,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     attackState = (int)StormWeaverAttackType.IceStorm;
                     break;
                 case 3:
-                    attackState = (int)(lifeRatio > StormWeaverArmoredHeadBehaviorOverride.Phase3LifeRatio ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
+                    attackState = (int)StormWeaverAttackType.FakeoutCharge;
                     break;
                 case 4:
+                    attackState = (int)(lifeRatio > StormWeaverArmoredHeadBehaviorOverride.Phase3LifeRatio ? StormWeaverAttackType.NormalMove : StormWeaverAttackType.StormWeave);
+                    break;
+                case 5:
                     attackState = (int)StormWeaverAttackType.StaticChargeup;
                     break;
             }

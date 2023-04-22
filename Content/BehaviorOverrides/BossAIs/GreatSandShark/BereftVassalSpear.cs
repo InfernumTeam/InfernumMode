@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 sparkVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 8f;
-                            Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 190, 0f);
+                            Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<VassalSpark>(), 190, 0f);
                             Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity * 0.01f, ModContent.ProjectileType<SparkTelegraphLine>(), 0, 0f, -1, 0f, 35f);
                         }
                     }

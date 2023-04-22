@@ -64,7 +64,7 @@ namespace InfernumMode.Common.Graphics
             Dispose();
             IsDisposed = false;
 
-            Target = CreationCondition(screenHeight, screenWidth);
+            Target = CreationCondition(screenWidth, screenHeight);
         }
     }
 }

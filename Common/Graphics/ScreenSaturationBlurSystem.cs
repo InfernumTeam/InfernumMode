@@ -161,7 +161,7 @@ namespace InfernumMode.Common.Graphics
                 LargeLumenylCrystal.CrystalCache.Clear();
 
             DrawAdditiveCache();
-            DrawAEW();
+            DrawEntityTargets();
             DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
             if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
@@ -175,7 +175,7 @@ namespace InfernumMode.Common.Graphics
             ThingsToDrawOnTopOfBlurAdditive.EmptyDrawCache();
         }
 
-        internal static void DrawAEW()
+        internal static void DrawEntityTargets()
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);

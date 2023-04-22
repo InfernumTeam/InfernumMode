@@ -11,7 +11,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using static Humanizer.In;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 {

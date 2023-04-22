@@ -28,7 +28,7 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.GlobalInstances.GlobalItems;
+using InfernumMode.Core.GlobalInstances.GlobalItems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;

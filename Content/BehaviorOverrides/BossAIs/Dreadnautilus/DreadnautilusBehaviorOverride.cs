@@ -2,6 +2,7 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -66,6 +67,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             npc.DeathSound = SoundID.NPCDeath1;
             npc.timeLeft = NPC.activeTime * 30;
             npc.Calamity().canBreakPlayerDefense = true;
+        }
+
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += UseCustomMapIcon;
+        }
+
+        private void UseCustomMapIcon(NPC npc, ref int index)
+        {
+            // Have Dreadnautilus use a custom map icon.
+            if (npc.type == NPCID.BloodNautilus)
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon");
         }
 
         public override bool PreAI(NPC npc)

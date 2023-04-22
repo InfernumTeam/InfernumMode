@@ -3,6 +3,7 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -52,6 +53,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.canGhostHeal = false;
             npc.netAlways = true;
             npc.DeathSound = SepulcherHead.DeathSound;
+        }
+
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += UseCustomMapIcon;
+        }
+
+        private void UseCustomMapIcon(NPC npc, ref int index)
+        {
+            // Have Sepulcher use a custom map icon.
+            if (npc.type == ModContent.NPCType<SepulcherHead>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon");
         }
 
         public override bool PreAI(NPC npc)

@@ -29,7 +29,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.Core.GlobalInstances
 {
     public partial class GlobalNPCOverrides : GlobalNPC
     {

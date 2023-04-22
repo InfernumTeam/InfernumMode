@@ -5,6 +5,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -43,6 +44,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             Phase2LifeRatio,
             Phase3LifeRatio
         };
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += DisableMapIconDuringSpawnAnimation;
+        }
+
+        private void DisableMapIconDuringSpawnAnimation(NPC npc, ref int index)
+        {
+            if (npc.type == ModContent.NPCType<DesertScourgeHead>() && npc.Infernum().ExtraAI[DesertScourgeHeadBigBehaviorOverride.HideMapIconIndex] >= 1f)
+                index = -1;
+        }
+        #endregion Loading
 
         #region AI
         public override bool PreAI(NPC npc)

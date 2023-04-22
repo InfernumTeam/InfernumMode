@@ -5,7 +5,7 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.GlobalInstances;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -141,6 +141,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         };
 
         #endregion Attack Cycles
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += UseCustomMapIcon;
+        }
+
+        private void UseCustomMapIcon(NPC npc, ref int index)
+        {
+            // Have Cryogen use a custom map icon.
+            if (npc.type == ModContent.NPCType<CryogenBoss>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
+        }
+        #endregion Loading
 
         #region AI
 

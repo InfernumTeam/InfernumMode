@@ -5,6 +5,7 @@ using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,6 +44,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         {
             ComboAttackManager.LeviathanSummonLifeRatio
         };
+
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += DisableMapIconWhenInvisible;
+        }
+
+        private void DisableMapIconWhenInvisible(NPC npc, ref int index)
+        {
+            // Make Anahita completely invisible on the map when sufficiently faded out.
+            if (npc.type == ModContent.NPCType<Anahita>() && npc.Opacity < 0.1f)
+                index = -1;
+        }
 
         public override bool PreAI(NPC npc)
         {

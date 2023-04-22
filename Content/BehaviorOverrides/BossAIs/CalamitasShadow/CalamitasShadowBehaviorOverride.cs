@@ -30,9 +30,10 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Core.GlobalInstances;
 using CalamitasShadowBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
-using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 {
@@ -72,6 +73,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             TPosingCastAnimation = 2
         }
         #endregion
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += UseCustomMapIcon;
+        }
+
+        private void UseCustomMapIcon(NPC npc, ref int index)
+        {
+            // Have Calamitas' shadow and her brothers use a custom map icon.
+            if (npc.type == ModContent.NPCType<CalamitasShadowBoss>())
+            {
+                if (npc.Opacity <= 0f)
+                    index = -1;
+                else
+                    index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CalShadowMapIcon");
+            }
+            if (npc.type == ModContent.NPCType<Cataclysm>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CataclysmMapIcon");
+            if (npc.type == ModContent.NPCType<Catastrophe>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheMapIcon");
+        }
+        #endregion Loading
 
         #region AI
 

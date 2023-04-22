@@ -13,7 +13,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.GlobalInstances.GlobalItems
+namespace InfernumMode.Core.GlobalInstances.GlobalItems
 {
     public class TooltipChangeGlobalItem : GlobalItem
     {

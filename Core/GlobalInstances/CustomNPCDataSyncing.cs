@@ -1,7 +1,7 @@
 using System.Linq;
 using Terraria;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.Core.GlobalInstances
 {
     public partial class GlobalNPCOverrides
     {

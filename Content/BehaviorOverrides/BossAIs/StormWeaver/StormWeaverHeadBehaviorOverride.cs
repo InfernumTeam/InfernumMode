@@ -29,7 +29,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         {
             NormalMove,
             SparkBurst,
-            StaticChargeup,
             IceStorm,
             FakeoutCharge,
             FogSneakAttackCharges,
@@ -111,9 +110,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     break;
                 case StormWeaverAttackType.SparkBurst:
                     DoBehavior_SparkBurst(npc, target, lifeRatio, attackTimer);
-                    break;
-                case StormWeaverAttackType.StaticChargeup:
-                    DoBehavior_StaticChargeup(npc, target, ref attackTimer, ref fadeToBlue);
                     break;
                 case StormWeaverAttackType.IceStorm:
                     DoBehavior_IceStorm(npc, target, ref lightningSkyBrightness, ref attackTimer);
@@ -206,108 +202,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             if (attackTimer >= 300f)
-                SelectNewAttack(npc);
-        }
-
-        public static void DoBehavior_StaticChargeup(NPC npc, Player target, ref float attackTimer, ref float fadeToBlue)
-        {
-            int initialAttackWaitDelay = 10;
-            float attackStartDistanceThreshold = 490f;
-            int spinDelay = 30;
-            int totalSpins = 3;
-            int spinTime = 270;
-            int sparkShootRate = 8;
-            int orbShootRate = 75;
-            int attackTransitionDelay = 65;
-            float sparkShootSpeed = 5.6f;
-            float spinSpeed = 18f;
-            if (BossRushEvent.BossRushActive)
-            {
-                sparkShootRate = 5;
-                orbShootRate -= 12;
-                sparkShootSpeed *= 1.8f;
-            }
-
-            // Reset DR.
-            npc.Calamity().DR = 0.55f;
-
-            float angularSpinVelocity = MathHelper.TwoPi * totalSpins / spinTime;
-            ref float sparkShootCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Determine fade to blue.
-            fadeToBlue = Utils.GetLerpValue(spinDelay, spinDelay + initialAttackWaitDelay, attackTimer, true) *
-                Utils.GetLerpValue(spinDelay + initialAttackWaitDelay + spinTime, spinDelay + initialAttackWaitDelay + spinTime - 30f, attackTimer, true);
-
-            // Attempt to move towards the target if far away from them.
-            if (!npc.WithinRange(target.Center, attackStartDistanceThreshold) && attackTimer < initialAttackWaitDelay)
-            {
-                float idealMoventSpeed = (npc.Distance(target.Center) - attackStartDistanceThreshold) / 45f + 31f;
-                npc.velocity = (npc.velocity * 39f + npc.SafeDirectionTo(target.Center) * idealMoventSpeed) / 40f;
-
-                attackTimer = 0f;
-            }
-
-            // Attempt to get closer to the ideal spin speed once ready.
-            if (attackTimer >= initialAttackWaitDelay && attackTimer < spinDelay + initialAttackWaitDelay && !npc.WithinRange(target.Center, 150f))
-                npc.velocity = (npc.velocity * 14f + npc.SafeDirectionTo(target.Center) * spinSpeed) / 15f;
-
-            // Prepare the spin movement and direction.
-            if (attackTimer == spinDelay + initialAttackWaitDelay)
-            {
-                npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY) * spinSpeed;
-                npc.netUpdate = true;
-            }
-
-            // Do the spin, and create the sparks from the point at which the weaver is spinning.
-            if (attackTimer > spinDelay + initialAttackWaitDelay && attackTimer <= spinDelay + initialAttackWaitDelay + spinTime)
-            {
-                npc.velocity = npc.velocity.RotatedBy(angularSpinVelocity);
-                Vector2 spinCenter = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalSpins / MathHelper.TwoPi;
-
-                // Frequently release sparks.
-                if (attackTimer % sparkShootRate == sparkShootRate - 1f)
-                {
-                    SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, spinCenter);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int projectileCount = sparkShootCounter % 3f == 2f ? 9 : 1;
-                        for (int i = 0; i < projectileCount; i++)
-                        {
-                            float angularImprecision = Utils.GetLerpValue(720f, 350f, npc.Distance(target.Center), true);
-                            float predictivenessFactor = (float)Math.Pow(1f - angularImprecision, 2D);
-                            float angularOffset = 0f;
-                            if (projectileCount > 1)
-                                angularOffset = MathHelper.Lerp(-0.87f, 0.87f, i / (float)(projectileCount - 1f));
-
-                            Vector2 predictiveOffset = target.velocity * predictivenessFactor * 15f;
-                            Vector2 shootVelocity = (target.Center - spinCenter + predictiveOffset).SafeNormalize(Vector2.UnitY).RotatedBy(angularOffset).RotatedByRandom(angularImprecision * 0.59f) * sparkShootSpeed;
-                            Utilities.NewProjectileBetter(spinCenter, shootVelocity, ModContent.ProjectileType<WeaverSpark>(), 280, 0f);
-                        }
-                        sparkShootCounter++;
-                    }
-                }
-
-                // Release some electric orbs that explode.
-                if (attackTimer % orbShootRate == orbShootRate - 1f)
-                {
-                    Vector2 orbSpawnPosition = spinCenter + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 220f);
-                    Vector2 orbShootVelocity = (target.Center - orbSpawnPosition).SafeNormalize(Vector2.UnitY) * 5f;
-
-                    // Play a sound and create some electric dust.
-                    for (int i = 0; i < 16; i++)
-                    {
-                        Dust electricity = Dust.NewDustPerfect(orbSpawnPosition + Main.rand.NextVector2Circular(45f, 45f), 264);
-                        electricity.color = Color.Cyan;
-                        electricity.velocity = (electricity.position - orbShootVelocity).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(5f, 12f);
-                        electricity.noGravity = true;
-                    }
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(orbSpawnPosition, orbShootVelocity, ModContent.ProjectileType<ElectricOrb>(), 255, 0f);
-                }
-            }
-
-            if (attackTimer >= spinDelay + initialAttackWaitDelay + spinTime + attackTransitionDelay)
                 SelectNewAttack(npc);
         }
 
@@ -692,7 +586,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         npc.netUpdate = true;
                     }
                 }
-
+                
                 // Yeah, no. We're not having any of this.
                 if (npc.Calamity().dashImmunityTime[target.whoAmI] >= 1)
                 {
@@ -739,7 +633,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ref float attackCycleIndex = ref npc.Infernum().ExtraAI[5];
 
             attackCycleIndex++;
-            switch ((int)attackCycleIndex % 7)
+            switch ((int)attackCycleIndex % 6)
             {
                 case 0:
                     attackState = (int)StormWeaverAttackType.NormalMove;
@@ -757,9 +651,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     attackState = (int)(phase2 ? StormWeaverAttackType.FogSneakAttackCharges : StormWeaverAttackType.NormalMove);
                     break;
                 case 5:
-                    attackState = (int)StormWeaverAttackType.StaticChargeup;
-                    break;
-                case 6:
                     attackState = (int)(phase2 ? StormWeaverAttackType.BerdlyWindGusts : StormWeaverAttackType.FakeoutCharge);
                     break;
             }

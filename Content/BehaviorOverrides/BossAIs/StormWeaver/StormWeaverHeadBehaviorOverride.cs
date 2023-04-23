@@ -60,11 +60,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         public static int[] PotentialNPCTargetIDs => new int[]
         {
             NPCID.Harpy,
+
+            // The head and tail and not the body are specifically targetted.
             NPCID.WyvernHead,
             NPCID.WyvernTail,
+
             ModContent.NPCType<Sunskater>(),
             ModContent.NPCType<ShockstormShuttle>(),
             ModContent.NPCType<AeroSlime>(),
+
+            // Cloud elemental. I did not choose this internal name.
             ModContent.NPCType<ThiccWaifu>(),
         };
 
@@ -138,6 +143,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Let things home in on the weaver.
             npc.chaseable = true;
 
+            // Reset certain things.
+            Main.rainTime = 480;
+            npc.dontTakeDamage = npc.Opacity <= 0.6f;
             npc.damage = npc.defDamage;
 
             switch ((StormWeaverAttackType)(int)attackState)
@@ -168,10 +176,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     DoBehavior_BerdlyWindGusts(npc, target, ref attackTimer);
                     break;
             }
-
-            Main.rainTime = 480;
-
-            npc.dontTakeDamage = npc.Opacity <= 0.6f;
 
             // Determine rotation.
             npc.rotation = (npc.position - npc.oldPosition).ToRotation() + MathHelper.PiOver2;
@@ -377,7 +381,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 }
             }
 
-            if (attackTimer >= 300f)
+            if (attackTimer >= 240f)
                 SelectNewAttack(npc);
         }
 
@@ -646,7 +650,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 return;
             }
 
-            // Slow down and arc around towards the player while the segments emit electricity in anticipation of the attac.
+            // Slow down and arc around towards the player while the segments emit electricity in anticipation of the attack.
             if (attackTimer <= redirectTime + arcRedirectTime)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 189f) * 0.96f;

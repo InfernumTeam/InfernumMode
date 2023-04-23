@@ -18,7 +18,7 @@ namespace InfernumMode.Common.Graphics
         {
             foreach (ManagedRenderTarget target in ManagedTargets)
             {
-                // Don't attempt to recreate targets that are in the middle of being disposed, is null, or shouldn't be recreated.
+                // Don't attempt to recreate targets that are in the middle of being disposed, are null, or shouldn't be recreated.
                 if (target.IsDisposed || target is null)
                     continue;
 

@@ -1,9 +1,12 @@
 using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Accessories;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
@@ -12,6 +15,8 @@ using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -26,6 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         #region Enumerations
         public enum StormWeaverAttackType
         {
+            HuntSkyCreatures,
             NormalMove,
             SparkBurst,
             IceStorm,
@@ -50,6 +56,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         #endregion Loading
 
         #region AI
+
+        public static int[] PotentialNPCTargetIDs => new int[]
+        {
+            NPCID.Harpy,
+            NPCID.WyvernHead,
+            NPCID.WyvernTail,
+            ModContent.NPCType<Sunskater>(),
+            ModContent.NPCType<ShockstormShuttle>(),
+            ModContent.NPCType<AeroSlime>(),
+            ModContent.NPCType<ThiccWaifu>(),
+        };
 
         public const int FogInterpolantIndex = 6;
 
@@ -79,17 +96,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
             lightningSkyBrightness = MathHelper.Clamp(lightningSkyBrightness - 0.025f, 0f, 1f);
 
-            if (lifeRatio < 0.1f)
-                CalamityMod.CalamityMod.StopRain();
-            else if (!Main.raining || Main.maxRaining < 0.7f)
+            if (attackState != (int)StormWeaverAttackType.HuntSkyCreatures)
             {
-                CalamityUtils.StartRain(false, true);
-                Main.cloudBGActive = 1f;
-                Main.numCloudsTemp = 160;
-                Main.numClouds = Main.numCloudsTemp;
-                Main.windSpeedCurrent = 1.04f;
-                Main.windSpeedTarget = Main.windSpeedCurrent;
-                Main.maxRaining = 0.96f;
+                if (lifeRatio < 0.1f)
+                    CalamityMod.CalamityMod.StopRain();
+                else if (!Main.raining || Main.maxRaining < 0.7f)
+                {
+                    CalamityUtils.StartRain(false, true);
+                    Main.cloudBGActive = 1f;
+                    Main.numCloudsTemp = 160;
+                    Main.numClouds = Main.numCloudsTemp;
+                    Main.windSpeedCurrent = 1.04f;
+                    Main.windSpeedTarget = Main.windSpeedCurrent;
+                    Main.maxRaining = 0.96f;
+                }
             }
 
             // Lol. Lmao.
@@ -122,6 +142,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
             switch ((StormWeaverAttackType)(int)attackState)
             {
+                case StormWeaverAttackType.HuntSkyCreatures:
+                    DoBehavior_HuntSkyCreatures(npc, target, ref attackTimer, ref lightningSkyBrightness, ref fogInterpolant);
+                    break;
                 case StormWeaverAttackType.NormalMove:
                     DoBehavior_NormalMove(npc, target, attackTimer);
                     break;
@@ -158,6 +181,141 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_HuntSkyCreatures(NPC npc, Player player, ref float attackTimer, ref float lightningSkyBrightness, ref float fogInterpolant)
+        {
+            int rainCreationDelay = 30;
+            ref float targetIndex = ref npc.Infernum().ExtraAI[0];
+            ref float flyingAway = ref npc.Infernum().ExtraAI[1];
+
+            // Disable damage.
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+
+            // Get rid of the boss bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Make a strong lightning effect on the first frame and teleport near the player, right before the storm rolls in.
+            if (attackTimer == 1f)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { PitchVariance = 0.15f }, player.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with { Volume = 1.6f }, player.Center);
+                npc.netUpdate = true;
+
+                npc.Opacity = 1f;
+                npc.Center = player.Center + Main.rand.NextVector2CircularEdge(900f, 900f);
+                npc.velocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(0.76f) * 20f;
+                lightningSkyBrightness = 0.75f;
+
+                // Create a screen flash effect.
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 0.8f, rainCreationDelay + 5);
+
+                // Bring all segments to the weaver's position for the teleport.
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].realLife == npc.whoAmI)
+                    {
+                        Main.npc[i].Infernum().ExtraAI[0] = 36f;
+                        Main.npc[i].Center = npc.Center;
+                        Main.npc[i].netUpdate = true;
+                    }
+                }
+            }
+
+            // Perform fly away behaviors.
+            if (flyingAway == 1f)
+            {
+                npc.velocity = npc.SafeDirectionTo(player.Center) * -40f;
+                if (!npc.WithinRange(player.Center, 1900f) && Main.maxRaining <= 0.01f)
+                {
+                    // Delete all segments manually to make sure that they don't create gores when the head disappears.
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].realLife == npc.whoAmI)
+                        {
+                            Main.npc[i].active = false;
+                            Main.npc[i].netUpdate = true;
+                        }
+                    }
+
+                    Main.maxRaining = 0f;
+                    Main.rainTime = 0;
+                    CalamityNetcode.SyncWorld();
+                    npc.active = false;
+                }
+
+                // Make the fog and rain dissipate quickly.
+                Main.windSpeedCurrent *= 0.9f;
+                Main.windSpeedTarget = 0f;
+                Main.maxRaining *= 0.94f;
+                fogInterpolant *= 0.94f;
+
+                // Fade away.
+                npc.Opacity *= 0.9f;
+
+                return;
+            }
+
+            // Make the storm and fog roll in.
+            // It will have an incredibly high wind speed.
+            if (attackTimer >= rainCreationDelay)
+            {
+                fogInterpolant = MathHelper.Clamp(fogInterpolant + 0.1f, 0f, 1.5f);
+
+                Main.windSpeedCurrent = 1.07f;
+                Main.windSpeedTarget = Main.windSpeedCurrent;
+                Main.maxRaining = 0.97f;
+                Main.rainTime = 900;
+                Main.cloudBGActive = 1f;
+                Main.numCloudsTemp = 160;
+                Main.numClouds = Main.numCloudsTemp;
+            }
+
+            // Pick a target if necessary.
+            if (attackTimer <= 1f || !Main.npc.IndexInRange((int)targetIndex) || !Main.npc[(int)targetIndex].active || !PotentialNPCTargetIDs.Contains(Main.npc[(int)targetIndex].type))
+            {
+                List<NPC> potentialTargets = new();
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (!n.active || !PotentialNPCTargetIDs.Contains(n.type) || !n.WithinRange(npc.Center, 950f))
+                        continue;
+
+                    potentialTargets.Add(n);
+                }
+
+                if (potentialTargets.Any())
+                {
+                    targetIndex = potentialTargets.OrderBy(t => npc.Distance(t.Center)).First().whoAmI;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Begin to fly away if there are no more targets.
+            if ((!Main.npc[(int)targetIndex].active || !PotentialNPCTargetIDs.Contains(Main.npc[(int)targetIndex].type)) && flyingAway == 0f)
+            {
+                flyingAway = 1f;
+                npc.netUpdate = true;
+                return;
+            }
+
+            // Hunt down the target ruthlessly.
+            NPC target = Main.npc[(int)targetIndex];
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 60f;
+            if (!npc.WithinRange(target.Center, 80f))
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.05f).MoveTowards(idealVelocity, 0.7f).RotateTowards(idealVelocity.ToRotation(), 0.03f);
+
+            // Do a tremendous amount of damage to the target if touching their hitbox.
+            if (npc.Hitbox.Intersects(target.Hitbox) && !target.immortal && !target.dontTakeDamage)
+            {
+                // Play a slice sound.
+                SoundEngine.PlaySound(CommonCalamitySounds.SwiftSliceSound, target.Center);
+
+                CreateSparks(target.Center);
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 15);
+                target.StrikeNPCNoInteraction(Main.rand.Next(40000, 60000), 0f, 0, true);
+            }
         }
 
         public static void DoBehavior_NormalMove(NPC npc, Player target, float attackTimer)
@@ -413,7 +571,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { PitchVariance = 0.15f, Volume = 1.6f }, target.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with { Volume = 0.67f }, target.Center);
 
-                // Create screen flash effect.
+                // Create a screen flash effect.
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 0.8f, 25);
 
                 // Bring all segments to the weaver's position for the teleport.

@@ -46,6 +46,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -620,11 +621,17 @@ namespace InfernumMode.Core.ILEditingStuff
                 }
                 else if (player.ZoneSkyHeight)
                 {
-                    // TODO -- Add SW start.
                     int weaverIndex = NPC.FindFirstNPC(ModContent.NPCType<StormWeaverHead>());
                     if (weaverIndex != -1)
                     {
-
+                        NPC weaver = Main.npc[weaverIndex];
+                        if (weaver.ai[1] == (int)StormWeaverHeadBehaviorOverride.StormWeaverAttackType.HuntSkyCreatures)
+                        {
+                            SoundEngine.PlaySound(RuneofKos.StormSound, player.Center);
+                            StormWeaverHeadBehaviorOverride.SelectNewAttack(weaver);
+                            weaver.ai[1] = (int)StormWeaverHeadBehaviorOverride.StormWeaverAttackType.IceStorm;
+                            weaver.netUpdate = true;
+                        }
                     }
                     else
                     {

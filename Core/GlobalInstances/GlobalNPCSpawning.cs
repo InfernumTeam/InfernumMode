@@ -3,6 +3,7 @@ using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Signus;
+using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using SubworldLibrary;
@@ -49,6 +50,8 @@ namespace InfernumMode.Core.GlobalInstances
             bool sentinelsCanSpawn = NPC.downedGolemBoss && InfernumMode.CanUseCustomAIs && !spawnInfo.Player.Infernum_Biome().ZoneProfaned;
             if (sentinelsCanSpawn && !DownedBossSystem.downedSignus && spawnInfo.Player.ZoneUnderworldHeight && !WorldSaveSystem.MetSignusAtProfanedGarden && !NPC.AnyNPCs(ModContent.NPCType<Signus>()))
                 pool[ModContent.NPCType<Signus>()] = 0.0032f;
+            if (sentinelsCanSpawn && !DownedBossSystem.downedStormWeaver && spawnInfo.Player.ZoneSkyHeight && !NPC.AnyNPCs(ModContent.NPCType<StormWeaverHead>()))
+                pool[ModContent.NPCType<StormWeaverHead>()] = 0.0032f;
 
             // Clear abyss miniboss spawns from the pool. They are always spawned manually, since traditional enemy spawns have a
             // tendency to be limited to spawning on solid ground.

@@ -47,13 +47,21 @@ namespace InfernumMode.Common.Graphics
                     continue;
 
                 Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/StormWeaver/StormWeaverBodyNaked").Value;
+                Texture2D vortexTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/StormWeaver/VortexWeaverBody").Value;
                 if (n.type == weaverHeadID)
+                {
                     texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/StormWeaver/StormWeaverHeadNaked").Value;
+                    vortexTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/StormWeaver/VortexWeaverHead").Value;
+                }
                 if (n.type == weaverTailID)
+                {
                     texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/StormWeaver/StormWeaverTailNaked").Value;
+                    vortexTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/StormWeaver/VortexWeaverTail").Value;
+                }
 
                 Vector2 drawPosition = n.Center - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, drawPosition, null, n.GetAlpha(Color.White), n.rotation, texture.Size() * 0.5f, n.scale, 0, 0f);
+                Main.spriteBatch.Draw(vortexTexture, drawPosition, null, n.GetAlpha(Color.White) * n.Infernum().ExtraAI[StormWeaverHeadBehaviorOverride.FogInterpolantIndex], n.rotation, texture.Size() * 0.5f, n.scale, 0, 0f);
             }
 
             Main.spriteBatch.End();

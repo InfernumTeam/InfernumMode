@@ -46,6 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             npc.damage = head.damage > 0 ? npc.defDamage : 0;
             npc.dontTakeDamage = head.dontTakeDamage;
             npc.HitSound = head.HitSound;
+            npc.Infernum().ExtraAI[StormWeaverHeadBehaviorOverride.FogInterpolantIndex] = head.Infernum().ExtraAI[StormWeaverHeadBehaviorOverride.FogInterpolantIndex];
 
             if (npc.type == ModContent.NPCType<StormWeaverTail>())
             {

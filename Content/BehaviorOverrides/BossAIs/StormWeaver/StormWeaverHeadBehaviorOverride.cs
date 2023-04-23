@@ -378,7 +378,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 // Rapidly fade out.
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.12f, 0f, 1f);
 
-                electricityFormInterpolant = 1f - npc.Opacity;
+                electricityFormInterpolant = (1f - npc.Opacity) * 0.4f;
 
                 // Slow down.
                 npc.velocity *= 0.9f;
@@ -440,7 +440,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
 
                 if (chargeCounter >= chargeCount - 1f)
-                    fogInterpolant *= 0.8f;
+                {
+                    fogInterpolant *= 0.9f;
+                    electricityFormInterpolant *= 0.85f;
+                }
             }
 
             // Handle post charge behaviors.

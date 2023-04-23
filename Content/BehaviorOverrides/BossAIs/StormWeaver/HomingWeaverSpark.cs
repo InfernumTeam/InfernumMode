@@ -28,10 +28,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         {
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
-            if (Time < 75f)
+            if (Time < 45f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(target.Center) * 18.5f) / 30f;
+                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(target.Center) * 18.5f) / 20f;
             }
             else if (Projectile.velocity.Length() < 33f)
                 Projectile.velocity *= 1.026f;

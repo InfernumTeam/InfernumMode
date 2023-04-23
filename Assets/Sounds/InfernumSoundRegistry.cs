@@ -204,6 +204,10 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle SonicBoomSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Misc/SonicBoom") with { Volume = 1.7f };
 
+        public static readonly SoundStyle StormWeaverWindSound = new("InfernumMode/Assets/Sounds/Custom/StormWeaver/StormWeaverWind", 2);
+
+        public static readonly SoundStyle StormWeaverElectricDischargeSound = new("InfernumMode/Assets/Sounds/Custom/StormWeaver/ElectricDischarge");
+
         public static readonly SoundStyle TerminusLaserbeamSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/TerminusLaserbeam") with { Volume = 1.75f };
 
         public static readonly SoundStyle TerminusPulseSound = new("InfernumMode/Assets/Sounds/Custom/AEW/TerminusPulse");

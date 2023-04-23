@@ -184,6 +184,7 @@ namespace InfernumMode.Common.Graphics
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            StormWeaverDrawSystem.DrawTarget();
 
             for (int i = 0; i < AEWShadowFormDrawSystem.AEWEyesDrawCache.Count; i++)
             {

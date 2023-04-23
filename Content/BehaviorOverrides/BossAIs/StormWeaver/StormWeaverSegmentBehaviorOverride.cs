@@ -31,6 +31,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 npc.HitSound = head.HitSound;
             }
 
+            // Disable natural drawing so that the render target can handle it.
+            npc.hide = true;
+
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;
@@ -40,6 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             npc.Calamity().DR = head.Calamity().DR;
             npc.Calamity().unbreakableDR = head.Calamity().unbreakableDR;
             npc.damage = head.damage > 0 ? npc.defDamage : 0;
+            npc.HitSound = head.HitSound;
 
             if (npc.type == ModContent.NPCType<StormWeaverTail>())
             {
@@ -48,7 +52,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
-            if (aheadSegment.rotation != npc.rotation)
+            if (npc.Infernum().ExtraAI[0] >= 1f)
+                npc.Infernum().ExtraAI[0]--;
+            else if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.05f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;

@@ -38,6 +38,7 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData DoGDashIndicatorVertexShader => GameShaders.Misc["Infernum:DoGDashIndicatorShader"];
         public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
+        public static MiscShaderData FogShaderShader => GameShaders.Misc["Infernum:FogOverlay"];
         public static MiscShaderData GenericLaserVertexShader => GameShaders.Misc["Infernum:GenericLaserShader"];
         public static MiscShaderData GuardiansLaserVertexShader => GameShaders.Misc["Infernum:GuardiansLaserShader"];
         public static MiscShaderData KevinLightningShader => GameShaders.Misc["Infernum:KevinLightning"];
@@ -177,6 +178,9 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> shadowflameShader = new(assets.Request<Effect>("Assets/Effects/Primitives/Shadowflame", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:Fire"] = new MiscShaderData(shadowflameShader, "TrailPass");
+
+            Ref<Effect> fogShader = new(assets.Request<Effect>("Assets/Effects/Overlays/FogShader", AssetRequestMode.ImmediateLoad).Value);
+            GameShaders.Misc["Infernum:FogOverlay"] = new MiscShaderData(fogShader, "FogPass");
 
             Ref<Effect> genericLaserShader = new(assets.Request<Effect>("Assets/Effects/Primitives/GenericLaserShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:GenericLaserShader"] = new MiscShaderData(genericLaserShader, "TrailPass");

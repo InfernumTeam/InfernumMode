@@ -8,11 +8,10 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
-using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -36,6 +35,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             BerdlyWindGusts
         }
         #endregion
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += UsePhase2HeadIconUniversally;
+        }
+
+        private void UsePhase2HeadIconUniversally(NPC npc, ref int index)
+        {
+            if (npc.type == ModContent.NPCType<StormWeaverHead>())
+                index = StormWeaverHead.vulnerableIconIndex;
+        }
+        #endregion Loading
 
         #region AI
 
@@ -228,7 +240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 33f;
             npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.036f, true) * idealVelocity.Length();
             npc.velocity = npc.velocity.MoveTowards(idealVelocity, 4f);
-            
+
             if (attackTimer % shootRate == 1f)
             {
                 // Play a sound on the player getting frost waves rained on them, as a telegraph.
@@ -601,7 +613,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         npc.netUpdate = true;
                     }
                 }
-                
+
                 // Yeah, no. We're not having any of this.
                 if (npc.Calamity().dashImmunityTime[target.whoAmI] >= 1)
                 {

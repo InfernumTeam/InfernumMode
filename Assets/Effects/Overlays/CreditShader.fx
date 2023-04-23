@@ -6,6 +6,8 @@ float noiseScale;
 float noiseIntensity;
 float overallOpacity;
 
+bool justCrop;
+
 float noise2(float2 uv)
 {
     return frac(sin(dot(uv, float2(12.9898, 78.233) * 2.0)) * 43758.5453);
@@ -24,18 +26,23 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
     float4 color = tex2D(mainImage, uv);
     float distanceFromCenter = RectangularDistance(float2(0.5, 0.5), uv);
     
-    // Make the image shift towards a certain color.
-    float grayscale = dot(color.rgb, float3(0.299, 0.587, 0.114));
+    if (!justCrop)
+    {
+        // Make the image shift towards a certain color.
+        float grayscale = dot(color.rgb, float3(0.299, 0.587, 0.114));
     
-    color = float4(grayscale, grayscale, grayscale, 1) * lerp(color, float4(lerpColor, 1), lerpColorAmount);
+        color = float4(grayscale, grayscale, grayscale, 1) * lerp(color, float4(lerpColor, 1), lerpColorAmount);
     
-    // Create random "film grain" based noise on the image.
-    float noise = noise2(uv * noiseScale) * noiseIntensity;
-    color += noise;
+        // Create random "film grain" based noise on the image.
+        float noise = noise2(uv * noiseScale) * noiseIntensity;
+        color += noise;
+    }
     
     float opacity = 1;
-    if (distanceFromCenter > 0.9)
-        opacity *= pow(1 - ((distanceFromCenter) - 0.9) / 0.1, 3);
+    if (distanceFromCenter >= 0.9)
+        opacity *= pow(1 - ((distanceFromCenter) - 0.9) / 0.1, 4);
+    
+    color = lerp(float4(0, 0, 0, 1), color, opacity);
     
     return color * opacity * overallOpacity;
 }

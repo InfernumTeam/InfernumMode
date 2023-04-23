@@ -66,6 +66,7 @@ namespace InfernumMode.Content.Credits
         {
             // Get the noise intensity.
             float noiseIntensity = 0.1f;
+
             // If the base credits are in use, a single image is used and the noise intensity is lowered as a result.
             if (BaseCredits)
             {
@@ -84,6 +85,7 @@ namespace InfernumMode.Content.Credits
             creditEffect.Parameters["noiseScale"].SetValue(3f);
             creditEffect.Parameters["noiseIntensity"].SetValue(noiseIntensity);
             creditEffect.Parameters["overallOpacity"].SetValue(opacity);
+            creditEffect.Parameters["justCrop"].SetValue(false);
             creditEffect.CurrentTechnique.Passes["CreditPass"].Apply();
 
             // Get the current frame from the textures.

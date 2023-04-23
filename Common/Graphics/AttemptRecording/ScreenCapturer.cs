@@ -425,9 +425,6 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         // Adapted from https://gamedev.stackexchange.com/questions/6440/bitmap-to-texture2d-problem-with-colors
         private static uint[] GetColorsFromImage(Bitmap bitmap)
         {
-            // Create a new, empty texture.
-            Texture2D texture = TextureAssets.MagicPixel.Value;
-
             // Create an array of the bitmap size.
             uint[] imgData = new uint[bitmap.Width * bitmap.Height];
             unsafe

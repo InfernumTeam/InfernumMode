@@ -16,6 +16,7 @@ namespace InfernumMode.Content.Credits
         {
             LoadingTextures,
             Playing,
+            FinalScene,
             FinalizingDisposing
         }
 
@@ -75,9 +76,15 @@ namespace InfernumMode.Content.Credits
 
         public const string Testers4 = "Smh\nShade\nShadine\nTeiull";
 
-        public override void Load() => Main.OnPostDraw += DrawCredits;
+        public override void Load()
+        {
+            Main.OnPostDraw += DrawCredits;
+        }
 
-        public override void Unload() => Main.OnPostDraw -= DrawCredits;
+        public override void Unload()
+        {
+            Main.OnPostDraw -= DrawCredits;
+        }
 
         public override void PostUpdateDusts() => UpdateCredits();
 
@@ -105,6 +112,7 @@ namespace InfernumMode.Content.Credits
             CreditsTimer = 0;
             ActiveGifIndex = 0;
             CreditsPlaying = true;
+            CreditFinalScene.SetupObjects();
         }
 
         public static void StopAbruptly()
@@ -113,10 +121,7 @@ namespace InfernumMode.Content.Credits
             CreditsTimer = 0;
         }
 
-        public static bool ShouldPause()
-        {
-            return Main.mapFullscreen || Main.inFancyUI || Main.gamePaused;
-        }
+        public static bool ShouldPause() => Main.mapFullscreen || Main.inFancyUI; //|| Main.gamePaused;
 
         private static void UpdateCredits()
         {
@@ -138,7 +143,7 @@ namespace InfernumMode.Content.Credits
 
                     if (CreditsTimer >= 240f)
                     {
-                        CurrentState = CreditState.Playing;
+                        CurrentState = CreditState.FinalScene;
                         CreditsTimer = 0;
                     }
                     break;
@@ -172,13 +177,26 @@ namespace InfernumMode.Content.Credits
                             else
                             {
                                 CreditsTimer = 0;
-                                CurrentState = CreditState.FinalizingDisposing;
+                                CurrentState = CreditState.FinalScene;
                                 CreditsPlaying = true;
                                 return;
                             }
                         }
                     }
                     break;
+
+                case CreditState.FinalScene:
+                    float maxTime = 720f;
+                    CreditFinalScene.Update(CreditsTimer);
+
+                    if (CreditsTimer >= maxTime)
+                    {
+                        CreditsTimer = 0;
+                        CurrentState = CreditState.FinalizingDisposing;
+                        return;
+                    }
+                    break;
+
                 case CreditState.FinalizingDisposing:
                     if (CreditsTimer >= disposeTime)
                     {
@@ -201,35 +219,52 @@ namespace InfernumMode.Content.Credits
         private static void DrawCredits(GameTime gameTime)
         {
             // Only draw if the credits are playing.
-            if (!CreditsPlaying || CurrentState != CreditState.Playing || ShouldPause())
+            if (!CreditsPlaying || ShouldPause())
                 return;
 
             // This is already ended.
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
-            // TODO -- Make this variable based on the amount of frames in the gif.
-            float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
-            float fadeInTime = 60f;
-            float fadeOutTime = gifTime - fadeInTime;
-
-            if (CreditsTimer <= gifTime)
+            if (CurrentState is CreditState.Playing)
             {
+                // TODO -- Make this variable based on the amount of frames in the gif.
+                float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
+                float fadeInTime = 60f;
+                float fadeOutTime = gifTime - fadeInTime;
+
+                if (CreditsTimer <= gifTime)
+                {
+                    float opacity = 1f;
+
+                    if (CreditsTimer <= fadeInTime)
+                        opacity = Utils.GetLerpValue(0f, fadeInTime, CreditsTimer, true);
+                    else if (CreditsTimer >= fadeOutTime)
+                        opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
+
+                    if (CreditGIFs.IndexInRange(ActiveGifIndex))
+                    {
+                        CreditGIFs[ActiveGifIndex]?.DrawGIF(CreditsTimer / 3, opacity);
+                        Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+
+                        CreditGIFs[ActiveGifIndex]?.DrawNames(opacity);
+                    }
+                }
+            }
+            else if (CurrentState is CreditState.FinalScene)
+            {
+                float maxTime = 720f;
+                float fadeInTime = 45f;
+                float fadeOutTime = maxTime - fadeInTime;
+
                 float opacity = 1f;
 
                 if (CreditsTimer <= fadeInTime)
                     opacity = Utils.GetLerpValue(0f, fadeInTime, CreditsTimer, true);
                 else if (CreditsTimer >= fadeOutTime)
-                    opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
+                    opacity = 1f - Utils.GetLerpValue(fadeOutTime, maxTime, CreditsTimer, true);
 
-                if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                {
-                    CreditGIFs[ActiveGifIndex]?.DrawGIF(CreditsTimer / 3, opacity);
-                    Main.pixelShader.CurrentTechnique.Passes[0].Apply();
-
-                    CreditGIFs[ActiveGifIndex]?.DrawNames(opacity);
-                }
+                CreditFinalScene.Draw(CreditsTimer, opacity);
             }
-
             Main.spriteBatch.End();
         }
 

@@ -40,9 +40,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.Opacity = head.Opacity;
+            npc.chaseable = head.chaseable;
             npc.Calamity().DR = head.Calamity().DR;
             npc.Calamity().unbreakableDR = head.Calamity().unbreakableDR;
             npc.damage = head.damage > 0 ? npc.defDamage : 0;
+            npc.dontTakeDamage = head.dontTakeDamage;
             npc.HitSound = head.HitSound;
 
             if (npc.type == ModContent.NPCType<StormWeaverTail>())

@@ -103,6 +103,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Reset DR.
             npc.Calamity().DR = 0.1f;
 
+            // Let things home in on the weaver.
+            npc.chaseable = true;
+
+            npc.damage = npc.defDamage;
+
             switch ((StormWeaverAttackType)(int)attackState)
             {
                 case StormWeaverAttackType.NormalMove:
@@ -122,8 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     break;
 
                 case StormWeaverAttackType.AimedLightningBolts:
-                    float _ = 0f;
-                    DoBehavior_AimedLightningBolts(npc, target, ref attackTimer, ref lightningSkyBrightness, ref _, ref electricityFormInterpolant);
+                    DoBehavior_AimedLightningBolts(npc, target, ref attackTimer, ref lightningSkyBrightness, ref electricityFormInterpolant);
                     break;
                 case StormWeaverAttackType.BerdlyWindGusts:
                     DoBehavior_BerdlyWindGusts(npc, target, ref attackTimer);
@@ -131,6 +135,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             Main.rainTime = 480;
+
+            npc.dontTakeDamage = npc.Opacity <= 0.6f;
 
             // Determine rotation.
             npc.rotation = (npc.position - npc.oldPosition).ToRotation() + MathHelper.PiOver2;
@@ -213,6 +219,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             int delayBeforeFiring = 60;
             int shootRate = delayBeforeFiring + 54;
 
+            npc.damage = 0;
+
             // Circle the target.
             Vector2 flyDestination = target.Center - Vector2.UnitY.RotatedBy(attackTimer / 30f) * 630f;
             npc.Center = npc.Center.MoveTowards(flyDestination, 22f);
@@ -220,10 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 33f;
             npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.036f, true) * idealVelocity.Length();
             npc.velocity = npc.velocity.MoveTowards(idealVelocity, 4f);
-
-            // Disable contact damage.
-            npc.damage = 0;
-
+            
             if (attackTimer % shootRate == 1f)
             {
                 // Play a sound on the player getting frost waves rained on them, as a telegraph.
@@ -421,6 +426,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 }
 
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+
+                if (chargeCounter >= chargeCount - 1f)
+                    fogInterpolant *= 0.8f;
             }
 
             // Handle post charge behaviors.
@@ -431,19 +439,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     chargeCounter++;
                     if (chargeCounter >= chargeCount)
+                    {
+                        fogInterpolant = 0f;
                         SelectNewAttack(npc);
+                    }
                     attackTimer = 0f;
                     npc.netUpdate = true;
                 }
             }
         }
 
-        public static void DoBehavior_AimedLightningBolts(NPC npc, Player target, ref float attackTimer, ref float lightningSkyBrightness, ref float weatherStrength, ref float electricityFormInterpolant)
+        public static void DoBehavior_AimedLightningBolts(NPC npc, Player target, ref float attackTimer, ref float lightningSkyBrightness, ref float electricityFormInterpolant)
         {
             int shootCount = 3;
             int redirectTime = 35;
             int arcRedirectTime = 18;
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+
+            npc.damage = 0;
 
             // Have the weaver orient itself near the player at first, and become wreathed in lightning.
             if (attackTimer <= redirectTime)
@@ -464,7 +477,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             if (attackTimer <= redirectTime + arcRedirectTime)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 189f) * 0.96f;
-                weatherStrength = MathHelper.Clamp(weatherStrength + 0.07f, 0f, 0.8f);
                 return;
             }
 
@@ -525,6 +537,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ref float centerPointX = ref npc.Infernum().ExtraAI[0];
             ref float centerPointY = ref npc.Infernum().ExtraAI[1];
             ref float windBurstCounter = ref npc.Infernum().ExtraAI[2];
+
+            if (attackTimer <= 90f)
+                npc.damage = 0;
 
             // Idly emit wind particles.
             Vector2 windSpawnPosition = target.Center + new Vector2(Main.windSpeedCurrent.DirectionalSign() * -1250f, Main.rand.NextFloatDirection() * 900f);

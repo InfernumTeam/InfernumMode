@@ -23,6 +23,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public PrimitiveTrailCopy LimbDrawer = null;
 
+        public bool DrawBeforeNPCs => true;
+
         public Player Target => Main.player[NPC.target];
 
         public int Direction => (NPC.ai[0] >= 2f).ToDirectionInt();

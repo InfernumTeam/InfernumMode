@@ -498,7 +498,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             {
                                 laser.MaxUpdates = 3;
                             });
-                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), 455, 0f);
+                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), DeathLaserDamage, 0f);
                         }
                     }
                 }
@@ -857,13 +857,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             laser.MaxUpdates = 2;
                         });
-                        Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, 400, 0f);
+                        Utilities.NewProjectileBetter(laserSpawnPositionRight, laserVelocityRight, shootType, DeathLaserDamage, 0f);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                         {
                             laser.MaxUpdates = 2;
                         });
-                        Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, 400, 0f);
+                        Utilities.NewProjectileBetter(laserSpawnPositionLeft, laserVelocityLeft, shootType, DeathLaserDamage, 0f);
                     }
 
                     // Lower wall.
@@ -876,7 +876,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             laser.MaxUpdates = 2;
                         });
-                        Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
+                        Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, DeathLaserDamage, 0f);
                     }
 
                     // Upper wall.
@@ -889,7 +889,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             laser.MaxUpdates = 2;
                         });
-                        Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, 400, 0f);
+                        Utilities.NewProjectileBetter(laserSpawnPosition, laserVelocity, shootType, DeathLaserDamage, 0f);
                     }
                 }
             }
@@ -1023,15 +1023,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     npc.Opacity = 1f;
                     npc.netUpdate = true;
 
-                    // Create a burst of homing flames.
+                    // Create a burst of accelerating flames.
                     float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < fireballCount; i++)
                     {
                         Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 13f;
-                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 380, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), AcceleratingFireballDamage, 0f);
 
                         flameShootVelocity = flameShootVelocity.RotatedBy(MathHelper.Pi / fireballCount) * 0.5f;
-                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), 380, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<AcceleratingDoGBurst>(), AcceleratingFireballDamage, 0f);
                     }
 
                     // Create the portal to go through.

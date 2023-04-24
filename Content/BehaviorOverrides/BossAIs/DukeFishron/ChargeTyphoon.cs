@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 for (int i = 0; i < waveCount; i++)
                 {
                     Vector2 shootVelocity = (MathHelper.TwoPi * i / waveCount + offsetAngle).ToRotationVector2() * 9f;
-                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<SmallWave>(), 180, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<SmallWave>(), DukeFishronBehaviorOverride.SmallWaveDamage, 0f);
                 }
             }
         }

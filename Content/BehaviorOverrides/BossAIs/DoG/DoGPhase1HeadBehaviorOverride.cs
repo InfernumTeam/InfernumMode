@@ -66,6 +66,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             set;
         }
 
+        public static int AcceleratingFireballDamage => 380;
+
+        public static int DeathLaserDamage => 400;
+
         public const float Phase2LifeRatio = 0.8f;
 
         public const int PassiveMovementTimeP1 = 420;
@@ -427,7 +431,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             {
                                 laser.MaxUpdates = 3;
                             });
-                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), 455, 0f);
+                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), DeathLaserDamage, 0f);
                         }
                     }
                 }

@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 boltShootVelocity = Projectile.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 2.25f;
-                    Utilities.NewProjectileBetter(Projectile.Center, boltShootVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, boltShootVelocity, ModContent.ProjectileType<BloodBolt>(), DreadnautilusBehaviorOverride.BoltBoltDamage, 0f);
                 }
             }
 

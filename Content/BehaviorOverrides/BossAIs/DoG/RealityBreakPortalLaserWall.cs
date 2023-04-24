@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         {
                             laser.MaxUpdates = 2;
                         });
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), 96, 0f, Projectile.owner);
+                        Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<DoGDeathInfernum>(), DoGPhase1HeadBehaviorOverride.DeathLaserDamage, 0f, Projectile.owner);
                     }
                 }
             }

@@ -31,6 +31,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override int NPCOverrideType => NPCID.BloodNautilus;
 
+        public static int GoreSpikeDamage => 115;
+
+        public static int GoreSpitBallDamage => 120;
+
+        public static int BoltBoltDamage => 120;
+
+        public static int SanguineBatDamage => 130;
+
         public const float Phase2LifeRatio = 0.55f;
 
         public const float Phase3LifeRatio = 0.25f;
@@ -163,7 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 for (int i = 0; i < 36; i++)
                 {
                     Vector2 velocityDirection = (npc.velocity.SafeNormalize(Vector2.UnitY) * new Vector2(npc.width / 2f, npc.height) * 0.75f * 0.5f).RotatedBy(MathHelper.TwoPi * i / 36f);
-                    Dust blood = Dust.NewDustDirect(npc.Center, 0, 0, 5, 0f, 0f, 100, default, 1.4f);
+                    Dust blood = Dust.NewDustDirect(npc.Center, 0, 0, DustID.Blood, 0f, 0f, 100, default, 1.4f);
                     blood.velocity = velocityDirection.SafeNormalize(Vector2.UnitY) * 3f;
                     blood.noGravity = true;
                 }
@@ -494,8 +502,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 perpendicularVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 1.3f;
-                    Utilities.NewProjectileBetter(mouthPosition + perpendicularVelocity * 24f, perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
-                    Utilities.NewProjectileBetter(mouthPosition - perpendicularVelocity * 24f, -perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
+                    Utilities.NewProjectileBetter(mouthPosition + perpendicularVelocity * 24f, perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
+                    Utilities.NewProjectileBetter(mouthPosition - perpendicularVelocity * 24f, -perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
                 }
             }
 
@@ -504,10 +512,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             npc.rotation += chargeAngularVelocity;
 
             // Emit a bunch of blood dust from the mouth.
-            Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 50f - new Vector2(15f), 30, 30, 5, 0f, 0f, 0, Color.Transparent, 1.5f);
+            Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 50f - new Vector2(15f), 30, 30, DustID.Blood, 0f, 0f, 0, Color.Transparent, 1.5f);
             blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(5f, 5f)) * blood.velocity.Length();
             blood.position -= mouthDirection * 60f;
-            blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 90f - new Vector2(20f), 40, 40, 5, 0f, 0f, 100, Color.Transparent, 1.5f);
+            blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 90f - new Vector2(20f), 40, 40, DustID.Blood, 0f, 0f, 100, Color.Transparent, 1.5f);
             blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(10f, 10f)) * (blood.velocity.Length() + 5f);
             blood.position -= mouthDirection * 100f;
 
@@ -576,7 +584,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
                     float offsetAngle = Utils.Remap(attackTimer - shootDelay - slowdownTime, 0f, shootTime, -0.91f, 0.91f);
                     Vector2 shootVelocity = (shootDirection + offsetAngle).ToRotationVector2() * shootSpeed;
-                    Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
+                    Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
 
                     npc.netUpdate = true;
                 }
@@ -637,7 +645,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                         for (int i = 0; i < backSpikeCount; i++)
                         {
                             Vector2 backSpikeShootVelocity = -mouthDirection.RotatedBy(MathHelper.Lerp(-1.5f, 1.5f, i / (float)(backSpikeCount - 1f))) * 7f;
-                            Utilities.NewProjectileBetter(npc.Center + backSpikeShootVelocity * 8f, backSpikeShootVelocity, ModContent.ProjectileType<GoreSpike>(), 125, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + backSpikeShootVelocity * 8f, backSpikeShootVelocity, ModContent.ProjectileType<GoreSpike>(), GoreSpikeDamage, 0f);
                         }
                     }
 
@@ -750,7 +758,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     {
                         int batLifetime = batAttackTime + (slowdownTime + summonTime - (int)attackTimer);
                         Vector2 batSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 600f, -1000f);
-                        int bat = Utilities.NewProjectileBetter(batSpawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<SanguineBat>(), 130, 0f);
+                        int bat = Utilities.NewProjectileBetter(batSpawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<SanguineBat>(), SanguineBatDamage, 0f);
                         if (Main.projectile.IndexInRange(bat))
                         {
                             Main.projectile[bat].ai[1] = batLifetime;
@@ -781,7 +789,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 bloodShootVelocity = (MathHelper.TwoPi * (i + (bloodBurstShootCounter % 2f == 0f ? 0.5f : 0f)) / 8f).ToRotationVector2() * 2f;
-                            Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodBolt>(), 125, 0f);
+                            Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
                         }
                         bloodBurstShootCounter++;
                         npc.netUpdate = true;

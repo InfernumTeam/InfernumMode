@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.width = Projectile.height = 64;
             Projectile.hostile = false;
             Projectile.friendly = false;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.timeLeft = 60;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-7f, 7f);
                 spawnPosition.Y -= 2800f;
 
-                Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), 305, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), DragonfollyBehaviorOverride.RedLightningDamage, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
             }
         }
     }

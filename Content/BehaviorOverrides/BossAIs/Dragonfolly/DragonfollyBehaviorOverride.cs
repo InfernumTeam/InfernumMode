@@ -113,6 +113,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         #region AI
 
+        public static int RedSparkDamage => 225;
+
+        public static int FeatherDamage => 250;
+
+        public static int RedLightningDamage => 250;
+
         public const int TransitionTime = ScreamTime + 15;
 
         public const float Phase2LifeRatio = 0.75f;
@@ -336,7 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     Vector2 spawnPosition = target.Center - Vector2.UnitY.RotatedBy(offsetAngle) * 800f;
                     Vector2 shootDirection = target.DirectionFrom(spawnPosition) * 0.001f;
-                    Utilities.NewProjectileBetter(spawnPosition, shootDirection, ModContent.ProjectileType<RedLightningSnipeFeather>(), 300, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, shootDirection, ModContent.ProjectileType<RedLightningSnipeFeather>(), FeatherDamage, 0f);
                 }
             }
             if (attackTimer >= 150f)
@@ -760,7 +766,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     for (int i = 0; i < totalFeathers; i++)
                     {
                         Vector2 shootVelocity = Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / totalFeathers) * -8f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 9f, shootVelocity, featherType, 240, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 9f, shootVelocity, featherType, FeatherDamage, 0f);
                     }
                 }
 
@@ -948,7 +954,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     Vector2 spawnOffset = -target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 775f;
                     Vector2 sparkVelocity = -spawnOffset.SafeNormalize(Vector2.UnitY) * 14f;
-                    Utilities.NewProjectileBetter(target.Center + spawnOffset, sparkVelocity, ModContent.ProjectileType<RedSpark>(), 240, 0f);
+                    Utilities.NewProjectileBetter(target.Center + spawnOffset, sparkVelocity, ModContent.ProjectileType<RedSpark>(), RedSparkDamage, 0f);
                 }
 
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();

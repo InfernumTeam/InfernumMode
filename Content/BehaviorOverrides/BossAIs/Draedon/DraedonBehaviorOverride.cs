@@ -43,9 +43,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         public const int PostBattleMusicLength = 5120;
 
         // Projectile damage values.
-        public const int NormalShotDamage = 520;
+        public const int NormalShotDamage = 540;
 
-        public const int StrongerNormalShotDamage = 540;
+        public const int StrongerNormalShotDamage = 560;
 
         public const int AresEnergySlashDamage = 640;
 

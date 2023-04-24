@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             {
                 float shootOffsetAngle = MathHelper.Lerp(-0.56f, 0.56f, i / 4f);
                 Vector2 lightningVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 8f;
-                Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ModContent.ProjectileType<RedSpark>(), 240, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ModContent.ProjectileType<RedSpark>(), DragonfollyBehaviorOverride.RedSparkDamage, 0f);
             }
         }
     }

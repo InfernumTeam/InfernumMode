@@ -155,6 +155,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         #endregion
 
         #region AI
+
+        public static int SmallWaveDamage => 180;
+
+        public static int ChargeTyphoonDamage => 185;
+
+        public static int TornadoDamage => 250;
+
+        public static int TidalWaveDamage => 275;
+
         public override bool PreAI(NPC npc)
         {
             npc.TargetClosestIfTargetIsInvalid();
@@ -421,7 +430,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 typhoonSpeed = -npc.velocity * 0.2f;
-                        Utilities.NewProjectileBetter(npc.Center, typhoonSpeed, ModContent.ProjectileType<ChargeTyphoon>(), 150, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, typhoonSpeed, ModContent.ProjectileType<ChargeTyphoon>(), ChargeTyphoonDamage, 0f);
                     }
                 }
             }
@@ -728,7 +737,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                         WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
                         Vector2 spawnPosition = result.ToWorldCoordinates();
                         Vector2 tornadoVelocity = Vector2.UnitX * (target.Center.X > spawnPosition.X).ToDirectionInt() * 4f;
-                        int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), 200, 0f);
+                        int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), TornadoDamage, 0f);
                         Main.projectile[tornado].Bottom = spawnPosition;
                     }
                 }
@@ -812,7 +821,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                     {
                         for (int i = -1; i <= 1; i += 2)
                         {
-                            int wave = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * waveSpeed * i, ModContent.ProjectileType<TidalWave>(), 230, 0f);
+                            int wave = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * waveSpeed * i, ModContent.ProjectileType<TidalWave>(), TidalWaveDamage, 0f);
                             Main.projectile[wave].Bottom = npc.Center + Vector2.UnitY * 700f;
                         }
                     }
@@ -900,7 +909,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                     foreach (int x in horizontalSpawnPositions)
                     {
                         Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
-                        int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 300, 0f);
+                        int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), TornadoDamage, 0f);
                         Main.projectile[tornado].ai[1] = 1f;
                         Main.projectile[tornado].Bottom = spawnPosition;
                     }
@@ -932,7 +941,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                         {
                             float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 185, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), ChargeTyphoonDamage, 0f);
                         }
                     }
                 }

@@ -31,6 +31,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             SummonVultures
         }
 
+        public static int SandBlastDamage => 75;
+
+        public static int SandnadoDamage => 90;
+
         public const int HideMapIconIndex = 5;
 
         public const float Phase2LifeRatio = 0.55f;
@@ -284,7 +288,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                     {
                         Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * sandBurstSpeed;
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
-                        Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 80, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), SandBlastDamage, 0f);
 
                         for (int j = 0; j < 5; j++)
                             CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
@@ -375,8 +379,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(8f, 11f);
-                            Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
-                            Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), SandBlastDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), SandBlastDamage, 0f);
 
                             for (int i = 0; i < 5; i++)
                                 CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
@@ -458,7 +462,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
 
                 for (int i = 0; i < 2; i++)
-                    Utilities.NewProjectileBetter(spawnPosition + Main.rand.NextVector2Circular(120f, 120f), sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 75, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition + Main.rand.NextVector2Circular(120f, 120f), sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), SandBlastDamage, 0f);
             }
             Vector2 sandPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
             Vector2 sandVelocity = new Vector2(target.Center.X - sandPosition.X, 0).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
@@ -534,15 +538,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         for (int i = 0; i < sandBurstCount; i++)
                         {
                             Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
-                            Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), 75, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), SandBlastDamage, 0f);
                             for (int j = 0; j < 2; j++)
                                 CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
                         }
 
                         // Create the tornadoes.
                         Vector2 tornadoVelocity = Vector2.UnitX * 4f;
-                        Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), SandnadoDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), SandnadoDamage, 0f);
 
                         npc.netUpdate = true;
                     }

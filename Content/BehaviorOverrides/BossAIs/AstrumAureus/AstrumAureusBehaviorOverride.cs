@@ -70,15 +70,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             new Vector2(-184f, -20f),
         };
 
-        public const int AstralLaserDamage = 160;
+        public static int AstralLaserDamage => 160;
 
-        public const int AstralMissileDamage = 160;
+        public static int AstralMissileDamage => 160;
 
-        public const int AstralCometDamage = 165;
+        public static int AstralCometDamage => 165;
 
-        public const int StompShockwaveDamage = 200;
+        public static int StompShockwaveDamage => 200;
 
-        public const int DrillLaserbeamDamage = 280;
+        public static int DrillLaserbeamDamage => 280;
 
         public const int NextAttackTypeIndex = 5;
 

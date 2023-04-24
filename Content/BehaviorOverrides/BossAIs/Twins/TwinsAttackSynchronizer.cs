@@ -178,19 +178,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         #region AI
 
-        public const int SmallLaserDamage = 135;
+        public static int SmallLaserDamage => 135;
 
-        public const int CursedCinderDamage = 135;
+        public static int CursedCinderDamage => 135;
 
-        public const int CursedFireballDamage = 135;
+        public static int CursedFireballDamage => 135;
 
-        public const int RedLightningDamage = 140;
+        public static int RedLightningDamage => 140;
 
-        public const int CursedFlameBurstDamage = 140;
+        public static int CursedFlameBurstDamage => 140;
 
-        public const int FlamethrowerDamage = 200;
+        public static int FlamethrowerDamage => 200;
 
-        public const int BigDeathrayDamage = 250;
+        public static int BigDeathrayDamage => 250;
 
         public const int AfterimageDrawInterpolantIndex = 8;
 

@@ -450,6 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (lifeRatio < DeathAnimationLifeRatio)
             {
                 DoBehavior_DeathAnimation(npc, target, deathEffectTimer, wasSummonedAtNight == 1f, ref burnIntensity);
+                deathEffectTimer++;
                 return false;
             }
 
@@ -594,8 +595,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Delete all fire blenders.
             Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());
-
-            deathEffectTimer++;
 
             // Delete remaining projectiles with a shockwave.
             if (deathEffectTimer == 96f)

@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Projectile.velocity.Length() > 0.02f)
             {
-                float flySpeed = 0.0076f * Projectile.Distance(target.Center) + 6f;
+                float flySpeed = Projectile.Distance(target.Center) * 0.0064f + 5.5f;
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(target.Center) * flySpeed, 0.05f);
                 Projectile.velocity = Projectile.velocity.ClampMagnitude(1f, 26f);
             }

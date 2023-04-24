@@ -9,6 +9,7 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -289,7 +290,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
-                    if (!n.active || !PotentialNPCTargetIDs.Contains(n.type) || !n.WithinRange(npc.Center, 950f))
+                    if (!n.active || !PotentialNPCTargetIDs.Contains(n.type) || !n.WithinRange(player.Center, 950f))
                         continue;
 
                     potentialTargets.Add(n);
@@ -323,8 +324,59 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 SoundEngine.PlaySound(CommonCalamitySounds.SwiftSliceSound, target.Center);
 
                 CreateSparks(target.Center);
-                ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 15);
+                ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 8);
                 target.StrikeNPCNoInteraction(Main.rand.Next(40000, 60000), 0f, 0, true);
+
+                CreateImpactParticlesForTarget(npc, target);
+            }
+        }
+
+        public static void CreateImpactParticlesForTarget(NPC npc, NPC target)
+        {
+            if (target.Organic())
+            {
+                SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
+                for (int i = 0; i < 15; i++)
+                {
+                    int bloodLifetime = Main.rand.Next(22, 36);
+                    float bloodScale = Main.rand.NextFloat(0.6f, 0.8f);
+                    Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat());
+                    bloodColor = Color.Lerp(bloodColor, new Color(51, 22, 94), Main.rand.NextFloat(0.65f));
+
+                    if (Main.rand.NextBool(20))
+                        bloodScale *= 2f;
+
+                    Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.81f) * Main.rand.NextFloat(11f, 23f);
+                    bloodVelocity.Y -= 12f;
+                    BloodParticle blood = new(target.Center, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
+                    GeneralParticleHandler.SpawnParticle(blood);
+                }
+                for (int i = 0; i < 6; i++)
+                {
+                    float bloodScale = Main.rand.NextFloat(0.4f, 0.8f);
+                    Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat(0.5f, 1f));
+                    Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.9f) * Main.rand.NextFloat(9f, 14.5f);
+                    BloodParticle2 blood = new(target.Center, bloodVelocity, 20, bloodScale, bloodColor);
+                    GeneralParticleHandler.SpawnParticle(blood);
+                }
+
+                return;
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                int sparkLifetime = Main.rand.Next(22, 36);
+                float sparkScale = Main.rand.NextFloat(0.7f, 0.8f);
+                Color sparkColor = Color.Lerp(Color.Silver, Color.Gold, Main.rand.NextFloat(0.7f));
+                sparkColor = Color.Lerp(sparkColor, Color.Orange, Main.rand.NextFloat());
+
+                if (Main.rand.NextBool(6))
+                    sparkScale *= 2f;
+
+                Vector2 sparkVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * Main.rand.NextFloat(9f, 14f);
+                sparkVelocity.Y -= 4f;
+                SparkParticle spark = new(target.Center, sparkVelocity, true, sparkLifetime, sparkScale, sparkColor);
+                GeneralParticleHandler.SpawnParticle(spark);
             }
         }
 

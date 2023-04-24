@@ -19,11 +19,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             get
             {
                 int weaverIndex = NPC.FindFirstNPC(ModContent.NPCType<StormWeaverHead>());
-                int? defaultCVMusic = Calamity.Instance.GetMusicFromMusicMod("StormWeaver");
+                int? defaultSWMusic = Calamity.Instance.GetMusicFromMusicMod("StormWeaver");
                 if (weaverIndex == -1 || !InfernumMode.CanUseCustomAIs)
-                    return defaultCVMusic;
+                    return defaultSWMusic;
 
-                return Main.npc[weaverIndex].ai[1] != 0f ? defaultCVMusic : MusicID.SpaceDay;
+                return defaultSWMusic;
             }
         }
 
@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 if (weaverIndex == -1 || !InfernumMode.CanUseCustomAIs)
                     return MusicID.Boss3;
 
-                return Main.npc[weaverIndex].ai[1] != 0f ? MusicID.Boss2 : MusicID.SpaceDay;
+                return MusicID.Boss2;
             }
         }
 

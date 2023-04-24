@@ -47,17 +47,13 @@ float2 GetVelocity(float2 coords)
 float4 MultiColorLerp(float4 colors[8], float t, int numStops)
 {
     // Handle t outside the gradient's range.
-    if (t <= 0)
-        return colors[0];
-
-    if (t >= 1)
-        return colors[numStops - 1];
+    float clampedT = saturate(t);
 
     // Find the span t sits within.
-    int end = int(t / numStops);
+    int end = int(clampedT / numStops);
 
     // Interpolate colors for this span.
-    float colorInterpolant = t * numStops % 1;
+    float colorInterpolant = clampedT * numStops % 1;
     return lerp(colors[clamp(end, 0, numStops - 1)], colors[clamp(end + 1, 0, numStops - 1)], colorInterpolant);
 }
 
@@ -153,17 +149,7 @@ float4 DrawResult(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLO
     
     // Correct for density "gaps" in cases where there's small areas where there's no density surrounding by lots of density.
     float densityCorrectionThresold = 1.8;
-    if (density < densityCorrectionThresold)
-    {
-        if (left > density && left > densityCorrectionThresold)
-            density = left;
-        if (right > density && right > densityCorrectionThresold)
-            density = right;
-        if (top > density && top > densityCorrectionThresold)
-            density = top;
-        if (bottom > density && bottom > densityCorrectionThresold)
-            density = bottom;
-    }
+    density = lerp(density, max(density, max(max(left, right), max(top, bottom))), density < densityCorrectionThresold);
     
     float4 colorData = tex2D(colorField, coords);
     float4 color = float4(colorData.rgb, 1);
@@ -172,7 +158,7 @@ float4 DrawResult(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLO
     if (lifetimeFadeStops >= 2)
     {
         float4 interpolatedColor = MultiColorLerp(lifetimeFadeColors, 1 - exp(-colorInterpolateSharpness * density), lifetimeFadeStops);
-        color = lerp(color, interpolatedColor, interpolatedColor.a / (density * 0.088 + 1));
+        color = lerp(color, interpolatedColor, interpolatedColor.a / (density * 0.088 + 1) * lifetimeFadeStops >= 2);
     }
     
     return color * density;

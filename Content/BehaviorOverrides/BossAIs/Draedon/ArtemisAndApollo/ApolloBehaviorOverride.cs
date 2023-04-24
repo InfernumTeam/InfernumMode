@@ -555,7 +555,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ref float apolloFlameSpinDirection = ref npc.Infernum().ExtraAI[20];
 
             // Provide the target infinite flight time.
-            target.wingTime = target.wingTimeMax;
+            if (npc.type == ModContent.NPCType<Apollo>())
+                target.DoInfiniteFlightCheck(Color.ForestGreen);
 
             if (npc.type == ModContent.NPCType<Apollo>() && CalamityGlobalNPC.draedonExoMechTwinRed >= 0)
             {

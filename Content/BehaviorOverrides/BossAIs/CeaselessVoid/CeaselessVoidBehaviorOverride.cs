@@ -112,6 +112,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             CeaselessVoidAttackType.ConvergingEnergyBarrages
         };
 
+        public static readonly Color InfiniteFlightTextColor = Color.Lerp(Color.Purple, Color.Black, 0.35f);
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -507,7 +509,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 InfernumMode.BlackFade = 1f;
 
             // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
-            target.wingTime = target.wingTimeMax;
+            target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
 
             // Initialize by creating the dark energy ring.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedDarkEnergy == 0f)
@@ -731,7 +733,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
             if (attackTimer <= chargeUpDelay)
-                target.wingTime = target.wingTimeMax;
+                target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
 
             // Play a shoot sound if ready.
             if (playShootSound)
@@ -1103,7 +1105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             float burstAcceleration = 1.023f;
 
             // Grant the target infinite flight time so that they don't run out and take an unfair hit.
-            target.wingTime = target.wingTimeMax;
+            target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
 
             // Create a dark energy circle on the first frame.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)

@@ -2071,7 +2071,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 // Give the target infinite flight time.
-                target.wingTime = target.wingTimeMax;
+                target.DoInfiniteFlightCheck(Color.Red);
 
                 // Make the bomb countdown effect happen.
                 if (bombReleaseCountdown >= 0f)
@@ -2169,7 +2169,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 // Give the target infinite flight time.
-                target.wingTime = target.wingTimeMax;
+                target.DoInfiniteFlightCheck(Color.Red);
 
                 // Release walls of darts from the top of the arena.
                 int brimstoneDartID = ModContent.ProjectileType<BrimstoneBarrage>();

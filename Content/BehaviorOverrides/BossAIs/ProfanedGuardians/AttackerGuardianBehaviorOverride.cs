@@ -116,10 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (player.active && !player.dead)
                 {
                     if (player.WithinRange(npc.Center, 10000f))
-                    {
-                        player.wingTime = player.wingTimeMax;
-                        player.AddBuff(ModContent.BuffType<ElysianGrace>(), 2, true);
-                    }
+                        target.DoInfiniteFlightCheck(Color.Orange);
 
                     if (player.WithinRange(new Vector2(WorldSaveSystem.ProvidenceDoorXPosition, (WorldSaveSystem.ProvidenceArena.Y + WorldSaveSystem.ProvidenceArena.Height * 0.5f) * 16f), 10000f))
                     {

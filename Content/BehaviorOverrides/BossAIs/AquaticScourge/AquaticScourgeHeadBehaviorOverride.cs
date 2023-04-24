@@ -221,7 +221,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 target.breath = target.breathMax;
                 target.ignoreWater = true;
-                target.wingTime = target.wingTimeMax;
+                target.DoInfiniteFlightCheck(Color.Lime);
             }
 
             // Stop despawning.

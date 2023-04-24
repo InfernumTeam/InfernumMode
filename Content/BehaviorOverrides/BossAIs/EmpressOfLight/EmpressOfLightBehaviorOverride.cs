@@ -199,8 +199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
-                player.wingTime = player.wingTimeMax;
-                player.AddBuff(ModContent.BuffType<GlimmeringWings>(), 10);
+                target.DoInfiniteFlightCheck(Color.White);
             }
 
             // Use the bloom shader at night.

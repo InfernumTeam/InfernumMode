@@ -1330,7 +1330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                     // Provide the target infinite flight time during laser grid attacks.
                     if (specialAttackType != SpecialAttackType.ChargeGates)
-                        target.wingTime = target.wingTimeMax;
+                        target.DoInfiniteFlightCheck(Color.Fuchsia);
 
                     if (specialAttackType is SpecialAttackType.LaserWalls or SpecialAttackType.CircularLaserBurst)
                         HatGirl.SayThingWhileOwnerIsAlive(target, "Oh man, theres so many lasers! Slow and precise movements seem like your best bet here...");

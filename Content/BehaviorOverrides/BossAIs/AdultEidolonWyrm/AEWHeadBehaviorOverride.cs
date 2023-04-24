@@ -9,6 +9,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
+using InfernumMode.Content.Cooldowns;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -237,7 +238,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
             target.breath = target.breathMax;
             target.ignoreWater = true;
-            target.wingTime = target.wingTimeMax;
+            target.DoInfiniteFlightCheck(Color.Navy);
 
             // Set the global whoAmI variable.
             CalamityGlobalNPC.adultEidolonWyrmHead = npc.whoAmI;

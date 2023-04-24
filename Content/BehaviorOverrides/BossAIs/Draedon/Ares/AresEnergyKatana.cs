@@ -147,12 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             NPC.npcSlots = 5f;
             NPC.damage = AresEnergyKatanaContactDamage / 2;
-
-            // Unlike projectiles, NPCs have no Colliding hook to use for general-purpose collision logic.
-            // As such, a roundabout hack is required, where the hurt box is so large that it triggers for everything, but a CanHitPlayer check culls invalid hits.
-            NPC.width = 450;
-            NPC.height = 450;
-
+            NPC.Size = Vector2.One * 60f;
             NPC.defense = 80;
             NPC.DR_NERD(0.35f);
             NPC.LifeMaxNERB(1250000, 1495000, 500000);
@@ -220,6 +215,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 PerformDisabledHoverMovement();
                 return;
             }
+
+            // Unlike projectiles, NPCs have no Colliding hook to use for general-purpose collision logic.
+            // As such, a roundabout hack is required, where the hurt box is so large that it triggers for everything, but a CanHitPlayer check culls invalid hits.
+            NPC.width = 450;
+            NPC.height = 450;
 
             switch ((AresBodyAttackType)Ares.ai[0])
             {
@@ -459,6 +459,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             // The katana should by default not be in use.
             KatanaIsInUse = false;
+
+            // Reset the hit/hurtbox.
+            NPC.Size = Vector2.One * 60f;
 
             ExoMechAIUtilities.PerformAresArmDirectioning(NPC, Ares, Target, Vector2.UnitY, true, false, ref CurrentDirection);
 

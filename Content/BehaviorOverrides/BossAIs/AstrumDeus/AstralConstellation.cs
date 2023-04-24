@@ -107,8 +107,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (Projectile.identity % 2f == 1f)
                 initialVelocity = initialVelocity.RotatedBy(MathHelper.PiOver2);
 
-            Utilities.NewProjectileBetter(Projectile.Center, -initialVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), 200, 0f, -1, 1f);
-            Utilities.NewProjectileBetter(Projectile.Center, initialVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), 200, 0f, -1, 1f);
+            Utilities.NewProjectileBetter(Projectile.Center, -initialVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), AstrumDeusHeadBehaviorOverride.AstralPlasmaSparkDamage, 0f, -1, 1f);
+            Utilities.NewProjectileBetter(Projectile.Center, initialVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), AstrumDeusHeadBehaviorOverride.AstralPlasmaSparkDamage, 0f, -1, 1f);
             Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordExplosion>(), 0, 0f);
         }
     }

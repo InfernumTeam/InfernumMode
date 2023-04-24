@@ -39,6 +39,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         #region AI
 
+        public static int ElectricBoltDamage => 95;
+
+        public static int BloodSpitDamage => 100;
+
+        public static int IchorSpitDamage => 100;
+
+        public static int PsionicOrbDamage => 105;
+
+        public static int PsionicLightningBoltDamage => 140;
+
         public override bool PreAI(NPC npc)
         {
             NPC.crimsonBoss = npc.whoAmI;
@@ -229,7 +239,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     {
                         Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8f);
                         Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(40f, 40f);
-                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 100, 0f, -1, 0f, 1f);
+                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), IchorSpitDamage, 0f, -1, 0f, 1f);
                     }
                 }
                 else
@@ -279,7 +289,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                         if (BossRushEvent.BossRushActive)
                             bloodVelocity *= 1.35f;
 
-                        Utilities.NewProjectileBetter(spawnPosition, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), 100, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), BloodSpitDamage, 0f);
                     }
                 }
             }
@@ -425,13 +435,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                         {
                             orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
                         });
-                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(-0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(-0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), PsionicOrbDamage, 0f);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(orb =>
                         {
                             orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
                         });
-                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY.RotatedBy(0.17f) * -5f, ModContent.ProjectileType<PsionicOrb>(), PsionicOrbDamage, 0f);
                     }
                     else
                     {
@@ -439,7 +449,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                         {
                             orb.ModProjectile<PsionicOrb>().UseUndergroundAI = shouldUseUndergroundAI;
                         });
-                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<PsionicOrb>(), 110, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<PsionicOrb>(), PsionicOrbDamage, 0f);
                     }
                 }
                 npc.velocity = Vector2.Zero;

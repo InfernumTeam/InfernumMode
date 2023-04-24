@@ -112,15 +112,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (BossRushEvent.BossRushActive)
                     doomVelocity *= 1.5f;
 
-                Utilities.NewProjectileBetter(Projectile.Center, doomVelocity, ModContent.ProjectileType<DarkPulse>(), 170, 0f);
-                Utilities.NewProjectileBetter(Projectile.Center, doomVelocity * 0.25f, ModContent.ProjectileType<DarkPulse>(), 170, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, doomVelocity, ModContent.ProjectileType<DarkPulse>(), CultistBehaviorOverride.DarkPulseDamage, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, doomVelocity * 0.25f, ModContent.ProjectileType<DarkPulse>(), CultistBehaviorOverride.DarkPulseDamage, 0f);
             }
             for (int i = 0; i < 9; i++)
             {
                 Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
                 if (Projectile.localAI[1] == 1f)
                     beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
-                Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<DoomBeam>(), 240, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<DoomBeam>(), CultistBehaviorOverride.DoomBeamDamage, 0f);
             }
         }
     }

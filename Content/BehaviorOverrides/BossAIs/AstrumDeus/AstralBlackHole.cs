@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     for (int i = 0; i < LaserCount; i++)
                     {
                         Vector2 laserDirection = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / LaserCount);
-                        Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<DarkGodLaser>(), 300, 0f);
+                        Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<DarkGodLaser>(), AstrumDeusHeadBehaviorOverride.BlackHoleLaserDamage, 0f);
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                     Vector2 flyVelocity = Projectile.SafeDirectionTo(target.Center) * (BossRushEvent.BossRushActive ? 28f : 19.5f);
-                    Utilities.NewProjectileBetter(Projectile.Center + flyVelocity * 10f, flyVelocity, ModContent.ProjectileType<DarkBoltLarge>(), 200, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center + flyVelocity * 10f, flyVelocity, ModContent.ProjectileType<DarkBoltLarge>(), AstrumDeusHeadBehaviorOverride.DarkBoltDamage, 0f);
                 }
             }
         }

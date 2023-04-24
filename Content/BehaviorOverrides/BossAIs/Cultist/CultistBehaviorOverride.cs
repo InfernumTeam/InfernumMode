@@ -49,8 +49,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         }
 
         public const float BorderWidth = 3472f;
+
         public const float Phase2LifeRatio = 0.65f;
+
         public const float Phase3LifeRatio = 0.25f;
+
         public const float TransitionAnimationTime = 90f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -93,6 +96,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         #endregion Loading
 
         #region AI
+
+        public static int IceShardDamage => 185;
+
+        public static int LightBurstDamage => 195;
+
+        public static int IceMassDamage => 195;
+
+        public static int FireballDamage => 195;
+
+        public static int LightningDamage => 200;
+
+        public static int ShadowFireballDamage => 200;
+
+        public static int DarkPulseDamage => 200;
+
+        public static int FireBeamDamage => 250;
+
+        public static int DoomBeamDamage => 300;
 
         public override bool PreAI(NPC npc)
         {
@@ -549,13 +570,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         if (BossRushEvent.BossRushActive)
                             fireballShootVelocity *= 1.5f;
 
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 180, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, FireballDamage, 0f);
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % skyFireballShootRate == skyFireballShootRate - 1f)
                     {
                         Vector2 fireballSpawnPosition = target.Center - new Vector2(Main.rand.NextFloatDirection() * 600f, -850f - target.velocity.Y * 20f);
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, 180, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY * 7.75f, ProjectileID.CultistBossFireBall, FireballDamage, 0f);
                     }
 
                     frameType = (int)CultistFrameState.HoldArmsOut;
@@ -769,7 +790,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                                     if (BossRushEvent.BossRushActive)
                                         lightningVelocity *= 1.3f;
 
-                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 185, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, LightningDamage, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                                     Main.projectile[lightning].tileCollide = false;
                                 }
                             }
@@ -861,7 +882,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
 
                     int explosionDelay = (int)(215f - adjustedTime + Main.rand.Next(20));
-                    Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 180, 0f, -1, explosionDelay);
+                    Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), LightBurstDamage, 0f, -1, explosionDelay);
                 }
             }
 
@@ -1168,7 +1189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 5f) * 3.2f;
-                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 180, 0f);
+                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), IceMassDamage, 0f);
                     }
 
                     npc.Center = teleportPosition;

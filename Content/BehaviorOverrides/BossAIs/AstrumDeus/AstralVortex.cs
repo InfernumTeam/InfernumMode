@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 else
                     Projectile.velocity *= 0.9f;
 
-                // Idly create debris crystals.
+                // Idly create flames.
                 if (FlameSpawnRate >= 1f && Timer % FlameSpawnRate == FlameSpawnRate - 1)
                 {
                     Vector2 crystalSpawnPosition = Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 200f) * Projectile.scale;
@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 crystalVelocity = (crystalSpawnPosition - Projectile.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * flameSpeed;
-                            Utilities.NewProjectileBetter(crystalSpawnPosition, crystalVelocity, ModContent.ProjectileType<AstralFlame2>(), 200, 0f);
+                            Utilities.NewProjectileBetter(crystalSpawnPosition, crystalVelocity, ModContent.ProjectileType<AstralFlame2>(), AstrumDeusHeadBehaviorOverride.AstralFlameDamage, 0f);
                         }
                     }
                 }
@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                         for (int i = 0; i < 9; i++)
                         {
                             Vector2 flameVelocity = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * 10f;
-                            Utilities.NewProjectileBetter(impactPoint, flameVelocity, ModContent.ProjectileType<AstralFlame2>(), 200, 0f);
+                            Utilities.NewProjectileBetter(impactPoint, flameVelocity, ModContent.ProjectileType<AstralFlame2>(), AstrumDeusHeadBehaviorOverride.AstralFlameDamage, 0f);
                         }
                     }
                     Color[] explosionColors = new Color[]

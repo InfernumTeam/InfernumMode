@@ -89,12 +89,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     explosion.ModProjectile<CosmicExplosion>().MaxRadius = ExplosionRadius * 0.7f;
                 });
 
-                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), 400, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CosmicExplosion>(), SignusBehaviorOverride.CosmicExplosionDamage, 0f);
 
                 for (int i = 0; i < 2; i++)
                 {
                     Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(12f, 12f);
-                    Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), SignusBehaviorOverride.KunaiDamage, 0f);
                 }
             }
 

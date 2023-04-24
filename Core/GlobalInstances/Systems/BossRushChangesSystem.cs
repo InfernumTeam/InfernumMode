@@ -166,7 +166,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 new Boss(NPCID.Deerclops, permittedNPCs: new int[] { ModContent.NPCType<LightSnuffingHand>() }),
 
-                new Boss(ModContent.NPCType<Signus>(), specialSpawnCountdown: 360, permittedNPCs: new int[] { ModContent.NPCType<UnworldlyEntity>() }),
+                new Boss(ModContent.NPCType<Signus>(), specialSpawnCountdown: 360),
 
                 new Boss(ModContent.NPCType<Bumblefuck>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Bumblefuck2>(), NPCID.Spazmatism, NPCID.Retinazer }),
 

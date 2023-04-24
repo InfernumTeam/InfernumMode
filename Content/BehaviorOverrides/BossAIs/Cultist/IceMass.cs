@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 for (float speed = 6f; speed <= 21f; speed += 3.3f)
                 {
                     Vector2 iceVelocity = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2() * speed * (BossRushEvent.BossRushActive ? 1.6f : 1f);
-                    Utilities.NewProjectileBetter(Projectile.Center, iceVelocity, ModContent.ProjectileType<IceShard>(), 175, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, iceVelocity, ModContent.ProjectileType<IceShard>(), CultistBehaviorOverride.IceShardDamage, 0f);
                 }
             }
         }

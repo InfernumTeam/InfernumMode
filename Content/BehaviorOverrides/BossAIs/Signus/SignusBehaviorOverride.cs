@@ -34,8 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             ScytheTeleportThrow,
             ShadowDash,
             FastHorizontalCharge,
-            CosmicFlameChargeBombs,
-            SummonEntities
+            CosmicFlameChargeBombs
         }
         #endregion
 
@@ -55,8 +54,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         #region AI
 
+        public static int KunaiDamage => 275;
+
+        public static int ScytheDamage => 275;
+
+        public static int ShadowSlashDamage => 300;
+
+        public static int CosmicExplosionDamage => 350;
+
         public const float Phase2LifeRatio = 0.7f;
+
         public const float Phase3LifeRatio = 0.3f;
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -123,10 +132,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     break;
                 case SignusAttackType.CosmicFlameChargeBombs:
                     DoAttack_CosmicFlameChargeBombs(npc, target, lifeRatio, ref attackTimer);
-                    break;
-                case SignusAttackType.SummonEntities:
-                    DoAttack_SummonEntities(npc, target, lifeRatio, ref attackTimer);
-                    npc.ai[0] = 3f;
                     break;
             }
 
@@ -396,7 +401,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                         {
                             int scytheReleaseDelay = (int)MathHelper.Lerp(70f, 25f, i / (float)(totalScythesToCreate - 1f));
                             float scytheShootAngle = baseShootAngle + MathHelper.Lerp(-scytheSpread, scytheSpread, i / (float)(totalScythesToCreate - 1f));
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EldritchScythe>(), 250, 0f, -1, scytheReleaseDelay, scytheShootAngle);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EldritchScythe>(), ScytheDamage, 0f, -1, scytheReleaseDelay, scytheShootAngle);
                         }
 
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -544,7 +549,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 slashPosition = new(slashPositionX, slashPositionY);
-                            Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), 250, 0f, -1, Main.rand.NextFloat(MathHelper.TwoPi));
+                            Utilities.NewProjectileBetter(slashPosition + Main.rand.NextVector2Circular(30f, 30f), Vector2.Zero, ModContent.ProjectileType<ShadowSlash>(), ShadowSlashDamage, 0f, -1, Main.rand.NextFloat(MathHelper.TwoPi));
 
                             // Make the slashes move.
                             slashPosition = slashPosition.MoveTowards(target.Center, slashMovementSpeed);
@@ -764,46 +769,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     }
                     break;
             }
-        }
-
-        public static void DoAttack_SummonEntities(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-        {
-            int totalEntitiesToSummon = (int)MathHelper.SmoothStep(4f, 8f, 1f - lifeRatio);
-            int entitySummonRate = (int)MathHelper.Lerp(10f, 15f, 1f - lifeRatio);
-            ref float entitySummonCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Lol. Lmao.
-            SelectNextAttack(npc);
-
-            // Slow down at first and appear above the target.
-            if (attackTimer < 90f)
-            {
-                npc.velocity *= 0.95f;
-                npc.rotation = npc.velocity.X * 0.02f;
-                npc.Opacity = Utils.GetLerpValue(0f, 35f, attackTimer, true);
-                if (attackTimer == 1f)
-                    npc.Center = target.Center - Vector2.UnitY * 440f;
-                return;
-            }
-
-            // Look at the target.
-            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-
-            // Disable contact damage.
-            npc.damage = 0;
-
-            // And create entities.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % entitySummonRate == entitySummonRate - 1f)
-            {
-                Vector2 entitySpawnPosition = npc.Center + Main.rand.NextVector2Circular(250f, 250f);
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
-
-                entitySummonCounter++;
-                npc.netUpdate = true;
-            }
-
-            if (entitySummonCounter > totalEntitiesToSummon)
-                SelectNextAttack(npc);
         }
 
         public static void SelectNextAttack(NPC npc)

@@ -39,6 +39,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
         #region AI
 
+        public static int MushroomBombDamage => 70;
+
+        public static int SporeCloudDamage => 75;
+
+        public static int MushroomPillarDamage => 80;
+
         public const int MushroomStompBarrageInterval = 3;
 
         public const int UsingDetachedHandsFlagIndex = 5;
@@ -225,7 +231,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                 extraGravity = MathHelper.Clamp(extraGravity - 0.1f, 0f, 10f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % pillarMushroomSpawnRate == pillarMushroomSpawnRate - 1f)
-                    Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, target.Bottom.Y);
+                    Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), MushroomBombDamage, 0f, -1, 0f, target.Bottom.Y);
             }
 
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
@@ -299,7 +305,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                             {
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
                                 Vector2 sporeShootVelocity = Main.rand.NextVector2Unit() * sporeCloudSpeed * Main.rand.NextFloat(1f, 2f);
-                                Utilities.NewProjectileBetter(spawnPosition, sporeShootVelocity, ModContent.ProjectileType<SporeCloud>(), 75, 0f, -1, Main.rand.Next(3));
+                                Utilities.NewProjectileBetter(spawnPosition, sporeShootVelocity, ModContent.ProjectileType<SporeCloud>(), SporeCloudDamage, 0f, -1, Main.rand.Next(3));
                             }
                         }
 
@@ -346,7 +352,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootPower;
                     shootVelocity.X += npc.SafeDirectionTo(target.Center).X * shootPower * 0.4f;
                     shootVelocity.Y -= shootPower * 0.6f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MushBomb>(), MushroomBombDamage, 0f);
                 }
             }
 
@@ -393,7 +399,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                         new CustomTileConditions.ActiveAndNotActuated(),
                         new CustomTileConditions.NotPlatform()
                     }), out Point newBottom);
-                    Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 80, 0f);
+                    Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), MushroomPillarDamage, 0f);
                 }
 
                 // Release spores into the air.
@@ -493,7 +499,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                                 if (target.Center.Y < npc.Center.Y - 400f)
                                     shroomVelocity.Y *= 1.5f;
 
-                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f, -1, 0f, npc.Bottom.Y);
+                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), MushroomBombDamage, 0f, -1, 0f, npc.Bottom.Y);
                             }
                         }
                     }

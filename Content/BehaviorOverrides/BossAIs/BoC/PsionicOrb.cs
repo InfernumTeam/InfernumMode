@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                         for (int i = 0; i < 10; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / 10f + offsetAngle).ToRotationVector2() * 9f;
-                            Utilities.NewProjectileBetter(Projectile.position, shootVelocity, ProjectileID.MartianTurretBolt, 95, 0f);
+                            Utilities.NewProjectileBetter(Projectile.position, shootVelocity, ProjectileID.MartianTurretBolt, BoCBehaviorOverride.ElectricBoltDamage, 0f);
                         }
                     }
                 }
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * 16f;
-                Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), 145, 0f, -1, shootVelocity.ToRotation(), Main.rand.Next(100));
+                Utilities.NewProjectileBetter(Projectile.Center - shootVelocity * 7.6f, shootVelocity, ModContent.ProjectileType<PsionicLightningBolt>(), BoCBehaviorOverride.PsionicLightningBoltDamage, 0f, -1, shootVelocity.ToRotation(), Main.rand.Next(100));
             }
 
             for (int i = 0; i < 36; i++)

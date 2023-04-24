@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.Items.Accessories;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.StormWeaver;
@@ -72,6 +71,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Cloud elemental. I did not choose this internal name.
             ModContent.NPCType<ThiccWaifu>(),
         };
+
+        public static int SparkDamage => 275;
+
+        public static int FrostWaveDamage => 275;
+
+        public static int LightningDamage => 275;
+
+        public static int WindGustDamage => 300;
 
         public const int FogInterpolantIndex = 6;
 
@@ -168,7 +175,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 case StormWeaverAttackType.FogSneakAttackCharges:
                     DoBehavior_FogSneakAttackCharges(npc, target, ref lightningSkyBrightness, ref attackTimer, ref fogInterpolant, ref electricityFormInterpolant);
                     break;
-
                 case StormWeaverAttackType.AimedLightningBolts:
                     DoBehavior_AimedLightningBolts(npc, target, ref attackTimer, ref lightningSkyBrightness, ref electricityFormInterpolant);
                     break;
@@ -376,7 +382,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     {
                         float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / 10f);
                         Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 245, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                     }
                 }
             }
@@ -417,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         Vector2 spawnOffset = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * 1600f + shootOffsetAngle.ToRotationVector2() * dx;
                         Vector2 maxShootVelocity = Vector2.UnitY.RotatedBy(shootOffsetAngle) * 9f;
                         Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.5f, ModContent.ProjectileType<StormWeaverFrostWaveTelegraph>(), 0, 0f, -1, 0f, maxShootVelocity.Length());
-                        Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.15f, ProjectileID.FrostWave, 260, 0f, -1, -delayBeforeFiring, maxShootVelocity.Length());
+                        Utilities.NewProjectileBetter(target.Center + spawnOffset, maxShootVelocity * 0.15f, ProjectileID.FrostWave, FrostWaveDamage, 0f, -1, -delayBeforeFiring, maxShootVelocity.Length());
                     }
                 }
                 lightningSkyBrightness = MaxLightningBrightness;
@@ -492,7 +498,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         {
                             Vector2 lightningSpawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.92f) * 150f;
                             Vector2 lightningVelocity = (target.Center - lightningSpawnPosition).SafeNormalize(Vector2.UnitY) * 6.5f;
-                            int arc = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 255, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
+                            int arc = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, LightningDamage, 0f, -1, lightningVelocity.ToRotation(), Main.rand.Next(100));
                             if (Main.projectile.IndexInRange(arc))
                                 Main.projectile[arc].tileCollide = false;
                         }
@@ -502,7 +508,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.37f, 0.37f, i / 3f);
                             Vector2 sparkVelocity = tail.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 6.7f;
-                            Utilities.NewProjectileBetter(tail.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
+                            Utilities.NewProjectileBetter(tail.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                         }
                     }
                     attackTimer = 0;
@@ -595,7 +601,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     for (int i = 0; i < sparkCount; i++)
                     {
                         Vector2 sparkVelocity = (MathHelper.TwoPi * i / sparkCount).ToRotationVector2() * sparkSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 250, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                     }
                 }
 
@@ -679,7 +685,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         // Proportionally make the sparks aim at the target.
                         sparkVelocity = Vector2.Lerp(sparkVelocity, n.SafeDirectionTo(target.Center) * sparkVelocity.Length(), aimAtTargetInterpolant).SafeNormalize(Vector2.UnitY) * sparkSpeed;
 
-                        Utilities.NewProjectileBetter(n.Center + Main.rand.NextVector2Circular(8f, 8f), sparkVelocity, ModContent.ProjectileType<HomingWeaverSpark>(), 250, 0f);
+                        Utilities.NewProjectileBetter(n.Center + Main.rand.NextVector2Circular(8f, 8f), sparkVelocity, ModContent.ProjectileType<HomingWeaverSpark>(), SparkDamage, 0f);
 
                         // Create sparks.
                         CreateSparks(n.Center);
@@ -772,7 +778,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                                 wind.ModProjectile<WindGust>().SpinDirection = spinDirection;
                                 wind.ModProjectile<WindGust>().SpinCenter = target.Center;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<WindGust>(), 250, 0f, -1, MathHelper.TwoPi * i / gustsPerBurst);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<WindGust>(), WindGustDamage, 0f, -1, MathHelper.TwoPi * i / gustsPerBurst);
                         }
                         windBurstCounter++;
                         npc.netUpdate = true;

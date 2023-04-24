@@ -787,9 +787,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
             attackSelector.Add(SignusAttackType.KunaiDashes);
             attackSelector.Add(SignusAttackType.ScytheTeleportThrow);
-
-            if (!NPC.AnyNPCs(ModContent.NPCType<UnworldlyEntity>()))
-                attackSelector.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
+            attackSelector.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
 
             attackSelector.Add(SignusAttackType.FastHorizontalCharge);
 

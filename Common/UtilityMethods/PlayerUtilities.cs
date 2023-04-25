@@ -30,11 +30,15 @@ namespace InfernumMode
 
         public static void DoInfiniteFlightCheck(this Player player, Color textColor)
         {
+            if (player.dead || !player.active)
+                return;
+                
             if (!player.HasCooldown(InfiniteFlight.ID))
             {
                 CombatText.NewText(player.Hitbox, textColor, "Infinite flight granted!", true);
                 SoundEngine.PlaySound(SoundID.Item35 with { Volume = 4f, Pitch = 0.3f }, player.Center);
             }
+
             player.AddCooldown(InfiniteFlight.ID, CalamityUtils.SecondsToFrames(0.5f));
             player.wingTime = player.wingTimeMax;
         }

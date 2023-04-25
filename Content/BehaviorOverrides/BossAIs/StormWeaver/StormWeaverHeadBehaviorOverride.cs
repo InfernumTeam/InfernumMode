@@ -156,6 +156,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             npc.dontTakeDamage = npc.Opacity <= 0.6f;
             npc.damage = npc.defDamage;
 
+            // If there still was no valid target, fly away.
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
+            {
+                AquaticScourgeHeadBehaviorOverride.DoBehavior_Despawn(npc);
+                return false;
+            }
+
             switch ((StormWeaverAttackType)(int)attackState)
             {
                 case StormWeaverAttackType.HuntSkyCreatures:

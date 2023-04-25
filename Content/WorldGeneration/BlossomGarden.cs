@@ -21,13 +21,13 @@ namespace InfernumMode.Content.WorldGeneration
             SchematicAnchor schematicAnchor = SchematicAnchor.Center;
             for (int i = 0; i < 10000; i++)
             {
-                int placementPositionX = WorldGen.genRand.Next(WorldGen.tLeft, WorldGen.tRight);
-                int placementPositionY = WorldGen.tTop < Main.rockLayer - 10.0 ? WorldGen.tBottom + 240 : WorldGen.tTop - 240;
-                placementPoint = new(placementPositionX, placementPositionY);
+                int placementPositionX = WorldGen.genRand.Next(WorldGen.tLeft - 240, WorldGen.tRight + 240);
+                int placementPositionY = WorldGen.tTop < Main.rockLayer - 10.0 ? WorldGen.tBottom + 160 : WorldGen.tTop - 160;
+                placementPoint = new(placementPositionX, placementPositionY + WorldGen.genRand.Next(-120, 120));
                 Rectangle area = CalamityMod.CalamityUtils.GetSchematicProtectionArea(schematic, placementPoint, schematicAnchor);
 
-                // Check the spot is valid.
-                if (WorldGen.structures.CanPlace(area, 10))
+                // Check if the spot is valid.
+                if (WorldGen.structures.CanPlace(area, 36))
                     break;
             }
             WorldSaveSystem.BlossomGardenCenter = placementPoint;

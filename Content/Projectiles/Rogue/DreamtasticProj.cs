@@ -38,10 +38,10 @@ namespace InfernumMode.Content.Projectiles.Rogue
         }
 
         public Vector2 PikyPosition =>
-            Projectile.Center + new Vector2(MathF.Cos(Time / 19f), MathF.Sin(Time / 29f) * 0.4f - 1.48f) * DorkHoverOffset;
+            Owner.Center + new Vector2(MathF.Cos(Time / 19f), MathF.Sin(Time / 29f) * 0.4f - 1.48f) * DorkHoverOffset;
 
         public Vector2 DunkerPosition =>
-            Projectile.Center + new Vector2(-MathF.Cos(Time / 19f), MathF.Sin(Time / 29f + MathHelper.Pi * 0.66f) * 0.4f - 1.48f) * DorkHoverOffset;
+            Owner.Center + new Vector2(-MathF.Cos(Time / 19f), MathF.Sin(Time / 29f + MathHelper.Pi * 0.66f) * 0.4f - 1.48f) * DorkHoverOffset;
 
         public Player Owner => Main.player[Projectile.owner];
 

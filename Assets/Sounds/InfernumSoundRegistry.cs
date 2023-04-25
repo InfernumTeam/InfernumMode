@@ -263,6 +263,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ModeToggleLaugh = new("InfernumMode/Assets/Sounds/Custom/Misc/ModeToggleLaugh");
 
+        public static readonly SoundStyle RainLoop = new("InfernumMode/Assets/Sounds/Custom/MainMenu/RainLoop");
+
         public static readonly SoundStyle ThunderRumble = new("InfernumMode/Assets/Sounds/Custom/MainMenu/ThunderRumble");
 
         public static readonly SoundStyle ThunderRumble2 = new("InfernumMode/Assets/Sounds/Custom/MainMenu/ThunderRumble2");

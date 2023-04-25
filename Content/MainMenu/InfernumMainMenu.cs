@@ -1,13 +1,16 @@
 ﻿using CalamityMod.MainMenu;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -20,6 +23,8 @@ namespace InfernumMode.Content.MainMenu
         internal List<Raindroplet> RainDroplets;
 
         internal List<GlowingEmber> Embers;
+
+        private SlotId RainSlot;
 
         private int TimeTilNextFlash;
 
@@ -54,7 +59,13 @@ namespace InfernumMode.Content.MainMenu
         {
             RainDroplets = null;
             Embers = null;
-        }      
+        }
+
+        public override void Update(bool isOnTitleScreen)
+        {
+            if (!SoundEngine.TryGetActiveSound(RainSlot, out var result) && Main.instance.IsActive)
+                RainSlot = SoundEngine.PlaySound(InfernumSoundRegistry.RainLoop with { Volume = 0.1f });
+        }
 
         private void HandleRaindrops()
         {
@@ -68,8 +79,8 @@ namespace InfernumMode.Content.MainMenu
             if (RainDroplets.Count < maxDroplets)
             {
                 float scaleScalar = Main.rand.NextFloat(1f, 4f);
-                Vector2 velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(22f, 32f);
-                RainDroplets.Add(new Raindroplet(Main.rand.Next(300, 300), Main.rand.NextFloat(0.35f, 0.85f) * scaleScalar, 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
+                Vector2 velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(25f, 34f);
+                RainDroplets.Add(new Raindroplet(Main.rand.Next(70, 80), Main.rand.NextFloat(0.35f, 0.85f) * scaleScalar, 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
                    velocity));
             }
 
@@ -144,9 +155,9 @@ namespace InfernumMode.Content.MainMenu
             
             // Apply a raindrop effect to the texture.
             Effect raindrop = InfernumEffectsRegistry.RaindropShader.GetShader().Shader;
-            raindrop.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            raindrop.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 2f);
             raindrop.Parameters["cellResolution"].SetValue(15f);
-            raindrop.Parameters["intensity"].SetValue(2f);
+            raindrop.Parameters["intensity"].SetValue(1f);
             float sceneBrightness = 1f;
             if (LightningFlash.TimeLeft > 0)
                 sceneBrightness = MathHelper.Clamp(MathHelper.Lerp(1f, 0f, 0.7f - (float)LightningFlash.TimeLeft / FlashTime), 0f, 1f);

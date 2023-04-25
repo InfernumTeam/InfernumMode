@@ -13,6 +13,7 @@
         MusicNotes,
         BubbleSparkle,
         CyanLightningSparkle,
-        SakuraSparkle
+        SakuraSparkle,
+        BookSparkle
     }
 }

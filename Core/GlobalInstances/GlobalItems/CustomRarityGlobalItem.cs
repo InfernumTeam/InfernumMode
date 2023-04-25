@@ -85,6 +85,11 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumSakuraRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumDreamtasticRarity>())
+                {
+                    InfernumDreamtasticRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

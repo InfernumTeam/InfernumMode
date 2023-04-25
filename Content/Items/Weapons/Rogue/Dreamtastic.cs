@@ -2,6 +2,7 @@
 using CalamityMod.Items;
 using CalamityMod.Items.Weapons.Rogue;
 using InfernumMode.Content.Projectiles.Rogue;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -38,6 +39,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
             Item.shoot = ModContent.ProjectileType<DreamtasticProj>();
             Item.shootSpeed = 26f;
             Item.DamageType = RogueDamageClass.Instance;
+            Item.rare = ModContent.RarityType<InfernumDreamtasticRarity>();
             Item.value = CalamityGlobalItem.RarityHotPinkBuyPrice;
         }
 

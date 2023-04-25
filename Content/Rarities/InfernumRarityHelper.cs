@@ -175,6 +175,14 @@ namespace InfernumMode.Content.Rarities
                         velocity = (Vector2.UnitY * Main.rand.NextFloat(0.25f, 0.41f)).RotatedBy(MathHelper.PiOver4 + Main.rand.NextFloat(0.65f, 0.75f));
                         sparklesList.Add(new SakuraSparkle(lifetime, scale, initialRotation, rotationSpeed, position, velocity));
                         break;
+
+                    case SparkleType.BookSparkle:
+                        lifetime = (int)Main.rand.NextFloat(60f, 90f);
+                        scale = Main.rand.NextFloat(0.125f, 0.25f);
+                        position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
+                        velocity = Vector2.UnitY * Main.rand.NextBool().ToDirectionInt() * Main.rand.NextFloat(0.05f, 0.15f);
+                        sparklesList.Add(new BookSparkle(lifetime, scale, 0f, 0f, position, Vector2.Zero));
+                        break;
                 }
             }
 

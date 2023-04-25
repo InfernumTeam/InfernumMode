@@ -159,7 +159,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             }
 
             // Make the two dorks appear near the end of the animation.
-            DorkHoverOffset = Utils.GetLerpValue(animationTime - 105f, animationTime - 25f, Time, true) * 85f;
+            DorkHoverOffset = Utils.GetLerpValue(animationTime - 105f, animationTime - 25f, Time, true) * 84f;
 
             if (Time >= animationTime)
             {
@@ -249,8 +249,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
             Vector2 dunkerDrawPosition = DunkerPosition - Main.screenPosition;
 
             Texture2D pikyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/Rogue/Piky").Value;
-            Texture2D dunkerTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/Rogue/Piky").Value;
-            SpriteEffects pikyDirection = pikyDrawPosition.X < baseDrawPosition.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Texture2D dunkerTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/Rogue/Dunker").Value;
+            SpriteEffects pikyDirection = pikyDrawPosition.X > baseDrawPosition.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             SpriteEffects dunkerDirection = dunkerDrawPosition.X < baseDrawPosition.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             Main.EntitySpriteDraw(pikyTexture, pikyDrawPosition, null, Projectile.GetAlpha(dorkDrawColor), 0f, pikyTexture.Size() * 0.5f, Projectile.scale, pikyDirection, 0);

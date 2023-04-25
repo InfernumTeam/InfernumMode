@@ -109,19 +109,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reset fields.
             npc.Infernum().ExtraAI[DefenderShouldGlowIndex] = 0;
 
-            // Give the player infinite flight time, and keep them in the bounds.
-            for (int i = 0; i < Main.player.Length; i++)
-            {
-                Player player = Main.player[i];
-                if (player.active && !player.dead)
-                {
-                    if (player.WithinRange(npc.Center, 10000f))
-                        target.DoInfiniteFlightCheck(Color.Orange);
+            bool giveInfFlight = true;
+            // Wait before giving this at the start of the fight, to allow the camera time to pan back first.
+            if ((GuardiansAttackType)npc.ai[0] == GuardiansAttackType.SpawnEffects || ((GuardiansAttackType)npc.ai[0] == GuardiansAttackType.FlappyBird && npc.ai[1] < 105f))
+                giveInfFlight = false;
 
-                    if (player.WithinRange(new Vector2(WorldSaveSystem.ProvidenceDoorXPosition, (WorldSaveSystem.ProvidenceArena.Y + WorldSaveSystem.ProvidenceArena.Height * 0.5f) * 16f), 10000f))
+            // Give the player infinite flight time, and keep them in the bounds.
+            if (giveInfFlight)
+            {
+                for (int i = 0; i < Main.player.Length; i++)
+                {
+                    Player player = Main.player[i];
+                    if (player.active && !player.dead)
                     {
-                        if (player.Center.X > WorldSaveSystem.ProvidenceDoorXPosition)
-                            player.Center = new(WorldSaveSystem.ProvidenceDoorXPosition, player.Center.Y);
+                        if (player.WithinRange(npc.Center, 10000f))
+                            player.DoInfiniteFlightCheck(Color.Orange);
+
+                        if (player.WithinRange(new Vector2(WorldSaveSystem.ProvidenceDoorXPosition, (WorldSaveSystem.ProvidenceArena.Y + WorldSaveSystem.ProvidenceArena.Height * 0.5f) * 16f), 10000f))
+                        {
+                            if (player.Center.X > WorldSaveSystem.ProvidenceDoorXPosition)
+                                player.Center = new(WorldSaveSystem.ProvidenceDoorXPosition, player.Center.Y);
+                        }
                     }
                 }
             }

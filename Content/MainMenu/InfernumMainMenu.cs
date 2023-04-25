@@ -158,9 +158,6 @@ namespace InfernumMode.Content.MainMenu
             raindrop.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 2f);
             raindrop.Parameters["cellResolution"].SetValue(15f);
             raindrop.Parameters["intensity"].SetValue(1f);
-            float sceneBrightness = 1f;
-            if (LightningFlash.TimeLeft > 0)
-                sceneBrightness = MathHelper.Clamp(MathHelper.Lerp(1f, 0f, 0.7f - (float)LightningFlash.TimeLeft / FlashTime), 0f, 1f);
             raindrop.Parameters["sceneBrightness"].SetValue(1f);
             raindrop.CurrentTechnique.Passes["RainPass"].Apply();
 

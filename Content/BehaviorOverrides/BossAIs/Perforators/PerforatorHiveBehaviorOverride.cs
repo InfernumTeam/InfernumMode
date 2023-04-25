@@ -39,7 +39,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             IchorFountainCharge
         }
 
-        public const int DeathTimerIndex = 3;
+        public const int DeathTimerIndex = 5;
+
+        public const int DeathAnimationBasePositionXIndex = 6;
+
+        public const int DeathAnimationBasePositionYIndex = 7;
+
+        public const int HasSpawnedLegsIndex = 8;
 
         public const int DeathAnimationLength = 160;
 
@@ -101,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             HandleWormPhaseTriggers(npc, inPhase2, inPhase3, inPhase4, ref attackState, ref wormSummonState);
 
             // Calculate rotation, if not performing the death animation.
-            if (deathTimer! > 0)
+            if (deathTimer <= 0f)
                 npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.04f, -MathHelper.Pi / 6f, MathHelper.Pi / 6f);
 
             // Make the background glow crimson in the form phase, once the large worm is dead.
@@ -187,20 +193,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         public static void DoBehavior_DeathAnimation(NPC npc, Player player, ref float deathTimer)
         {
             int flinchInterval = 30;
-            float interpolant = deathTimer / DeathAnimationLength;
-            ref float basePositionX = ref npc.Infernum().ExtraAI[6];
-            ref float basePositionY = ref npc.Infernum().ExtraAI[7];
-            int bloodReleaseRate = (int)MathHelper.Lerp(1, 4, interpolant);
+            float animationCompletion = deathTimer / DeathAnimationLength;
+            int bloodReleaseRate = (int)MathHelper.Lerp(1f, 4f, animationCompletion);
+            ref float basePositionX = ref npc.Infernum().ExtraAI[DeathAnimationBasePositionXIndex];
+            ref float basePositionY = ref npc.Infernum().ExtraAI[DeathAnimationBasePositionYIndex];
 
             // Don't deal or take any damage.
             npc.dontTakeDamage = true;
             npc.damage = 0;
 
-            // Rapidly come to a halt.
+            // Rapidly slow to a halt.
             if (npc.velocity != Vector2.Zero)
-            {
                 npc.velocity *= 0.75f;
-            }
 
             // Play the sound, and save the original position.
             if (deathTimer == 1)
@@ -214,7 +218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             }
 
             // Screenshake.
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f * interpolant;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = animationCompletion * 8f;
 
             // After a second, start releasing blood everywhere.
             if (deathTimer >= 10)

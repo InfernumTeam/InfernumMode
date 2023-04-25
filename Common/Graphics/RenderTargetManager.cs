@@ -49,10 +49,14 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
-            DisposeOfTargets();
             ManagedTargets = new();
             Main.OnPreDraw += HandleTargetUpdateLoop;
             On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
+        }
+
+        public override void OnModUnload()
+        {
+            DisposeOfTargets();
         }
 
         private void HandleTargetUpdateLoop(GameTime obj) => RenderTargetUpdateLoopEvent?.Invoke();

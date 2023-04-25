@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 return;
 
             for (int i = 0; i < 2; i++)
-                Utilities.NewProjectileBetter(Projectile.Center, -Vector2.UnitY.RotatedByRandom(0.92f) * Main.rand.NextFloat(21f, 31f), ModContent.ProjectileType<EoCTooth2>(), 75, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, -Vector2.UnitY.RotatedByRandom(0.92f) * Main.rand.NextFloat(21f, 31f), ModContent.ProjectileType<EoCTooth2>(), EyeOfCthulhuBehaviorOverride.ToothDamage, 0f);
         }
     }
 }

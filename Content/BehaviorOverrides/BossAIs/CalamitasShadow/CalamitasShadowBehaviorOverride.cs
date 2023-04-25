@@ -1923,7 +1923,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Incorporate the black shadow form effects.
             lightColor = Color.Lerp(lightColor, Color.Black, MathF.Pow(npc.localAI[2], 0.33f));
             bool drawCharredForm = npc.Infernum().ExtraAI[DrawCharredFormIndex] == 1f;
-            float shadowBackglowOffset = 25f * MathF.Pow(npc.localAI[2], 2.8f) * npc.scale;
+            float shadowBackglowOffset = MathF.Pow(npc.localAI[2], 2.8f) * npc.scale * 25f;
             float eyeGleamInterpolant = npc.localAI[3];
 
             // Draw afterimages.

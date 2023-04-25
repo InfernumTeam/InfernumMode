@@ -28,6 +28,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
 
+        public static int CursedCinderDamage => 90;
+
+        public static int ShadeNimbusDamage => 90;
+
+        public static int CorruptThornVineDamage => 95;
+
+        public static int CursedFlameBombDamage => 95;
+
+        public static int ShockwaveDamage => 140;
+
         // This is applicable to all split worms as well.
         // Since split worms share HP, the total amount of HP of the boss is equal to Worm HP * (Total Splits + 1).
         public const int TotalLifeAcrossWorm = 4000;
@@ -195,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                         if (totalFireballsPerBurst > 1f)
                             shootOffsetAngle = MathHelper.Lerp(-0.84f, 0.84f, i / (float)(totalFireballsPerBurst - 1f));
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * 7f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedFlameBomb>(), 85, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedFlameBomb>(), CursedFlameBombDamage, 0f);
                     }
                 }
             }
@@ -224,7 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 for (float dx = -2000f; dx < 2000f; dx += spacing)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
-                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<CorruptThorn>(), 90, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<CorruptThorn>(), CorruptThornVineDamage, 0f);
                 }
             }
 
@@ -240,7 +250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                         Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(6f, 6f);
                         if (BossRushEvent.BossRushActive)
                             shootVelocity *= 3.2f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 85, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedBullet>(), CursedCinderDamage, 0f);
                     }
                 }
             }
@@ -339,7 +349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % rainReleaseRate == rainReleaseRate - 1f && npc.Center.Y < target.Center.Y - 185f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
-                Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 85, 0f);
+                Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), ShadeNimbusDamage, 0f);
             }
 
             if (attackTimer >= 480f)
@@ -381,7 +391,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 125, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), ShockwaveDamage, 0f);
                         wasPreviouslyInTiles = 1f;
                     }
 

@@ -66,6 +66,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Phase3LifeRatio
         };
 
+        public static int FireCrystalDamage => 185;
+
+        public static int FistBulletDamage => 185;
+
+        public static int LaserDamage => 185;
+
+        public static int SpikeTrapDamage => 190;
+
+        public static int SpikeTrapFloorDamage => 250;
+
+        public static int EnrageFireballDamage => 300;
+
+        public static int EyeLaserRayDamage => 300;
+
+        public static int BodyLaserRayDamage => 320;
+
         public static NPC GetLeftFist(NPC npc) => Main.npc[(int)npc.Infernum().ExtraAI[0]];
 
         public static NPC GetRightFist(NPC npc) => Main.npc[(int)npc.Infernum().ExtraAI[1]];
@@ -516,7 +532,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 shootVelocity = freeHead.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(MathHelper.Lerp(-0.72f, 0.72f, i / 9f)) * 10f;
-                        Utilities.NewProjectileBetter(freeHead.Center, shootVelocity, ProjectileID.Fireball, 250, 0f);
+                        Utilities.NewProjectileBetter(freeHead.Center, shootVelocity, ProjectileID.Fireball, EnrageFireballDamage, 0f);
                     }
                 }
 
@@ -795,7 +811,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                             }
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                                Utilities.NewProjectileBetter(crystalSpawnPosition, -Vector2.UnitY * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), 200, 0f);
+                                Utilities.NewProjectileBetter(crystalSpawnPosition, -Vector2.UnitY * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), FireCrystalDamage, 0f);
                         }
 
                         // As well as on the sides of the arena in the third phase.
@@ -817,7 +833,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                                 }
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.UnitX * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), 200, 0f);
+                                    Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.UnitX * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), FireCrystalDamage, 0f);
                             }
                         }
 
@@ -884,7 +900,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fistShootRate == 0f)
                 {
                     int type = ModContent.ProjectileType<FistBullet>();
-                    int bullet = Utilities.NewProjectileBetter(rightFist.Center, Vector2.Zero, type, 200, 0);
+                    int bullet = Utilities.NewProjectileBetter(rightFist.Center, Vector2.Zero, type, FistBulletDamage, 0);
                     if (Main.projectile.IndexInRange(bullet))
                     {
                         Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
@@ -893,7 +909,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                         Main.projectile[bullet].netUpdate = true;
                     }
 
-                    bullet = Utilities.NewProjectileBetter(leftFist.Center, Vector2.Zero, type, 200, 0);
+                    bullet = Utilities.NewProjectileBetter(leftFist.Center, Vector2.Zero, type, FistBulletDamage, 0);
                     if (Main.projectile.IndexInRange(bullet))
                     {
                         Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
@@ -985,10 +1001,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     if (inPhase3)
                         trapVelocity *= 1.25f;
 
-                    Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f, -1, 0f, 1f);
+                    Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), SpikeTrapDamage, 0f, -1, 0f, 1f);
 
                     trapSpawnPosition = npc.Infernum().Arena.BottomRight();
-                    Utilities.NewProjectileBetter(trapSpawnPosition, -trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 200, 0f, -1, 0f, -1f);
+                    Utilities.NewProjectileBetter(trapSpawnPosition, -trapVelocity, ModContent.ProjectileType<SpikeTrap>(), SpikeTrapDamage, 0f, -1, 0f, -1f);
                 }
             }
             else
@@ -1096,7 +1112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     {
                         Vector2 beamSpawnPosition = freeHead.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = Vector2.UnitX * i;
-                        Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), 290, 0f, -1, i * MathHelper.PiOver2 / 120f * 0.46f, freeHead.whoAmI);
+                        Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), EyeLaserRayDamage, 0f, -1, i * MathHelper.PiOver2 / 120f * 0.46f, freeHead.whoAmI);
                     }
                 }
             }
@@ -1119,7 +1135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     for (int i = 0; i < fireCircleCount; i++)
                     {
                         Vector2 fireShootVelocity = (MathHelper.TwoPi * i / fireCircleCount + shootOffsetAngle).ToRotationVector2() * 6.7f;
-                        Utilities.NewProjectileBetter(freeHead.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), 190, 0f);
+                        Utilities.NewProjectileBetter(freeHead.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), LaserDamage, 0f);
                     }
                 }
             }
@@ -1185,7 +1201,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
                 target.Calamity().GeneralScreenShakePower = 12f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f, -1, 0f, laserLifetime);
+                    Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), BodyLaserRayDamage, 0f, -1, 0f, laserLifetime);
             }
 
             // Maintain screen shake effects.
@@ -1355,7 +1371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fistShootRate == 0f && attackTimer < dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime - 75f)
                 {
                     int type = ModContent.ProjectileType<FistBullet>();
-                    int bullet = Utilities.NewProjectileBetter(otherFist.Center, Vector2.Zero, type, 200, 0);
+                    int bullet = Utilities.NewProjectileBetter(otherFist.Center, Vector2.Zero, type, FistBulletDamage, 0);
                     if (Main.projectile.IndexInRange(bullet))
                     {
                         Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
@@ -1376,7 +1392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                         for (int i = 0; i < 15; i++)
                         {
                             Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 15f + shootOffsetAngle).ToRotationVector2() * 8f;
-                            Utilities.NewProjectileBetter(attachedHead.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), 200, 0f);
+                            Utilities.NewProjectileBetter(attachedHead.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), LaserDamage, 0f);
                         }
                     }
                 }
@@ -1467,7 +1483,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserShootVelocity = Vector2.UnitX * Math.Sign(npc.Infernum().Arena.Center.X - laserSpawnPosition.X) * 5f;
-                    Utilities.NewProjectileBetter(laserSpawnPosition, laserShootVelocity, ModContent.ProjectileType<GolemLaser>(), 200, 0f);
+                    Utilities.NewProjectileBetter(laserSpawnPosition, laserShootVelocity, ModContent.ProjectileType<GolemLaser>(), LaserDamage, 0f);
                 }
             }
 
@@ -1541,10 +1557,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().Arena.Center.Y)).Floor();
 
                     if (Collision.CanHit(top, 1, 1, top + Vector2.UnitY * 100f, 1, 1))
-                        Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f, -1, 0f, 1f);
+                        Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), SpikeTrapFloorDamage, 0f, -1, 0f, 1f);
 
                     if (Collision.CanHit(bottom, 1, 1, bottom - Vector2.UnitY * 100f, 1, 1))
-                        Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f, -1, 0f, -1f);
+                        Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), SpikeTrapFloorDamage, 0f, -1, 0f, -1f);
                 }
             }
 

@@ -39,6 +39,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public override int NPCOverrideType => ModContent.NPCType<HiveMindBoss>();
 
+        public static int VileClotDamage => 85;
+
+        public static int EaterOfSoulsWallDamage => 90;
+
+        public static int ShadeNimbusDamage => 90;
+
+        public static int ShadeRainDamage => 90;
+
+        public static int HiveBlobDamage => 95;
+
+        public static int ShadeFireDamage => 100;
+
         public const float FinalPhaseLifeRatio = 0.2f;
 
         public const float HiveMindFadeoutTime = 25f;
@@ -457,7 +469,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < teleportDelay + MaxSlowdownTime)
                 {
                     Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 2.1f;
-                    int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 85, 1f);
+                    int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), VileClotDamage, 1f);
                     Main.projectile[fuck].tileCollide = false;
                 }
             }
@@ -546,7 +558,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             else if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 3f == 0f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + new Vector2(Main.rand.NextFloatDirection(), Main.rand.NextFloatDirection()) * npc.Size * 0.5f;
-                int cloud = Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 72, 0, Main.myPlayer, 11, 0);
+                int cloud = Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), ShadeNimbusDamage, 0, Main.myPlayer, 11, 0);
                 if (!Main.projectile.IndexInRange(cloud))
                 {
                     Main.projectile[cloud].ai[0] = 11f;
@@ -569,7 +581,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             // Release rain.
             Vector2 rainSpawnPosition = npc.position + new Vector2(Main.rand.NextFloat(14f, npc.width - 14f), npc.height + 4f);
-            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 3f, ModContent.ProjectileType<ShaderainHostile>(), 82, 0f, Main.myPlayer, 0f, 0f);
+            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 3f, ModContent.ProjectileType<ShaderainHostile>(), ShadeRainDamage, 0f, Main.myPlayer, 0f, 0f);
         }
 
         public static void DoBehavior_EaterWall(NPC npc, Player target, bool enraged, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
@@ -620,8 +632,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
-                    Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 72, 1f);
+                    Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), EaterOfSoulsWallDamage, 1f);
+                    Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), EaterOfSoulsWallDamage, 1f);
                 }
 
                 // Reset to the slowdown state in preparation for the next attack.
@@ -695,7 +707,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             // Constantly shoot shade flames upward.
             if (npc.alpha <= 0)
-                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, Vector2.UnitY.RotatedByRandom(0.09f) * -9.75f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
+                Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, Vector2.UnitY.RotatedByRandom(0.09f) * -9.75f, ModContent.ProjectileType<ShadeFire>(), ShadeFireDamage, 0f);
 
             // Roar and dash.
             if (attackTimer == teleportDelay + waitTime)
@@ -708,7 +720,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             // Release clots upward if below the necessary phase threshold.
             if (attackTimer > teleportDelay + waitTime && lifeRatio < FinalPhaseLifeRatio && attackTimer % 7f == 6f)
             {
-                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(7f, 9f), ModContent.ProjectileType<VileClot>(), 74, 0f);
+                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(7f, 9f), ModContent.ProjectileType<VileClot>(), VileClotDamage, 0f);
                 Main.projectile[vileClot].tileCollide = false;
             }
 
@@ -767,12 +779,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                     {
                         clot.tileCollide = false;
                     });
-                    Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), 72, 1f);
+                    Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), VileClotDamage, 1f);
                 }
                 if (npc.ai[3] % cloudSpawnRate == cloudSpawnRate - 1f)
                 {
                     Vector2 cloudSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(-605f, -545f));
-                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 72, 1f);
+                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), ShadeNimbusDamage, 1f);
                 }
 
                 // Make flame columns appear.
@@ -863,7 +875,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                             shootSpeed *= 2.3f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), HiveBlobDamage, 0f);
                     }
                     SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);
                 }

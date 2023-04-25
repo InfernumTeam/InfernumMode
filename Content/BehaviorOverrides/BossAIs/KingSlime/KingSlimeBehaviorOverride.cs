@@ -39,6 +39,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         #region AI
 
+        public static int ShurikenDamage => 65;
+
+        public static int JewelBeamDamage => 70;
+
         public static readonly KingSlimeAttackType[] AttackPattern = new KingSlimeAttackType[]
         {
             KingSlimeAttackType.SmallJump,

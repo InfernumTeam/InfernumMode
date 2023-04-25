@@ -34,9 +34,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #endregion
 
         #region AI
+        public static int ToothDamage => 75;
+
+        public static int SittingBloodDamage => 80;
+
+        public static int BloodShotDamage => 80;
+
         public const int GleamTime = 45;
+
         public const float Phase2LifeRatio = 0.8f;
+
         public const float Phase3LifeRatio = 0.35f;
+
         public const float Phase4LifeRatio = 0.15f;
 
         public static EoCAttackType[] Phase1AttackPattern => new EoCAttackType[]
@@ -396,7 +405,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     shootVelocity.X *= Main.rand.NextFloat(0.35f, 0.65f);
                     for (int j = 0; j < 3; j++)
                         CreateBloodParticles(npc, Color.Red * 0.8f);
-                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), 60, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), SittingBloodDamage, 0f);
                 }
 
                 if (attackTimer >= chargeTime || Math.Abs(npc.Center.X - target.Center.X) > 920f)
@@ -482,7 +491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                             for (int j = 0; j < 3; j++)
                                 CreateBloodParticles(npc, Color.Red * 0.8f, toothShootVelocity, spawnPosition);
 
-                            Utilities.NewProjectileBetter(spawnPosition, toothShootVelocity, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
+                            Utilities.NewProjectileBetter(spawnPosition, toothShootVelocity, ModContent.ProjectileType<EoCTooth>(), ToothDamage, 0f, 255, npc.target);
                         }
                     }
                     teethBurstDelay = 8f;
@@ -732,7 +741,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         for (int i = 0; i < bloodShotCount; i++)
                         {
                             Vector2 velocity = shootDirection * 6.4f + Main.rand.NextVector2Square(-3f, 3f);
-                            Utilities.NewProjectileBetter(shootCenter - shootDirection * 5f, velocity, ModContent.ProjectileType<BloodShot>(), 80, 0f);
+                            Utilities.NewProjectileBetter(shootCenter - shootDirection * 5f, velocity, ModContent.ProjectileType<BloodShot>(), BloodShotDamage, 0f);
                             int bloodParticleCount = phase3 ? 7 : 4;
                             for (int j = 0; j < bloodParticleCount; j++)
                                 CreateBloodParticles(npc, Color.Red * 0.70f, velocity * 2f, shootCenter - shootDirection * 5);

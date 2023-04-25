@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     if (lightningSpawnPosition.Y <= 640f)
                         lightningSpawnPosition.Y = 640f;
 
-                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), 200, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), BereftVassalComboAttackManager.LightningDamage, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
                 }
             }
 
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 sparkVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 8f;
-                            Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<VassalSpark>(), 190, 0f);
+                            Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<VassalSpark>(), BereftVassalComboAttackManager.SparkDamage, 0f);
                             Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity * 0.01f, ModContent.ProjectileType<SparkTelegraphLine>(), 0, 0f, -1, 0f, 35f);
                         }
                     }

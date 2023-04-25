@@ -47,6 +47,9 @@ namespace InfernumMode.Common.InverseKinematics
                     float behindRotation = (float)limbs.Limbs[i - 1].Rotation;
                     limbs.Limbs[i].Rotation = MathHelper.Clamp((float)limbs.Limbs[i].Rotation, behindRotation - AngularDeviationLenience, behindRotation + AngularDeviationLenience);
                 }
+
+                if (limbs.Limbs[i].Rotation < 0f)
+                    limbs.Limbs[i].Rotation += MathHelper.TwoPi;
             }
         }
     }

@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             }
 
             Vector2 aimDirection = jewel.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
-            int beam = Utilities.NewProjectileBetter(jewel.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), 72, 0f);
+            int beam = Utilities.NewProjectileBetter(jewel.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), KingSlimeBehaviorOverride.JewelBeamDamage, 0f);
             if (Main.projectile.IndexInRange(beam))
                 Main.projectile[beam].tileCollide = canReachTarget;
         }

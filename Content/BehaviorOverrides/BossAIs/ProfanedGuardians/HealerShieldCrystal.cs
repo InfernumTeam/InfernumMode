@@ -4,6 +4,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -135,6 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Die
                 NPC.active = false;
+                HatGirl.SayThingWhileOwnerIsAlive(target, "They're a really good team! You'll want to manage everything at once, taking it slow is your best shot!");
 
                 Vector2 wallBottom = NPC.Center + new Vector2(21f, WallTexture.Height * 0.5f);
                 Vector2 wallTop = NPC.Center + new Vector2(21f, -WallTexture.Height * 0.5f);

@@ -25,6 +25,7 @@ using InfernumMode.Common.Graphics.Particles;
 using Terraria.GameContent.Events;
 using InfernumMode.Core;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Content.Projectiles.Pets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -134,6 +135,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             ref float localAttackTimer = ref npc.Infernum().ExtraAI[0];
             ref float substate = ref npc.Infernum().ExtraAI[1];
+
+            ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
+
             npc.Calamity().ShouldCloseHPBar = true;
             npc.damage = 0;
             switch (substate)
@@ -146,6 +150,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Particle energyLeak = new SparkParticle(energySpawnPosition, npc.velocity * 0.3f, false, 30, Main.rand.NextFloat(0.9f, 1.4f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], 0.75f));
                         GeneralParticleHandler.SpawnParticle(energyLeak);
                     }
+
+                    shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
 
                     if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
                     {
@@ -194,7 +200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 case 1:
                     if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 30f)
-                        typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);//MoonlordDeathDrama.RequestLight(1f/*1f - Utils.GetLerpValue(15f, 30f, localAttackTimer, true)*/, target.Center);
+                        typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);
                     ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
                     drawBlackBars = 0f;
                     npc.Opacity = 0f;
@@ -203,6 +209,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Main.hideUI = false;
                         SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndCharge);
                         commander.Infernum().ExtraAI[CommanderAttackCyclePositionIndex] = 1f;
+
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Ohhh, he's really mad now! Stay on your toes!");
                         npc.life = 0;
                         npc.NPCLoot();
                         npc.active = false;

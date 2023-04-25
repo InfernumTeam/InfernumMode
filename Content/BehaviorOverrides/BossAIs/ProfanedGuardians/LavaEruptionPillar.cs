@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public ref float StretchOffset => ref Projectile.localAI[0];
 
-        public float Width => BigVersion ? 700 : 160f;
+        public float Width => BigVersion ? 700 : 150f;
 
         public float VariableWidth => Width * (BigVersion ? CalamityUtils.SineInOutEasing(CurrentLength / MaxLength, 0) : Utilities.EaseInOutCubic(CurrentLength / MaxLength));
 

@@ -19,6 +19,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Content.Projectiles.Pets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -129,6 +130,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                     }
                 }
+
+                if (attackTimer == initialDelay)
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "They've holed themselves up on the right, but if you get there you can probably breach their defenses!");
 
                 if (attackTimer >= initialDelay && !Main.projectile.Any((Projectile p) => (p.type == ModContent.ProjectileType<HolyAimedDeathrayTelegraph>() || p.type == ModContent.ProjectileType<HolyAimedDeathray>()) && p.active))
                 {
@@ -882,6 +886,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 else if (universalAttackTimer >= whiteGlowTime + ashesTime)
                 {
                     // Die once the animation is complete.
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "It's getting physical now! Don't let one distract you from the other!");
                     npc.life = 0;
                     npc.active = false;
                     DoPhaseTransitionEffects(commander, 2);
@@ -1645,6 +1650,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         float maxXPos = CrystalPosition.X;
                         float minXPos = CenterOfGarden.X - 2370f;
                         xPosToMoveTo = MathHelper.Clamp(npc.Center.X, minXPos, maxXPos);
+
+                        if (target.HasShieldBash())
+                            HatGirl.SayThingWhileOwnerIsAlive(target, "Try ramming into the defender!");
+
                         // Don't deal damage while moving.
                         npc.damage = 0;
 
@@ -1657,7 +1666,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Don't deal damage while moving.
                         npc.damage = 0;
                         Vector2 hoverDestination = new(xPosToMoveTo, CenterOfGarden.Y);
-                        if (npc.Distance(hoverDestination) > 100f)
+                        if (npc.Distance(hoverDestination) > 100f || universalAttackTimer < 10f)
                             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         else
                             npc.velocity *= 0.9f;
@@ -1769,7 +1778,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             if (angleBetween is < (MathHelper.PiOver2 + 0.01f) and not 0)
                                 break;
                         }
-
+                        shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         hoverOffsetX = hoverOffset.X;
                         hoverOffsetY = hoverOffset.Y;
                         localAttackTimer = 0;
@@ -1874,7 +1883,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
                         break;
                 }
-                localAttackTimer++;
+                if (fireballRingsReleased > 0)
+                    localAttackTimer++;
             }
         }
 

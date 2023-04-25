@@ -302,7 +302,7 @@ namespace InfernumMode.Common.Graphics
             }
 
             // Night time should be a bit dimmer.
-            lighting.Parameters["intensity"].SetValue(Main.dayTime ? intensity : 0.75f);
+            lighting.Parameters["intensity"].SetValue(Main.dayTime ? intensity : intensity * 6.5f);
             // Apply the shader
             lighting.CurrentTechnique.Passes[0].Apply();
 
@@ -311,7 +311,7 @@ namespace InfernumMode.Common.Graphics
             spriteBatch.Draw(pixel, new Rectangle(0, 0, screenTarget.Width, screenTarget.Height), Color.White);
             spriteBatch.End();
             if (!Main.dayTime)
-                intensity = 0.8f;
+                intensity *= 6.5f;
         }
 
         private static void DrawShadows(SpriteBatch spriteBatch, RenderTarget2D screenTarget, float lightIntensity)

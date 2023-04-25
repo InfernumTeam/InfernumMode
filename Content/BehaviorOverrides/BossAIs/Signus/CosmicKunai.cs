@@ -69,13 +69,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             // Draw afterimages.
-            for (int i = 0; i < 5; i++)
+            if (Projectile.velocity.Length() > 2.5f)
             {
-                Vector2 afterimageOffset = Projectile.velocity.SafeNormalize(Vector2.Zero) * i * -20f;
-                Color afterimageColor = new Color(198, 118, 204, 0) * (1f - i / 5f) * 0.7f;
-                Main.spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale * 0.7f, SpriteEffects.None, 0f);
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 afterimageOffset = Projectile.velocity.SafeNormalize(Vector2.Zero) * i * -20f;
+                    Color afterimageColor = new Color(198, 118, 204, 0) * (1f - i / 5f) * 0.7f;
+                    Main.spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale * 0.7f, SpriteEffects.None, 0f);
+                }
             }
-
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {

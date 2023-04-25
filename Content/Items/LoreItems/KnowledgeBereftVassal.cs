@@ -9,14 +9,16 @@ namespace InfernumMode.Content.Items.LoreItems
 {
     public class KnowledgeBereftVassal : LoreItem
     {
+        public override string Lore =>
+@"An unusal pair of solitary camaraderie.
+Once a warrior of noble renown, it would seem that Argus was one of the few survivors to emerge from the ruins of Ilmeris.
+Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
+Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.";
+
         public override void SetStaticDefaults()
         {
+            base.SetStaticDefaults();
             DisplayName.SetDefault("The Bereft Vassal and Great Sand Shark");
-            Tooltip.SetDefault("A most unusual allegiance.\n" +
-                "Once a great warrior under the Sea King, it appears that the destruction of his home had left him despondent.\n" +
-                "And yet, it would seem that fighting you has reignited his spirits.");
-            SacrificeTotal = 1;
-            ItemID.Sets.ItemNoGravity[Item.type] = true;
         }
 
         public override void SetDefaults()

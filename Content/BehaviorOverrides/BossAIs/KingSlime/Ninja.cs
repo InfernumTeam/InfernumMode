@@ -361,8 +361,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public void DoJump(float jumpSpeed, Vector2? destination = null)
         {
-            if (destination is null)
-                destination = Target.Center;
+            destination ??= Target.Center;
 
             float gravity = 0.3f;
             NPC.velocity = Utilities.GetProjectilePhysicsFiringVelocity(NPC.Center, destination.Value, gravity, jumpSpeed, out _);

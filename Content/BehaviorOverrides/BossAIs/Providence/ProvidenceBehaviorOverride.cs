@@ -13,7 +13,6 @@ using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
-using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;

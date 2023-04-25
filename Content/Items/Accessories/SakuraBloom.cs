@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Items.Accessories
 
         public override void SetDefaults()
         {
-            Item.width = Item.height = 20;
+            Item.width = Item.height = 26;
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
             Item.rare = ModContent.RarityType<InfernumSakuraRarity>();
             Item.vanity = true;

@@ -1801,27 +1801,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         #endregion Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Serpent's frantic swimming seems to cause the water to be easier to traverse through, you could probably swim with your bare hands!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "If you feel you need more space, try clearing out the sulphurous sand around!";
-                return string.Empty;
-            };
-
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "Did you even take a moment to consider you are pulling me down there with you into that acidic water...? Mate, that stuff BURNS!";
-                return string.Empty;
-            };
+            yield return n => "The Serpent's frantic swimming seems to cause the water to be easier to traverse through, you could probably swim with your bare hands!";
+            yield return n => "If you feel you need more space, try clearing out the sulphurous sand around!";
         }
         #endregion Tips
     }

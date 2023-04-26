@@ -854,23 +854,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (hatGirl)
-                    return "Contrary to what you may think, running into the shadowflame walls will not work, take it slow!";
-                return string.Empty;
+                return "Contrary to what you may think, running into the shadowflame walls will not work, take it slow!";
             };
             yield return n =>
             {
-                if (n.life < n.lifeMax * Phase2LifeRatio && hatGirl)
+                if (n.life < n.lifeMax * Phase2LifeRatio)
                     return "Don't panic when Skeletron does his barrages of hand fireballs! Just jump and stay calm!";
                 return string.Empty;
             };
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "Geeettttttt DUNKED ON!!!";
                 return string.Empty;
             };

@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Items.Pets;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -23,6 +24,12 @@ namespace InfernumMode.Content.Projectiles.Pets
             BeingPet
         }
 
+        public bool SaidBossText
+        {
+            get;
+            set;
+        }
+
         public AsterAIState AIState
         {
             get => (AsterAIState)Projectile.ai[0];
@@ -30,6 +37,8 @@ namespace InfernumMode.Content.Projectiles.Pets
         }
 
         public ref float Time => ref Projectile.ai[1];
+
+        public ref float IdleTextCountdown => ref Projectile.localAI[1];
 
         public Player Owner => Main.player[Projectile.owner];
 
@@ -58,42 +67,38 @@ namespace InfernumMode.Content.Projectiles.Pets
                 return;
             }
 
-            // Bark on the first frame.
+            // Say stuff when a boss is summoned.
+            if (Utilities.CurrentlyFoughtBoss is not null && !Utilities.CurrentlyFoughtBoss.dontTakeDamage)
+            {
+                if (!SaidBossText)
+                {
+                    if (Projectile.localAI[0] != 0f)
+                        SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.BossSpawnText));
+                    SaidBossText = true;
+                }
+            }
+            else
+                SaidBossText = false;
+
+            // Bark and say some snarky text on the first frame.
             if (Projectile.localAI[0] == 0f)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.AsterBarkSound, Projectile.Center);
+                SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.SummonText));
+                IdleTextCountdown = 3600f;
                 Projectile.localAI[0] = 1f;
             }
 
-            HandlePetVariables();
-
-            // Say some goofy things if the player died to a boss.
-            if (Main.myPlayer == Projectile.owner && Owner.Infernum_Tips().ShouldDisplayTips && !Owner.dead)
+            if (Owner.ZoneForest)
             {
-                string tipText = TipsManager.PotentialTipToUse;
-                if (!string.IsNullOrEmpty(tipText))
+                IdleTextCountdown--;
+                if (IdleTextCountdown <= 0f)
                 {
-                    Color messageColor = Color.MediumPurple;
-
-                    if (InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
-                        Main.NewText(tipText, messageColor);
-                    else
-                    {
-                        int textIndex = CombatText.NewText(Projectile.Hitbox, messageColor, tipText, true);
-                        if (textIndex >= 100)
-                            textIndex = 99;
-
-                        Main.combatText[textIndex].position = Projectile.Center;
-                        Main.combatText[textIndex].crit = true;
-                        Main.combatText[textIndex].text = tipText;
-                        Main.combatText[textIndex].color = messageColor;
-                        Main.combatText[textIndex].lifeTime *= 3;
-                    }
-
-                    Owner.Infernum_Tips().ShouldDisplayTips = false;
-                    TipsManager.SaidText.Add(tipText);
+                    IdleTextCountdown = Main.rand.Next(3600, 4800);
+                    SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.PassiveTextOnSurface));
                 }
             }
+
+            HandlePetVariables();
 
             switch (AIState)
             {
@@ -113,6 +118,12 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             Time++;
             Projectile.gfxOffY = 6;
+        }
+
+        public void SaySnarkyComment(string comment)
+        {
+            SoundEngine.PlaySound(InfernumSoundRegistry.AsterBarkSound, Projectile.Center);
+            CombatText.NewText(Projectile.Hitbox, RisingWarriorsSoulstone.TextColor, comment);
         }
 
         public void DoBehavior_SitInPlace()
@@ -243,6 +254,8 @@ namespace InfernumMode.Content.Projectiles.Pets
                     HeartParticle heart = new(Projectile.Top + Main.rand.NextVector2Circular(15f, 6f), Color.Red, Color.DarkRed, heartVelocity, Main.rand.Next(60, 96), heartVelocity.X * 0.3f, Main.rand.NextFloat(0.2f, 0.36f));
                     GeneralParticleHandler.SpawnParticle(heart);
                 }
+
+                SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.PetText));
             }
 
             // Use petting frames.

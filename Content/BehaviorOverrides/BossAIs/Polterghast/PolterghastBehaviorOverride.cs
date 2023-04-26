@@ -1562,20 +1562,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!";
-                return string.Empty;
-            };
+            yield return n => "A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!";
+            yield return n => "If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!";
         }
         #endregion Tips
     }

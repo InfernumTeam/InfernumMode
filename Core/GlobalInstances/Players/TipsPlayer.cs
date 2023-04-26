@@ -22,7 +22,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
         {
-            TipsManager.PotentialTipToUse = TipsManager.SelectTip(HatGirl);
+            TipsManager.PotentialTipToUse = TipsManager.SelectTip();
         }
     }
 }

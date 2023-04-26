@@ -1,4 +1,3 @@
-using InfernumMode.Content.Items.Pets;
 using InfernumMode.Core.OverridingSystem;
 using System;
 using System.Collections.Generic;
@@ -39,7 +38,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
         }
 
-        public static string SelectTip(bool hatGirl)
+        public static string SelectTip()
         {
             if (BossBeingFought is null)
                 return string.Empty;
@@ -50,10 +49,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             bossInfo = NPCBehaviorOverride.BehaviorOverrides[bossInfo.NPCIDToDeferToForTips ?? bossInfo.NPCOverrideType];
 
             // This func evaluates the state of the NPC in question, after it died.
-            IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips(hatGirl);
+            IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips();
             var possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t) && !SaidText.Contains(t)).ToList();
-            if (!hatGirl && !possibleThingsToSay.Any())
-                possibleThingsToSay.AddRange(RisingWarriorsSoulstone.GenericThingsToSayOnDeath.Where(s => !SaidText.Contains(s)));
 
             if (!possibleThingsToSay.Any())
                 return string.Empty;

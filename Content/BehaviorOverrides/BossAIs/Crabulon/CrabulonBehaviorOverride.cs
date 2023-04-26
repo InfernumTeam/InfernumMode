@@ -778,24 +778,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         #endregion Frames and Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return $"Crabulon will only launch spores every {Utilities.AddOrdinalSuffix(MushroomStompBarrageInterval)} jump, better keep count!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!";
-                return string.Empty;
-            };
+            yield return n => $"Crabulon will only launch spores every {Utilities.AddOrdinalSuffix(MushroomStompBarrageInterval)} jump, better keep count!";
+            yield return n => "Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!";
 
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "There isnt Mushroom for the three of us, and I can tell who won the roullete.";
                 return string.Empty;
             };

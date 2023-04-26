@@ -170,19 +170,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #endregion Frames and Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (hatGirl)
-                    return "Having trouble dodging during the spin? Three can play at that game, Spin!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "SPIN TO WIN! SPIN TO WIN! SPIN TO WIN! SPIN TO WIN!";
-                return string.Empty;
+                return "Having trouble dodging during the spin? Three can play at that game, Spin!";
             };
         }
         #endregion Tips

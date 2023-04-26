@@ -1313,22 +1313,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The fight against the Dragonfolly is very chaotic and fast paced. Good mobility and reaction time help a lot!";
-
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Those large red lightning pillars can be negated by flying below them!";
-
-                return string.Empty;
-            };
+            yield return n => "The fight against the Dragonfolly is very chaotic and fast paced. Good mobility and reaction time help a lot!";
+            yield return n => "Those large red lightning pillars can be negated by flying below them!";
         }
         #endregion Tips
     }

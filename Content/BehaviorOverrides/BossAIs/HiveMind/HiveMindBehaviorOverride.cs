@@ -977,38 +977,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             return false;
         }
 
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "This is the time you would want to learn the opponents moves, use their tells to get the upper hand!";
+            yield return n => "Try to push his Rain Charge away by running towards the Hive Mind, this can help keep your arena clean!";
+            yield return n => "The Hive Mind begins its next attack early if you attack it; wait until it's on cooldown before you shoot!";
             yield return n =>
             {
-                if (hatGirl)
-                    return "This is the time you would want to learn the opponents moves, use their tells to get the upper hand!";
-
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Try to push his Rain Charge away by running towards the Hive Mind, this can help keep your arena clean!";
-
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Hive Mind begins its next attack early if you attack it; wait until it's on cooldown before you shoot!";
-
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "That didn't work, but dont worry! Hive got a plan!";
                 return string.Empty;
             };
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "I would make a snarky comment right now, but I probably should Mind my own business...";
                 return string.Empty;
             };

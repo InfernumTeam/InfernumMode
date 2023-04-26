@@ -750,17 +750,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             return false;
         }
 
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "You can weave through the clefs if you manipulate her movement well!";
             yield return n =>
             {
-                if (hatGirl)
-                    return "You can weave through the clefs if you manipulate her movement well!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl && NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
+                if (NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
                     return "The meteors all split in the same way; use this to your advantage!";
                 return string.Empty;
             };

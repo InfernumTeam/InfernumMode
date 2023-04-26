@@ -353,19 +353,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         break;
 
                     case AresBodyAttackType.EnergyBladeSlices:
-                        DoBehavior_EnergyBladeSlices(npc, target, ref enraged, ref attackTimer, ref frameType);
+                        DoBehavior_EnergyBladeSlices(npc, target, ref attackTimer, ref frameType);
                         if (backarmSwapTimer >= 5f)
                             backarmSwapTimer--;
                         break;
 
                     case AresBodyAttackType.DownwardCrossSlices:
-                        DoBehavior_DownwardCrossSlices(npc, target, ref enraged, ref attackTimer, ref frameType);
+                        DoBehavior_DownwardCrossSlices(npc, target, ref attackTimer, ref frameType);
                         if (backarmSwapTimer >= 5f)
                             backarmSwapTimer--;
                         break;
 
                     case AresBodyAttackType.ThreeDimensionalSuperslashes:
-                        DoBehavior_ThreeDimensionalSuperslashes(npc, target, ref enraged, ref attackTimer, ref frameType, ref zPosition);
+                        DoBehavior_ThreeDimensionalSuperslashes(npc, target, ref attackTimer, ref frameType, ref zPosition);
                         if (backarmSwapTimer >= 5f)
                             backarmSwapTimer--;
                         break;
@@ -708,7 +708,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
-        public static void DoBehavior_EnergyBladeSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_EnergyBladeSlices(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             int attackTime = 420;
             ref float attackDelayTimer = ref npc.Infernum().ExtraAI[0];
@@ -740,7 +740,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_DownwardCrossSlices(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_DownwardCrossSlices(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             int sliceCount = 3;
             int anticipationTime = AresEnergyKatana.DownwardCrossSlicesAnticipationTime;
@@ -787,7 +787,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_ThreeDimensionalSuperslashes(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType, ref float zPosition)
+        public static void DoBehavior_ThreeDimensionalSuperslashes(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float zPosition)
         {
             int anticipationTime = AresEnergyKatana.ThreeDimensionalSlicesAnticipationTime;
             int sliceTime = AresEnergyKatana.ThreeDimensionalSlicesSliceTime;
@@ -795,6 +795,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             int sliceCount = 4;
             if (ExoMechManagement.CurrentAresPhase >= 6)
                 laserCount += 4;
+
+            // Laugh.
+            frameType = (int)AresBodyFrameType.Laugh;
 
             float wrappedAttackTimer = attackTimer % (anticipationTime + sliceTime);
             ref float laserSoundCountdown = ref npc.Infernum().ExtraAI[0];
@@ -1664,22 +1667,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Best to keep close during these Exo Overload attacks, otherwise you may have trouble keeping up with the spin!";
-
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Ares' has one hell of a supercomputer, those arms are super predictive! Maybe you can use that to your advantage?";
-
-                return string.Empty;
-            };
+            yield return n => "Best to keep close during these Exo Overload attacks, otherwise you may have trouble keeping up with the spin!";
+            yield return n => "Ares' has one hell of a supercomputer, those arms are super predictive! Maybe you can use that to your advantage?";
         }
         #endregion Tips
     }

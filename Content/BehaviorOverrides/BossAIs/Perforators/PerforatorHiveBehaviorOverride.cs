@@ -1582,14 +1582,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Hive spews out a ton of lingering ichor, so space management is key!";
-                return string.Empty;
-            };
+            yield return n => "The Hive spews out a ton of lingering ichor, so space management is key!";
         }
         #endregion Tips
     }

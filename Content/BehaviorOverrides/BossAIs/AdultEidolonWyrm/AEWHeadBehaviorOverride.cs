@@ -1695,18 +1695,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return false;
         }
         #endregion Death Effects
-
-        #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
-        {
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "Do you have any idea. How hard it is. To hold my breath for that long-MY GUY, you're KILLING me... oh, and yourself! Karma.";
-
-                return string.Empty;
-            };
-        }
-        #endregion Tips
     }
 }

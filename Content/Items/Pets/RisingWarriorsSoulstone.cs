@@ -12,43 +12,51 @@ namespace InfernumMode.Content.Items.Pets
 {
     public class RisingWarriorsSoulstone : ModItem
     {
-        // LITERALLY inverse of hat girl...
-        public static readonly string[] GenericThingsToSayOnDeath = new string[]
+        public static readonly string[] SummonText = new string[]
         {
-            "Another day, another death, ay?",
-            "You totally could have dodged, that, mate.",
-            "Life is an endless cycle. Death after death, you return. And yet your fate is the same.",
-            "Still keeping me around? Hey, no no, I'm not complaining. Carry on.",
-            "Oh you died? Apologies, I was much too lost in my own thoughts to notice, kekeke",
-            "You should die to explosions more. Always fun to see.",
-            "It's quite easy to point out where you went wrong there, kekeke",
-            "Just pick up your money and break your grave, and we can pretend that never happened. Agreed?",
-            "I never thought I would have to travel with someone so prone to dying.",
-            "Yeah, maybe uhhhhh don't do that again.",
-            "If this was hardcore mode I would be on the floor laughing my guts out right now.",
-            "Oh, you think THAT death was bad? Man, lemme tell you about this one time I...",
-            "Hmm? No, no, I saw everything. I'm always watching.",
-            "And up goes the death counter.",
-            "For legal reasons, I have to tell you that I did NOT snap an awesome photo of your death just now.",
-            "You got a bit too goofy there, bub.",
-            "Ah, so silly!!!",
-            "All good things must come to an end. Oh, and you too it seems.",
-            "Oh damn, I thought you might have actually gone that time. But you are back. Again.",
-            "I appreciate you for trying, at least.",
-            "I don't think witnessing you perish time and time again will ever get old.",
-            "You should hold onto Adrenaline more, it helps you tank a hit. If you can build it up, that is.",
-            "Ah! Close... ish.",
-            "You should give me your gear so I can show you how it's done.",
-            "Awesome. Now try again. I wanna see the bloodshed.",
-            "What, you want me to help you during the fight? Sorry, I'm just here for style points.",
-            "Oh yeah, this boss was balanced to screw specifically you and JUST you over. Cruel world, I know.", // I agree.
-            "...eh? Oh sorry sorry, was just vibin' to the boss music! Uh, sorry for your death, try again, I guess.",
-            "Wow, you... lasted longer than I thought you would!",
-            "I'm wondering if... maybe you need a break.",
-            "They'll tell your story for ages to come... as that guy who died. Or something.",
-            "I feel like BIG SHOT would suit that boss, to be honest.",
-            "Hey now, don't get salty... I'm sure that was only a BIT your fault."
+            "Thought you could keep me away? Think again!",
+            "Huzzah! I return.",
+            "WOW it smells dusty inside that tablet...",
+            "Be careful with me, I'm a special little guy.",
+            "Back at last! Time to wreak havoc once more!",
+            "Gamers don't die, they respawn.",
+            "Weh!",
         };
+
+        public static readonly string[] PassiveTextOnSurface = new string[]
+        {
+            "It's a beautiful day outside. Birds are singing, flowers are blooming...",
+            "Wanna come pick flowers with me?",
+            "Hey, where do you keep your explosives?",
+            "What a boring day.",
+            "Come on! Let's do something FUN!",
+            "What's next on the agenda, compadre?",
+            "Sparkle sparkle!",
+        };
+
+        public static readonly string[] BossSpawnText = new string[]
+        {
+            "Heh, this'll be over quick.",
+            "Don't die this time, alright?",
+            "Back so soon?",
+            "If you lose this time, I'll eat all your furniture. That's a threat.",
+            "Don't forget potions!",
+            "If you die on purpose, I'll give you a twenty.",
+            "Keh, this'll be a breeze!",
+            "Go forth. Make me proud.",
+            "Show us how it's done, big shot.",
+            "Remember, fallgodding is ALWAYS an option!",
+        };
+
+        public static readonly string[] PetText = new string[]
+        {
+            "Hey now...",
+            "WEH?",
+            "Affections!",
+            "Wait, don't stop...",
+        };
+
+        public static readonly Color TextColor = new(126, 107, 189);
 
         public override void SetStaticDefaults()
         {

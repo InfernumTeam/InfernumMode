@@ -657,37 +657,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (hatGirl)
-                    return "Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!";
-                return string.Empty;
+                return "Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!";
             };
             yield return n =>
             {
-                if (hatGirl)
-                    return "Getting rid of those extra hornets should be your top priority!";
-                return string.Empty;
+                return "Getting rid of those extra hornets should be your top priority!";
             };
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "I can't Bee-lieve that, totally uncalled for!";
                 return string.Empty;
             };
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "Oof, that mustve Stung...";
-                return string.Empty;
-            };
-
-            yield return n =>
-            {
-                if (!hatGirl && n.ai[0] == (int)QueenBeeAttackState.InwardMovingBees)
-                    return "I WON'T FORCE YOU. I CAN'T. I CAN'T FORCE YOU. BUT JUST LOOK. LOOK AT THE [Power of NEO] AND ASK YOURSELF... WELL, DON'T YOU? DON'T YOU WANNA BE A [Bee Shot]!?";
                 return string.Empty;
             };
         }

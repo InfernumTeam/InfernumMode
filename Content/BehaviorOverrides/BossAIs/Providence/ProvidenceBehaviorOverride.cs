@@ -2710,29 +2710,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (hatGirl)
-                    return "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
-                return string.Empty;
+                return "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
             };
             yield return n =>
             {
-                if (hatGirl)
-                {
-                    if (Main.dayTime && Main.time >= Main.dayLength - 3600D)
-                        return "Make sure it doesn't become dusk if you fight her again!";
-                    if (!Main.dayTime && Main.time >= Main.nightLength - 3600D)
-                        return "Make sure it doesn't become dawn if you fight her again!";
-                }
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (!hatGirl && !IsEnraged)
-                    return "Orange is BORING! Fight that goddess during night time. I wanna see brains.";
+                if (Main.dayTime && Main.time >= Main.dayLength - 3600D)
+                    return "Make sure it doesn't become dusk if you fight her again!";
+                if (!Main.dayTime && Main.time >= Main.nightLength - 3600D)
+                    return "Make sure it doesn't become dawn if you fight her again!";
                 return string.Empty;
             };
         }

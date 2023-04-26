@@ -662,20 +662,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Try to learn King Slime's jump cycle! It could help you plan your next move better.";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "With a jump that high, I wonder if you could duck beneath him?";
-                return string.Empty;
-            };
+            yield return n => "Try to learn King Slime's jump cycle! It could help you plan your next move better.";
+            yield return n => "With a jump that high, I wonder if you could duck beneath him?";
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)

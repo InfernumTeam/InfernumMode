@@ -116,10 +116,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                     DoAttack_ShadowOrbSummon(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
                 case EoWAttackState.RainHover:
-                    DoAttack_RainHover(npc, target, splitCounter, enraged, ref attackTimer);
+                    DoAttack_RainHover(npc, target, splitCounter, ref attackTimer);
                     break;
                 case EoWAttackState.DownwardSlam:
-                    DoAttack_DownwardSlam(npc, target, splitCounter, enraged, ref attackTimer);
+                    DoAttack_DownwardSlam(npc, target, enraged, ref attackTimer);
                     break;
             }
 
@@ -322,7 +322,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_RainHover(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
+        public static void DoAttack_RainHover(NPC npc, Player target, float splitCounter, ref float attackTimer)
         {
             // Hover above the player.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f + target.velocity * 25f;
@@ -357,7 +357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         }
 
 
-        public static void DoAttack_DownwardSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
+        public static void DoAttack_DownwardSlam(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
@@ -553,26 +553,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         #endregion AI Utility Methods
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Many layered platforms can help greatly to avoid the exploding Cursed Flames!";
+            yield return n => "A dash and a hook can greatly help with reacting to the Eaters bursts of speed!";
             yield return n =>
             {
-                if (hatGirl)
-                    return "Many layered platforms can help greatly to avoid the exploding Cursed Flames!";
-
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "A dash and a hook can greatly help with reacting to the Eaters bursts of speed!";
-
-                return string.Empty;
-            };
-
-            yield return n =>
-            {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "I guess it eats more than just worlds.";
                 return string.Empty;
             };

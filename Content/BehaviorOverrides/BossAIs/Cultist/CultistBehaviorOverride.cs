@@ -1616,14 +1616,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "That guy was quite a lunatic, You might want extra mobility!";
-                return string.Empty;
-            };
+            yield return n => "That guy was quite a lunatic, You might want extra mobility!";
         }
         #endregion Tips
     }

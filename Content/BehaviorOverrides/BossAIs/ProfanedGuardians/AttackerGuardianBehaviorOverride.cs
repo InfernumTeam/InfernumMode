@@ -657,17 +657,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             return false;
         }
         #endregion Death Effects
-
-        #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
-        {
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "I have a weird craving for round pastries right about now...";
-                return string.Empty;
-            };
-        }
-        #endregion Tips
     }
 }

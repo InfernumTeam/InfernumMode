@@ -1229,20 +1229,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         #endregion Misc Utilities
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (hatGirl)
-                    return "Don't flail about, and figure out what she's doing. Do still try and stay on the move, though!";
-                return string.Empty;
-            };
-
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "Man, the hallow never dissapoints, guess I'm biased for saying that... Shame you died though, keh!";
-                return string.Empty;
+                return "Don't flail about, and figure out what she's doing. Do still try and stay on the move, though!";
             };
         }
         #endregion Tips

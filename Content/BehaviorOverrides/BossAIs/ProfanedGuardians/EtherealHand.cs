@@ -38,7 +38,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static bool ShouldEditDestination => AttackerGuardian.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex] == 1f;
 
-        public static NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
+        public static NPC AttackerGuardian
+        {
+            get
+            { 
+                if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
+                    return Main.npc[CalamityGlobalNPC.doughnutBoss];
+                return null;
+            }
+        }
 
         public static bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
 
@@ -74,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void AI()
         {
-            if (CalamityGlobalNPC.doughnutBoss < 0 || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
+            if (CalamityGlobalNPC.doughnutBoss < 0 || !Main.npc[CalamityGlobalNPC.doughnutBoss].active || AttackerGuardian is null)
             {
                 NPC.active = false;
                 NPC.netUpdate = true;

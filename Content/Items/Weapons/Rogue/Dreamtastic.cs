@@ -1,6 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.Items;
+using CalamityMod.Items.Materials;
+using CalamityMod.Items.Placeables.FurnitureStratus;
 using CalamityMod.Items.Weapons.Rogue;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Projectiles.Rogue;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
@@ -31,7 +34,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
         {
             Item.width = 54;
             Item.height = 54;
-            Item.damage = 5000;
+            Item.damage = 2300;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.channel = true;
@@ -45,6 +48,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
             Item.DamageType = RogueDamageClass.Instance;
             Item.rare = ModContent.RarityType<InfernumDreamtasticRarity>();
             Item.value = CalamityGlobalItem.RarityHotPinkBuyPrice;
+            Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -59,6 +63,19 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
         {
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI);
             return false;
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe().
+                AddTile(TileID.Bookcases).
+                AddIngredient(ModContent.ItemType<StratusBookcase>()).
+                AddIngredient(ModContent.ItemType<StratusBed>(), 2).
+                AddIngredient(ModContent.ItemType<StratusChandelier>()).
+                AddIngredient(ModContent.ItemType<StratusPiano>()).
+                AddIngredient(ModContent.ItemType<NightsGaze>()).
+                AddIngredient(ModContent.ItemType<AuricBar>(), 5).
+                Register();
         }
     }
 }

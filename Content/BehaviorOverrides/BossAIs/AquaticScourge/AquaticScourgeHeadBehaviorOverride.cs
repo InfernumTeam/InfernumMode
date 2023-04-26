@@ -782,7 +782,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Collision.HitTiles(npc.TopLeft, -npc.velocity, npc.width, npc.height);
 
                     // Create rubble that aims backwards and some bubbles from below.
-                    if (Main.rand.NextBool(1))
+                    if (Main.rand.NextBool(25))
                     {
                         HatGirl.SayThingWhileOwnerIsAlive(target, "Bonk!");
                         SoundEngine.PlaySound(InfernumSoundRegistry.SkeletronHeadBonkSound, target.Center);

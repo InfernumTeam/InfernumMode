@@ -149,6 +149,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void Load()
         {
             GlobalNPCOverrides.OnKillEvent += DetermineNightDefeatStatus;
+            GlobalNPCOverrides.StrikeNPCEvent += PerformDamageRestrictions;
+        }
+
+        private bool PerformDamageRestrictions(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        {
+            if (npc.type == ModContent.NPCType<ProvidenceBoss>() && npc.defense >= 60)
+                damage = (int)Math.Max(damage - defense / 2, 1f);
+            return true;
         }
 
         private void DetermineNightDefeatStatus(NPC npc)

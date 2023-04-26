@@ -24,15 +24,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     {
         public override int NPCOverrideType => ModContent.NPCType<PlaguebringerBoss>();
 
-        public static int PlagueSeekerDamage => 170;
+        public static int PlagueSeekerDamage => 180;
 
-        public static int ExplosionDamage => 185;
+        public static int ExplosionDamage => 190;
 
-        public static int PlagueCloudDamage => 185;
+        public static int PlagueCloudDamage => 190;
 
-        public static int PlagueVomitDamage => 185;
+        public static int PlagueVomitDamage => 190;
 
-        public static int PlagueMissileDamage => 190;
+        public static int PlagueMissileDamage => 195;
 
         public static int DroneDeathrayDamage => 250;
 

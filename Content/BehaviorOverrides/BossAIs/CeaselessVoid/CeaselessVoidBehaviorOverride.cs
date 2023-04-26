@@ -11,6 +11,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -508,6 +509,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer <= 5f)
                 InfernumMode.BlackFade = 1f;
 
+            // Give a tip.
+            if (attackTimer == 10f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Stay calm and circle! Don't lose focus!");
+
             // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
             target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
 
@@ -606,6 +611,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Release energy balls from above.
             if (attackTimer == 1f)
             {
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Those blobs seem to spin in a spiral! Spin with them!");
+
                 SoundEngine.PlaySound(SoundID.Item103, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -919,6 +927,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer < vortexSpawnDelay)
                 return;
 
+            // Give a tip before the torrent is fired.
+            if (attackTimer == vortexSpawnDelay + 30f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Those portals are preparing something! Get near the void, quickly!");
+
             // Periodically release vortices that strike at the target.
             float attackCompletion = Utils.GetLerpValue(vortexSpawnDelay, vortexSpawnDelay + vortexSpawnCount * vortexSpawnRate, attackTimer, true);
             if ((attackTimer - vortexSpawnDelay) % vortexSpawnRate == 0f)
@@ -1054,6 +1066,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                 return;
             }
+
+            // Give a tip before the torrent is fired.
+            if (attackTimer == chargeUpTime + 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "That thing is releasing so much energy! Try to get to the edge and move up and down to weave through it!");
 
             // Release a spiral of dark energy.
             if (attackTimer >= chargeUpTime && attackTimer < chargeUpTime + spiralShootTime)
@@ -1231,7 +1247,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Play a buildup sound prior to the whitening effect.
             if (attackTimer == 1f)
+            {
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Those chains wont seem to hold it much longer, brace yourself!");
                 SoundEngine.PlaySound(CeaselessVoidBoss.BuildupSound);
+            }
 
             // Enable the distortion filter if it isnt active and the player's config permits it.
             if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)

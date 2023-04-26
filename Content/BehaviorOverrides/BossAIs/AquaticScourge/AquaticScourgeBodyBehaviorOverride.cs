@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -93,7 +94,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * (float)Math.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
                 }
 
-                AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position = npc.Center;
+                if (AquaticScourgeHeadBehaviorOverride.WormSegments.Any())
+                    AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position = npc.Center;
             }
 
             // Follow the verlet segment as directed by the head.

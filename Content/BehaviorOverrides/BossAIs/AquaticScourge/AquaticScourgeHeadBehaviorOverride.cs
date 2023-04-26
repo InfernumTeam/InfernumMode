@@ -27,6 +27,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
@@ -189,7 +191,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Attach the verlet segments to the head.
-            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation)
+            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation && WormSegments.Any())
                 WormSegments[0].position = npc.Center;
 
             // Determine hostility.
@@ -1570,6 +1572,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 previousIndex = nextIndex;
             }
+
+            // Sync the worm segments.
+            PacketManager.SendPacket<CreateASWormSegmentsPacket>();
         }
 
         public static void SelectNextAttack(NPC npc)

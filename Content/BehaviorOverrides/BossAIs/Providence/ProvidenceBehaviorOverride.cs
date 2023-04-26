@@ -155,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         private bool PerformDamageRestrictions(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
         {
             if (npc.type == ModContent.NPCType<ProvidenceBoss>() && npc.defense >= 60)
-                damage = (int)Math.Max(damage - defense / 2, 1f);
+                damage = (int)Math.Max(damage - defense / 2, 1D);
             return true;
         }
 
@@ -2629,7 +2629,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Vector2 headDrawPosition = baseDrawPosition - new Vector2(0.1f, 1f).RotatedBy(npc.rotation * npc.spriteDirection) * (npc.scale * 60f + rockReformOffset) + crystalOffsetCorrection;
                     Vector2 leftDrawPosition = baseDrawPosition - Vector2.UnitX.RotatedBy(npc.rotation * npc.spriteDirection) * (rockReformOffset - 10f) + crystalOffsetCorrection;
                     Vector2 rightDrawPosition = baseDrawPosition + Vector2.UnitX.RotatedBy(npc.rotation * npc.spriteDirection) * (rockReformOffset - 12f) + crystalOffsetCorrection;
-                    Main.spriteBatch.Draw(headRock, headDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, headRock.Size() * new Vector2(0.5f, 1f), npc.scale * 2f, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(headRock, headDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, headRock.Size() * new Vector2(0.5f, 1f), npc.scale, spriteEffects, 0f);
                     Main.spriteBatch.Draw(leftBodyRock, leftDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, leftBodyRock.Size() * new Vector2(1f, 0.5f), npc.scale, spriteEffects, 0f);
                     Main.spriteBatch.Draw(rightBodyRock, rightDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, leftBodyRock.Size() * new Vector2(0f, 0.5f), npc.scale, spriteEffects, 0f);
                 }

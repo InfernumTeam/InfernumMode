@@ -176,7 +176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 // Penalize deviations from the ideal radius offset.
                 float distanceFromCenter = position.Distance(centerOfMass);
                 float deviationFromRadius = MathHelper.Distance(distanceFromCenter, circleRadius);
-                float radiusError = 1f - (float)Math.Exp(-3f / circleRadius * deviationFromRadius);
+                float radiusError = 1f - MathF.Exp(-3f / circleRadius * deviationFromRadius);
                 if (deviationFromRadius < 30f)
                     radiusError = 0f;
 

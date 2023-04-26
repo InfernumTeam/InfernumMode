@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics
@@ -69,6 +70,9 @@ namespace InfernumMode.Common.Graphics
                 }
 
                 Main.spriteBatch.ExitShaderRegion();
+
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    WhiteningInterpolant = MathHelper.Clamp(WhiteningInterpolant - 0.007f, 0f, 1f);
             }
             else
                 WhiteningInterpolant = MathHelper.Clamp(WhiteningInterpolant - 0.1f, 0f, 1f);

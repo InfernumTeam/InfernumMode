@@ -26,6 +26,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
+using InfernumMode.Content.Projectiles.Pets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
@@ -379,6 +380,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     target.Infernum_Camera().ScreenFocusPosition = bubbleProj.Center;
                 }
             }
+
+            // Give a tip to encourage the player to go to the bubble.
+            if (attackTimer == waterBubbleTime)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "That bleach bubble looks like a good place to recover from the acidic water!");
 
             // Emit bubbles around the player.
             if (Main.netMode != NetmodeID.Server)
@@ -777,8 +782,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Collision.HitTiles(npc.TopLeft, -npc.velocity, npc.width, npc.height);
 
                     // Create rubble that aims backwards and some bubbles from below.
-                    if (Main.rand.NextBool(25))
+                    if (Main.rand.NextBool(1))
+                    {
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Bonk!");
                         SoundEngine.PlaySound(InfernumSoundRegistry.SkeletronHeadBonkSound, target.Center);
+                    }
                     else
                         SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
 
@@ -1112,6 +1120,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "The water is almost boiling, I'd surface unless you want to become fried human!");
+
                 npc.netUpdate = true;
             }
 
@@ -1297,6 +1308,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Create the tornado on the first frame.
             if (attackTimer <= 1f)
             {
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Looks like that's not all this serpent could do, we gotta skeddadle!");
+
                 SoundEngine.PlaySound(CalamityMod.NPCs.Leviathan.Leviathan.EmergeSound);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1756,18 +1770,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         }
         #endregion Death Effects
 
-        #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
-        {
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "Did you even take a moment to consider you are pulling me down there with you into that acidic water...? Mate, that stuff BURNS!";
-                return string.Empty;
-            };
-        }
-        #endregion Tips
-
         #region Drawcode
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
@@ -1797,5 +1799,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             return false;
         }
         #endregion Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        {
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "The Serpent's frantic swimming seems to cause the water to be easier to traverse through, you could probably swim with your bare hands!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "If you feel you need more space, try clearing out the sulphurous sand around!";
+                return string.Empty;
+            };
+
+            yield return n =>
+            {
+                if (!hatGirl)
+                    return "Did you even take a moment to consider you are pulling me down there with you into that acidic water...? Mate, that stuff BURNS!";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

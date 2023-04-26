@@ -35,6 +35,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+using InfernumMode.Content.Projectiles.Pets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -502,7 +503,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 // Phase 2.
                 case ProvidenceAttackType.EnterFireFormBulletHell:
-                    if (lifeRatio > 0.04f)
+                    if (lifeRatio > DeathAnimationLifeRatio)
                     {
                         burnIntensity *= 0.94f;
                         if (burnIntensity < 0.004f)
@@ -1612,6 +1613,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
+            // Give a tip.
+            if (shootTimer == 1f)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Those fireballs seem to only explode if they hit lava, you should probably bait them away!");
+
             shootTimer++;
         }
 
@@ -1805,9 +1810,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            // Play a rumble sound.
+            // Play a rumble sound and give a tip.
             if (npc.Infernum().ExtraAI[2] == 0f)
             {
+                HatGirl.SayThingWhileOwnerIsAlive(target, "It looks like Providence is preparing something!");
                 SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound);
                 npc.Infernum().ExtraAI[2] = 1f;
             }
@@ -2234,6 +2240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float laserShootTimer = ref npc.Infernum().ExtraAI[1];
             ref float vfxDelayCountdown = ref npc.Infernum().ExtraAI[2];
             ref float recordingStarted = ref npc.Infernum().ExtraAI[3];
+            ref float hasSaidTip = ref npc.Infernum().ExtraAI[4];
 
             int bombShootRate = (int)MathHelper.Lerp(startingBombShootRate, endingBombShootRate, attackCompletion);
             int laserShootRate = (int)MathHelper.Lerp(startingLaserShootRate, endingLaserShootRate, attackCompletion);
@@ -2249,10 +2256,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Start recording.
-            if (attackCompletion >= 0.5f && recordingStarted == 0)
+            if (attackCompletion >= 0.5f && recordingStarted == 0f)
             {
-                recordingStarted = 1;
+                recordingStarted = 1f;
                 CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Provi);
+                npc.netUpdate = true;
+            }
+
+            // Give a tip.
+            if (hasSaidTip == 0f)
+            {
+                string tip = "The lava is rising, get to higher ground!";
+                if (TipsManager.ShouldUseJokeText)
+                    tip = "Who opened the faucets again?!";
+
+                HatGirl.SayThingWhileOwnerIsAlive(target, tip);
+                hasSaidTip = 1f;
+                npc.netUpdate = true;
             }
 
             // Make the lava rise upward.
@@ -2696,6 +2716,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 if (hatGirl)
                     return "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (hatGirl)
+                {
+                    if (Main.dayTime && Main.time >= Main.dayLength - 3600D)
+                        return "Make sure it doesn't become dusk if you fight her again!";
+                    if (!Main.dayTime && Main.time >= Main.nightLength - 3600D)
+                        return "Make sure it doesn't become dawn if you fight her again!";
+                }
                 return string.Empty;
             };
             yield return n =>

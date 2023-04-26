@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord.MoonLordCoreBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -50,22 +51,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             int idealFrame = 0;
 
-            switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
+            switch ((MoonLordAttackState)(int)core.ai[0])
             {
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalSphereHandWaves:
+                case MoonLordAttackState.PhantasmalSphereHandWaves:
                     if (!hasPopped)
                         DoBehavior_PhantasmalSphereHandWaves(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalFlareBursts:
+                case MoonLordAttackState.PhantasmalFlareBursts:
                     if (!hasPopped)
                         DoBehavior_PhantasmalFlareBursts(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.ExplodingConstellations:
+                case MoonLordAttackState.ExplodingConstellations:
                     DoBehavior_ExplodingConstellations(npc, core, target, handSide, attackTimer, ref idealFrame);
                     break;
                 default:
                     DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
-                    if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalSpin)
+                    if (core.ai[0] == (int)MoonLordAttackState.PhantasmalSpin)
                     {
                         idealFrame = 0;
                         npc.dontTakeDamage = false;
@@ -112,12 +113,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             int attackTransitionDelay = 40;
             float sphereShootSpeed = 12f;
             float sphereSlamSpeed = 6f;
-            if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 1)
+            if (CurrentActiveArms <= 1)
             {
                 sphereShootRate -= 4;
                 sphereSlamSpeed += 3f;
             }
-            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            if (IsEnraged)
             {
                 sphereShootRate /= 2;
                 sphereSlamSpeed += 7f;
@@ -176,7 +177,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, sphereShootVelocity, ProjectileID.PhantasmalSphere, 215, 0f, -1, 0f, npc.whoAmI);
+                        Utilities.NewProjectileBetter(npc.Center, sphereShootVelocity, ProjectileID.PhantasmalSphere, PhantasmalSphereDamage, 0f, -1, 0f, npc.whoAmI);
 
                         // Sync the entire moon lord's current state. This will be executed on the frame immediately after this one.
                         core.netUpdate = true;
@@ -185,7 +186,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Slam all phantasmal spheres at the target after they have been fired.
-            if (attackTimer == waveTime + 16f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
+            if (attackTimer == waveTime + 16f && (handSide == 1 || CurrentActiveArms == 1))
             {
                 if (Main.netMode != NetmodeID.Server)
                     SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.85f, Pitch = -0.5f }, target.Center);
@@ -211,7 +212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             int flareReleaseDelay = 32;
             int flareShootTime = 60;
             float flareSpawnOffsetMax = 900f;
-            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            if (IsEnraged)
             {
                 flareCreationRate -= 2;
                 flareSpawnOffsetMax += 400f;
@@ -232,7 +233,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f).MoveTowards(idealVelocity, 1.6f);
 
             // Create flare telegraphs.
-            if (attackTimer < flareTelegraphTime && attackTimer % flareCreationRate == flareCreationRate - 1f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
+            if (attackTimer < flareTelegraphTime && attackTimer % flareCreationRate == flareCreationRate - 1f && (handSide == 1 || CurrentActiveArms == 1))
             {
                 SoundEngine.PlaySound(SoundID.Item72, target.Center);
 
@@ -259,13 +260,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             int explosionTime = 130;
             int constellationCount = 3;
 
-            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            if (InFinalPhase)
             {
                 starCreationRate--;
                 totalStarsToCreate += 3;
             }
 
-            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            if (IsEnraged)
             {
                 starCreationRate = 2;
                 explosionTime -= 50;

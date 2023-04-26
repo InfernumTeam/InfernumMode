@@ -43,6 +43,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using System;

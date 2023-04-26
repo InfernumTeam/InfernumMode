@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     SoundEngine.PlaySound(SoundID.Item72, cinderShootPosition);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 11f, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
+                        Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 11f, ModContent.ProjectileType<DarkMagicCinder>(), RavagerBodyBehaviorOverride.DarkMagicCinderDamage, 0f);
                         npc.velocity -= aimDirection * 8f;
                         npc.netUpdate = true;
                     }

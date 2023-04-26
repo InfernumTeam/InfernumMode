@@ -33,6 +33,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
     public static class SlimeGodComboAttackManager
     {
+        public static int GroundSlimeDamage => 95;
+
+        public static int SlimeGlobDamage => 95;
+
         public static int FirstSlimeToSummonIndex => WorldGen.crimson ? CalamityGlobalNPC.slimeGodRed : CalamityGlobalNPC.slimeGodPurple;
 
         public static int SecondSlimeToSummonIndex => WorldGen.crimson ? CalamityGlobalNPC.slimeGodPurple : CalamityGlobalNPC.slimeGodRed;
@@ -248,11 +252,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                             for (int i = 0; i < globCount; i++)
                             {
                                 Vector2 globVelocity = (MathHelper.TwoPi * i / globCount + shootOffsetAngle).ToRotationVector2() * globSpeed;
-                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, SlimeGlobDamage, 0f);
                             }
 
                             // Shoot one glob directly at the target to prevent sitting in place.
-                            Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, 90, 0f);
+                            Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, SlimeGlobDamage, 0f);
                         }
 
                         SoundEngine.PlaySound(SoundID.Item167, npc.Bottom);
@@ -382,7 +386,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         float idealShootSpeed = (float)Math.Sqrt(horizontalDistance * GroundSlimeGlob.Gravity);
                         float slimeShootSpeed = MathHelper.Clamp(idealShootSpeed, 7.6f, 20f);
                         Vector2 slimeShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, GroundSlimeGlob.Gravity, slimeShootSpeed, out _);
-                        Utilities.NewProjectileBetter(shootPosition, slimeShootVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), 90, 0f, -1, 0f, target.Center.Y);
+                        Utilities.NewProjectileBetter(shootPosition, slimeShootVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), GroundSlimeDamage, 0f, -1, 0f, target.Center.Y);
                     }
 
                     // Shoot accelerating blobs if far away enough to the target.
@@ -396,11 +400,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                             if (target.Center.X < npc.Center.X)
                                 globVelocity *= -1f;
 
-                            Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
+                            Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, SlimeGlobDamage, 0f);
                         }
 
                         // Shoot one glob directly at the target to prevent sitting in place.
-                        Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, 90, 0f);
+                        Utilities.NewProjectileBetter(npc.Bottom, npc.SafeDirectionTo(target.Center) * globSpeed * 0.8f, globID, SlimeGlobDamage, 0f);
                     }
                 }
             }
@@ -481,7 +485,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                             {
                                 float shootOffsetAngle = MathHelper.Lerp(-0.32f, 0.32f, i / (float)(acceleratingGlobPerShot - 1f));
                                 Vector2 globVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * globSpeed;
-                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, SlimeGlobDamage, 0f);
                             }
                         }
                     }

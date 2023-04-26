@@ -24,6 +24,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     {
         public override int NPCOverrideType => ModContent.NPCType<PlaguebringerBoss>();
 
+        public static int PlagueSeekerDamage => 170;
+
+        public static int ExplosionDamage => 185;
+
+        public static int PlagueCloudDamage => 185;
+
+        public static int PlagueVomitDamage => 185;
+
+        public static int PlagueMissileDamage => 190;
+
+        public static int DroneDeathrayDamage => 250;
+
+        public static int NuclearExplosionDamage => 600;
+
         public const float Phase2LifeRatio = 0.75f;
 
         public const float Phase3LifeRatio = 0.3f;
@@ -56,6 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         #endregion Enumerations
 
         #region AI
+
         public override bool PreAI(NPC npc)
         {
             npc.damage = npc.defDamage;
@@ -218,7 +233,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.velocity *= 0.97f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 6f == 5f)
-                    Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Circular(5f, 5f), ModContent.ProjectileType<PlagueCloud>(), 170, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Circular(5f, 5f), ModContent.ProjectileType<PlagueCloud>(), PlagueCloudDamage, 0f);
 
                 if (chargeTimer >= chargeTime)
                 {
@@ -286,7 +301,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                             Vector2 shootDirection = (abdomenPosition - npc.Center).SafeNormalize(Vector2.UnitY);
                             shootDirection = shootDirection.RotateTowards(npc.SafeDirectionTo(target.Center).ToRotation(), Main.rand.NextFloat(0.74f, 1.04f));
                             Vector2 shootVelocity = shootDirection.RotatedByRandom(0.31f) * missileShootSpeed;
-                            Utilities.NewProjectileBetter(abdomenPosition, shootVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 175, 0f);
+                            Utilities.NewProjectileBetter(abdomenPosition, shootVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), PlagueMissileDamage, 0f);
                         }
                         missileShootTimer = 0f;
                         npc.netUpdate = true;
@@ -365,7 +380,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                             mouthPosition += Vector2.UnitY.RotatedBy(npc.rotation) * 18f;
                             mouthPosition -= Vector2.UnitX.RotatedBy(npc.rotation) * npc.spriteDirection * -68f;
                             Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * vomitShootSpeed;
-                            Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<PlagueVomit>(), 180, 0f);
+                            Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<PlagueVomit>(), PlagueVomitDamage, 0f);
                         }
                         vomitShootTimer = 0f;
                         npc.netUpdate = true;
@@ -468,7 +483,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Vector2 missileShootVelocity = new(npc.velocity.X * 0.6f, 15f);
                     missileShootVelocity += Main.rand.NextVector2Circular(1.25f, 1.25f);
-                    Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 180, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), PlagueMissileDamage, 0f);
                 }
 
                 if (chargeTimer >= chargeTime)

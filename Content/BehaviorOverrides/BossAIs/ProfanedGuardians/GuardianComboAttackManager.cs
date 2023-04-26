@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
         }
 
-        public static void DoBehavior_FlappyBird(NPC npc,Player target, ref float attackTimer, NPC commander)
+        public static void DoBehavior_FlappyBird(NPC npc, Player target, ref float attackTimer, NPC commander)
         {
             // This attack ends automatically when the crystal wall dies, it advances the attackers attack state, which the other
             // guardians check for and advance with it.
@@ -295,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 float offsetAngleInterpolant = (float)i / 2;
-                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolySpinningFireBeam>(), 700, 0f, -1, 0f, offsetAngleInterpolant);
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolySpinningFireBeam>(), HolySpinningFireBeamDamage, 0f, -1, 0f, offsetAngleInterpolant);
                             }
                             // Screenshake
                             if (CalamityConfig.Instance.Screenshake)
@@ -339,7 +339,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         150,
                         240,
                         330,
-                        420 
+                        420
                     };
 
                     for (int i = 0; i < rockAmount; i++)
@@ -368,7 +368,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 hoverPosition = CrystalPosition + new Vector2(150f, 0f);
                 // Sit still behind the commander
                 if (npc.Distance(hoverPosition) > 5f && movedToPosition == 0f)
-                     npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 25)) / 8f;
+                    npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 25)) / 8f;
                 else
                 {
                     drawShieldConnections = 1f;
@@ -822,7 +822,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         spearStatus = (float)DefenderShieldStatus.ActiveAndAiming;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), 300, 0f, -1, 0f, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CommanderSpear>(), CommanderSpearDamage, 0f, -1, 0f, npc.whoAmI);
                     }
                     float easingInterpolant = (universalAttackTimer - (angerDelay + angerTime / 2f)) / (angerTime / 2f);
                     spearRotation = Utilities.EaseInOutCubic(easingInterpolant);
@@ -995,7 +995,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Make the spear rotation point to the player.
                         idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
                         spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
-                        
+
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (localAttackTimer >= recoilLength)
@@ -1274,7 +1274,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBossDefender))
                 return;
 
-             defender = Main.npc[CalamityGlobalNPC.doughnutBossDefender];            
+            defender = Main.npc[CalamityGlobalNPC.doughnutBossDefender];
 
             if (npc.type == CommanderType)
             {
@@ -1435,7 +1435,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             // Damage the defender slightly, as it has been stabbed by the spear.
                             if (defender.life > defender.lifeMax * 0.01f)
-                            defender.life -= (int)(defender.lifeMax * 0.001f);
+                                defender.life -= (int)(defender.lifeMax * 0.001f);
                         }
 
                         npc.velocity *= 0.99f;
@@ -1513,7 +1513,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
 
                         // If close enough, mark us as ready.
-                            defenderIsReady = 1f;
+                        defenderIsReady = 1f;
                         break;
 
                     // Mark the shield as static.
@@ -1945,7 +1945,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Spawn cool symbols.
                 if (universalAttackTimer % symbolSpawnRate == symbolSpawnRate - 1f)
                 {
-                    Vector2 position = npc.Center  + npc.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * 50f + Main.rand.NextVector2Circular(250f, 250f);
+                    Vector2 position = npc.Center + npc.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * 50f + Main.rand.NextVector2Circular(250f, 250f);
                     Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.1f, 0.4f)) * Main.rand.NextFloat(1.5f, 2f);
                     Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat(1f));
                     Particle jojo = new ProfanedSymbolParticle(position, velocity, color, 0.8f, 120);
@@ -2196,12 +2196,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Create a bunch of lava particles under the commander on the players bottom of the screen.
                         for (int i = 0; i < 6; i++)
                         {
-                            Vector2 position = new(npc.Center.X + Main.rand.NextFloat(-250f, 250f), Main.screenHeight + - 100f + Main.screenPosition.Y + Main.rand.NextFloat(-70f, 70f));
+                            Vector2 position = new(npc.Center.X + Main.rand.NextFloat(-250f, 250f), Main.screenHeight + -100f + Main.screenPosition.Y + Main.rand.NextFloat(-70f, 70f));
                             Particle lavaParticle = new GlowyLightParticle(position, -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(6f, 9f),
                                 Main.rand.NextBool() ? WayfinderSymbol.Colors[2] : Color.OrangeRed, 60, Main.rand.NextFloat(0.75f, 1.25f), Main.rand.NextFloat(0.9f, 1.1f), true);
                             GeneralParticleHandler.SpawnParticle(lavaParticle);
                         }
-                        
+
                         if (universalAttackTimer >= moveUnderAndWaitTime)
                         {
                             universalAttackTimer = 0;
@@ -2452,7 +2452,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 0:
 
                     // Aim towards the target if far enough.
-                     npc.velocity = npc.SafeDirectionTo(target.Center) * (flySpeed * npc.Distance(target.Center) / minDistanceToMove);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * (flySpeed * npc.Distance(target.Center) / minDistanceToMove);
 
                     if (npc.Center.Y > CrystalPosition.Y)
                         npc.velocity.Y = -13f;
@@ -2663,7 +2663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
             switch (substate)
-            { 
+            {
                 // Choose the angle to aim at, as well as the position for the exit portal.
                 case 0:
                     angleToStab = (MathHelper.TwoPi + Main.rand.NextFloat(0f, MathHelper.TwoPi)) * Main.rand.NextFromList(-1f, 1f);
@@ -2676,7 +2676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     npc.CreateSpearAndAimAtTarget(ref spearStatus, ref spearRotation, target);
 
                     substate++;
-                    universalAttackTimer = 0f;                   
+                    universalAttackTimer = 0f;
                     return;
 
                 // Move to the offset.
@@ -2767,9 +2767,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 }
                             }
                             else
-                            {                     
+                            {
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {                                 
+                                {
                                     float rotation = baseRotation * i;
                                     spawnPosition = target.Center + Main.rand.NextFloat(rotation * 0.85f, rotation * 1.15f).ToRotationVector2() * spearDistance;
                                     Vector2 velocity = spawnPosition.DirectionTo(target.Center).SafeNormalize(Vector2.UnitY) * spearThrowSpeed;

@@ -26,6 +26,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
     {
         public override int NPCOverrideType => NPCID.QueenSlimeBoss;
 
+        public static int FallingGelDamage => 125;
+
+        public static int SlimeMinionDamage => 125;
+
+        public static int SmallCrystalSpikeDamage => 125;
+
+        public static int SolidCrystalDamage => 125;
+
+        public static int JewelBeamDamage => 130;
+
+        public static int HallowBladeDamage => 135;
+
+        public static int SplitFormDamage => 135;
+
+        public static int LargeCrystalSpikeDamage => 185;
+
+        public static int AimedLaserbeamDamage => 200;
+
+        public static int GiantHallowLaserbeamDamage => 225;
+
         public const float Phase2LifeRatio = 0.625f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -111,6 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         #endregion Fields, Properties, and Enumerations
 
         #region AI and Behaviors
+
         public override bool PreAI(NPC npc)
         {
             npc.TargetClosestIfTargetIsInvalid();
@@ -385,7 +406,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 SoundEngine.PlaySound(SoundID.Item28, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, crystalID, 140, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, crystalID, SolidCrystalDamage, 0f);
             }
 
             // Begin the slam.
@@ -497,8 +518,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     if (slimeSpawnAttackType == bouncingSlimeID)
                         horizontalOffset *= 0.72f;
 
-                    Utilities.NewProjectileBetter(npc.Top - Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
-                    Utilities.NewProjectileBetter(npc.Top + Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, 140, 0f);
+                    Utilities.NewProjectileBetter(npc.Top - Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, SlimeMinionDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Top + Vector2.UnitX * horizontalOffset, Vector2.Zero, (int)slimeSpawnAttackType, SlimeMinionDamage, 0f);
                 }
             }
 
@@ -605,7 +626,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HallowBladeLaserbeam>(), 220, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HallowBladeLaserbeam>(), GiantHallowLaserbeamDamage, 0f);
                     bladeVerticalOffset = -maxVerticalBladeOffset;
                     npc.netUpdate = true;
                 }
@@ -626,10 +647,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 Vector2 rightSpawnPosition = new(target.Center.X + 900f, npc.Center.Y + bladeVerticalOffset);
 
                 if (target.Center.X < npc.Center.X + 900f)
-                    Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, 0f, hue);
+                    Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, 0f, hue);
 
                 if (target.Center.X > npc.Center.X - 900f)
-                    Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, MathHelper.Pi, 1f - hue);
+                    Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, MathHelper.Pi, 1f - hue);
             }
 
             // Create an explosion and make the blades go outward.
@@ -658,10 +679,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         if (outwardLaserShootCounter % 2f == 1f)
                             bladeSpawnPosition.Y -= bladeOffsetSpacing * 1.4f;
 
-                        int bitch = Utilities.NewProjectileBetter(bladeSpawnPosition + Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, 0f, hue);
+                        int bitch = Utilities.NewProjectileBetter(bladeSpawnPosition + Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, 0f, hue);
                         Main.projectile[bitch].localAI[1] = 3000f;
 
-                        bitch = Utilities.NewProjectileBetter(bladeSpawnPosition - Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), 145, 0f, -1, MathHelper.Pi, 1f - hue);
+                        bitch = Utilities.NewProjectileBetter(bladeSpawnPosition - Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, MathHelper.Pi, 1f - hue);
                         Main.projectile[bitch].localAI[1] = 3000f;
                     }
 
@@ -796,7 +817,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         {
                             splitSlime.ModProjectile<QueenSlimeSplitFormProj>().ConvergencePoint = convergencePoint;
                         });
-                        Utilities.NewProjectileBetter(npc.Center + splitVelocity, splitVelocity, ModContent.ProjectileType<QueenSlimeSplitFormProj>(), 140, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + splitVelocity, splitVelocity, ModContent.ProjectileType<QueenSlimeSplitFormProj>(), SplitFormDamage, 0f);
                     }
 
                     telegraphInterpolant = 0f;
@@ -832,13 +853,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 crystalDirection = (MathHelper.TwoPi * i / 8f).ToRotationVector2();
-                            Utilities.NewProjectileBetter(npc.Center - crystalDirection * 70f, crystalDirection, ModContent.ProjectileType<HallowCrystalSpike>(), 200, 0f);
+                            Utilities.NewProjectileBetter(npc.Center - crystalDirection * 70f, crystalDirection, ModContent.ProjectileType<HallowCrystalSpike>(), LargeCrystalSpikeDamage, 0f);
                         }
 
                         for (int i = 0; i < 5; i++)
                         {
                             Vector2 crystalSpikeVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.43f, 0.43f, i / 4f)) * 8f;
-                            Utilities.NewProjectileBetter(npc.Center, crystalSpikeVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), 140, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, crystalSpikeVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), SmallCrystalSpikeDamage, 0f);
                         }
                     }
 
@@ -904,7 +925,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.9f, 3.2f))
                     {
                         Vector2 gelVelocity = new(horizontalSpeedOffset + i, Main.rand.NextFloat(-12f, -10f));
-                        Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), 125, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), FallingGelDamage, 0f);
                     }
                 }
             }

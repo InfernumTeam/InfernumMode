@@ -39,6 +39,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             IchorFountainCharge
         }
 
+        public static int ToothBallDamage => 85;
+
+        public static int CrimeraWallDamage => 90;
+
+        public static int BloodSpitDamage => 95;
+
+        public static int IchorBlobDamage => 95;
+
+        public static int IchorSpitDamage => 95;
+
         public const int DeathTimerIndex = 5;
 
         public const int DeathAnimationBasePositionXIndex = 6;
@@ -523,7 +533,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             float horizontalSpeed = MathHelper.Lerp(-maxHorizontalSpeed, maxHorizontalSpeed, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 5f;
                             float verticalSpeed = Main.rand.NextFloat(-8f, -7f);
                             Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
-                            Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 75, 0f);
+                            Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), IchorSpitDamage, 0f);
                         }
 
                         for (int i = 0; i < burstIchorCount; i++)
@@ -531,7 +541,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             float projectileOffsetInterpolant = i / (float)(burstIchorCount - 1f);
                             float offsetAngle = MathHelper.Lerp(-0.55f, 0.55f, projectileOffsetInterpolant);
                             Vector2 ichorVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 6.5f;
-                            Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), 75, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), IchorSpitDamage, 0f);
                             CreateBloodParticles(npc.Center + ichorVelocity * 3f, ichorVelocity, Main.rand.NextBool() ? Color.Red : Color.Gold, 60);
                         }
 
@@ -725,7 +735,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             float offsetAngle = MathHelper.Lerp(-0.41f, 0.41f, i / 2f);
                             Vector2 shootVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 3.5f;
                             shootVelocity = shootVelocity.RotatedBy(offsetAngle);
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<IchorBlast>(), 75, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<IchorBlast>(), IchorBlobDamage, 0f);
                             for (int j = 0; j < 3; j++)
                                 CreateBloodParticles(npc.Center + shootVelocity * 3f, shootVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
                         }
@@ -832,7 +842,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f, -1, 0f, target.Center.Y);
+                            Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), IchorBlobDamage, 0f, -1, 0f, target.Center.Y);
 
                             for (int i = 0; i < 10; i++)
                                 CreateBloodParticles(npc.Center + blobVelocity, blobVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
@@ -853,7 +863,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < chargeBlobCount; i++)
                         {
                             Vector2 blobVelocity = (shootDirection * 14.5f + Main.rand.NextVector2Circular(4f, 4f)) * Math.Abs(blobSpeedFactor);
-                            Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f, -1, 0f, target.Center.Y);
+                            Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), IchorBlobDamage, 0f, -1, 0f, target.Center.Y);
 
                             for (int j = 0; j < chargeBlobCount * 2; j++)
                                 CreateBloodParticles(npc.Center + blobVelocity, blobVelocity, Main.rand.NextBool(3) ? Color.Gold : Color.Red, 60);
@@ -1025,10 +1035,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 Vector2 wallVelocity = Vector2.Lerp(Vector2.UnitY, -wallSpawnOffset.SafeNormalize(Vector2.UnitY), aimAtTargetInterpolant);
                 wallVelocity = wallVelocity.SafeNormalize(Vector2.UnitY) * wallSpeed;
 
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<Crimera>(), 75, 1f);
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<Crimera>(), CrimeraWallDamage, 1f);
 
                 wallSpawnOffset.X += 48f;
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(1f, -1f), -wallVelocity, ModContent.ProjectileType<Crimera>(), 75, 1f);
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(1f, -1f), -wallVelocity, ModContent.ProjectileType<Crimera>(), CrimeraWallDamage, 1f);
             }
 
             if (attackTimer > riseTime + attackSwitchDelay)
@@ -1103,7 +1113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             float projectileOffsetInterpolant = i / (float)(burstIchorCount - 1f);
                             float offsetAngle = MathHelper.Lerp(-0.49f, 0.49f, projectileOffsetInterpolant);
                             Vector2 ichorVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 5.4f;
-                            Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), 80, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), IchorSpitDamage, 0f);
                         }
                         npc.netUpdate = true;
                     }
@@ -1288,7 +1298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                                     float projectileShootInterpolant = i / (float)(ichorBlobCount - 1f);
                                     float horizontalShootSpeed = MathHelper.Lerp(-10f, 10f, projectileShootInterpolant) + Main.rand.NextFloatDirection() * 0.64f;
                                     Vector2 blobVelocity = new(horizontalShootSpeed, -7f);
-                                    Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 80, 0f, -1, 0f, target.Center.Y);
+                                    Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), IchorBlobDamage, 0f, -1, 0f, target.Center.Y);
                                 }
                             }
 
@@ -1405,7 +1415,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         float verticalWallOffset = MathHelper.Lerp(-0.5f, 0.5f, ichorShootInterpolant) * ichorWallSpacing * ichorWallShotCount;
                         Vector2 wallOffset = new(ichorOffsetDirection * 560f, verticalWallOffset);
                         Vector2 wallVelocity = Vector2.UnitX * ichorOffsetDirection * -6.5f;
-                        Utilities.NewProjectileBetter(target.Center + wallOffset, wallVelocity, ModContent.ProjectileType<IchorBolt>(), 80, 0f);
+                        Utilities.NewProjectileBetter(target.Center + wallOffset, wallVelocity, ModContent.ProjectileType<IchorBolt>(), IchorSpitDamage, 0f);
                     }
                 }
 
@@ -1418,7 +1428,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         foreach (Vector2 mouthPosition in mouthPositions)
                         {
                             Vector2 ichorVelocity = npc.SafeDirectionTo(mouthPosition) * 12f;
-                            Utilities.NewProjectileBetter(mouthPosition, ichorVelocity, ModContent.ProjectileType<FallingIchorBlast>(), 85, 0f);
+                            Utilities.NewProjectileBetter(mouthPosition, ichorVelocity, ModContent.ProjectileType<FallingIchorBlast>(), IchorBlobDamage, 0f);
                         }
 
                     }

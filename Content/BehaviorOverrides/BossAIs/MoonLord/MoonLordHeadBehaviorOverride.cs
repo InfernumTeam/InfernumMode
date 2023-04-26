@@ -13,6 +13,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord.MoonLordCoreBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -58,19 +59,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             npc.velocity = Vector2.Zero;
             npc.Center = core.Center - Vector2.UnitY * 400f;
 
-            switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
+            switch ((MoonLordAttackState)(int)core.ai[0])
             {
-                // Have the head use the exposed eye frames, not take damage, and rotate in such a way that it looks like the neck was fucking snapped when dying.
-                // Simple stuff.
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.DeathEffects:
+                // Have the head use the exposed eye frames, not take damage, and rotate in such a way that it looks like the neck was snapped when dying.
+                case MoonLordAttackState.DeathEffects:
                     idealFrame = 3;
                     npc.dontTakeDamage = true;
                     npc.rotation = npc.rotation.AngleLerp(MathHelper.Pi / 12f, 0.1f);
                     break;
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBoltEyeBursts:
+                case MoonLordAttackState.PhantasmalBoltEyeBursts:
                     DoBehavior_PhantasmalBoltEyeBursts(npc, core, target, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
-                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDeathrays:
+                case MoonLordAttackState.PhantasmalDeathrays:
                     DoBehavior_PhantasmalDeathrays(npc, core, target, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
                 default:
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             int circularSpreadBoltCount = 12;
             int randomBurstBoltCount = 6;
             float boltShootSpeed = 4.25f;
-            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            if (IsEnraged)
             {
                 boltShootDelay -= 14;
                 boltShootSpeed += 5f;
@@ -188,19 +188,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     for (int i = 0; i < circularSpreadBoltCount; i++)
                     {
                         Vector2 boltShootVelocity = (MathHelper.TwoPi * i / circularSpreadBoltCount + circularSpreadOffsetAngle).ToRotationVector2() * boltShootSpeed;
-                        Utilities.NewProjectileBetter(pupilPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
+                        Utilities.NewProjectileBetter(pupilPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
                     }
 
                     for (int i = 0; i < randomBurstBoltCount; i++)
                     {
                         Vector2 boltShootVelocity = npc.SafeDirectionTo(target.Center) * boltShootSpeed * Main.rand.NextFloat(1.4f, 1.55f);
                         boltShootVelocity += Main.rand.NextVector2Circular(1.9f, 1.9f);
-                        Utilities.NewProjectileBetter(pupilPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
+                        Utilities.NewProjectileBetter(pupilPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
                     }
                 }
             }
 
-            if (attackTimer >= boltShootDelay * boltBurstCount || !MoonLordCoreBehaviorOverride.EyeIsActive)
+            if (attackTimer >= boltShootDelay * boltBurstCount || !EyeIsActive)
                 core.Infernum().ExtraAI[5] = 1f;
         }
 
@@ -214,7 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             ref float deathrayTelegraphTime = ref npc.Infernum().ExtraAI[2];
             ref float deathrayLifetime = ref npc.Infernum().ExtraAI[3];
 
-            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            if (IsEnraged)
             {
                 idealDeathrayTelegraphTime -= 45;
                 idealDeathrayLifetime -= 25;
@@ -268,9 +268,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         {
                             Vector2 boltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 42f) * 5.5f;
                             Vector2 middleBoltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 42f + middleRingAngularOffset) * 3.69f;
-                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
-                            Utilities.NewProjectileBetter(pupilPosition, middleBoltVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
-                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.4f, ProjectileID.PhantasmalBolt, 200, 0f);
+                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
+                            Utilities.NewProjectileBetter(pupilPosition, middleBoltVelocity, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
+                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.4f, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
                         }
                     }
 
@@ -283,12 +283,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                             deathray.ModProjectile<PhantasmalDeathray>().InitialRotationalOffset = MathHelper.TwoPi * i / 10f;
                             deathray.ModProjectile<PhantasmalDeathray>().OwnerIndex = npc.whoAmI + 1;
                         });
-                        Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), 330, 0f, -1, 0f, deathrayLifetime);
+                        Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), PhantasmalDeathrayDamage, 0f, -1, 0f, deathrayLifetime);
                     }
                 }
             }
 
-            if (attackTimer >= (deathrayTelegraphTime + deathrayLifetime) * deathrayShootCount || !MoonLordCoreBehaviorOverride.EyeIsActive)
+            if (attackTimer >= (deathrayTelegraphTime + deathrayLifetime) * deathrayShootCount || !EyeIsActive)
                 core.Infernum().ExtraAI[5] = 1f;
         }
 
@@ -336,7 +336,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             // Draw line telegraphs as necessary.
             NPC core = Main.npc[(int)npc.ai[3]];
-            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDeathrays)
+            if (core.ai[0] == (int)MoonLordAttackState.PhantasmalDeathrays)
             {
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[0];
 

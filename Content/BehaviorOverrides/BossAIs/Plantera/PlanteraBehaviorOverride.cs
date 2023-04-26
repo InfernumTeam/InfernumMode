@@ -42,6 +42,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         #region AI
 
+        public static int PetalDamage => 160;
+
+        public static int SporeGasDamage => 165;
+
+        public static int NettlevineArenaSeparatorDamage => 215;
+
         public override bool PreAI(NPC npc)
         {
             NPC.plantBoss = npc.whoAmI;
@@ -249,7 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * seedShootSpeed;
                 Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
-                Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
+                Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, PetalDamage, 0f);
             }
         }
 
@@ -297,7 +303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     float shootOffsetAngle = MathHelper.Lerp(-0.48f, 0.48f, i / 2f);
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * seedShootSpeed;
                     Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
-                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, PetalDamage, 0f);
                 }
             }
 
@@ -347,7 +353,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                         float rotateOffset = MathHelper.Lerp(-0.33f, 0.33f, i / (petalCount - 1f));
                         Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * petalShootSpeed;
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 68f;
-                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 155, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), PetalDamage, 0f);
                     }
                 }
 
@@ -379,7 +385,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 {
                     Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 720f;
                     Vector2 gasSporeVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.Zero) * 5f;
-                    Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), 165, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), SporeGasDamage, 0f);
                 }
             }
 
@@ -406,7 +412,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                         if (BossRushEvent.BossRushActive)
                             gasSporeVelocity *= 1.5f;
 
-                        Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), 160, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), SporeGasDamage, 0f);
                     }
                 }
             }
@@ -545,7 +551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                         Vector2 thornVelocity = (MathHelper.TwoPi * i / vineCount).ToRotationVector2() * 12f;
                         if (BossRushEvent.BossRushActive)
                             thornVelocity *= 1.5f;
-                        Utilities.NewProjectileBetter(npc.Center, thornVelocity, ModContent.ProjectileType<NettlevineArenaSeparator>(), 215, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, thornVelocity, ModContent.ProjectileType<NettlevineArenaSeparator>(), NettlevineArenaSeparatorDamage, 0f);
                     }
                 }
                 SelectNextAttack(npc);
@@ -648,7 +654,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
                         Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * (chargeSpeed * 0.67f);
 
-                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 160, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), PetalDamage, 0f);
                     }
                 }
 

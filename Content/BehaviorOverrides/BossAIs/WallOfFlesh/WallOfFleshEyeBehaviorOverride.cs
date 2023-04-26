@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                         SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int laser = Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.EyeLaser, 105, 0f);
+                            int laser = Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.EyeLaser, WallOfFleshMouthBehaviorOverride.EyeLaserDamage, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
                                 Main.projectile[laser].hostile = true;
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float laserShootSpeed = 8.5f;
-                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wofNPCIndex].velocity.X) * laserShootSpeed, ProjectileID.EyeLaser, 105, 0f);
+                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wofNPCIndex].velocity.X) * laserShootSpeed, ProjectileID.EyeLaser, WallOfFleshMouthBehaviorOverride.EyeLaserDamage, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
                                 Main.projectile[laser].hostile = true;

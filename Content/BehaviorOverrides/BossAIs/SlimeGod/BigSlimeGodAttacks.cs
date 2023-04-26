@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod.SlimeGodComboAttackManager;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -166,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                             {
                                 float shootOffsetAngle = MathHelper.Lerp(-0.98f, 0.98f, i / (float)(groundBlobCount - 1f)) + Main.rand.NextFloatDirection() * 0.04f;
                                 Vector2 globVelocity = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * globSpeed;
-                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), 90, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), GroundSlimeDamage, 0f);
                             }
 
                             int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
@@ -176,7 +177,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                                 Vector2 globVelocity = Vector2.UnitX.RotatedBy(shootOffsetAngle) * globSpeed * 0.4f;
                                 if (target.Center.X < npc.Center.X)
                                     globVelocity *= -1f;
-                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, 90, 0f);
+                                Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, SlimeGlobDamage, 0f);
                             }
                         }
 
@@ -296,7 +297,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 7f);
                             Vector2 globShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * burstSpeed;
-                            Utilities.NewProjectileBetter(npc.Bottom, globShootVelocity, globID, 90, 0f);
+                            Utilities.NewProjectileBetter(npc.Bottom, globShootVelocity, globID, SlimeGlobDamage, 0f);
                         }
                         coreChargeCounter = 1f;
                         npc.netUpdate = true;
@@ -343,7 +344,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             WeightedRandom<BigSlimeGodAttackType> newStatePicker = new(Main.rand);
             newStatePicker.Add(BigSlimeGodAttackType.LongJumps);
             newStatePicker.Add(BigSlimeGodAttackType.GroundedGelSlam);
-            if (SlimeGodComboAttackManager.FightState == SlimeGodFightState.AloneSingleLargeSlimeEnraged)
+            if (FightState == SlimeGodFightState.AloneSingleLargeSlimeEnraged)
                 newStatePicker.Add(BigSlimeGodAttackType.CoreSpinBursts);
 
             do
@@ -352,7 +353,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 tries++;
             }
             while (localState == oldLocalState && tries < 1000);
-            SlimeGodComboAttackManager.SelectNextAttackSpecific(npc);
+            SelectNextAttackSpecific(npc);
             npc.netUpdate = true;
         }
     }

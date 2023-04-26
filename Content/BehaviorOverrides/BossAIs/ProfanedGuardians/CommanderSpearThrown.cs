@@ -107,16 +107,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i < crossWaves; i++)
             {
                 float speed = i switch
-                { 
+                {
                     0 => 8.5f,
                     1 => 5f,
                     _ => 2.5f
                 };
-                
+
                 for (int j = 0; j < crossCount; j++)
                 {
                     Vector2 crossVelocity = (MathHelper.TwoPi * j / crossCount + MathHelper.PiOver4 * i).ToRotationVector2() * speed;
-                    Utilities.NewProjectileBetter(Projectile.Center + crossVelocity, crossVelocity, ModContent.ProjectileType<HolyCross>(), 250, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center + crossVelocity, crossVelocity, ModContent.ProjectileType<HolyCross>(), GuardianComboAttackManager.HolyCrossDamage, 0f);
                 }
             }
         }

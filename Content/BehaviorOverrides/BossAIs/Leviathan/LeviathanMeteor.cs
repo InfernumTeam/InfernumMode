@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             for (int i = 0; i < 15; i++)
             {
                 Vector2 shootVelocity = (MathHelper.TwoPi * i / 15f).ToRotationVector2() * 12f;
-                Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<LeviathanVomit>(), 175, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<LeviathanVomit>(), LeviathanComboAttackManager.LeviathanVomitDamage, 0f);
             }
         }
 

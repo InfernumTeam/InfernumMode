@@ -103,8 +103,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (Projectile.identity % 2f == 1f)
                 initialVelocity = initialVelocity.RotatedBy(MathHelper.PiOver2);
 
-            Utilities.NewProjectileBetter(Projectile.Center, -initialVelocity, ProjectileID.CultistBossFireBall, 215, 0f);
-            Utilities.NewProjectileBetter(Projectile.Center, initialVelocity, ProjectileID.CultistBossFireBall, 215, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center, -initialVelocity, ProjectileID.CultistBossFireBall, MoonLordCoreBehaviorOverride.FireballDamage, 0f);
+            Utilities.NewProjectileBetter(Projectile.Center, initialVelocity, ProjectileID.CultistBossFireBall, MoonLordCoreBehaviorOverride.FireballDamage, 0f);
             Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordExplosion>(), 0, 0f);
         }
     }

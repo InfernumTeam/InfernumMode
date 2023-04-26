@@ -152,6 +152,38 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
+        public static int BrimstoneDartDamage => 540;
+
+        public static int BrimstoneHellblastDamage => 540;
+
+        public static int BrothersProjectileDamage => 540;
+
+        public static int CondemnationArrowDamage => 540;
+
+        public static int DarkMagicFlameDamage => 540;
+
+        public static int SepulcherBoneDamage => 540;
+
+        public static int ShadowBoltDamage => 540;
+
+        public static int GigablastDamage => 600;
+
+        public static int LostSoulDamage => 600;
+
+        public static int ShadowBlastDamage => 600;
+
+        public static int DemonicExplosionDamage => 650;
+
+        public static int SepulcherSoulBombDamage => 650;
+
+        public static int SuicideBomberDemonDamage => 650;
+
+        public static int FlameOverloadBeamDamage => 900;
+
+        public static int FlamePillarDamage => 900;
+
+        public static int RancorLaserbeamDamage => 900;
+
         public static bool ShadowDemonCanAttack => SCal?.ai[0] >= 50f;
 
         public static SCalAttackType[] Phase1AttackCycle => new SCalAttackType[]
@@ -541,7 +573,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Vector2 soulVelocity = (Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt()).RotatedBy(offsetAngle) * soulShootSpeed * new Vector2(0.67f, 1f);
                         soulVelocity.Y += target.velocity.Y;
 
-                        Utilities.NewProjectileBetter(handPosition, soulVelocity, ModContent.ProjectileType<RedirectingDarkSoul>(), 500, 0f);
+                        Utilities.NewProjectileBetter(handPosition, soulVelocity, ModContent.ProjectileType<RedirectingDarkSoul>(), LostSoulDamage, 0f);
                     }
                 }
 
@@ -681,7 +713,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
                         Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
-                        Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                        Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
@@ -701,7 +733,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = condemnationRef.rotation.ToRotationVector2() * shootSpeed;
-                    Utilities.NewProjectileBetter(condemnationRef.ModProjectile<CondemnationProj>().TipPosition, shootVelocity, ModContent.ProjectileType<CondemnationArrowSCal>(), 500, 0f);
+                    Utilities.NewProjectileBetter(condemnationRef.ModProjectile<CondemnationProj>().TipPosition, shootVelocity, ModContent.ProjectileType<CondemnationArrowSCal>(), CondemnationArrowDamage, 0f);
                 }
             }
 
@@ -810,10 +842,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             bomb.timeLeft = bombLifetime;
                         });
-                        Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), 500, 0f, -1, bombExplosionRadius);
+                        Utilities.NewProjectileBetter(npc.Center, bombShootVelocity, ModContent.ProjectileType<DemonicBomb>(), GigablastDamage, 0f, -1, bombExplosionRadius);
 
                         if (chargeCounter % 3f == 2f)
-                            Utilities.NewProjectileBetter(npc.Center, bombShootVelocity.RotatedByRandom(0.4f) * 0.5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, bombShootVelocity.RotatedByRandom(0.4f) * 0.5f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), GigablastDamage, 0f);
 
                         chargeCounter++;
                         npc.netUpdate = true;
@@ -941,7 +973,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Vector2 projectileVelocity = (npc.SafeDirectionTo(target.Center) * new Vector2(1f, 0.1f)).SafeNormalize(Vector2.UnitY) * 15f;
                     Vector2 hellblastSpawnPosition = npc.Center + projectileVelocity * 0.4f;
                     int projectileType = ModContent.ProjectileType<BrimstoneHellblast>();
-                    Utilities.NewProjectileBetter(hellblastSpawnPosition, projectileVelocity, projectileType, 500, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(hellblastSpawnPosition, projectileVelocity, projectileType, BrimstoneHellblastDamage, 0f, Main.myPlayer);
 
                     // Release a burst of darts after a certain number of hellblasts have been fired.
                     if (shootCounter % dartBurstPeriod == dartBurstPeriod - 1f)
@@ -950,7 +982,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             float dartOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartCount - 1f));
                             Vector2 dartVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(dartOffsetAngle) * dartSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f, Main.myPlayer);
+                            Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f, Main.myPlayer);
                         }
                     }
 
@@ -1054,7 +1086,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(target.Center + shootOffset, cinderShootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicFlame>(), 500, 0f);
+                        Utilities.NewProjectileBetter(target.Center + shootOffset, cinderShootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1315,7 +1347,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         float dartOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / (float)(dartCount - 1f));
                         Vector2 dartVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(dartOffsetAngle) * dartSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f, Main.myPlayer);
                     }
                     dartShootCounter++;
                     npc.netUpdate = true;
@@ -1462,7 +1494,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 Vector2 aimDirection = (jewelRef.rotation + MathHelper.PiOver2).ToRotationVector2();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<BrimstoneLaserbeam>(), 900, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<BrimstoneLaserbeam>(), RancorLaserbeamDamage, 0f);
             }
 
             // Make the laserbeam spin after it's created.
@@ -2008,7 +2040,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.73f) * Main.rand.NextFloat(8f, 17f);
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<RedirectingLostSoulProj>(), 550, 0f, -1, 0f, 0.6f);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<RedirectingLostSoulProj>(), LostSoulDamage, 0f, -1, 0f, 0.6f);
                         }
                     }
                 }
@@ -2119,10 +2151,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
                             Vector2 dartShootVelocity = (dartTelegraphDirection + shootOffsetAngle).ToRotationVector2() * dartShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
 
                             dartShootVelocity *= -1f;
-                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
                         }
                     }
                 }
@@ -2189,7 +2221,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (dartBulletHellCounter % 2f == 1f)
                                 dartSpawnPosition.X += dartBulletHellWallArea;
 
-                            int dart = Utilities.NewProjectileBetter(dartSpawnPosition, Vector2.UnitY * 5f, brimstoneDartID, 500, 0f);
+                            int dart = Utilities.NewProjectileBetter(dartSpawnPosition, Vector2.UnitY * 5f, brimstoneDartID, BrimstoneDartDamage, 0f);
                             if (Main.projectile.IndexInRange(dart))
                                 Main.projectile[dart].timeLeft -= 210;
                         }
@@ -2218,7 +2250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                             gigablastReleaseCountdown = 34f;
 
                         SoundEngine.PlaySound(SCalBoss.BrimstoneBigShotSound, npc.Center);
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 9.4f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), 500, 0f, -1, 0f, 13f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 9.4f, ModContent.ProjectileType<InfernumBrimstoneGigablast>(), GigablastDamage, 0f, -1, 0f, 13f);
                     }
                 }
 

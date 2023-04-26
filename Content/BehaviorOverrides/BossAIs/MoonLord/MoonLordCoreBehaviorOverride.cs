@@ -41,11 +41,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             VoidAccretionDisk
         }
 
+        public static int FireballDamage => 215;
+
+        public static int LunarFireballDamage => 215;
+
+        public static int PhantasmalBoltDamage => 215;
+
+        public static int PhantasmalEyeDamage => 215;
+
+        public static int LunarAsteroidDamage => 220;
+
+        public static int PhantasmalSphereDamage => 220;
+
+        public static int PhantasmalDeathrayDamage => 325;
+
+        public static int BlackHoleDamage => 350;
+
+        public static int PhantasmalBoltEnragedDamage => 500;
+
         public const int ArenaWidth = 200;
+
         public const int ArenaHeight = 150;
+
         public const float BaseFlySpeedFactor = 6f;
+
         public const float Phase2LifeRatio = 0.65f;
+
         public const float Phase3LifeRatio = 0.33333f;
+
         public static readonly Color OverallTint = new(7, 81, 81);
 
         public static bool IsEnraged
@@ -418,7 +441,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 HatGirl.SayThingWhileOwnerIsAlive(target, "The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!");
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), 300, 0f, -1, 0f, npc.whoAmI);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), BlackHoleDamage, 0f, -1, 0f, npc.whoAmI);
             }
 
             if (attackTimer >= 540f)

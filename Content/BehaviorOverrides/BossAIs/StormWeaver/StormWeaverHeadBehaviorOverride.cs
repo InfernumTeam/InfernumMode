@@ -676,7 +676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Handle post charge behaviors.
             else
             {
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.025f) * chargeAcceleration;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.022f) * chargeAcceleration;
                 if (attackTimer >= telegraphTime + chargeTime)
                 {
                     chargeCounter++;

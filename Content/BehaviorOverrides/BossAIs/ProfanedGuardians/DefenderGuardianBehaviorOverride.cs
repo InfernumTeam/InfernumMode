@@ -265,6 +265,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public void DrawFireSuckup(NPC npc)
         {
+            if (CalamityGlobalNPC.doughnutBoss == -1)
+                return;
+
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             FireDrawer ??= new PrimitiveTrailCopy((float completionRatio) => commander.Infernum().ExtraAI[DefenderFireSuckupWidthIndex] * 50f,
                 FireColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);

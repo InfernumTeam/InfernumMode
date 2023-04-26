@@ -30,9 +30,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public ref float ShatteringTimer => ref NPC.ai[1];
 
-        public Texture2D WallTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/HealerShieldWall").Value;
-
         public Vector2 InitialPosition;
+
+        public static Texture2D WallTexture => ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/HealerShieldWall").Value;
 
         public override void SetStaticDefaults()
         {
@@ -138,8 +138,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 NPC.active = false;
                 HatGirl.SayThingWhileOwnerIsAlive(target, "They're a really good team! You'll want to manage everything at once, taking it slow is your best shot!");
 
-                Vector2 wallBottom = NPC.Center + new Vector2(21f, WallTexture.Height * 0.5f);
-                Vector2 wallTop = NPC.Center + new Vector2(21f, -WallTexture.Height * 0.5f);
+                Vector2 wallBottom = NPC.Center + new Vector2(21f, 989f);
+                Vector2 wallTop = NPC.Center + new Vector2(21f, -989f);
 
                 float crystalAmount = 50f;
                 for (int i = 0; i < crystalAmount; i++)
@@ -147,7 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Vector2 crystalSpawnPosition = Vector2.Lerp(wallBottom, wallTop, (float)i / crystalAmount) + Main.rand.NextVector2Circular(24f, 24f);
                     Vector2 crystalVelocity = -Vector2.UnitX.RotatedByRandom(1.06f) * Main.rand.NextFloat(2f, 4f);
 
-                    if (!Collision.SolidCollision(crystalSpawnPosition, 1, 1))
+                    if (!Collision.SolidCollision(crystalSpawnPosition, 1, 1) && Main.netMode != NetmodeID.Server)
                         Gore.NewGore(new EntitySource_WorldEvent(), crystalSpawnPosition, crystalVelocity, Mod.Find<ModGore>($"ProvidenceDoor{Main.rand.Next(1, 3)}").Type, 1.16f);
                 }
 

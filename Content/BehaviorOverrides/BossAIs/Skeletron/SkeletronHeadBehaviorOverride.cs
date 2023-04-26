@@ -34,8 +34,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
         public override int NPCOverrideType => NPCID.SkeletronHead;
 
+        public static int ShadowflameFireballDamage => 105;
+
+        public static int SkullDamage => 105;
+
+        public static int ShadowflameFireballArenaDamage => 150;
+
         public const float Phase2LifeRatio = 0.85f;
+
         public const float Phase3LifeRatio = 0.475f;
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
@@ -370,7 +378,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int skull = Utilities.NewProjectileBetter(skullShootPosition, skullShootVelocity, ProjectileID.Skull, 95, 0f);
+                        int skull = Utilities.NewProjectileBetter(skullShootPosition, skullShootVelocity, ProjectileID.Skull, SkullDamage, 0f);
                         if (Main.projectile.IndexInRange(skull))
                         {
                             Main.projectile[skull].ai[0] = -1f;
@@ -436,7 +444,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                     for (int i = 0; i < skullCount; i++)
                     {
                         Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
-                        int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
+                        int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), SkullDamage, 0f);
                         if (Main.projectile.IndexInRange(skull))
                             Main.projectile[skull].ai[0] = 0.005f;
                     }
@@ -472,7 +480,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(8f, 12.65f);
                 if (Main.rand.NextBool(2))
                     shootVelocity.Y *= -1f;
-                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
+                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), SkullDamage, 0f);
             }
 
             npc.damage = 0;
@@ -511,7 +519,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                         for (int i = 0; i < 3; i++)
                         {
                             Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 10f;
-                            int skull = Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ProjectileID.Skull, 95, 0f);
+                            int skull = Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ProjectileID.Skull, SkullDamage, 0f);
                             if (Main.projectile.IndexInRange(skull))
                             {
                                 Main.projectile[skull].ai[0] = -1f;
@@ -524,7 +532,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                         for (int i = 0; i < 8; i++)
                         {
                             Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 9f;
-                            Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ModContent.ProjectileType<SpinningFireball>(), 95, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ModContent.ProjectileType<SpinningFireball>(), ShadowflameFireballDamage, 0f);
                         }
                     }
                 }
@@ -656,12 +664,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
                         Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
                         shootVelocity.Y += Main.rand.NextFloat(2f);
-                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f, -1, offset + fuck);
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), SkullDamage, 0f, -1, offset + fuck);
                     }
 
                     // Fire one skull directly at the target.
                     Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center) * 5f;
-                    Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 95, 0f, -1, -9999f);
+                    Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), SkullDamage, 0f, -1, -9999f);
                 }
             }
 

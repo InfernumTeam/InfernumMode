@@ -218,7 +218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                             {
                                 float shootOffsetAngle = MathHelper.Lerp(-0.44f, 0.44f, i / 2f) + Main.rand.NextFloatDirection() * 0.04f;
                                 Vector2 shadowBlastShootVelocity = (Target.Center - head.Center).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * blastShootSpeed;
-                                Utilities.NewProjectileBetter(head.Center, shadowBlastShootVelocity, ModContent.ProjectileType<ShadowFlameBlast>(), 550, 0f);
+                                Utilities.NewProjectileBetter(head.Center, shadowBlastShootVelocity, ModContent.ProjectileType<ShadowFlameBlast>(), SupremeCalamitasBehaviorOverride.ShadowBlastDamage, 0f);
                             }
                         }
                     }
@@ -289,7 +289,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 gigablastShootVelocity = (Target.Center - Heads[1].Center).SafeNormalize(Vector2.UnitY) * 12.5f;
-                        Utilities.NewProjectileBetter(Heads[1].Center, gigablastShootVelocity, ModContent.ProjectileType<ShadowGigablast>(), 550, 0f);
+                        Utilities.NewProjectileBetter(Heads[1].Center, gigablastShootVelocity, ModContent.ProjectileType<ShadowGigablast>(), SupremeCalamitasBehaviorOverride.ShadowBlastDamage, 0f);
                     }
 
                     NPC.netUpdate = true;
@@ -311,7 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 boltVelocity = (Target.Center - Heads[headToShoot].Center).SafeNormalize(Vector2.UnitY) * 14.5f;
-                        Utilities.NewProjectileBetter(Heads[headToShoot].Center, boltVelocity, ModContent.ProjectileType<ShadowBolt>(), 500, 0f);
+                        Utilities.NewProjectileBetter(Heads[headToShoot].Center, boltVelocity, ModContent.ProjectileType<ShadowBolt>(), SupremeCalamitasBehaviorOverride.ShadowBoltDamage, 0f);
                     }
                 }
 

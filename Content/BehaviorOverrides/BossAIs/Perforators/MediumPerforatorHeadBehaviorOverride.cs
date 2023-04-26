@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 toothBallShootVelocity = npc.SafeDirectionTo(target.Center) * toothBallShootSpeed;
-                    Utilities.NewProjectileBetter(npc.Center, toothBallShootVelocity, ModContent.ProjectileType<ToothBall>(), 80, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, toothBallShootVelocity, ModContent.ProjectileType<ToothBall>(), PerforatorHiveBehaviorOverride.ToothBallDamage, 0f);
                 }
             }
             attackTimer++;

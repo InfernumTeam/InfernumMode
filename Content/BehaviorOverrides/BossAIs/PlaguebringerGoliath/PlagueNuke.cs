@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                     SoundEngine.PlaySound(InfernumSoundRegistry.PBGNukeExplosionSound with { Volume = 2f }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), 750, 0f);
+                        Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), PlaguebringerGoliathBehaviorOverride.NuclearExplosionDamage, 0f);
 
                     NPC.life = 0;
                     NPC.checkDead();

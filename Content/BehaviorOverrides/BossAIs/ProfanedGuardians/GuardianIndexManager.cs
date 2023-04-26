@@ -113,12 +113,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         // Damage fields.
         public const int ProfanedRockDamage = 200;
+
         public const int MagicShotDamage = 220;
+
+        public const int HolyCrossDamage = 250;
+
         public const int HolySpearDamage = 250;
+
         public const int LingeringFireDamage = 275;
+
         public const int CommanderSpearDamage = 300;
+
+        public const int SunExplosionDamage = 300;
+
         public const int HolyFireBeamDamage = 375;
+
         public const int LavaPillarDamage = 450;
+
+        public const int HolySpinningFireBeamDamage = 500;
         #endregion
 
         #region Indexes

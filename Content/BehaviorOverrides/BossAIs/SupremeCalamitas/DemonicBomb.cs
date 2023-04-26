@@ -101,14 +101,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     explosion.ModProjectile<DemonicExplosion>().MaxRadius = ExplosionRadius * 0.7f;
                 });
-                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 660, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), SupremeCalamitasBehaviorOverride.DemonicExplosionDamage, 0f);
 
                 if (ExplodeIntoDarts)
                 {
                     for (int i = 0; i < 6; i++)
                     {
                         Vector2 dartVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 7.4f;
-                        Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f);
+                        Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), SupremeCalamitasBehaviorOverride.BrimstoneDartDamage, 0f);
                     }
                 }
             }

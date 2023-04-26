@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 SoundEngine.PlaySound(SoundID.Item163, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(Projectile.Center, AimDirection.ToRotationVector2() * 0.01f, ModContent.ProjectileType<HallowLaserbeam>(), 200, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, AimDirection.ToRotationVector2() * 0.01f, ModContent.ProjectileType<HallowLaserbeam>(), QueenSlimeBehaviorOverride.AimedLaserbeamDamage, 0f);
             }
 
             Time++;

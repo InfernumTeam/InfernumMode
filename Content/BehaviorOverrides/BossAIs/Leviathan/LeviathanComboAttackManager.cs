@@ -28,8 +28,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         AngeringSong
     }
 
-    public static class ComboAttackManager
+    public static class LeviathanComboAttackManager
     {
+        public static int WaterSpearDamage => 170;
+
+        public static int LullabyDamage => 170;
+
+        public static int FrostMistDamage => 175;
+
+        public static int LeviathanVomitDamage => 175;
+
+        public static int AquaticAberrationDamage => 190;
+
+        public static int AtlantisSpearDamage => 195;
+
+        public static int LeviathanMeteorDamage => 195;
+
         public static NPC LeaderOfFight
         {
             get
@@ -171,7 +185,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 shootVelocity = -Vector2.UnitY * 15.5f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<RedirectingWaterBolt>(), 175, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<RedirectingWaterBolt>(), WaterSpearDamage, 0f);
                     }
                 }
             }
@@ -228,7 +242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 shootVelocity = (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * 13.5f;
-                        Utilities.NewProjectileBetter(headPosition, shootVelocity, ModContent.ProjectileType<FrostMist>(), 175, 0f);
+                        Utilities.NewProjectileBetter(headPosition, shootVelocity, ModContent.ProjectileType<FrostMist>(), FrostMistDamage, 0f);
                     }
                 }
 
@@ -244,7 +258,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * 16f;
-                        Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanMeteor>(), 200, 0f);
+                        Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanMeteor>(), LeviathanMeteorDamage, 0f);
                     }
                 }
             }
@@ -297,7 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     {
                         Vector2 aberrationSpawnPosition = npc.Center + Main.rand.NextVector2Circular(50f, 16f);
                         Vector2 aberrationVelocity = (target.Center - aberrationSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.43f) * 13.6f;
-                        Utilities.NewProjectileBetter(aberrationSpawnPosition, aberrationVelocity, ModContent.ProjectileType<AquaticAberrationProj>(), 185, 0f);
+                        Utilities.NewProjectileBetter(aberrationSpawnPosition, aberrationVelocity, ModContent.ProjectileType<AquaticAberrationProj>(), AquaticAberrationDamage, 0f);
                     }
                 }
 
@@ -325,7 +339,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 songShootVelocity = (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * songShootSpeed;
-                        Utilities.NewProjectileBetter(headPosition, songShootVelocity, ModContent.ProjectileType<HeavenlyLullaby>(), 175, 0f);
+                        Utilities.NewProjectileBetter(headPosition, songShootVelocity, ModContent.ProjectileType<HeavenlyLullaby>(), LullabyDamage, 0f);
                     }
                 }
             }

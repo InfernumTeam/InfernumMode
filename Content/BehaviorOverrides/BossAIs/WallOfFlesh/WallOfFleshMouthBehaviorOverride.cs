@@ -20,6 +20,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public const float Phase2LifeRatio = 0.45f;
 
+        public static int EyeLaserDamage => 100;
+
+        public static int FleshTentacleDamage => 105;
+
+        public static int FireBeamDamage => 185;
+
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio
@@ -318,7 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
                     spawnPosition = spawnPosition.ToTileCoordinates().ToWorldCoordinates();
                     Vector2 tentacleDirection = target.DirectionFrom(spawnPosition);
-                    Utilities.NewProjectileBetter(spawnPosition, tentacleDirection, ModContent.ProjectileType<TileTentacle>(), 105, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, tentacleDirection, ModContent.ProjectileType<TileTentacle>(), FleshTentacleDamage, 0f);
                 }
                 enrageAttackCountdown--;
             }

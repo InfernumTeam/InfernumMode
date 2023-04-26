@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         pillar.BottomLeft = Projectile.Center;
                     });
-                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillar>(), 900, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneFlamePillar>(), SupremeCalamitasBehaviorOverride.FlamePillarDamage, 0f);
                 }
                 Projectile.Kill();
             }

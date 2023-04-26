@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             for (int i = 0; i < 6; i++)
             {
                 Vector2 shadowSparkVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 7f;
-                Utilities.NewProjectileBetter(Projectile.Center, shadowSparkVelocity, ModContent.ProjectileType<ShadowSpark>(), 500, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, shadowSparkVelocity, ModContent.ProjectileType<ShadowSpark>(), SupremeCalamitasBehaviorOverride.ShadowBoltDamage, 0f);
             }
         }
     }

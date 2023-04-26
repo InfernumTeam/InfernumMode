@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         if (BossRushEvent.BossRushActive)
                             shootVelocity *= 1.7f;
 
-                        Utilities.NewProjectileBetter(boltSpawnPosition, shootVelocity, ModContent.ProjectileType<QueenJewelBeam>(), 140, 0f);
+                        Utilities.NewProjectileBetter(boltSpawnPosition, shootVelocity, ModContent.ProjectileType<QueenJewelBeam>(), QueenSlimeBehaviorOverride.JewelBeamDamage, 0f);
                     }
                 }
             }

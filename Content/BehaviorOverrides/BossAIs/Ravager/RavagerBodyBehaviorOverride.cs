@@ -49,6 +49,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerBody>();
 
+        public static int BloodGlobDamage => 185;
+
+        public static int BloodSpikeDamage => 185;
+
+        public static int DarkMagicCinderDamage => 185;
+
+        public static int DarkMagicFireballDamage => 190;
+
+        public static int RockPillarDamage => 190;
+
+        public static int FlamePillarDamage => 215;
+
         public const int AttackDelay = 135;
 
         public const float BaseDR = 0.325f;
@@ -344,7 +356,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         {
                             float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / (float)(emberBurstCount - 1f));
                             Vector2 emberShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 6f;
-                            Utilities.NewProjectileBetter(npc.Center + emberShootVelocity * 9f, emberShootVelocity, ModContent.ProjectileType<DarkMagicFireball>(), 180, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + emberShootVelocity * 9f, emberShootVelocity, ModContent.ProjectileType<DarkMagicFireball>(), DarkMagicFireballDamage, 0f);
                         }
                     }
 
@@ -396,7 +408,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int bloodShootTime = 180;
             int totalInstancesPerShot = 1;
             int postAttackTransitionDelay = 75;
-            int bloodDamage = 180;
             float destinationOffsetVariance = 200f;
 
             if (!phaseInfo.HandsAreAlive)
@@ -457,7 +468,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         if (multiplePerShot)
                             bloodShootVelocity += Main.rand.NextVector2Circular(2f, 2f);
 
-                        int blood = Utilities.NewProjectileBetter(shootPosition, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), bloodDamage, 0f);
+                        int blood = Utilities.NewProjectileBetter(shootPosition, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), BloodGlobDamage, 0f);
                         if (Main.projectile.IndexInRange(blood))
                             Main.projectile[blood].ai[1] = target.Center.Y;
                     }
@@ -479,8 +490,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
             int projectileShootCount = 27;
             int slamCount = 3;
-            int bloodDamage = 180;
-            int spikeDamage = 185;
             float projectileAngularSpread = MathHelper.ToRadians(61f);
             float horizontalSpikeSpeed = 8.4f;
 
@@ -555,7 +564,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                             continue;
 
                         Vector2 bloodShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(19f, 21f) + Main.rand.NextVector2Circular(1.6f, 1.6f);
-                        int blood = Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), bloodDamage, 0f);
+                        int blood = Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), BloodGlobDamage, 0f);
                         if (Main.projectile.IndexInRange(blood))
                             Main.projectile[blood].ai[1] = target.Center.Y;
                     }
@@ -566,7 +575,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         for (int i = -1; i <= 1; i += 2)
                         {
                             Vector2 spikeVelocity = Vector2.UnitX * horizontalSpikeSpeed * i;
-                            Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), spikeDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), BloodSpikeDamage, 0f);
                         }
                     }
                     npc.netUpdate = true;
@@ -604,8 +613,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int fireReleaseRate = 20;
             int spikeReleaseRate = 64;
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
-            int flamePillarDamage = 210;
-            int spikeDamage = 185;
             float horizontalSpikeSpeed = MathHelper.Lerp(7.6f, 10f, 1f - phaseInfo.LifeRatio);
             float horizontalStepPerPillar = MathHelper.Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
@@ -697,7 +704,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
                             fireSpawnPosition.Y += 36f;
                             if (!skipPillar)
-                                Utilities.NewProjectileBetter(fireSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkFlamePillar>(), flamePillarDamage, 0f);
+                                Utilities.NewProjectileBetter(fireSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkFlamePillar>(), FlamePillarDamage, 0f);
                         }
                         npc.netUpdate = true;
                     }
@@ -709,7 +716,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     for (int i = -1; i <= 1; i += 2)
                     {
                         Vector2 spikeVelocity = Vector2.UnitX * horizontalSpikeSpeed * i;
-                        Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), spikeDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), BloodSpikeDamage, 0f);
                     }
                 }
             }
@@ -724,7 +731,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int wallCreateRate = 48;
             int wallCreateTime = 360;
             int attackTransitionDelay = 70;
-            int wallDamage = 200;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
 
             // WHY ARE YOU SLIDING AWAY YOU MOTHERFUCKER???
@@ -745,7 +751,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 {
                     Vector2 pillarSpawnPosition = target.Center + Vector2.UnitX * (i * spaceBetweenWalls + 120f);
                     pillarSpawnPosition.Y -= 640f;
-                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f);
+                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), RockPillarDamage, 0f);
                 }
             }
 
@@ -758,7 +764,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             // The head itself does the attack.
             // The body does pretty much nothing lmao
             int wallCreateRate = 60;
-            int wallDamage = 200;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
             ref float wallCreationCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -775,7 +780,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         pillarSpawnPosition.Y -= 640f;
                     }
 
-                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f, -1, 0f, wallCreationCounter % 2f);
+                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), RockPillarDamage, 0f, -1, 0f, wallCreationCounter % 2f);
                 }
                 wallCreationCounter++;
                 npc.netUpdate = true;

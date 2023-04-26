@@ -293,8 +293,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Vector2 leftVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-MathHelper.PiOver2) * 4f;
                     Vector2 rightVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 4f;
-                    Utilities.NewProjectileBetter(npc.Center, leftVelocity, ModContent.ProjectileType<SepulcherBone>(), 500, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, rightVelocity, ModContent.ProjectileType<SepulcherBone>(), 500, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, leftVelocity, ModContent.ProjectileType<SepulcherBone>(), SupremeCalamitasBehaviorOverride.SepulcherBoneDamage, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, rightVelocity, ModContent.ProjectileType<SepulcherBone>(), SupremeCalamitasBehaviorOverride.SepulcherBoneDamage, 0f);
                 }
             }
 
@@ -336,7 +336,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 1f && !bombExists)
             {
                 if (bombLaunchCounter < bombLaunchCount)
-                    Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(target.Center) * 15f, Vector2.Zero, bombID, 600, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(target.Center) * 15f, Vector2.Zero, bombID, SupremeCalamitasBehaviorOverride.SepulcherSoulBombDamage, 0f);
                 else
                 {
                     SelectNextAttack(npc);

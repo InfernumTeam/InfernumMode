@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public override void AI()
         {
             // Die if Anahita is not around.
-            if (CalamityGlobalNPC.siren == -1 || ComboAttackManager.FightState == LeviAnahitaFightState.LeviathanAlone)
+            if (CalamityGlobalNPC.siren == -1 || LeviathanComboAttackManager.FightState == LeviAnahitaFightState.LeviathanAlone)
             {
                 Projectile.Kill();
                 return;

@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             {
                                 explosion.ModProjectile<HolySunExplosion>().MaxRadius = 300f;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 300, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), SunExplosionDamage, 0f);
                         }
 
                         for (int i = 0; i < 100; i++)
@@ -293,7 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float fadeOutLength = 6f;
             int maxAfterimages = 6;
 
-            DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);          
+            DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);
         }
 
         public static void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

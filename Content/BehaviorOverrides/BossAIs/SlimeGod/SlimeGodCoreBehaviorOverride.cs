@@ -17,6 +17,7 @@ using Terraria.Utilities;
 
 using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanSlimeGod;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod.SlimeGodComboAttackManager;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -53,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     Main.npc[slime].velocity = Main.rand.NextVector2Circular(8f, 8f);
                 }
 
-                SlimeGodComboAttackManager.SelectNextAttackSpecific(SlimeGodComboAttackManager.LeaderOfFight);
+                SelectNextAttackSpecific(LeaderOfFight);
             }
         }
         #endregion Loading
@@ -84,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 int slimeGodID = WorldGen.crimson ? ModContent.NPCType<CrimulanSGBig>() : ModContent.NPCType<EbonianSGBig>();
                 int fuck = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X - 500, (int)target.Center.Y - 750, slimeGodID);
                 Main.npc[fuck].velocity = Vector2.UnitY * 8f;
-                npc.scale = SlimeGodComboAttackManager.CoreBaseScale;
+                npc.scale = CoreBaseScale;
                 npc.localAI[3] = 1f;
             }
 
@@ -110,13 +111,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             // Update the boss HP bar.
             BossHealthBarManager.BossExclusionList.Remove(npc.type);
 
-            npc.boss = SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase;
+            npc.boss = FightState == SlimeGodFightState.CorePhase;
             npc.Calamity().CanHaveBossHealthBar = npc.boss;
             npc.Calamity().ShouldCloseHPBar = !npc.boss;
 
             if (npc.ai[0] <= 1f)
             {
-                bool transitionToNextAttack = SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase;
+                bool transitionToNextAttack = FightState == SlimeGodFightState.CorePhase;
                 if (npc.ai[0] != (int)SlimeGodCoreAttackType.HoverAndDoNothing)
                     transitionToNextAttack |= attackTimer >= 480f;
 
@@ -275,7 +276,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         {
                             int globID = Main.rand.NextBool() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                             Vector2 blobShootVelocity = (MathHelper.TwoPi * i / blobsInBurst + offsetAngle).ToRotationVector2() * blobShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, 100, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, SlimeGlobDamage, 0f);
                         }
                     }
                 }
@@ -294,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         int globID = Main.rand.NextBool() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                         float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
                         Vector2 blobShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * blobShootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, 100, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, SlimeGlobDamage, 0f);
                     }
                 }
                 npc.netUpdate = true;
@@ -375,8 +376,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<DeceleratingEbonianGlob>(), 100, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<DeceleratingCrimulanGlob>(), 100, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<DeceleratingEbonianGlob>(), SlimeGlobDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<DeceleratingCrimulanGlob>(), SlimeGlobDamage, 0f);
                     }
                 }
 
@@ -424,7 +425,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         int globID = Main.rand.NextBool() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                         float shootOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, i / (blobsPerBurst - 1f));
                         Vector2 blobShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * blobShootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, 100, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, SlimeGlobDamage, 0f);
                     }
                 }
             }
@@ -449,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             int tries = 0;
             WeightedRandom<SlimeGodCoreAttackType> newStatePicker = new(Main.rand);
 
-            if (SlimeGodComboAttackManager.FightState != SlimeGodFightState.CorePhase)
+            if (FightState != SlimeGodFightState.CorePhase)
                 newStatePicker.Add(SlimeGodCoreAttackType.HoverAndDoNothing);
             else
             {
@@ -466,7 +467,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             while (localState == oldLocalState && tries < 1000);
 
             // Do the final phase animation if the previous attack was just an idle hover.
-            if (npc.Infernum().ExtraAI[7] == 0f && SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase)
+            if (npc.Infernum().ExtraAI[7] == 0f && FightState == SlimeGodFightState.CorePhase)
             {
                 localState = (int)SlimeGodCoreAttackType.PhaseTransitionAnimation;
                 npc.Infernum().ExtraAI[7] = 1f;
@@ -543,7 +544,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             yield return n => "They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?";
             yield return n =>
             {
-                if (SlimeGodComboAttackManager.FightState == SlimeGodFightState.CorePhase)
+                if (FightState == SlimeGodFightState.CorePhase)
                     return "Dont let all the projectiles intimidate you, be very cautious with your movement!";
                 return string.Empty;
             };

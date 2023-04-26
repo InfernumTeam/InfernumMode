@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron.SkeletronHeadBehaviorOverride;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 {
@@ -44,14 +45,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             }
             else
             {
-                SkeletronHeadBehaviorOverride.SkeletronAttackType ownerAttackState = (SkeletronHeadBehaviorOverride.SkeletronAttackType)(int)owner.ai[0];
+                SkeletronAttackType ownerAttackState = (SkeletronAttackType)(int)owner.ai[0];
                 float attackTimer = owner.ai[1];
                 Player target = Main.player[owner.target];
 
                 switch (ownerAttackState)
                 {
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HoverSkulls:
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.DownwardAcceleratingSkulls:
+                    case SkeletronAttackType.HoverSkulls:
+                    case SkeletronAttackType.DownwardAcceleratingSkulls:
                         Vector2 destination = owner.Center + new Vector2(armDirection * 600f, 950f);
                         if (npc.Center.Y > destination.Y)
                         {
@@ -99,19 +100,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                                     Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(18f, 24f);
 
                                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 150, 0f);
+                                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), ShadowflameFireballArenaDamage, 0f);
                                 }
                             }
                         }
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && ownerAttackState == SkeletronHeadBehaviorOverride.SkeletronAttackType.HoverSkulls &&
+                        if (Main.netMode != NetmodeID.MultiplayerClient && ownerAttackState == SkeletronAttackType.HoverSkulls &&
                             npc.WithinRange(destination, 100f) && attackTimer % 50f == 49f && attackTimer > 90f)
                         {
                             Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
-                            Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), ShadowflameFireballDamage, 0f);
                         }
                         break;
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandWaves:
+                    case SkeletronAttackType.HandWaves:
                         Vector2 idealPosition = owner.Center + new Vector2(armDirection * 200f, -230f);
 
                         bool facingPlayer = armDirection == (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -136,17 +137,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                                 skullShootVelocity *= 2f;
 
                             skullSpawnPosition += skullShootVelocity * 4f;
-                            Utilities.NewProjectileBetter(skullSpawnPosition, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 115, 0f);
+                            Utilities.NewProjectileBetter(skullSpawnPosition, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), SkullDamage, 0f);
                         }
 
                         break;
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.SpinCharge:
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.Phase1Fakeout:
+                    case SkeletronAttackType.SpinCharge:
+                    case SkeletronAttackType.Phase1Fakeout:
                         destination = owner.Center + new Vector2(armDirection * 200f, -230f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.035f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
                         break;
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameBurst:
+                    case SkeletronAttackType.HandShadowflameBurst:
                         destination = owner.Center + new Vector2(armDirection * 540f, 360f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.1f);
                         npc.Center = npc.Center.MoveTowards(destination, 12f);
@@ -165,12 +166,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 3f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
-                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity.RotatedBy(offsetAngle) * 0.6f, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity.RotatedBy(offsetAngle) * 0.6f, ModContent.ProjectileType<ShadowflameFireball>(), ShadowflameFireballDamage, 0f);
                                 }
                             }
                         }
                         break;
-                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameWaves:
+                    case SkeletronAttackType.HandShadowflameWaves:
                         int attackDelay = 75;
                         adjustedTimer = (attackTimer - attackDelay) % 150f;
                         bool shouldAttack = (int)((attackTimer - attackDelay) / 150) % 2 == (armDirection == 1f).ToInt() && attackTimer > attackDelay;
@@ -193,7 +194,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                                     Vector2 flameShootVelocity = Vector2.UnitX * Math.Sign(npc.SafeDirectionTo(target.Center).X) * 13f;
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 2f;
-                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), ShadowflameFireballDamage, 0f);
                                 }
                             }
                         }

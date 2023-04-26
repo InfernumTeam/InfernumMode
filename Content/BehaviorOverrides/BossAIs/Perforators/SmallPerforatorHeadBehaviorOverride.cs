@@ -104,7 +104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             {
                                 ichor.tileCollide = false;
                             });
-                            Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 80, 0f);
+                            Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), PerforatorHiveBehaviorOverride.IchorSpitDamage, 0f);
                         }
                         npc.netUpdate = true;
                     }

@@ -29,7 +29,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             ChargeIndicatorSound,
             Charge,
             AcidBelch,
-            AcidBubbleFountain,
             SharkronSpinSummon,
             ToothBallVomit,
             GoreAndAcidSpit,
@@ -46,9 +45,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public override int NPCOverrideType => ModContent.NPCType<OldDukeBoss>();
 
+        public static int HomingAcidDamage => 300;
+
+        public static int HomingToothDamage => 300;
+
+        public static int GoreDamage => 335;
+
+        public static int SulphuricBlobDamage => 335;
+
+        public static int VortexDamage => 500;
+
         public const float Phase2LifeRatio = 0.75f;
+
         public const float Phase3LifeRatio = 0.375f;
+
         public const float Phase4LifeRatio = 0.2f;
+
         public const float PhaseTransitionTime = 150f;
 
         public const float TeleportPauseTime = 30f;
@@ -379,9 +391,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 case OldDukeAttackState.AcidBelch:
                     DoBehavior_AcidBelch(npc, target, inPhase2, mouthPosition, attackTimer, ref frameType);
                     break;
-                case OldDukeAttackState.AcidBubbleFountain:
-                    DoBehavior_AcidBubbleFountain(npc, target, inPhase2, attackTimer, ref frameType);
-                    break;
                 case OldDukeAttackState.SharkronSpinSummon:
                     DoBehavior_SharkronSpinSummon(npc, target, attackTimer, ref frameType);
                     break;
@@ -699,52 +708,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
             {
                 Vector2 shootVelocity = (mouthPosition - npc.Center).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 19f;
-                Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<SulphuricBlob>(), 320, 0f);
+                Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<SulphuricBlob>(), SulphuricBlobDamage, 0f);
             }
 
             if (attackTimer >= shootDelay + belchRate * (belchCount + 0.7f))
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_AcidBubbleFountain(NPC npc, Player target, bool inPhase2, float attackTimer, ref float frameType)
-        {
-            // Disable contact damage.
-            npc.damage = 0;
-
-            int shootDelay = inPhase2 ? 40 : 55;
-            int bubbleCount = inPhase2 ? 12 : 15;
-            int bubbleSummonRate = inPhase2 ? 9 : 15;
-            if (BossRushEvent.BossRushActive)
-                bubbleSummonRate -= 2;
-
-            // Hover near the target.
-            Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-            if (!npc.WithinRange(hoverDestination, 45f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 14.5f, 0.75f);
-
-            // Look at the target.
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            npc.rotation = npc.AngleTo(target.Center);
-            if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
-
-            // Handle frames.
-            npc.frameCounter += 1.5f;
-            frameType = (int)OldDukeFrameType.FlapWings;
-
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % bubbleSummonRate == bubbleSummonRate - 1f)
-            {
-                Vector2 bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f + target.velocity.X * 60f, 800f);
-                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10.5f, 13.5f);
-                if (inPhase2)
-                    bubbleVelocity *= 1.15f;
-                if (BossRushEvent.BossRushActive)
-                    bubbleVelocity *= 1.6f;
-
-                Utilities.NewProjectileBetter(bubbleSpawnPosition, bubbleVelocity, ModContent.ProjectileType<AcidFountainBubble>(), 320, 0f);
-            }
-
-            if (attackTimer >= shootDelay + bubbleSummonRate * (bubbleCount + 0.5f))
                 SelectNextAttack(npc);
         }
 
@@ -775,7 +742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.NewProjectileBetter(vortexSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummonVortex>(), 480, 0f);
+                    Utilities.NewProjectileBetter(vortexSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummonVortex>(), VortexDamage, 0f);
 
                     // Release sharks from above.
                     for (int i = 0; i < 4; i++)
@@ -892,7 +859,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                     for (int i = 0; i < goreCount; i++)
                     {
                         Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(10f, 15.6f);
-                        Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), 345, 0f);
+                        Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), GoreDamage, 0f);
                     }
                 }
             }
@@ -900,7 +867,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > goreShootDelay && attackTimer < goreShootDelay + 30f)
             {
                 Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(13f, 18f);
-                Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), 325, 0f);
+                Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), HomingAcidDamage, 0f);
             }
 
             if (attackTimer >= goreShootDelay + 30f)
@@ -1075,7 +1042,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (currentAttack == OldDukeAttackState.AttackSelectionWait)
                 afterimageCount = 7;
 
-            if (currentAttack is OldDukeAttackState.AcidBubbleFountain or OldDukeAttackState.AcidBelch)
+            if (currentAttack is OldDukeAttackState.AcidBelch)
                 afterimageCount = 4;
 
             if (currentAttack == OldDukeAttackState.Charge || inPhase3)

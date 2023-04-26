@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     {
                         deathray.ModProjectile<PlagueDeathray>().LocalLifetime = 1200;
                     });
-                    Utilities.NewProjectileBetter(NPC.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f, -1, 0f, NPC.whoAmI);
+                    Utilities.NewProjectileBetter(NPC.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), PlaguebringerGoliathBehaviorOverride.DroneDeathrayDamage, 0f, -1, 0f, NPC.whoAmI);
                 }
             }
             AttackTimer++;

@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 ichorShootVelocity = (MathHelper.TwoPi * i / 6f + offsetAngle).ToRotationVector2() * 9f;
-                    Utilities.NewProjectileBetter(Projectile.Center, ichorShootVelocity, ModContent.ProjectileType<IchorSpit>(), 75, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, ichorShootVelocity, ModContent.ProjectileType<IchorSpit>(), PerforatorHiveBehaviorOverride.IchorSpitDamage, 0f);
                 }
             }
         }

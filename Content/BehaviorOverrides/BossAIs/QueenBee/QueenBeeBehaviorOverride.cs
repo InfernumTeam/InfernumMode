@@ -36,6 +36,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         #region AI
 
+        public static int TinyBeeDamage => 90;
+
+        public static int ConvergingHornetDamage => 95;
+
+        public static int HoneyBlastDamage => 95;
+
+        public static int HornetHiveDamage => 95;
+
+        public static int StingerDamage => 100;
+
         public const float FinalPhaseLifeRatio = 0.225f;
 
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -298,7 +308,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                         float burstOutwardness = MathHelper.Lerp(0.04f, 0.12f, 1f - npc.life / (float)npc.lifeMax);
                         stingerShootVelocity = stingerShootVelocity.RotatedBy(MathHelper.Lerp(-burstOutwardness, burstOutwardness, i / 11f));
 
-                        int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 85, 0f);
+                        int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, StingerDamage, 0f);
                         if (Main.projectile.IndexInRange(stinger))
                             Main.projectile[stinger].tileCollide = false;
                     }
@@ -369,7 +379,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 {
                     Vector2 honeySpawnPosition = new(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
                     Vector2 honeyShootVelocity = (target.Center - honeySpawnPosition).SafeNormalize(Vector2.UnitY) * shootSpeed;
-                    int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), 85, 0f);
+                    int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), HoneyBlastDamage, 0f);
                     if (Main.projectile.IndexInRange(honeyBlast))
                         Main.projectile[honeyBlast].ai[0] = honeyIsPoisonous.ToInt();
                 }
@@ -409,7 +419,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 {
                     Vector2 hiveShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 11.5f;
                     spawnPosition += hiveShootVelocity * 2f;
-                    Utilities.NewProjectileBetter(spawnPosition, hiveShootVelocity, ModContent.ProjectileType<HornetHive>(), 100, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, hiveShootVelocity, ModContent.ProjectileType<HornetHive>(), HornetHiveDamage, 0f);
                 }
                 else
                 {
@@ -464,12 +474,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 float stingerShootSpeed = 11f;
                 Vector2 stingerSpawnPosition = new(npc.Center.X + Main.rand.NextFloat(4f) * npc.spriteDirection, npc.Center.Y + npc.height * 0.3f);
                 Vector2 stingerShootVelocity = (beeAimConeDirection - coneSpread).ToRotationVector2() * stingerShootSpeed;
-                int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 105, 0f);
+                int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, StingerDamage, 0f);
                 if (Main.projectile.IndexInRange(stinger))
                     Main.projectile[stinger].tileCollide = false;
 
                 stingerShootVelocity = (beeAimConeDirection + coneSpread).ToRotationVector2() * stingerShootSpeed;
-                stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 105, 0f);
+                stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, StingerDamage, 0f);
                 if (Main.projectile.IndexInRange(stinger))
                     Main.projectile[stinger].tileCollide = false;
             }
@@ -480,7 +490,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             {
                 Vector2 beeSpawnPosition = target.Center + npc.SafeDirectionTo(target.Center).RotatedByRandom(beeAimConeDirection * 0.6f) * 500f;
                 Vector2 beeShootVelocity = (target.Center - beeSpawnPosition).SafeNormalize(Vector2.UnitY) * 6f;
-                Utilities.NewProjectileBetter(beeSpawnPosition, beeShootVelocity, ModContent.ProjectileType<ConvergingHornet>(), 90, 0f);
+                Utilities.NewProjectileBetter(beeSpawnPosition, beeShootVelocity, ModContent.ProjectileType<ConvergingHornet>(), ConvergingHornetDamage, 0f);
             }
 
             // Bob up and down.
@@ -544,7 +554,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 {
                     Vector2 beeSpawnPosition = target.Center + new Vector2(Main.rand.NextBool(2).ToDirectionInt() * 1200f, Main.rand.NextFloat(-900f, 0f));
                     Vector2 beeVelocity = (target.Center - beeSpawnPosition).SafeNormalize(Vector2.UnitY) * new Vector2(4f, 20f);
-                    Utilities.NewProjectileBetter(beeSpawnPosition, beeVelocity, ModContent.ProjectileType<TinyBee>(), 90, 0f);
+                    Utilities.NewProjectileBetter(beeSpawnPosition, beeVelocity, ModContent.ProjectileType<TinyBee>(), TinyBeeDamage, 0f);
                 }
             }
 

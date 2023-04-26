@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 fireballShootVelocity = (fireballSpawnPosition - Projectile.Center).SafeNormalize(Vector2.UnitY);
                     fireballShootVelocity = Vector2.Lerp(fireballShootVelocity, (Target.Center - fireballSpawnPosition).SafeNormalize(Vector2.UnitY), 0.35f);
                     fireballShootVelocity = fireballShootVelocity.SafeNormalize(Vector2.UnitY) * 13.5f;
-                    Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ModContent.ProjectileType<LunarFireball>(), 220, 0f);
+                    Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ModContent.ProjectileType<LunarFireball>(), MoonLordCoreBehaviorOverride.LunarFireballDamage, 0f);
                 }
             }
 
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 Vector2 asteroidSpawnPosition = Target.Center + Main.rand.NextVector2CircularEdge(700f, 700f);
                 Vector2 asteroidShootVelocity = (core.Center - asteroidSpawnPosition).SafeNormalize(Vector2.UnitY) * 9.25f;
-                Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), 220, 0f, -1, core.whoAmI);
+                Utilities.NewProjectileBetter(asteroidSpawnPosition, asteroidShootVelocity, ModContent.ProjectileType<LunarAsteroid>(), MoonLordCoreBehaviorOverride.LunarAsteroidDamage, 0f, -1, core.whoAmI);
             }
 
             // Explode into a bunch of bolts after enough time has passed.

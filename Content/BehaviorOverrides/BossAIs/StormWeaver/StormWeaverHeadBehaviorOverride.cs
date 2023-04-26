@@ -453,7 +453,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         public static void DoBehavior_IceStorm(NPC npc, Player target, ref float lightningSkyBrightness, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int shootCount = 4;
+            int shootCount = 2;
             int shotSpacing = (int)MathHelper.Lerp(175f, 145f, 1f - lifeRatio);
             int delayBeforeFiring = 60;
             int shootRate = delayBeforeFiring + 54;
@@ -598,7 +598,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Make the fog appear.
             fogInterpolant = MathHelper.Clamp(fogInterpolant + 0.02f, 0f, 1f);
 
-            float telegraphHoverOffset = MathHelper.Lerp(500f, 400f, chargeCounter / chargeCount);
+            float telegraphHoverOffset = MathHelper.Lerp(540f, 436f, chargeCounter / chargeCount);
             Vector2 teleportPosition = target.Center + telegraphHoverOffsetDirection.ToRotationVector2() * telegraphHoverOffset;
             if (attackTimer <= telegraphTime)
             {

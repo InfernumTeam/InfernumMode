@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 for (int i = 0; i < LaserCount; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
-                    Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<FlameOverloadBeam>(), 900, 0f, -1, Owner.whoAmI);
+                    Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<FlameOverloadBeam>(), SupremeCalamitasBehaviorOverride.FlameOverloadBeamDamage, 0f, -1, Owner.whoAmI);
                 }
             }
 

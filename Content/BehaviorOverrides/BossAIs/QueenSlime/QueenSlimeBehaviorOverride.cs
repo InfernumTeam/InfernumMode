@@ -4,6 +4,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -744,6 +745,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<FallingCrystal>(), 0, 0f);
                     }
                 }
+
+                // Give a tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Those crystals are equally spaced... seems like you can dodge them the same way consistently!");
             }
 
             // Create the spinning lasers.
@@ -1227,6 +1231,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
         {
+            yield return n =>
+            {
+                if (hatGirl)
+                    return "Don't flail about, and figure out what she's doing. Do still try and stay on the move, though!";
+                return string.Empty;
+            };
+
             yield return n =>
             {
                 if (!hatGirl)

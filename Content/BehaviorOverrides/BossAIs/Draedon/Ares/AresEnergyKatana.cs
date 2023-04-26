@@ -135,6 +135,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static float AttackTimer => Ares.ai[1];
 
+        public static Vector2 ActiveHitboxSize => new(450f);
+
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
@@ -207,7 +209,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Check to see if this arm should be used for special things in a combo attack.
             if (AresCannonBehaviorOverride.IsInUseByComboAttack(NPC))
+            {
+                NPC.Size = ActiveHitboxSize;
                 return;
+            }
 
             // Hover in place below Ares if disabled.
             if (currentlyDisabled)
@@ -218,8 +223,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Unlike projectiles, NPCs have no Colliding hook to use for general-purpose collision logic.
             // As such, a roundabout hack is required, where the hurt box is so large that it triggers for everything, but a CanHitPlayer check culls invalid hits.
-            NPC.width = 450;
-            NPC.height = 450;
+            NPC.Size = ActiveHitboxSize;
 
             switch ((AresBodyAttackType)Ares.ai[0])
             {

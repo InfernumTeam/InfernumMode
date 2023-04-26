@@ -11,6 +11,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.Projectiles.Magic;
 using CalamityMod.Skies;
 using CalamityMod.Systems;
 using CalamityMod.UI.DraedonSummoning;
@@ -423,6 +424,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(CalamityPlayer).GetMethod("ProcessTriggers", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(CalamityPlayer).GetMethod("ProcessTriggers", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator EternityHexAI
+        {
+            add => HookEndpointManager.Modify(typeof(EternityHex).GetMethod("AI", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(EternityHex).GetMethod("AI", Utilities.UniversalBindingFlags), value);
         }
     }
 }

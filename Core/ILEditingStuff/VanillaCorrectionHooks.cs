@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Balancing;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
+using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
@@ -23,6 +24,7 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
 using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
+using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -1245,6 +1247,25 @@ namespace InfernumMode.Core.ILEditingStuff
             orig(npc, ref typeName);
             if (npc.type == ModContent.NPCType<CalamitasClone>() && InfernumMode.CanUseCustomAIs)
                 typeName = $"The {CalamitasShadowBehaviorOverride.CustomName}";
+        }
+    }
+
+    public class MakeEternityOPHook : IHookEdit
+    {
+        public void Load() => EternityHexAI += ChangeDamageValues;
+
+        public void Unload() => EternityHexAI += ChangeDamageValues;
+
+        private void ChangeDamageValues(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            while (cursor.TryGotoNext(i => i.MatchCallOrCallvirt<StatModifier>("ApplyTo")))
+            {
+                cursor.GotoNext(MoveType.Before, i => i.MatchLdcR4(out float originalDamage));
+                cursor.Remove();
+                cursor.EmitDelegate(() => (float)ItemDamageValues.DamageValues[ModContent.ItemType<Eternity>()]);
+            }
         }
     }
 }

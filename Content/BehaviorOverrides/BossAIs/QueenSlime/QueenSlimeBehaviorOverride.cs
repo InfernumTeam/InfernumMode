@@ -197,6 +197,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     break;
             }
 
+            if (attackType != (int)QueenSlimeAttackType.SpawnAnimation)
+                usingWings = 1f;
+
             // Perform wing updates.
             if (usingWings == 1f)
             {

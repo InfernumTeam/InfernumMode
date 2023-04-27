@@ -18,6 +18,7 @@ using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.OverridingSystem;
@@ -305,6 +306,15 @@ namespace InfernumMode.Core.GlobalInstances
                 return base.CheckActive(npc);
 
             return base.CheckActive(npc);
+        }
+
+        public override void OnChatButtonClicked(NPC npc, bool firstButton)
+        {
+            if (npc.type == NPCID.OldMan && firstButton && InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.GetModPlayer<SkeletronSummonerGiftPlayer>().WasGivenDungeonsCurse)
+            {
+                Item.NewItem(npc.GetSource_FromThis(), Main.LocalPlayer.Hitbox, ModContent.ItemType<DungeonsCurse>());
+                Main.LocalPlayer.GetModPlayer<SkeletronSummonerGiftPlayer>().WasGivenDungeonsCurse = true;
+            }
         }
         #endregion
     }

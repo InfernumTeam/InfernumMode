@@ -88,8 +88,8 @@ namespace InfernumMode.Content.Tiles.Abyss
             // Cached for performance reasons. Profiling revealed that all of the LocalPlayer/Center getters were causing slowdowns.
             Vector2 playerCenter = Main.LocalPlayer.Center;
 
-            int width = (int)MathF.Ceiling(Main.screenWidth / 22) + 2;
-            int height = (int)MathF.Ceiling(Main.screenHeight / 22) + 2;
+            int width = (int)MathF.Ceiling(Main.screenWidth / 18) + 6;
+            int height = (int)MathF.Ceiling(Main.screenHeight / 18) + 6;
             for (int k = 0; k < width * height; k++)
             {
                 int dx = k % width - width / 2;

@@ -108,6 +108,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (isHostile != 1f)
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+
+                if (!AbyssMinibossSpawnSystem.MajorAbyssEnemyExists)
+                    target.Calamity().adrenaline = 0f;
+
                 return false;
             }
 

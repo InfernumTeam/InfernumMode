@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     if (npc.spriteDirection == -1)
                         npc.rotation += MathHelper.Pi;
 
-                    if (npc.WithinRange(hoverDestination, 108f) && attackTimer >= 45f)
+                    if (npc.WithinRange(hoverDestination, 108f) && attackTimer >= 45f && Collision.CanHit(npc, target))
                     {
                         attackTimer = 0f;
                         movementState = 1f;

@@ -698,6 +698,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             int arcRedirectTime = 18;
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
 
+            if (shootCounter <= 0f)
+                redirectTime += 50;
+
             npc.damage = 0;
 
             // Have the weaver orient itself near the player at first, and become wreathed in lightning.

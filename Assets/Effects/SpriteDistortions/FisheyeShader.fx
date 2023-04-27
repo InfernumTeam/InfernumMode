@@ -3,6 +3,12 @@
 float intensity;
 float2 resolution;
 
+// I can't believe it's come to this.
+float fakeAtan(float x)
+{
+    return x / (sqrt(pow(x, 2)) + 1) * 1.5707;
+}
+
 // Adapted from https://www.shadertoy.com/view/MsjGzh
 float4 Main(float2 coords : TEXCOORD0) : COLOR0
 {
@@ -16,21 +22,21 @@ float4 Main(float2 coords : TEXCOORD0) : COLOR0
 
     float bind = 0;
     
-    if (power > 0.0) 
+    if (power > 0) 
         bind = sqrt(dot(centerCoords, centerCoords));
     else
     {
-        if (aspect < 1.0) 
+        if (aspect < 1) 
             bind = centerCoords.x;
         else
             bind = centerCoords.y;
     }
     // Fisheye
-    if (power > 0.)
+    if (power > 0)
         uv = (centerCoords + normalize(direction)) * tan(dist * power) * bind / tan(bind * power);
      // Anti-Fisheye
-     else if (power < 0.)
-        uv = (centerCoords + normalize(direction)) * atan(dist * (-1 * power) * 10.0) * bind / atan((-1 * power) * bind * 10.0);
+     else if (power < 0)
+        uv = (centerCoords + normalize(direction)) * fakeAtan(dist * power * -10.0) / fakeAtan(-power * bind * 10.0) * bind;
 
     return tex2D(mainSample, uv);
 }

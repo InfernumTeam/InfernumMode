@@ -112,7 +112,7 @@ namespace InfernumMode.Content.Credits
                 if (suckSpeed > 0)
                 {
                     cd.Velocity = cd.Position.DirectionTo(PortalPosition) * suckSpeed * 3f;
-                    cd.Rotation = MathF.Abs(cd.Rotation.AngleTowards(cd.Velocity.ToRotation(), 0.005f));
+                    cd.Rotation = MathF.Abs(cd.Rotation.AngleTowards(cd.Velocity.ToRotation(), 0.08f));
                 }
                 else
                 {

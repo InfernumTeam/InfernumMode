@@ -1291,23 +1291,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!";
+            yield return n => "The Deerclops will follow a set pattern, learn it to gain the upper hand!";
             yield return n =>
             {
-                if (hatGirl)
-                    return "Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Deerclops will follow a set pattern, learn it to gain the upper hand!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "Deer god...";
                 return string.Empty;
             };

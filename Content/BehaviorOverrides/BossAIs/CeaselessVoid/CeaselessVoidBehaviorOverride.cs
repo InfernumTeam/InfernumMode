@@ -1985,27 +1985,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Try not to move too much at the start of the battle. Finding a good spot and staying near it helps a lot!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Most of the Void's attacks require fast maneuvering to evade. Be sure to pay attention to any projectiles on-screen!";
-                return string.Empty;
-            };
-
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "SHALL WE PLAY THE RING AROUND?- SORRY sorry, don't know what came over m- MY HEARTS GO OUT TO ALL YOU SINNERS! ...dude.";
-                return string.Empty;
-            };
+            yield return n => "Try not to move too much at the start of the battle. Finding a good spot and staying near it helps a lot!";
+            yield return n => "Most of the Void's attacks require fast maneuvering to evade. Be sure to pay attention to any projectiles on-screen!";
         }
         #endregion Tips
     }

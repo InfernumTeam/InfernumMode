@@ -638,20 +638,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         #endregion Drawing
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Brain of Cthulhu uses a lot of prediction and deception in its attacks, so play extra smart!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Brain is going to try to decieve you with various mind games, keep your eyes on the real one!";
-                return string.Empty;
-            };
+            yield return n => "The Brain of Cthulhu uses a lot of prediction and deception in its attacks, so play extra smart!";
+            yield return n => "The Brain is going to try to decieve you with various mind games, keep your eyes on the real one!";
         }
         #endregion Tips
     }

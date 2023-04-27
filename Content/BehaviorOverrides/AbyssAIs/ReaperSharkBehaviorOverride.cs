@@ -90,6 +90,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return false;
             }
 
+            // Disable not taking damage from minions.
+            npc.ModNPC<ReaperShark>().hasBeenHit = true;
+
             switch (currentAttack)
             {
                 case ReaperSharkAttackState.StalkTarget:

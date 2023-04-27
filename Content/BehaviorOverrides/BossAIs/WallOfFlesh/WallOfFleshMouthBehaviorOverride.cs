@@ -380,11 +380,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         #endregion
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "Be sure to run the opposite direction!";
                 return string.Empty;
             };

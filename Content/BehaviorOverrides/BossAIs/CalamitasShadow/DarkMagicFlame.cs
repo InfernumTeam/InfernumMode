@@ -49,8 +49,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(HexType);
-            writer.Write(HexType2);
+            writer.Write(HexType ?? string.Empty);
+            writer.Write(HexType2 ?? string.Empty);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)

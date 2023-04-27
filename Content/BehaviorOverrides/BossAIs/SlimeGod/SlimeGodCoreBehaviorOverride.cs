@@ -539,7 +539,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         #endregion Drawing
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?";
             yield return n =>

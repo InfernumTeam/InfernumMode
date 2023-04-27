@@ -2190,17 +2190,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return false;
         }
         #endregion Death Effects
-
-        #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
-        {
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "All those hexes left my head spinning... please don't put me back in there... Please...";
-                return string.Empty;
-            };
-        }
-        #endregion Tips
     }
 }

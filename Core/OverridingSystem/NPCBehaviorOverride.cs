@@ -67,7 +67,7 @@ namespace InfernumMode.Core.OverridingSystem
                         InfernumMode.PhaseIndicator.Call(0, npcID, (NPC npc, float difficulty) => lifeRatio);
                 }
 
-                TipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips(false).ToArray().Fuse(instance.GetTips(true).ToArray()).ToList();
+                TipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips().ToList();
             }
         }
 
@@ -81,7 +81,7 @@ namespace InfernumMode.Core.OverridingSystem
 
         public virtual float[] PhaseLifeRatioThresholds => Array.Empty<float>();
 
-        public virtual IEnumerable<Func<NPC, string>> GetTips(bool hatGirl) => Array.Empty<Func<NPC, string>>();
+        public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
 
         public abstract int NPCOverrideType { get; }
 

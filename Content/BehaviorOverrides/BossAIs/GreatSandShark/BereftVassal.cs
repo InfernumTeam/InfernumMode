@@ -461,7 +461,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             // Disable controls and UI for the target.
-            if (Main.myPlayer == NPC.target)
+            if (Main.myPlayer == NPC.target && Main.netMode == NetmodeID.SinglePlayer)
             {
                 Main.hideUI = true;
                 Main.blockInput = true;
@@ -469,7 +469,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             if (AttackTimer >= animationTime + animationFocusReturnTime)
             {
-                if (Main.myPlayer == NPC.target)
+                if (Main.myPlayer == NPC.target && Main.netMode == NetmodeID.SinglePlayer)
                 {
                     Main.hideUI = false;
                     Main.blockInput = false;

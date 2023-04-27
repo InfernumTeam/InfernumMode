@@ -2630,18 +2630,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         #endregion Death Effects
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n =>
             {
-                if (TipsManager.ShouldUseJokeText && hatGirl)
+                if (TipsManager.ShouldUseJokeText)
                     return "Do you want my Witch's hat? Matching her atire could be fun...";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "I may be immortal, but I can still be burned and singed by all that damn fire... please, for all that is holy, DODGE!";
                 return string.Empty;
             };
         }

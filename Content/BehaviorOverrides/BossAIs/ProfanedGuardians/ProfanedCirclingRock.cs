@@ -59,23 +59,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             else if (Timer == WaitTime)
             {
                 Projectile.velocity = Projectile.Center.DirectionTo(target.Center) * -3.2f;
-                SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = 0.9f, Volume = 0.9f} , target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = 0.9f, Volume = 0.9f }, target.Center);
             }
             else if (Timer == WaitTime + ReelbackTime)
             {
-                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.95f, Volume = 0.9f}, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.95f, Volume = 0.9f }, target.Center);
                 Projectile.velocity = Projectile.Center.DirectionTo(target.Center) * 17f;
                 for (int i = 0; i < 20; i++)
                 {
                     Vector2 velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * Main.rand.NextFloat(4f, 6f);
-                    Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity, 
+                    Particle rockParticle = new SandyDustParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), velocity,
                         Color.SandyBrown, Main.rand.NextFloat(1.25f, 1.55f), 90);
                     GeneralParticleHandler.SpawnParticle(rockParticle);
 
-                    Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero, 
+                    Particle fire = new HeavySmokeParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 2f, Projectile.height / 2f), Vector2.Zero,
                         Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2], 30, Main.rand.NextFloat(0.2f, 0.4f), 1f, glowing: true,
                         rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
-                    GeneralParticleHandler.SpawnParticle(fire);                 
+                    GeneralParticleHandler.SpawnParticle(fire);
                 }
                 if (CalamityConfig.Instance.Screenshake)
                     target.Infernum_Camera().CurrentScreenShakePower = 2f;
@@ -86,11 +86,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Color.SandyBrown, Main.rand.NextFloat(0.45f, 0.75f), 30);
                 GeneralParticleHandler.SpawnParticle(rockParticle);
                 Projectile.rotation -= 0.1f;
-                if (Main.rand.NextBool())
+                if (Main.rand.NextBool() && Main.netMode != NetmodeID.Server)
                 {
-                    ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center
-                        - Projectile.velocity * 0.5f,
-                    0f, Projectile.scale * 0.8f, 15f, 170);
+                    ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center - Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 15f, 170);
                 }
             }
         }
@@ -133,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             backglowColor.A = 0;
             float backglowAmount = 12;
             for (int i = 0; i < backglowAmount; i++)
-            { 
+            {
                 Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }

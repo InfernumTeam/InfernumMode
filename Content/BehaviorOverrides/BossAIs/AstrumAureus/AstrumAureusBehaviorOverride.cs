@@ -1110,14 +1110,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
         #endregion Frames and Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Stay somewhat close, otherwise you may be caught off guard!";
-                return string.Empty;
-            };
+            yield return n => "Stay somewhat close, otherwise you may be caught off guard!";
         }
         #endregion Tips
     }

@@ -78,6 +78,18 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return false;
             }
 
+            // Despawn if the player has left the final layer of the abyss or died.
+            if (!target.Calamity().ZoneAbyssLayer4 || target.dead)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 22f, 0.1f);
+                if (!npc.WithinRange(target.Center, 1300f))
+                    npc.active = false;
+                return false;
+            }
+
+            // Disable not taking damage from minions.
+            npc.ModNPC<EidolonWyrmHead>().detectsPlayer = true;
+
             switch ((WyrmAttackState)attackType)
             {
                 case WyrmAttackState.StalkTarget:

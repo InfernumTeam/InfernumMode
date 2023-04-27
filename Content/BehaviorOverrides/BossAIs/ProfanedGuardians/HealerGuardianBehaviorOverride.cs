@@ -102,6 +102,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
+            if (CalamityGlobalNPC.doughnutBoss == -1)
+                return false;
+
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             // If maintaining the front shield or shielding the commander, glow.
             if ((GuardiansAttackType)commander.ai[0] is not GuardiansAttackType.SpawnEffects)
@@ -142,16 +145,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
             ShieldEnergyDrawer ??= new PrimitiveTrailCopy((float _) => commander.width * 0.35f,
                 EnergyColorFunction, null, true, InfernumEffectsRegistry.PulsatingLaserVertexShader);
-            NPC npcToConnectTo = default;
+            NPC npcToConnectTo = null;
             if (Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal))
             {
-                if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
+                if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active && Main.npc[GlobalNPCOverrides.ProfanedCrystal].type == ModContent.NPCType<HealerShieldCrystal>())
                     npcToConnectTo = Main.npc[GlobalNPCOverrides.ProfanedCrystal];
-                else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
-                {
-                    if (Main.npc[CalamityGlobalNPC.doughnutBoss].active)
-                        npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];
-                }
+                else if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) && Main.npc[CalamityGlobalNPC.doughnutBoss].active)
+                    npcToConnectTo = Main.npc[CalamityGlobalNPC.doughnutBoss];
             }
 
             // Messy hack to stop the healer connecting to the commander immediately after the crystal dies. This should be made nicer.
@@ -163,6 +163,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             else
                 return;
 
+            if (npcToConnectTo is null)
+                return;
+
             Vector2 startPos = npc.Center + new Vector2(npc.spriteDirection * 32f, 12f);
             Vector2 endPos = npcToConnectTo.type == CommanderType ? npcToConnectTo.Top + new Vector2(-50, 50) : npcToConnectTo.Top;
 
@@ -171,7 +174,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             InfernumEffectsRegistry.PulsatingLaserVertexShader.UseSaturation(2.5f * commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex]);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["usePulsing"].SetValue(true);
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["reverseDirection"].SetValue(false);
-
 
             Vector2[] drawPositions = new Vector2[8];
             for (int i = 0; i < drawPositions.Length; i++)
@@ -205,7 +207,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.spriteBatch.Draw(gleamTexture, drawPosition, null, finalColor, -gleamRotation, gleamOrigin, gleamScale, 0, 0f);
         }
 
-        public void DrawWhiteGlowOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Texture2D glowmask2, NPC commander, Color lightColor, SpriteEffects direction)
+        public static void DrawWhiteGlowOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D texture, Texture2D glowmask, Texture2D glowmask2, NPC commander, Color lightColor, SpriteEffects direction)
         {
             float commanderTimer = commander.ai[1];
             float whiteGlowTime = 120f;

@@ -1911,15 +1911,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
         }
 
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "Golem's eye color will change depending on it's attack. Keep your own eyes peeled!";
-
-                return string.Empty;
-            };
+            yield return n => "Golem's eye color will change depending on it's attack. Keep your own eyes peeled!";
         }
     }
 }

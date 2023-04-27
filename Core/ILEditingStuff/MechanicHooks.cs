@@ -47,6 +47,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver;
+using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
@@ -583,7 +585,8 @@ namespace InfernumMode.Core.ILEditingStuff
                             SoundEngine.PlaySound(RuneofKos.CVSound, player.Center);
                             CeaselessVoidBehaviorOverride.SelectNewAttack(ceaselessVoid);
                             ceaselessVoid.ai[0] = (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl;
-                            ceaselessVoid.netUpdate = true;
+
+                            PacketManager.SendPacket<SyncNPCAIClientside>(CalamityGlobalNPC.voidBoss);
                         }
                     }
                     else if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter.X == 0)
@@ -607,7 +610,8 @@ namespace InfernumMode.Core.ILEditingStuff
                             SignusBehaviorOverride.SelectNextAttack(signus);
                             signus.ai[1] = (int)SignusBehaviorOverride.SignusAttackType.KunaiDashes;
                             signus.Infernum().ExtraAI[9] = 0f;
-                            signus.netUpdate = true;
+
+                            PacketManager.SendPacket<SyncNPCAIClientside>(CalamityGlobalNPC.signus);
                         }
                     }
                     else
@@ -630,7 +634,8 @@ namespace InfernumMode.Core.ILEditingStuff
                             SoundEngine.PlaySound(RuneofKos.StormSound, player.Center);
                             StormWeaverHeadBehaviorOverride.SelectNewAttack(weaver);
                             weaver.ai[1] = (int)StormWeaverHeadBehaviorOverride.StormWeaverAttackType.IceStorm;
-                            weaver.netUpdate = true;
+
+                            PacketManager.SendPacket<SyncNPCAIClientside>(weaverIndex);
                         }
                     }
                     else

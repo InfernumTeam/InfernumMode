@@ -27,6 +27,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
@@ -189,7 +191,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Attach the verlet segments to the head.
-            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation)
+            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation && WormSegments.Any())
                 WormSegments[0].position = npc.Center;
 
             // Determine hostility.
@@ -1570,6 +1572,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 previousIndex = nextIndex;
             }
+
+            // Sync the worm segments.
+            PacketManager.SendPacket<CreateASWormSegmentsPacket>();
         }
 
         public static void SelectNextAttack(NPC npc)
@@ -1801,27 +1806,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         #endregion Drawcode
 
         #region Tips
-        public override IEnumerable<Func<NPC, string>> GetTips(bool hatGirl)
+        public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "The Serpent's frantic swimming seems to cause the water to be easier to traverse through, you could probably swim with your bare hands!";
-                return string.Empty;
-            };
-            yield return n =>
-            {
-                if (hatGirl)
-                    return "If you feel you need more space, try clearing out the sulphurous sand around!";
-                return string.Empty;
-            };
-
-            yield return n =>
-            {
-                if (!hatGirl)
-                    return "Did you even take a moment to consider you are pulling me down there with you into that acidic water...? Mate, that stuff BURNS!";
-                return string.Empty;
-            };
+            yield return n => "The Serpent's frantic swimming seems to cause the water to be easier to traverse through, you could probably swim with your bare hands!";
+            yield return n => "If you feel you need more space, try clearing out the sulphurous sand around!";
         }
         #endregion Tips
     }

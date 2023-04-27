@@ -676,7 +676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Handle post charge behaviors.
             else
             {
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.025f) * chargeAcceleration;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.022f) * chargeAcceleration;
                 if (attackTimer >= telegraphTime + chargeTime)
                 {
                     chargeCounter++;
@@ -697,6 +697,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             int redirectTime = 35;
             int arcRedirectTime = 18;
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (shootCounter <= 0f)
+                redirectTime += 50;
 
             npc.damage = 0;
 

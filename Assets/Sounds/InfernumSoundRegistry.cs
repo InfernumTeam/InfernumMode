@@ -40,7 +40,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle AquaticScourgeGoreSound = new("InfernumMode/Assets/Sounds/Custom/AquaticScourge/AquaticScourgeGore");
 
-        public static readonly SoundStyle AsterBarkSound = new("InfernumMode/Assets/Sounds/Item/AsterBark");
+        public static readonly SoundStyle AsterBarkSound = new("InfernumMode/Assets/Sounds/Item/AsterBark", 3);
 
         public static readonly SoundStyle AstrumAureusStompSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AstrumAureus/AureusStomp") with { Volume = 1.5f };
 
@@ -74,7 +74,7 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle CeaselessVoidMetalBreakSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidMetalBreak");
 
-        public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Assets/Sounds/Custom/CloudElementalWind");
+        public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Assets/Sounds/Custom/Misc/CloudElementalWind");
 
         public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Assets/Sounds/Custom/Deerclops/DeerclopsRubbleAttackDistorted");
 

@@ -1206,7 +1206,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                         if (attackTimer % laserShootRate == 0f)
                         {
-                            SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, Target.Center);
+                            SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound with { Volume = 0.85f }, Target.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
@@ -1260,7 +1260,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                     if (attackTimer < barrageBurstTime && attackTimer % laserShootRate == laserShootRate - 1f)
                     {
-                        SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, npc.Center);
+                        SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound with { Volume = 0.8f }, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedByRandom(0.12f) * 7f;
@@ -1293,7 +1293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                         Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 8f;
                         ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 20);
 
-                        SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);
+                        SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound with { Volume = 0.67f }, Target.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<RetinazerAimedDeathray>(), BigDeathrayDamage, 0f, -1, 0f, npc.whoAmI);
@@ -1374,7 +1374,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                         ScreenEffectSystem.SetFlashEffect(npc.Center, 2f, 20);
 
                         SoundEngine.PlaySound(Artemis.ChargeSound, Target.Center);
-                        SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, Target.Center);
+                        SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound with { Volume = 0.67f }, Target.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -1394,7 +1394,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                         if (attackTimer % laserCircleReleaseRate == laserCircleReleaseRate - 1f)
                         {
-                            SoundEngine.PlaySound(Artemis.LaserShotgunSound, npc.Center);
+                            SoundEngine.PlaySound(Artemis.LaserShotgunSound with { Volume = 0.8f }, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 for (int i = 0; i < laserCircleCount; i++)

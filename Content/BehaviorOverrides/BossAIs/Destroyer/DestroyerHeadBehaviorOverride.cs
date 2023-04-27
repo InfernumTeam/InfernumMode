@@ -115,12 +115,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             ref float attackTimer = ref npc.ai[2];
-            ref float spawnedSegmentsFlag = ref npc.ai[3];
+            ref float hasInitializedFlag = ref npc.ai[3];
 
-            if (spawnedSegmentsFlag == 0f)
+            if (hasInitializedFlag == 0f)
             {
+                npc.Center = target.Center + Vector2.UnitY * 2400f;
                 SpawnDestroyerSegments(npc);
-                spawnedSegmentsFlag = 1f;
+                hasInitializedFlag = 1f;
                 npc.netUpdate = true;
             }
 

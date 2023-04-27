@@ -51,8 +51,8 @@ namespace InfernumMode.Content.MainMenu
                 Scale = MathHelper.Lerp(0f, MaxScale, Time / 20f);
 
             // Shrink rapidly.
-            if (TimeLeft <= 20)
-                Scale = MathHelper.Lerp(0f, MaxScale, (float)TimeLeft / 20f);
+            if (TimeLeft <= 30)
+                Scale = MathHelper.Lerp(0f, MaxScale, (float)TimeLeft / 30f);
 
             // Increase the rotation and time.
             Rotation += RotationSpeed;

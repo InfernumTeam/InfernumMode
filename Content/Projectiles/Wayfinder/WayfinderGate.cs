@@ -113,9 +113,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         public override void Kill(int timeLeft)
         {
             if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
-            {
                 sound.Stop();
-            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -155,8 +153,8 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             float scale = (float)Math.Sin(Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 2f) * 0.3f + 0.7f;
             innerColor.A = 0;
             innerColor = innerColor * 0.1f * scale;
-            for (float num5 = 0f; num5 < 1f; num5 += 1f / 16f)
-                Main.spriteBatch.Draw(innerTexture, drawPos + (MathHelper.TwoPi * num5).ToRotationVector2() * (6f + 2f), null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1f, 0, 0f);
+            for (float i = 0f; i < 1f; i += 1f / 16f)
+                Main.spriteBatch.Draw(innerTexture, drawPos + (MathHelper.TwoPi * i).ToRotationVector2() * (6f + 2f), null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1f, 0, 0f);
             return false;
         }
 

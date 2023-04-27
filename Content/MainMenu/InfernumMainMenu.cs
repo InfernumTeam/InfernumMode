@@ -34,7 +34,15 @@ namespace InfernumMode.Content.MainMenu
 
         public override ModSurfaceBackgroundStyle MenuBackgroundStyle => ModContent.GetInstance<NullSurfaceBackground>();
 
-        public override Asset<Texture2D> Logo => ModContent.Request<Texture2D>("InfernumMode/Content/MainMenu/Logo", AssetRequestMode.ImmediateLoad);
+        public override Asset<Texture2D> Logo
+        {
+            get
+            {
+                if (Utilities.IsAprilFirst())
+                    return ModContent.Request<Texture2D>("InfernumMode/Content/MainMenu/AprilsFoolsLogo", AssetRequestMode.ImmediateLoad);
+                return ModContent.Request<Texture2D>("InfernumMode/Content/MainMenu/InfernumLogo", AssetRequestMode.ImmediateLoad);
+            }
+        }
 
         public override Asset<Texture2D> MoonTexture => InfernumTextureRegistry.Invisible;
 
@@ -63,8 +71,18 @@ namespace InfernumMode.Content.MainMenu
 
         public override void Update(bool isOnTitleScreen)
         {
-            if (!SoundEngine.TryGetActiveSound(RainSlot, out var result) && Main.instance.IsActive)
-                RainSlot = SoundEngine.PlaySound(InfernumSoundRegistry.RainLoop with { Volume = 0.1f });
+            if (!SoundEngine.TryGetActiveSound(RainSlot, out var _) && Main.instance.IsActive)
+                RainSlot = SoundEngine.PlaySound(InfernumSoundRegistry.RainLoop with { Volume = 0.1f, PlayOnlyIfFocused = true, IsLooped = true });
+
+            // Ensure it is midday.
+            Main.time = 27000.0;
+            Main.dayTime = true;
+        }
+
+        public override void OnDeselected()
+        {
+            if (SoundEngine.TryGetActiveSound(RainSlot, out var rain))
+                rain.Stop();
         }
 
         private void HandleRaindrops()
@@ -174,7 +192,11 @@ namespace InfernumMode.Content.MainMenu
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
-            spriteBatch.Draw(Logo.Value, logoDrawCenter, null, drawColor, logoRotation, Logo.Value.Size() * 0.5f, logoScale, SpriteEffects.None, 0f);
+
+            Vector2 drawPos = new(Main.screenWidth * 0.5f, 100f);
+            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 0.5f)) * 0.5f;
+            logoScale = MathHelper.Lerp(0.85f, 1.05f, interpolant);
+            spriteBatch.Draw(Logo.Value, drawPos, null, drawColor, logoRotation, Logo.Value.Size() * 0.5f, logoScale, SpriteEffects.None, 0f);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
             return false;

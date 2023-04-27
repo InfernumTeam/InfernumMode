@@ -15,7 +15,10 @@ namespace InfernumMode.Content.Credits
 {
     public static class CreditFinalScene
     {
+        #region Textures
         public static Texture2D ArixTexture { get; private set; } = null;
+        public static Texture2D BlastTexture { get; private set; } = null;
+        public static Texture2D BronzeTexture { get; private set; } = null;
         public static Texture2D DominicTexture { get; private set; } = null;
         public static Texture2D IbanTexture { get; private set; } = null;
         public static Texture2D JaretoTexture { get; private set; } = null;
@@ -29,6 +32,7 @@ namespace InfernumMode.Content.Credits
         public static Texture2D ToastyTexture { get; private set; } = null;
 
         public static Texture2D MainScene { get; private set; } = null;
+        #endregion
 
         private static List<CreditDeveloper> CreditDevelopers = null;
 
@@ -39,6 +43,8 @@ namespace InfernumMode.Content.Credits
         public static void SetupObjects()
         {
             ArixTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Arix", AssetRequestMode.ImmediateLoad).Value;
+            BlastTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Blast", AssetRequestMode.ImmediateLoad).Value;
+            BronzeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Bronze", AssetRequestMode.ImmediateLoad).Value;
             DominicTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Dom", AssetRequestMode.ImmediateLoad).Value;
             IbanTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Iban", AssetRequestMode.ImmediateLoad).Value;
             JaretoTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Jareto", AssetRequestMode.ImmediateLoad).Value;
@@ -60,6 +66,10 @@ namespace InfernumMode.Content.Credits
 
             var arix = new CreditDeveloper(ArixTexture, ImagePosition + new Vector2(-90f, -5f), Vector2.Zero, 0f, SpriteEffects.None);
             CreditDevelopers.Add(arix);
+            var blast = new CreditDeveloper(BlastTexture, ImagePosition + new Vector2(-260f, 20f), Vector2.Zero, 0f, SpriteEffects.None);
+            CreditDevelopers.Add(blast);
+            var bronze = new CreditDeveloper(BronzeTexture, ImagePosition + new Vector2(260f, 20f), Vector2.Zero, 0f, SpriteEffects.None);
+            CreditDevelopers.Add(bronze);
             var dom = new CreditDeveloper(DominicTexture, ImagePosition + new Vector2(-45f, -5f), Vector2.Zero, 0f, SpriteEffects.None);
             CreditDevelopers.Add(dom);
             var iban = new CreditDeveloper(IbanTexture, ImagePosition + new Vector2(90f, -5), Vector2.Zero, 0f, SpriteEffects.None);
@@ -99,6 +109,7 @@ namespace InfernumMode.Content.Credits
             }
         }
 
+        #region Drawing
         public static void Draw(float timer, float opacity)
         {
             // Draw the main image.
@@ -141,64 +152,67 @@ namespace InfernumMode.Content.Credits
             float portalOpacity = CalamityUtils.SineInOutEasing(Utils.GetLerpValue(portalAppearTime, portalAppearTime + portalAppearLength, timer, true), 0);
 
             if (portalOpacity > 0f)
-            {
-                float portalScale = portalOpacity * opacity * 0.5f;
-
-
-                // Get squishyness variables
-                float sineX = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 2.25f)) / 2);
-                float sineY = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 1.5f)) / 2);
-                float scaleScalarX = MathHelper.Lerp(0.95f, 1.15f, sineX);
-                float scaleScalarY = MathHelper.Lerp(0.95f, 1.15f, sineY);
-
-                Texture2D texture = InfernumTextureRegistry.WhiteHole.Value;
-                Asset<Texture2D> eventHorizonTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise");
-                Vector2 scale = new(0.22f * scaleScalarX, 0.22f * scaleScalarY);
-                DrawData eventHorizon = new(texture, PortalPosition, new(0, 0, texture.Width, texture.Height), Color.Green, 0f, texture.Size() * 0.5f, scale * portalScale, SpriteEffects.None, 0);
-                InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(eventHorizonTexture);
-                InfernumEffectsRegistry.RealityTear2Shader.UseSaturation(0.3f);
-                InfernumEffectsRegistry.RealityTear2Shader.Apply(eventHorizon);
-                eventHorizon.Draw(Main.spriteBatch);
-
-                // Draw the portal.
-                Texture2D diskTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
-                DrawData accrecionDisk = new(diskTexture, PortalPosition, null, Color.White, 0f, diskTexture.Size() * 0.5f, 0.8f * portalScale, SpriteEffects.None, 0);
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Lerp(Color.Teal, Color.Lime, 0.5f));
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(portalOpacity);
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Green);
-                GameShaders.Misc["CalamityMod:DoGPortal"].Apply(accrecionDisk);
-                accrecionDisk.Draw(Main.spriteBatch);
-
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Green);
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(portalOpacity);
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Khaki);
-                GameShaders.Misc["CalamityMod:DoGPortal"].Apply(accrecionDisk);
-                accrecionDisk.scale = new Vector2(0.83f) * portalScale;
-                accrecionDisk.Draw(Main.spriteBatch);
-
-                Main.pixelShader.CurrentTechnique.Passes[0].Apply();
-
-                scaleScalarX = MathHelper.Lerp(0.97f, 1.13f, sineX);
-                scaleScalarY = MathHelper.Lerp(0.97f, 1.13f, sineY);
-                Vector2 blackScale = new(0.2f * scaleScalarX, 0.2f * scaleScalarY);
-                Main.spriteBatch.Draw(texture, PortalPosition, new(0, 0, texture.Width, texture.Height), Color.Black, 0f, texture.Size() * 0.5f, blackScale * portalScale, SpriteEffects.None, 0f);
-
-                Texture2D fireNoise = InfernumTextureRegistry.BlurryPerlinNoise.Value;
-                Texture2D miscNoise = InfernumTextureRegistry.HexagonGrid.Value;
-
-                Effect portal = InfernumEffectsRegistry.ProfanedPortalShader.Shader;
-                portal.Parameters["sampleTexture"].SetValue(fireNoise);
-                portal.Parameters["sampleTexture2"].SetValue(miscNoise);
-                portal.Parameters["mainColor"].SetValue(Color.DarkGreen.ToVector3());
-                portal.Parameters["secondaryColor"].SetValue(Color.DarkOliveGreen.ToVector3());
-                portal.Parameters["resolution"].SetValue(new Vector2(120f));
-                portal.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-                portal.Parameters["opacity"].SetValue(opacity * 0.5f);
-                portal.Parameters["innerGlowAmount"].SetValue(0.8f);
-                portal.Parameters["innerGlowDistance"].SetValue(0.15f);
-                portal.CurrentTechnique.Passes[0].Apply();
-                Main.spriteBatch.Draw(fireNoise, PortalPosition, null, Color.White, 0f, fireNoise.Size() * 0.5f, new Vector2(scaleScalarX, scaleScalarY) * portalScale, SpriteEffects.None, 0f);
-            }
+                DrawPortal(portalOpacity, opacity);
         }
+
+        private static void DrawPortal(float portalOpacity, float opacity)
+        {
+            float portalScale = portalOpacity * opacity * 0.5f;
+
+            // Get squishyness variables
+            float sineX = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 2.25f)) / 2);
+            float sineY = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 1.5f)) / 2);
+            float scaleScalarX = MathHelper.Lerp(0.95f, 1.15f, sineX);
+            float scaleScalarY = MathHelper.Lerp(0.95f, 1.15f, sineY);
+
+            Texture2D texture = InfernumTextureRegistry.WhiteHole.Value;
+            Asset<Texture2D> eventHorizonTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise");
+            Vector2 scale = new(0.22f * scaleScalarX, 0.22f * scaleScalarY);
+            DrawData eventHorizon = new(texture, PortalPosition, new(0, 0, texture.Width, texture.Height), Color.Green, 0f, texture.Size() * 0.5f, scale * portalScale, SpriteEffects.None, 0);
+            InfernumEffectsRegistry.RealityTear2Shader.SetShaderTexture(eventHorizonTexture);
+            InfernumEffectsRegistry.RealityTear2Shader.UseSaturation(0.3f);
+            InfernumEffectsRegistry.RealityTear2Shader.Apply(eventHorizon);
+            eventHorizon.Draw(Main.spriteBatch);
+
+            // Draw the portal.
+            Texture2D diskTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            DrawData accrecionDisk = new(diskTexture, PortalPosition, null, Color.White, 0f, diskTexture.Size() * 0.5f, 0.8f * portalScale, SpriteEffects.None, 0);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Lerp(Color.Teal, Color.Lime, 0.5f));
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(portalOpacity);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Green);
+            GameShaders.Misc["CalamityMod:DoGPortal"].Apply(accrecionDisk);
+            accrecionDisk.Draw(Main.spriteBatch);
+
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Green);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(portalOpacity);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Khaki);
+            GameShaders.Misc["CalamityMod:DoGPortal"].Apply(accrecionDisk);
+            accrecionDisk.scale = new Vector2(0.83f) * portalScale;
+            accrecionDisk.Draw(Main.spriteBatch);
+
+            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+
+            scaleScalarX = MathHelper.Lerp(0.97f, 1.13f, sineX);
+            scaleScalarY = MathHelper.Lerp(0.97f, 1.13f, sineY);
+            Vector2 blackScale = new(0.2f * scaleScalarX, 0.2f * scaleScalarY);
+            Main.spriteBatch.Draw(texture, PortalPosition, new(0, 0, texture.Width, texture.Height), Color.Black, 0f, texture.Size() * 0.5f, blackScale * portalScale, SpriteEffects.None, 0f);
+
+            Texture2D fireNoise = InfernumTextureRegistry.BlurryPerlinNoise.Value;
+            Texture2D miscNoise = InfernumTextureRegistry.HexagonGrid.Value;
+
+            Effect portal = InfernumEffectsRegistry.ProfanedPortalShader.Shader;
+            portal.Parameters["sampleTexture"].SetValue(fireNoise);
+            portal.Parameters["sampleTexture2"].SetValue(miscNoise);
+            portal.Parameters["mainColor"].SetValue(Color.DarkGreen.ToVector3());
+            portal.Parameters["secondaryColor"].SetValue(Color.DarkOliveGreen.ToVector3());
+            portal.Parameters["resolution"].SetValue(new Vector2(120f));
+            portal.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            portal.Parameters["opacity"].SetValue(opacity * 0.5f);
+            portal.Parameters["innerGlowAmount"].SetValue(0.8f);
+            portal.Parameters["innerGlowDistance"].SetValue(0.15f);
+            portal.CurrentTechnique.Passes[0].Apply();
+            Main.spriteBatch.Draw(fireNoise, PortalPosition, null, Color.White, 0f, fireNoise.Size() * 0.5f, new Vector2(scaleScalarX, scaleScalarY) * portalScale, SpriteEffects.None, 0f);
+        }
+        #endregion
     }
 }

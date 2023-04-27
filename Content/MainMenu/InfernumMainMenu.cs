@@ -98,8 +98,7 @@ namespace InfernumMode.Content.MainMenu
             {
                 float scaleScalar = Main.rand.NextFloat(1f, 4f);
                 Vector2 velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.35f)) * Main.rand.NextFloat(25f, 34f);
-                RainDroplets.Add(new Raindroplet(Main.rand.Next(70, 80), Main.rand.NextFloat(0.35f, 0.85f) * scaleScalar, 0f, Main.rand.NextVector2FromRectangle(spawnRectangle),
-                   velocity));
+                RainDroplets.Add(new Raindroplet(Main.rand.Next(70, 80), Main.rand.NextFloat(0.35f, 0.85f) * scaleScalar, 0f, Main.rand.NextVector2FromRectangle(spawnRectangle), velocity));
             }
 
             foreach (var rain in RainDroplets)

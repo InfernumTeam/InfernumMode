@@ -1,5 +1,4 @@
-﻿using InfernumMode.Assets.ExtraTextures;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
@@ -18,7 +17,6 @@ namespace InfernumMode.Content.MainMenu
         public Vector2 Velocity;
         public Vector2 DistortScale;
         public Color DrawColor;
-        public Texture2D Texture;
 
         public static Texture2D BloomTexture => ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
 
@@ -34,12 +32,6 @@ namespace InfernumMode.Content.MainMenu
             MaxScale = maxScale;
             Lifetime = lifetime;
             DistortScale = new(Main.rand.NextFloat(0.8f, 1.6f), Main.rand.NextFloat(0.8f, 1.6f));
-            Texture = Main.rand.Next(3) switch
-            {
-                0 => InfernumTextureRegistry.CrispCircle.Value,
-                1 => InfernumTextureRegistry.DistortedCircle.Value,
-                _ => InfernumTextureRegistry.GreyscalePill.Value
-            };
         }
 
         public void Update()
@@ -66,8 +58,6 @@ namespace InfernumMode.Content.MainMenu
             {
                 Main.spriteBatch.Draw(BloomTexture, Position, null, Color.DarkMagenta with { A = 0 } * 0.9f, Rotation, BloomTexture.Size() * 0.5f, Scale * 0.15f * DistortScale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(BloomTexture, Position, null, Color.Lerp(DrawColor, Color.DarkMagenta, 0.5f) with { A = 0 } * 0.9f, Rotation, BloomTexture.Size() * 0.5f, Scale * 0.075f * DistortScale, SpriteEffects.None, 0f);
-
-                //Main.spriteBatch.Draw(Texture, Position, null, Color.Lerp(DrawColor, Color.DarkMagenta, 0.5f) with { A = 0 } * 0.54f, Rotation, Texture.Size() * 0.5f, Scale * 0.05f * DistortScale, SpriteEffects.None, 0f);
             }
         }
     }

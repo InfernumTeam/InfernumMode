@@ -404,13 +404,6 @@ namespace InfernumMode.Core.ILEditingStuff
             device.SetRenderTargets(bindings);
         }
 
-        internal static void FindSealocketItemDyeShader(On.Terraria.Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)
-        {
-            orig(self, isNotInVanitySlot, isSetToHidden, armorItem, dyeItem);
-            if (armorItem.type == ModContent.ItemType<CherishedSealocket>())
-                ForcefieldShader = GameShaders.Armor.GetShaderFromItemId(dyeItem.type);
-        }
-
         public static void InitializeTargetIfNecessary()
         {
             if (PlayerForcefieldTarget is not null || Main.netMode == NetmodeID.Server)
@@ -443,17 +436,22 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
 
+        private void FindSealocketItemDyeShader(Item armorItem, Item dyeItem)
+        {
+            if (armorItem.type == ModContent.ItemType<CherishedSealocket>())
+                ForcefieldShader = GameShaders.Armor.GetShaderFromItemId(dyeItem.type);
+        }
+
         public void Load()
         {
             On.Terraria.Main.CheckMonoliths += PrepareSealocketTarget;
-            On.Terraria.Player.UpdateItemDye += FindSealocketItemDyeShader;
             On.Terraria.Main.DrawInfernoRings += DrawForcefields;
+            DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
         }
 
         public void Unload()
         {
             On.Terraria.Main.CheckMonoliths -= PrepareSealocketTarget;
-            On.Terraria.Player.UpdateItemDye -= FindSealocketItemDyeShader;
             On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
         }
     }

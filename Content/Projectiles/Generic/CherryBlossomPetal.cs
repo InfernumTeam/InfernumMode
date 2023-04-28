@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Generic
 {
-    public class CherryBlossomPetal : ModProjectile, IAdditiveDrawer
+    public class CherryBlossomPetal : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 

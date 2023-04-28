@@ -129,7 +129,7 @@ namespace InfernumMode.Content.Credits
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
-            if (CreditsPlaying) //|| Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed)
+            if (CreditsPlaying || Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed)
                 return;
 
             // Else, mark them as playing.

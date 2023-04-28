@@ -36,6 +36,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using InfernumMode.Content.Projectiles.Pets;
+using Terraria.Enums;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -570,7 +571,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float attackTimer = ref npc.ai[1];
             ref float startedWithMusicDisabled = ref npc.Infernum().ExtraAI[StartedWithMusicDisabledIndex];
             if (SyncAttacksWithMusic && startedWithMusicDisabled == 0f)
+            {
                 attackTimer = (int)Math.Round(TrackedMusicManager.SongElapsedTime.TotalMilliseconds * 0.06f);
+
+                // Prevent frame skip from messing up the attack timer.
+                if (Main.FrameSkipMode == FrameSkipMode.On)
+                    Main.FrameSkipMode = FrameSkipMode.Subtle;
+            }
 
             // Increment the attack timer manually if it shouldn't sync with the music.
             else
@@ -607,6 +614,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
             if (deathEffectTimer == 1f && !Main.dedServ)
                 SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with { Volume = 1.8f }, target.Center);
+
+            // Mark Providence as defeated at night. This is necessary for ensuring that the moonlight dye drops.
+            npc.ModNPC<ProvidenceBoss>().hasTakenDaytimeDamage = wasSummonedAtNight;
 
             // Delete all fire blenders.
             Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());

@@ -10,11 +10,15 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class PurityWish : Achievement
     {
+        public int ProviFightTimer = 0;
+
+        public const int MaxFightTimerLength = 12600;
+
         public override void Initialize()
         {
             Name = "The Tanning Starseed";
             Description = "It feels like solar winds, and solar chimes\n" +
-                "[c/777777:Defeat Infernum Night Providence]";
+                "[c/777777:Defeat Infernum Night Providencer in under 3.5 minutes]";
             TotalCompletion = 1;
             PositionInMainList = 16;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
@@ -25,8 +29,22 @@ namespace InfernumMode.Content.Achievements.DevWishes
         {
             if (AchievementPlayer.NightProviDefeated)
             {
-                CurrentCompletion = TotalCompletion;
                 AchievementPlayer.NightProviDefeated = false;
+                CurrentCompletion = TotalCompletion;
+                if (ProviFightTimer < MaxFightTimerLength)
+                {
+                    CurrentCompletion++;
+                    return;
+                }
+
+                ProviFightTimer = 0;
+            }
+            else
+            {
+                if (CalamityGlobalNPC.holyBoss != -1)
+                    ProviFightTimer++;
+                else
+                    ProviFightTimer = 0;
             }
         }
 

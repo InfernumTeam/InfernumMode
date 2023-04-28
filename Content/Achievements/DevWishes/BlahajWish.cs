@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
         {
             Name = "Benevolent Force";
             Description = "Warm hugs\n" +
-                "[c/777777:Defeat Infernum Duke Fishron in under one minute]";
+                "[c/777777:Defeat Infernum Duke Fishron in under 1 minute]";
             TotalCompletion = 1;
             PositionInMainList = 15;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

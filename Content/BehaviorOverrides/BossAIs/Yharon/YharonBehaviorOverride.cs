@@ -303,7 +303,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public const int Phase2InvincibilityTime = 300;
 
         // Various look-up constants for ExtraAI variables.
-        // TODO -- Consider expanding this practice a bit to other AIs? This pattern solves the problem of having random hardcoded indices scattered about in the global NPC classes.
         public const int SpecialFrameTypeIndex = 5;
 
         public const int AttackCycleIndexIndex = 6;

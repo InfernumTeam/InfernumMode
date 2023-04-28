@@ -11,6 +11,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Core.GlobalInstances.GlobalNPCOverrides;
 
 namespace InfernumMode.Core.TrackedMusic
 {
@@ -47,6 +48,10 @@ namespace InfernumMode.Core.TrackedMusic
         // Song instances are expected to be read directly from the disk, not memory.
         // As such, we need to save them separately from the embedded tmod file data.
         public static readonly string MusicDirectory = $"{Main.SavePath}/TrackedMusic";
+
+        public delegate bool PauseInUIConditionDelegate();
+
+        public static event PauseInUIConditionDelegate PauseInUIConditionEvent;
 
         public static Song TrackedSong
         {
@@ -210,8 +215,17 @@ namespace InfernumMode.Core.TrackedMusic
                 int musicIndex = CustomTracks.Where(kv => kv.Value.Name == TrackedSong.Name).Select(kv => kv.Key).First();
                 volume = Main.musicFade[musicIndex];
 
-                // TODO -- Make this not hardcoded.
-                if ((TrackedSong.Name.Contains("Providence") || TrackedSong.Name.Contains("Guardians")) && InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.holyBoss != -1)
+                // Check if the music should be paused in the UI.
+                bool pauseInUI = false;
+                foreach (Delegate d in PauseInUIConditionEvent.GetInvocationList())
+                {
+                    // This doesn't break if true in case an event contains secondary code that should be run regardless of the returned value.
+                    if (((PauseInUIConditionDelegate)d).Invoke())
+                        pauseInUI = true;
+                }
+
+                // Pause in the UI if necessary.
+                if (pauseInUI && InfernumMode.CanUseCustomAIs)
                 {
                     if (!PausedBecauseOfUI && Main.gamePaused)
                     {

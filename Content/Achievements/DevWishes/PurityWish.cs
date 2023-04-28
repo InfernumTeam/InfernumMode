@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "It feels like solar winds, and solar chimes\n" +
                 "[c/777777:Defeat Infernum Night Providence]";
             TotalCompletion = 1;
-            PositionInMainList = 15;
+            PositionInMainList = 16;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
             IsDevWish = true;
         }

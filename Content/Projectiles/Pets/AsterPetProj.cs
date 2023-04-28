@@ -286,10 +286,7 @@ namespace InfernumMode.Content.Projectiles.Pets
         {
             PetsPlayer modPlayer = Owner.Infernum_Pet();
             if (Owner.dead)
-            {
                 modPlayer.AsterPet = false;
-                Owner.Infernum_Tips().ShouldDisplayTips = true;
-            }
             if (modPlayer.AsterPet)
                 Projectile.timeLeft = 2;
         }

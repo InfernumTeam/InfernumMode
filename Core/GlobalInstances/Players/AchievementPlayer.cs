@@ -121,6 +121,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         #endregion
 
         #region Helper Fields
+        internal static bool DukeFishronDefeated = false;
         internal static bool DoGDefeated = false;
         internal static bool ProviDefeated = false;
         internal static bool NightProviDefeated = false;

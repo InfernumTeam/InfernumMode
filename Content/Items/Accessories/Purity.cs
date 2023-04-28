@@ -1,6 +1,9 @@
 ﻿using CalamityMod.Items;
+using CalamityMod.Items.Materials;
+using CalamityMod.Items.Placeables.Ores;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Accessories
@@ -27,5 +30,15 @@ namespace InfernumMode.Content.Items.Accessories
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual) => player.Infernum_Accessory().Purity = true;
+
+        public override void AddRecipes()
+        {
+            CreateRecipe().
+                AddTile(TileID.LunarCraftingStation).
+                AddIngredient(ModContent.ItemType<LunarCoin>()).
+                AddIngredient(ModContent.ItemType<ExodiumCluster>(), 25).
+                AddIngredient(ModContent.ItemType<CoreofEleum>(), 10).
+                Register();
+        }
     }
 }

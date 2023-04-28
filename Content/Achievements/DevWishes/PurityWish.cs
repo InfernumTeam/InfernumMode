@@ -1,4 +1,5 @@
 ﻿using CalamityMod.NPCs;
+using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
@@ -9,15 +10,11 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class PurityWish : Achievement
     {
-        public int ProviFightTimer = 0;
-
-        public const int MaxFightTimerLength = 9000;
-
         public override void Initialize()
         {
             Name = "The Tanning Starseed";
             Description = "It feels like solar winds, and solar chimes\n" +
-                "[c/777777:Defeat Infernum Night Providence in under 2.5 minutes]";
+                "[c/777777:Defeat Infernum Night Providence]";
             TotalCompletion = 1;
             PositionInMainList = 15;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
@@ -26,31 +23,16 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void Update()
         {
-            // If Provi was just killed.
             if (AchievementPlayer.NightProviDefeated)
             {
+                CurrentCompletion = TotalCompletion;
                 AchievementPlayer.NightProviDefeated = false;
-                // If the length was quick enough.
-                if (ProviFightTimer < MaxFightTimerLength)
-                {
-                    CurrentCompletion++;
-                    return;
-                }
-                else
-                    ProviFightTimer = 0;
-            }
-            else
-            {
-                if (CalamityGlobalNPC.holyBoss != -1)
-                    ProviFightTimer++;
-                else
-                    ProviFightTimer = 0;
             }
         }
 
         public override void OnCompletion(Player player)
         {
-            WishCompletionEffects(player, ModContent.ItemType<Purity>());
+            WishCompletionEffects(player, ModContent.ItemType<LunarCoin>());
         }
 
         public override void SaveProgress(TagCompound tag)

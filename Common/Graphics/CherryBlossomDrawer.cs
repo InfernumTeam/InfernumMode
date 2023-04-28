@@ -102,7 +102,7 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             CherryBlossomShader?.Apply(null, new(CherryBlossomTarget.Target, Vector2.Zero, null, Color.White));
-            Main.spriteBatch.Draw(CherryBlossomTarget.Target, Main.LocalPlayer.Center - Main.screenPosition, null, Color.White, 0f, CherryBlossomTarget.Target.Size() * 0.5f, 1f, 0, 0f);
+            Main.spriteBatch.Draw(CherryBlossomTarget.Target, Main.screenLastPosition - Main.screenPosition + CherryBlossomTarget.Target.Size() * 0.5f, null, Color.White, 0f, CherryBlossomTarget.Target.Size() * 0.5f, 1f, 0, 0f);
             Main.spriteBatch.End();
         }
     }

@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "Legends tell of a mighty warrior who will one day venture deep into the world and find the legendary blade hidden within\n" +
                 "[c/777777:Find an egg sword shrine after defeating Golem]";
             TotalCompletion = 1;
-            PositionInMainList = 13;
+            PositionInMainList = 14;
             UpdateCheck = AchievementUpdateCheck.TileBreak;
             IsDevWish = true;
         }

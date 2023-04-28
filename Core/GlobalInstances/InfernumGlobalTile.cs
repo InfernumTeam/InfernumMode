@@ -1,15 +1,19 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Achievements;
+using InfernumMode.Content.Items;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.TileData;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -67,6 +71,9 @@ namespace InfernumMode.Core.GlobalInstances
             // Trigger achievement checks.
             if (Main.netMode != NetmodeID.Server)
                 AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.TileBreak, type);
+
+            if (type == TileID.VanityTreeSakura && SakuraTreeSystem.HasSakura(new(i, j)))
+                AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.Sakura);
         }
 
         public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
@@ -82,6 +89,12 @@ namespace InfernumMode.Core.GlobalInstances
             bool tombstonesShouldSpontaneouslyCombust = WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 16, 16)) || SubworldSystem.IsActive<LostColosseum>();
             if (tombstonesShouldSpontaneouslyCombust && type is TileID.Tombstones)
                 WorldGen.KillTile(i, j);
+        }
+
+        public override void RandomUpdate(int i, int j, int type)
+        {
+            if (type == TileID.VanityTreeSakura && Main.rand.NextBool(100))
+                Main.tile[i, j].Get<SakuraTreeSystem.BlossomData>().HasBlossom = true;
         }
     }
 }

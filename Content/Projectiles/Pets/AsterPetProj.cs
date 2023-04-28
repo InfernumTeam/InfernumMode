@@ -77,7 +77,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                     SaidBossText = true;
                 }
             }
-            else
+            else if (Utilities.CurrentlyFoughtBoss is null)
                 SaidBossText = false;
 
             // Bark and say some snarky text on the first frame.
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.Projectiles.Pets
         public void SaySnarkyComment(string comment)
         {
             SoundEngine.PlaySound(InfernumSoundRegistry.AsterBarkSound, Projectile.Center);
-            CombatText.NewText(Projectile.Hitbox, RisingWarriorsSoulstone.TextColor, comment);
+            CombatText.NewText(Projectile.Hitbox, RisingWarriorsSoulstone.TextColor, comment, true);
         }
 
         public void DoBehavior_SitInPlace()

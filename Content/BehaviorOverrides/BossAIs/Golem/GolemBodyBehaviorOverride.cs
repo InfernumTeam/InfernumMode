@@ -507,7 +507,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     SwapHeads(npc);
 
                 // Invincibility is lame
-                freeHead.defense = 9999;
+                freeHead.defense = 9999999;
 
                 // Accelerate the X and Y separately for sporadic movement
                 if (freeHead.velocity.Length() < 2f)

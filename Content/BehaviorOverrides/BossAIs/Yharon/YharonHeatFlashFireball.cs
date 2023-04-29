@@ -49,5 +49,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 }
             }
         }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, lightColor, 6f);
+            return false;
+        }
     }
 }

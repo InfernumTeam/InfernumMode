@@ -3,7 +3,6 @@ using CalamityMod.Items;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.FurnitureStratus;
 using CalamityMod.Items.Weapons.Rogue;
-using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Projectiles.Rogue;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;

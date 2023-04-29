@@ -26,6 +26,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 
 using YharonBoss = CalamityMod.NPCs.Yharon.Yharon;
+using InfernumMode.Content.Skies;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
@@ -987,8 +988,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Hover to the top left/right of the target and look at them.
                 Vector2 destination = target.Center + new Vector2(xAimOffset, berserkChargeMode ? -480f : -240f);
-                Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 26f;
-                npc.SimpleFlyMovement(idealVelocity, 1.1f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 18.5f;
+                npc.SimpleFlyMovement(idealVelocity, 0.54f);
 
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
@@ -1002,6 +1003,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 specialFrameType = (int)YharonFrameDrawingType.IdleWings;
 
                 SoundEngine.PlaySound(YharonBoss.ShortRoarSound, npc.Center);
+                YharonSky.CreateSmokeBurst();
 
                 npc.netUpdate = true;
             }

@@ -1249,6 +1249,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer == 1f)
             {
                 // Give a tip.
+                ClearEntities();
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Those chains wont seem to hold it much longer, brace yourself!");
                 SoundEngine.PlaySound(CeaselessVoidBoss.BuildupSound);
             }

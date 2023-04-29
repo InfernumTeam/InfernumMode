@@ -10,6 +10,7 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Common.Graphics;
@@ -233,7 +234,8 @@ namespace InfernumMode.Core.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CanHitPlayer(npc, target, ref cooldownSlot);
 
-            if (npc.type == NPCID.KingSlime || npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>() || npc.type == ModContent.NPCType<DarkEnergy>())
+            bool isSepulcher = npc.type == ModContent.NPCType<SepulcherHead>() || npc.type == ModContent.NPCType<SepulcherBody>() || npc.type == ModContent.NPCType<SepulcherBodyEnergyBall>() || npc.type == ModContent.NPCType<SepulcherTail>();
+            if (npc.type == NPCID.KingSlime || npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>() || npc.type == ModContent.NPCType<DarkEnergy>() || isSepulcher)
                 cooldownSlot = ImmunityCooldownID.Bosses;
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())

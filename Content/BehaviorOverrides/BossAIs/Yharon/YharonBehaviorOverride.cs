@@ -27,6 +27,7 @@ using Terraria.ModLoader;
 
 using YharonBoss = CalamityMod.NPCs.Yharon.Yharon;
 using InfernumMode.Content.Skies;
+using InfernumMode.Common.Graphics.Particles;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
@@ -895,8 +896,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     Vector2 teleportPosition = target.Center + offsetDirection.ToRotationVector2() * teleportOffset;
                     for (int i = 0; i < 6; i++)
                     {
-                        var fire = new MediumMistParticle(teleportPosition + Main.rand.NextVector2Circular(150f, 150f), -Vector2.UnitY * Main.rand.NextFloat(1f, 5f), Color.Yellow, Color.Red, 1.9f, 255f);
-                        GeneralParticleHandler.SpawnParticle(fire);
+                        Color fireColor = Main.rand.NextBool() ? Color.White : Color.Yellow;
+                        CloudParticle noxiousCloud = new(teleportPosition, Main.rand.NextVector2Circular(12f, 12f), fireColor * 0.85f, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
+                        GeneralParticleHandler.SpawnParticle(noxiousCloud);
+
+                        Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-96f, 96f), 75);
+                        fire.velocity = -Vector2.UnitY.RotateRandom(0.6f) * Main.rand.NextFloat(1f, 10f);
+                        fire.scale *= 1.66f;
+                        fire.noGravity = true;
                     }
                 }
 
@@ -1773,10 +1780,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     {
                         ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 42);
                         SoundEngine.PlaySound(YharonBoss.DeathSound with { Volume = 4f, Pitch = -0.15f });
+                        SoundEngine.PlaySound(YharonBoss.RoarSound with { Volume = 3f, Pitch = -0.125f });
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
                     }
+
+                    if (attackTimer >= preAttackTime + 96f)
+                        specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
                 }
 
                 // Emit very strong fireballs.

@@ -701,6 +701,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Disable contact damage.
             npc.damage = 0;
 
+            // Provide the target infinite flight time.
+            target.DoInfiniteFlightCheck(Color.LightCyan);
+
             if (ringShootCounter >= ringCount)
             {
                 npc.velocity *= 0.9f;
@@ -778,9 +781,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningSoul>(), SoulDamage, 0f, -1, Main.rand.Next(2), soulAngle);
                     }
                 }
-
-                // Provide the target infinite flight time.
-                target.DoInfiniteFlightCheck(Color.LightCyan);
             }
 
             // Look at the target.

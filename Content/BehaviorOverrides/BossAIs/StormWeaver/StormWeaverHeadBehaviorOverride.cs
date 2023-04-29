@@ -132,6 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 target.ClearBuff(BuffID.Frozen);
             if (target.HasBuff(BuffID.Electrified))
                 target.ClearBuff(BuffID.Electrified);
+            target.Calamity().gravityNormalizer = true;
 
             // Update the hit and death sounds to account for the fact that there is no more phase 1.
             npc.HitSound = SoundID.NPCHit13;
@@ -206,6 +207,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             int rainCreationDelay = 30;
             ref float targetIndex = ref npc.Infernum().ExtraAI[0];
             ref float flyingAway = ref npc.Infernum().ExtraAI[1];
+
+            if (BossRushEvent.BossRushActive)
+            {
+                SelectNewAttack(npc);
+                return;
+            }
 
             // Disable damage.
             npc.dontTakeDamage = true;

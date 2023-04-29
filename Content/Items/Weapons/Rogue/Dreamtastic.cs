@@ -33,7 +33,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
         {
             Item.width = 54;
             Item.height = 54;
-            Item.damage = 1492;
+            Item.damage = 1215;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.channel = true;

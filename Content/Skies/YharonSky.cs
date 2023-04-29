@@ -128,7 +128,7 @@ namespace InfernumMode.Content.Skies
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             // Force it to be sunset.
-            Main.time = MathHelper.Lerp((float)Main.time, (float)Main.dayLength - 12000f, 0.01f);
+            Main.time = MathHelper.Lerp((float)Main.time, (float)Main.dayLength * 0.5f, 0.01f);
             Main.dayTime = true;
 
             // Draw the sky, sun, and smoke.
@@ -153,14 +153,14 @@ namespace InfernumMode.Content.Skies
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             Vector2 origin = backglowTexture.Size() * 0.5f;
             float opacity = intensity * MathHelper.Lerp(0.73f, 0.76f, MathF.Sin(Main.GlobalTimeWrappedHourly * 29f) * 0.5f + 0.5f);
-            Vector2 sunDrawPosition = DrawLostColosseumBackgroundHook.SunPosition + new Vector2(50f, 200f);
+            Vector2 sunDrawPosition = DrawLostColosseumBackgroundHook.SunPosition;
+            Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Wheat * opacity * 0.93f, 0f, origin, 1f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Yellow * opacity * 0.72f, 0f, origin, 3f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Orange * opacity * 0.66f, 0f, origin, 6f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Red * opacity * 0.7f, 0f, origin, 12f, 0, 0f);
 
             // Draw the regular sun.
             var sceneArea = DrawLostColosseumBackgroundHook.SunSceneArea;
-            sceneArea.bgTopY += 200;
             typeof(Main).GetMethod("DrawSunAndMoon", Utilities.UniversalBindingFlags).Invoke(Main.instance, new object[]
             {
                 sceneArea,

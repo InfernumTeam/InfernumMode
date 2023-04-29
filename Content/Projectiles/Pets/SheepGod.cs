@@ -14,6 +14,23 @@ namespace InfernumMode.Content.Projectiles.Pets
     {
         public Player Owner => Main.player[Projectile.owner];
 
+        public bool HasSpecialName
+        {
+            get
+            {
+                if (Owner.name == "Shade")
+                    return true;
+                if (Owner.name == "Bedman")
+                    return true;
+                if (Owner.name == "Delilah F. Neumann")
+                    return true;
+                if (Owner.name == "Romeo F. Neumann")
+                    return true;
+
+                return false;
+            }
+        }
+
         public ref float Time => ref Projectile.ai[1];
 
         public override void SetStaticDefaults()
@@ -68,7 +85,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             Projectile.Opacity = Utils.GetLerpValue(720f, 300f, Projectile.Distance(Owner.Center), true);
 
             // Temporarily disappear, make the player fall asleep, and provide adrenaline if the sheep god touches the owner.
-            if (Projectile.Hitbox.Intersects(Owner.Hitbox))
+            if (Projectile.Hitbox.Intersects(Owner.Hitbox) && !HasSpecialName)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, Owner.Center);
                 for (int i = 0; i < 32; i++)

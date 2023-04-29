@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
+using System.Globalization;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -133,7 +134,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
-            float extraOffset = character.ToLower() == "i" ? 9f : 0f;
+            float extraOffset = character.ToLower(CultureInfo.InvariantCulture) == "i" ? 9f : 0f;
             return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + 10f) * AspectRatioFactor * TextScale;
         }
 
@@ -145,7 +146,7 @@ namespace InfernumMode.Content.BossIntroScreens
             {
                 if (!HasPlayedMainSound)
                 {
-                    SoundEngine.PlaySound(SoundToPlayWithTextCreation.Value, Main.LocalPlayer.Center);
+                    SoundEngine.PlaySound(SoundToPlayWithTextCreation.Value);
                     HasPlayedMainSound = true;
                 }
             }
@@ -174,7 +175,7 @@ namespace InfernumMode.Content.BossIntroScreens
                     // Play a sound if a new letter was added and a sound of this effect is initialized.
                     if (totalLettersToDisplay > previousTotalLettersToDisplay && SoundToPlayWithLetterAddition != null && !playedNewLetterSound)
                     {
-                        SoundEngine.PlaySound(SoundToPlayWithLetterAddition.Value, Main.LocalPlayer.Center);
+                        SoundEngine.PlaySound(SoundToPlayWithLetterAddition.Value);
                         playedNewLetterSound = true;
                     }
 

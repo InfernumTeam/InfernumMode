@@ -81,6 +81,9 @@ namespace InfernumMode.Content.Projectiles.Generic
         // Prevent instant death upon touching tiles if the blossom has existed for a brief enough period of time.
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            if (Time <= 20f)
+                Projectile.Kill();
+
             Projectile.velocity.X = 0f;
             return Time <= 4f;
         }

@@ -571,13 +571,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float attackTimer = ref npc.ai[1];
             ref float startedWithMusicDisabled = ref npc.Infernum().ExtraAI[StartedWithMusicDisabledIndex];
             if (SyncAttacksWithMusic && startedWithMusicDisabled == 0f)
-            {
                 attackTimer = (int)Math.Round(TrackedMusicManager.SongElapsedTime.TotalMilliseconds * 0.06f);
-
-                // Prevent frame skip from messing up the attack timer.
-                if (Main.FrameSkipMode == FrameSkipMode.On)
-                    Main.FrameSkipMode = FrameSkipMode.Subtle;
-            }
 
             // Increment the attack timer manually if it shouldn't sync with the music.
             else

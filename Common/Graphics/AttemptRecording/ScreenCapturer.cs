@@ -1,4 +1,5 @@
 using Gif.Components;
+using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -412,13 +413,13 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 catch (IOException)
                 {
                     // Return this if the file is in use.
-                    return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
+                    return new Texture2D[] { ModContent.Request<Texture2D>(InfernumTextureRegistry.InvisPath, AssetRequestMode.ImmediateLoad).Value };
                 }
             }
             else
             {
                 baseCreditsUsed = true;
-                return new Texture2D[] { ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/testcredits", AssetRequestMode.ImmediateLoad).Value };
+                return new Texture2D[] { ModContent.Request<Texture2D>(InfernumTextureRegistry.InvisPath, AssetRequestMode.ImmediateLoad).Value };
             }
         }
 

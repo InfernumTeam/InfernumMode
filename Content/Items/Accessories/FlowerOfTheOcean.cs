@@ -8,9 +8,6 @@ namespace InfernumMode.Content.Items.Accessories
 {
     internal class FlowerOfTheOcean : ModItem
     {
-        // TODO: Replace with actual sprite.
-        public override string Texture => "InfernumMode/Content/Items/Accessories/FlowerOfTheOceanTempSprite";
-
         public override void SetStaticDefaults()
         {
             SacrificeTotal = 1;

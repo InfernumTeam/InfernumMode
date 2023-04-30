@@ -5,6 +5,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -1033,6 +1034,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             }
         }
         #endregion
+
+        #region Death Effects
+        public override bool CheckDead(NPC npc)
+        {
+            AchievementPlayer.DukeFishronDefeated = true;
+            return true;
+        }
+        #endregion Death Effects
 
         #region Frames and Drawcode
 

@@ -277,6 +277,8 @@ namespace InfernumMode.ILEditingStuff
 
         public delegate void CalCloneSkyDrawDelegate(Action<CalamitasCloneBackgroundScene, Player, bool> orig, CalamitasCloneBackgroundScene instance, Player player, bool isActive);
 
+        public delegate void YharonSkyDrawDelegate(Action<YharonBackgroundScene, Player, bool> orig, YharonBackgroundScene instance, Player player, bool isActive);
+
         public static event AbyssRequirementHookDelegate MeetsBaseAbyssRequirement
         {
             add => HookEndpointManager.Add(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), value);
@@ -358,6 +360,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Add(typeof(CalamitasCloneBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Remove(typeof(CalamitasCloneBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event YharonSkyDrawDelegate YharonSkyDraw
+        {
+            add => HookEndpointManager.Add(typeof(YharonBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Remove(typeof(YharonBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator UpdateBadLifeRegen

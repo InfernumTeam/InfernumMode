@@ -56,7 +56,7 @@ namespace InfernumMode.Content.Items.Pets
             "Wait, don't stop...",
         };
 
-        public static readonly Color TextColor = new(126, 107, 189);
+        public static readonly Color TextColor = new(233, 124, 249);
 
         public override void SetStaticDefaults()
         {

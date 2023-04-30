@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             if (Time == 1f)
             {
-                Projectile.scale = Main.rand.NextFloat(0.8f, 1.5f);
+                Projectile.scale = Main.rand.NextFloat(0.6f, 0.9f);
                 Projectile.ExpandHitboxBy((int)(72 * Projectile.scale));
                 ColorSpectrumHue = Main.rand.NextFloat(0f, 0.9999f);
                 Projectile.netUpdate = true;

@@ -26,7 +26,11 @@ namespace InfernumMode.Content.Credits
             private set;
         }
 
-        private static int CreditsTimer = 0;
+        public static int CreditsTimer
+        {
+            get;
+            internal set;
+        }
 
         private static int ActiveGifIndex = 0;
 
@@ -60,6 +64,25 @@ namespace InfernumMode.Content.Credits
             ScreenCapturer.RecordingBoss.SCal
         };
 
+        public static float FinalSceneOpacity
+        {
+            get
+            {
+                float maxTime = 540f;
+                float fadeInTime = 45f;
+                float fadeOutTime = maxTime - fadeInTime;
+
+                float opacity = 1f;
+
+                if (CreditsTimer <= fadeInTime)
+                    opacity = Utils.GetLerpValue(0f, fadeInTime, CreditsTimer, true);
+                else if (CreditsTimer >= fadeOutTime)
+                    opacity = 1f - Utils.GetLerpValue(fadeOutTime, maxTime, CreditsTimer, true);
+
+                return opacity;
+            }
+        }
+
         public const int TotalGIFs = 7;
 
         public const string Artists = "Arix\nFreeman\nIbanPlay\nPengolin\nReika\nSpicySpaceSnake";
@@ -78,11 +101,13 @@ namespace InfernumMode.Content.Credits
 
         public override void Load()
         {
+            Main.OnPreDraw += CreditFinalScene.PreparePortraitTarget;
             Main.OnPostDraw += DrawCredits;
         }
 
         public override void Unload()
         {
+            Main.OnPreDraw -= CreditFinalScene.PreparePortraitTarget;
             Main.OnPostDraw -= DrawCredits;
         }
 
@@ -104,7 +129,7 @@ namespace InfernumMode.Content.Credits
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
-            if (CreditsPlaying) //|| Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed)
+            if (CreditsPlaying || Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed)
                 return;
 
             // Else, mark them as playing.
@@ -143,7 +168,7 @@ namespace InfernumMode.Content.Credits
 
                     if (CreditsTimer >= 240f)
                     {
-                        CurrentState = CreditState.FinalScene;
+                        CurrentState = CreditState.Playing;
                         CreditsTimer = 0;
                     }
                     break;
@@ -252,18 +277,7 @@ namespace InfernumMode.Content.Credits
             }
             else if (CurrentState is CreditState.FinalScene)
             {
-                float maxTime = 720f;
-                float fadeInTime = 45f;
-                float fadeOutTime = maxTime - fadeInTime;
-
-                float opacity = 1f;
-
-                if (CreditsTimer <= fadeInTime)
-                    opacity = Utils.GetLerpValue(0f, fadeInTime, CreditsTimer, true);
-                else if (CreditsTimer >= fadeOutTime)
-                    opacity = 1f - Utils.GetLerpValue(fadeOutTime, maxTime, CreditsTimer, true);
-
-                CreditFinalScene.Draw(CreditsTimer, opacity);
+                CreditFinalScene.Draw(FinalSceneOpacity);
             }
             Main.spriteBatch.End();
         }

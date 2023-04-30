@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Items;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Content.Rarities.Sparkles;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ namespace InfernumMode.Content.Items.Accessories
             Item.width = Item.height = 26;
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
             Item.rare = ModContent.RarityType<InfernumSakuraRarity>();
+            Item.accessory = true;
             Item.vanity = true;
             Item.Infernum_Tooltips().DeveloperItem = true;
         }
@@ -111,5 +113,9 @@ namespace InfernumMode.Content.Items.Accessories
             // Return the x offset.
             return line.Font.MeasureString(text).X * line.BaseScale.X;
         }
+
+        public override void UpdateAccessory(Player player, bool hideVisual) => player.GetModPlayer<CherryBlossomPlayer>().CreatingCherryBlossoms = true;
+
+        public override void UpdateVanity(Player player) => player.GetModPlayer<CherryBlossomPlayer>().CreatingCherryBlossoms = true;
     }
 }

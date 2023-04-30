@@ -24,6 +24,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Light;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -233,12 +234,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 return false;
             }
 
+            // WHY IS THIS A PROBLEM???
+            if (!Lighting.NotRetro)
+                Lighting.Mode = LightMode.Color;
+
             bool targetNeedsDeath = superEnrageTimer >= 1f || target.chaosState;
 
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
             target.breath = target.breathMax;
             target.ignoreWater = true;
-            target.DoInfiniteFlightCheck(Color.Navy);
+            target.DoInfiniteFlightCheck(Color.DeepSkyBlue);
 
             // Set the global whoAmI variable.
             CalamityGlobalNPC.adultEidolonWyrmHead = npc.whoAmI;

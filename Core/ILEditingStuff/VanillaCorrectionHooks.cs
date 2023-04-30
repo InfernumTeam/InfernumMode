@@ -282,6 +282,24 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class DrawLostColosseumBackgroundHook : IHookEdit
     {
+        public static Vector2 SunPosition
+        {
+            get;
+            private set;
+        }
+
+        public static Main.SceneArea SunSceneArea
+        {
+            get;
+            private set;
+        }
+
+        public static bool DisableSunForNextFrame
+        {
+            get;
+            set;
+        }
+
         internal void ForceDrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
         {
             orig(self, force || SubworldSystem.IsActive<LostColosseum>() || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
@@ -380,6 +398,14 @@ namespace InfernumMode.Core.ILEditingStuff
             int x = (int)(dayCompletion * sceneArea.totalWidth + sunTexture.Width * 2f) - sunTexture.Width;
             int y = (int)(sceneArea.bgTopY + verticalOffsetInterpolant * 250f + Main.sunModY);
             Vector2 sunPosition = new(x - 108f, y + 180f);
+            SunSceneArea = sceneArea;
+            SunPosition = sunPosition;
+
+            if (DisableSunForNextFrame)
+            {
+                DisableSunForNextFrame = false;
+                return;
+            }
 
             if (!inColosseum)
             {
@@ -1033,6 +1059,7 @@ namespace InfernumMode.Core.ILEditingStuff
             On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
             SCalSkyDraw += ChangeSCalSkyRequirements;
             CalCloneSkyDraw += ChangeCalCloneSkyRequirements;
+            YharonSkyDraw += ChangeYharonSkyRequirements;
         }
 
         public void Unload()
@@ -1064,6 +1091,14 @@ namespace InfernumMode.Core.ILEditingStuff
                 return false;
 
             return orig(self);
+        }
+
+        private void ChangeYharonSkyRequirements(Action<YharonBackgroundScene, Player, bool> orig, YharonBackgroundScene instance, Player player, bool isActive)
+        {
+            if (InfernumMode.CanUseCustomAIs)
+                return;
+
+            orig(instance, player, isActive);
         }
     }
 

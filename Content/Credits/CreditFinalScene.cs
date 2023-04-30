@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -32,6 +33,8 @@ namespace InfernumMode.Content.Credits
         public static Texture2D ToastyTexture { get; private set; } = null;
 
         public static Texture2D MainScene { get; private set; } = null;
+
+        public static ManagedRenderTarget PortraitTarget { get; private set; } = null;
         #endregion
 
         private static List<CreditDeveloper> CreditDevelopers = null;
@@ -39,6 +42,8 @@ namespace InfernumMode.Content.Credits
         internal static Vector2 ImagePosition;
 
         internal static Vector2 PortalPosition;
+
+        public static float PortalAppearDelay => 180f;
 
         public static void SetupObjects()
         {
@@ -88,30 +93,55 @@ namespace InfernumMode.Content.Credits
             CreditDevelopers.Add(smh);
             var toasty = new CreditDeveloper(ToastyTexture, ImagePosition + new Vector2(45f, -3f), Vector2.Zero, 0f, SpriteEffects.None);
             CreditDevelopers.Add(toasty);
+
+            // Initialize the portrait render target.
+            PortraitTarget ??= new ManagedRenderTarget(true, RenderTargetManager.CreateScreenSizedTarget);
         }
 
         public static void Update(float time)
         {
-            float portalAppearTime = 400f;
             float portalAppearLength = 45f;
             float suckSpeed = 0f;
 
             // Accelerate while the portal is being created.
-            if (time >= portalAppearTime)
-                suckSpeed = MathF.Pow(1 + CalamityUtils.ExpOutEasing(Utils.GetLerpValue(portalAppearTime, portalAppearTime + portalAppearLength, time, true), 0), 2f);
+            if (time >= PortalAppearDelay)
+                suckSpeed = MathF.Pow(1 + CalamityUtils.ExpOutEasing(Utils.GetLerpValue(PortalAppearDelay + portalAppearLength, PortalAppearDelay + portalAppearLength + 90f, time, true), 0), 2f);
 
             foreach (var cd in CreditDevelopers)
             {
                 if (suckSpeed > 0)
-                    cd.Velocity = cd.Position.DirectionTo(PortalPosition) * suckSpeed;
-                cd.Rotation = MathF.Abs(cd.Rotation.AngleTowards(cd.Velocity.ToRotation(), 0.005f));
+                {
+                    cd.Velocity = cd.Position.DirectionTo(PortalPosition) * suckSpeed * 3f;
+                    cd.Rotation = MathF.Abs(cd.Rotation.AngleTowards(cd.Velocity.ToRotation(), 0.08f));
+                }
+                else
+                {
+                    if (Main.rand.NextBool(30) && cd.Velocity.Y == 0f && time < PortalAppearDelay - 76f)
+                    {
+                        cd.Velocity = -Vector2.UnitY * 3f;
+                        cd.Position.Y--;
+                    }
+                    cd.Velocity.Y += 0.11f;
+                    if (cd.Position.Y >= cd.StartingPosition.Y)
+                        cd.Velocity.Y = 0f;
+                }
                 cd.Update();
             }
         }
 
         #region Drawing
-        public static void Draw(float timer, float opacity)
+
+        public static void PreparePortraitTarget(GameTime _)
         {
+            float opacity = CreditManager.FinalSceneOpacity;
+            if (PortraitTarget is null || opacity <= 0.01f)
+                return;
+
+            Main.instance.GraphicsDevice.SetRenderTarget(PortraitTarget.Target);
+            Main.instance.GraphicsDevice.Clear(Color.Transparent);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
+
             // Draw the main image.
             Effect creditEffect = InfernumEffectsRegistry.CreditShader.GetShader().Shader;
             creditEffect.Parameters["overallOpacity"].SetValue(opacity);
@@ -143,16 +173,41 @@ namespace InfernumMode.Content.Credits
 
                 // Don't bother drawing if either of these are 0.
                 if (scale == 0 || opacity == 0)
+                {
+                    Main.instance.GraphicsDevice.SetRenderTarget(null);
+                    Main.spriteBatch.End();
                     return;
+                }
 
                 cd.Draw(opacity, scale);
             }
-            float portalAppearTime = 400f;
+
+            Main.instance.GraphicsDevice.SetRenderTarget(null);
+            Main.spriteBatch.End();
+        }
+
+        public static void Draw(float opacity)
+        {
             float portalAppearLength = 45f;
-            float portalOpacity = CalamityUtils.SineInOutEasing(Utils.GetLerpValue(portalAppearTime, portalAppearTime + portalAppearLength, timer, true), 0);
+            float portalOpacity = CalamityUtils.SineInOutEasing(Utils.GetLerpValue(PortalAppearDelay, PortalAppearDelay + portalAppearLength, CreditManager.CreditsTimer, true), 0);
+            float distortionIntensity = Utils.GetLerpValue(PortalAppearDelay + 84f, PortalAppearDelay + 256f, CreditManager.CreditsTimer, true);
+
+            // Draw the portrait with an optional collapse effect.
+            if (distortionIntensity > 0f)
+            {
+                var collapseEffect = InfernumEffectsRegistry.BackgroundDistortionShader;
+                collapseEffect.UseImage1("Images/Misc/Perlin");
+                collapseEffect.Shader.Parameters["distortionIntensity"].SetValue(MathF.Pow(distortionIntensity, 1.05f));
+                collapseEffect.Shader.Parameters["center"].SetValue(PortalPosition / new Vector2(Main.screenWidth, Main.screenHeight));
+                collapseEffect.Apply();
+            }
+            Main.spriteBatch.Draw(PortraitTarget.Target, new Vector2(Main.screenWidth, Main.screenHeight - distortionIntensity * 600f) * 0.5f, null, Color.White, 0f, PortraitTarget.Target.Size() * 0.5f, 1f - MathF.Pow(distortionIntensity, 0.4f) * 0.9f, 0, 0f);
 
             if (portalOpacity > 0f)
+            {
+                Main.spriteBatch.EnterShaderRegion();
                 DrawPortal(portalOpacity, opacity);
+            }
         }
 
         private static void DrawPortal(float portalOpacity, float opacity)

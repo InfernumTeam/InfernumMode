@@ -302,7 +302,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                     attackTimer = 36f;
 
                 npc.position.Y += 3f;
-                if (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 28))
+                if (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 28) || (npc.velocity.Y == 0f && attackTimer >= 10f))
                 {
                     Collision.HitTiles(npc.TopLeft, Vector2.UnitY * -3f, npc.width, npc.height + 20);
                     hasHitGround = 1f;

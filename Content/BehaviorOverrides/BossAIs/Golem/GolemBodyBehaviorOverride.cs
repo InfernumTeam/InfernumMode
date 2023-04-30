@@ -498,6 +498,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 return false;
             }
 
+            freeHead.Calamity().DR = 0.3f;
+            freeHead.Calamity().unbreakableDR = false;
             if (Enraged)
             {
                 npc.Calamity().CurrentlyEnraged = true;
@@ -507,7 +509,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     SwapHeads(npc);
 
                 // Invincibility is lame
-                freeHead.defense = 9999;
+                freeHead.Calamity().DR = 0.99999999f;
+                freeHead.Calamity().unbreakableDR = true;
 
                 // Accelerate the X and Y separately for sporadic movement
                 if (freeHead.velocity.Length() < 2f)

@@ -138,8 +138,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Polterghast/SoulMedium").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Vector2 scale = Projectile.scale * Projectile.Size / texture.Size();
             Rectangle frame = texture.Frame(1, 4, 0, 0);
+            Vector2 scale = Vector2.One * Projectile.scale * 0.4f;
             Main.EntitySpriteDraw(texture, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, frame.Size() * 0.5f, scale, 0, 0);
         }
 

@@ -9,6 +9,7 @@
         PlayerDeath,
         PlayerUpdate,
         TileBreak,
-        NightmareCatcher
+        NightmareCatcher,
+        Sakura
     }
 }

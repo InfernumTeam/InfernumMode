@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool TextShouldBeCentered => true;
 
-        public override bool ShouldCoverScreen => true;
+        public override bool ShouldCoverScreen => false;
 
         public override string TextToDisplay
         {
@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BossIntroScreens
                 if (CachedText == "Grand\nYharon")
                     return new SoundStyle("InfernumMode/Assets/Sounds/Custom/Yharon/YharonRoarTroll");
 
-                return new SoundStyle("CalamityMod/Sounds/Custom/Yharon/YharonRoar");
+                return null;
             }
         }
 

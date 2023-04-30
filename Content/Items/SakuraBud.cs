@@ -1,4 +1,6 @@
 ﻿using CalamityMod.Items;
+using InfernumMode.Content.Items.Accessories;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,8 @@ namespace InfernumMode.Content.Items
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sakura Bud");
-            Tooltip.SetDefault("You feel a guiding spirit trying to lead you the bloom’s home. Maybe you should follow its call?");
+            Tooltip.SetDefault("You feel a guiding spirit trying to lead you the bloom's home, within the heart of the jungle\n" +
+                "If you find it, toss it in the pond");
             SacrificeTotal = 1;
         }
         public override void SetDefaults()
@@ -30,6 +33,17 @@ namespace InfernumMode.Content.Items
 
             if (nameLine != null)
                 nameLine.OverrideColor = Color.Pink;
+        }
+
+        public override void Update(ref float gravity, ref float maxFallSpeed)
+        {
+            bool inSpecialGarden = Item.position.Distance(WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates()) <= 3200f && WorldSaveSystem.BlossomGardenCenter != Point.Zero;
+            if (inSpecialGarden && Collision.WetCollision(Item.TopLeft, Item.width, Item.height))
+            {
+                int oldStack = Item.stack;
+                Item.SetDefaults(ModContent.ItemType<SakuraBloom>());
+                Item.stack = oldStack;
+            }
         }
     }
 }

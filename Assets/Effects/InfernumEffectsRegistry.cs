@@ -387,6 +387,10 @@ namespace InfernumMode.Assets.Effects
             // Twins (desperation phase).
             Filters.Scene["InfernumMode:Twins"] = new Filter(new TwinsScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Twins"] = new TwinsSky();
+
+            // Yharon.
+            Filters.Scene["InfernumMode:Yharon"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Yharon"] = new YharonSky();
         }
         #endregion
     }

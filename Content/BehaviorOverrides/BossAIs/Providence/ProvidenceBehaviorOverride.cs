@@ -36,6 +36,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using InfernumMode.Content.Projectiles.Pets;
+using Terraria.Enums;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -151,6 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             GlobalNPCOverrides.OnKillEvent += DetermineNightDefeatStatus;
             GlobalNPCOverrides.StrikeNPCEvent += PerformDamageRestrictions;
+            TrackedMusicManager.PauseInUIConditionEvent += AddMusicPauseCondition;
         }
 
         private bool PerformDamageRestrictions(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
@@ -170,6 +172,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 WorldSaveSystem.HasBeatenInfernumProvRegularly = true;
                 CalamityNetcode.SyncWorld();
             }
+        }
+
+        private bool AddMusicPauseCondition()
+        {
+            string songName = TrackedMusicManager.TrackedSong.Name;
+            return (songName.Contains("Providence") || songName.Contains("Guardians")) && CalamityGlobalNPC.holyBoss != -1;
         }
         #endregion Loading
 
@@ -600,6 +608,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
             if (deathEffectTimer == 1f && !Main.dedServ)
                 SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with { Volume = 1.8f }, target.Center);
+
+            // Mark Providence as defeated at night. This is necessary for ensuring that the moonlight dye drops.
+            npc.ModNPC<ProvidenceBoss>().hasTakenDaytimeDamage = wasSummonedAtNight;
 
             // Delete all fire blenders.
             Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());

@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
             Description = "It demands a sacrifice. You seem like a good choice\n" +
                 $"[c/777777:Sleep in the brimstone crags for {NightmareCatcherPlayer.AchievementSleepTime} seconds]";
             TotalCompletion = 1;
-            PositionInMainList = 10;
+            PositionInMainList = 11;
             UpdateCheck = AchievementUpdateCheck.NightmareCatcher;
             IsDevWish = true;
         }

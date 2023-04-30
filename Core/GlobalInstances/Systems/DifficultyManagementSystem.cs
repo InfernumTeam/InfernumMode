@@ -33,7 +33,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 CalamityWorld.death = true;
 
             // Disable Infernum interactions with FTW/Master because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
-            // TODO -- Maybe just make a popup in chat warning the player that they won't actually influence anything so that people won't complain? Would need to talk with the team about that.
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive && DisableDifficultyModes)
             {

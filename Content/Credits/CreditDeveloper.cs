@@ -8,6 +8,7 @@ namespace InfernumMode.Content.Credits
     {
         public Texture2D Texture;
         public Vector2 Position;
+        public Vector2 StartingPosition;
         public Vector2 Velocity;
         public float Rotation;
         public readonly SpriteEffects Direction;
@@ -16,6 +17,7 @@ namespace InfernumMode.Content.Credits
         {
             Texture = texture;
             Position = position;
+            StartingPosition = position;
             Velocity = velocity;
             Rotation = rotation;
             Direction = direction;

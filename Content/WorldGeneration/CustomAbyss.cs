@@ -865,7 +865,6 @@ namespace InfernumMode.Content.WorldGeneration
                 }));
 
                 // Generate a stand of scoria.
-                // TODO -- Make the scoria ore a resource inside a shell of abyssal magma blocks.
                 int moundHeight = WorldGen.genRand.Next(4, 9);
                 int scoriaGroundSize = WorldGen.genRand.Next(5, 7);
                 WorldUtils.Gen(new(floor.X, floor.Y + scoriaGroundSize / 2), new Shapes.Slime(scoriaGroundSize), Actions.Chain(new GenAction[]

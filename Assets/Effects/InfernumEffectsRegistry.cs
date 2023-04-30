@@ -35,7 +35,6 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData CultistDeathVertexShader => GameShaders.Misc["Infernum:CultistDeath"];
         public static MiscShaderData CultistShieldShader => GameShaders.Misc["Infernum:CultistShield"];
         public static MiscShaderData DarkFlamePillarVertexShader => GameShaders.Misc["Infernum:DarkFlamePillar"];
-        public static MiscShaderData DoGDashIndicatorVertexShader => GameShaders.Misc["Infernum:DoGDashIndicatorShader"];
         public static MiscShaderData DukeTornadoVertexShader => GameShaders.Misc["Infernum:DukeTornado"];
         public static MiscShaderData FireVertexShader => GameShaders.Misc["Infernum:Fire"];
         public static MiscShaderData FishEyeShader => GameShaders.Misc["Infernum:Fisheye"];
@@ -170,9 +169,6 @@ namespace InfernumMode.Assets.Effects
 
             Ref<Effect> darkFlamePillarShader = new(assets.Request<Effect>("Assets/Effects/Primitives/DarkFlamePillarShader", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:DarkFlamePillar"] = new MiscShaderData(darkFlamePillarShader, "TrailPass");
-
-            Ref<Effect> dashIndicator = new(assets.Request<Effect>("Assets/Effects/Primitives/DoGDashIndicatorShader", AssetRequestMode.ImmediateLoad).Value);
-            GameShaders.Misc["Infernum:DoGDashIndicatorShader"] = new MiscShaderData(dashIndicator, "TrailPass");
 
             Ref<Effect> dukeTornadoShader = new(assets.Request<Effect>("Assets/Effects/Primitives/DukeTornado", AssetRequestMode.ImmediateLoad).Value);
             GameShaders.Misc["Infernum:DukeTornado"] = new MiscShaderData(dukeTornadoShader, "TrailPass");

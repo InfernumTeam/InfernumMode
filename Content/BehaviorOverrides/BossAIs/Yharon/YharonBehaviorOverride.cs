@@ -251,7 +251,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     return false;
 
                 NPC yharon = Main.npc[GlobalNPCOverrides.Yharon];
-                return yharon.Infernum().ExtraAI[HasEnteredPhase2Index] == 1f;
+                return yharon.Infernum().ExtraAI[HasEnteredPhase2Index] == 1f && yharon.ai[0] != (int)YharonAttackType.EnterSecondPhase;
             }
             set
             {
@@ -280,9 +280,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase2LifeRatio && !InSecondPhase,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase3LifeRatio && npc.life / (float)npc.lifeMax <= Subphase2LifeRatio && !InSecondPhase,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase4LifeRatio && npc.life / (float)npc.lifeMax <= Subphase3LifeRatio && !InSecondPhase,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax <= Subphase2LifeRatio && !InSecondPhase,
 
-            [Subphase4Pattern] = (npc) => (npc.life / (float)npc.lifeMax > Subphase5LifeRatio || npc.Infernum().ExtraAI[InvincibilityTimerIndex] > 0f) && InSecondPhase,
+            [Subphase4Pattern] = (npc) => (npc.life / (float)npc.lifeMax > Subphase5LifeRatio || npc.Infernum().ExtraAI[InvincibilityTimerIndex] > 0f) && (InSecondPhase || npc.ai[0] == (int)YharonAttackType.SpawnEffects),
             [Subphase5Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase6LifeRatio && npc.life / (float)npc.lifeMax <= Subphase5LifeRatio && InSecondPhase,
             [Subphase6Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase7LifeRatio && npc.life / (float)npc.lifeMax <= Subphase6LifeRatio && InSecondPhase,
             [Subphase7Pattern] = (npc) => npc.life / (float)npc.lifeMax > Subphase8LifeRatio && npc.life / (float)npc.lifeMax <= Subphase7LifeRatio && InSecondPhase,
@@ -303,7 +303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const int TransitionDRBoostTime = 120;
 
-        public const int Phase2InvincibilityTime = 300;
+        public const int Phase2InvincibilityTime = 360;
 
         // Various look-up constants for ExtraAI variables.
         public const int SpecialFrameTypeIndex = 5;
@@ -443,7 +443,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             ref float hasGottenNearPlayer = ref npc.Infernum().ExtraAI[HasGottenNearPlayerIndex];
 
             // Go to phase 2 if close to death.
-            if (!InSecondPhase && lifeRatio < Phase2LifeRatio)
+            if (npc.Infernum().ExtraAI[HasEnteredPhase2Index] == 0f && lifeRatio < Phase2LifeRatio)
             {
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Better stay near the edges of the arena during those carpet bomb flames, That should keep them out of the way!");
 
@@ -451,7 +451,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 // This is necessary to ensure that the special phase 2 name is used.
                 typeof(YharonBoss).GetField("startSecondAI", Utilities.UniversalBindingFlags).SetValue(npc.ModNPC, true);
 
-                InSecondPhase = true;
+                npc.Infernum().ExtraAI[HasEnteredPhase2Index] = 1f;
 
                 // Enter the second phase animation state.
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
@@ -498,10 +498,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType nextAttackType = patternToUse[(int)((attackType + 1) % patternToUse.Length)];
 
             // Transition to the next subphase if necessary.
-            if (oldSubphase != currentSubphase)
+            if (oldSubphase != currentSubphase && attackType != (int)YharonAttackType.EnterSecondPhase)
             {
-                subphaseTransitionTimer = TransitionDRBoostTime;
-
                 // Clear away projectiles in subphase 4 and 7.
                 if (Main.netMode != NetmodeID.MultiplayerClient && (currentSubphase == 3f || currentSubphase == 6f))
                 {
@@ -518,11 +516,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 // Reset the attack cycle for the next subphase.
                 if (currentSubphase != 3f)
                 {
+                    subphaseTransitionTimer = TransitionDRBoostTime;
+                    transitionDRCountdown = TransitionDRBoostTime;
                     npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
                     SelectNextAttack(npc, ref attackType);
                 }
 
-                transitionDRCountdown = TransitionDRBoostTime;
                 npc.netUpdate = true;
             }
 
@@ -553,7 +552,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             // Slow down and transition to the next subphase as necessary.
             // Following this Yharon will recieve a DR boost. The code for this up a small bit.
-            if (subphaseTransitionTimer > 0)
+            if (subphaseTransitionTimer > 0 && attackType != (int)YharonAttackType.EnterSecondPhase)
             {
                 npc.damage = 0;
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.2f);
@@ -609,11 +608,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             int splittingMeteorBombTime = 72;
 
             // Determine important phase variables.
-            bool phase2 = npc.Infernum().ExtraAI[HasEnteredPhase2Index] == 1f;
             bool berserkChargeMode = shouldPerformBerserkCharges == 1f;
             if (!berserkChargeMode)
             {
-                berserkChargeMode = phase2 && lifeRatio >= Subphase8LifeRatio && lifeRatio < Subphase7LifeRatio && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
+                berserkChargeMode = InSecondPhase && lifeRatio >= Subphase8LifeRatio && lifeRatio < Subphase7LifeRatio && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
                 shouldPerformBerserkCharges = berserkChargeMode.ToInt();
             }
             if (berserkChargeMode)
@@ -668,7 +666,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.damage = npc.defDamage;
 
             // Buff charges if in phase 2.
-            if (phase2)
+            if (InSecondPhase)
             {
                 chargeDelay = (int)(chargeDelay * 0.8);
                 chargeSpeed += 2.7f;
@@ -679,9 +677,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             fastChargeSpeedMultiplier *= 0.875f;
 
             // Disable damage for a while and heal in phase 2. Also release some sparkles for visual flair.
-            if (invincibilityTime > 0f && attackType != (int)YharonAttackType.EnterSecondPhase)
+            if (invincibilityTime > 0f)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient && invincibilityTime <= Phase2InvincibilityTime - 5f)
                 {
                     Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
                     Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
@@ -722,7 +720,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     break;
 
                 case YharonAttackType.EnterSecondPhase:
-                    DoBehavior_EnterSecondPhase(npc, target, ref attackType, ref attackTimer, ref specialFrameType, ref fireIntensity);
+                    DoBehavior_EnterSecondPhase(npc, target, ref attackType, ref attackTimer, ref specialFrameType, ref fireIntensity, ref invincibilityTime);
                     break;
                 case YharonAttackType.CarpetBombing:
                     DoBehavior_CarpetBombing(npc, target, splittingMeteorRiseTime, splittingMeteorBombingSpeed, splittingMeteorBombTime, ref attackTimer, ref attackType, ref specialFrameType);
@@ -1252,7 +1250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-        public static void DoBehavior_EnterSecondPhase(NPC npc, Player target, ref float attackType, ref float attackTimer, ref float specialFrameType, ref float fireIntensity)
+        public static void DoBehavior_EnterSecondPhase(NPC npc, Player target, ref float attackType, ref float attackTimer, ref float specialFrameType, ref float fireIntensity, ref float invincibilityTime)
         {
             int cameraPanDelay1 = 4;
             int cameraPanTime1 = 240;
@@ -1266,6 +1264,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             npc.dontTakeDamage = true;
             npc.damage = 0;
 
+            // Rotate in place.
+            npc.rotation = npc.rotation.AngleTowards(0f, 0.03f);
+
+            // Close the HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
             // Disable music.
             npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Nothing");
             CalamityGlobalNPC.yharon = -1;
@@ -1276,7 +1280,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 2f });
 
             // Clear all entities and look at the target before the animation begins.
-            if (attackTimer <= 5f)
+            if (attackTimer <= 20f)
             {
                 npc.spriteDirection = (target.Center.X - npc.Center.X < 0).ToDirectionInt();
                 ClearAllEntities();
@@ -1358,8 +1362,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 target.Infernum_Camera().ScreenFocusPosition = npc.Center;
 
                 // Make the background get progressively brighter.
-                float flashIntensity = Utils.GetLerpValue(0f, energyChargeTime - 30f, adjustedTimer, true) * 0.5f;
-                ScreenEffectSystem.SetFlashEffect(npc.Center, flashIntensity, 25);
+                float flashIntensity = Utils.GetLerpValue(0f, energyChargeTime - 30f, adjustedTimer, true);
+                ScreenEffectSystem.SetFlashEffect(npc.Center, flashIntensity * 1.05f, 25);
 
                 // Create a bunch of lava in the background.
                 if (attackTimer % 45f == 44f)
@@ -1390,17 +1394,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Have Yharon fade back in in his lava form.
                 fadeToAshInterpolant = MathHelper.Clamp(fadeToAshInterpolant - 0.05f, 0f, 1f);
-                fireIntensity = MathF.Pow(flashIntensity * 2f, 0.7f);
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.01f, 0f, 1f);
+                fireIntensity = MathF.Pow(flashIntensity, 0.7f);
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.01f, 0f, 0.6f);
 
                 // Let the music play.
                 CalamityGlobalNPC.yharonP2 = npc.whoAmI;
+
+                // Let the HP bar reappear.
+                npc.Calamity().ShouldCloseHPBar = false;
+            }
+
+            // Lock the invicibility timer in place before he charges energy.
+            else
+            {
+                npc.life = (int)MathF.Round(npc.lifeMax * Phase2LifeRatio);
+                invincibilityTime = Phase2InvincibilityTime;
             }
 
             // Reset the attack cycle for the next subphase.
             if (attackTimer >= cameraPanTime1 + fadeOutTime + energyChargeTime)
             {
+                npc.Opacity = 1f;
+
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 2f });
+
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
                 Utilities.DisplayText("The air is scorching your skin...", Color.Orange);
                 SelectNextAttack(npc, ref attackType);
@@ -1832,7 +1849,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Hover and charge.
                 float wrappedAttackTimer = attackTimer % berserkChargeTime;
-                if (wrappedAttackTimer < 20)
+                if (wrappedAttackTimer < 20f)
                 {
                     npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
                     ref float xAimOffset = ref npc.Infernum().ExtraAI[0];
@@ -1989,7 +2006,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 ModContent.ProjectileType<BigFlare>(),
                 ModContent.ProjectileType<BigFlare2>(),
                 ModContent.ProjectileType<YharonHeatFlashFireball>(),
-                ModContent.ProjectileType<VortexOfFlame>()
+                ModContent.ProjectileType<VortexOfFlame>(),
+                ModContent.ProjectileType<RedirectingYharonMeteor>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -2128,7 +2146,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (phase2InvincibilityCountdown > 0f)
             {
                 float backBackToRegularColor = Utils.GetLerpValue(75f, 0f, phase2InvincibilityCountdown, true);
-                Color phase2Color = Color.Lerp(Color.Pink, Color.Yellow, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
+                Color phase2Color = Color.Lerp(Color.Pink, Color.Wheat, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
                 burnColor = Color.Lerp(phase2Color, burnColor, backBackToRegularColor);
             }
             if (npc.life < npc.lifeMax * 0.2f)

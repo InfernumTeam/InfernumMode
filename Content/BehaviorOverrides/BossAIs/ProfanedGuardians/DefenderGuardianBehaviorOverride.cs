@@ -201,8 +201,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 1:
                     if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 30f)
                         typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);
-                    ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
-                    drawBlackBars = 0f;
                     npc.Opacity = 0f;
                     if (localAttackTimer > 45f)
                     {
@@ -241,10 +239,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Draw a dash telegraph when needed.
             if (commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex] == 1)
                 DrawDashTelegraph(npc, spriteBatch, commander);
-
-            // Draw afterimages.
-            if (commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex] == 1)
-                PrepareFireAfterimages(npc, spriteBatch, commander, direction);
 
             // Glow during the healer solo.
             if ((GuardiansAttackType)commander.ai[0] == GuardiansAttackType.SoloHealer || commander.Infernum().ExtraAI[DefenderShouldGlowIndex] == 1)
@@ -285,18 +279,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             InfernumEffectsRegistry.PulsatingLaserVertexShader.Shader.Parameters["reverseDirection"].SetValue(true);
 
             FireDrawer.Draw(drawPositions, -Main.screenPosition, 40);
-        }
-
-        public static void PrepareFireAfterimages(NPC npc, SpriteBatch spriteBatch, NPC commander, SpriteEffects direction)
-        {
-            Texture2D afterTexture = InfernumTextureRegistry.GuardianDefenderGlow.Value;
-            bool soloDefender = (GuardiansAttackType)commander.ai[0] is GuardiansAttackType.SoloDefender;
-            float length = soloDefender ? 30f : 25f;
-            float timer = soloDefender ? commander.ai[1] : npc.Infernum().ExtraAI[1];
-            float fadeOutLength = 6f;
-            int maxAfterimages = 6;
-
-            DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);
         }
 
         public static void DrawBackglow(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

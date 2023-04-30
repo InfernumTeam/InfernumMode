@@ -87,25 +87,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 {
                     Color color = Color.Black * fadeToBlack;
                     Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
-                }
-                //else
-                //{
-                //    bool drawBlackBars = false;
-                //    if (CalamityGlobalNPC.doughnutBoss != -1 && Main.npc[CalamityGlobalNPC.doughnutBoss].active)
-                //        drawBlackBars = Main.npc[CalamityGlobalNPC.doughnutBoss].Infernum().ExtraAI[GuardianComboAttackManager.CommanderDrawBlackBarsIndex] == 1;
-
-                //    if (drawBlackBars)
-                //    {
-                //        float barOpacity = Main.npc[CalamityGlobalNPC.doughnutBoss].Infernum().ExtraAI[GuardianComboAttackManager.CommanderBlackBarsOpacityIndex];
-                //        float barRotation = Main.npc[CalamityGlobalNPC.doughnutBoss].Infernum().ExtraAI[GuardianComboAttackManager.CommanderBlackBarsRotationIndex];
-
-                //        Color color = Color.Black * barOpacity;
-                //        Rectangle frame = new(0, 0, 1, 1);
-                //        float rotation = -0.175f;
-                //        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight) + 4, Main.screenWidth * 2 + 4, (int)(Main.screenHeight * 0.25f) + 4), new Rectangle(0, 0, 1, 1), color, rotation, frame.Size() * 0.5f, SpriteEffects.None, 0f);
-                //        Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)(Main.screenWidth * 0.5f), (int)(Main.screenHeight) + 4, Main.screenWidth * 2 + 4, (int)(Main.screenHeight * 0.25f) + 4), new Rectangle(0, 0, 1, 1), color, rotation, frame.Size() * 0.5f, SpriteEffects.None, 0f);
-                //    }
-                //}
+                }                
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);

@@ -438,7 +438,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
                 ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
                 ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
-                ref float drawFireAfterimages = ref commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex];
 
                 float maxDashes = 4f;
                 float waitTime = dashesCompleted == 0f ? 90f : 60f;
@@ -518,7 +517,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Charge
                     case 2:
-                        drawFireAfterimages = 1;
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
                         drawDashTelegraph = 1;
                         npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
@@ -558,7 +556,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (universalAttackTimer >= dashTime)
                         {
                             dashesCompleted++;
-                            drawFireAfterimages = 0;
                             if (dashesCompleted >= maxDashes)
                                 SelectNewAttack(commander, ref universalAttackTimer);
                             else
@@ -633,7 +630,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
                 ref float drawDashTelegraph = ref commander.Infernum().ExtraAI[DefenderDrawDashTelegraphIndex];
                 ref float dashTelegraphOpacity = ref commander.Infernum().ExtraAI[DefenderDashTelegraphOpacityIndex];
-                ref float drawFireAfterimages = ref commander.Infernum().ExtraAI[DefenderFireAfterimagesIndex];
 
                 float waitTime = dashesCompleted == 0f ? 60f : 30;
                 float telegraphWaitTime = 20f;
@@ -694,7 +690,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Charge
                     case 2:
-                        drawFireAfterimages = 1;
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
                         drawDashTelegraph = 1;
                         npc.velocity = npc.DirectionTo(target.Center) * dashSpeed;
@@ -732,7 +727,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (localAttackTimer >= dashTime)
                         {
-                            drawFireAfterimages = 0;
                             substate = 0;
                             localAttackTimer = 0;
                         }
@@ -910,7 +904,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
                 ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
                 ref float drawShieldSmear = ref npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex];
-                ref float drawFireAfterimages = ref npc.Infernum().ExtraAI[CommanderFireAfterimagesIndex];
 
                 float flySpeed = 20f;
                 float spinLength = 20f;
@@ -920,9 +913,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float chargeAcceleration = 1.55f;
                 float totalSpearsToRelease = 11f;
                 int spearReleasePoint = (int)(spinLength / totalSpearsToRelease);
-
-                drawFireAfterimages = 0f;
-                npc.Infernum().ExtraAI[CommanderFireAfterimagesLengthIndex] = chargeLength;
 
                 switch (substate)
                 {
@@ -1028,7 +1018,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (localAttackTimer < chargeLength && npc.velocity.Length() <= 120f)
                             npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (npc.velocity.Length() + chargeAcceleration);
 
-                        drawFireAfterimages = 1f;
                         if (localAttackTimer >= chargeLength)
                         {
                             substate = 0f;
@@ -1280,8 +1269,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
                 ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
-                ref float drawFireAfterimages = ref npc.Infernum().ExtraAI[CommanderFireAfterimagesIndex];
-                npc.Infernum().ExtraAI[CommanderFireAfterimagesLengthIndex] = 10f;
                 switch (substate)
                 {
                     // Get an offset from the player.
@@ -1349,7 +1336,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         // Cause the defender to charge as well.
                         defender.velocity = defender.DirectionTo(npc.Center) * defenderRamSpeed;
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 0.9f }, target.Center);
-                        drawFireAfterimages = 1f;
+
                         // Reset the defender being ready.
                         defenderIsReady = 0f;
                         substate++;
@@ -1358,7 +1345,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // If close enough to the defender, or if enough time has passed if they missed.
                     case 3:
-                        drawFireAfterimages = 1f;
 
                         // Create particles to indicate the sudden speed.
                         if (Main.rand.NextBool())
@@ -1896,8 +1882,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ref float catchingRightHandXOG = ref commander.Infernum().ExtraAI[3];
             ref float catchingRightHandYOG = ref commander.Infernum().ExtraAI[4];
 
-            ref float drawBlackBars = ref commander.Infernum().ExtraAI[CommanderDrawBlackBarsIndex];
-            ref float drawBlackRotation = ref commander.Infernum().ExtraAI[CommanderBlackBarsRotationIndex];
             ref float leftHandIndex = ref commander.Infernum().ExtraAI[LeftHandIndex];
             ref float rightHandIndex = ref commander.Infernum().ExtraAI[RightHandIndex];
             ref float moveHands = ref commander.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex];
@@ -1931,7 +1915,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (substate < 6f)
                 {
                     target.Infernum_Camera().CurrentScreenShakePower = 2f;
-                    drawBlackBars = 1f;
 
                     // Do not take damage.
                     npc.dontTakeDamage = true;

@@ -144,7 +144,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         /// 0 = shield needs to spawn, 1 = shield is spawned and should aim at the player, 2 = shield is spawned and should stop aiming, 3 = shield should die.
         /// </summary>
         public const int DefenderShieldStatusIndex = 16;
-        public const int DefenderFireAfterimagesIndex = 17;
         public const int CommanderBlenderShouldFadeOutIndex = 18;
         public const int CommanderAngerGlowAmountIndex = 19;
         /// 0 = spear needs to spawn, 1 = spear is spawned and should aim at the player, 2 = spear is spawned and should stop aiming, 3 = spear should die.
@@ -154,17 +153,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         /// Handled entirely by the commander. Do not touch
         /// </summary>
         public const int CommanderSpearSmearOpacityIndex = 22;
-        // Reset by the commander every frame.
-        public const int CommanderDrawSpearSmearIndex = 22;
-        public const int CommanderFireAfterimagesIndex = 23;
-        public const int CommanderFireAfterimagesLengthIndex = 24;
-
-        public const int CommanderDrawBlackBarsIndex = 25;
-        public const int CommanderBlackBarsRotationIndex = 26;
         /// <summary>
-        /// Reset by the commander every frame based on the draw index.
+        /// Reset by the commander every frame.
         /// </summary>
-        public const int CommanderBlackBarsOpacityIndex = 27;
+        public const int CommanderDrawSpearSmearIndex = 22;
 
         // Hand stuff
         public const int LeftHandIndex = 28;

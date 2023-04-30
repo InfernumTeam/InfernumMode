@@ -144,12 +144,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             else
                 smearOpacity = MathHelper.Clamp(smearOpacity - 0.1f, 0f, 1f);
 
-            ref float blackBarOpacity = ref npc.Infernum().ExtraAI[CommanderBlackBarsOpacityIndex];
-            if (npc.Infernum().ExtraAI[CommanderDrawBlackBarsIndex] == 1f)
-                blackBarOpacity = MathHelper.Clamp(blackBarOpacity + 0.1f, 0f, 1f);
-            else
-                blackBarOpacity = MathHelper.Clamp(blackBarOpacity - 0.1f, 0f, 1f);
-
             npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0f;
 
             ref float fireBorderOpacity = ref npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
@@ -469,36 +463,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.OrangeRed) with { A = 0 } * glowAmount * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             spriteBatch.Draw(glowmask, npc.Center - Main.screenPosition, npc.frame, WayfinderSymbol.Colors[0] with { A = 0 } * glowAmount * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
-        }
-
-        public static void PrepareFireAfterimages(NPC npc, SpriteBatch spriteBatch, SpriteEffects direction)
-        {
-            Texture2D afterTexture = InfernumTextureRegistry.GuardianCommanderGlow.Value;
-            float length = npc.Infernum().ExtraAI[CommanderFireAfterimagesLengthIndex];
-            float timer = (GuardiansAttackType)npc.ai[0] is GuardiansAttackType.SpearDashAndGroundSlam ? npc.Infernum().ExtraAI[1] : npc.ai[1];
-            float fadeOutLength = 6f;
-            int maxAfterimages = 5;
-
-            DrawFireAfterimages(npc, spriteBatch, afterTexture, direction, length, timer, fadeOutLength, maxAfterimages);
-        }
-
-        public static void DrawFireAfterimages(NPC npc, SpriteBatch spriteBatch, Texture2D afterTexture, SpriteEffects direction, float length, float timer, float fadeOutLength, int maxAfterimages)
-        {
-            if (timer < maxAfterimages)
-                maxAfterimages = (int)timer;
-            else if (timer >= length - fadeOutLength)
-                maxAfterimages = (int)MathHelper.Lerp(6f, 0f, (timer - (length - fadeOutLength)) / fadeOutLength);
-
-            // Failsafe
-            if (maxAfterimages > npc.oldPos.Length)
-                maxAfterimages = npc.oldPos.Length;
-
-            for (int i = 0; i < maxAfterimages; i++)
-            {
-                Vector2 basePosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
-                Vector2 positionOffset = (npc.velocity * MathHelper.Lerp(0f, 8f, (float)i / npc.oldPos.Length));
-                spriteBatch.Draw(afterTexture, basePosition + positionOffset, null, WayfinderSymbol.Colors[1] with { A = 0 } * 0.8f * npc.Opacity, npc.rotation, afterTexture.Size() * 0.5f, npc.scale * 0.8f, direction, 0f);
-            }
         }
 
         public static void DrawHealerShield(NPC npc, SpriteBatch spriteBatch, float scaleFactor, float opacity)

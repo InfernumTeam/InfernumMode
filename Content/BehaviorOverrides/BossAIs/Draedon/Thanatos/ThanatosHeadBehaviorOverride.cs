@@ -28,6 +28,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.Projectiles.Melee;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -87,7 +89,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<ThanatosBody1>() || npc.type == ModContent.NPCType<ThanatosBody2>())
+            {
                 damage = (int)(damage * npc.takenDamageMultiplier);
+                realDamage = (int)(realDamage * npc.takenDamageMultiplier);
+            }
+
+            bool isThanatos = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<ThanatosBody1>() || npc.type == ModContent.NPCType<ThanatosBody2>() || npc.type == ModContent.NPCType<ThanatosTail>();
+            if (isThanatos)
+            {
+                NPC head = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
+
+                // Disable damage and start the death animation if the hit would kill Thanatos.
+                if (head.life - realDamage <= 1)
+                {
+                    head.life = 0;
+                    head.checkDead();
+                    damage = 0;
+                    npc.dontTakeDamage = true;
+                    return false;
+                }
+            }
 
             return true;
         }

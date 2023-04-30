@@ -39,6 +39,23 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.Calamity().DealsDefenseDamage = true;
         }
 
+        public override void AI()
+        {
+            if (UsesScreenshake)
+            {
+                float screenShakePower = GetScreenshakePower(Projectile.timeLeft / (float)Lifetime) * Utils.GetLerpValue(1300f, 0f, Projectile.Distance(Main.LocalPlayer.Center), true);
+                if (Main.LocalPlayer.Calamity().GeneralScreenShakePower < screenShakePower)
+                    Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakePower;
+            }
+
+            // Expand outward.
+            CurrentRadius = MathHelper.Lerp(CurrentRadius, MaxRadius, 0.25f);
+            Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+
+            // Adjust the hitbox.
+            Projectile.ExpandHitboxBy((int)(CurrentRadius * Projectile.scale * 0.75f), (int)(CurrentRadius * Projectile.scale * 0.75f));
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Main.spriteBatch.End();

@@ -25,9 +25,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public static int TrueLifetime => RawLifetime / TotalUpdates;
 
-        public const int TotalUpdates = 5;
+        public const int TotalUpdates = 4;
 
-        public const int RawLifetime = 180;
+        public const int RawLifetime = 210;
 
         public const float TelegraphWidth = 3600f;
 

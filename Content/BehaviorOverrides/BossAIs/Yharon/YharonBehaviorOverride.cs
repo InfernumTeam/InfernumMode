@@ -28,6 +28,8 @@ using Terraria.ModLoader;
 using YharonBoss = CalamityMod.NPCs.Yharon.Yharon;
 using InfernumMode.Content.Skies;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Dusts;
+using InfernumMode.Assets.Sounds;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
@@ -47,7 +49,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             FireTrailCharge,
             MassiveInfernadoSummon,
             TeleportingCharge,
-            SummonFlareRing,
+
+            EnterSecondPhase,
             CarpetBombing,
             PhoenixSupercharge,
             HeatFlashRing,
@@ -164,7 +167,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FireTrailCharge,
             YharonAttackType.FireTrailCharge,
             YharonAttackType.CarpetBombing,
-            YharonAttackType.SummonFlareRing,
             YharonAttackType.FastCharge,
             YharonAttackType.FireTrailCharge,
             YharonAttackType.FireTrailCharge,
@@ -172,7 +174,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
-            YharonAttackType.SummonFlareRing,
             YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
         };
@@ -343,6 +344,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const int PlayerChargeMarkCenterYIndex = 23;
 
+        public const int FadeToAshInterpolantIndex = 24;
+
         public const float Phase2LifeRatio = 0.1f;
 
         public const float BaseDR = 0.3f;
@@ -450,11 +453,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 InSecondPhase = true;
 
-                Utilities.DisplayText("The air is scorching your skin...", Color.Orange);
-
-                // Reset the attack cycle index.
+                // Enter the second phase animation state.
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = 0f;
                 SelectNextAttack(npc, ref attackType);
+                attackType = (int)YharonAttackType.EnterSecondPhase;
 
                 // Spawn a lot of cool sparkles.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -514,8 +516,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 // Reset the attack cycle for the next subphase.
-                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
-                SelectNextAttack(npc, ref attackType);
+                if (currentSubphase != 3f)
+                {
+                    npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
+                    SelectNextAttack(npc, ref attackType);
+                }
 
                 transitionDRCountdown = TransitionDRBoostTime;
                 npc.netUpdate = true;
@@ -561,7 +566,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 if (subphaseTransitionTimer < 18f)
                 {
                     specialFrameType = (int)YharonFrameDrawingType.Roar;
-                    if (subphaseTransitionTimer == 9)
+                    if (subphaseTransitionTimer == 9f && currentSubphase != 3f)
                         SoundEngine.PlaySound(YharonBoss.RoarSound, npc.Center);
                 }
 
@@ -674,7 +679,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             fastChargeSpeedMultiplier *= 0.875f;
 
             // Disable damage for a while and heal in phase 2. Also release some sparkles for visual flair.
-            if (invincibilityTime > 0f)
+            if (invincibilityTime > 0f && attackType != (int)YharonAttackType.EnterSecondPhase)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -715,8 +720,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 case YharonAttackType.MassiveInfernadoSummon:
                     DoBehavior_MassiveInfernadoSummon(npc, infernadoAttackPowerupTime, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
-                case YharonAttackType.SummonFlareRing:
-                    DoBehavior_SummonFlareRing(npc, ref attackType);
+
+                case YharonAttackType.EnterSecondPhase:
+                    DoBehavior_EnterSecondPhase(npc, target, ref attackType, ref attackTimer, ref specialFrameType, ref fireIntensity);
                     break;
                 case YharonAttackType.CarpetBombing:
                     DoBehavior_CarpetBombing(npc, target, splittingMeteorRiseTime, splittingMeteorBombingSpeed, splittingMeteorBombTime, ref attackTimer, ref attackType, ref specialFrameType);
@@ -811,7 +817,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 target.Infernum_Camera().ScreenFocusPosition = npc.Center;
             }
 
-            // Perform the charge.
+            // Perform the charge after camera effects are done.
             if (attackTimer == cameraPanTime + chargeDelay)
             {
                 SoundEngine.PlaySound(YharonBoss.OrbSound);
@@ -897,8 +903,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     for (int i = 0; i < 6; i++)
                     {
                         Color fireColor = Main.rand.NextBool() ? Color.White : Color.Yellow;
-                        CloudParticle noxiousCloud = new(teleportPosition, Main.rand.NextVector2Circular(12f, 12f), fireColor * 0.85f, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
-                        GeneralParticleHandler.SpawnParticle(noxiousCloud);
+                        CloudParticle fireCloud = new(teleportPosition, Main.rand.NextVector2Circular(12f, 12f), fireColor * 0.85f, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
+                        GeneralParticleHandler.SpawnParticle(fireCloud);
 
                         Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-96f, 96f), 75);
                         fire.velocity = -Vector2.UnitY.RotateRandom(0.6f) * Main.rand.NextFloat(1f, 10f);
@@ -1246,15 +1252,171 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-        public static void DoBehavior_SummonFlareRing(NPC npc, ref float attackType)
+        public static void DoBehavior_EnterSecondPhase(NPC npc, Player target, ref float attackType, ref float attackTimer, ref float specialFrameType, ref float fireIntensity)
         {
-            SelectNextAttack(npc, ref attackType);
+            int cameraPanDelay1 = 4;
+            int cameraPanTime1 = 240;
+            int wingFlapTime = 90;
+            int fadeToAshTime = 210;
+            int fadeOutTime = 150;
+            int energyChargeTime = 360;
+            ref float fadeToAshInterpolant = ref npc.Infernum().ExtraAI[FadeToAshInterpolantIndex];
+
+            // Disable damage.
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+
+            // Disable music.
+            npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Nothing");
+            CalamityGlobalNPC.yharon = -1;
+            CalamityGlobalNPC.yharonP2 = -1;
+
+            // Create a violent sound on the first frame to try and obscure the sudden music stop.
+            if (attackTimer == 1f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 2f });
+
+            // Clear all entities and look at the target before the animation begins.
+            if (attackTimer <= 5f)
+            {
+                npc.spriteDirection = (target.Center.X - npc.Center.X < 0).ToDirectionInt();
+                ClearAllEntities();
+            }
+
+            // Slow to a crawl.
+            npc.velocity *= 0.86f;
+
+            // Use the open mouth frames and roar after enough time has passed.
+            if (attackTimer <= wingFlapTime)
+                specialFrameType = (int)YharonFrameDrawingType.FlapWings;
+            else
+            {
+                if (attackTimer == wingFlapTime + 1f)
+                {
+                    SoundEngine.PlaySound(YharonBoss.RoarSound with { Volume = 3f });
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1.5f, 48);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+                }
+
+                specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
+            }
+
+            // Make Yharon fade to ash.
+            if (attackTimer <= fadeToAshTime)
+                fadeToAshInterpolant = MathF.Pow(Utils.GetLerpValue(0f, fadeToAshTime, attackTimer, true), 1.43f);
+
+            // Emit a bunch of ash particles.
+            if (fadeToAshInterpolant >= 0.3f)
+            {
+                fireIntensity *= 0.98f;
+                for (int i = 0; i < (int)(fadeToAshInterpolant * npc.Opacity * 8f); i++)
+                {
+                    Dust dragonAsh = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Square(-180f, 180f), ModContent.DustType<BrimstoneCinderDust>());
+                    dragonAsh.velocity += Vector2.UnitX.RotatedByRandom(0.9f) * npc.spriteDirection * Main.rand.NextFloat(6f, 20f);
+                    dragonAsh.scale = 0.7f + dragonAsh.velocity.Length() * 0.032f;
+                    dragonAsh.noGravity = true;
+                }
+            }
+
+            // Move the camera.
+            if (attackTimer >= cameraPanDelay1)
+            {
+                float cameraPanInterpolant = Utils.GetLerpValue(cameraPanDelay1, cameraPanDelay1 + 10f, attackTimer, true) * Utils.GetLerpValue(cameraPanTime1, cameraPanTime1 - 10f, attackTimer, true);
+                target.Infernum_Camera().ScreenFocusInterpolant = cameraPanInterpolant;
+                target.Infernum_Camera().ScreenFocusPosition = npc.Center;
+            }
+
+            // Have Yharon disappear before flying into the sky as a bunch of auric energy.
+            if (attackTimer >= cameraPanTime1 && attackTimer <= cameraPanTime1 + fadeOutTime)
+            {
+                float oldOpacity = npc.Opacity;
+                npc.alpha = Utils.Clamp(npc.alpha + 5, 0, 255);
+                if (npc.Opacity <= 0f && oldOpacity > 0.01f)
+                {
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Color fireColor = Main.rand.NextBool() ? Color.White : Color.Yellow;
+                        CloudParticle fireCloud = new(npc.Center, Main.rand.NextVector2Circular(9f, 9f) - Vector2.UnitY * Main.rand.NextFloat(10f, 40f), fireColor * 0.85f, Color.DarkGray, 60, Main.rand.NextFloat(2f, 2.4f));
+                        GeneralParticleHandler.SpawnParticle(fireCloud);
+                    }
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound with { Volume = 3f });
+                    npc.Center = target.Center - Vector2.UnitY * 900f;
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Charge up energy in the new position after the teleport.
+            // The camera pans to Yharon again during this, and the music begins.
+            if (attackTimer >= cameraPanTime1 + fadeOutTime && attackTimer <= cameraPanTime1 + fadeOutTime + energyChargeTime)
+            {
+                float adjustedTimer = attackTimer - cameraPanTime1 - fadeOutTime;
+                float cameraPanInterpolant = Utils.GetLerpValue(0f, 10f, adjustedTimer, true) * Utils.GetLerpValue(energyChargeTime, energyChargeTime - 10f, adjustedTimer, true);
+                target.Infernum_Camera().ScreenFocusInterpolant = cameraPanInterpolant;
+                target.Infernum_Camera().ScreenFocusPosition = npc.Center;
+
+                // Make the background get progressively brighter.
+                float flashIntensity = Utils.GetLerpValue(0f, energyChargeTime - 30f, adjustedTimer, true) * 0.5f;
+                ScreenEffectSystem.SetFlashEffect(npc.Center, flashIntensity, 25);
+
+                // Create a bunch of lava in the background.
+                if (attackTimer % 45f == 44f)
+                {
+                    YharonSky.CreateSmokeBurst();
+                    target.Infernum_Camera().CurrentScreenShakePower = 12f;
+                }
+
+                // Create pulse rungs and bloom periodically.
+                if (attackTimer % 10f == 0f)
+                {
+                    Color energyColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.9f));
+                    PulseRing ring = new(npc.Center, Vector2.Zero, energyColor, 10f, 0f, 60);
+                    GeneralParticleHandler.SpawnParticle(ring);
+
+                    StrongBloom bloom = new(npc.Center, Vector2.Zero, energyColor, 3f, 15);
+                    GeneralParticleHandler.SpawnParticle(bloom);
+                }
+
+                // Enable the distortion filter if it isnt active and the player's config permits it.
+                if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)
+                {
+                    Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
+                    InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
+                    InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(cameraPanInterpolant * 20f);
+                    InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(5f);
+                }
+
+                // Have Yharon fade back in in his lava form.
+                fadeToAshInterpolant = MathHelper.Clamp(fadeToAshInterpolant - 0.05f, 0f, 1f);
+                fireIntensity = MathF.Pow(flashIntensity * 2f, 0.7f);
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.01f, 0f, 1f);
+
+                // Let the music play.
+                CalamityGlobalNPC.yharonP2 = npc.whoAmI;
+            }
+
+            // Reset the attack cycle for the next subphase.
+            if (attackTimer >= cameraPanTime1 + fadeOutTime + energyChargeTime)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 2f });
+                npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
+                Utilities.DisplayText("The air is scorching your skin...", Color.Orange);
+                SelectNextAttack(npc, ref attackType);
+
+                SoundEngine.PlaySound(YharonBoss.RoarSound with { Volume = 3f });
+                ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 210);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+            }
         }
 
         public static void DoBehavior_CarpetBombing(NPC npc, Player target, float splittingMeteorRiseTime, float splittingMeteorBombingSpeed, float splittingMeteorBombTime, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
             int directionToDestination = (target.Center.X < npc.Center.X).ToDirectionInt();
-            bool morePowerfulMeteors = npc.life < npc.lifeMax * 0.35f;
+            bool morePowerfulMeteors = npc.life < npc.lifeMax * Subphase6LifeRatio;
 
             // Fly towards the hover destination near the target.
             if (attackTimer < splittingMeteorRiseTime)
@@ -1952,7 +2114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             int afterimageCount = 7;
             float afterimageOffsetMax = 30f;
             float fireIntensity = npc.Infernum().ExtraAI[FireFormInterpolantIndex];
-            bool inLastSubphases = npc.life / (float)npc.lifeMax <= Subphase7LifeRatio && InSecondPhase;
+            bool inLastSubphases = npc.life / (float)npc.lifeMax <= Subphase7LifeRatio && InSecondPhase && npc.Infernum().ExtraAI[InvincibilityTimerIndex] <= 0f;
             if (inLastSubphases)
                 fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
 
@@ -1996,7 +2158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 InfernumEffectsRegistry.YharonBurnShader.Apply();
             }
 
-            float opacity = npc.Opacity;
+            float opacity = npc.Opacity * MathHelper.Lerp(1f, 0.067f, npc.Infernum().ExtraAI[FadeToAshInterpolantIndex]);
 
             // Draw backglow textures.
             if (fireIntensity > 0.01f)
@@ -2008,13 +2170,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         afterimageOpacity = i / (float)(afterimageCount - 1f);
 
                     Color color = npc.GetAlpha(Color.White) * (1f - afterimageOpacity);
-                    Color afterimageColor = color;
+                    color = Color.Lerp(color, new(60, 60, 60, 255), npc.Infernum().ExtraAI[FadeToAshInterpolantIndex]);
+
                     Vector2 drawPosition = position.Value - Main.screenPosition;
                     drawPosition -= npc.velocity * 0.6f * i;
                     for (int j = 0; j < 6; j++)
                     {
                         Vector2 circularDrawOffset = (MathHelper.TwoPi * j / 6f).ToRotationVector2() * fireIntensity * afterimageOpacity * afterimageOffsetMax;
-                        Color offsetColor = afterimageColor * opacity * 0.4f;
+                        Color offsetColor = color * opacity * 0.4f;
                         offsetColor.A = 0;
                         Main.spriteBatch.Draw(tex, drawPosition + circularDrawOffset, npc.frame, offsetColor, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
                     }
@@ -2032,6 +2195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 Color afterimageColor = color;
                 if (i == 0 && fireIntensity > 0.01f)
                     afterimageColor.A = 184;
+                afterimageColor = Color.Lerp(afterimageColor, new(60, 60, 60, 255), npc.Infernum().ExtraAI[FadeToAshInterpolantIndex]);
 
                 Vector2 drawPosition = position.Value - Main.screenPosition;
                 drawPosition -= npc.velocity * i * 1.16f;

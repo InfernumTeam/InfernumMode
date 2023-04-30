@@ -122,8 +122,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void PreUpdate()
         {
-            BossRushEvent.BossRushStage = 13;
-
             // Make the map turn black if in the final layer of the abyss.
             bool obscureMap = Player.Calamity().ZoneAbyssLayer4 && !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
             MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + obscureMap.ToDirectionInt() * 0.008f, 0f, 1f);

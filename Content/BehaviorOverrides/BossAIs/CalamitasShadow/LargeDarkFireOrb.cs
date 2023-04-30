@@ -51,6 +51,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void AI()
         {
+            // Disappear if Calamitas' shadow is not present.
+            if (CalamityGlobalNPC.calamitas == -1)
+                Projectile.Kill();
+
             Projectile.scale = Utils.Remap(Projectile.timeLeft, 25f, 1f, 1f, 10f);
             Projectile.Opacity = Utils.GetLerpValue(1f, 18f, Projectile.timeLeft, true);
 

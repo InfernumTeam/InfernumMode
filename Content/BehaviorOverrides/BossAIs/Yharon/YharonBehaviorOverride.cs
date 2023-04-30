@@ -2170,15 +2170,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 Color phase2Color = Color.Lerp(Color.Pink, Color.Wheat, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
                 burnColor = Color.Lerp(phase2Color, burnColor, backBackToRegularColor);
             }
-            if (npc.life < npc.lifeMax * 0.2f)
-                burnColor = Color.LightYellow;
+            if (npc.life < npc.lifeMax * Subphase7LifeRatio)
+                burnColor = Color.Lerp(Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.3f % 1f, 1f, 0.7f), Color.Pink, 0.55f);
             if (attackType == YharonAttackType.FireTrailCharge)
                 burnColor = Color.OrangeRed;
             if (npc.life < npc.lifeMax * 0.075f)
-            {
-                burnColor = Color.White;
                 fireIntensity += 0.325f;
-            }
 
             // Use the molten burn effect for certain parts of the fight. This does not happen if the config favors performance over visual quality.
             if (!InfernumConfig.Instance.ReducedGraphicsConfig)

@@ -13,7 +13,6 @@ using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
-using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
@@ -36,7 +35,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using InfernumMode.Content.Projectiles.Pets;
-using Terraria.Enums;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -361,19 +359,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    List<int> guardianIDs = new()
-                    {
-                        ModContent.NPCType<ProvSpawnHealer>(),
-                        ModContent.NPCType<ProvSpawnOffense>()
-                    };
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        NPC n = Main.npc[i];
-                        if (n.active && guardianIDs.Contains(n.type))
-                            n.active = false;
-                    }
-                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CommanderSpear2>());
-
+                    ClearEntities();
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
                     hasEnteredPhase2 = 1f;
                     hasCompletedCycle = 0f;
@@ -611,9 +597,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Mark Providence as defeated at night. This is necessary for ensuring that the moonlight dye drops.
             npc.ModNPC<ProvidenceBoss>().hasTakenDaytimeDamage = wasSummonedAtNight;
-
-            // Delete all fire blenders.
-            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyFireBeam>());
 
             // Delete remaining projectiles with a shockwave.
             if (deathEffectTimer == 96f)
@@ -2441,6 +2424,43 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             for (int i = 0; i < sparkleCount; i++)
                 Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(maxSpraySpeed, maxSpraySpeed), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
+        }
+
+        public static void ClearEntities()
+        {
+            // Delete all Guardians and rocks.
+            List<int> guardianIDs = new()
+            {
+                ModContent.NPCType<ProvSpawnHealer>(),
+                ModContent.NPCType<ProvSpawnOffense>(),
+                ModContent.NPCType<ProfanedRocks>(),
+            };
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC n = Main.npc[i];
+                if (n.active && guardianIDs.Contains(n.type))
+                    n.active = false;
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                Utilities.DeleteAllProjectiles(false,
+                    ModContent.ProjectileType<AcceleratingCrystalShard>(),
+                    ModContent.ProjectileType<AcceleratingMagicProfanedRock>(),
+                    ModContent.ProjectileType<CleansingFireball>(),
+                    ModContent.ProjectileType<CommanderSpear2>(),
+                    ModContent.ProjectileType<FallingCrystalShard>(),
+                    ModContent.ProjectileType<HolyBasicFireball>(),
+                    ModContent.ProjectileType<HolyBomb>(),
+                    ModContent.ProjectileType<HolyCinder>(),
+                    ModContent.ProjectileType<HolyCross>(),
+                    ModContent.ProjectileType<HolyCrystalSpike>(),
+                    ModContent.ProjectileType<HolyMagicLaserbeam>(),
+                    ModContent.ProjectileType<HolyRitual>(),
+                    ModContent.ProjectileType<HolySpear>(),
+                    ModContent.ProjectileType<HolySpearFirePillar>(),
+                    ModContent.ProjectileType<ProfanedLavaBlob>());
+            }
         }
         #endregion
 

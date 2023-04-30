@@ -30,6 +30,8 @@ using InfernumMode.Content.Skies;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Generic;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
@@ -691,6 +693,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.1f, npc.lifeMax, 1f - invincibilityTime / Phase2InvincibilityTime);
             }
 
+            // Create blossoms from the sky if in the last subphase.
+            if (currentSubphase == 6f && Main.rand.NextBool(3) && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 blossomSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -800f);
+                Vector2 blossomVelocity = Vector2.UnitY.RotatedByRandom(1.23f) * Main.rand.NextFloat(0.5f, 6f);
+                Projectile.NewProjectile(npc.GetSource_FromThis(), blossomSpawnPosition, blossomVelocity, ModContent.ProjectileType<DraconicBlossomPetal>(), 0, 0f, target.whoAmI);
+            }
+
             switch ((YharonAttackType)(int)attackType)
             {
                 // The attack only happens when Yharon spawns.
@@ -1024,16 +1034,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 fireIntensity = 1f;
                 float competionRatio = Utils.GetLerpValue(chargeDelay, chargeDelay + chargeTime, attackTimer, true);
+
                 // Ensure this isnt loaded on the server, as it will throw a null reference error.
                 if (Main.netMode != NetmodeID.Server)
                     Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + CalamityUtils.Convert01To010(competionRatio) * 3f);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient && npc.Infernum().ExtraAI[SubphaseIndexIndex] <= 5f)
                 {
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(240f, 240f);
                         Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(28f, 28f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
                     }
+                }
+
+                // Make any draconic petals move a bit forward.
+                foreach (Projectile petal in Utilities.AllProjectilesByID(ModContent.ProjectileType<DraconicBlossomPetal>()))
+                {
+                    float distanceFromYharon = petal.Distance(npc.Center);
+                    float distanceTaper = Utils.GetLerpValue(600f, 350f, distanceFromYharon, true);
+                    petal.velocity += npc.velocity.RotatedByRandom(1.02f) * Main.rand.NextFloat(0.01f, 0.02f) * distanceTaper;
                 }
             }
 
@@ -1419,6 +1438,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 2f });
 
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
+                target.Infernum_Camera().CurrentScreenShakePower = 16f;
+
                 Utilities.DisplayText("The air is scorching your skin...", Color.Orange);
                 SelectNextAttack(npc, ref attackType);
 

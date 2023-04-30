@@ -1670,7 +1670,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "Best to keep close during these Exo Overload attacks, otherwise you may have trouble keeping up with the spin!";
-            yield return n => "Ares' has one hell of a supercomputer, those arms are super predictive! Maybe you can use that to your advantage?";
+            yield return n => "Ares has one hell of a supercomputer, those arms are super predictive! Maybe you can use that to your advantage?";
         }
         #endregion Tips
     }

@@ -62,8 +62,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public static float PrimitiveWidthFunction(float completionRatio) => Utils.GetLerpValue(0f, 0.32f, completionRatio, true) * Utils.GetLerpValue(1f, 0.68f, completionRatio, true) * 40f;
 
-        public static Color PrimitiveColorFunction(float completionRatio) => Color.Cyan;
-
         public Color PrimitiveColorFunction2(float completionRatio) => Color.Lerp(Color.Cyan, Color.Fuchsia, MathF.Pow(Projectile.Opacity, 0.5f)) with { A = 0 };
 
         public override bool PreDraw(ref Color lightColor)

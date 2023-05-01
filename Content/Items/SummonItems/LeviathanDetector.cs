@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Items.SummonItems
 
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
+            SacrificeTotal = 3;
             DisplayName.SetDefault("Leviathan Detector");
             Tooltip.SetDefault("Summons Anahita\n" +
                 "Not consumable");

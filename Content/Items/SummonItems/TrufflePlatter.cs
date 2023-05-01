@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
+            SacrificeTotal = 3;
             DisplayName.SetDefault("Truffle Worm Platter");
             Tooltip.SetDefault("Summons Duke Fishron\n" +
                 "Can only be used at the Ocean\n" +

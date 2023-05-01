@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
+            SacrificeTotal = 3;
             DisplayName.SetDefault("Flesh Chunk");
             Tooltip.SetDefault("Summons the Wall of Flesh\n" +
                 "Can only be used in the underworld\n" +

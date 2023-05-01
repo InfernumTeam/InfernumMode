@@ -19,6 +19,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
         {
             DisplayName.SetDefault("Call Upon The Eggs");
             Tooltip.SetDefault(FlavorText);
+            SacrificeTotal = 1;
         }
 
         public override void SetDefaults()

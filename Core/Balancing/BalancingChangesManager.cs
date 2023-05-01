@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -5,6 +6,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Perforator;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.DraedonsArsenal;
@@ -13,6 +15,7 @@ using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -94,6 +97,12 @@ namespace InfernumMode.Core.Balancing
                 // Astrum Deus.
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new PierceResistBalancingRule(0.35f))),
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.00000001f, ProjectileType<TenebreusTidesWaterProjectile>(), ProjectileType<TenebreusTidesWaterSpear>()))),
+
+                // Guardians. Summoner completely melted them at ~50% faster killtimes which is not ok.
+                new NPCBalancingChange(NPCType<ProfanedGuardianCommander>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<ProfanedGuardianDefender>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<ProfanedGuardianHealer>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<HealerShieldCrystal>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.5f, ProjectileType<TerrorBeam>(), ProjectileType<TerrorBlast>()))),

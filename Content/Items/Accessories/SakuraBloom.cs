@@ -19,9 +19,8 @@ namespace InfernumMode.Content.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sakura Bloom");
-            Tooltip.SetDefault("A symbol of how beautiful love is when in bloom, and how easily it can wither away\nTemporary");
+            Tooltip.SetDefault("A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyyyy\nTemporary");
             SacrificeTotal = 1;
-
         }
 
         public override void SetDefaults()

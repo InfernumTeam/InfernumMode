@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Items.SummonItems
         public int frame = 0;
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
+            SacrificeTotal = 3;
             DisplayName.SetDefault("Dungeon's Curse");
             Tooltip.SetDefault("Summons Skeletron\n" +
                 "Skeletron enrages during daytime\n" +

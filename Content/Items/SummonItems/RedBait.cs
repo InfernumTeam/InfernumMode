@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
+            SacrificeTotal = 3;
             DisplayName.SetDefault("Red Bait");
             Tooltip.SetDefault("Summons the Dreadnautilus\n" +
                 "Can only be used at night\n" +

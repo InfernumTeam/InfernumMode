@@ -218,6 +218,7 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == ModContent.NPCType<Yharon>())
             {
                 // UNLIMITED CHICKEN NUGGET
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
                 npcLoot.Add(new DropOneByOne(ItemID.ChickenNugget, new DropOneByOne.Parameters()
                 {
                     ChanceNumerator = 1,
@@ -227,7 +228,6 @@ namespace InfernumMode.Core.GlobalInstances
                     MinimumItemDropsCount = 600,
                     MaximumItemDropsCount = 700
                 }));
-                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<YharonRelic>());
             }
 
             if (npc.type == ModContent.NPCType<AdultEidolonWyrmHead>())

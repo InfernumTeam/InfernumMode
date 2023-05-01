@@ -280,7 +280,7 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DrawLostColosseumBackgroundHook : IHookEdit
+    public class ManipulateSunPositionHook : IHookEdit
     {
         public static Vector2 SunPosition
         {

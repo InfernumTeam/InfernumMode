@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Effects;
@@ -65,7 +66,13 @@ namespace InfernumMode.Content.Skies
 
         private bool isActive;
 
-        public static List<BackgroundSmoke> SmokeParticles = new();
+        public static List<BackgroundSmoke> SmokeParticles
+        {
+            get;
+            private set;
+        } = new();
+
+        public static readonly MethodInfo DrawSunAndMoonMethod = typeof(Main).GetMethod("DrawSunAndMoon", Utilities.UniversalBindingFlags);
 
         public override void Activate(Vector2 position, params object[] args) => isActive = true;
 
@@ -82,9 +89,10 @@ namespace InfernumMode.Content.Skies
             else if (!isActive && intensity > 0f)
                 intensity = MathHelper.Clamp(intensity - 0.005f, 0f, 1f);
 
+            // Update the phase 2 update interpolant based on whether Yharon is in phase 2.
             phase2VariantInterpolant = MathHelper.Clamp(phase2VariantInterpolant + YharonBehaviorOverride.InSecondPhase.ToDirectionInt() * 0.007f, 0f, intensity + 0.0001f);
 
-            // Kill every cloud.
+            // Kill every regular cloud immediately.
             for (int i = 0; i < Main.maxClouds; i++)
                 Main.cloud[i].kill = true;
 
@@ -130,21 +138,30 @@ namespace InfernumMode.Content.Skies
 
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            // Force it to be sunset.
+            // Force it to be daytime.
             Main.time = MathHelper.Lerp((float)Main.time, (float)Main.dayLength * 0.5f, 0.01f);
             Main.dayTime = true;
 
-            // Draw the sky, sun, and smoke.
+            // Draw the sky background overlay, sun, and smoke.
             if (maxDepth >= 0f && minDepth < 0f)
             {
-                Texture2D skyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/YharonSky").Value;
-                Texture2D skyTextureP2 = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/YharonSkyP2").Value;
-                spriteBatch.Draw(skyTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Lerp(Color.White, Color.Gray, 0.33f) * intensity * (1f - phase2VariantInterpolant) * 0.63f);
-                spriteBatch.Draw(skyTextureP2, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White * intensity * phase2VariantInterpolant * 0.83f);
-
+                DrawSkyOverlay();
                 DrawVibrantSun();
                 DrawSmoke();
             }
+        }
+
+        public void DrawSkyOverlay()
+        {
+            // Draw the sky overlay. There are two textures that accomplish this, one for each major phase of the fight.
+            // As Yharon transitions between them the textures will naturally cross fade, given that they rely on inverted opacity multipliers.
+            // Naturally, the second phase background is brighter, for the purpose of greater thematic flair.
+            Rectangle screenArea = new(0, 0, Main.screenWidth, Main.screenHeight);
+            Texture2D skyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/YharonSky").Value;
+            Texture2D skyTextureP2 = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/YharonSkyP2").Value;
+
+            Main.spriteBatch.Draw(skyTexture, screenArea, Color.Lerp(Color.White, Color.Gray, 0.33f) * intensity * (1f - phase2VariantInterpolant) * 0.63f);
+            Main.spriteBatch.Draw(skyTextureP2, screenArea, Color.White * intensity * phase2VariantInterpolant * 0.83f);
         }
 
         public void DrawVibrantSun()
@@ -154,17 +171,20 @@ namespace InfernumMode.Content.Skies
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
 
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
-            Vector2 origin = backglowTexture.Size() * 0.5f;
             float opacity = intensity * MathHelper.Lerp(0.73f, 0.76f, MathF.Sin(Main.GlobalTimeWrappedHourly * 29f) * 0.5f + 0.5f);
-            Vector2 sunDrawPosition = DrawLostColosseumBackgroundHook.SunPosition;
+            Vector2 origin = backglowTexture.Size() * 0.5f;
+            Vector2 sunDrawPosition = ManipulateSunPositionHook.SunPosition;
+
+            // Draw multiple greyscale circles on top of each other. Circles that are smaller are more vivid and have a yellowish white aesthetic, while circles that are
+            // bigger recede naturally into the background aesthetic by becoming less opaque and more reddish-pink.
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Wheat * opacity * 0.93f, 0f, origin, 1f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Yellow * opacity * 0.72f, 0f, origin, 3f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Orange * opacity * 0.66f, 0f, origin, 6f, 0, 0f);
             Main.spriteBatch.Draw(backglowTexture, sunDrawPosition, null, Color.Red * opacity * 0.7f, 0f, origin, 12f, 0, 0f);
 
-            // Draw the regular sun.
-            var sceneArea = DrawLostColosseumBackgroundHook.SunSceneArea;
-            typeof(Main).GetMethod("DrawSunAndMoon", Utilities.UniversalBindingFlags).Invoke(Main.instance, new object[]
+            // Draw the regular sun on top of everything else.
+            var sceneArea = ManipulateSunPositionHook.SunSceneArea;
+            DrawSunAndMoonMethod.Invoke(Main.instance, new object[]
             {
                 sceneArea,
                 Color.White * intensity,
@@ -173,11 +193,12 @@ namespace InfernumMode.Content.Skies
             });
         }
 
-        public void DrawSmoke()
+        public static void DrawSmoke()
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
 
+            // Draw all active smoke particles in the background.
             Texture2D smokeTexture = InfernumTextureRegistry.Smoke.Value;
             foreach (BackgroundSmoke smoke in SmokeParticles)
                 Main.spriteBatch.Draw(smokeTexture, smoke.DrawPosition, null, smoke.SmokeColor * 0.56f, smoke.Rotation, smokeTexture.Size() * 0.5f, 1f, 0, 0f);

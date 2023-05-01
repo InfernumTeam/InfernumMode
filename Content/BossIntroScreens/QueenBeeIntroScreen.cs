@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(_ =>
         {
-            float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 4f) * 0.5f + 0.5f;
+            float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 3f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Yellow, Color.Orange, colorFadeInterpolant);
         });
 
@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Oversized Insect\nQueen Bee";
+        public override string TextToDisplay => "Hive Matriarch\nQueen Bee";
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.QueenBee);
 

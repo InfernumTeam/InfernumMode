@@ -379,7 +379,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         private void DisplayAEWNotificationText(NPC npc)
         {
-            if (DownedBossSystem.downedYharon)
+            if (DownedBossSystem.downedYharon || npc.type != ModContent.NPCType<YharonBoss>())
                 return;
 
             Utilities.DisplayText("A primordial light shimmers at the nadir of the abyssal depths...", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));

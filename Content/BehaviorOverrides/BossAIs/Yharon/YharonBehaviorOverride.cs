@@ -374,6 +374,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             GlobalNPCOverrides.BossHeadSlotEvent += DisableMapIconDuringDesperation;
             GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalYharonDeath;
+            GlobalNPCOverrides.OnKillEvent += DisplayAEWNotificationText;
+        }
+
+        private void DisplayAEWNotificationText(NPC npc)
+        {
+            if (DownedBossSystem.downedYharon)
+                return;
+
+            Utilities.DisplayText("A primordial light shimmers at the nadir of the abyssal depths...", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
         }
 
         private void DisableMapIconDuringDesperation(NPC npc, ref int index)

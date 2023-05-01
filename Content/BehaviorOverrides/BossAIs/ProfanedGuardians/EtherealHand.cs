@@ -139,6 +139,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            // WHY
+            if (AttackerGuardian == null)
+                return false;
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;
             SpriteEffects direction = HandSide == HandSides.Right ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

@@ -124,7 +124,7 @@ namespace InfernumMode.Common.Graphics
 
             UseRaymarching = false;
 
-            // This is unfinished, and it's unlikely i will finish it. It will remain here inactive in the code unless/until i decide to remove it.
+            // This is unfinished, but has been left here as it half works and may be interesting to some.
             if (UseRaymarching)
             {
                 DoRaymarching(Main.spriteBatch, screenTarget1);
@@ -146,9 +146,9 @@ namespace InfernumMode.Common.Graphics
             // Do the final drawing.
             DoFinalDrawing(Main.spriteBatch, screenTarget1);
 
-            // Draw Bloom, only if the saturation bloom is not active.
-            if (!InfernumMode.CanUseCustomAIs || !Main.npc.Any(n => n.active && (n.type == ModContent.NPCType<Draedon>() || n.type == NPCID.HallowBoss)))
-                DoBloomEffect(Main.spriteBatch, screenTarget1);
+            // Don't draw this, it just ends up making too many things glowy and doesn't look good.
+            //if (!InfernumMode.CanUseCustomAIs || !Main.npc.Any(n => n.active && (n.type == ModContent.NPCType<Draedon>() || n.type == NPCID.HallowBoss)))
+            //  DoBloomEffect(Main.spriteBatch, screenTarget1);
 
             return screenTarget1;
         }
@@ -167,11 +167,11 @@ namespace InfernumMode.Common.Graphics
             spriteBatch.Draw(TextureAssets.Sun.Value, GetSunPosition(screenTarget1), Color.White);
             spriteBatch.End();
 
-            // Create the distance fields
+            // Create the distance fields. This works.
             SetupDistanceField(spriteBatch, true);
             SetupDistanceField(spriteBatch, false);
 
-            // Raymarch.
+            // Raymarch. This does not work.
             screenTarget1.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             //spriteBatch.Draw(RaymarchingLightDisplacementFieldTarget, Vector2.Zero, Color.White);
@@ -397,6 +397,7 @@ namespace InfernumMode.Common.Graphics
             DownscaledBloomTarget.SwapToRenderTarget(Color.Transparent);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             Effect bloomEffect = InfernumEffectsRegistry.BloomShader.GetShader().Shader;
+            // HOW IS THIS NOT ENOUGH
             bloomEffect.Parameters["filterThreshold"].SetValue(0.99f);
             bloomEffect.CurrentTechnique.Passes["FilterPass"].Apply();
             // Draw the screen to it at half size. This "downscales" it and creates a better bloom effect when upscaling it.
@@ -490,6 +491,30 @@ namespace InfernumMode.Common.Graphics
                     TempBloomTarget.Dispose();
 
                 TempBloomTarget = null;
+
+                if (RaymarchingOccludersTarget != null && !RaymarchingOccludersTarget.IsDisposed)
+                    RaymarchingOccludersTarget.Dispose();
+                RaymarchingOccludersTarget = null;
+
+                if (RaymarchingLightsTarget != null && !RaymarchingLightsTarget.IsDisposed)
+                    RaymarchingLightsTarget.Dispose();
+                RaymarchingLightsTarget = null;
+
+                if (RaymarchingOccluderDisplacementFieldTarget != null && !RaymarchingOccluderDisplacementFieldTarget.IsDisposed)
+                    RaymarchingOccluderDisplacementFieldTarget.Dispose();
+                RaymarchingOccluderDisplacementFieldTarget = null;
+
+                if (RaymarchingLightDisplacementFieldTarget != null && !RaymarchingLightDisplacementFieldTarget.IsDisposed)
+                    RaymarchingLightDisplacementFieldTarget.Dispose();
+                RaymarchingLightDisplacementFieldTarget = null;
+
+                if (TempRaymarchingDisplacementFieldTarget != null && !TempRaymarchingDisplacementFieldTarget.IsDisposed)
+                    TempRaymarchingDisplacementFieldTarget.Dispose();
+                TempRaymarchingDisplacementFieldTarget = null;
+
+                if (RaymarchingVoronoiTarget != null && !RaymarchingVoronoiTarget.IsDisposed)
+                    RaymarchingVoronoiTarget.Dispose();
+                RaymarchingVoronoiTarget = null;
             });
         }
 

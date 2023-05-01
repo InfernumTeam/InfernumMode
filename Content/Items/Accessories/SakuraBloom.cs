@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Items.Accessories
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sakura Bloom");
-            Tooltip.SetDefault("A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyyyy\nTemporary");
+            Tooltip.SetDefault("A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyy\nTemporary");
             SacrificeTotal = 1;
         }
 
@@ -37,7 +37,7 @@ namespace InfernumMode.Content.Items.Accessories
         {
             loveSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             memorySparkles.RemoveAll(s => s.Time >= s.Lifetime);
-            if (line.Text == "A symbol of how beautiful love is when in bloom, and how easily it can wither away")
+            if (line.Text.StartsWith("A symbol of how beautiful love is when in bloom, and how easily it can wither away"))
             {
                 Vector2 drawOffset = Vector2.UnitY * yOffset;
 

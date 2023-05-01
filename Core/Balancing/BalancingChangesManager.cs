@@ -99,10 +99,10 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCType<AstrumDeusBody>(), Do(new ProjectileResistBalancingRule(0.00000001f, ProjectileType<TenebreusTidesWaterProjectile>(), ProjectileType<TenebreusTidesWaterSpear>()))),
 
                 // Guardians. Summoner completely melted them at ~50% faster killtimes which is not ok.
-                new NPCBalancingChange(NPCType<ProfanedGuardianCommander>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
-                new NPCBalancingChange(NPCType<ProfanedGuardianDefender>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
-                new NPCBalancingChange(NPCType<ProfanedGuardianHealer>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
-                new NPCBalancingChange(NPCType<HealerShieldCrystal>(), Do(new ClassResistBalancingRule(0.345575191867f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<ProfanedGuardianCommander>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<ProfanedGuardianDefender>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<ProfanedGuardianHealer>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
+                new NPCBalancingChange(NPCType<HealerShieldCrystal>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.5f, ProjectileType<TerrorBeam>(), ProjectileType<TerrorBlast>()))),

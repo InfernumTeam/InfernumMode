@@ -981,7 +981,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             // Slow down after sufficiently far away from the target.
             float slowdownRange = 800f;
-            if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f))
+            if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f) && attackTimer >= chargeDelay + 25f)
             {
                 hasGottenNearPlayer = 1f;
                 MarkChargeZone(npc, target);
@@ -1067,7 +1067,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             // Slow down after sufficiently far away from the target.
             float slowdownRange = 800f;
-            if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f))
+            if (hasGottenNearPlayer != 1f && npc.WithinRange(target.Center, slowdownRange - 350f) && attackTimer >= chargeDelay + 23f)
             {
                 hasGottenNearPlayer = 1f;
                 MarkChargeZone(npc, target);

@@ -1447,7 +1447,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     magic.noGravity = true;
                 }
 
-                Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrage>());
+                // Clear old entities.
+                ClearAllEntities();
 
                 // Teleport to the center of the arena.
                 npc.Center = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
@@ -1662,29 +1663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Despawn leftover projectiles.
             if (attackTimer == 1f)
-            {
-                Utilities.DeleteAllProjectiles(false,
-                    ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
-                    ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
-                    ModContent.ProjectileType<BrimstoneFlameOrb>(),
-                    ModContent.ProjectileType<BrimstoneJewelProj>(),
-                    ModContent.ProjectileType<BrimstoneLaserbeam>(),
-                    ModContent.ProjectileType<CatastropheSlash>(),
-                    ModContent.ProjectileType<CondemnationArrowSCal>(),
-                    ModContent.ProjectileType<CondemnationProj>(),
-                    ModContent.ProjectileType<DemonicBomb>(),
-                    ModContent.ProjectileType<DemonicTelegraphLine>(),
-                    ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
-                    ModContent.ProjectileType<FlameOverloadBeam>(),
-                    ModContent.ProjectileType<HeresyProjSCal>(),
-                    ModContent.ProjectileType<LostSoulProj>(),
-                    ModContent.ProjectileType<RedirectingDarkSoul>(),
-                    ModContent.ProjectileType<RedirectingHellfireSCal>(),
-                    ModContent.ProjectileType<RedirectingLostSoulProj>(),
-                    ModContent.ProjectileType<SepulcherBone>(),
-                    ModContent.ProjectileType<SuicideBomberDemonHostile>(),
-                    ModContent.ProjectileType<SuicideBomberRitual>());
-            }
+                ClearAllEntities();
 
             // Use the hands out casting animation.
             frameChangeSpeed = 0.27f;
@@ -1852,29 +1831,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SCalBoss.SpawnSound, npc.Center);
 
                 for (int i = 0; i < 4; i++)
-                {
-                    Utilities.DeleteAllProjectiles(false,
-                        ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
-                        ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
-                        ModContent.ProjectileType<BrimstoneFlameOrb>(),
-                        ModContent.ProjectileType<BrimstoneJewelProj>(),
-                        ModContent.ProjectileType<BrimstoneLaserbeam>(),
-                        ModContent.ProjectileType<CatastropheSlash>(),
-                        ModContent.ProjectileType<CondemnationArrowSCal>(),
-                        ModContent.ProjectileType<CondemnationProj>(),
-                        ModContent.ProjectileType<DemonicBomb>(),
-                        ModContent.ProjectileType<DemonicTelegraphLine>(),
-                        ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
-                        ModContent.ProjectileType<FlameOverloadBeam>(),
-                        ModContent.ProjectileType<HeresyProjSCal>(),
-                        ModContent.ProjectileType<LostSoulProj>(),
-                        ModContent.ProjectileType<RedirectingDarkSoul>(),
-                        ModContent.ProjectileType<RedirectingHellfireSCal>(),
-                        ModContent.ProjectileType<RedirectingLostSoulProj>(),
-                        ModContent.ProjectileType<SepulcherBone>(),
-                        ModContent.ProjectileType<SuicideBomberDemonHostile>(),
-                        ModContent.ProjectileType<SuicideBomberRitual>());
-                }
+                    ClearAllEntities();
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -2395,6 +2352,34 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             npc.ai[1] = 0f;
             npc.netUpdate = true;
+        }
+
+        public static void ClearAllEntities()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Utilities.DeleteAllProjectiles(false,
+                    ModContent.ProjectileType<AcceleratingDarkMagicFlame>(),
+                    ModContent.ProjectileType<BrimstoneDemonSummonExplosion>(),
+                    ModContent.ProjectileType<BrimstoneFlameOrb>(),
+                    ModContent.ProjectileType<BrimstoneJewelProj>(),
+                    ModContent.ProjectileType<BrimstoneLaserbeam>(),
+                    ModContent.ProjectileType<CatastropheSlash>(),
+                    ModContent.ProjectileType<CondemnationArrowSCal>(),
+                    ModContent.ProjectileType<CondemnationProj>(),
+                    ModContent.ProjectileType<DemonicBomb>(),
+                    ModContent.ProjectileType<DemonicTelegraphLine>(),
+                    ModContent.ProjectileType<InfernumBrimstoneGigablast>(),
+                    ModContent.ProjectileType<FlameOverloadBeam>(),
+                    ModContent.ProjectileType<HeresyProjSCal>(),
+                    ModContent.ProjectileType<LostSoulProj>(),
+                    ModContent.ProjectileType<RedirectingDarkSoul>(),
+                    ModContent.ProjectileType<RedirectingHellfireSCal>(),
+                    ModContent.ProjectileType<RedirectingLostSoulProj>(),
+                    ModContent.ProjectileType<SepulcherBone>(),
+                    ModContent.ProjectileType<SuicideBomberDemonHostile>(),
+                    ModContent.ProjectileType<SuicideBomberRitual>());
+            }
         }
         #endregion AI
 

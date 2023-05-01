@@ -91,7 +91,7 @@ namespace InfernumMode.Content.Skies
 
         public static void CheckForMusicIntensity()
         {
-            List<(TimeSpan, TimeSpan)> splitMusicPointsIntoSections(List<TimeSpan> musicPoints)
+            static List<(TimeSpan, TimeSpan)> splitMusicPointsIntoSections(List<TimeSpan> musicPoints)
             {
                 List<(TimeSpan, TimeSpan)> sections = new();
                 for (int i = 0; i < musicPoints.Count - 1; i += 2)
@@ -114,7 +114,7 @@ namespace InfernumMode.Content.Skies
             }
 
             // Lament section.
-            if (CalamityGlobalNPC.SCalLament == CalamityGlobalNPC.SCal)
+            else if (CalamityGlobalNPC.SCalLament == CalamityGlobalNPC.SCal)
             {
                 var lament = splitMusicPointsIntoSections(Lament_HighPoints).Where(m => m.Item2 >= songTime);
                 if (lament.Any() && songTime >= lament.First().Item1 && songTime <= lament.First().Item2)
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.Skies
             }
 
             // Grief section.
-            if (CalamityGlobalNPC.SCalEpiphany == CalamityGlobalNPC.SCal && CalamityGlobalNPC.SCalAcceptance != CalamityGlobalNPC.SCal)
+            else if (CalamityGlobalNPC.SCalEpiphany == CalamityGlobalNPC.SCal && CalamityGlobalNPC.SCalAcceptance != CalamityGlobalNPC.SCal)
             {
                 var epiphany = splitMusicPointsIntoSections(Epiphany_HighPoints.Select(s => s.Key).ToList()).Where(m => m.Item2 >= songTime);
                 if (epiphany.Any() && songTime >= epiphany.First().Item1 && songTime <= epiphany.First().Item2)

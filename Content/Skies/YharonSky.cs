@@ -146,8 +146,16 @@ namespace InfernumMode.Content.Skies
             if (maxDepth >= 0f && minDepth < 0f)
             {
                 DrawSkyOverlay();
+
+                // Use additive drawing.
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
+
                 DrawVibrantSun();
                 DrawSmoke();
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
             }
         }
 
@@ -166,10 +174,6 @@ namespace InfernumMode.Content.Skies
 
         public void DrawVibrantSun()
         {
-            // Use additive drawing.
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
-
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             float opacity = intensity * MathHelper.Lerp(0.73f, 0.76f, MathF.Sin(Main.GlobalTimeWrappedHourly * 29f) * 0.5f + 0.5f);
             Vector2 origin = backglowTexture.Size() * 0.5f;
@@ -195,16 +199,10 @@ namespace InfernumMode.Content.Skies
 
         public static void DrawSmoke()
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
-
             // Draw all active smoke particles in the background.
             Texture2D smokeTexture = InfernumTextureRegistry.Smoke.Value;
             foreach (BackgroundSmoke smoke in SmokeParticles)
                 Main.spriteBatch.Draw(smokeTexture, smoke.DrawPosition, null, smoke.SmokeColor * 0.56f, smoke.Rotation, smokeTexture.Size() * 0.5f, 1f, 0, 0f);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
         }
     }
 }

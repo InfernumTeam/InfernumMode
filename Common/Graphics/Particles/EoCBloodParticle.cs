@@ -38,7 +38,7 @@ namespace InfernumMode.Common.Graphics.Particles
             // Gravity gets changed here.
             Velocity.Y = MathHelper.Clamp(Velocity.Y + 0.9f, -22f, Gravity);
             Color = Color.Lerp(InitialColor, Color.Transparent, MathF.Pow(LifetimeCompletion, 3f));
-            Rotation = Velocity.ToRotation() + (float)Math.PI / 2f;
+            Rotation = Velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)

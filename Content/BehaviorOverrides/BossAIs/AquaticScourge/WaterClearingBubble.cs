@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 float adjustedAngle = offsetAngle + Main.GlobalTimeWrappedHourly * 1.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 Vector2 radius = Vector2.One * Radius;
-                radius.Y *= MathHelper.Lerp(1f, 2f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 1.1f)));
+                radius.Y *= MathHelper.Lerp(1f, 2f, Math.Abs(MathF.Cos(Main.GlobalTimeWrappedHourly * 1.1f)));
 
                 for (int i = 0; i <= 8; i++)
                 {

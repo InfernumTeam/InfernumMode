@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BossIntroScreens
             Color redFireColor = new(255, 85, 0);
             Color blueFireColor = new(111, 89, 255);
 
-            float colorSpan = (float)Math.Abs(Math.Tan(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 3f));
+            float colorSpan = Math.Abs(MathF.Tan(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 3f));
 
             // Perform special checks to prevent potential exceptions causing problems with draw-logic or precision errors.
             if (float.IsInfinity(colorSpan) || float.IsNaN(colorSpan))

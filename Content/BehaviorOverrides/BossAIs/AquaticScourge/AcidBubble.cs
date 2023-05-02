@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 float adjustedAngle = offsetAngle + Main.GlobalTimeWrappedHourly * 2.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 Vector2 radius = Vector2.One * Radius;
-                radius.Y *= MathHelper.Lerp(1f, 2f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 1.9f)));
+                radius.Y *= MathHelper.Lerp(1f, 2f, Math.Abs(MathF.Cos(Main.GlobalTimeWrappedHourly * 1.9f)));
 
                 for (int i = 0; i <= 8; i++)
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));

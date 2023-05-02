@@ -1088,7 +1088,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float scaleFactor = 1.6f;
-                            perpendicularPortalAngle = MathHelper.PiOver2 * (float)Math.Round(npc.Infernum().ExtraAI[PreviousSnapAngleIndex] / MathHelper.PiOver2);
+                            perpendicularPortalAngle = MathHelper.PiOver2 * MathF.Round(npc.Infernum().ExtraAI[PreviousSnapAngleIndex] / MathHelper.PiOver2);
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
                             {

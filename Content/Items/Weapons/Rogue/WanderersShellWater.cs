@@ -121,7 +121,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
         public Color ColorFunction(float completionRatio)
         {
             float opacty = Utils.GetLerpValue(0.92f, 0.6f, completionRatio, true) * MathHelper.Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity;
-            Color color = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            Color color = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             return color * opacty;
         }
 

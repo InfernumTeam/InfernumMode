@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         internal Color ColorFunction(float completionRatio)
         {
             float opacity = MathF.Sin(completionRatio * MathHelper.Pi) * Projectile.Opacity;
-            return Color.Lerp(Color.DeepSkyBlue, Color.Blue, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f) * opacity;
+            return Color.Lerp(Color.DeepSkyBlue, Color.Blue, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f) * opacity;
         }
 
         internal float WidthFunction(float completionRatio) => WaveHeight * MathF.Sin(completionRatio * MathHelper.Pi);

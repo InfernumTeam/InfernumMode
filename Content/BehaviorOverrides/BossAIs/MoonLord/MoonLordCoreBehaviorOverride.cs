@@ -582,6 +582,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            // Hideous code from vanilla. Don't mind it too much.
             Texture2D coreTexture = TextureAssets.Npc[npc.type].Value;
             Texture2D coreOutlineTexture = TextureAssets.Extra[16].Value;
             Texture2D forearmTexture = TextureAssets.Extra[14].Value;
@@ -608,7 +609,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 shoulderPosition = center + new Vector2(220f, -60f) * directionThing;
                     Vector2 shoulderOffset = (Main.npc[armIndex].Center + new Vector2(0f, 76f) - shoulderPosition) * 0.5f;
-                    float rotationalOffset = (float)Math.Acos(MathHelper.Clamp(shoulderOffset.Length() / 340f, 0f, 1f)) * -directionThing.X;
+                    float rotationalOffset = MathF.Acos(MathHelper.Clamp(shoulderOffset.Length() / 340f, 0f, 1f)) * -directionThing.X;
                     float forearmRotation = shoulderOffset.ToRotation() - rotationalOffset - MathHelper.PiOver2;
                     SpriteEffects direction = !leftArm ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                     Vector2 forearmOrigin = new(76f, 66f);

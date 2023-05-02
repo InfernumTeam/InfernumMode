@@ -367,6 +367,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            // Hideous code from vanilla. Don't mind it too much.
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 shoulderOffset = new(220f, -60f);
             Texture2D armTexture = TextureAssets.Extra[15].Value;
@@ -396,7 +397,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (!isLeftHand)
                 armOrigin.X = armTexture.Width - armOrigin.X;
 
-            float armAngularOffset = (float)Math.Acos(MathHelper.Clamp(v.Length() / 340f, 0f, 1f)) * -directionThing.X;
+            float armAngularOffset = MathF.Acos(MathHelper.Clamp(v.Length() / 340f, 0f, 1f)) * -directionThing.X;
             float armRotation = v.ToRotation() + armAngularOffset - MathHelper.PiOver2;
             Main.spriteBatch.Draw(armTexture, handBottom - Main.screenPosition, null, color, armRotation, armOrigin, 1f, direction, 0f);
             if (npc.ai[0] == -2f)

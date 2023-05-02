@@ -31,7 +31,7 @@ namespace InfernumMode.Common.Graphics.Particles
             Color = color;
             Scale = scale;
             Lifetime = lifetime;
-            Rotation = Main.rand.NextFloat((float)Math.PI * 2);
+            Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
             Spin = rotationspeed;
             Gravity = (gravity ?? new Vector2?(Vector2.Zero)).Value;
             Variant = Main.rand.Next(12);

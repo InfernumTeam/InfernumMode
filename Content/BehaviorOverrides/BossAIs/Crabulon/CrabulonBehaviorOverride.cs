@@ -652,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         {
             Color endColors = new(116, 108, 166);
             Color middleColor = new(90, 167, 209);
-            Color baseColor = Color.Lerp(endColors, middleColor, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi * 0.7f)));
+            Color baseColor = Color.Lerp(endColors, middleColor, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi * 0.7f)));
             return baseColor * Utils.GetLerpValue(0f, 0.07f, completionRatio, true) * npc.Opacity;
         }
 

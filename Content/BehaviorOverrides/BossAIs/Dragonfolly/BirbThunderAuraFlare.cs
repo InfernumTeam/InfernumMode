@@ -52,8 +52,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     Time++;
                     if (Time > 10f)
                     {
-                        // Dust pulse effect
-                        PulsationFactor = (float)Math.Abs(Math.Cos(MathHelper.ToRadians(Time * 2f)));
+                        // Dust pulse effect.
+                        PulsationFactor = Math.Abs(MathF.Cos(MathHelper.ToRadians(Time * 2f)));
                         EmitDust();
                     }
 

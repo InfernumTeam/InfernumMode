@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         public Color ColorFunction(float completionRatio)
         {
             float opacity = Utils.GetLerpValue(0.92f, 0.6f, completionRatio, true) * MathHelper.Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity * 0.4f;
-            Color color = Color.Lerp(Color.Red, Color.Yellow, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            Color color = Color.Lerp(Color.Red, Color.Yellow, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             return color * opacity;
         }
 

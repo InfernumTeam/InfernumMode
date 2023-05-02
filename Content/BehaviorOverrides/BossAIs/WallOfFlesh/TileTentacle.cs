@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             Color endColors = new(158, 48, 83);
             Color middleColor = new(184, 78, 113);
             Color witherColor = new(61, 28, 32);
-            Color baseColor = Color.Lerp(endColors, middleColor, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi * 0.7f)));
+            Color baseColor = Color.Lerp(endColors, middleColor, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi * 0.7f)));
             return Color.Lerp(baseColor, witherColor, Utils.GetLerpValue(60f, 0f, Projectile.timeLeft, true)) * Projectile.Opacity;
         }
 

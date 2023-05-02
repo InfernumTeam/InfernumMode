@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BossIntroScreens
             Color redSlimeColor = new(170, 25, 57);
             Color purpleSlimeColor = new(108, 67, 108);
 
-            float colorSpan = (float)Math.Abs(Math.Tan(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 3f));
+            float colorSpan = Math.Abs(MathF.Tan(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 3f));
 
             // Perform special checks to prevent potential exceptions causing problems with draw-logic or precision errors.
             if (float.IsInfinity(colorSpan) || float.IsNaN(colorSpan))

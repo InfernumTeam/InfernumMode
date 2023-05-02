@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             else
             {
                 float grabInterpolant = Utils.GetLerpValue(0f, DeerclopsBehaviorOverride.ShadowHandGrabTime, attackTimer - DeerclopsBehaviorOverride.ShadowHandSpinTime - DeerclopsBehaviorOverride.ShadowHandReelbackTime, true);
-                hoverOffset = Vector2.Lerp(CalculateReelbackHoverOffset(deerclops, 1f), new(HoverSide * -32f - deerclops.spriteDirection * 20f, HoverSide * 82f - 36f), (float)Math.Pow(grabInterpolant, 1.58));
+                hoverOffset = Vector2.Lerp(CalculateReelbackHoverOffset(deerclops, 1f), new(HoverSide * -32f - deerclops.spriteDirection * 20f, HoverSide * 82f - 36f), MathF.Pow(grabInterpolant, 1.58f));
 
                 // Make the thumbs do a grabbing motion, as though it's locking Deerclops' hands in place.
                 ThumbRotation = grabInterpolant * -0.4f;

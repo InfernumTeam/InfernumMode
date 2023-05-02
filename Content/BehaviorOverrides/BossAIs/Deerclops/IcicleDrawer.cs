@@ -396,7 +396,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 initialPoints[i] = Vector2.Lerp(start, end, i / (float)(ControlPointCountPerBranch - 1f));
 
             // Create a bend midway.
-            float bendFactor = (float)Math.Pow(RNG.NextFloat(), 0.66) * RNG.NextBool().ToDirectionInt() * BranchMaxBendFactor;
+            float bendFactor = MathF.Pow(RNG.NextFloat(), 0.66f) * RNG.NextBool().ToDirectionInt() * BranchMaxBendFactor;
             bendFactor = MathHelper.Lerp(bendFactor, Math.Sign(bendFactor) * BranchMaxBendFactor, Utils.GetLerpValue(DistanceUsedForBase * 0.4f, DistanceUsedForBase * 0.75f, distanceBetweenPoints, true));
 
             initialPoints[ControlPointCountPerBranch / 2] += orthogonalDirection * RNG.NextFloatDirection() * distanceBetweenPoints * bendFactor;

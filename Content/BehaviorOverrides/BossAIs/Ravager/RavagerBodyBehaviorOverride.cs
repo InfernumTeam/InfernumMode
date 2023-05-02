@@ -462,7 +462,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         // v = sqrt(R * g), as the solution.
                         // However, to prevent weird looking angles, a clamp is performed to ensure the result stays within natural bounds.
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
-                        float idealShootSpeed = (float)Math.Sqrt(horizontalDistance * UnholyBloodGlob.Gravity);
+                        float idealShootSpeed = MathF.Sqrt(horizontalDistance * UnholyBloodGlob.Gravity);
                         float bloodShootSpeed = MathHelper.Clamp(idealShootSpeed, 8.4f, 24f);
                         Vector2 bloodShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, UnholyBloodGlob.Gravity, bloodShootSpeed, out _);
                         if (multiplePerShot)
@@ -897,7 +897,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 Color darkFlameColor = new(58, 107, 252);
                 Color lightFlameColor = new(45, 207, 239);
                 float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
-                Color color = Color.Lerp(darkFlameColor, lightFlameColor, (float)Math.Pow(colorShiftInterpolant, 1.64f));
+                Color color = Color.Lerp(darkFlameColor, lightFlameColor, MathF.Pow(colorShiftInterpolant, 1.64f));
                 return color * npc.Opacity;
             }
 

@@ -487,7 +487,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
 
-                npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp((float)Math.Pow(attackTimer / digTime, 3D), 0f, 1f));
+                npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp(MathF.Pow(attackTimer / digTime, 3f), 0f, 1f));
                 npc.Opacity = Utils.GetLerpValue(0.7f, 1f, npc.scale, true) * 0.7f;
                 npc.dontTakeDamage = true;
                 npc.damage = 0;

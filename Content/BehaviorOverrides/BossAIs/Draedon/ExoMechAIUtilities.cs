@@ -130,7 +130,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             return aimDirection;
         }
 
-        public static void DrawAresArmTelegraphEffect(SpriteBatch spriteBatch, NPC npc, Color telegraphColor, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
+        public static void DrawAresArmTelegraphEffect(NPC npc, Color telegraphColor, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
@@ -144,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             {
                 float whiteFade = MathF.Sin(Main.GlobalTimeWrappedHourly * 20f) * 0.5f + 0.5f;
                 telegraphColor = Color.Lerp(telegraphColor, Color.White, whiteFade);
-                telegraphColor *= Utils.GetLerpValue(0f, 0.65f, telegraphGlowInterpolant, true) * (float)Math.Pow(Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true), 2D);
+                telegraphColor *= Utils.GetLerpValue(0f, 0.65f, telegraphGlowInterpolant, true) * MathF.Pow(Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true), 2f);
 
                 float backAfterimageOffset = telegraphGlowInterpolant * 10f;
                 backAfterimageOffset += Utils.GetLerpValue(0.85f, 1f, telegraphGlowInterpolant, true) * 20f;
@@ -158,7 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
-        public static void DrawFinalPhaseGlow(SpriteBatch spriteBatch, NPC npc, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
+        public static void DrawFinalPhaseGlow(NPC npc, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                     color.A = 0;
 
                     if (npc.realLife >= 0 && Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
-                        color *= (float)Math.Pow(1f - Main.npc[npc.realLife].localAI[3], 1.9);
+                        color *= MathF.Pow(1f - Main.npc[npc.realLife].localAI[3], 1.9f);
 
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);

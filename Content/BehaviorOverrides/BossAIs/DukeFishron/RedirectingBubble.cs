@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         {
             float redirectSpeed = RedirectSpeed * (BossRushEvent.BossRushActive ? 2f : 1f);
             if (Time < 45 && NPC.velocity.Length() < redirectSpeed)
-                NPC.velocity *= (float)Math.Pow(redirectSpeed / InitialSpeed, 1f / 45f);
+                NPC.velocity *= MathF.Pow(redirectSpeed / InitialSpeed, 1f / 45f);
             else if (Time >= 45f)
                 NPC.velocity = NPC.velocity.RotateTowards(NPC.AngleTo(Target.Center), MathHelper.ToRadians(2.4f));
 

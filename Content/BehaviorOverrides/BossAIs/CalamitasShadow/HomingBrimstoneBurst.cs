@@ -95,14 +95,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(3f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Red, Color.White, (float)Math.Pow(completionRatio, 2D));
-            color *= (float)Math.Pow(1f - completionRatio, 2.5D);
+            Color color = Color.Lerp(Color.Red, Color.White, MathF.Pow(completionRatio, 2f));
+            color *= MathF.Pow(1f - completionRatio, 2.5f);
             return color * Projectile.Opacity * 1.5f;
         }
 

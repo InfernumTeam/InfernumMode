@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     else
                         flameDrawColor = Color.Transparent;
 
-                    float flameScale = (float)Math.Pow(MathHelper.Lerp(0.9f, 1.7f, flameDrawInterpolant), 2D) * 0.8f;
+                    float flameScale = MathF.Pow(MathHelper.Lerp(0.9f, 1.7f, flameDrawInterpolant), 2f) * 0.8f;
 
                     Vector2 currentFlameDrawPosition = Vector2.SmoothStep(startOfFlame, endOfFlame, flameDrawInterpolant);
                     Rectangle frame = texture2D5.Frame(1, 7, 0, (int)(flameDrawInterpolant * 7f));

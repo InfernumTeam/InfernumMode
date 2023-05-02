@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * (1f - materializeInterpolant) * 12f + backOffset;
                 lightColor = Color.Lerp(lightColor, Color.Wheat with { A = 0 }, (1f - materializeInterpolant) * 0.6f) * Utils.GetLerpValue(0.1f, 0.5f, materializeInterpolant, true);
                 Projectile.Center = oldCenter + drawOffset;
-                Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.OrangeRed with { A = 0 } * (float)Math.Pow(materializeInterpolant, 4D), lightColor, 2f);
+                Utilities.DrawProjectileWithBackglowTemp(Projectile, Color.OrangeRed with { A = 0 } * MathF.Pow(materializeInterpolant, 4f), lightColor, 2f);
             }
             Projectile.Center = oldCenter;
             return false;

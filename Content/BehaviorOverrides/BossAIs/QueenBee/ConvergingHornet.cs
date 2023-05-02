@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * (float)Math.Pow(Projectile.Opacity, 2D), lightColor, Projectile.Opacity * 6f);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * MathF.Pow(Projectile.Opacity, 2f), lightColor, Projectile.Opacity * 6f);
             return false;
         }
 

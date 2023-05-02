@@ -220,7 +220,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             Vector2 center = npc.Center - Main.screenPosition;
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody1Glow").Value;
@@ -257,7 +257,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             Vector2 center = npc.Center - Main.screenPosition;
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody2Glow").Value;
@@ -295,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             Vector2 center = npc.Center - Main.screenPosition;
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosTailGlow").Value;

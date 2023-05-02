@@ -133,7 +133,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             for (int i = 0; i < 8; i++)
             {
-                Color color = Color.Lerp(new Color(1f, 0.62f, 0f, 0f), Color.White, (float)Math.Pow(Projectile.Opacity, 2.7f)) * MathF.Pow(Projectile.Opacity, 2f);
+                Color color = Color.Lerp(new Color(1f, 0.62f, 0f, 0f), Color.White, MathF.Pow(Projectile.Opacity, 2.7f)) * MathF.Pow(Projectile.Opacity, 2f);
                 Vector2 drawOffset = (Time * MathHelper.TwoPi / 67f + MathHelper.TwoPi * i / 8f).ToRotationVector2() * (1f - Projectile.Opacity) * 75f;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
                 Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);

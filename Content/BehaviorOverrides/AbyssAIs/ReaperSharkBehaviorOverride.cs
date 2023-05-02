@@ -144,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 soundSlotID = SoundEngine.PlaySound(ReaperShark.SearchRoarSound, target.Center).ToFloat();
 
                 // Determine the teleport offset.
-                teleportOffset = MathHelper.Lerp(1436f, 450f, (float)Math.Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
+                teleportOffset = MathHelper.Lerp(1436f, 450f, MathF.Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
 
                 // Teleport near target.
                 float angleOffsetDirection = Main.rand.NextBool().ToDirectionInt();

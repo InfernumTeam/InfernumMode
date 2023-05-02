@@ -34,12 +34,12 @@ namespace InfernumMode.Common.Graphics.Particles
         {
             Velocity.X *= 0.98f;
             Velocity.Y += Gravity;
-            Color = Color.Lerp(InitialColor, Color.Transparent, (float)Math.Pow(LifetimeCompletion, 4D));
+            Color = Color.Lerp(InitialColor, Color.Transparent, MathF.Pow(LifetimeCompletion, 4f));
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            float brightness = (float)Math.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15);
+            float brightness = MathF.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15f);
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Rectangle frame = texture.Frame(1, 3, 0, (int)(LifetimeCompletion * 3f));
             Vector2 origin = frame.Size() * 0.5f;

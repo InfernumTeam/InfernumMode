@@ -181,7 +181,7 @@ namespace InfernumMode.Content.Tiles
             Color lightSandColor = new(234, 179, 112);
             float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
             float opacity = Utils.GetLerpValue(0.84f, 0.96f, AnimationCompletion, true) * Utils.GetLerpValue(0f, 0.13f, completionRatio, true);
-            return Color.Lerp(lightSandColor, Color.SkyBlue, (float)Math.Pow(colorShiftInterpolant, 1.64f)) * opacity * 0.85f;
+            return Color.Lerp(lightSandColor, Color.SkyBlue, MathF.Pow(colorShiftInterpolant, 1.64f)) * opacity * 0.85f;
         }
 
         public static void DrawSpecialEffects(Vector2 center)

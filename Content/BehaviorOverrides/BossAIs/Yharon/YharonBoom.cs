@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f - (float)Math.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,
+                new Color(new Vector4(1f - MathF.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,

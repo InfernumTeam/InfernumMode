@@ -383,7 +383,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         // v = sqrt(R * g), as the solution.
                         // However, to prevent weird looking angles, a clamp is performed to ensure the result stays within natural bounds.
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
-                        float idealShootSpeed = (float)Math.Sqrt(horizontalDistance * GroundSlimeGlob.Gravity);
+                        float idealShootSpeed = MathF.Sqrt(horizontalDistance * GroundSlimeGlob.Gravity);
                         float slimeShootSpeed = MathHelper.Clamp(idealShootSpeed, 7.6f, 20f);
                         Vector2 slimeShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, GroundSlimeGlob.Gravity, slimeShootSpeed, out _);
                         Utilities.NewProjectileBetter(shootPosition, slimeShootVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), GroundSlimeDamage, 0f, -1, 0f, target.Center.Y);

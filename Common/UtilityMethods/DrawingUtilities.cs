@@ -416,7 +416,7 @@ namespace InfernumMode
 
             // Use the law of cosines to determine the side length of the triangles that compose the inscribed shape.
             float sideAngle = MathHelper.TwoPi / sideCount;
-            float sideLength = (float)Math.Sqrt(2D - Math.Cos(sideAngle) * 2D) * radius;
+            float sideLength = MathF.Sqrt(2f - MathF.Cos(sideAngle) * 2f) * radius;
 
             // Calculate vertices by approximating a circle with a bunch of triangles.
             for (int i = 0; i < sideCount; i++)

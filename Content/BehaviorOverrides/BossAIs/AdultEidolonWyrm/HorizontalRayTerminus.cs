@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public void DoBehavior_RiseAndGrowWings()
         {
             WingsFadeInInterpolant = Utils.GetLerpValue(0f, WingGrowTime - 15f, Time, true);
-            float animationCompletion = (float)Math.Pow(WingsFadeInInterpolant, 1.7);
+            float animationCompletion = MathF.Pow(WingsFadeInInterpolant, 1.7f);
             UpdateWings(WingMotionState.RiseUpward, animationCompletion);
 
             // Rise upward.

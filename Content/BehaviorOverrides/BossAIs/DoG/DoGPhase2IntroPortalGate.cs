@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = Projectile.whoAmI;
 
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9f) * 45f + 5f;
 
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)

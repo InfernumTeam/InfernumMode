@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         public static Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -1.23f + completionRatio * 23f) * 0.5f + 0.5f;
-            return Color.Lerp(Color.Black, Color.Cyan, (float)Math.Pow(colorInterpolant, 3.3) * 0.25f);
+            return Color.Lerp(Color.Black, Color.Cyan, MathF.Pow(colorInterpolant, 3.3f) * 0.25f);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound with { Volume = 1.5f }, Projectile.Center);
 
             // Shake the screen.
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Pow(Utils.GetLerpValue(180f, 290f, Time, true), 0.3D) * 20f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Pow(Utils.GetLerpValue(180f, 290f, Time, true), 0.3f) * 20f;
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower += CalamityUtils.Convert01To010(MathF.Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5f)) * 35f;
 
             if (Projectile.timeLeft == 45)

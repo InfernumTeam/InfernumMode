@@ -220,7 +220,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public void PrepareScreenDistortionShaderParameters()
         {
             InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
-            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue((float)Math.Pow(LostColosseumTeleportInterpolant, 0.89) * 50f);
+            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(MathF.Pow(LostColosseumTeleportInterpolant, 0.89f) * 50f);
             InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["uvSampleFactors"].SetValue(new Vector2(1f, 5f));
             InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(6f);
         }

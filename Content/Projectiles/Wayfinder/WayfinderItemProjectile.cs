@@ -192,7 +192,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             {
                 Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-                Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * (float)Math.Pow(bloomInterpolant, 2D);
+                Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * MathF.Pow(bloomInterpolant, 2f);
                 bloomSize *= 1f + (rayExpandFactor - 1f) * 2f;
 
                 Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Orange * bloomInterpolant, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);

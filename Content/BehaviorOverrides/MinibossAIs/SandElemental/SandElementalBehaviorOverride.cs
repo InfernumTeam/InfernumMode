@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                 if (attackTimer >= animationChangeTime + castTime / 2 + 5f && attackTimer <= animationChangeTime + castTime)
                 {
                     float sandnadoSpeedInterpolant = Utils.GetLerpValue(castTime / 2 + 5f, animationChangeTime + castTime, attackTimer, true);
-                    float sandnadoSpeed = MathHelper.Lerp(0f, 16f, (float)Math.Pow(sandnadoSpeedInterpolant, 4D));
+                    float sandnadoSpeed = MathHelper.Lerp(0f, 16f, MathF.Pow(sandnadoSpeedInterpolant, 4f));
                     foreach (Projectile sandnado in Utilities.AllProjectilesByID(ModContent.ProjectileType<Sandnado2>()))
                         sandnado.velocity = Vector2.UnitX * sandnado.ai[1] * sandnadoSpeed;
                 }

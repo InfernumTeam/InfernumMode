@@ -114,7 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Color telegraphColor = Color.Orange;
                     if (CalamityGlobalNPC.SCal == CalamityGlobalNPC.SCalLament)
                         telegraphColor = Color.Lerp(telegraphColor, Color.DeepSkyBlue, 0.65f);
-                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor * (float)Math.Pow(TelegraphInterpolant, 0.67), telegraphWidth);
+                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor * MathF.Pow(TelegraphInterpolant, 0.67f), telegraphWidth);
                 }
             }
             return false;

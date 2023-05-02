@@ -258,7 +258,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 for (int j = 4; j >= 0; j--)
                 {
-                    InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.UseOpacity((float)Math.Pow(MathHelper.Lerp(0.9f, 0.05f, j / 4f), 4D));
+                    InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.UseOpacity(MathF.Pow(MathHelper.Lerp(0.9f, 0.05f, j / 4f), 4f));
                     InfernumEffectsRegistry.PolterghastEctoplasmVertexShader.UseSaturation(i);
 
                     if (j > 0 && NPC.velocity == Vector2.Zero)

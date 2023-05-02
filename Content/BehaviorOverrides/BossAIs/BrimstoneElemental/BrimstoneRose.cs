@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override void AI()
         {
             Projectile.scale = Utils.GetLerpValue(0f, 25f, Time, true);
-            Projectile.Opacity = (float)Math.Sqrt(Projectile.scale) * Utils.GetLerpValue(0f, 18f, Projectile.timeLeft, true);
+            Projectile.Opacity = MathF.Sqrt(Projectile.scale) * Utils.GetLerpValue(0f, 18f, Projectile.timeLeft, true);
 
             // Initialize rotation.
             if (Projectile.rotation == 0f)

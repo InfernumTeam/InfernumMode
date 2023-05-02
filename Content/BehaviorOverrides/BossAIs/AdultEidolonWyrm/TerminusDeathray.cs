@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (Time >= Lifetime)
                 Projectile.Kill();
 
-            LaserLength = (float)Math.Pow(Utils.GetLerpValue(4f, 30f, Time, true), 2.4) * MaxLaserLength;
+            LaserLength = MathF.Pow(Utils.GetLerpValue(4f, 30f, Time, true), 2.4f) * MaxLaserLength;
 
             // Create very strong screen shakes.
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.Remap(Time, 10f, 90f, 20f, 3f);

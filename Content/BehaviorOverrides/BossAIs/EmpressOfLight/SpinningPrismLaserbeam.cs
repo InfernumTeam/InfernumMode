@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) *
                 Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
+                MathF.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3f);
             Color c = Main.hslToRgb((completionRatio * 8f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
             c.A = 0;
 

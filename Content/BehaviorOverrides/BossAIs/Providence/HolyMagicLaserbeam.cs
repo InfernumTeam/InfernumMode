@@ -225,15 +225,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         // This technically also draws when the lasers are shot, since the bloom looks super cool.
         public void SpecialDraw(SpriteBatch spriteBatch)
         {
-            float opacity = (float)Math.Pow(Time / LaserTelegraphTime, 0.4);
+            float opacity = MathF.Pow(Time / LaserTelegraphTime, 0.4f);
             Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
-            float width = (0.002f + (float)Math.Pow(opacity, 4D) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
+            float width = (0.002f + MathF.Pow(opacity, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
             laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
             laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-            laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(opacity));
+            laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Sqrt(opacity));
             laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(1500f));
             laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
             laserScopeEffect.Parameters["laserWidth"].SetValue(width);

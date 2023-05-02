@@ -2120,7 +2120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 flickerPower += 0.2f;
             if (lifeRatio < 0.05f)
                 flickerPower += 0.1f;
-            float opacity = MathHelper.Lerp(1f, MathHelper.Max(1f - flickerPower, 0.56f), (float)Math.Pow(Math.Cos(Main.GlobalTimeWrappedHourly * MathHelper.Lerp(3f, 5f, flickerPower)), 24D));
+            float opacity = MathHelper.Lerp(1f, MathHelper.Max(1f - flickerPower, 0.56f), MathF.Pow(MathF.Cos(Main.GlobalTimeWrappedHourly * MathHelper.Lerp(3f, 5f, flickerPower)), 24f));
 
             // Dampen the opacity and intensity slightly, to allow the shadow to be more easily visible inside of the forcefield.
             intensity *= 0.85f;

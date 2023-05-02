@@ -1088,8 +1088,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                     Vector2 telegraphOrigin = new(line.Width / 2f, line.Height);
                     Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
 
-                    // Create bloom on the pupil.
-                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
+                    // Create bloom at the start of the telegraph.
+                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * MathF.Pow(lineTelegraphInterpolant, 2f);
                     Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     if (npc.Infernum().ExtraAI[0] >= -100f)

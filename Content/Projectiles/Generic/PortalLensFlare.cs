@@ -29,7 +29,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override void AI()
         {
-            float scaleInterpolant = (float)Math.Pow(CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime), 4.93);
+            float scaleInterpolant = MathF.Pow(CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime), 4.93f);
             Projectile.scale = scaleInterpolant * 1.67f;
 
             WorldSaveSystem.HasOpenedLostColosseumPortal = true;

@@ -806,7 +806,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 drawPosition = baseDrawPosition + pupilOffset;
 
                     // Create bloom on the pupil.
-                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
+                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * MathF.Pow(lineTelegraphInterpolant, 2f);
                     Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     if (npc.Infernum().ExtraAI[0] >= -100f)
@@ -838,7 +838,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 drawPosition = baseDrawPosition + pupilOffset;
 
                     // Create bloom on the pupil.
-                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
+                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * MathF.Pow(lineTelegraphInterpolant, 2f);
                     Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     Vector2 beamDirection = -npc.Infernum().ExtraAI[1].ToRotationVector2();
@@ -848,9 +848,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     Main.spriteBatch.ResetBlendState();
                 }
             }
-            if (core.ai[0] is
-                ((int)MoonLordAttackState.PhantasmalBarrage) or
-                ((int)MoonLordAttackState.PhantasmalWrath))
+            if (core.ai[0] is ((int)MoonLordAttackState.PhantasmalBarrage) or ((int)MoonLordAttackState.PhantasmalWrath))
             {
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
                 if (lineTelegraphInterpolant > 0f)

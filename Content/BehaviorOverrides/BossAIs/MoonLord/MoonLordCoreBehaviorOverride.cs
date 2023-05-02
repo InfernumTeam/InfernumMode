@@ -548,7 +548,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 ModContent.ProjectileType<LunarFireball>(),
                 ModContent.ProjectileType<LunarFlare>(),
                 ModContent.ProjectileType<LunarFlareTelegraph>(),
-                ModContent.ProjectileType<NebulaCloud>(),
                 ModContent.ProjectileType<PhantasmalDeathray>(),
                 ModContent.ProjectileType<PhantasmalOrb>(),
                 ModContent.ProjectileType<StardustConstellation>(),

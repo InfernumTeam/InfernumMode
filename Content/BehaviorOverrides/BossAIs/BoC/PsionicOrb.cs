@@ -138,14 +138,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.9f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.9f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(Projectile.width * 0.1f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Cyan, Color.White, CalamityUtils.Convert01To010(MathF.Pow(completionRatio, 2f)));
-            color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
+            color *= 1f - 0.5f * MathF.Pow(completionRatio, 3f);
             color *= Projectile.Opacity * 3f;
             return color;
         }
@@ -163,7 +163,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 Vector2 telegraphStart = Projectile.Center - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
-                Color telegraphColor = new Color(50, 255, 232) * (float)Math.Pow(TelegraphInterpolant, 0.79) * 1.4f;
+                Color telegraphColor = new Color(50, 255, 232) * MathF.Pow(TelegraphInterpolant, 0.79f) * 1.4f;
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }

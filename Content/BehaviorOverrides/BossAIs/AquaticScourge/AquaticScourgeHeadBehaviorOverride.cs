@@ -729,7 +729,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Attempt to move towards the target before charging.
             if (attackTimer <= chargeDelay)
             {
-                float slowdownInterpolant = (float)Math.Pow(attackTimer / chargeDelay, 2D);
+                float slowdownInterpolant = MathF.Pow(attackTimer / chargeDelay, 2f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * slowdownInterpolant * chargeSpeed;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
             }

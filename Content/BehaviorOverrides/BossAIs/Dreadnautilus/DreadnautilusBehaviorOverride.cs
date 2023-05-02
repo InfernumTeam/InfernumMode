@@ -929,7 +929,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 float drawOffsetFactor = backglowFade * 7.5f + MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 3f;
                 if (drawOffsetFactor < 0f)
                     drawOffsetFactor = 0f;
-                Color backglowColor = Color.Red * (float)Math.Pow(backglowFade, 0.55f);
+                Color backglowColor = Color.Red * MathF.Pow(backglowFade, 0.55f);
 
                 for (int i = 0; i < 6; i++)
                 {

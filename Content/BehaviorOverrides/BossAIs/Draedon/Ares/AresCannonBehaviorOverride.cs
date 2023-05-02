@@ -311,8 +311,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             DrawUltimateAttackTelegraphs(npc, drawPosition);
 
             // Draw backglow effects, telegraphs, and the base texture.
-            ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, npc, texture, drawPosition, frame, origin);
-            ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, npc, telegraphBackglowColor, texture, drawPosition, frame, origin);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(npc, texture, drawPosition, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(npc, telegraphBackglowColor, texture, drawPosition, frame, origin);
             Main.spriteBatch.Draw(texture, drawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
             // Draw glowmasks.

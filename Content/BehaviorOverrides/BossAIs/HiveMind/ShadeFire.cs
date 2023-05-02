@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             // Start with a random color between green and a muted purple. The variance from this leads to a pseudo-gradient look.
             float lifetimeInterpolant = 1f - Projectile.timeLeft / (float)Lifetime;
-            float particleScale = MathHelper.Lerp(0.03f, 1.2f, (float)Math.Pow(lifetimeInterpolant, 0.53));
+            float particleScale = MathHelper.Lerp(0.03f, 1.2f, MathF.Pow(lifetimeInterpolant, 0.53f));
             float opacity = Utils.GetLerpValue(0.96f, 0.7f, lifetimeInterpolant, true) * 0.84f;
             float fadeToBlack = Utils.GetLerpValue(5f, 32f, Projectile.timeLeft, true);
             Color fireColor = Color.Lerp(Color.MediumPurple, Color.ForestGreen, Main.rand.NextFloat(0.2f, 0.67f));

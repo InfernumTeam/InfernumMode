@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Orange, Color.DarkRed, 1f - (float)Math.Pow(completionRatio, 2D));
+            Color color = Color.Lerp(Color.Orange, Color.DarkRed, 1f - MathF.Pow(completionRatio, 2f));
             color = Color.Lerp(color, Color.Red, 0.5f);
             return color * Projectile.Opacity * 0.7f;
         }

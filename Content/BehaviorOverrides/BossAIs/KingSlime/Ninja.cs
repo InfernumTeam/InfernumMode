@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (Main.netMode != NetmodeID.MultiplayerClient && horizontalDistanceFromTarget > 320f && Time % 60f == 59f && onSolidGround)
             {
-                float jumpSpeed = (float)Math.Sqrt(horizontalDistanceFromTarget) * 0.5f;
+                float jumpSpeed = MathF.Sqrt(horizontalDistanceFromTarget) * 0.5f;
                 if (jumpSpeed >= 11f)
                     jumpSpeed = 11f;
                 jumpSpeed *= Main.rand.NextFloat(1.15f, 1.4f);

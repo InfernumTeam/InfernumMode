@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Calculate light power. This checks below the position of the fog to check if this fog is underground.
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
-            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / (float)Math.Sqrt(3D);
+            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / MathF.Sqrt(3f);
             if (CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).LiquidAmount >= 25)
                 lightPowerBelow = 1f;
 

@@ -1578,7 +1578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     // Make the orb grow.
                     if (isApollo)
                     {
-                        float orbGrowInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, orbGrowTime, attackTimer, true), 2.3);
+                        float orbGrowInterpolant = MathF.Pow(Utils.GetLerpValue(0f, orbGrowTime, attackTimer, true), 2.3f);
                         deathOrbRadius = MathHelper.Lerp(1f, orbMaxRadius, orbGrowInterpolant);
                     }
 
@@ -1893,7 +1893,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             Color startingColor = new(34, 40, 48);
             Color endColor = new(40, 160, 32);
-            return Color.Lerp(startingColor, endColor, (float)Math.Pow(completionRatio, 1.5D)) * npc.Opacity;
+            return Color.Lerp(startingColor, endColor, MathF.Pow(completionRatio, 1.5f)) * npc.Opacity;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -2027,7 +2027,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             Main.spriteBatch.EnterShaderRegion();
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, npc, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(npc, texture, center, frame, origin);
             drawInstance(Vector2.Zero, baseInstanceColor);
 
             if (instanceCount > 1)

@@ -436,7 +436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 return;
             }
 
-            spinIncrement += (float)Math.Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer - teleportDelay, true), 0.6D);
+            spinIncrement += MathF.Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer - teleportDelay, true), 0.6f);
 
             // Decide the spin direction if it has yet to be.
             while (spinDirection == 0f)

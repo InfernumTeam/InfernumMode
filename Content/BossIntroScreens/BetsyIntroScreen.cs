@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             Color c1 = new(155, 39, 68);
             Color c2 = new(255, 145, 57);
-            float orangeFlash = (float)Math.Pow(CalamityUtils.Convert01To010(AnimationCompletion), 4D);
+            float orangeFlash = MathF.Pow(CalamityUtils.Convert01To010(AnimationCompletion), 4f);
             return Color.Lerp(c1, c2, orangeFlash);
         });
 

@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     continue;
 
                 float completionRatio = i / (float)Projectile.oldPos.Length;
-                float fade = (float)Math.Pow(completionRatio, 2D);
+                float fade = MathF.Pow(completionRatio, 2f);
                 float scale = Projectile.scale * MathHelper.Lerp(1.2f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) * MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
                 Color drawColor = Color.HotPink * (1f - fade) * Projectile.Opacity;
                 drawColor.A = 0;

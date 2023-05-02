@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 float telegraphWidth = MathHelper.Lerp(2f, 9f, telegraphInterpolant);
                 for (int i = 0; i < 5; i++)
                 {
-                    Color telegraphColor = Main.hslToRgb(i / 4f, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant) * 0.5f;
+                    Color telegraphColor = Main.hslToRgb(i / 4f, 1f, 0.5f) * MathF.Sqrt(telegraphInterpolant) * 0.5f;
                     telegraphColor.A = 0;
 
                     Vector2 aimDirection = (MathHelper.PiOver2 + MathHelper.Lerp(-maxOffsetAngle, maxOffsetAngle, i / 5f)).ToRotationVector2();
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
                     color = EmpressOfLightBehaviorOverride.GetDaytimeColor(hue);
 
-                color *= Utils.GetLerpValue(0f, 30f, Lifetime, true) * (float)Math.Sqrt(fadeInInterpolant);
+                color *= Utils.GetLerpValue(0f, 30f, Lifetime, true) * MathF.Sqrt(fadeInInterpolant);
                 color.A = 0;
 
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + fadeInInterpolant * MathHelper.TwoPi + Main.GlobalTimeWrappedHourly * 1.5f).ToRotationVector2() * fadeOffset;

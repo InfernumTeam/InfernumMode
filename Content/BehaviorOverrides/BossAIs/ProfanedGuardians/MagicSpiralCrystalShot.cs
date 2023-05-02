@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     continue;
 
                 float completionRatio = i / (float)Projectile.oldPos.Length;
-                float fade = (float)Math.Pow(completionRatio, 2D);
+                float fade = MathF.Pow(completionRatio, 2f);
                 float scale = Projectile.scale * MathHelper.Lerp(1.3f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) *
                     MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
                 Color drawColor = Color.Lerp(StreakBaseColor, new Color(229, 255, 255), fade) * (1f - fade) * Projectile.Opacity;

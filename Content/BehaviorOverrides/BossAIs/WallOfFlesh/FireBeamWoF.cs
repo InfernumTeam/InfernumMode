@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Red, Color.Orange, 0.65f);
-            return color * Projectile.Opacity * (float)Math.Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 3D);
+            return color * Projectile.Opacity * MathF.Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 3f);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

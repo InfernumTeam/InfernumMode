@@ -1800,7 +1800,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         npc.netUpdate = true;
                     }
                     else
-                        npc.position.Y = MathHelper.Lerp(startingY, WorldSaveSystem.ProvidenceArena.Top * 16f + 1650f, (float)Math.Pow(attackCompletion, 1.54));
+                        npc.position.Y = MathHelper.Lerp(startingY, WorldSaveSystem.ProvidenceArena.Top * 16f + 1650f, MathF.Pow(attackCompletion, 1.54f));
                 }
             }
 
@@ -1814,7 +1814,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Create screenshake effects.
             if (!attackIsAlmostDone)
-                target.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(1f, 10f, (float)Math.Pow(attackCompletion, 2.1));
+                target.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(1f, 10f, MathF.Pow(attackCompletion, 2.1f));
 
             // Transform into the crystal at the end of the attack.
             npc.Opacity = Utils.GetLerpValue(0.95f, 0.7f, attackCompletion, true);
@@ -2299,7 +2299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         for (int i = 0; i < 12; i++)
                         {
                             int lavaLifetime = Main.rand.Next(120, 167);
-                            float blobSize = MathHelper.Lerp(11f, 30f, (float)Math.Pow(Main.rand.NextFloat(), 1.85));
+                            float blobSize = MathHelper.Lerp(11f, 30f, MathF.Pow(Main.rand.NextFloat(), 1.85f));
                             if (Main.rand.NextBool(6))
                                 blobSize *= 1.36f;
                             Vector2 lavaVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(4f, 5f);
@@ -2704,7 +2704,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 float offsetAngle = MathHelper.TwoPi * i * 2f / totalProvidencesToDraw;
                 float drawOffsetScalar = MathF.Sin(offsetAngle * 6f + Main.GlobalTimeWrappedHourly * MathHelper.Pi);
-                drawOffsetScalar *= (float)Math.Pow(burnIntensity, 1.4f) * 36f;
+                drawOffsetScalar *= MathF.Pow(burnIntensity, 1.4f) * 36f;
                 drawOffsetScalar *= MathHelper.Lerp(1f, 2f, 1f - lifeRatio);
 
                 Vector2 drawOffset = offsetAngle.ToRotationVector2() * drawOffsetScalar;

@@ -85,8 +85,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         internal float WidthFunction(float completionRatio)
         {
             float widthCompletion = 1f;
-            widthCompletion *= 1f - (float)Math.Pow(1f - Utils.GetLerpValue(0.04f, 0.3f, 1f - completionRatio, true), 2D);
-            widthCompletion *= 1f - (float)Math.Pow(1f - Utils.GetLerpValue(0.96f, 0.9f, 1f - completionRatio, true), 2D);
+            widthCompletion *= 1f - MathF.Pow(1f - Utils.GetLerpValue(0.04f, 0.3f, 1f - completionRatio, true), 2f);
+            widthCompletion *= 1f - MathF.Pow(1f - Utils.GetLerpValue(0.96f, 0.9f, 1f - completionRatio, true), 2f);
             return MathHelper.Lerp(0f, 9f, widthCompletion) * Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true);
         }
 

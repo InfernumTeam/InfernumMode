@@ -121,7 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 offsetDirection = (noise * MathHelper.Pi * 0.7f).ToRotationVector2();
 
                 // Then, determine the factor of the offset. This is based on the initial direction (but squashed) and the muffle factor from above.
-                Vector2 offset = offsetDirection * (float)Math.Pow(offsetDirection.Y, 2D) * offsetMuffleFactor * 15f;
+                Vector2 offset = offsetDirection * MathF.Pow(offsetDirection.Y, 2f) * offsetMuffleFactor * 15f;
 
                 points[i] += offset;
             }

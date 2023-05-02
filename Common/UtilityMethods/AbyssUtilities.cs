@@ -29,7 +29,7 @@ namespace InfernumMode
             }
 
             // Apply a square root on the squared distance.
-            distanceToClosestPredator = (float)Math.Sqrt(distanceToClosestPredator);
+            distanceToClosestPredator = MathF.Sqrt(distanceToClosestPredator);
 
             return closestPredator;
         }
@@ -60,7 +60,7 @@ namespace InfernumMode
         public static void SpawnSchoolOfFish(NPC npc, int MinSchoolSize, int MaxSchoolSize)
         {
             // Larger schools are made rarer by this exponent by effectively "squashing" randomness.
-            float fishInterpolant = (float)Math.Pow(Main.rand.NextFloat(), 4D);
+            float fishInterpolant = MathF.Pow(Main.rand.NextFloat(), 4f);
             int fishCount = (int)MathHelper.Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
 
             for (int i = 0; i < fishCount; i++)

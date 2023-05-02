@@ -488,7 +488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Fly around and release lances at the target.
             float flySpeedInterpolant = Utils.GetLerpValue(attackDelay, attackDelay + hoverTime, attackTimer, true);
-            float flySpeed = MathHelper.Lerp(10f, 56f, (float)Math.Pow(flySpeedInterpolant, 1.5));
+            float flySpeed = MathHelper.Lerp(10f, 56f, MathF.Pow(flySpeedInterpolant, 1.5f));
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetX, hoverOffsetY);
             npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeed);
 
@@ -1516,7 +1516,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
 
                 animationScreenShaderStrength = Utils.GetLerpValue(0f, chargeUpTime - 90f, attackTimer, true);
-                wispInterpolant = (float)Math.Pow(animationScreenShaderStrength, 3D);
+                wispInterpolant = MathF.Pow(animationScreenShaderStrength, 3f);
                 return;
             }
 
@@ -1683,7 +1683,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 deathAnimationScreenShaderStrength = Utils.GetLerpValue(1f, fadeInTime, attackTimer, true);
                 outwardExpandFactor = Utils.GetLerpValue(-fadeOutTime, 0f, attackTimer - deathAnimationTime, true);
-                npc.Opacity = (float)Math.Pow(deathAnimationScreenShaderStrength, 3D) * (1f - outwardExpandFactor);
+                npc.Opacity = MathF.Pow(deathAnimationScreenShaderStrength, 3f) * (1f - outwardExpandFactor);
 
                 if (InfernumConfig.Instance.FlashbangOverlays)
                     MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
@@ -2140,7 +2140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                     for (int j = 0; j < boltCount; j++)
                     {
-                        Color telegraphColor = Main.hslToRgb(j / (float)boltCount, 1f, 0.5f) * (float)Math.Sqrt(telegraphInterpolant);
+                        Color telegraphColor = Main.hslToRgb(j / (float)boltCount, 1f, 0.5f) * MathF.Sqrt(telegraphInterpolant);
                         if (ShouldBeEnraged)
                             telegraphColor = GetDaytimeColor(j / (float)boltCount);
                         telegraphColor *= 0.6f;

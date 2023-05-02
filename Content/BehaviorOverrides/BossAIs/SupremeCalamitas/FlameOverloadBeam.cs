@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Spin.
             float spinInterpolant = Utils.GetLerpValue(16f, 150f, Time, true);
-            float angularVelocity = MathHelper.Lerp(0.006f, 0.0174f, (float)Math.Pow(spinInterpolant, 1.75));
+            float angularVelocity = MathHelper.Lerp(0.006f, 0.0174f, MathF.Pow(spinInterpolant, 1.75f));
             Projectile.velocity = Projectile.velocity.RotatedBy(angularVelocity);
 
             // Make the beam cast light along its length. The brightness of the light is reliant on the scale of the beam.
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) *
                 Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
+                MathF.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3f);
 
             float flameInterpolant = MathF.Sin(completionRatio * 3f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) * 0.5f + 0.5f;
             Color flameColor = Color.Orange;

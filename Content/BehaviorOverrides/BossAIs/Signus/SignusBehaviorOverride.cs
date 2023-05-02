@@ -512,7 +512,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     // Speed up after the initial charge has happened. This does not apply once the black screen fade has concluded.
                     if (attackTimer < telegraphTime + blackTime)
                     {
-                        float chargeSpeed = MathHelper.Lerp(1f, 32f, (float)Math.Pow(Utils.GetLerpValue(0f, telegraphTime, attackTimer, true), 2D));
+                        float chargeSpeed = MathHelper.Lerp(1f, 32f, MathF.Pow(Utils.GetLerpValue(0f, telegraphTime, attackTimer, true), 2f));
                         npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * chargeSpeed;
                     }
 

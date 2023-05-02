@@ -198,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 24f, attackTimer, true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(dustAnimationTime, dustAnimationTime - 10f, attackTimer, true);
 
-                float offsetAngle = MathHelper.Lerp(0f, MathHelper.Pi, (float)Math.Pow(attackTimer / dustAnimationTime, 4.2));
+                float offsetAngle = MathF.Pow(attackTimer / dustAnimationTime, 4.2f) * MathHelper.Pi;
                 float dustOffsetRadius = MathHelper.Lerp(24f, 300f, attackTimer / dustAnimationTime);
                 for (int i = 0; i < 6; i++)
                 {
@@ -528,7 +528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                 for (int i = (int)afterimageCount; i >= 1; i--)
                 {
-                    Color afterimageColor = lightColor.MultiplyRGB(Color.White) * (float)Math.Pow(1f - i / (float)afterimageCount, 3D);
+                    Color afterimageColor = lightColor.MultiplyRGB(Color.White) * MathF.Pow(1f - i / (float)afterimageCount, 3f);
                     DrawCoreInstance(afterimageColor, npc.oldPos[i] + npc.Size * 0.5f, npc.spriteDirection, false);
                 }
             }

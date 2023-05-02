@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
     {
         internal PrimitiveTrail SlashDrawer;
 
-        private List<Vector2> TrailCache = new();
+        private readonly List<Vector2> TrailCache = new();
 
         public float ScaleFactorDelta => Projectile.localAI[0];
 
@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             }
             // Fade in.
             float disappearInterpolant = Utils.GetLerpValue(0f, 24f, Projectile.timeLeft / Projectile.MaxUpdates, true);
-            float scaleGrowInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 64f, Time, true), 1.72);
+            float scaleGrowInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 64f, Time, true), 1.72f);
             Projectile.Opacity = Utils.GetLerpValue(0f, 24f, Time / Projectile.MaxUpdates, true) * disappearInterpolant;
             Projectile.scale = MathHelper.Lerp(0.24f, 1f, scaleGrowInterpolant) * disappearInterpolant;
             Time++;

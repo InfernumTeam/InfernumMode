@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
+            Color color = Color.Lerp(Color.Orange, Color.DarkRed, MathF.Pow(completionRatio, 2f));
             color = Color.Lerp(color, Color.Red, 0.65f);
             return color * Projectile.Opacity * 0.6f;
         }

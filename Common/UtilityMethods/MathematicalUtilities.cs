@@ -50,13 +50,13 @@ namespace InfernumMode
             gravity = -Math.Abs(gravity);
 
             float horizontalRange = MathHelper.Distance(shootingPosition.X, destination.X);
-            float fireAngleSine = gravity * horizontalRange / (float)Math.Pow(shootSpeed, 2D);
+            float fireAngleSine = gravity * horizontalRange / MathF.Pow(shootSpeed, 2f);
 
             // Clamp the sine if no fallback is provided.
             if (nanFallback is null)
                 fireAngleSine = MathHelper.Clamp(fireAngleSine, -1f, 1f);
 
-            fireAngle = (float)Math.Asin(fireAngleSine) * 0.5f;
+            fireAngle = MathF.Asin(fireAngleSine) * 0.5f;
 
             // Get out of here if no valid firing angle exists. This can only happen if a fallback does indeed exist.
             if (float.IsNaN(fireAngle))

@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             if (Time < 0f)
             {
-                float speedInterpolant = (float)Math.Pow(Utils.GetLerpValue(-150f, -1f, Time, true), 4D);
+                float speedInterpolant = MathF.Pow(Utils.GetLerpValue(-150f, -1f, Time, true), 4f);
                 Vector2 endingVelocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * MaxSpeed;
                 Projectile.velocity = Vector2.Lerp(StartingVelocity, endingVelocity, speedInterpolant);
             }

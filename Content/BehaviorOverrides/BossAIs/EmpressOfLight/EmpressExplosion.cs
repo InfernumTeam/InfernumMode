@@ -43,9 +43,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 scale = Projectile.Size / texture.Size();
 
             Color color = Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.64f % 1f, 1f, 0.65f);
-            color = Color.Lerp(color, Color.White, (float)Math.Pow(Projectile.scale, 5D)) * Projectile.scale;
+            color = Color.Lerp(color, Color.White, MathF.Pow(Projectile.scale, 5f)) * Projectile.scale;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * (float)Math.Pow(Projectile.scale, 1.5), 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * MathF.Pow(Projectile.scale, 1.5f), 0, 0f);
             for (int j = 0; j < 3; j++)
             {
                 float rotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver4, j / 2f);

@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 107, 0f, 0f, 0, default, 1f);
+                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.TerraBlade, 0f, 0f, 0, default, 1f);
                     fire.fadeIn = 1.5f;
                     fire.velocity = flameDirection.RotatedBy(Main.rand.NextFloatDirection() * FlameRotation * 2f) * Main.rand.NextFloat(0.5f, 3f) * FireMaxLength / 27f;
                     fire.velocity += Owner.velocity * 2f;
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 smoke.velocity += flameDirection * 4f;
             }
 
-            Dust smokeDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 31, 0f, 0f, 0, default, 1f);
+            Dust smokeDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 0, default, 1f);
             smokeDust.fadeIn = 1.5f;
             smokeDust.scale = 0.4f;
             smokeDust.velocity = flameDirection.RotatedBy(Main.rand.NextFloatDirection() * MathHelper.Pi / 8f) * (0.5f + Main.rand.NextFloat() * 2.5f) * 15f;
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     else
                         flameDrawColor = Color.Transparent;
 
-                    float flameScale = (float)Math.Pow(MathHelper.Lerp(0.9f, 1.7f, flameDrawInterpolant), 2D) * 0.8f;
+                    float flameScale = MathF.Pow(MathHelper.Lerp(0.9f, 1.7f, flameDrawInterpolant), 2f) * 0.8f;
 
                     Vector2 currentFlameDrawPosition = Vector2.SmoothStep(startOfFlame, endOfFlame, flameDrawInterpolant);
                     Rectangle frame = texture2D5.Frame(1, 7, 0, (int)(flameDrawInterpolant * 7f));

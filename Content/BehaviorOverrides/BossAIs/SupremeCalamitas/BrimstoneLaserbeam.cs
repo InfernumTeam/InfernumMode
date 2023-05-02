@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Color vibrantColor = Color.Lerp(Color.Blue, Color.Red, MathF.Cos(Main.GlobalTimeWrappedHourly * 0.67f - completionRatio / LaserLength * 29f) * 0.5f + 0.5f);
             float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) *
                 Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
+                MathF.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3f);
             return Color.Lerp(vibrantColor, Color.White, 0.3f) * opacity * 2f;
         }
 

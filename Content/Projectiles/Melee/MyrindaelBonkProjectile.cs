@@ -64,7 +64,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Stick to the owner.
             Projectile.Center = Owner.MountedCenter;
 
-            float angularVelocity = MathHelper.Pi * (float)Math.Pow(LungeProgression, 3D) * 0.024f;
+            float angularVelocity = MathHelper.Pi * MathF.Pow(LungeProgression, 3f) * 0.024f;
             float currentRotation = Projectile.velocity.ToRotation();
             float idealRotation = Owner.MountedCenter.AngleTo(Owner.Calamity().mouseWorld);
             Projectile.velocity = currentRotation.AngleTowards(idealRotation, angularVelocity).ToRotationVector2();
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.Projectiles.Melee
         public float PierceWidthFunction(float completionRatio)
         {
             float width = Utils.GetLerpValue(0f, 0.1f, completionRatio, true) * Projectile.scale * 20f;
-            width *= 1f - (float)Math.Pow(LungeProgression, 5D);
+            width *= 1f - MathF.Pow(LungeProgression, 5f);
             return width;
         }
 
@@ -136,8 +136,8 @@ namespace InfernumMode.Content.Projectiles.Melee
             Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
             Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
 
-            mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
-            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * (float)Math.Pow(LungeProgression, 0.5f));
+            mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * MathF.Pow(LungeProgression, 0.5f));
+            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * MathF.Pow(LungeProgression, 0.5f));
             Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");

@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (Main.netMode != NetmodeID.MultiplayerClient && !HasCreatedSchool && NPC.wet)
             {
                 // Larger schools are made rarer by this exponent by effectively "squashing" randomness.
-                float fishInterpolant = (float)Math.Pow(Main.rand.NextFloat(), 4D);
+                float fishInterpolant = MathF.Pow(Main.rand.NextFloat(), 4f);
                 int fishCount = (int)MathHelper.Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
 
                 for (int i = 0; i < fishCount; i++)

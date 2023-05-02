@@ -37,14 +37,14 @@ namespace InfernumMode.Common.Graphics.Particles
             Velocity.X *= 0.97f;
             // Gravity gets changed here.
             Velocity.Y = MathHelper.Clamp(Velocity.Y + 0.9f, -22f, Gravity);
-            Color = Color.Lerp(InitialColor, Color.Transparent, (float)Math.Pow((double)LifetimeCompletion, 3.0));
+            Color = Color.Lerp(InitialColor, Color.Transparent, MathF.Pow(LifetimeCompletion, 3f));
             Rotation = Velocity.ToRotation() + (float)Math.PI / 2f;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
             float verticalStretch = Utils.GetLerpValue(0f, 24f, Math.Abs(Velocity.Y), clamped: true) * 0.84f;
-            float brightness = (float)Math.Pow((double)Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15);
+            float brightness = MathF.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15f);
             Vector2 scale = new Vector2(1f, verticalStretch + 1f) * Scale * 0.1f;
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             spriteBatch.Draw(texture, Position - Main.screenPosition, null, Color * brightness, Rotation, texture.Size() * 0.5f, scale, 0, 0f);

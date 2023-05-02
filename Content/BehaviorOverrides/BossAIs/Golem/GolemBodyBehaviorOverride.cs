@@ -965,7 +965,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             // Make fists slam into the wall.
             if (attackTimer < fistSlamTime)
             {
-                fistSlamInterpolant = (float)Math.Pow(attackTimer / fistSlamTime, 2D);
+                fistSlamInterpolant = MathF.Pow(attackTimer / fistSlamTime, 2f);
 
                 // Create impact effects.
                 if (attackTimer == fistSlamTime - 1f)
@@ -1331,7 +1331,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             // Make arms do a slam effect.
             else if (attackTimer <= dustTelegraphTime + fistSlamTime)
             {
-                armSlamInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, fistSlamTime, attackTimer - dustTelegraphTime, true), 2D);
+                armSlamInterpolant = MathF.Pow(Utils.GetLerpValue(0f, fistSlamTime, attackTimer - dustTelegraphTime, true), 2f);
 
                 if (attackTimer == dustTelegraphTime + fistSlamTime)
                 {
@@ -1349,7 +1349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             else if (attackTimer <= dustTelegraphTime + fistSlamTime + bodyReelTime)
             {
                 armSlamInterpolant = 1f;
-                bodySlamInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, bodyReelTime, attackTimer - dustTelegraphTime - fistSlamTime, true), 2D);
+                bodySlamInterpolant = MathF.Pow(Utils.GetLerpValue(0f, bodyReelTime, attackTimer - dustTelegraphTime - fistSlamTime, true), 2f);
 
                 // Play a launch sound.
                 if (attackTimer == dustTelegraphTime + fistSlamTime + 4f)
@@ -1446,7 +1446,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             fistToChargeWith.Center = Vector2.Lerp(fistStart, fistEnd, armSlamInterpolant);
             Vector2 bodyDestination = fistEnd - offsetDirection * 100f;
-            npc.Center = Vector2.Lerp(npc.Center, bodyDestination, (float)Math.Pow(bodySlamInterpolant, 8.4D));
+            npc.Center = Vector2.Lerp(npc.Center, bodyDestination, MathF.Pow(bodySlamInterpolant, 8.4f));
 
             if (bodySlamInterpolant > 0f)
                 npc.velocity = Vector2.Zero;

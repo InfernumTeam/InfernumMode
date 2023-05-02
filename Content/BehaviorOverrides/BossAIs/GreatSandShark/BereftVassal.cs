@@ -1192,7 +1192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         shootDestination.X = MathHelper.Lerp(shootDestination.X, NPC.Center.X, shootInterpolant);
 
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
-                        float idealShootSpeed = (float)Math.Sqrt(horizontalDistance * WaterSpear.Gravity);
+                        float idealShootSpeed = MathF.Sqrt(horizontalDistance * WaterSpear.Gravity);
                         float spearShootSpeed = MathHelper.Clamp(idealShootSpeed, 10f, 29f);
                         Vector2 spearShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, WaterSpear.Gravity, spearShootSpeed, out _);
                         spearShootVelocity.Y -= 4.5f;

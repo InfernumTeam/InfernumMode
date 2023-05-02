@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Vector2 origin = warningSymbol.Size() * 0.5f;
                 float scale = 0.38f;
 
-                spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * (float)Math.Sqrt(opacityScalar), 0f, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * MathF.Sqrt(opacityScalar), 0f, origin, scale, SpriteEffects.None, 0f);
             }
 
             // Draw the laser.

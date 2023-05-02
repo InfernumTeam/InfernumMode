@@ -521,7 +521,7 @@ namespace InfernumMode.Content.WorldGeneration
             {
                 float yCompletion = Utils.GetLerpValue(start.Y, cutOffPoint, currentPoint.Y, true);
                 float noiseWidthOffset = FractalBrownianMotion(currentPoint.X * TrenchWidthNoiseMagnificationFactor, currentPoint.Y * TrenchWidthNoiseMagnificationFactor, widthSeed, 5) * endingWidth * 0.2f;
-                int width = (int)(MathHelper.Lerp(startingWidth, endingWidth, (float)Math.Pow(yCompletion, TrenchTightnessFactor)) + noiseWidthOffset);
+                int width = (int)(MathHelper.Lerp(startingWidth, endingWidth, MathF.Pow(yCompletion, TrenchTightnessFactor)) + noiseWidthOffset);
                 width = Utils.Clamp(width, startingWidth, endingWidth);
 
                 // Calculate the horizontal offset of the current trench.
@@ -1172,7 +1172,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public static int GetWidth(float yCompletion, int minWidth, int maxWidth)
         {
-            return (int)MathHelper.Lerp(minWidth, maxWidth, (float)Math.Pow(yCompletion * Utils.GetLerpValue(1f, 0.81f, yCompletion, true), 0.13));
+            return (int)MathHelper.Lerp(minWidth, maxWidth, MathF.Pow(yCompletion * Utils.GetLerpValue(1f, 0.81f, yCompletion, true), 0.13f));
         }
 
         public static void ClearOutStrayTiles(Rectangle area)

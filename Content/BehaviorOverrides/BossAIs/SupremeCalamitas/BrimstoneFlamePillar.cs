@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Color darkFlameColor = new(249, 59, 91);
             Color lightFlameColor = new(174, 45, 237);
             float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 2.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
-            Color color = Color.Lerp(darkFlameColor, lightFlameColor, (float)Math.Pow(colorShiftInterpolant, 1.64f));
+            Color color = Color.Lerp(darkFlameColor, lightFlameColor, MathF.Pow(colorShiftInterpolant, 1.64f));
             return color * Projectile.Opacity;
         }
 

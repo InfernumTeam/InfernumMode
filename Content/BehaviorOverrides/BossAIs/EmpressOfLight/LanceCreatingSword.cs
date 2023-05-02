@@ -224,7 +224,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 float telegraphHue = MathF.Cos(MathHelper.TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
                 float telegraphWidth = MathHelper.Lerp(0.2f, 1.2f, TelegraphInterpolant);
-                float telegraphOpacity = (float)Math.Pow(TelegraphInterpolant, 1.7) * 0.7f;
+                float telegraphOpacity = MathF.Pow(TelegraphInterpolant, 1.7f) * 0.7f;
                 Vector2 telegraphScale = new(telegraphWidth, TelegraphLength / telegraphTexture.Height);
                 Color telegraphColor = Main.hslToRgb(telegraphHue, 1f, 0.8f) * telegraphOpacity;
                 Vector2 telegraphOrigin = telegraphTexture.Size() * new Vector2(0.5f, 0f);

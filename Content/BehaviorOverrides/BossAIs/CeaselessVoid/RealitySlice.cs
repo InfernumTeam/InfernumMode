@@ -84,14 +84,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 End += Projectile.Center - oldCenter;
             }
 
-            float sliceInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 27f, Time, true), 1.6);
+            float sliceInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 27f, Time, true), 1.6f);
             Projectile.Center = Vector2.Lerp(Start, End, sliceInterpolant);
             if (Time <= 27f)
                 TrailCache.Add(Projectile.Center);
 
             // Fade in.
             float disappearInterpolant = Utils.GetLerpValue(0f, 16f, Projectile.timeLeft / Projectile.MaxUpdates, true);
-            float scaleGrowInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 15f, Time, true), 1.72);
+            float scaleGrowInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 15f, Time, true), 1.72f);
             Projectile.Opacity = Utils.GetLerpValue(0f, 24f, Time / Projectile.MaxUpdates, true) * disappearInterpolant;
             Projectile.scale = MathHelper.Lerp(0.24f, 1f, scaleGrowInterpolant) * disappearInterpolant;
             Time++;

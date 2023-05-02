@@ -330,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             if (attackTimer <= 45f)
             {
                 npc.Opacity = Utils.GetLerpValue(25f, 45f, attackTimer, true);
-                npc.Center = Vector2.SmoothStep(npc.Center, target.Center - Vector2.UnitY * 1350f, (float)Math.Pow(attackTimer / 45f, 3D));
+                npc.Center = Vector2.SmoothStep(npc.Center, target.Center - Vector2.UnitY * 1350f, MathF.Pow(attackTimer / 45f, 3f));
                 npc.spriteDirection = (npc.Center.X - target.Center.X < 0).ToDirectionInt();
                 flapRate = 7;
             }

@@ -79,7 +79,7 @@ namespace InfernumMode.Common.BaseEntities
                 ExplosionNoiseTexture,
                 drawPosition,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4((float)Math.Sqrt(Projectile.timeLeft / (float)Lifetime))) * 0.7f * Opacity,
+                new Color(new Vector4(MathF.Sqrt(Projectile.timeLeft / (float)Lifetime))) * 0.7f * Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,

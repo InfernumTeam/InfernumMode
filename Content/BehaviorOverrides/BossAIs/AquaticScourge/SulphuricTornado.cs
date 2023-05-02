@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     if (Main.rand.NextBool(25))
                         bubbleID = 424;
 
-                    float horizontalOffset = MathHelper.Lerp(-Projectile.width * 0.65f, Projectile.width * 0.65f, (float)Math.Pow(Main.rand.NextFloat(), 2D));
+                    float horizontalOffset = MathHelper.Lerp(-Projectile.width * 0.65f, Projectile.width * 0.65f, MathF.Pow(Main.rand.NextFloat(), 2f));
                     Vector2 bubbleSpawnPosition = Projectile.Bottom + new Vector2(horizontalOffset, Main.rand.NextFloat(400f, -Projectile.height - 800f));
                     Vector2 bubbleSpawnVelocity = -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(2f, 8f);
                     Gore bubble = Gore.NewGorePerfect(Projectile.GetSource_FromThis(), bubbleSpawnPosition, bubbleSpawnVelocity, bubbleID);

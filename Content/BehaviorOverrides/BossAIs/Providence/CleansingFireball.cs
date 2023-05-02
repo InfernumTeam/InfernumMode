@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         {
                             // Release a bunch of lava particles from below.
                             int lavaLifetime = Main.rand.Next(120, 167);
-                            float blobSize = MathHelper.Lerp(12f, 34f, (float)Math.Pow(Main.rand.NextFloat(), 1.85));
+                            float blobSize = MathHelper.Lerp(12f, 34f, MathF.Pow(Main.rand.NextFloat(), 1.85f));
                             if (Main.rand.NextBool(6))
                                 blobSize *= 1.4f;
                             Vector2 lavaVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(4f, 5f);

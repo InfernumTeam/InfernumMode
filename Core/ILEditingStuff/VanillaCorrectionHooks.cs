@@ -389,9 +389,9 @@ namespace InfernumMode.Core.ILEditingStuff
             float dayCompletion = (float)(Main.time / Main.dayLength);
             float verticalOffsetInterpolant;
             if (dayCompletion < 0.5f)
-                verticalOffsetInterpolant = (float)Math.Pow(1f - dayCompletion * 2f, 2D);
+                verticalOffsetInterpolant = MathF.Pow(1f - dayCompletion * 2f, 2f);
             else
-                verticalOffsetInterpolant = (float)Math.Pow(dayCompletion - 0.5f, 2D) * 4f;
+                verticalOffsetInterpolant = MathF.Pow(dayCompletion - 0.5f, 2f) * 4f;
 
             // Calculate the position of the sun.
             Texture2D sunTexture = TextureAssets.Sun.Value;

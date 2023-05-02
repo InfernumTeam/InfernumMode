@@ -489,7 +489,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Fade away as the explosion progresses.
             float opacityFadeInterpolant = Utils.GetLerpValue(implosionRingLifetime + explosionTime * 0.75f, implosionRingLifetime, deathAnimationTimer, true);
-            npc.Opacity = (float)Math.Pow(opacityFadeInterpolant, 6.1);
+            npc.Opacity = MathF.Pow(opacityFadeInterpolant, 6.1f);
 
             if (deathAnimationTimer == (int)(implosionRingLifetime + explosionTime * 0.5f))
             {
@@ -946,7 +946,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     shootDelay = (int)Utils.Remap(attackTimer, 0f, cannonAttackTime * 0.55f, startingShootDelay, endingShootDelay);
 
                     // Calculate the overheat interpolant.
-                    overheatInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, cannonAttackTime * 0.67f, attackTimer, true), 1.96) * 0.56f;
+                    overheatInterpolant = MathF.Pow(Utils.GetLerpValue(0f, cannonAttackTime * 0.67f, attackTimer, true), 1.96f) * 0.56f;
 
                     // Account for discrepancies caused by countdowns in the charge delay.
                     if (shootDelay < oldShootDelay)
@@ -1648,7 +1648,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                 Vector2 telegraphInnerScale = telegraphScale * 0.75f;
-                Color telegraphColor = new Color(255, 55, 0) * (float)Math.Pow(telegraphInterpolant, 0.79);
+                Color telegraphColor = new Color(255, 55, 0) * MathF.Pow(telegraphInterpolant, 0.79f);
                 Color innerColor = Color.Lerp(telegraphColor, Color.White, 0.35f);
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, innerColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphInnerScale, 0, 0f);

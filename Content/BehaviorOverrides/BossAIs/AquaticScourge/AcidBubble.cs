@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public Color ColorFunction(float completionRatio)
         {
-            float colorInterpolant = (float)Math.Pow(Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)), 3D) * 0.5f;
+            float colorInterpolant = MathF.Pow(Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)), 3f) * 0.5f;
             return Color.Lerp(new Color(140, 234, 87), new Color(144, 114, 166), colorInterpolant) * Projectile.Opacity * 0.3f;
         }
 

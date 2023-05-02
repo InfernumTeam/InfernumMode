@@ -434,7 +434,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Extend the claws outward.
             if (attackTimer <= clawMoveTime)
             {
-                float moveInterpolant = (float)Math.Pow(attackTimer / clawMoveTime, 4.81);
+                float moveInterpolant = MathF.Pow(attackTimer / clawMoveTime, 4.81f);
                 Vector2 idealClawOffset = new(MathHelper.Lerp(0f, 168f, moveInterpolant), MathHelper.Lerp(0f, -92f, moveInterpolant));
                 clawOffset = Vector2.Lerp(clawOffset, idealClawOffset, 0.16f);
 
@@ -455,7 +455,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Press the claws together.
             else if (attackTimer <= clawMoveTime + clawPressTime)
             {
-                float moveInterpolant = (float)Math.Pow(Utils.GetLerpValue(clawMoveTime, clawMoveTime + clawPressTime, attackTimer, true), 2.9);
+                float moveInterpolant = MathF.Pow(Utils.GetLerpValue(clawMoveTime, clawMoveTime + clawPressTime, attackTimer, true), 2.9f);
                 clawOffset.X = MathHelper.Lerp(168f, 30f, moveInterpolant);
                 clawOffset.Y = MathHelper.Lerp(-92f, -138f, moveInterpolant);
 
@@ -466,7 +466,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Make the claws slam into the ground.
             else
             {
-                float moveInterpolant = (float)Math.Pow(Utils.GetLerpValue(clawMoveTime + clawPressTime, clawMoveTime + clawPressTime + clawSlamTime, attackTimer, true), 8.3);
+                float moveInterpolant = MathF.Pow(Utils.GetLerpValue(clawMoveTime + clawPressTime, clawMoveTime + clawPressTime + clawSlamTime, attackTimer, true), 8.3f);
                 clawOffset.X = MathHelper.Lerp(30f, 42f, moveInterpolant);
                 clawOffset.Y = MathHelper.Lerp(-138f, 56f, moveInterpolant);
 
@@ -492,7 +492,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                             for (int j = 0; j < (enraged ? 28 : 16); j++)
                             {
                                 float pointToCrabulonInterpolant = Utils.GetLerpValue(5f, 0f, j, true);
-                                Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - (float)Math.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
+                                Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - MathF.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
                                 shroomVelocity.X = MathHelper.Lerp(shroomVelocity.X, (npc.Center - clawCenter).SafeNormalize(Vector2.Zero).X * 4f, pointToCrabulonInterpolant);
 
                                 // Make mushrooms go higher up if the target is quite a bit above Crabulon.

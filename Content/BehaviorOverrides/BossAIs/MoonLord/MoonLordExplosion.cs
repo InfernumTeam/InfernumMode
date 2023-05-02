@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Vector2 scale = Projectile.Size / texture.Size();
             Color color = Color.Lerp(Color.Turquoise, Color.White, Projectile.scale) * Projectile.scale;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * (float)Math.Pow(Projectile.scale, 1.5), 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * MathF.Pow(Projectile.scale, 1.5f), 0, 0f);
             for (int i = 0; i < 2; i++)
             {
                 float rotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver4, i);

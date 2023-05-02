@@ -34,14 +34,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(3f, Projectile.width, squeezeInterpolant);
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Green, Color.LimeGreen, (float)Math.Pow(completionRatio, 2D));
-            color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
+            Color color = Color.Lerp(Color.Green, Color.LimeGreen, MathF.Pow(completionRatio, 2f));
+            color *= 1f - 0.5f * MathF.Pow(completionRatio, 3f);
             return color * Projectile.Opacity;
         }
 

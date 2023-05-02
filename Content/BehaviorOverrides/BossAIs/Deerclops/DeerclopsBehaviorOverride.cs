@@ -1213,7 +1213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             if (shadowFormInterpolant > 0f)
             {
                 shadowBackglowCount = 2;
-                offsetInterpolant = (float)Math.Pow(shadowFormInterpolant, 2D);
+                offsetInterpolant = MathF.Pow(shadowFormInterpolant, 2f);
                 shadowOffset = 20f;
                 shadowColor = new Color(80, 0, 0, 255) * npc.Opacity * 0.5f;
                 forcedFadeToShadow = 1f;

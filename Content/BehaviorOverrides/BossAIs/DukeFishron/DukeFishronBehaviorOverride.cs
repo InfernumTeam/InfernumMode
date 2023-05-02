@@ -1119,7 +1119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 if (hasEyes)
                 {
                     Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[11];
-                    eyeColor *= (float)Math.Pow(color.ToVector3().Length() / 1.414f, 0.6);
+                    eyeColor *= MathF.Pow(color.ToVector3().Length() / 1.414f, 0.6f);
                     Main.spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
@@ -1146,7 +1146,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
                 for (int i = (int)afterimageCount; i >= 1; i--)
                 {
-                    Color afterimageColor = lightColor.MultiplyRGB(Color.White) * (float)Math.Pow(1f - i / (float)afterimageCount, 3D);
+                    Color afterimageColor = lightColor.MultiplyRGB(Color.White) * MathF.Pow(1f - i / (float)afterimageCount, 3f);
                     DrawOldDukeInstance(afterimageColor, npc.oldPos[i] + npc.Size * 0.5f, npc.spriteDirection);
                 }
             }

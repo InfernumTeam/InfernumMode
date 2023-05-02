@@ -81,7 +81,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (Time >= Lifetime)
                 Projectile.Kill();
 
-            LaserLength = (float)Math.Pow(Utils.GetLerpValue(4f, 30f, Time, true), 2.4) * MaxLaserLength;
+            // Make the laser quickly move outward.
+            LaserLength = MathF.Pow(Utils.GetLerpValue(4f, 30f, Time, true), 2.4f) * MaxLaserLength;
 
             // And create bright light.
             Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3() * 1.4f);

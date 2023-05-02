@@ -2532,7 +2532,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 flickerPower += 0.2f;
             if (lifeRatio < 0.05f)
                 flickerPower += 0.1f;
-            float opacity = MathHelper.Lerp(1f, MathHelper.Max(1f - flickerPower, 0.56f), (float)Math.Pow(Math.Cos(Main.GlobalTimeWrappedHourly * MathHelper.Lerp(3f, 5f, flickerPower)), 24D));
+            float opacity = MathHelper.Lerp(1f, MathHelper.Max(1f - flickerPower, 0.64f), MathF.Pow(MathF.Cos(Main.GlobalTimeWrappedHourly * MathHelper.Lerp(3f, 5f, flickerPower)), 26f));
 
             // During/prior to a charge the forcefield is always darker than usual and thus its intensity is also higher.
             if (!npc.dontTakeDamage && ShieldOpacity > 0f)

@@ -213,7 +213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             Color startingColor = new(34, 40, 48);
             Color endColor = new(219, 82, 28);
-            return Color.Lerp(startingColor, endColor, (float)Math.Pow(completionRatio, 1.5D)) * npc.Opacity;
+            return Color.Lerp(startingColor, endColor, MathF.Pow(completionRatio, 1.5f)) * npc.Opacity;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

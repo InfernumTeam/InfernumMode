@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.Center);
             for (int i = 0; i < 12; i++)
             {
-                Dust honey = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 147, 0f, 0f, 0, default, 0.8f);
+                Dust honey = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.t_Honey, 0f, 0f, 0, default, 0.8f);
                 if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
             }
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * (float)Math.Pow(Projectile.Opacity, 2D), lightColor, Projectile.Opacity * 6f);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * MathF.Pow(Projectile.Opacity, 2f), lightColor, Projectile.Opacity * 6f);
             return false;
         }
     }

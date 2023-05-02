@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             Color plantColor = new(96, 148, 14);
             Color flowerColor = new(225, 128, 206);
-            float flowerInterpolant = (float)Math.Pow(Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.Pi) * 0.5f + 0.5f, 2.3);
+            float flowerInterpolant = MathF.Pow(MathF.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.Pi) * 0.5f + 0.5f, 2.3f);
             return Color.Lerp(plantColor, flowerColor, flowerInterpolant);
         });
 

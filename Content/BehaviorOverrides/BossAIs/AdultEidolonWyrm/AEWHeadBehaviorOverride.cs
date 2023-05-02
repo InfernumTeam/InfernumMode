@@ -876,7 +876,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (attackTimer == 50f)
                     SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
 
-                float headOpenInterpolant = (float)Math.Pow(attackTimer / headOpenTime, 7D);
+                float headOpenInterpolant = MathF.Pow(attackTimer / headOpenTime, 7f);
                 hammerHeadRotation = MathHelper.SmoothStep(0f, 1f, headOpenInterpolant) * MathHelper.Pi * 0.19f;
 
                 // Turn into shadow.
@@ -1579,7 +1579,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 // Segments that are in the process of fading away do so before disappearing.
                 else if (npc.ai[3] == segmentToFadeAway)
-                    deathAnimationOpacity = (float)Math.Pow(fadeCompletionInterpolant * SegmentCount % 1f, 2D);
+                    deathAnimationOpacity = MathF.Pow(fadeCompletionInterpolant * SegmentCount % 1f, 2f);
             }
 
             // Draw the segment.
@@ -1644,7 +1644,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (terminusDrawInterpolant > 0f)
                 {
                     Texture2D terminusTexture = ModContent.Request<Texture2D>("CalamityMod/Items/SummonItems/Terminus").Value;
-                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(terminusTexture, npc.Center - Main.screenPosition, null, Color.White * (float)Math.Pow(terminusDrawInterpolant, 6D), 0f, terminusTexture.Size() * 0.5f, 1f, 0, 0));
+                    AEWShadowFormDrawSystem.LightAndDarkEffectsCache.Add(new(terminusTexture, npc.Center - Main.screenPosition, null, Color.White * MathF.Pow(terminusDrawInterpolant, 6f), 0f, terminusTexture.Size() * 0.5f, 1f, 0, 0));
                 }
             }
             drawInstance(npc.Center - Main.screenPosition);

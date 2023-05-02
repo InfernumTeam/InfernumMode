@@ -534,7 +534,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Determine DR. This becomes very powerful as Yharon transitions to a new attack, to prevent skipping multiple subphases with adrenaline.
-            npc.Calamity().DR = MathHelper.Lerp(BaseDR, 0.9999f, (float)Math.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.3));
+            npc.Calamity().DR = MathHelper.Lerp(BaseDR, 0.9999f, MathF.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.3f));
 
             // Decrement the transition DR countdown. This doesn't happen if Yharon is still in his brief invincibility period.
             if (transitionDRCountdown > 0f && !npc.dontTakeDamage)

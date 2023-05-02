@@ -837,7 +837,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         float fireScale = Main.rand.NextFloat(0.6f, 0.95f) * (flameScaleFactor + 1f);
                         Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.56f, 0.9f));
-                        fireColor = Color.Lerp(fireColor, Color.HotPink, (float)Math.Pow(Main.rand.NextFloat(0.5f), 2D));
+                        fireColor = Color.Lerp(fireColor, Color.HotPink, MathF.Pow(Main.rand.NextFloat(0.5f), 2f));
 
                         Vector2 fireVelocity = -Vector2.UnitY.RotatedByRandom(0.93f) * Main.rand.NextFloat(0.6f, 5.4f);
                         Vector2 fireSpawnPosition = npc.Center + (MathHelper.TwoPi * i / flameCount + flameOffsetAngle).ToRotationVector2() * flameOffsetRadius + Main.rand.NextVector2Circular(7f, 7f);
@@ -1028,7 +1028,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Sqrt(opacity));
+                laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Sqrt(opacity));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(425f));
                 laserScopeEffect.Parameters["laserAngle"].SetValue(MathHelper.Pi - new Vector2(npc.Infernum().ExtraAI[0], npc.Infernum().ExtraAI[1]).ToRotation());
                 laserScopeEffect.Parameters["laserWidth"].SetValue(opacity * 0.01f);

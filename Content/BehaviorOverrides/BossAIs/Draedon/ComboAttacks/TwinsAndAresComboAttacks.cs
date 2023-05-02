@@ -436,7 +436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         for (int i = 0; i < aresLaserbeamCount; i++)
                         {
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
-                            float squishedRatio = (float)Math.Pow(MathF.Sin(MathHelper.Pi * b / 7f), 2D);
+                            float squishedRatio = MathF.Pow(CalamityUtils.Convert01To010(b / 7f), 2f);
                             float smoothenedRatio = MathHelper.SmoothStep(0f, 1f, squishedRatio);
                             float offsetAngle = MathHelper.PiOver2 + MathHelper.TwoPi * i / aresLaserbeamCount;
                             float telegraphStartingAngle = MathHelper.Lerp(-0.55f, 0.55f, smoothenedRatio) + offsetAngle;

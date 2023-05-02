@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Turquoise, Color.Cyan, (float)Math.Pow(completionRatio, 2D));
+            Color color = Color.Lerp(Color.Turquoise, Color.Cyan, MathF.Pow(completionRatio, 2f));
             return color * Projectile.Opacity * 1.1f;
         }
 

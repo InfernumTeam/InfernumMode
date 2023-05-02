@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return;
             }
 
-            float mouthOffset = (float)Math.Pow(Radius / MaxRadius, 2.3) * MaxRadius * 0.92f + 45f;
+            float mouthOffset = MathF.Pow(Radius / MaxRadius, 2.3f) * MaxRadius * 0.92f + 45f;
             NPC sepulcher = Main.npc[sepulcherIndex];
             Projectile.Center = sepulcher.Center + sepulcher.velocity.SafeNormalize((sepulcher.rotation - MathHelper.PiOver2).ToRotationVector2()) * mouthOffset;
 

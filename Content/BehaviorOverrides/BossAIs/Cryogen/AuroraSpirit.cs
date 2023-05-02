@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (Projectile.ai[1] == 0f)
             {
                 if (Time < 110f)
-                    Projectile.velocity.Y = (float)Math.Pow(Math.Sin(Time / 29f), 10D) * 14.5f;
+                    Projectile.velocity.Y = MathF.Pow(MathF.Sin(Time / 29f), 10f) * 14.5f;
                 else
                     Projectile.velocity.Y *= 0.93f;
             }

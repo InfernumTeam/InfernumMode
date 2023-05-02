@@ -312,7 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     float intensity = MathHelper.Clamp(brightnessWidthFactor * 1.1f - i / 15f, 0f, 1f);
                     Vector2 lightPillarOrigin = new(TextureAssets.MagicPixel.Value.Width / 2f, TextureAssets.MagicPixel.Value.Height);
-                    Vector2 lightPillarScale = new((float)Math.Sqrt(intensity + i) * brightnessWidthFactor * 200f, 6f);
+                    Vector2 lightPillarScale = new(MathF.Sqrt(intensity + i) * brightnessWidthFactor * 200f, 6f);
                     Color lightPillarColor = new Color(0.7f, 0.55f, 0.38f, 0f) * intensity * npc.Infernum().ExtraAI[0] * 0.4f;
                     spriteBatch.Draw(TextureAssets.MagicPixel.Value, lightPillarPosition, null, lightPillarColor, 0f, lightPillarOrigin, lightPillarScale, 0, 0f);
                 }

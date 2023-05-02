@@ -165,7 +165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Draw spikes.
             int index = 0;
-            float spikeScale = (float)Math.Pow(npc.Infernum().ExtraAI[0], 1.64) * npc.scale;
+            float spikeScale = MathF.Pow(npc.Infernum().ExtraAI[0], 1.64f) * npc.scale;
             foreach (Vector2 spikePosition in GetSpikePositions(npc))
             {
                 SpriteEffects direction = index < 2 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.InverseKinematics;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -334,6 +335,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 deathraySound.Stop();
                 SoundEngine.PlaySound(AresBody.LaserEndSound with { Volume = blenderVolume }, npc.Center);
+
+                if (Utilities.IsAprilFirst())
+                    SoundEngine.PlaySound(TheMicrowave.BeepSound with { Volume = blenderVolume }, npc.Center);
             }
 
             // Handle the final phase transition.

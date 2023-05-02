@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
 
             // Adjust the hitbox.
-            Projectile.ExpandHitboxBy((int)(CurrentRadius * Projectile.scale * 0.75f), (int)(CurrentRadius * Projectile.scale * 0.75f));
+            Projectile.ExpandHitboxBy((int)(CurrentRadius * Projectile.scale * 0.54f), (int)(CurrentRadius * Projectile.scale * 0.54f));
         }
 
         public override bool PreDraw(ref Color lightColor)

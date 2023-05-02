@@ -2033,6 +2033,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 ModContent.ProjectileType<Infernado2>(),
                 ModContent.ProjectileType<InfernadoSpawner>(),
                 ModContent.ProjectileType<Flare>(),
+                ModContent.ProjectileType<FlareBomb>(),
                 ModContent.ProjectileType<BigFlare>(),
                 ModContent.ProjectileType<BigFlare2>(),
                 ModContent.ProjectileType<YharonHeatFlashFireball>(),

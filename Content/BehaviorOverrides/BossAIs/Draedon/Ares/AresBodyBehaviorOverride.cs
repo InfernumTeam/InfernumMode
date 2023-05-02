@@ -809,6 +809,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.Center = Vector2.Lerp(npc.Center, target.Center + new Vector2(target.velocity.X * 12f, zPosition * -100f), 0.1f);
                 npc.velocity.X *= 0.9f;
 
+                // Clean up old projectiles.
+                ExoMechManagement.ClearAwayTransitionProjectiles();
+
                 if (attackTimer == anticipationTime - 40f)
                 {
                     DoLaughEffect(npc, target);

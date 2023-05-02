@@ -5,7 +5,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Calamity = CalamityMod.CalamityMod;
 
-
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class GuardiansMusicSceneInfernum : BaseMusicSceneEffect
@@ -20,6 +19,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override int VanillaMusic => MusicID.Boss1;
 
-        public override int OtherworldMusic => MusicID.OtherworldlyBoss1;        
+        public override int OtherworldMusic => MusicID.OtherworldlyBoss1;
     }
 }

@@ -10,7 +10,7 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
-using static InfernumMode.ILEditingStuff.HookManager;
+using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {

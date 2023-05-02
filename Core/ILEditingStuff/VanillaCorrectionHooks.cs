@@ -44,7 +44,7 @@ using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
-using static InfernumMode.ILEditingStuff.HookManager;
+using static InfernumMode.Core.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
 
 namespace InfernumMode.Core.ILEditingStuff

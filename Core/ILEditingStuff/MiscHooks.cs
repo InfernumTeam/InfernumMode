@@ -16,7 +16,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
-using static InfernumMode.ILEditingStuff.HookManager;
+using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {

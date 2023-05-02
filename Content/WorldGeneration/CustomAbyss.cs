@@ -7,7 +7,7 @@ using CalamityMod.World;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Miscellaneous;
+using InfernumMode.Common;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

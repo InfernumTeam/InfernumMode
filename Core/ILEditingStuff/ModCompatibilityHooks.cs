@@ -8,7 +8,7 @@ using MonoMod.Cil;
 using System;
 using Terraria;
 using Terraria.ModLoader;
-using static InfernumMode.ILEditingStuff.HookManager;
+using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {

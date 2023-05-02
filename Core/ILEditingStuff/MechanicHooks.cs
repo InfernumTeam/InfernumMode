@@ -45,10 +45,10 @@ using Terraria.GameContent.Events;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.ILEditingStuff.HookManager;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
+using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {

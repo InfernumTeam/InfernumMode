@@ -8,7 +8,7 @@ using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.ILEditingStuff;
+using InfernumMode.Core.ILEditingStuff;
 using System.IO;
 using Terraria;
 using Terraria.ID;

@@ -11,7 +11,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
-using static InfernumMode.ILEditingStuff.HookManager;
+using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
 {

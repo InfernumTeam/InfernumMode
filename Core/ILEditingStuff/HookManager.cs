@@ -23,7 +23,7 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.ILEditingStuff
+namespace InfernumMode.Core.ILEditingStuff
 {
     public static partial class HookManager
     {

@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria.WorldBuilding;
 
-namespace InfernumMode.Miscellaneous
+namespace InfernumMode.Common
 {
     public class CustomInfernumShapes
     {

@@ -14,6 +14,7 @@ namespace InfernumMode.Content.Projectiles.Pets
         {
             DisplayName.SetDefault("Blahaj");
             Main.projPet[Projectile.type] = true;
+            Main.projFrames[Type] = 4;
         }
 
         public override void SetDefaults()
@@ -37,6 +38,10 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             Projectile.FloatingPetAI(false, 0.02f);
             Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X).ToDirectionInt();
+
+            // Decide frames.
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 9 % Main.projFrames[Type];
 
             HandlePetVariables();
         }

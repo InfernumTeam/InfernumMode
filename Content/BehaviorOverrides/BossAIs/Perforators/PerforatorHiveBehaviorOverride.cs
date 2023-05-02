@@ -246,7 +246,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             {
                 // Move slightly to emulate flinching from something inside the hive.
                 npc.velocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 6;
-                npc.rotation = npc.velocity.ToRotation();
             }
             if (deathTimer % flinchInterval + 20 == 0)
             {

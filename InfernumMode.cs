@@ -96,7 +96,7 @@ namespace InfernumMode
             IntroScreenManager.Load();
             NPCBehaviorOverride.LoadAll();
             ProjectileBehaviorOverride.LoadAll();
-            BossBarManager.Load(Instance);
+            BossBarManager.LoadPhaseInfo();
 
             if (Main.netMode != NetmodeID.Server)
             {

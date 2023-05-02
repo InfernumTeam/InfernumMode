@@ -70,6 +70,7 @@ namespace InfernumMode.Assets.Effects
         #region Screen Shaders
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
         public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
+        public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
         public static Filter BloomShader => Filters.Scene["InfernumMode:Bloom"];
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
@@ -267,6 +268,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Bossbar shader.
+            Ref<Effect> bossBarShader = new(assets.Request<Effect>("Assets/Effects/Overlays/BossBarShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:BossBar"] = new Filter(new(bossBarShader, "FilterPass"), EffectPriority.VeryHigh);
+
             // Raindrop shader.
             Ref<Effect> rainShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/RaindropShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Raindrops"] = new Filter(new(rainShader, "RainPass"), EffectPriority.VeryHigh);

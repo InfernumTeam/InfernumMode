@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Buffs
         public override void Update(Player player, ref int buffIndex)
         {
             player.buffTime[buffIndex] = 18000;
-            player.Infernum_Pet().AsterPet = true;
+            player.Infernum_Pet().BlahajPet = true;
             bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<BlahajProj>()] <= 0;
             if (petProjectileNotSpawned && player.whoAmI == Main.myPlayer)
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Top - Vector2.UnitY * 50f, Vector2.Zero, ModContent.ProjectileType<BlahajProj>(), 0, 0f, player.whoAmI);

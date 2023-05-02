@@ -230,7 +230,7 @@ namespace InfernumMode.Content.WorldGeneration
             ClearOutStrayTiles(layer1Area);
 
             // Generate sulphurous gravel on the cave walls.
-            GenerateLayer1SulphurousGravel(layer1Area);
+            GenerateLayer1SulphurousShale(layer1Area);
 
             // Generate scenic tiles.
             GeneratePostSkeletronTiles(layer1Area);
@@ -275,7 +275,7 @@ namespace InfernumMode.Content.WorldGeneration
             });
         }
 
-        public static void GenerateLayer1SulphurousGravel(Rectangle layer1Area)
+        public static void GenerateLayer1SulphurousShale(Rectangle layer1Area)
         {
             int sandstoneSeed = WorldGen.genRand.Next();
             WorldSaveSystem.AbyssLayer1ForestSeed = WorldGen.genRand.Next();

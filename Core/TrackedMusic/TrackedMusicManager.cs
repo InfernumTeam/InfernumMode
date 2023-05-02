@@ -11,12 +11,13 @@ using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Core.GlobalInstances.GlobalNPCOverrides;
 
 namespace InfernumMode.Core.TrackedMusic
 {
     public class TrackedMusicManager : ModSystem
     {
+        internal static bool PausedBecauseOfUI;
+
         internal static List<int> TracksThatDontUseTerrariasSystem = new();
 
         internal static Dictionary<int, Song> CustomTracks = new();
@@ -24,8 +25,6 @@ namespace InfernumMode.Core.TrackedMusic
         internal static Dictionary<int, string> CustomTrackDiskPositions = new();
 
         internal static ConstructorInfo SongConstructor;
-
-        internal static bool PausedBecauseOfUI;
 
         public static readonly List<string> CustomTrackPaths = new()
         {

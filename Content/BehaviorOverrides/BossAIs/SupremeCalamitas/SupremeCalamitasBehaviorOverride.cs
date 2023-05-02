@@ -2171,7 +2171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                         for (float dx = 0f; dx < dartBulletHellWallArea; dx += dartBulletHellGapArea)
                         {
-                            Vector2 dartSpawnPosition = new(x + dx + Main.rand.NextFloatDirection() * 4f, npc.Infernum().Arena.Top + Main.rand.NextFloatDirection() * 8f);
+                            Vector2 dartSpawnPosition = new(x + dx + Main.rand.NextFloatDirection() * 8f, npc.Infernum().Arena.Top + Main.rand.NextFloatDirection() * 12f);
                             if (dartSpawnPosition.X >= npc.Infernum().Arena.Right)
                                 continue;
 
@@ -2280,6 +2280,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Switch from the Epiphany section of Stained, Brutal Calamity to the Acceptance section.
                 npc.ModNPC.Music = MusicID.Eerie;
                 CalamityGlobalNPC.SCalAcceptance = npc.whoAmI;
+
+                // Start the acceptance timer for after SCal disappears.
+                if (SCalAcceptanceMusicSystem.ThemeTimer <= 0)
+                    SCalAcceptanceMusicSystem.ThemeTimer = 1;
 
                 frameType = (int)SCalFrameType.UpwardDraft;
 

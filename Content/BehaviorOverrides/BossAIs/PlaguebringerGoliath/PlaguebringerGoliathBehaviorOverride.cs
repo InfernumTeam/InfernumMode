@@ -758,7 +758,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 }
 
                 if (bombingTimer == bombingDelay)
-                    SoundEngine.PlaySound(HandheldTank.UseSound, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PBGMissileLaunchSound, target.Center);
 
                 if (bombingTimer > bombingDelay + 90f)
                 {

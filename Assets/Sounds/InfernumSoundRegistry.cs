@@ -50,6 +50,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle BirbCrySound = new("InfernumMode/Assets/Sounds/Custom/Misc/BirbCry");
 
+        public static readonly SoundStyle BrainLightningSound = new("InfernumMode/Assets/Sounds/Custom/BrainOfCthulhu/BrainLightning");
+
         public static readonly SoundStyle BrimstoneLaser = new("InfernumMode/Assets/Sounds/Custom/BrimstoneElemental/BrimstoneLaser");
 
         public static readonly SoundStyle BrimstoneElementalShellGroundHit = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/BrimstoneElementalShellGroundHit");

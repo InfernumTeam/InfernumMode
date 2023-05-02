@@ -1,6 +1,7 @@
 using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
@@ -89,6 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 if (Time % AttackCycleTime == (int)(AttackCycleTime * 0.667f) + 5)
                 {
                     SoundEngine.PlaySound(SoundID.Item125, nearestTarget.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.BrainLightningSound with { Volume = 0.6f }, nearestTarget.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

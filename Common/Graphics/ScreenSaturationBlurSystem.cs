@@ -75,7 +75,7 @@ namespace InfernumMode.Common.Graphics
 
         public static int TotalBlurIterations => 1;
 
-        public static float DownscaleFactor => 48f;
+        public static float DownscaleFactor => 32f;
 
         public static float BlurBrightnessFactor => 60f;
 

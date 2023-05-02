@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public const int BackArmSwapDelay = 1800;
 
-        public const int AresLaserStartSoundDuration = 194;
+        public const int AresLaserStartSoundDuration = 174;
 
         public const float Phase1ArmChargeupTime = 240f;
 
@@ -297,7 +297,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Increment the blender sound timer if it's activated.
-            float blenderVolume = 2f;
+            float blenderVolume = 3.2f;
             if (blenderSoundTimer >= 1f)
             {
                 if (blenderSoundTimer == 2f)
@@ -732,10 +732,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 else
                     spinSpeed *= -Utils.GetLerpValue(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
                 spinSpeed *= 0.84f;
-
-                if (adjustedTimer == spinTime - 60)
-                    blenderSoundIsLooping = 0f;
             }
+
+            // Stop the blender sound.
+            if (adjustedTimer >= spinTime - 60)
+                blenderSoundIsLooping = 0f;
 
             // Make the lasers slower in multiplayer.
             if (Main.netMode != NetmodeID.SinglePlayer)

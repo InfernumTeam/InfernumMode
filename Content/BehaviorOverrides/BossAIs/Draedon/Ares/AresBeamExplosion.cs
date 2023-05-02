@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -53,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
+            SoundEngine.PlaySound(CommonCalamitySounds.ExoPlasmaExplosionSound, Projectile.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;

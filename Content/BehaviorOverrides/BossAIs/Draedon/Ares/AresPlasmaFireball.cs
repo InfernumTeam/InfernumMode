@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -123,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.Center = Projectile.position;
             Projectile.Damage();
 
-            SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
+            SoundEngine.PlaySound(CommonCalamitySounds.ExoPlasmaExplosionSound, Projectile.Center);
 
             // Release plasma.
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[1] != -1f)

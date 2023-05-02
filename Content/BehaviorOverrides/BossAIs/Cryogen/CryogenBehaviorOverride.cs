@@ -555,7 +555,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % burstCreationRate == burstCreationRate - 1f && attackTimer < burstCreationRate * burstCount)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
-                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                SoundEngine.PlaySound(CryogenBoss.ShieldRegenSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

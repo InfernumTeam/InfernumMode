@@ -1,15 +1,15 @@
 ﻿using CalamityMod.Particles;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Items;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.ModLoader;
-using InfernumMode.Core.GlobalInstances.Players;
-using InfernumMode.Common.Graphics.Particles;
 using Terraria.Audio;
-using InfernumMode.Assets.Sounds;
 using Terraria.ID;
-using InfernumMode.Content.Buffs;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Generic
 {

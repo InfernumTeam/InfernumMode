@@ -1,15 +1,15 @@
-using System;
-using Terraria;
-using Terraria.Graphics.Effects;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using Terraria.Graphics;
-using CalamityMod.NPCs;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics
 {

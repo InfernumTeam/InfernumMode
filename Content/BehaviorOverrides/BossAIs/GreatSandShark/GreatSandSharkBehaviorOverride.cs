@@ -1,6 +1,6 @@
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.GlobalInstances;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

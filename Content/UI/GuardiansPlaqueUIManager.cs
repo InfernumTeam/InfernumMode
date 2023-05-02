@@ -58,7 +58,7 @@ namespace InfernumMode.Content.UI
                 // Out of an abundance of caution, Infernum implements the same solution as them and only uses the font on windows operating systems.
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     return InfernumMode.Instance.Assets.Request<DynamicSpriteFont>("Assets/Fonts/ProfanedText", AssetRequestMode.ImmediateLoad).Value;
-                
+
                 return FontAssets.MouseText.Value;
             }
         }

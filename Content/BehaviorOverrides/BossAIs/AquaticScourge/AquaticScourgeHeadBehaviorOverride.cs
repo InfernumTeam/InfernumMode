@@ -12,9 +12,12 @@ using InfernumMode.Common;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Items.Placeables;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.WorldGeneration;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.GlobalInstances;
+using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -26,9 +29,6 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using InfernumMode.Content.Projectiles.Pets;
-using InfernumMode.Core.Netcode;
-using InfernumMode.Core.Netcode.Packets;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {

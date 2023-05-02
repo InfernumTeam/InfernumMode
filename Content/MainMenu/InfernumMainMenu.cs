@@ -169,7 +169,7 @@ namespace InfernumMode.Content.MainMenu
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
-            
+
             // Apply a raindrop effect to the texture.
             Effect raindrop = InfernumEffectsRegistry.RaindropShader.GetShader().Shader;
             raindrop.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 2f);

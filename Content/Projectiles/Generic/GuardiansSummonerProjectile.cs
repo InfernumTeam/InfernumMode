@@ -216,7 +216,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                         });
                         Utilities.NewProjectileBetter(basePos, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 0, 0f);
                     }
-                }              
+                }
             }
 
             if (Time >= SpawnTime + 30f)
@@ -244,7 +244,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                     Main.rand.NextBool() ? WayfinderSymbol.Colors[0] : WayfinderSymbol.Colors[1],
                     Color.Gray, 120, Main.rand.NextFloat(0.85f, 1.35f), true);
                 GeneralParticleHandler.SpawnParticle(fireExplosion);
-            }     
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -265,8 +265,8 @@ namespace InfernumMode.Content.Projectiles.Generic
                 opacity = MathHelper.Clamp(opacity, 0.5f, 1f);
 
             Vector2 drawPosition = ProviLightPosition - Main.screenPosition;
-            Color lightColor = WayfinderSymbol.Colors[1] with { A = 0};
-            Color coloredLight = WayfinderSymbol.Colors[0] with { A = 0};
+            Color lightColor = WayfinderSymbol.Colors[1] with { A = 0 };
+            Color coloredLight = WayfinderSymbol.Colors[0] with { A = 0 };
 
             Main.spriteBatch.Draw(light, drawPosition, null, lightColor * opacity, -MathHelper.PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(light, drawPosition, null, coloredLight * opacity, -MathHelper.PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);

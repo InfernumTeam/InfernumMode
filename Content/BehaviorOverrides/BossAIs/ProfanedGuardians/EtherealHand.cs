@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static NPC AttackerGuardian
         {
             get
-            { 
+            {
                 if (Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss))
                     return Main.npc[CalamityGlobalNPC.doughnutBoss];
                 return null;
@@ -155,10 +155,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             int totalPoints = 20 + (int)(distanceFromAttacker / 40f);
 
             Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, NPC.Center, 0.5f);
-           
+
             sagLocation.Y += AttackerGuardian.velocity.ClampMagnitude(1f, 18f).Y * -5f;
             sagLocation.Y += MathHelper.Lerp(0f, 30f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y + 0.1f), true));
-            
+
 
             Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, NPC.Center).GetPoints(totalPoints).ToArray();
 

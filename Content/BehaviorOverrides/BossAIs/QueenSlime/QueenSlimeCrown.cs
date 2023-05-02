@@ -1,13 +1,13 @@
-﻿using CalamityMod.Events;
-using CalamityMod;
-using Microsoft.Xna.Framework.Graphics;
+﻿using CalamityMod;
+using CalamityMod.Events;
+using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
-using Terraria.ID;
-using Terraria.ModLoader;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
-using InfernumMode.Assets.ExtraTextures;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 {

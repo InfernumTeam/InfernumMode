@@ -1,12 +1,12 @@
+using InfernumMode.Content.Items.Pets;
 using InfernumMode.Content.Items.Placeables;
+using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using InfernumMode.Content.Items.Pets;
-using InfernumMode.Content.Projectiles.Generic;
 
 namespace InfernumMode.Content.Tiles
 {

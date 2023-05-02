@@ -51,7 +51,7 @@ namespace InfernumMode.Content.Items.Accessories
             else if (line.Text == "Temporary")
             {
                 Vector2 drawOffset = Vector2.UnitY * yOffset;
-                drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles,  "Maybe with this, we can hold onto the ");
+                drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles, "Maybe with this, we can hold onto the ");
                 drawOffset.X += DrawLine(line, drawOffset, ref memorySparkles, "memories", true, 12);
                 drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles, "?");
                 return false;

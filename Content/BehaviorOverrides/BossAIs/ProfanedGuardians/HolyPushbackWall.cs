@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // The gap is determined by the projectile center, and thus controlled by the attacking guardian.
             // Draw a set distance above and below the center to give a gap in the wall.
-            Vector2 drawPos = Projectile.Center - new Vector2(0f, LaserDistance /2);
+            Vector2 drawPos = Projectile.Center - new Vector2(0f, LaserDistance / 2);
             Vector2 endPos = Projectile.Center + new Vector2(0f, LaserDistance / 2);
             Vector2[] topDrawPoints = new Vector2[8];
             for (int i = 0; i < topDrawPoints.Length; i++)

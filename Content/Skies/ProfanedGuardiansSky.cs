@@ -110,7 +110,7 @@ namespace InfernumMode.Content.Skies
                 Symbols.Clear();
                 Deactivate();
                 return;
-            }            
+            }
 
             if (maxDepth >= 0 && minDepth < 0)
             {

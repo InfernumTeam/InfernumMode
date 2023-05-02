@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         }
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.9f;
-        
+
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         public override void Kill(int timeLeft)

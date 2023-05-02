@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.ILEditing;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;

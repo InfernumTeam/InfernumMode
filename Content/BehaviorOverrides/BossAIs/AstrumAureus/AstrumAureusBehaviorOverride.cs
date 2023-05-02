@@ -9,8 +9,8 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.GlobalInstances;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -22,7 +22,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-
 using AureusBoss = CalamityMod.NPCs.AstrumAureus.AstrumAureus;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus

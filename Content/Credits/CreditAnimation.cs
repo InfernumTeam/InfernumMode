@@ -98,7 +98,7 @@ namespace InfernumMode.Content.Credits
                 Vector2 scale = Vector2.One * ScreenCapturer.DownscaleFactor;
                 if (texture.Height >= 120f)
                     scale *= 120f / texture.Height;
-                
+
                 // Draw the frame.
                 Main.spriteBatch.Draw(texture, Center, null, Color.White, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }

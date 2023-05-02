@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Status is DefenderShieldStatus.ActiveAndAiming)
             {
                 Vector2 idealOffset = Owner.SafeDirectionTo(Main.player[Owner.target].Center) * 60f;
-                PositionOffset = CalamityUtils.MoveTowards(PositionOffset, idealOffset,7f);
+                PositionOffset = CalamityUtils.MoveTowards(PositionOffset, idealOffset, 7f);
                 Projectile.rotation = PositionOffset.ToRotation();
                 Projectile.netUpdate = true;
                 Projectile.netSpam = 0;

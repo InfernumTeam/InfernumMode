@@ -3,8 +3,8 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.UI;
-using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.GlobalInstances;
+using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,10 +14,9 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod.SlimeGodComboAttackManager;
 using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanSlimeGod;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod.SlimeGodComboAttackManager;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 {

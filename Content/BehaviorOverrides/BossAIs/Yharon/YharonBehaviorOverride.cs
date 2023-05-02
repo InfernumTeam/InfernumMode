@@ -5,12 +5,16 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Dusts;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.Skies;
 using InfernumMode.Core;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -24,14 +28,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-
 using YharonBoss = CalamityMod.NPCs.Yharon.Yharon;
-using InfernumMode.Content.Skies;
-using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.Dusts;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.Projectiles;
-using InfernumMode.Content.Projectiles.Generic;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {

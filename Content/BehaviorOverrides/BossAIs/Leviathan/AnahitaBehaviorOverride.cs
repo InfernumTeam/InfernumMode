@@ -16,9 +16,8 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan.LeviathanComboAttackManager;
+using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 {

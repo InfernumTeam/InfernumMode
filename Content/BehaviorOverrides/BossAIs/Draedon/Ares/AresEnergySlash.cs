@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using InfernumMode.Assets.Effects;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
-using CalamityMod;
-using System.Collections.Generic;
-using InfernumMode.Assets.Effects;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {

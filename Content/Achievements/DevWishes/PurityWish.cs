@@ -1,6 +1,5 @@
 ﻿using CalamityMod.NPCs;
 using InfernumMode.Content.Items;
-using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
 using Terraria.ModLoader;

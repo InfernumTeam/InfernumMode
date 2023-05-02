@@ -1,19 +1,16 @@
 using CalamityMod;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Achievements;
-using InfernumMode.Content.Items;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.TileData;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System.Linq;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 

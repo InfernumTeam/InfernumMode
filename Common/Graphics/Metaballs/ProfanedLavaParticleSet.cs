@@ -35,7 +35,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
             Main.gameMenu ? TextureAssets.MagicPixel.Value : PreferredBackground.Value,
         };
 
-        public static Asset<Texture2D> PreferredBackground => ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? 
+        public static Asset<Texture2D> PreferredBackground => ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ?
             InfernumTextureRegistry.HolyFirePixelLayerNight : InfernumTextureRegistry.HolyFirePixelLayer;
 
         public override void DrawParticles()

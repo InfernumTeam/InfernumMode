@@ -73,7 +73,7 @@ namespace InfernumMode.Content.Projectiles.Magic
                 else
                     slowDown = true;
             }
-            
+
             if (slowDown)
             {
                 float angularOffset = CalamityUtils.AperiodicSin(Time / 15f + Projectile.identity) * 0.4f;

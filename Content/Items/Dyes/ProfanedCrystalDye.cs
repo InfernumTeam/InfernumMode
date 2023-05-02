@@ -1,14 +1,14 @@
-﻿using CalamityMod.Items.Materials;
+﻿using CalamityMod;
+using CalamityMod.Items.Dyes;
+using CalamityMod.Items.Materials;
+using InfernumMode.Assets.ExtraTextures;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Graphics.Shaders;
-using Microsoft.Xna.Framework;
-using ReLogic.Content;
-using CalamityMod.Items.Dyes;
-using CalamityMod;
-using InfernumMode.Assets.ExtraTextures;
 
 namespace InfernumMode.Content.Items.Dyes
 {

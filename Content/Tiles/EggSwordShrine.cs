@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Tiles
             TileObjectData.addTile(Type);
             AddMapEntry(new Color(126, 52, 42));
         }
-        
+
         public override bool CanExplode(int i, int j) => IsBreakable;
 
         public override bool CanKillTile(int i, int j, ref bool blockDamaged) => IsBreakable;

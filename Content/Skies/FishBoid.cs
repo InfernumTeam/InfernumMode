@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Skies
             // Choose a direction.
 
             // Increase the rotation and time.
-            Rotation = Velocity.ToRotation() ;
+            Rotation = Velocity.ToRotation();
             //WrapAround();
             DoBehavior();
 
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.Skies
 
                 coheshion /= total;
                 float clockCenterMoveInterpolant = Utils.GetLerpValue(0f, 40f, Vector2.Distance(Position, coheshion), true);
-                Velocity += (coheshion - Position ) * clockCenterMoveInterpolant * ClumpCoeffecient;
+                Velocity += (coheshion - Position) * clockCenterMoveInterpolant * ClumpCoeffecient;
 
                 separation /= total;
                 Velocity += separation * SeperateCoeffecient;
@@ -157,7 +157,7 @@ namespace InfernumMode.Content.Skies
                 Rectangle frame = new(0, FrameHeight * CurrentFrame, FrameWidth, FrameHeight);
                 Vector2 origin = frame.Size() * 0.5f;
                 float opacityScalar = MathHelper.Lerp(0.4f, 0.7f, (Depth - 1) / 2f);
-                Main.spriteBatch.Draw(texture, position, frame, DrawColor * opacityScalar, rotation, origin, scale* Scale, effects, 0f);
+                Main.spriteBatch.Draw(texture, position, frame, DrawColor * opacityScalar, rotation, origin, scale * Scale, effects, 0f);
                 Main.spriteBatch.Draw(glowmask, position, frame, Color.White * 1.3f * opacityScalar, rotation, origin, scale * Scale, effects, 0f);
 
             }

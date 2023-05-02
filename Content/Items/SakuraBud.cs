@@ -1,5 +1,4 @@
 ﻿using CalamityMod.Items;
-using CalamityMod.Particles;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core.GlobalInstances.Systems;

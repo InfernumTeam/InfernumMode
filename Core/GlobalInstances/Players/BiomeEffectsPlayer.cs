@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.Events;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Biomes;

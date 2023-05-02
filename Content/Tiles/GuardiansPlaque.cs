@@ -12,7 +12,7 @@ using Terraria.ObjectData;
 
 namespace InfernumMode.Content.Tiles
 {
-    [LegacyName( new string[] {"GuardiansSummoner"})]
+    [LegacyName(new string[] { "GuardiansSummoner" })]
     public class GuardiansPlaque : ModTile
     {
         public const int Width = 3;

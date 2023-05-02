@@ -32,7 +32,7 @@ namespace InfernumMode
         {
             if (player.dead || !player.active)
                 return;
-                
+
             if (!player.HasCooldown(InfiniteFlight.ID))
             {
                 CombatText.NewText(player.Hitbox, textColor, "Infinite flight granted!", true);

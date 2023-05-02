@@ -4,7 +4,6 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
-using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -20,9 +19,9 @@ using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 using static InfernumMode.Common.Graphics.Primitives.PrimitiveTrailCopy;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
+using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride

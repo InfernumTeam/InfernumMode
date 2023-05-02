@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 
 namespace InfernumMode.Content.MainMenu
 {
@@ -45,7 +44,7 @@ namespace InfernumMode.Content.MainMenu
                         1 => InfernumSoundRegistry.ThunderRumble2,
                         _ => InfernumSoundRegistry.ThunderRumble3
                     };
-                    SoundEngine.PlaySound(thunder with { Volume = 0.75f * DistanceModifier, PitchVariance = 0.4f});
+                    SoundEngine.PlaySound(thunder with { Volume = 0.75f * DistanceModifier, PitchVariance = 0.4f });
                 }
             }
         }

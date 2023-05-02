@@ -1,24 +1,23 @@
 using CalamityMod;
+using CalamityMod.InverseKinematics;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.InverseKinematics;
-using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Primitives;
-using Terraria.Graphics.Shaders;
-using System.Collections.Generic;
-
-using CalamityModClass = CalamityMod.CalamityMod;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Common.Graphics;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.DraedonBehaviorOverride;
+using CalamityModClass = CalamityMod.CalamityMod;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {

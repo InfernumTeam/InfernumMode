@@ -62,8 +62,8 @@ namespace InfernumMode.Content.Skies
             {
                 Texture2D rayTexture = InfernumTextureRegistry.LaserCircle.Value;
 
-                Color lightColor = (GuardsVersion ? Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], ColorLerpAmount) : 
-                    Color.Lerp(Color.SkyBlue, Color.Teal, ColorLerpAmount)) 
+                Color lightColor = (GuardsVersion ? Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], ColorLerpAmount) :
+                    Color.Lerp(Color.SkyBlue, Color.Teal, ColorLerpAmount))
                     * Opacity * (0.015f * OpacityScalar) * opacity;
 
                 Vector2 scale = new(0.4f, 15.3f * LengthScalar);
@@ -265,7 +265,7 @@ namespace InfernumMode.Content.Skies
             Rectangle spawnRectangle = new(50, 50, Main.screenWidth - 50, Main.screenHeight - 50);
             if (Main.rand.NextBool(2) && Fishes.Count < maxBoids)
                 Fishes.Add(new(Main.rand.Next(600, 1200), Main.rand.NextFloat(0.15f, 0.2f), Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloat(-Main.screenWidth * 0.8f, Main.screenWidth * 0.8f),
-                        Main.rand.NextFloat(-Main.screenHeight * 0.8f, Main.screenHeight * 0.8f)), 
+                        Main.rand.NextFloat(-Main.screenHeight * 0.8f, Main.screenHeight * 0.8f)),
                         Main.rand.NextFloat(MathF.Tau).ToRotationVector2() * Main.rand.NextFloat(2f, 4f)));
 
             Fishes.RemoveAll(f => f.Time >= f.Lifetime);

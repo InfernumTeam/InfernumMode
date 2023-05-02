@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         public override bool ShouldUpdatePosition() => false;
-        
+
         public float WidthFunction(float completionRatio)
         {
             return Projectile.width * Projectile.scale * 2.5f;

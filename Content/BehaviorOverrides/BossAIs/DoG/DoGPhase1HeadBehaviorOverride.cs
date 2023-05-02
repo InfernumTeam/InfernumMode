@@ -3,12 +3,11 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.Particles;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
-using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -17,7 +16,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
@@ -272,7 +270,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             npc.dontTakeDamage = CurrentPhase2TransitionState == Phase2TransitionState.EnteringPortal;
 
             // Determine the hitbox size.
-            npc.Size = Vector2.One * 132f;          
+            npc.Size = Vector2.One * 132f;
 
             // Defer all further execution to the second phase AI manager if in the second phase.
             if (DoGPhase2HeadBehaviorOverride.InPhase2)

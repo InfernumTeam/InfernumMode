@@ -309,7 +309,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     for (int i = 1; i <= 5; i++)
                         Gore.NewGore(npc.GetSource_FromAI(), npc.Center, npc.velocity, InfernumMode.Instance.Find<ModGore>("CryogenChainGore" + i).Type, npc.scale);
 
-                    SoundEngine.PlaySound(SoundID.NPCDeath7, npc.Center);
+                    SoundEngine.PlaySound(CryogenBoss.TransitionSound, npc.Center);
                 }
 
                 if (Main.netMode != NetmodeID.Server && subphaseState == 1f)
@@ -361,7 +361,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % burstCreationRate == burstCreationRate - 1f && attackTimer < burstCreationRate * burstCount + 60f)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
-                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                SoundEngine.PlaySound(CryogenBoss.ShieldRegenSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);

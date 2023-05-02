@@ -153,7 +153,6 @@ namespace InfernumMode.Content.Credits
             if (!CreditsPlaying || ShouldPause())
                 return;
 
-            // TODO -- Make this variable based on the amount of frames in the gif.
             float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
             float disposeTime = 1f;
             float fadeInTime = 60f;
@@ -252,7 +251,6 @@ namespace InfernumMode.Content.Credits
 
             if (CurrentState is CreditState.Playing)
             {
-                // TODO -- Make this variable based on the amount of frames in the gif.
                 float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
                 float fadeInTime = 60f;
                 float fadeOutTime = gifTime - fadeInTime;

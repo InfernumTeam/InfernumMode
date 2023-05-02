@@ -8,11 +8,12 @@ namespace InfernumMode.Common.Graphics.Particles
 {
     public class DesertScourgeSandstormParticle : Particle
     {
-        private float Spin;
 
         private float opacity;
 
         public Rectangle Frame;
+
+        public readonly float Spin;
 
         public override string Texture => "CalamityMod/Particles/SandyDust";
 

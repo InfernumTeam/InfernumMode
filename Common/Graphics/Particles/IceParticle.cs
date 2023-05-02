@@ -8,13 +8,14 @@ namespace InfernumMode.Common.Graphics.Particles
 {
     public class SnowyIceParticle : Particle
     {
-        private float Spin;
 
         private float opacity;
 
         private Vector2 Gravity;
 
         public Rectangle Frame;
+
+        public readonly float Spin;
 
         public override bool UseHalfTransparency => false;
 

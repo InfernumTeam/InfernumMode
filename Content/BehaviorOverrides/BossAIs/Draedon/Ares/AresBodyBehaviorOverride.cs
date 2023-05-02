@@ -17,6 +17,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,6 +65,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         };
 
         public const int BackArmSwapDelay = 1800;
+
+        public const int AresLaserStartSoundDuration = 194;
 
         public const float Phase1ArmChargeupTime = 240f;
 
@@ -149,6 +152,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
+            ref float blenderSoundTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_BlenderSoundTimerIndex];
+            ref float blenderSoundIsLooping = ref npc.Infernum().ExtraAI[ExoMechManagement.Ares_BlenderSoundIsLoopingIndex];
+            ref SlotId deathraySoundSlot = ref npc.ModNPC<AresBody>().DeathraySoundSlot;
 
             // Use the screen saturation effect.
             npc.Infernum().ShouldUseSaturationBlur = true;
@@ -237,6 +243,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 hasSummonedComplementMech = 1f;
                 attackTimer = 0f;
                 zPosition = 0f;
+                blenderSoundTimer = 0f;
+                blenderSoundIsLooping = 0f;
                 SelectNextAttack(npc);
                 npc.netUpdate = true;
             }
@@ -288,6 +296,46 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     npc.active = false;
             }
 
+            // Increment the blender sound timer if it's activated.
+            float blenderVolume = 2f;
+            if (blenderSoundTimer >= 1f)
+            {
+                if (blenderSoundTimer == 2f)
+                    SoundEngine.PlaySound(AresBody.LaserStartSound with { Volume = blenderVolume }, npc.Center);
+
+                blenderSoundTimer++;
+
+                // Naturally fade into the loop sound after the start sound has finished.
+                if (blenderSoundTimer >= AresLaserStartSoundDuration)
+                {
+                    blenderSoundTimer = 0f;
+                    blenderSoundIsLooping = 1f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Make the blender sound loop if necessary.
+            if (blenderSoundIsLooping == 1f)
+            {
+                // Keep the laser sound playing at Ares' center, and ensure that it loops.
+                if (SoundEngine.TryGetActiveSound(deathraySoundSlot, out var deathraySound))
+                {
+                    if (deathraySound.IsPlaying)
+                        deathraySound.Position = npc.Center;
+                    else
+                        deathraySound.Resume();
+                }
+                else
+                    deathraySoundSlot = SoundEngine.PlaySound(AresBody.LaserLoopSound with { Volume = blenderVolume }, npc.Center);
+            }
+
+            // If the blender sound is disabled, turn it off immediately.
+            else if (SoundEngine.TryGetActiveSound(deathraySoundSlot, out var deathraySound) && deathraySound.IsPlaying)
+            {
+                deathraySound.Stop();
+                SoundEngine.PlaySound(AresBody.LaserEndSound with { Volume = blenderVolume }, npc.Center);
+            }
+
             // Handle the final phase transition.
             if (finalPhaseAnimationTime <= ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
@@ -303,6 +351,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.TotalMechs >= 2 && (int)attackType < 100)
             {
                 attackTimer = 0f;
+                blenderSoundTimer = 0f;
+                blenderSoundIsLooping = 0f;
 
                 if (initialMech.whoAmI == npc.whoAmI)
                     SelectNextAttack(npc);
@@ -314,6 +364,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Reset the attack type if it was a combo attack but the respective mech is no longer present.
             if ((finalMech != null && finalMech.Opacity > 0f || ExoMechManagement.CurrentAresPhase >= 6) && attackType >= 100f)
             {
+                blenderSoundTimer = 0f;
+                blenderSoundIsLooping = 0f;
                 attackTimer = 0f;
                 attackType = 0f;
                 npc.netUpdate = true;
@@ -349,7 +401,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         break;
                     case AresBodyAttackType.LaserSpinBursts:
                     case AresBodyAttackType.DirectionChangingSpinBursts:
-                        DoBehavior_LaserSpinBursts(npc, target, ref enraged, ref attackTimer, ref frameType);
+                        DoBehavior_LaserSpinBursts(npc, target, ref enraged, ref attackTimer, ref frameType, ref blenderSoundTimer, ref blenderSoundIsLooping);
                         break;
 
                     case AresBodyAttackType.EnergyBladeSlices:
@@ -371,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         break;
 
                     case AresBodyAttackType.PrecisionBlasts:
-                        DoBehavior_PrecisionBlasts(npc, target, ref enraged, ref attackTimer, ref frameType);
+                        DoBehavior_PrecisionBlasts(npc, target, ref enraged, ref attackTimer, ref frameType, ref blenderSoundTimer, ref blenderSoundIsLooping);
                         backarmSwapTimer = 300f;
                         break;
                 }
@@ -392,6 +444,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.rotation = 0f;
             }
 
+            // Give the illusion of being in 3D space by shrinking.
+            // Other parts of code cause Ares to layer being things like trees to better sell the illusion.
             npc.scale = 1f / (zPosition + 1f);
             npc.ShowNameOnHover = true;
             if (Math.Abs(zPosition) >= 0.4f)
@@ -547,7 +601,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_LaserSpinBursts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_LaserSpinBursts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType, ref float blenderSoundTimer, ref float blenderSoundIsLooping)
         {
             int shootDelay = 90;
             int telegraphTime = 60;
@@ -634,6 +688,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     generalAngularOffset = 0f;
+                    blenderSoundTimer = 1f;
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
@@ -677,6 +732,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 else
                     spinSpeed *= -Utils.GetLerpValue(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
                 spinSpeed *= 0.84f;
+
+                if (adjustedTimer == spinTime - 60)
+                    blenderSoundIsLooping = 0f;
             }
 
             // Make the lasers slower in multiplayer.
@@ -866,7 +924,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_PrecisionBlasts(NPC npc, Player target, ref float enraged, ref float attackTimer, ref float frameType, ref float blenderSoundTimer, ref float blenderSoundIsLooping)
         {
             int startingShootDelay = 60;
             int endingShootDelay = 36;
@@ -1029,6 +1087,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                             attackTimer = 0f;
                             attackSubstate = 3f;
+                            blenderSoundTimer = 1f;
                             npc.netUpdate = true;
                         }
                     }
@@ -1071,6 +1130,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         draedon.Infernum().ExtraAI[1] = 1f;
                         draedon.netUpdate = true;
                     }
+
+                    if (attackTimer >= laserbeamSpinTime - 60f)
+                        blenderSoundIsLooping = 0f;
 
                     if (attackTimer >= laserbeamSpinTime)
                     {
@@ -1157,6 +1219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             npc.ai[1] = 0f;
+            npc.Infernum().ExtraAI[ExoMechManagement.Ares_BlenderSoundIsLoopingIndex] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 

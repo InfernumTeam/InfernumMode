@@ -15,7 +15,7 @@ namespace InfernumMode.Content.Tiles
             Main.tileBlockLight[Type] = true;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Arena");
-            AddMapEntry(new Color(40, 70, 70), name);
+            AddMapEntry(new(95, 31, 0), name);
             CalamityUtils.SetMerge(Type, TileID.LihzahrdBrick);
         }
 

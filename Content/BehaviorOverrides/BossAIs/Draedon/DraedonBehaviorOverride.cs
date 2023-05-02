@@ -373,10 +373,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 {
                     if (!InfernumEffectsRegistry.ScreenBorderShader.IsActive() && !InfernumConfig.Instance.ReducedGraphicsConfig)
                     {
-                        // TODO: This currently follows the camera to the edges of the world. Copying the camera stay in bounds code here didnt work, so find a way
-                        // to do it properly.
-                        Vector2 focusPoint = Main.LocalPlayer.Center;
-
+                        Vector2 focusPoint = Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                         Filters.Scene.Activate("InfernumMode:ScreenBorder", focusPoint);
 
                         // Get the section(s) where the current elapsed time is in.

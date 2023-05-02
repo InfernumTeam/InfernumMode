@@ -42,8 +42,8 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override void SetDefaults()
         {
-            Projectile.width = 100;
-            Projectile.height = 100;
+            Projectile.width = 140;
+            Projectile.height = 190;
             Projectile.friendly = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
@@ -76,6 +76,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                 flySpeed *= 0.2f;
 
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Owner.Center) * flySpeed, 0.332f);
+            Projectile.spriteDirection = Projectile.velocity.X.DirectionalSign();
 
             // Enforce a hard limit on how far the sheep god can be from the owner, to prevent just running away forever.
             if (!Projectile.WithinRange(Owner.Center, 1600f))

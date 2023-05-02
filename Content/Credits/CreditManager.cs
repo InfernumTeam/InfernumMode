@@ -1,10 +1,12 @@
 ﻿using InfernumMode.Common.Graphics.AttemptRecording;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using System.Threading;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -215,6 +217,7 @@ namespace InfernumMode.Content.Credits
 
                     if (CreditsTimer >= maxTime)
                     {
+                        Item.NewItem(new EntitySource_WorldEvent(), Main.LocalPlayer.Hitbox, ModContent.ItemType<CreditPainting>());
                         CreditsTimer = 0;
                         CurrentState = CreditState.FinalizingDisposing;
                         return;

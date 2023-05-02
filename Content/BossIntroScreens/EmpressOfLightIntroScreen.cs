@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BossIntroScreens
         public override TextColorData TextColor => new(completionRatio =>
         {
             float period = Main.dayTime ? 0.3f : 1f;
-            float rainbowInterpolant = (float)Math.Sin(completionRatio * MathHelper.Pi * 4f + AnimationCompletion * period * MathHelper.TwoPi) * 0.5f + 0.5f;
+            float rainbowInterpolant = MathF.Sin(completionRatio * MathHelper.Pi * 4f + AnimationCompletion * period * MathHelper.TwoPi) * 0.5f + 0.5f;
 
             if (!Main.dayTime)
                 return Main.hslToRgb(rainbowInterpolant, 1f, 0.64f);

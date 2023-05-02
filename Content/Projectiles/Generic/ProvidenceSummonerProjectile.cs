@@ -52,7 +52,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                         {
                             float verticalOffset = Main.rand.NextFloat() * -Projectile.velocity.Y;
                             Vector2 dustSpawnOffset = Vector2.UnitX * Main.rand.NextFloatDirection() * 0.05f;
-                            dustSpawnOffset.X += (float)Math.Sin((Projectile.position.Y + verticalOffset) * 0.06f + MathHelper.TwoPi * j / 3f) * 0.5f;
+                            dustSpawnOffset.X += MathF.Sin((Projectile.position.Y + verticalOffset) * 0.06f + MathHelper.TwoPi * j / 3f) * 0.5f;
                             dustSpawnOffset.X = MathHelper.Lerp(Main.rand.NextFloat() - 0.5f, dustSpawnOffset.X, MathHelper.Clamp(-Projectile.velocity.Y, 0f, 1f));
                             dustSpawnOffset.Y = -Math.Abs(dustSpawnOffset.X) * 0.25f;
                             dustSpawnOffset *= Utils.GetLerpValue(210f, 180f, Time, true) * new Vector2(40f, 50f);

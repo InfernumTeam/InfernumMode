@@ -2174,7 +2174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (phase2InvincibilityCountdown > 0f)
             {
                 float backBackToRegularColor = Utils.GetLerpValue(75f, 0f, phase2InvincibilityCountdown, true);
-                Color phase2Color = Color.Lerp(Color.Pink, Color.Wheat, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
+                Color phase2Color = Color.Lerp(Color.Pink, Color.Wheat, MathF.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
                 burnColor = Color.Lerp(phase2Color, burnColor, backBackToRegularColor);
             }
             if (npc.life < npc.lifeMax * Subphase7LifeRatio)

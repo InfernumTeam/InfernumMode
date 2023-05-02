@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float explosionInterpolant = Utils.GetLerpValue(200f, 35f, Projectile.timeLeft, true);
             float pulseInterpolant = Utils.GetLerpValue(0.75f, 0.85f, explosionInterpolant, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, explosionInterpolant, true);
-            float colorPulse = ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 7.2f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant * 0.6f;
+            float colorPulse = (MathF.Cos(Main.GlobalTimeWrappedHourly * 7.2f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant * 0.6f;
             colorPulse += (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity * 1.3f) * 0.5f + 0.5f) * 0.4f;
 
             if (explosionInterpolant > 0f)

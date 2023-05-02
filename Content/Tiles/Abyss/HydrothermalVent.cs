@@ -41,7 +41,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             {
                 float positionInterpolant = (i + j) * 0.041f % 1f;
                 Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(0.11f) * MathHelper.Lerp(4.8f, 8.1f, positionInterpolant);
-                smokeVelocity.X += (float)Math.Cos(MathHelper.TwoPi * positionInterpolant) * 1.7f;
+                smokeVelocity.X += MathF.Cos(MathHelper.TwoPi * positionInterpolant) * 1.7f;
                 Projectile.NewProjectile(new EntitySource_WorldEvent(), spawnPosition, smokeVelocity, ModContent.ProjectileType<HydrothermalSmoke>(), Main.expertMode ? 56 : 98, 0f);
             }
         }

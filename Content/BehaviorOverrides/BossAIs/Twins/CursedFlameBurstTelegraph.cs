@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 30f * MathHelper.Pi) * 1.6f;
+            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 30f * MathHelper.Pi) * 1.6f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
         }

@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BossIntroScreens
         public override TextColorData TextColor => new(completionRatio =>
         {
             Color ichorColor = new(250, 171, 4);
-            return Color.Lerp(Color.IndianRed, ichorColor, ((float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.6f);
+            return Color.Lerp(Color.IndianRed, ichorColor, (MathF.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.6f);
         });
 
         public override bool TextShouldBeCentered => true;

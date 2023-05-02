@@ -116,7 +116,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                 rayAnimationCompletion *= rayExpandFactor * aewProximityOpacityFade;
 
                 ulong seed = (ulong)(i + 1) * 177195uL;
-                float rayDirection = MathHelper.TwoPi * i / 8f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
+                float rayDirection = MathHelper.TwoPi * i / 8f + MathF.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
                 rayDirection += Main.GlobalTimeWrappedHourly * 0.48f;
                 DrawLightRay(seed, rayDirection, rayAnimationCompletion, Projectile.Center);
             }

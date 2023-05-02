@@ -928,7 +928,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset;
             if (hasBegunFiring)
-                hoverDestination.Y += (float)Math.Sin((attackTimer - shootDelay) * MathHelper.Pi / verticalBobPeriod) * verticalBobAmplitude;
+                hoverDestination.Y += MathF.Sin((attackTimer - shootDelay) * MathHelper.Pi / verticalBobPeriod) * verticalBobAmplitude;
 
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * MathHelper.Min(npc.Distance(hoverDestination), 32f);
             npc.SimpleFlyMovement(idealVelocity, hoverSpeedFactor * 2.25f);
@@ -1106,8 +1106,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     do
                         bombFireOffsetAngle = MathHelper.TwoPi * Main.rand.NextFloat(8) / 8f;
                     while (bombFireOffsetAngle.ToRotationVector2().AngleBetween(target.velocity) < 0.91f);
-                    bombFirePositionX = target.Center.X + (float)Math.Cos(bombFireOffsetAngle) * 1150f;
-                    bombFirePositionY = target.Center.Y + (float)Math.Sin(bombFireOffsetAngle) * 1150f;
+                    bombFirePositionX = target.Center.X + MathF.Cos(bombFireOffsetAngle) * 1150f;
+                    bombFirePositionY = target.Center.Y + MathF.Sin(bombFireOffsetAngle) * 1150f;
                     npc.netUpdate = true;
                 }
 
@@ -1785,7 +1785,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (heartOffsetAngle < 0f)
                     heartOffsetAngle += MathHelper.TwoPi;
 
-                float focusAngle = -MathHelper.PiOver2 + MathHelper.Lerp(-0.87f, 0.87f, (float)Math.Sin(heart.ai[0] * MathHelper.TwoPi + attackTimer / 19f) * 0.5f + 0.5f);
+                float focusAngle = -MathHelper.PiOver2 + MathHelper.Lerp(-0.87f, 0.87f, MathF.Sin(heart.ai[0] * MathHelper.TwoPi + attackTimer / 19f) * 0.5f + 0.5f);
 
                 // Have hearts hover a fixed distance away from SCal.
                 heart.Center = npc.Center + heartOffsetAngle.AngleLerp(focusAngle, focusInterpolant).ToRotationVector2() * heartRadius;
@@ -2476,7 +2476,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 rotationalDrawOffset = (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
-                    rotationalDrawOffset *= MathHelper.Lerp(3f, 4.25f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
+                    rotationalDrawOffset *= MathHelper.Lerp(3f, 4.25f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
                     Main.spriteBatch.Draw(texture2D15, vector43 + rotationalDrawOffset, frame, auraColor, npc.rotation, vector11, npc.scale * 1.1f, spriteEffects, 0f);
                 }
             }
@@ -2516,7 +2516,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Shield intensity is always high during invincibility.
             if (npc.dontTakeDamage)
-                intensity = 0.75f + Math.Abs((float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.7f)) * 0.1f;
+                intensity = 0.75f + Math.Abs(MathF.Cos(Main.GlobalTimeWrappedHourly * 1.7f)) * 0.1f;
 
             // Make the forcefield weaker in the second phase as a means of showing desparation.
             if (npc.ai[0] >= 3f)
@@ -2580,7 +2580,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // And a laugh right before the charge.
             else if (shouldUseShieldLaughAnimation)
-                jawRotationOffset += MathHelper.Lerp(0.04f, -0.82f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 17.2f) * 0.5f + 0.5f);
+                jawRotationOffset += MathHelper.Lerp(0.04f, -0.82f, MathF.Sin(Main.GlobalTimeWrappedHourly * 17.2f) * 0.5f + 0.5f);
 
             Color shieldColor = Color.White * ShieldOpacity;
             Texture2D shieldSkullTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeShieldTop").Value;

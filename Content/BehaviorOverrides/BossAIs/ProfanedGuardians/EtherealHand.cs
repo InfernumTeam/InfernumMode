@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
 
             Vector2 destination = AttackerGuardian.Center;
-            destination += new Vector2((float)HandSide * 120f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 3f + (float)HandSide * 2.1f) * 30f - 80f);
+            destination += new Vector2((float)HandSide * 120f, MathF.Sin(Main.GlobalTimeWrappedHourly * 3f + (float)HandSide * 2.1f) * 30f - 80f);
 
             FingerOutwardness = MathHelper.Lerp(FingerOutwardness, 35f, 0.2f);
 

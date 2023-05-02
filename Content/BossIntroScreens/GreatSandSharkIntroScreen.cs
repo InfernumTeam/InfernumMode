@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             Color sandColor = new(191, 142, 104);
             Color sandColor2 = new(150, 96, 88);
-            return Color.Lerp(sandColor, sandColor2, (float)Math.Sin(completionRatio * MathHelper.Pi * 3f - AnimationCompletion * MathHelper.Pi));
+            return Color.Lerp(sandColor, sandColor2, MathF.Sin(completionRatio * MathHelper.Pi * 3f - AnimationCompletion * MathHelper.Pi));
         });
 
         public override bool TextShouldBeCentered => true;

@@ -856,7 +856,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     Texture2D lanternTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/CosmicLantern").Value;
                     Rectangle lanternFrame = lanternTexture.Frame(1, 4, 0, (int)(Main.GlobalTimeWrappedHourly * 10f) % 4);
                     float lanternBrightness = npc.Infernum().ExtraAI[9] * Utils.GetLerpValue(1100f, 850f, npc.Distance(Main.LocalPlayer.Center), true);
-                    lanternBrightness += (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.06f;
+                    lanternBrightness += MathF.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.06f;
 
                     Vector2 lanternDrawPosition = baseDrawPosition - Main.screenPosition + new Vector2(npc.spriteDirection * 84f, -38f) * npc.scale;
                     Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;

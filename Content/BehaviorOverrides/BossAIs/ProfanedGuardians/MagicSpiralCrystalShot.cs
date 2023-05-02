@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 previousDrawPoint = InitialCenter;
             Vector2 previousDrawVelocity = InitialVelocity;
 
-            float lineOpacityScalar = (float)Math.Sin(Timer / 30 * MathHelper.Pi);
+            float lineOpacityScalar = MathF.Sin(Timer / 30 * MathHelper.Pi);
 
             // Loop through the total number of draw points.
             for (int i = 0; i < totalDrawPoints; i++)

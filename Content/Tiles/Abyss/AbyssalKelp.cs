@@ -73,7 +73,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             float windPushFactor = MathHelper.Lerp(0.2f, 1f, Math.Abs(Main.WindForVisuals) / 1.2f);
             float offsetAngle = -0.08f * windPushFactor;
             float windCycle = Utils.GetLerpValue(0.08f, 0.18f, Math.Abs(Main.WindForVisuals), true);
-            windCycle += (float)Math.Sin(Main.GlobalTimeWrappedHourly * 2.3f + i * 1.1f + j * 0.81f) * 1.9f + 1.27f;
+            windCycle += MathF.Sin(Main.GlobalTimeWrappedHourly * 2.3f + i * 1.1f + j * 0.81f) * 1.9f + 1.27f;
 
             if (!Main.SettingsEnabled_TilesSwayInWind)
                 windCycle = 0f;

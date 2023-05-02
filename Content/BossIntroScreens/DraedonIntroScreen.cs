@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
-            float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi + completionRatio * MathHelper.Pi * 6f) * 0.5f + 0.5f;
+            float colorFadeInterpolant = MathF.Sin(AnimationCompletion * MathHelper.Pi + completionRatio * MathHelper.Pi * 6f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Silver, Color.Gold, colorFadeInterpolant);
         });
 
@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override void PrepareShader(Effect shader)
         {
-            Color color = CalamityUtils.MulticolorLerp((float)Math.Cos(Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
+            Color color = CalamityUtils.MulticolorLerp(MathF.Cos(Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
             shader.Parameters["uColor"].SetValue(color.ToVector3());
             shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }

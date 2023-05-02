@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float lerpMult = (1f + 0.22f * (float)Math.Cos(Main.GlobalTimeWrappedHourly % 30f * MathHelper.TwoPi * 3f + Projectile.identity % 10f)) * 0.8f;
+            float lerpMult = (1f + 0.22f * MathF.Cos(Main.GlobalTimeWrappedHourly % 30f * MathHelper.TwoPi * 3f + Projectile.identity % 10f)) * 0.8f;
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);

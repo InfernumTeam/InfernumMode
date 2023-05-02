@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         {
             if (Projectile.timeLeft > 330)
             {
-                float width = (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(360f, 330f, Projectile.timeLeft, true)) * 5f + 1f;
+                float width = MathF.Sin(MathHelper.Pi * Utils.GetLerpValue(360f, 330f, Projectile.timeLeft, true)) * 5f + 1f;
                 Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 5100f;
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * 0.4f, width * 1.8f);
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.White * 0.6f, width);

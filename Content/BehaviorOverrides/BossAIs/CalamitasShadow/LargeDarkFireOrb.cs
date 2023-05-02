@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         public void SpecialDraw(SpriteBatch spriteBatch)
         {
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 36f, Time, true);
-            float colorPulse = ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 7.2f + Projectile.identity) * 0.5f + 0.5f) * 0.6f;
+            float colorPulse = (MathF.Cos(Main.GlobalTimeWrappedHourly * 7.2f + Projectile.identity) * 0.5f + 0.5f) * 0.6f;
             colorPulse += (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity * 1.3f) * 0.5f + 0.5f) * 0.4f;
 
             Color explosionTelegraphColor = Color.Lerp(Color.Red, Color.Purple, colorPulse * 0.3f + 0.4f) * circleFadeinInterpolant;

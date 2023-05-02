@@ -965,7 +965,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             if (superchargePower > 0f)
             {
-                float outwardness = superchargePower * 6f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2f) * 0.5f;
+                float outwardness = superchargePower * 6f + MathF.Cos(Main.GlobalTimeWrappedHourly * 2f) * 0.5f;
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 2.9f).ToRotationVector2() * outwardness;

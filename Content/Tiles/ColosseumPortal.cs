@@ -170,7 +170,7 @@ namespace InfernumMode.Content.Tiles
         {
             float tipFadeoffInterpolant = MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
             float baseFadeoffInterpolant = MathHelper.SmoothStep(2.4f, 1f, 1f - CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, 0.64f, completionRatio, true)));
-            float widthAdditionFactor = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -13f + completionRatio * MathHelper.Pi * 4f) * 0.2f;
+            float widthAdditionFactor = MathF.Sin(Main.GlobalTimeWrappedHourly * -13f + completionRatio * MathHelper.Pi * 4f) * 0.2f;
             float generalSquishFactor = Utils.GetLerpValue(0.8f, 0.96f, AnimationCompletion, true);
 
             return tipFadeoffInterpolant * baseFadeoffInterpolant * (1f + widthAdditionFactor) * PortalWidth * generalSquishFactor;
@@ -179,7 +179,7 @@ namespace InfernumMode.Content.Tiles
         public static Color PillarColorFunction(float completionRatio)
         {
             Color lightSandColor = new(234, 179, 112);
-            float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
+            float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
             float opacity = Utils.GetLerpValue(0.84f, 0.96f, AnimationCompletion, true) * Utils.GetLerpValue(0f, 0.13f, completionRatio, true);
             return Color.Lerp(lightSandColor, Color.SkyBlue, (float)Math.Pow(colorShiftInterpolant, 1.64f)) * opacity * 0.85f;
         }

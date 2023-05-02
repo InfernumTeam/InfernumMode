@@ -348,7 +348,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             // Hover to the side of the target and bob up and down.
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
             if (attackTimer >= shootDelay)
-                hoverDestination.Y += (float)Math.Sin((attackTimer - shootDelay) * MathHelper.TwoPi / bobPeriod) * bobAmplitude;
+                hoverDestination.Y += MathF.Sin((attackTimer - shootDelay) * MathHelper.TwoPi / bobPeriod) * bobAmplitude;
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             DoDefaultMovement(npc, hoverDestination, new Vector2(19.6f, 12.5f), 0.8f);
 

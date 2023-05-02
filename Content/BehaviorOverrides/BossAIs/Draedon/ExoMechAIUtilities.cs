@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
             if (telegraphGlowInterpolant > 0f)
             {
-                float whiteFade = (float)Math.Sin(Main.GlobalTimeWrappedHourly * 20f) * 0.5f + 0.5f;
+                float whiteFade = MathF.Sin(Main.GlobalTimeWrappedHourly * 20f) * 0.5f + 0.5f;
                 telegraphColor = Color.Lerp(telegraphColor, Color.White, whiteFade);
                 telegraphColor *= Utils.GetLerpValue(0f, 0.65f, telegraphGlowInterpolant, true) * (float)Math.Pow(Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true), 2D);
 

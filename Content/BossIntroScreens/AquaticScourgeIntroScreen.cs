@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             Color sulphuricColor = new(41, 142, 134);
             Color fleshColor = new(165, 119, 112);
-            return Color.Lerp(sulphuricColor, fleshColor, ((float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.72f);
+            return Color.Lerp(sulphuricColor, fleshColor, (MathF.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.72f);
         });
 
         public override bool TextShouldBeCentered => true;

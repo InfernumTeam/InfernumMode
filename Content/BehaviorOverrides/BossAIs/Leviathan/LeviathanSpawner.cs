@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common;
 using Microsoft.Xna.Framework;
@@ -35,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 120f * MathHelper.Pi) * 4f;
+            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 120f * MathHelper.Pi) * 4f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 
@@ -45,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
             // Shake the screen.
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = (float)Math.Pow(Utils.GetLerpValue(180f, 290f, Time, true), 0.3D) * 20f;
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5D)) * 35f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower += CalamityUtils.Convert01To010(MathF.Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5f)) * 35f;
 
             if (Projectile.timeLeft == 45)
             {
@@ -97,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 for (float x = -xArea; x <= xArea; x += 110f)
                 {
                     // As well as liquid disruption.
-                    float ripplePower = MathHelper.Lerp(60f, 90f, (float)Math.Sin(Main.GlobalTimeWrappedHourly + x / xArea * MathHelper.TwoPi) * 0.5f + 0.5f);
+                    float ripplePower = MathHelper.Lerp(60f, 90f, MathF.Sin(Main.GlobalTimeWrappedHourly + x / xArea * MathHelper.TwoPi) * 0.5f + 0.5f);
                     ripplePower *= MathHelper.Lerp(0.5f, 1f, Time / 300f);
 
                     WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();

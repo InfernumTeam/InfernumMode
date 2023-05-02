@@ -151,7 +151,7 @@ namespace InfernumMode.Content.Tiles.Relics
 
             // Some math magic to make it smoothly move up and down over time
             const float TwoPi = (float)Math.PI * 2f;
-            float offset = (float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 5f);
+            float offset = MathF.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 5f);
             Vector2 drawPos = worldPos + offScreen - Main.screenPosition + new Vector2(0f, -40f) + new Vector2(0f, offset * 4f);
 
             // Draw the main texture
@@ -159,7 +159,7 @@ namespace InfernumMode.Content.Tiles.Relics
             spriteBatch.Draw(glowTexture, drawPos, frame, Color.White, 0f, origin, 1f, effects, 0f);
 
             // Draw the periodic glow effect
-            float scale = (float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f + 0.7f;
+            float scale = MathF.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f + 0.7f;
             Color effectColor = color;
             effectColor.A = 0;
             effectColor = effectColor * 0.1f * scale;

@@ -367,7 +367,7 @@ namespace InfernumMode.Content.Projectiles
 
         public float RayWidthFunction(float completionRatio)
         {
-            float widthOffset = (float)Math.Cos(completionRatio * 73f - Main.GlobalTimeWrappedHourly * 8f) *
+            float widthOffset = MathF.Cos(completionRatio * 73f - Main.GlobalTimeWrappedHourly * 8f) *
                 Utils.GetLerpValue(0f, 0.1f, completionRatio, true) *
                 Utils.GetLerpValue(1f, 0.9f, completionRatio, true);
             return MathHelper.Lerp(2f, HologramRayWidth + 3f, completionRatio) + widthOffset;

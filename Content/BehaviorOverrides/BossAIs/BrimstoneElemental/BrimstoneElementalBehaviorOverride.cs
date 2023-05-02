@@ -1033,7 +1033,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 laserScopeEffect.Parameters["laserAngle"].SetValue(MathHelper.Pi - new Vector2(npc.Infernum().ExtraAI[0], npc.Infernum().ExtraAI[1]).ToRotation());
                 laserScopeEffect.Parameters["laserWidth"].SetValue(opacity * 0.01f);
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(10f);
-                laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Red, Color.Yellow, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.075f + 0.24f).ToVector3());
+                laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Red, Color.Yellow, MathF.Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.075f + 0.24f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Red.ToVector3());
                 laserScopeEffect.Parameters["bloomSize"].SetValue(0.4f + (1f - opacity) * 0.18f);
                 laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(1f);

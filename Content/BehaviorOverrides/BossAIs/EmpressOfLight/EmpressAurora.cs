@@ -51,9 +51,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 scaleFactor = new(3f, 6f);
             for (int i = 0; i < auroraCount; i++)
             {
-                float timePulse = (float)Math.Sin(timeInterpolant * MathHelper.TwoPi + MathHelper.PiOver2 + i / 2f);
+                float timePulse = MathF.Sin(timeInterpolant * MathHelper.TwoPi + MathHelper.PiOver2 + i / 2f);
                 drawOffsetsX[i] = timePulse * (300f - i * 3f);
-                drawOffsetsY[i] = (float)Math.Sin(timeInterpolant * MathHelper.TwoPi * 2f + MathHelper.Pi / 3f + i) * 30f;
+                drawOffsetsY[i] = MathF.Sin(timeInterpolant * MathHelper.TwoPi * 2f + MathHelper.Pi / 3f + i) * 30f;
                 drawOffsetsY[i] -= i * 3f;
                 scales[i] = widthFactorMin + (i + 1) * (widthFactorMax - widthFactorMin) / auroraCount;
                 scales[i] *= 0.3f;

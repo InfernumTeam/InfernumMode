@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             NPC.dontTakeDamage = GeneralTimer < 60f;
 
             Vector2 continousHoverPosition = Target.Center + new Vector2(-280f, -225f);
-            continousHoverPosition += (NPC.whoAmI * 1.58436f).ToRotationVector2() * (float)Math.Cos(GeneralTimer / 17f) * 42f;
+            continousHoverPosition += (NPC.whoAmI * 1.58436f).ToRotationVector2() * MathF.Cos(GeneralTimer / 17f) * 42f;
             if (Vector2.Distance(GeneralHoverPosition, continousHoverPosition) > 325f)
                 GeneralHoverPosition = continousHoverPosition;
 

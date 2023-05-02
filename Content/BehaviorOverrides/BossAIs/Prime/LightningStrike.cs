@@ -25,14 +25,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override float PrimitiveWidthFunction(float completionRatio)
         {
-            float baseWidth = MathHelper.Lerp(4f, 10f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
-            return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio);
+            float baseWidth = MathHelper.Lerp(4f, 10f, MathF.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
+            return baseWidth * MathF.Sin(MathHelper.Pi * completionRatio);
         }
 
         public override Color PrimitiveColorFunction(float completionRatio)
         {
-            Color baseColor = Color.Lerp(Color.Crimson, Color.DarkRed, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
-            return Color.Lerp(baseColor, Color.Red, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
+            Color baseColor = Color.Lerp(Color.Crimson, Color.DarkRed, MathF.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
+            return Color.Lerp(baseColor, Color.Red, (MathF.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
         }
     }
 }

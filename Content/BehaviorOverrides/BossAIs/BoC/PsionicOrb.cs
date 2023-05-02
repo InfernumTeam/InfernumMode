@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -143,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Cyan, Color.White, (float)Math.Sin(Math.Pow(completionRatio, 2D) * MathHelper.Pi));
+            Color color = Color.Lerp(Color.Cyan, Color.White, CalamityUtils.Convert01To010(MathF.Pow(completionRatio, 2f)));
             color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
             color *= Projectile.Opacity * 3f;
             return color;

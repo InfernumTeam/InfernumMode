@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
+            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             if (Time >= Lifetime)

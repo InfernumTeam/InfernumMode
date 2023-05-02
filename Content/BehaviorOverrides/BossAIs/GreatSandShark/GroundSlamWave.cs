@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public float WidthFunction(float completionRatio) => WaveHeight;
 
-        public Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * (float)Math.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 16f;
+        public Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * MathF.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 16f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

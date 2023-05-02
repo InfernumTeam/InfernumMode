@@ -139,7 +139,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            float colorInterpolant = (float)Math.Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 3.1f) * 0.5f + 0.5f;
+            float colorInterpolant = MathF.Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 3.1f) * 0.5f + 0.5f;
             Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Red, Color.Orange, Color.Pink, Color.IndianRed);
             return color;
         }

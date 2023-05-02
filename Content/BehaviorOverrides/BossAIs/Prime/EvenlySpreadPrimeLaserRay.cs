@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public Color ColorFunction(float completionRatio)
         {
-            float colorInterpolant = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             // new(221, 1, 3), new(255, 40, 30)
             Color color = Color.Lerp(new(221, 50, 50), new(255, 5, 1), colorInterpolant * 0.67f);
             return color;

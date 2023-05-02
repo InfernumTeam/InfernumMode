@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
-            float colorInterpolant = (float)Math.Sin(completionRatio * MathHelper.Pi * 4f + AnimationCompletion * MathHelper.TwoPi * 0.4f) * 0.5f + 0.5f;
+            float colorInterpolant = MathF.Sin(completionRatio * MathHelper.Pi * 4f + AnimationCompletion * MathHelper.TwoPi * 0.4f) * 0.5f + 0.5f;
             Color pink = Color.HotPink;
             Color cyan = Color.Cyan;
             return Color.Lerp(pink, cyan, CalamityUtils.Convert01To010(colorInterpolant * 3f % 1f));

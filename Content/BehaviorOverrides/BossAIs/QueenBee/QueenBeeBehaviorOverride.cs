@@ -495,7 +495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
             // Bob up and down.
             if (isTimeToSummonBees)
-                npc.velocity = Vector2.UnitY * (float)Math.Cos(MathHelper.TwoPi * attackTimer / 150f) * 3f;
+                npc.velocity = Vector2.UnitY * MathF.Cos(MathHelper.TwoPi * attackTimer / 150f) * 3f;
 
             // Delete far away stingers.
             foreach (Projectile stinger in Utilities.AllProjectilesByID(ProjectileID.Stinger))

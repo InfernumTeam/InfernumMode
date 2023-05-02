@@ -601,13 +601,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (hasCharged == 0f)
             {
                 float t = MathHelper.TwoPi * attackTimer / 150f;
-                float sinT = (float)Math.Sin(t);
-                float sin2T = (float)Math.Sin(2D * t);
-                float cosT = (float)Math.Cos(t);
-                float denominator = (float)(1D + 2D * Math.Pow(Math.Sin(t), 2D) + Math.Pow(sinT, 4D));
+                float sinT = MathF.Sin(t);
+                float sin2T = MathF.Sin(t * 2f);
+                float cosT = MathF.Cos(t);
+                float denominator = 1f + 1f * MathF.Pow(MathF.Sin(t), 2f) + MathF.Pow(sinT, 4f);
 
-                float speedX = flySpeed * (float)(-sinT - Math.Pow(sinT, 3D) - cosT * sin2T) / denominator;
-                float speedY = flySpeed * (float)(Math.Pow(cosT, 2D) - 2D * Math.Pow(sinT, 4D) - sinT * cosT * sin2T) / denominator;
+                float speedX = flySpeed * (-sinT - MathF.Pow(sinT, 3f) - cosT * sin2T) / denominator;
+                float speedY = flySpeed * (MathF.Pow(cosT, 2f) - MathF.Pow(sinT, 4f) * 2f - sinT * cosT * sin2T) / denominator;
                 npc.velocity = new(speedX, speedY);
             }
 
@@ -1165,7 +1165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     case 2:
                     default:
                         float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
-                        float verticalOffset = (float)Math.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        float verticalOffset = MathF.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
                         currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
                         break;
                 }

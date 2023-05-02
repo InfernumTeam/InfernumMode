@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Define the direction.
-            Projectile.direction = ((float)Math.Cos(Projectile.rotation) > 0f).ToDirectionInt();
+            Projectile.direction = (MathF.Cos(Projectile.rotation) > 0f).ToDirectionInt();
             if (Projectile.spriteDirection == -1)
                 Projectile.rotation += MathHelper.Pi;
             Projectile.spriteDirection = Projectile.direction;

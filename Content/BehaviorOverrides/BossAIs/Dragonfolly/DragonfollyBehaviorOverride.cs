@@ -499,7 +499,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                         SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Pitch = 0.25f }, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                            Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                             if (phase3)
                             {
                                 Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 7f;
@@ -564,7 +564,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     if (npc.alpha < 255)
                     {
                         // Turn red as a telegraph for a short moment.
-                        fadeToRed = (float)Math.Sin(Utils.GetLerpValue(0f, 18f, attackTimer, true) * MathHelper.Pi);
+                        fadeToRed = MathF.Sin(Utils.GetLerpValue(0f, 18f, attackTimer, true) * MathHelper.Pi);
 
                         npc.alpha = Utils.Clamp(npc.alpha + 10, 0, 255);
                         npc.damage = 0;
@@ -704,7 +704,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                     Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                 }
             }
@@ -820,7 +820,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             for (int delay = 0; delay < 60; delay += 20)
             {
-                Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 27f);
+                Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 27f);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime - 30f + delay)
                 {
                     int plasmaBall = NPC.NewNPC(npc.GetSource_FromAI(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedPlasmaEnergy>());
@@ -1092,7 +1092,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 // Create the orbs from the mouth.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % energyOrbReleaseRate == energyOrbReleaseRate - 1f)
                 {
-                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                     Vector2 baseShootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.56f) * 11f;
                     Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<ExplodingEnergyOrb>(), 0, 0f);
                 }
@@ -1201,7 +1201,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 // Create the bolts from the mouth.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningSpawnerReleaseRate == lightningSpawnerReleaseRate - 1f)
                 {
-                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                     Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 10f;
                     Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                 }
@@ -1286,7 +1286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             {
                 if (phaseTransitionCountdown > 0f)
                 {
-                    float outwardnessFactor = 1f - (float)Math.Cos(phaseTransitionCountdown * MathHelper.TwoPi / TransitionTime);
+                    float outwardnessFactor = 1f - MathF.Cos(phaseTransitionCountdown * MathHelper.TwoPi / TransitionTime);
                     outwardnessFactor /= 3f;
                     for (int i = 0; i < 6; i++)
                     {

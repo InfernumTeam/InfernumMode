@@ -45,7 +45,7 @@ namespace InfernumMode.Common.BaseEntities
 
             // Fly up and down.
             if (Math.Abs(Velocity.X) > 4f && ID % 2 == 1)
-                Velocity.Y += (float)Math.Sin(MathHelper.TwoPi * Time / 42f) * 0.0667f;
+                Velocity.Y += MathF.Sin(MathHelper.TwoPi * Time / 42f) * 0.0667f;
 
             if (Time >= Lifetime)
                 Kill();

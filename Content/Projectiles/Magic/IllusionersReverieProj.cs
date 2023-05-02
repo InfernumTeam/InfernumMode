@@ -107,7 +107,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Rectangle frame = bookTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition;
             Vector2 origin = frame.Size() * 0.5f;
-            Color glowColor = Color.Lerp(Color.HotPink, Color.Blue, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
+            Color glowColor = Color.Lerp(Color.HotPink, Color.Blue, MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
             glowColor.A = 0;
 
             // Draw an ominous glowing version of the book after a bit of time.

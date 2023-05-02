@@ -1048,7 +1048,7 @@ namespace InfernumMode.Content.WorldGeneration
             Point caveStart = new(WorldSaveSystem.SquidDenCenter.X + Abyss.AtLeftSideOfWorld.ToDirectionInt() * Layer3SquidDenOuterRadius, WorldSaveSystem.SquidDenCenter.Y + Layer3SquidDenOuterRadius);
             for (int i = 0; i < 50; i++)
             {
-                float cavePerpendicularAngle = (float)Math.Sin(i * 0.39f);
+                float cavePerpendicularAngle = MathF.Sin(i * 0.39f);
                 Point currentCavePosition = Vector2.Lerp(caveStart.ToVector2(), WorldSaveSystem.SquidDenCenter.ToVector2(), i / 49f).ToPoint();
                 Vector2 directionToCenter = (WorldSaveSystem.SquidDenCenter.ToVector2() - caveStart.ToVector2()).SafeNormalize(Vector2.Zero);
                 currentCavePosition += (directionToCenter.RotatedBy(cavePerpendicularAngle) * 8f).ToPoint();

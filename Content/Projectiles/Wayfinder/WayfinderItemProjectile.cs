@@ -166,7 +166,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 rayAnimationCompletion *= rayExpandFactor;
 
                 ulong seed = (ulong)(i + 1) * 3141592uL;
-                float rayDirection = MathHelper.TwoPi * i / 8f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
+                float rayDirection = MathHelper.TwoPi * i / 8f + MathF.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
                 rayDirection += Main.GlobalTimeWrappedHourly * 0.48f;
                 DrawLightRay(seed, rayDirection, rayAnimationCompletion, Projectile.Center);
             }

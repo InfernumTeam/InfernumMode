@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Spin the laserbeam.
             float deviationAngle = (Time * MathHelper.TwoPi / 40f + LaserbeamIDRatio * SpinRate) / (LaserCount * SpinRate) * MathHelper.TwoPi;
-            float sinusoidYOffset = (float)Math.Cos(deviationAngle) * AngularOffset;
+            float sinusoidYOffset = MathF.Cos(deviationAngle) * AngularOffset;
             Projectile.velocity = Vector2.UnitY.RotatedBy(sinusoidYOffset) * VerticalSpinDirection;
 
             // Update the laser length.

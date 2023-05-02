@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sin(MathHelper.Pi * Time / 72f) * 1.35f;
+            Projectile.Opacity = MathF.Sin(MathHelper.Pi * Time / 72f) * 1.35f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             Projectile.scale = Projectile.Opacity;

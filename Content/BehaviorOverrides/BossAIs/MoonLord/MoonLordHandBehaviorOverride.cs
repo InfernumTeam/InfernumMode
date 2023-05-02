@@ -344,7 +344,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     case 2:
                     default:
                         float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
-                        float verticalOffset = (float)Math.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        float verticalOffset = MathF.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
                         currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
                         break;
                 }

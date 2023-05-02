@@ -139,11 +139,11 @@ namespace InfernumMode.Core.GlobalInstances
 
                 for (int i = 0; i < totalAurasToDraw; i++)
                 {
-                    float oscillatingTime = (float)Math.Cos(clampedTime * MathHelper.TwoPi + i / 2f);
+                    float oscillatingTime = MathF.Cos(clampedTime * MathHelper.TwoPi + i / 2f);
 
                     posX[i] = oscillatingTime * (xPosOffset - i * 3f);
 
-                    posY[i] = (float)Math.Sin(clampedTime * MathHelper.TwoPi + MathHelper.Pi / 3f + i) * yPosOffset;
+                    posY[i] = MathF.Sin(clampedTime * MathHelper.TwoPi + MathHelper.Pi / 3f + i) * yPosOffset;
                     posY[i] -= i * 3f;
 
                     hue[i] = i / (float)totalAurasToDraw * 2f % 1f;

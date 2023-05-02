@@ -1369,7 +1369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
             else if (terminusDrawInterpolant >= 1f)
             {
-                npc.velocity = Vector2.UnitY * (float)Math.Sin(MathHelper.TwoPi * attackTimer / 240f) * 2f;
+                npc.velocity = Vector2.UnitY * MathF.Sin(MathHelper.TwoPi * attackTimer / 240f) * 2f;
 
                 // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
                 if (attackTimer % 90f == 67f)

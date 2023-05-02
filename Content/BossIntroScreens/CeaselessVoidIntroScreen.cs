@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
-            float voidInterpolant = Utils.GetLerpValue(0.77f, 1f, (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 3f + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
+            float voidInterpolant = Utils.GetLerpValue(0.77f, 1f, MathF.Sin(AnimationCompletion * MathHelper.Pi * 3f + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
             Color metalColor = new(167, 181, 209);
             Color voidColor = new(12, 18, 27);
             return Color.Lerp(metalColor, voidColor, voidInterpolant);

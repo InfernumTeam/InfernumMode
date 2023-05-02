@@ -183,10 +183,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue((float)Math.Pow((double)opacity, 0.5f));
+                laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Pow(opacity, 0.5f));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(340f));
                 laserScopeEffect.Parameters["laserAngle"].SetValue(Projectile.velocity.ToRotation() * -1f);
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.005f + (float)Math.Pow((double)opacity, 5.0) * ((float)Math.Sin((double)(Main.GlobalTimeWrappedHourly * 3f)) * 0.002f + 0.002f));
+                laserScopeEffect.Parameters["laserWidth"].SetValue(0.005f + MathF.Pow(opacity, 5f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.002f + 0.002f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
                 laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(WayfinderSymbol.Colors[1], Color.OrangeRed, 0.5f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(WayfinderSymbol.Colors[2].ToVector3());

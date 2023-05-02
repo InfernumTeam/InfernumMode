@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
-            float limeColorInterpolant = Utils.GetLerpValue(0.77f, 1f, (float)Math.Sin(AnimationCompletion * -MathHelper.Pi * 4f + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
+            float limeColorInterpolant = Utils.GetLerpValue(0.77f, 1f, MathF.Sin(AnimationCompletion * -MathHelper.Pi * 4f + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
             Color skinColor = new(216, 93, 82);
             Color bloodColor = new(193, 45, 6);
             return Color.Lerp(skinColor, bloodColor, limeColorInterpolant);

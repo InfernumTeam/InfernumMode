@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
+            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.OrangeRed, Color.LawnGreen, (float)(1f + Math.Sin(Main.GlobalTimeWrappedHourly)) / 2f);
-            color = Color.Lerp(color, Color.White, ((float)Math.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
+            color = Color.Lerp(color, Color.White, (MathF.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
             color.A = 20;
             return color * Projectile.Opacity;
         }

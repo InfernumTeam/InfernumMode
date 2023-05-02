@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 float lineWidth = Utils.GetLerpValue(45f, 75f, Time, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * 2.5f + 0.2f;
 
                 if (lineWidth > 1f)
-                    lineWidth += (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;
+                    lineWidth += MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;
 
                 for (int i = 0; i < ShardBurstCount; i++)
                 {

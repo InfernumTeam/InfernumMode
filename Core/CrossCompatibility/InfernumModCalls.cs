@@ -52,7 +52,7 @@ namespace InfernumMode.Core.CrossCompatibility
                         beatTime *= 0.25f;
 
                     headRotationTime += beatTime;
-                    player.headRotation = (float)Math.Sin(headRotationTime) * 0.276f;
+                    player.headRotation = MathF.Sin(headRotationTime) * 0.276f;
                     player.eyeHelper.BlinkBecausePlayerGotHurt();
                     return headRotationTime;
                 case "CanPlayMusicForNPC":

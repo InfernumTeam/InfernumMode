@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                     acceleration *= 1.3f;
                 }
 
-                float angularOffset = (float)Math.Cos((Projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + Projectile.identity * 0.89f) * 0.01f;
+                float angularOffset = MathF.Cos((Projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + Projectile.identity * 0.89f) * 0.01f;
                 Projectile.velocity = Projectile.velocity.RotatedBy(angularOffset);
                 Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(Projectile.velocity.Length() * acceleration, minSpeed, maxSpeed);
             }

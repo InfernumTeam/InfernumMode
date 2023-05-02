@@ -435,7 +435,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
 
                     Vector2 origin = backglowTexture.Size() * 0.5f;
-                    Color transColor = Color.Lerp(Color.HotPink, Color.Cyan, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f);
+                    Color transColor = Color.Lerp(Color.HotPink, Color.Cyan, MathF.Sin(Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f);
                     Main.spriteBatch.Draw(backglowTexture, sunPosition, null, transColor, 0f, origin, 0.74f, 0, 0f);
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
@@ -1027,7 +1027,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 screenCenter += new Vector2(Main.screenWidth, Main.screenHeight) * (Main.GameViewMatrix.Zoom - Vector2.One) * 0.5f;
 
-                float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + (float)Math.Sin(BossRushSky.IdleTimer) * 0.01f;
+                float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + MathF.Sin(BossRushSky.IdleTimer) * 0.01f;
                 Vector2 drawPosition = (new Vector2(Main.LocalPlayer.Center.X, 1120f) - screenCenter) * 0.097f + screenCenter - Main.screenPosition - Vector2.UnitY * 100f;
                 Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/XerocEyeAlt").Value;
                 Color baseColorDraw = Color.Lerp(Color.White, Color.Red, BossRushSky.IncrementalInterest);

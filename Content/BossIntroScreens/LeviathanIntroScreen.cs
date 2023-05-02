@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
-            float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.TwoPi + completionRatio * MathHelper.Pi * 64f) * 0.5f + 0.5f;
+            float colorFadeInterpolant = MathF.Sin(AnimationCompletion * MathHelper.TwoPi + completionRatio * MathHelper.Pi * 64f) * 0.5f + 0.5f;
             Color lightSkinColor = new(80, 211, 174);
             Color darkSkinColor = new(0, 149, 159);
             return Color.Lerp(lightSkinColor, darkSkinColor, colorFadeInterpolant);

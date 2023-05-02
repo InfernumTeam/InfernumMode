@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             if (WaveHeight < 60f)
                 WaveHeight = 60f;
             WaveHeight = MathHelper.Lerp(WaveHeight, 640f, 0.04f);
-            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
+            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
         }
@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         internal float WidthFunction(float completionRatio) => WaveHeight;
 
-        internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * (float)Math.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 60f;
+        internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * MathF.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 60f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

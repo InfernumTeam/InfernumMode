@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public void DrawFrontGlow()
         {
-            float pulse = (float)Math.Cos(Main.GlobalTimeWrappedHourly * 36f);
+            float pulse = MathF.Cos(Main.GlobalTimeWrappedHourly * 36f);
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             Vector2 origin = backglowTexture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.scale * 20f;

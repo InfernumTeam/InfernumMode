@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public const float LaserLength = 4800f;
 
-        public static float LaserPulse => (float)Math.Sin(Main.GlobalTimeWrappedHourly * 36f);
+        public static float LaserPulse => MathF.Sin(Main.GlobalTimeWrappedHourly * 36f);
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = (float)Math.Sin(Time / 210f * MathHelper.Pi) * 3f;
+            Projectile.scale = MathF.Sin(Time / 210f * MathHelper.Pi) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 

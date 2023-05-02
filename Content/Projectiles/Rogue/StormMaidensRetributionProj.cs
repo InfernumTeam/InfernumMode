@@ -96,7 +96,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
         {
             int shootDelay = 54;
             float animationCompletion = Utils.GetLerpValue(0f, shootDelay, Time, true);
-            float unsharpenedLightningInterpolant = (float)Math.Sin(MathHelper.Pi * animationCompletion * 2.5f);
+            float unsharpenedLightningInterpolant = MathF.Sin(MathHelper.Pi * animationCompletion * 2.5f);
             PinkLightningFormInterpolant = (float)Math.Pow(unsharpenedLightningInterpolant, 6D);
 
             // Play lightning crackle sounds and release sparks when the spear has reached a peak energy state.

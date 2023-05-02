@@ -198,8 +198,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         internal float PrimitiveWidthFunction(float completionRatio)
         {
-            float fadeToMax = MathHelper.Lerp(0f, 1f, (float)Math.Sin(MathHelper.Pi * completionRatio) * (NPC.localAI[2] == 1f ? 0.5f : 1f));
-            float pulse = MathHelper.Lerp(-0.4f, 2f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4.6f) * 0.5f + 0.5f);
+            float fadeToMax = MathHelper.Lerp(0f, 1f, MathF.Sin(MathHelper.Pi * completionRatio) * (NPC.localAI[2] == 1f ? 0.5f : 1f));
+            float pulse = MathHelper.Lerp(-0.4f, 2f, MathF.Sin(Main.GlobalTimeWrappedHourly * 4.6f) * 0.5f + 0.5f);
             return MathHelper.Lerp(9.5f, 12f + pulse, fadeToMax) * MathHelper.Clamp(Polterghast.scale, 0.75f, 1.5f);
         }
 

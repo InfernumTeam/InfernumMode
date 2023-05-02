@@ -89,9 +89,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Time++;
         }
 
-        public float SunWidthFunction(float completionRatio) => Radius * (float)Math.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * MathF.Sin(MathHelper.Pi * completionRatio);
 
-        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Red, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.4f + 0.3f) * Projectile.Opacity;
+        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Red, MathF.Sin(MathHelper.Pi * completionRatio) * 0.4f + 0.3f) * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor)
         {

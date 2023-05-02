@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = MathHelper.Clamp((float)Math.Sin(Time / 30f * MathHelper.Pi) * 3f, 0f, 1f);
+            Projectile.scale = MathHelper.Clamp(MathF.Sin(Time / 30f * MathHelper.Pi) * 3f, 0f, 1f);
             Projectile.Center = Owner.Center + Projectile.velocity * 30f;
 
             // And create bright light.

@@ -342,7 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 return;
 
             // Creepers do most of the interesting stuff with this attack.
-            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * (float)Math.Sin((attackTimer - 54f) / 24f) * 6f, 0.007f);
+            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * MathF.Sin((attackTimer - 54f) / 24f) * 6f, 0.007f);
 
             if (attackTimer >= shootTime)
                 GotoNextAttackState(npc);
@@ -483,7 +483,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
             }
 
-            npc.localAI[1] = (float)Math.Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
+            npc.localAI[1] = MathF.Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
             if (attackTimer == (int)(teleportFadeTime * 1.5f) + spinTime + 15f)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 26f;

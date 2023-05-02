@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 segmentPositions.Add(stickPosition - Vector2.UnitX * RightSide.ToDirectionInt() * 10f);
                 for (int i = 0; i < 20; i++)
                 {
-                    float moveOffset = (float)Math.Sin(Owner.Infernum().ExtraAI[9] * 0.113f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
+                    float moveOffset = MathF.Sin(Owner.Infernum().ExtraAI[9] * 0.113f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
                     if (Owner.Infernum().ExtraAI[9] <= 0f)
                         moveOffset = 0f;
 

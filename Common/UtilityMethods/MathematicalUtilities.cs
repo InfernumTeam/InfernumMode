@@ -27,7 +27,7 @@ namespace InfernumMode
         /// <param name="angle">The angular interpolant.</param>
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
-        public static float AngularSmoothstep(float angle, float min, float max) => ((max - min) * ((float)Math.Cos(angle) * 0.5f)) + min + ((max - min) * 0.5f);
+        public static float AngularSmoothstep(float angle, float min, float max) => ((max - min) * (MathF.Cos(angle) * 0.5f)) + min + ((max - min) * 0.5f);
 
         /// <summary>
         /// Determines the angular distance between two vectors based on dot product comparisons. This method ensures underlying normalization is performed safely.

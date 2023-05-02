@@ -1852,8 +1852,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Loosely hover above the player after the ritual.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
-            hoverDestination.X += (float)Math.Sin(MathHelper.TwoPi * localAttackTimer / 180f) * 180f;
-            hoverDestination.Y += (float)Math.Sin(MathHelper.TwoPi * localAttackTimer / 105f + 0.75f) * 40f;
+            hoverDestination.X += MathF.Sin(MathHelper.TwoPi * localAttackTimer / 180f) * 180f;
+            hoverDestination.Y += MathF.Sin(MathHelper.TwoPi * localAttackTimer / 105f + 0.75f) * 40f;
             if (localAttackTimer >= ritualTime)
             {
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.11f);
@@ -2703,7 +2703,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             for (int i = 0; i < totalProvidencesToDraw; i++)
             {
                 float offsetAngle = MathHelper.TwoPi * i * 2f / totalProvidencesToDraw;
-                float drawOffsetScalar = (float)Math.Sin(offsetAngle * 6f + Main.GlobalTimeWrappedHourly * MathHelper.Pi);
+                float drawOffsetScalar = MathF.Sin(offsetAngle * 6f + Main.GlobalTimeWrappedHourly * MathHelper.Pi);
                 drawOffsetScalar *= (float)Math.Pow(burnIntensity, 1.4f) * 36f;
                 drawOffsetScalar *= MathHelper.Lerp(1f, 2f, 1f - lifeRatio);
 

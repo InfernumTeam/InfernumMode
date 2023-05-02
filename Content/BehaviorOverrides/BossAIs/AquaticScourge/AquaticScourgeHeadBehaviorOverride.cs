@@ -1159,7 +1159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
             else
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -25f, 0.05f);
-            npc.velocity.X = (float)Math.Sin(MathHelper.TwoPi * attackTimer / 90f) * 12f;
+            npc.velocity.X = MathF.Sin(MathHelper.TwoPi * attackTimer / 90f) * 12f;
 
             // Create very strong rain.
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1334,7 +1334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Circle around the tornado.
             Projectile tornado = tornadoes.First();
             Vector2 hoverPosition = tornado.Center + (MathHelper.TwoPi * attackTimer / 120f).ToRotationVector2() * new Vector2(708f, -330f);
-            hoverPosition.Y += (float)Math.Sin(MathHelper.TwoPi * attackTimer / 120f) * 15f;
+            hoverPosition.Y += MathF.Sin(MathHelper.TwoPi * attackTimer / 120f) * 15f;
 
             npc.velocity = npc.SafeDirectionTo(hoverPosition, (npc.rotation - MathHelper.PiOver2).ToRotationVector2()) * MathHelper.Clamp(npc.Distance(hoverPosition), 0.4f, 50f);
             npc.Center = npc.Center.MoveTowards(hoverPosition, 2f);

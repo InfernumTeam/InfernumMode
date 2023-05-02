@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     break;
                 case BoCAttackState.CreeperBloodDripping:
                     destination = target.Center + destinationOffsetDirection * 480f;
-                    destination.Y += (float)Math.Sin(attackTimer / 56f + creeperOffsetAngleFactor * MathHelper.TwoPi) * 40f;
+                    destination.Y += MathF.Sin(attackTimer / 56f + creeperOffsetAngleFactor * MathHelper.TwoPi) * 40f;
                     idealAlpha = ownerAttackTimer < 60f ? 255 : 40;
                     break;
                 case BoCAttackState.PsionicBombardment:

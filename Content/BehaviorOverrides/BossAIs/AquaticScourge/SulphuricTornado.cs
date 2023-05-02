@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Move upward.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.velocity.X = (float)Math.Cos(MathHelper.TwoPi * Time / 270f) * FlyDirection * Projectile.Opacity * 19.5f;
+            Projectile.velocity.X = MathF.Cos(MathHelper.TwoPi * Time / 270f) * FlyDirection * Projectile.Opacity * 19.5f;
             Projectile.velocity.Y = -4.5f;
             Projectile.position.X += Projectile.SafeDirectionTo(target.Center).X * Projectile.Opacity * 13f;
 

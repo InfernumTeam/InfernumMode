@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 return;
             }
 
-            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 480f) * 10f;
+            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 480f) * 10f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
         }

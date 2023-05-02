@@ -69,9 +69,9 @@ namespace InfernumMode.Content.Tiles.Abyss
                 Texture2D spiritTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Pets/OceanSpirit").Value;
                 for (int k = 0; k < 6; k++)
                 {
-                    int spiritFrameY = (int)MathHelper.Lerp(0f, 8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 4f + k * 0.7f) * 0.5f + 0.5f);
-                    float offsetInterpolant = (float)Math.Sin(MathHelper.PiOver2 * k / 6f + Main.GlobalTimeWrappedHourly * 0.74f) * 0.5f + 0.5f;
-                    float rotationalOffset = (float)Math.Sin(MathHelper.TwoPi * k / 6f + Main.GlobalTimeWrappedHourly * 0.85f) * 0.8f;
+                    int spiritFrameY = (int)MathHelper.Lerp(0f, 8f, MathF.Sin(Main.GlobalTimeWrappedHourly * 4f + k * 0.7f) * 0.5f + 0.5f);
+                    float offsetInterpolant = MathF.Sin(MathHelper.PiOver2 * k / 6f + Main.GlobalTimeWrappedHourly * 0.74f) * 0.5f + 0.5f;
+                    float rotationalOffset = MathF.Sin(MathHelper.TwoPi * k / 6f + Main.GlobalTimeWrappedHourly * 0.85f) * 0.8f;
                     float offset = MathHelper.Lerp(84f, 136f, offsetInterpolant) * spiritOpacity;
                     Vector2 drawPosition = drawPos - Vector2.UnitY.RotatedBy(rotationalOffset) * offset;
                     SpriteEffects direction = drawPosition.X < drawPos.X ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

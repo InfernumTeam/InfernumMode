@@ -926,7 +926,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             // Create a backglow as necessary.
             if (backglowFade > 0f)
             {
-                float drawOffsetFactor = backglowFade * 7.5f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 5f) * 3f;
+                float drawOffsetFactor = backglowFade * 7.5f + MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 3f;
                 if (drawOffsetFactor < 0f)
                     drawOffsetFactor = 0f;
                 Color backglowColor = Color.Red * (float)Math.Pow(backglowFade, 0.55f);
@@ -968,7 +968,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 {
                     npc.Opacity * eyeGleamInterpolant * 1.65f,
                     npc.Opacity * eyeGleamInterpolant* 1.65f,
-                    npc.Opacity * eyeGleamInterpolant * Utils.Remap((float)Math.Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
+                    npc.Opacity * eyeGleamInterpolant * Utils.Remap(MathF.Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
                 };
 
                 for (int i = 0; i < eyeRotations.Length; i++)

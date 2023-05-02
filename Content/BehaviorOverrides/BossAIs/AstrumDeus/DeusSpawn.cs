@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 OrbitOffsetAngle += MathHelper.ToRadians(OrbitAngularVelocity);
                 NPC.Center = astrumDeus.Center + OrbitOffsetAngle.ToRotationVector2() * OrbitOffsetRadius;
                 NPC.spriteDirection = (Math.Cos(OrbitOffsetAngle) > 0f).ToDirectionInt();
-                NPC.rotation = (float)Math.Sin(OrbitOffsetAngle) * 0.11f;
+                NPC.rotation = MathF.Sin(OrbitOffsetAngle) * 0.11f;
                 return;
             }
 

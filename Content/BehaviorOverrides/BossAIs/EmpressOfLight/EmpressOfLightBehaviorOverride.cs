@@ -2024,7 +2024,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 wingData.Draw(spriteBatch);
                 spriteBatch.ExitShaderRegion();
 
-                float pulse = (float)Math.Sin(Main.GlobalTimeWrappedHourly * MathHelper.Pi) * 0.5f + 0.5f;
+                float pulse = MathF.Sin(Main.GlobalTimeWrappedHourly * MathHelper.Pi) * 0.5f + 0.5f;
                 Color tentacleDressColor = Main.hslToRgb((pulse * 0.08f + 0.6f) % 1f, 1f, 0.5f);
                 tentacleDressColor.A = 0;
                 tentacleDressColor *= 0.6f;

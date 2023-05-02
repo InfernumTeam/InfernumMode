@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (Time <= TelegraphTime)
             {
-                Projectile.Opacity = (float)Math.Sin(Time / TelegraphTime * MathHelper.Pi) * 2f;
+                Projectile.Opacity = MathF.Sin(Time / TelegraphTime * MathHelper.Pi) * 2f;
                 Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + MathHelper.PiOver2 + Projectile.rotation).ToRotationVector2();
                 Projectile.Center = owner.Center + Projectile.velocity;
                 Time++;

@@ -672,7 +672,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             universalTimer++;
 
-            float verticalHoverOffset = (float)Math.Sin(universalTimer / 13f) * 100f - 50f;
+            float verticalHoverOffset = MathF.Sin(universalTimer / 13f) * 100f - 50f;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 480f, verticalHoverOffset);
             if (reboundCoundown <= 0f)
             {

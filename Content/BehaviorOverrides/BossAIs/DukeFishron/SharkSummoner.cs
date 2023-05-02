@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         {
             Time++;
 
-            Projectile.scale = (float)Math.Sin(Projectile.timeLeft / 30f * MathHelper.Pi) * 3f;
+            Projectile.scale = MathF.Sin(Projectile.timeLeft / 30f * MathHelper.Pi) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
         }

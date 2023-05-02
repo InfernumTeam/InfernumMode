@@ -1002,7 +1002,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             bool attacking = attackTimer >= slowdownTime && attackTimer < attackDuration;
             if (Main.netMode != NetmodeID.MultiplayerClient && attacking && attackTimer % shootRate == shootRate - 1f)
             {
-                float offsetAngle = (float)Math.Sin(MathHelper.TwoPi * (attackTimer - 60f) / 128f) * MathHelper.Pi / 3f + Main.rand.NextFloatDirection() * 0.16f;
+                float offsetAngle = MathF.Sin(MathHelper.TwoPi * (attackTimer - 60f) / 128f) * MathHelper.Pi / 3f + Main.rand.NextFloatDirection() * 0.16f;
                 Vector2 baseSpawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 44f;
                 for (int i = 0; i < 3; i++)
                 {
@@ -1476,11 +1476,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Color baseColor = Color.White;
-                float drawOffsetFactor = MathHelper.Lerp(6.5f, 8.5f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
+                float drawOffsetFactor = MathHelper.Lerp(6.5f, 8.5f, MathF.Cos(Main.GlobalTimeWrappedHourly * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
                 float fadeFactor = 0.225f;
                 if (enraged)
                 {
-                    drawOffsetFactor = MathHelper.Lerp(7f, 9.75f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.3f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
+                    drawOffsetFactor = MathHelper.Lerp(7f, 9.75f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4.3f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
                     baseColor = Color.Red;
                     fadeFactor = 0.3f;
                 }

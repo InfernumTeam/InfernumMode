@@ -144,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Color color = Main.hslToRgb((completionRatio * 2f + Main.GlobalTimeWrappedHourly * 0.4f + Projectile.identity * 0.27f) % 1f, 1f, 0.6f);
             if (SuperLaser)
             {
-                Color laserFireColor = Color.Lerp(Color.Orange, Color.Red, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.7f + completionRatio * 2.3f) * 0.5f + 0.5f);
+                Color laserFireColor = Color.Lerp(Color.Orange, Color.Red, MathF.Sin(Main.GlobalTimeWrappedHourly * 1.7f + completionRatio * 2.3f) * 0.5f + 0.5f);
                 color = Color.Lerp(color, laserFireColor, 0.8f);
             }
 

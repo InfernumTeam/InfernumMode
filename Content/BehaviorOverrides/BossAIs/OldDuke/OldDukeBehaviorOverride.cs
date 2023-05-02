@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 npc.Opacity = 1f;
 
             // Define a general-purpose mouth position vector.
-            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 50f);
+            Vector2 mouthPosition = npc.Center + new Vector2(MathF.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 50f);
 
             switch ((OldDukeAttackState)(int)attackState)
             {
@@ -1089,14 +1089,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (inTheMiddleOfPhaseTransition && phaseTransitionTimer > 60f)
             {
                 rotationalOffsetImageCount = 6;
-                rotationalOffsetFade = (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(60f, PhaseTransitionTime, phaseTransitionTimer, true)) / 3f;
+                rotationalOffsetFade = MathF.Sin(MathHelper.Pi * Utils.GetLerpValue(60f, PhaseTransitionTime, phaseTransitionTimer, true)) / 3f;
                 rotationalOffsetOutwardness = 60f;
             }
 
             if (currentAttack == OldDukeAttackState.TeleportPause)
             {
                 rotationalOffsetImageCount = 6;
-                rotationalOffsetFade = (float)Math.Sin(MathHelper.Pi * attackTimer / TeleportPauseTime) / 3f;
+                rotationalOffsetFade = MathF.Sin(MathHelper.Pi * attackTimer / TeleportPauseTime) / 3f;
                 rotationalOffsetOutwardness = 20f;
             }
 

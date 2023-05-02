@@ -114,7 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             float telegraphInterpolant = Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 45f, Time, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, telegraphInterpolant, true);
-            float colorPulse = (float)Math.Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity) * 0.5f + 0.5f;
+            float colorPulse = MathF.Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity) * 0.5f + 0.5f;
             float fadePulse = (Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.2721f) % 1f;
             if (telegraphInterpolant > 0f)
             {

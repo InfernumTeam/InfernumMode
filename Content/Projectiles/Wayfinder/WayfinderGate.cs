@@ -150,7 +150,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
             Main.spriteBatch.Draw(innerTexture, drawPos, null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1, 0, 0);
 
-            float scale = (float)Math.Sin(Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 2f) * 0.3f + 0.7f;
+            float scale = MathF.Sin(Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 2f) * 0.3f + 0.7f;
             innerColor.A = 0;
             innerColor = innerColor * 0.1f * scale;
             for (float i = 0f; i < 1f; i += 1f / 16f)

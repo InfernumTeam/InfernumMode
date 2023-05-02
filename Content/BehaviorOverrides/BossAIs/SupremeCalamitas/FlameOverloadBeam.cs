@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
                 (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
 
-            float flameInterpolant = (float)Math.Sin(completionRatio * 3f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) * 0.5f + 0.5f;
+            float flameInterpolant = MathF.Sin(completionRatio * 3f + Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.3156f) * 0.5f + 0.5f;
             Color flameColor = Color.Orange;
             if (CalamityGlobalNPC.SCal == CalamityGlobalNPC.SCalLament)
                 flameColor = Color.Lerp(flameColor, Color.Blue, 0.6f);

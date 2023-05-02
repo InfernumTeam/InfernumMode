@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (!Main.player.IndexInRange(npc.type) || !Main.player[npc.target].active || Main.player[npc.target].dead)
                 npc.TargetClosest();
 
-            npc.Center = target.Center - Vector2.UnitY * (350f + (float)Math.Sin(MathHelper.TwoPi * attackTimer / 120f) * 10f);
+            npc.Center = target.Center - Vector2.UnitY * (350f + MathF.Sin(MathHelper.TwoPi * attackTimer / 120f) * 10f);
 
             if (shootRate >= 1 && attackTimer % shootRate == shootRate - 1f)
             {

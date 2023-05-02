@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                         destination = owner.Center + new Vector2(armDirection * 620f, 420f);
 
                         if (attackTimer > attackDelay)
-                            destination.Y += (float)Math.Sin((attackTimer - attackDelay) * MathHelper.Pi / 50f) * shouldAttack.ToInt() * 250f;
+                            destination.Y += MathF.Sin((attackTimer - attackDelay) * MathHelper.Pi / 50f) * shouldAttack.ToInt() * 250f;
 
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.065f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);

@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Slither around.
             float maxSlitherOffset = Utils.Remap(head.velocity.Length(), 1f, 13f, 20f, 1f);
-            float slitherOffset = (float)Math.Sin(-slitherTimer + segmentIndex * 0.4113f) * Utils.Remap(segmentIndex, 2f, 7f, 0f, maxSlitherOffset);
+            float slitherOffset = MathF.Sin(-slitherTimer + segmentIndex * 0.4113f) * Utils.Remap(segmentIndex, 2f, 7f, 0f, maxSlitherOffset);
             npc.Center += npc.SafeDirectionTo(head.Center).RotatedBy(MathHelper.PiOver2) * Utils.GetLerpValue(npc.Distance(head.Center), 145f, 190f, true) * slitherOffset;
             return false;
         }

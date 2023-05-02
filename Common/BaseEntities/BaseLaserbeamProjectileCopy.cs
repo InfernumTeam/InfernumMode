@@ -79,7 +79,7 @@ namespace InfernumMode.Common.BaseEntities
         /// </summary>
         public virtual void DetermineScale()
         {
-            Projectile.scale = (float)Math.Sin(Time / Lifetime * MathHelper.Pi) * ScaleExpandRate * MaxScale;
+            Projectile.scale = MathF.Sin(Time / Lifetime * MathHelper.Pi) * ScaleExpandRate * MaxScale;
             if (Projectile.scale > MaxScale)
                 Projectile.scale = MaxScale;
         }

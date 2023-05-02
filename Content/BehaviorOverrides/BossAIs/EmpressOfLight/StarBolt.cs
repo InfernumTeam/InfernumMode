@@ -72,9 +72,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 spacedAngle -= MathHelper.PiOver2;
 
             // Refer to desmos to view the resulting shape this creates. It's basically a black box of trig otherwise.
-            float numerator = (float)Math.Cos(MathHelper.Pi * (pointCount + 1f) / pointCount);
-            float starAdjustedAngle = (float)Math.Asin(Math.Cos(pointCount * spacedAngle)) * 2f;
-            float denominator = (float)Math.Cos((starAdjustedAngle + MathHelper.PiOver2 * pointCount) / (pointCount * 2f));
+            float numerator = MathF.Cos(MathHelper.Pi * (pointCount + 1f) / pointCount);
+            float starAdjustedAngle = MathF.Asin(MathF.Cos(pointCount * spacedAngle)) * 2f;
+            float denominator = MathF.Cos((starAdjustedAngle + MathHelper.PiOver2 * pointCount) / (pointCount * 2f));
             Vector2 result = angle.ToRotationVector2() * numerator / denominator / 1.732051f;
             return result;
         }

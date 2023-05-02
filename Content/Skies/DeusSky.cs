@@ -158,8 +158,8 @@ namespace InfernumMode.Content.Skies
                 if (rectangle.Contains((int)drawPosition.X, (int)drawPosition.Y))
                 {
                     // Handle alpha pulsing. This is what allows the stars to appear, disappear, and reappear.
-                    float opacity = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
-                    float minorFade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
+                    float opacity = MathF.Sin((Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
+                    float minorFade = MathF.Sin(Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
                     minorFade = MathHelper.Clamp(minorFade, 0f, 1f);
                     opacity = MathHelper.Clamp(opacity, 0f, 1f);
 

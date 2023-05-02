@@ -77,8 +77,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Fade in, grow, and spread out.
             float fadeInInterpolant = Utils.GetLerpValue(0f, Lifetime * 0.45f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 12f, Time, true);
-            float lightOffset = MathHelper.Lerp(20f, (float)Math.Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
-            float offsetAngleFactor = MathHelper.Lerp(0.7f, 1f, (float)Math.Cos(Time / 23f) * 0.5f + 0.5f);
+            float lightOffset = MathHelper.Lerp(20f, MathF.Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
+            float offsetAngleFactor = MathHelper.Lerp(0.7f, 1f, MathF.Cos(Time / 23f) * 0.5f + 0.5f);
             CurrentSpread = MathHelper.Lerp(CurrentSpread, MaximumSpread, 0.015f);
             if (MathHelper.Distance(CurrentSpread, MaximumSpread) < 0.03f)
                 CurrentSpread = MaximumSpread;

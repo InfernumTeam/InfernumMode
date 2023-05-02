@@ -902,7 +902,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             for (int i = 0; i < 72; i++)
             {
                 float angle = MathHelper.TwoPi / 72f * i;
-                Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, DustID.ChlorophyteWeapon, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
+                Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, DustID.ChlorophyteWeapon, MathF.Cos(angle) * 15f, MathF.Sin(angle) * 15f);
                 fire.noGravity = true;
             }
             SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);

@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void AI()
         {
             // Fade in.
-            Projectile.scale = (float)Math.Sin(Time / 150f * MathHelper.Pi) * 4f;
+            Projectile.scale = MathF.Sin(Time / 150f * MathHelper.Pi) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             Projectile.Opacity = Projectile.scale;

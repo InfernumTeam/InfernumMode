@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             // Fade in and out.
             Projectile.Opacity = Utils.GetLerpValue(0f, 108f, Time, true) * Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true);
             Projectile.scale = Projectile.Opacity * 0.5f + 0.001f;
-            Projectile.velocity.Y = (float)Math.Sin(Time / 42f + Projectile.identity) * 2.1f;
+            Projectile.velocity.Y = MathF.Sin(Time / 42f + Projectile.identity) * 2.1f;
 
             Time++;
         }
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             Rectangle frame = tex.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition;
             Vector2 origin = frame.Size() * 0.5f;
-            Color glowColor = Color.Lerp(Color.Pink, Color.Red, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
+            Color glowColor = Color.Lerp(Color.Pink, Color.Red, MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
 
             // Draw an ominous glowing backimage of the book after a bit of time.
             float outwardFade = Main.GlobalTimeWrappedHourly * 0.4f % 1f;

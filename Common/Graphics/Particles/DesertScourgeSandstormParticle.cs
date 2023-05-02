@@ -37,7 +37,7 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override void Update()
         {
-            opacity = (float)Math.Cos(MathHelper.PiOver2 * LifetimeCompletion);
+            opacity = MathF.Cos(MathHelper.PiOver2 * LifetimeCompletion);
             Velocity *= 0.99f;
             Rotation += Spin * (Velocity.X > 0f ? 1f : -1f);
             Scale *= 0.98f;

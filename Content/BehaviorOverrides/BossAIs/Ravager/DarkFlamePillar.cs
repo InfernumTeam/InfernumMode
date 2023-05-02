@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             // Fade in.
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime) * 2f;
+            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / Lifetime) * 2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         {
             float tipFadeoffInterpolant = MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
             float baseFadeoffInterpolant = MathHelper.SmoothStep(2.4f, 1f, 1f - CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, 0.19f, completionRatio, true)));
-            float widthAdditionFactor = (float)Math.Sin(Main.GlobalTimeWrappedHourly * -13f + Projectile.identity + completionRatio * MathHelper.Pi * 4f) * 0.2f;
+            float widthAdditionFactor = MathF.Sin(Main.GlobalTimeWrappedHourly * -13f + Projectile.identity + completionRatio * MathHelper.Pi * 4f) * 0.2f;
             return Width * tipFadeoffInterpolant * baseFadeoffInterpolant * (1f + widthAdditionFactor);
         }
 
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         {
             Color darkFlameColor = new(58, 107, 252);
             Color lightFlameColor = new(45, 207, 239);
-            float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
+            float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
             Color color = Color.Lerp(darkFlameColor, lightFlameColor, (float)Math.Pow(colorShiftInterpolant, 1.64f));
             return color * Projectile.Opacity;
         }

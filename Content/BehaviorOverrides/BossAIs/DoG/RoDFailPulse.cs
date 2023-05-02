@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) => (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio) * 3f;
+        public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) => MathF.Sin(MathHelper.Pi * lifetimeCompletionRatio) * 3f;
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio) => Color.Lerp(Color.Cyan, Color.Fuchsia, lifetimeCompletionRatio * 2f % 1f);
     }

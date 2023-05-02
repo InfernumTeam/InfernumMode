@@ -64,14 +64,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.37f;
 
-        public float SunWidthFunction(float completionRatio) => Radius * (float)Math.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * MathF.Sin(MathHelper.Pi * completionRatio);
 
         public Color SunColorFunction(float completionRatio)
         {
             if (ProvidenceBehaviorOverride.IsEnraged)
                 return Color.Lerp(Color.Cyan, Color.Lime, 0.33f) with { A = 92 } * Projectile.Opacity;
 
-            return Color.Lerp(Color.Yellow, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
+            return Color.Lerp(Color.Yellow, Color.White, MathF.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)

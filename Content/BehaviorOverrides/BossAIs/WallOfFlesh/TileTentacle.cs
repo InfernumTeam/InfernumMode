@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 Vector2 offset = (RestingSpot - Projectile.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 40f;
 
                 // And make it sway a bit, like a flag.
-                offset *= (float)Math.Sin(i / (float)ControlPoints.Length * MathHelper.TwoPi + Time / 12f);
+                offset *= MathF.Sin(i / (float)ControlPoints.Length * MathHelper.TwoPi + Time / 12f);
 
                 // Incorporate more sway the faster the tentacle is moving.
                 offset *= Projectile.velocity.Length() * 0.05f;

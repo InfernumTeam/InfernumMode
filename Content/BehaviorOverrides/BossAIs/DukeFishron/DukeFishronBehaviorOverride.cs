@@ -831,7 +831,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                     if (Main.netMode != NetmodeID.Server)
                     {
                         WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
-                        float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 20f);
+                        float waveSine = 0.1f * MathF.Sin(Main.GlobalTimeWrappedHourly * 20f);
                         Vector2 ripplePos = npc.Center + npc.velocity * 7f;
                         Color waveData = new Color(0.5f, 0.1f * Math.Sign(waveSine) + 0.5f, 0f, 1f) * Math.Abs(waveSine);
                         ripple.QueueRipple(ripplePos, waveData, Vector2.One * 860f, RippleShape.Circle, npc.rotation);

@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 float offsetMuffleFactor = Utils.GetLerpValue(0.12f, 0.25f, completionRatio, true) * Utils.GetLerpValue(0.88f, 0.75f, completionRatio, true);
 
                 // Give a sense of time for the noise on the vertical axis. This is achieved via a 0-1 constricted sinusoid.
-                float noiseY = (float)Math.Cos(completionRatio * 17.2f + Main.GlobalTimeWrappedHourly * 10.7f) * 0.5f + 0.5f;
+                float noiseY = MathF.Cos(completionRatio * 17.2f + Main.GlobalTimeWrappedHourly * 10.7f) * 0.5f + 0.5f;
 
                 float noise = CalamityUtils.PerlinNoise2D(completionRatio, noiseY, 2, seed);
 
@@ -131,14 +131,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         internal float WidthFunction(float completionRatio)
         {
-            return MathHelper.Lerp(0.75f, 1.85f, (float)Math.Sin(MathHelper.Pi * completionRatio)) * Projectile.scale;
+            return MathHelper.Lerp(0.75f, 1.85f, MathF.Sin(MathHelper.Pi * completionRatio)) * Projectile.scale;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            float fadeToWhite = MathHelper.Lerp(0f, 0.65f, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
+            float fadeToWhite = MathHelper.Lerp(0f, 0.65f, MathF.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
             Color baseColor = Color.Lerp(Color.Cyan, Color.White, fadeToWhite);
-            return Color.Lerp(baseColor, Color.LightBlue, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f) * Projectile.Opacity;
+            return Color.Lerp(baseColor, Color.LightBlue, (MathF.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f) * Projectile.Opacity;
         }
 
         internal float BackgroundWidthFunction(float completionRatio) => WidthFunction(completionRatio) * 4f;

@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             }
             else if (Time < 100f)
             {
-                float movementOffset = (float)Math.Sin(Time / 24f) * 0.02f;
+                float movementOffset = MathF.Sin(Time / 24f) * 0.02f;
                 Projectile.velocity = Projectile.velocity.RotatedBy(movementOffset);
             }
 

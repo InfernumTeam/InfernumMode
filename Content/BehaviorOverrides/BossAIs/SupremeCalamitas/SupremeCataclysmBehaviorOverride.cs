@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             currentFrame = (int)SCalBrotherAnimationType.AttackAnimation;
 
             float acceleration = 0.95f;
-            float sinusoidalOffset = (float)Math.Sin(attackTimer * MathHelper.TwoPi / shootTime) * (!isCataclysm).ToDirectionInt() * 400f;
+            float sinusoidalOffset = MathF.Sin(attackTimer * MathHelper.TwoPi / shootTime) * (!isCataclysm).ToDirectionInt() * 400f;
             Vector2 hoverDestination = target.Center + new Vector2(isCataclysm.ToDirectionInt() * -720f, sinusoidalOffset);
             if (attackTimer < 72f)
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.018f).MoveTowards(hoverDestination, 1f);

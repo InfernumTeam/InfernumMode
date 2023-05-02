@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             Projectile.Center = Owner.Center;
 
-            Radius = (float)Math.Sin(Projectile.timeLeft / (float)Lifetime * MathHelper.Pi) * MaxRadius * 4f;
+            Radius = MathF.Sin(Projectile.timeLeft / (float)Lifetime * MathHelper.Pi) * MaxRadius * 4f;
             if (Radius > MaxRadius)
                 Radius = MaxRadius;
             Projectile.scale = 2f;

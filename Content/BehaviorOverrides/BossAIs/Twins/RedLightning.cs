@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // which allows random turning to occur.
             Projectile.frameCounter++;
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (36f * (Projectile.MaxUpdates - 1))) * 4f;
+            Projectile.scale = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / (36f * (Projectile.MaxUpdates - 1))) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -128,13 +128,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #region Drawing
         internal float WidthFunction(float completionRatio)
         {
-            float baseWidth = MathHelper.Lerp(2f, 4.5f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
-            return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio);
+            float baseWidth = MathHelper.Lerp(2f, 4.5f, MathF.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
+            return baseWidth * MathF.Sin(MathHelper.Pi * completionRatio);
         }
         internal Color ColorFunction(float completionRatio)
         {
-            Color baseColor = Color.Lerp(Color.Red, Color.Orange, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
-            return Color.Lerp(baseColor, Color.DarkRed, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
+            Color baseColor = Color.Lerp(Color.Red, Color.Orange, MathF.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
+            return Color.Lerp(baseColor, Color.DarkRed, (MathF.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
         }
 
         public override bool PreDraw(ref Color lightColor)

@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             if (adjustedAttackTimer <= swerveTime)
             {
-                float moveOffsetAngle = (float)Math.Cos(npc.Center.Length() / 150f + npc.whoAmI % 10f / 10f * MathHelper.TwoPi);
+                float moveOffsetAngle = MathF.Cos(npc.Center.Length() / 150f + npc.whoAmI % 10f / 10f * MathHelper.TwoPi);
                 moveOffsetAngle *= MathHelper.Pi * 0.85f / swerveTime;
 
                 npc.velocity = npc.velocity.RotatedBy(moveOffsetAngle) * 0.97f;

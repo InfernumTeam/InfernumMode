@@ -450,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            float verticalOffset = MathHelper.Lerp(0f, 45f, (float)Math.Cos(attackTimer / 32f) * 0.5f + 0.5f);
+            float verticalOffset = MathHelper.Lerp(0f, 45f, MathF.Cos(attackTimer / 32f) * 0.5f + 0.5f);
             Vector2 hoverDestination = target.Center - Vector2.UnitY * verticalOffset;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * BaseFlySpeedFactor * 0.75f;
             npc.SimpleFlyMovement(idealVelocity, BaseFlySpeedFactor / 20f);

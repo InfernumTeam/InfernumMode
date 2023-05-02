@@ -1365,7 +1365,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 bodySlamInterpolant = 1f;
 
                 // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
-                float rotation = npc.AngleTo(target.Center) + (float)Math.Cos(attackTimer / 13f) * 0.31f;
+                float rotation = npc.AngleTo(target.Center) + MathF.Cos(attackTimer / 13f) * 0.31f;
                 otherFist.Center = npc.Center + rotation.ToRotationVector2() * 180f;
                 otherFist.rotation = rotation;
                 if (otherFist.whoAmI == leftFist.whoAmI)
@@ -1762,7 +1762,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
+                    float colorInterpolant = MathF.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
                     Color backAfterimageColor = Color.Lerp(Color.Yellow, Color.Orange, colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
                     backAfterimageColor.A /= 8;

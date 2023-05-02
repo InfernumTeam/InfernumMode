@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     hoverSpeedFactor = 1.3f;
                     hoverDestination = new Vector2(Main.npc[Main.wofNPCIndex].Center.X, target.Center.Y);
-                    hoverDestination.Y += (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
+                    hoverDestination.Y += MathF.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
                 }
 
                 if (!Main.npc[Main.wofNPCIndex].WithinRange(target.Center, 4000f))
@@ -132,11 +132,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             float destinationOffset = MathHelper.Clamp(npc.Distance(target.Center), 60f, 210f);
-            destinationOffset += MathHelper.Lerp(0f, 215f, (float)Math.Sin(npc.whoAmI % 4f / 4f * MathHelper.Pi + attackTimer / 16f) * 0.5f + 0.5f);
+            destinationOffset += MathHelper.Lerp(0f, 215f, MathF.Sin(npc.whoAmI % 4f / 4f * MathHelper.Pi + attackTimer / 16f) * 0.5f + 0.5f);
             destinationOffset += npc.Distance(target.Center) * 0.1f;
 
             float destinationAngularOffset = MathHelper.Lerp(-1.04f, 1.04f, npc.ai[0]);
-            destinationAngularOffset += (float)Math.Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
+            destinationAngularOffset += MathF.Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
 
             // Move in sharp, sudden movements while releasing things at the target.
             Vector2 destination = Main.npc[Main.wofNPCIndex].Center;
@@ -194,7 +194,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                     drawPosition += npc.DirectionFrom(drawPosition) * fleshRopeTexture.Height;
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 drawOffset = Vector2.UnitX.RotatedBy(rotation) * (float)Math.Cos(MathHelper.TwoPi * i / 4f) * 4f;
+                        Vector2 drawOffset = Vector2.UnitX.RotatedBy(rotation) * MathF.Cos(MathHelper.TwoPi * i / 4f) * 4f;
                         Color color = Lighting.GetColor((int)(drawPosition + drawOffset).X / 16, (int)(drawPosition + drawOffset).Y / 16);
                         Main.spriteBatch.Draw(fleshRopeTexture, drawPosition + drawOffset - Main.screenPosition, null, color, rotation, fleshRopeTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                     }

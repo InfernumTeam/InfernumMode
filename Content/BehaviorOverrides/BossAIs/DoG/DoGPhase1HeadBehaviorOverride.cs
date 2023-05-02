@@ -505,8 +505,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     jawBaseOffset *= -1f;
                 }
                 Vector2 jawPosition = drawPosition;
-                jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + (float)Math.Sin(jawRotation) * 20f));
-                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + (float)Math.Sin(jawRotation) * 20f);
+                jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + MathF.Sin(jawRotation) * 20f));
+                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + MathF.Sin(jawRotation) * 20f);
                 Main.spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 

@@ -426,7 +426,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f)
             {
                 int currentShotCounter = (int)(attackTimer / shootRate);
-                SoundEngine.PlaySound(SoundID.Item8, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DarkMagicSkullShootDamage, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -649,7 +649,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
             if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f && attackTimer > attackDelay)
             {
-                SoundEngine.PlaySound(SoundID.Item8, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DarkMagicSkullShootDamage, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

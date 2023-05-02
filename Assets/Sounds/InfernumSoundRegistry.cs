@@ -22,6 +22,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle AEWThreatenRoar = new SoundStyle("InfernumMode/Assets/Sounds/Custom/AEW/AEWThreatenRoar") with { Volume = 1.64f };
 
+        public static readonly SoundStyle AnahitaSingSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Leviathan/AnahitaSing", 2) with { PitchVariance = 0.03f };
+
         public static readonly SoundStyle AresLaughSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresLaugh");
 
         public static readonly SoundStyle AresSlashSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/AresSlash");
@@ -75,6 +77,8 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle CeaselessVoidMetalBreakSound = new("InfernumMode/Assets/Sounds/Custom/CeaselessVoid/CeaselessVoidMetalBreak");
 
         public static readonly SoundStyle CloudElementalWindSound = new("InfernumMode/Assets/Sounds/Custom/Misc/CloudElementalWind");
+
+        public static readonly SoundStyle DarkMagicSkullShootDamage = new("InfernumMode/Assets/Sounds/Custom/Skeletron/DarkMagicSkullShoot");
 
         public static readonly SoundStyle DeerclopsRubbleAttackDistortedSound = new("InfernumMode/Assets/Sounds/Custom/Deerclops/DeerclopsRubbleAttackDistorted");
 
@@ -157,6 +161,8 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle PolterghastSoulSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterSoulVortexShoot");
 
         public static readonly SoundStyle PolterSoulVortexShootSound = new("InfernumMode/Assets/Sounds/Custom/Polterghast/PolterSoulShoot");
+
+        public static readonly SoundStyle PrimeChargeSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronPrime/PrimeCharge");
 
         public static readonly SoundStyle PrimeSawSound = new("InfernumMode/Assets/Sounds/Custom/SkeletronPrime/PrimeSaw");
 

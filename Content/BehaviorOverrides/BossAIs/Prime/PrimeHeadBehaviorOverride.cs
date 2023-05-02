@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
@@ -41,9 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             RocketRelease,
             HoverCharge,
             LightningSupercharge,
-            ReleaseTeslaMines,
-
-            FakeDeathAnimation
+            ReleaseTeslaMines
         }
 
         public enum PrimeFrameType
@@ -201,9 +200,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     break;
                 case PrimeAttackType.ReleaseTeslaMines:
                     DoBehavior_ReleaseTeslaMines(npc, target, lifeRatio, ref attackTimer, ref frameType);
-                    break;
-                case PrimeAttackType.FakeDeathAnimation:
-                    DoBehavior_FakeDeathAnimation(npc, target, attackTimer, ref frameType);
                     break;
             }
 
@@ -385,18 +381,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 if (!npc.WithinRange(target.Center, 250f))
                     npc.velocity *= 0.87f;
 
-                SoundEngine.PlaySound(SoundID.Item42, npc.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
+                if (wrappedTime % 3f == 2f)
                 {
-                    float rocketSpeed = Main.rand.NextFloat(12.5f, 14f) * (AnyArms ? 0.825f : 1f);
-                    if (!AnyArms)
-                        rocketSpeed += (1f - lifeRatio) * 5.6f;
-                    Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
-                    if (rocketVelocity.Y < -1f)
-                        rocketVelocity.Y = -1f;
-                    rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * rocketVelocity.Length(), 0.96f);
-                    rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), MissileDamage, 0f);
+                    SoundEngine.PlaySound(Apollo.MissileLaunchSound with { Pitch = 0.2f }, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float rocketSpeed = Main.rand.NextFloat(12.5f, 14f) * (AnyArms ? 0.825f : 1f);
+                        if (!AnyArms)
+                            rocketSpeed += (1f - lifeRatio) * 5.6f;
+                        Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
+                        if (rocketVelocity.Y < -1f)
+                            rocketVelocity.Y = -1f;
+                        rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * rocketVelocity.Length(), 0.96f);
+                        rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
+                        Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ModContent.ProjectileType<PrimeMissile>(), MissileDamage, 0f);
+                    }
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 12f == 11f && !AnyArms)
@@ -474,10 +474,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), MetalSpikeDamage, 0f);
                             }
                         }
-                        SoundEngine.PlaySound(SoundID.Item101, target.Center);
-                    }
+                        SoundEngine.PlaySound(InfernumSoundRegistry.PrimeChargeSound, target.Center);
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center);
+                        // Release some smoke backwards.
+                        for (int i = 0; i < 32; i++)
+                        {
+                            Color smokeColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.65f));
+                            SmallSmokeParticle smoke = new(npc.Center + Main.rand.NextVector2Circular(90f, 90f), -npc.velocity.RotatedByRandom(0.52f) * Main.rand.NextFloat(0.3f, 2f), smokeColor, Color.DarkGray, 1f, 255f, Main.rand.NextFloat(0.01f));
+                            GeneralParticleHandler.SpawnParticle(smoke);
+                        }
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Color smokeColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.55f));
+                            MediumMistParticle smoke = new(npc.Center + Main.rand.NextVector2Circular(90f, 90f), -npc.velocity.RotatedByRandom(0.52f) * Main.rand.NextFloat(0.2f, 1.2f), smokeColor, Color.White, 1f, 255f, Main.rand.NextFloat(0.01f));
+                            GeneralParticleHandler.SpawnParticle(smoke);
+                        }
+                    }
                 }
 
                 frameType = (int)PrimeFrameType.Spikes;
@@ -580,7 +592,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 // Their purpose is to act as a "border".
                 if (attackTimer == 165f)
                 {
-                    SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, target.Center);
+                    SoundEngine.PlaySound(AresLaserCannon.LaserbeamShootSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)
@@ -616,7 +628,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 }
                 if (attackTimer > 180f && attackTimer < 435f && attackTimer % 30f == 29f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item36, npc.Center);
+                    SoundEngine.PlaySound(Apollo.MissileLaunchSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 8f);
@@ -671,73 +683,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_FakeDeathAnimation(NPC npc, Player target, float attackTimer, ref float frameType)
-        {
-            int slowdownTime = 70;
-            int jitterTime = 60;
-            int explosionDelay = TwinsLensFlare.Lifetime;
-            ref float spinAcceleration = ref npc.Infernum().ExtraAI[0];
-
-            // Keep the mouth open.
-            frameType = (int)PrimeFrameType.OpenMouth;
-
-            // Play a malfunction sound on the first frame.
-            if (attackTimer == 1f)
-                SoundEngine.PlaySound(AresBody.EnragedSound with { Volume = 1.5f });
-
-            // Slow down at first.
-            if (attackTimer < slowdownTime)
-                npc.velocity *= 0.9f;
-            else
-                npc.velocity = Vector2.Zero;
-
-            // Spin.
-            spinAcceleration = MathHelper.Lerp(spinAcceleration, MathHelper.Pi / 9f, 0.01f);
-            npc.rotation += spinAcceleration;
-
-            // Disable damage.
-            npc.damage = 0;
-            npc.dontTakeDamage = true;
-
-            // Create explosion effects on top of Spazmatism and jitter.
-            if (attackTimer >= slowdownTime)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 4f == 3f)
-                {
-                    int explosion = Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Square(-80f, 80f), Vector2.Zero, ModContent.ProjectileType<TwinsSpriteExplosion>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(explosion))
-                        Main.projectile[explosion].ModProjectile<TwinsSpriteExplosion>().SpazmatismVariant = false;
-                }
-                npc.Center += Main.rand.NextVector2Circular(3f, 3f);
-            }
-
-            // Create a lens flare on top of Spazmatism that briefly fades in and out.
-            if (attackTimer == slowdownTime + jitterTime)
-            {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    int lensFlare = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsLensFlare>(), 0, 0f);
-                    if (Main.projectile.IndexInRange(lensFlare))
-                        Main.projectile[lensFlare].ModProjectile<TwinsLensFlare>().SpazmatismVariant = false;
-                }
-            }
-
-            // Release an incredibly violent explosion and go to the next attack.
-            if (attackTimer == slowdownTime + jitterTime + explosionDelay)
-            {
-                Utilities.CreateShockwave(npc.Center, 40, 10, 30f);
-                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, new Color[] { Color.Gray, Color.OrangeRed * 0.72f }, 2.3f, 75, 0.4f));
-
-                npc.life = 1;
-                npc.Center = target.Center - Vector2.UnitY * 400f;
-                npc.netUpdate = true;
-
-                SpawnArms(npc, 10000);
-                SelectNextAttack(npc);
-            }
-        }
-
         #endregion Specific Attacks
 
         #region General Helper Functions
@@ -786,7 +731,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
             // Always start the fight with generic cannon attacks.
-            if (oldAttack is PrimeAttackType.SpawnEffects or PrimeAttackType.FakeDeathAnimation)
+            if (oldAttack is PrimeAttackType.SpawnEffects)
                 npc.ai[0] = (int)PrimeAttackType.GenericCannonAttacking;
 
             npc.TargetClosest();

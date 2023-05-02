@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
@@ -331,7 +332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         {
             int shootDelay = 72;
             int shootTime = 250;
-            int shootRate = 10;
+            int shootRate = 17;
             float bobAmplitude = 325f;
             float bobPeriod = 30f;
             float songShootSpeed = 13f;
@@ -356,7 +357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             if (ableToShoot && attackTimer % shootRate == shootRate - 1f && !npc.WithinRange(target.Center, 270f))
             {
                 Main.musicPitch = Main.rand.NextFloatDirection() * 0.25f;
-                SoundEngine.PlaySound(SoundID.Item26, target.position);
+                SoundEngine.PlaySound(InfernumSoundRegistry.AnahitaSingSound with { Volume = 0.4f, PitchVariance = 0f, MaxInstances = 6 }, target.position);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 songShootVelocity = Vector2.UnitX * npc.spriteDirection * songShootSpeed;

@@ -20,6 +20,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override int? NPCIDToDeferToForTips => NPCID.Spazmatism;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatioThreshold,
+            Phase3LifeRatioThreshold
+        };
+
         #region AI
         public override bool PreAI(NPC npc) => DoAI(npc);
         #endregion AI

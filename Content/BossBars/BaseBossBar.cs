@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
@@ -8,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 using static CalamityMod.UI.BossHealthBarManager;
@@ -19,6 +22,8 @@ namespace InfernumMode.Content.BossBars
     public class BaseBossBar
     {
         #region Fields/Properties
+        public FireParticleSet EnrageParticleSet = new(-1, int.MaxValue, Color.Yellow, Color.Red * 1.2f, 10f, 0.65f);
+
         public int NPCIndex = -1;
 
         public int EnrageTimer;
@@ -33,10 +38,14 @@ namespace InfernumMode.Content.BossBars
 
         public long PreviousLife;
 
+        public float PreviousRatio;
+
         /// <summary>
         /// The type of the NPC this bar is indended for.
         /// </summary>
         public int IntendedNPCType;
+
+        public readonly Texture2D BossIcon;
 
         public NPC AssociatedNPC
         {
@@ -177,6 +186,11 @@ namespace InfernumMode.Content.BossBars
                 IntendedNPCType = AssociatedNPC.type;
                 PreviousLife = CombinedNPCLife;
             }
+            int headIndex = AssociatedNPC.GetBossHeadTextureIndex();
+            if (TextureAssets.NpcHeadBoss.IndexInRange(headIndex))
+                BossIcon = TextureAssets.NpcHeadBoss[headIndex].Value;
+            else
+                BossIcon = TextureAssets.Mana.Value;
         }
 
         public void Update()
@@ -190,9 +204,14 @@ namespace InfernumMode.Content.BossBars
                 return;
             }
 
-            OpenAnimationTimer = Utils.Clamp(OpenAnimationTimer + 1, 0, 80);
-            EnrageTimer = Utils.Clamp(EnrageTimer + NPCIsEnraged.ToDirectionInt(), 0, 120);
+            OpenAnimationTimer = Utils.Clamp(OpenAnimationTimer + 1, 0, 25);
+            EnrageTimer = Utils.Clamp(EnrageTimer + NPCIsEnraged.ToDirectionInt(), 0, 45);
 
+            if (EnrageTimer > 0)
+                EnrageParticleSet.ParticleSpawnRate = (int)MathHelper.Lerp(600f, 4f, Utils.GetLerpValue(0f, 45f, EnrageTimer, true));
+            else
+                EnrageParticleSet.ParticleSpawnRate = int.MaxValue;
+            EnrageParticleSet.Update();
             IncreasingDefenseOrDRTimer = Utils.Clamp(IncreasingDefenseOrDRTimer + NPCIsIncreasingDefenseOrDR.ToDirectionInt(), 0, 120);
             if (CombinedNPCMaxLife != 0L && (InitialMaxLife == 0L || InitialMaxLife < CombinedNPCMaxLife))
                 InitialMaxLife = CombinedNPCMaxLife;
@@ -257,9 +276,11 @@ namespace InfernumMode.Content.BossBars
         {
             float currentRatio = GetCurrentRatio(out int currentPhase);
             Vector2 barCenter = new(x, y);
+            float mainOpacity = Utils.GetLerpValue(0f, 25f, OpenAnimationTimer, true) * Utils.GetLerpValue(45f, 0f, CloseAnimationTimer, true);
+            Color drawColor = Color.White * mainOpacity;
 
             // Draw the frame.
-            spriteBatch.Draw(BarFrame, barCenter, null, Color.White, 0f, BarFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(BarFrame, barCenter, null, drawColor, 0f, BarFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             Vector2 leftBarTipPos = barCenter + new Vector2(-147f, 0f);
             Vector2 rightBarTipPos = barCenter + new Vector2(84f, 0f);
@@ -281,18 +302,41 @@ namespace InfernumMode.Content.BossBars
             Effect barShader = InfernumEffectsRegistry.BossBarShader.GetShader().Shader;
             barShader.Parameters["pixelationAmount"].SetValue(4f);
             barShader.Parameters["lifeRatio"].SetValue(currentRatio);
+            barShader.Parameters["opacity"].SetValue(mainOpacity);
             barShader.Parameters["mainColor"].SetValue(mainBarColor.ToVector3());
             barShader.Parameters["bloomColor"].SetValue(bloomColor.ToVector3());
             barShader.CurrentTechnique.Passes[0].Apply();
 
-            spriteBatch.Draw(InfernumTextureRegistry.Pixel.Value, hpBarRightPos, null, Color.Red, 0f, hpOrigin, hpScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(InfernumTextureRegistry.Pixel.Value, hpBarRightPos, null, drawColor, 0f, hpOrigin, hpScale, SpriteEffects.None, 0f);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
             // Draw the icon frame.
-            spriteBatch.Draw(IconFrame, barCenter, null, Color.White, 0f, IconFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(IconFrame, barCenter, null, drawColor, 0f, IconFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+
+            // Draw the icon.
+            float idealIconSize = 40f;
+            float actualIconSize = MathHelper.Max(BossIcon.Width, BossIcon.Height);
+            float iconScaleNeeded = idealIconSize / actualIconSize;
+            Vector2 iconDrawPos = barCenter + new Vector2(135f, 0f);
+            Color afterimageColor = Color.White;
+
+            if (NPCIsEnraged || EnrageTimer > 0)
+            {
+                EnrageParticleSet.DrawSet(iconDrawPos + Vector2.UnitY * 4f + Main.screenPosition);
+                EnrageParticleSet.SpawnAreaCompactness = 18f;
+                EnrageParticleSet.RelativePower = 0.4f;
+                afterimageColor = Color.Lerp(Color.White, Color.OrangeRed, Utils.GetLerpValue(0f, 45f, EnrageTimer, true));
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 backglowOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 3f;
+                spriteBatch.Draw(BossIcon, iconDrawPos + backglowOffset, null, afterimageColor with { A = 0 } * 0.5f * MathF.Pow(mainOpacity, 2f), 0f, BossIcon.Size() * 0.5f, iconScaleNeeded, SpriteEffects.None, 0f);
+            }
+            spriteBatch.Draw(BossIcon, iconDrawPos, null, Color.Lerp(drawColor, afterimageColor * mainOpacity, 0.75f), 0f, BossIcon.Size() * 0.5f, iconScaleNeeded, SpriteEffects.None, 0f);
 
             // Draw the tip.
-            spriteBatch.Draw(MainBarTip, mainBarTipPos, null, Color.White, 0f, MainBarTip.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(MainBarTip, mainBarTipPos, null, drawColor, 0f, MainBarTip.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw the phase indicators.
             int totalPhaseIndicators = GetTotalPhaseIndicators();
@@ -305,39 +349,39 @@ namespace InfernumMode.Content.BossBars
             float phaseNotchXPos = phaseShellXPos + 6f;
             for (int i = 0; i < totalPhaseIndicators; i++)
             {
-                Texture2D phaseNotchTexture = ((totalPhaseIndicators - i)) < currentPhase ? PhaseIndicatorNotch : PhaseIndicatorPlate;
+                Texture2D phaseNotchTexture = ((totalPhaseIndicators - i) < currentPhase) || (AssociatedNPC.Calamity().ShouldCloseHPBar || !AssociatedNPC.active) ? PhaseIndicatorNotch : PhaseIndicatorPlate;
                 Vector2 phaseNotchDrawPos = new(phaseNotchXPos, rightPhaseIndicatorShellDrawPos.Y + 3f);
-                spriteBatch.Draw(phaseNotchTexture, phaseNotchDrawPos, null, Color.White, 0f, phaseNotchTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(phaseNotchTexture, phaseNotchDrawPos, null, drawColor, 0f, phaseNotchTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 phaseNotchXPos -= 15f;
 
                 if (i < totalPhaseIndicators - 1)
                 {
                     Vector2 middleDrawPos = new(phaseShellXPos, rightPhaseIndicatorShellDrawPos.Y - 9f);
-                    spriteBatch.Draw(PhaseIndicatorMiddle, middleDrawPos, null, Color.White, 0f, PhaseIndicatorMiddle.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(PhaseIndicatorMiddle, middleDrawPos, null, drawColor, 0f, PhaseIndicatorMiddle.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                     phaseShellXPos -= 15f;
                 }
             }
 
             // Draw the rightmost piece.
-            spriteBatch.Draw(PhaseIndicatorEnd, rightPhaseIndicatorShellDrawPos, null, Color.White, 0f, PhaseIndicatorEnd.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(PhaseIndicatorEnd, rightPhaseIndicatorShellDrawPos, null, drawColor, 0f, PhaseIndicatorEnd.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw the leftmost piece.
             Vector2 leftPhaseShellPos = new(phaseShellXPos - 6f, rightPhaseIndicatorShellDrawPos.Y);
-            spriteBatch.Draw(PhaseIndicatorStart, leftPhaseShellPos, null, Color.White, 0f, PhaseIndicatorStart.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(PhaseIndicatorStart, leftPhaseShellPos, null, drawColor, 0f, PhaseIndicatorStart.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw the percentage box.
             Vector2 percentBaseDrawPos = leftPhaseShellPos + new Vector2(-30f, -3f);
-            spriteBatch.Draw(PercentageFrame, percentBaseDrawPos, null, Color.White, 0f, PercentageFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(PercentageFrame, percentBaseDrawPos, null, drawColor, 0f, PercentageFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             float totalRatio = (float)CombinedNPCLife / CombinedNPCMaxLife;
-            float formattedRatio = MathF.Truncate(totalRatio * 1000f) / 10;
+            float formattedRatio = MathF.Truncate(totalRatio * 10000f) / 100;
             if (float.IsNaN(formattedRatio))
                 formattedRatio = 0f;
             string percentText = formattedRatio.ToString() + "%";
-            Vector2 textDrawPos = percentBaseDrawPos + new Vector2(12f, 6.5f);
+            Vector2 textDrawPos = percentBaseDrawPos + new Vector2(13f, 6.5f);
             Color shadowColor = new(210, 158, 68);
             Vector2 size = BarFont.MeasureString(percentText);
             Vector2 origin = new(size.X, size.Y * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, BarFont, percentText, textDrawPos, shadowColor, 0f, origin, Vector2.One * 0.65f);
+            ChatManager.DrawColorCodedString(spriteBatch, BarFont, percentText, textDrawPos, shadowColor * mainOpacity, 0f, origin, Vector2.One * 0.65f);
         }
         #endregion
     }

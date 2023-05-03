@@ -1569,14 +1569,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             return false;
         }
 
-        public static void DrawForcefield(Vector2 drawPosition, float opacity, Color color, Texture2D noise, float scaleFactor = 1f)
+        public static void DrawForcefield(Vector2 drawPosition, float opacity, Color color, Texture2D noise, bool useOutline = true, float mainScaleFactor = 1f, float fresnelScaleFactor = 1f, float noiseScaleFactor = 1f)
         {
             Texture2D invis = InfernumTextureRegistry.Invisible.Value;
             float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
             float eased = CalamityUtils.PolyInOutEasing(interpolant, 1);
-            float scale = MathHelper.Lerp(0.95f, 1.05f, eased);
-            float noiseScale = MathHelper.Lerp(1.55f, 1.45f, eased);
-            float fresnelScale = MathHelper.Lerp(0.85f, 1.15f, eased);
+            float scale = MathHelper.Lerp(0.95f, 1.05f, eased) * mainScaleFactor;
+            float noiseScale = MathHelper.Lerp(1.55f, 1.45f, eased) * noiseScaleFactor;
+            float fresnelScale = MathHelper.Lerp(0.85f, 1.15f, eased) * fresnelScaleFactor;
             Vector2 noiseDirection = -Vector2.UnitX;
 
             Effect shield = InfernumEffectsRegistry.CultistShieldShader.Shader;
@@ -1590,9 +1590,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             shield.Parameters["scrollSpeed"].SetValue(0.345f);
             shield.Parameters["fill"].SetValue(0.1f);
             shield.Parameters["opacity"].SetValue(opacity);
+            shield.Parameters["useOuterGlow"].SetValue(useOutline);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, Main.Rasterizer, shield, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(invis, drawPosition, null, Color.White, 0f, invis.Size() * 0.5f, scale * scaleFactor * 150f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(invis, drawPosition, null, Color.White, 0f, invis.Size() * 0.5f, scale * 150f, SpriteEffects.None, 0f);
             Main.spriteBatch.ExitShaderRegion();
         }
 

@@ -2,10 +2,9 @@
 
 float pixelationAmount;
 float lifeRatio;
+float opacity;
 float3 mainColor;
 float3 bloomColor;
-
-
 
 float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
 {
@@ -15,7 +14,7 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
     float distanceToCenter = distance(float2(uv.x, 0.5), float2(0.5, 0.5)) * 2 * pow(lifeRatio, 1);
     float3 color = lerp(bloomColor, mainColor, distanceToCenter - 0.25);
     
-    return float4(color, 1);
+    return float4(color, 1) * opacity;
 }
 
 technique Technique1

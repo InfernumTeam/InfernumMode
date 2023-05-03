@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -68,24 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             if (!Main.npc.IndexInRange((int)OwnerIndex) || !Main.npc[(int)OwnerIndex].active)
                 return false;
-
-            Main.spriteBatch.EnterShaderRegion();
-
-            Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value,
-                Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
-                new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f)) * 0.7f * Projectile.Opacity,
-                Projectile.rotation,
-                Projectile.Size,
-                scale,
-                SpriteEffects.None, 0);
-
-            GameShaders.Misc["ForceField"].UseColor(Owner.type == NPCID.Spazmatism ? Color.LimeGreen : Color.Red);
-            GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(Main.spriteBatch);
-
-            Main.spriteBatch.ExitShaderRegion();
+            Cultist.CultistBehaviorOverride.DrawForcefield(Projectile.Center - Main.screenPosition, Projectile.Opacity, Owner.type == NPCID.Spazmatism ? Color.LimeGreen : Color.Red, InfernumTextureRegistry.HexagonGrid.Value, false, 1.3f * (Radius / MaxRadius), fresnelScaleFactor: 1.3f, noiseScaleFactor: 1.05f);
             return false;
         }
     }

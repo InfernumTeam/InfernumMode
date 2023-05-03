@@ -54,6 +54,7 @@ namespace InfernumMode.Core.Balancing
             int inkCloud3 = ProjectileType<InkCloud3>();
 
             float aresPierceResistFactor = 0.925f;
+            float thanatosPierceResistFactor = 0.75f;
             float sepulcherPierceResistFactor = 0.375f;
 
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
@@ -109,6 +110,7 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCType<StormWeaverBody>(), Do(new PierceResistBalancingRule(0.4f))),
 
                 // The Devourer of Gods.
+                new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new PierceResistBalancingRule(0.75f))),
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.5f, ProjectileType<TerrorBeam>(), ProjectileType<TerrorBlast>()))),
                 new NPCBalancingChange(NPCType<DevourerofGodsHead>(), Do(new ProjectileResistBalancingRule(0.5f, ProjectileType<TerrorBeam>(), ProjectileType<TerrorBlast>()))),
 
@@ -119,6 +121,9 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCType<AresTeslaCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresGaussNuke>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresPulseCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<AresBody>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new PierceResistBalancingRule(thanatosPierceResistFactor))),
+                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new PierceResistBalancingRule(thanatosPierceResistFactor))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
                 new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileType<DragonRageStaff>()))),

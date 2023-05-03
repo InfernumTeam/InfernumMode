@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (Main.rand.NextBool(dustReleaseRate))
             {
-                Dust shimmer = Dust.NewDustDirect(npc.position, npc.width, npc.height, 264);
+                Dust shimmer = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.PortalBoltTrail);
                 shimmer.color = Color.Red;
 
                 if (unstableDust)

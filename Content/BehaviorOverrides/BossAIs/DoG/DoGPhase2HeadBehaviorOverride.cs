@@ -523,7 +523,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             {
                 // Randomly play an electric pop sound to accompany the destruction of a segment.
                 if (Main.rand.NextBool(5))
-                    SoundEngine.PlaySound(SoundID.Item94, npc.Center);
+                    SoundEngine.PlaySound(DevourerofGodsHead.DeathSegmentSound, npc.Center);
 
                 List<int> segments = new()
                 {

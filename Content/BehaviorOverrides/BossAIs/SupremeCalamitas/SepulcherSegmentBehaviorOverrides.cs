@@ -31,7 +31,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.lifeMax = 582000;
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
-            npc.scale *= 1.2f;
             npc.alpha = 255;
             npc.behindTiles = true;
             npc.noGravity = true;
@@ -67,6 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.defDamage = 200;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             npc.defense = 20;
+            npc.scale = head.scale;
             npc.Calamity().DR = 0.56f;
 
             npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             directionToNextSegment = directionToNextSegment.SafeNormalize(Vector2.Zero);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.725f;
+            npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.5f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
 
             // Disable dart spreads from the energy balls if Sepulcher is creating soul bombs.

@@ -44,7 +44,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.lifeMax = 331550;
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
-            npc.scale *= 1.2f;
             npc.alpha = 255;
             npc.chaseable = true;
             npc.behindTiles = true;
@@ -82,6 +81,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
             npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
             npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
+
+            // No.
+            npc.scale = 1.25f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedSegments == 0f)
             {

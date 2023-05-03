@@ -30,6 +30,8 @@ namespace InfernumMode.Content.BossBars
 
         public int IncreasingDefenseOrDRTimer;
 
+        public int InvincibilityTimer;
+
         public int OpenAnimationTimer;
 
         public int CloseAnimationTimer;
@@ -147,7 +149,7 @@ namespace InfernumMode.Content.BossBars
                 }
                 return false;
             }
-        }      
+        }
 
         public bool NPCIsInvincible
         {
@@ -204,15 +206,19 @@ namespace InfernumMode.Content.BossBars
                 return;
             }
 
+            // Update timers.
             OpenAnimationTimer = Utils.Clamp(OpenAnimationTimer + 1, 0, 25);
             EnrageTimer = Utils.Clamp(EnrageTimer + NPCIsEnraged.ToDirectionInt(), 0, 45);
+            IncreasingDefenseOrDRTimer = Utils.Clamp(IncreasingDefenseOrDRTimer + NPCIsIncreasingDefenseOrDR.ToDirectionInt(), 0, 120);
+            InvincibilityTimer = Utils.Clamp(InvincibilityTimer + NPCIsInvincible.ToDirectionInt(), 0, 45);
 
+            // Update the enrage fire particles.
             if (EnrageTimer > 0)
                 EnrageParticleSet.ParticleSpawnRate = (int)MathHelper.Lerp(600f, 4f, Utils.GetLerpValue(0f, 45f, EnrageTimer, true));
             else
                 EnrageParticleSet.ParticleSpawnRate = int.MaxValue;
             EnrageParticleSet.Update();
-            IncreasingDefenseOrDRTimer = Utils.Clamp(IncreasingDefenseOrDRTimer + NPCIsIncreasingDefenseOrDR.ToDirectionInt(), 0, 120);
+
             if (CombinedNPCMaxLife != 0L && (InitialMaxLife == 0L || InitialMaxLife < CombinedNPCMaxLife))
                 InitialMaxLife = CombinedNPCMaxLife;
         }
@@ -221,9 +227,8 @@ namespace InfernumMode.Content.BossBars
         {
             float baseRatio = (float)CombinedNPCLife / CombinedNPCMaxLife;
             currentPhase = 1;
-            if (PhaseInfos.ContainsKey(NPCType))
+            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo))
             {
-                BossPhaseInfo phaseInfo = PhaseInfos[NPCType];
                 float startingHealthPercentForPhase = 1f;
                 float endingHealthPercentForPhase = 0f;
 
@@ -262,9 +267,8 @@ namespace InfernumMode.Content.BossBars
 
         private int GetTotalPhaseIndicators()
         {
-            if (PhaseInfos.ContainsKey(NPCType))
+            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo))
             {
-                BossPhaseInfo phaseInfo = PhaseInfos[NPCType];
                 if (phaseInfo.NPCType == ModContent.NPCType<Yharon>())
                     return phaseInfo.PhaseCount / 2;
                 return phaseInfo.PhaseCount;
@@ -310,6 +314,15 @@ namespace InfernumMode.Content.BossBars
             spriteBatch.Draw(InfernumTextureRegistry.Pixel.Value, hpBarRightPos, null, drawColor, 0f, hpOrigin, hpScale, SpriteEffects.None, 0f);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+
+            // Draw the invincibility overlay.
+            if (InvincibilityTimer >= 0)
+            {
+                float invincibilityTimerInterpolant = InvincibilityTimer / 45f;
+                Vector2 invincibilityBarStart = mainBarTipPos + Vector2.UnitX * 4f;
+                spriteBatch.Draw(InvincibilityOverlay, invincibilityBarStart, null, drawColor * invincibilityTimerInterpolant, 0f, InvincibilityOverlay.Size() * new Vector2(0f, 0.5f), 1f, SpriteEffects.None, 0f);
+            }
+
             // Draw the icon frame.
             spriteBatch.Draw(IconFrame, barCenter, null, drawColor, 0f, IconFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
@@ -342,7 +355,6 @@ namespace InfernumMode.Content.BossBars
             int totalPhaseIndicators = GetTotalPhaseIndicators();
 
             Vector2 rightPhaseIndicatorShellDrawPos = barCenter + new Vector2(114f, -38f);
-
 
             // Draw the middle connectors.
             float phaseShellXPos = rightPhaseIndicatorShellDrawPos.X - PhaseIndicatorEnd.Width * 0.5f - PhaseIndicatorMiddle.Width * 0.5f + 4f;

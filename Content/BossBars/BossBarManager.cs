@@ -15,6 +15,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.GameContent.UI.BigProgressBar;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BossBars
@@ -56,6 +57,8 @@ namespace InfernumMode.Content.BossBars
         public static Texture2D PhaseIndicatorStart { get; private set; }
 
         public static Texture2D PhaseIndicatorPlate { get; private set; }
+
+        public static Texture2D InvincibilityOverlay { get; private set; }
         #endregion
 
         #region Overrides
@@ -74,17 +77,21 @@ namespace InfernumMode.Content.BossBars
                     BarFont = FontAssets.MouseText.Value;
             }
 
-            BarFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/Frame", AssetRequestMode.ImmediateLoad).Value;
-            IconFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/IconBase", AssetRequestMode.ImmediateLoad).Value;
-            MainBarTip = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/MainBarTip", AssetRequestMode.ImmediateLoad).Value;
-            MinionBarTip = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/MinionBarTip", AssetRequestMode.ImmediateLoad).Value;
-            MinionFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/MinionFrame", AssetRequestMode.ImmediateLoad).Value;
-            PercentageFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PercentageFrame", AssetRequestMode.ImmediateLoad).Value;
-            PhaseIndicatorEnd = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorEnd", AssetRequestMode.ImmediateLoad).Value;
-            PhaseIndicatorMiddle = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorMiddle", AssetRequestMode.ImmediateLoad).Value;
-            PhaseIndicatorNotch = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorNotch", AssetRequestMode.ImmediateLoad).Value;
-            PhaseIndicatorStart = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorStart", AssetRequestMode.ImmediateLoad).Value;
-            PhaseIndicatorPlate = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhasePlate", AssetRequestMode.ImmediateLoad).Value;
+            if (Main.netMode != NetmodeID.Server)
+            {
+                BarFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/Frame", AssetRequestMode.ImmediateLoad).Value;
+                IconFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/IconBase", AssetRequestMode.ImmediateLoad).Value;
+                MainBarTip = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/MainBarTip", AssetRequestMode.ImmediateLoad).Value;
+                MinionBarTip = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/MinionBarTip", AssetRequestMode.ImmediateLoad).Value;
+                MinionFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/MinionFrame", AssetRequestMode.ImmediateLoad).Value;
+                PercentageFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PercentageFrame", AssetRequestMode.ImmediateLoad).Value;
+                PhaseIndicatorEnd = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorEnd", AssetRequestMode.ImmediateLoad).Value;
+                PhaseIndicatorMiddle = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorMiddle", AssetRequestMode.ImmediateLoad).Value;
+                PhaseIndicatorNotch = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorNotch", AssetRequestMode.ImmediateLoad).Value;
+                PhaseIndicatorStart = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorStart", AssetRequestMode.ImmediateLoad).Value;
+                PhaseIndicatorPlate = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhasePlate", AssetRequestMode.ImmediateLoad).Value;
+                InvincibilityOverlay = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/InvincibilityOverlay", AssetRequestMode.ImmediateLoad).Value;
+            }
         }
 
         public override void Unload()

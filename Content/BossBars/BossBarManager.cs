@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.UI;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -134,7 +135,7 @@ namespace InfernumMode.Content.BossBars
         public override void Draw(SpriteBatch spriteBatch, IBigProgressBar currentBar, BigProgressBarInfo info)
         {
             int startHeight = 100;
-            int x = Main.screenWidth - 220 - 300;
+            int x = Main.screenWidth - 220;
             int y = Main.screenHeight - startHeight;
             if (Main.playerInventory || Main.invasionType > 0 || Main.pumpkinMoon || Main.snowMoon || DD2Event.Ongoing || AcidRainEvent.AcidRainEventIsOngoing)
             {
@@ -177,16 +178,6 @@ namespace InfernumMode.Content.BossBars
 
             if (canAddBar)
                 ActiveBossBars.Add(new BaseBossBar(npcIndex));
-        }
-
-        public static int GetNPCPhaseCount(int type)
-        {
-            if (NPCBehaviorOverride.BehaviorOverrides.ContainsKey(type))
-            {
-                NPCBehaviorOverride behaviorOverride = NPCBehaviorOverride.BehaviorOverrides[type];
-                return behaviorOverride.PhaseLifeRatioThresholds.Length;
-            }
-            return 1;
         }
         #endregion
     }

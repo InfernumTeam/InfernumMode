@@ -20,6 +20,7 @@ float fresnelPower;
 float scrollSpeed;
 float fill;
 float opacity;
+bool useOuterGlow;
 
 float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
 {
@@ -38,7 +39,7 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
     float4 finalNoise = noise * 0.66 + noise2 * 0.33;
     float noiseValue = finalNoise.r;
     float fresnel = pow(distanceFromCenter, fresnelPower) + pow(distanceFromCenter, fresnelPower * 0.5) * 0.6;
-    if (distanceFromCenter > 0.97)
+    if (distanceFromCenter > 0.97 && useOuterGlow)
         return float4(mainColor, 1) * pow(1 - (distanceFromCenter / 0.03), 10);
     return float4(mainColor, 1) * (((noiseValue * 1.6 + 0.6)) * fresnel + fill) * opacity;
 

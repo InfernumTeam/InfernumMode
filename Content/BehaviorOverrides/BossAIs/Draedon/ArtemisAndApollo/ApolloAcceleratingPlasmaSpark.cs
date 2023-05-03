@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             // Emit dust.
             for (int i = 0; i < 2; i++)
             {
-                Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 107);
+                Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.TerraBlade);
                 plasma.scale *= 0.7f;
                 plasma.velocity = plasma.velocity * 0.4f + Main.rand.NextVector2Circular(0.4f, 0.4f);
                 plasma.fadeIn = 0.4f;

@@ -534,7 +534,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 // Mark an index based on whether it can be split at a specific split counter value.
 
                 // Small worm split indices.
-                if (i == BaseBodySegmentCount / 4 || i == BaseBodySegmentCount * 3 / 4)
+                if (i is (BaseBodySegmentCount / 4) or (BaseBodySegmentCount * 3 / 4))
                     Main.npc[nextIndex].ai[3] = 2f;
 
                 // Medium worm split index.

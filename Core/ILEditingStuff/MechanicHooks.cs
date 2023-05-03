@@ -429,7 +429,7 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 float scale = MathHelper.Lerp(0.55f, 1.5f, 1f - crescentPlayer.ForcefieldStrengthInterpolant);
                 Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * crescentPlayer.ForcefieldStrengthInterpolant;
-                CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.FireNoise.Value, scale);
+                CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.FireNoise.Value, true, scale);
             }
         }
 

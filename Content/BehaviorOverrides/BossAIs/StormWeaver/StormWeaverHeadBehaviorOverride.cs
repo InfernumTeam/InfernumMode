@@ -86,6 +86,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
         public const float Phase2LifeRatio = 0.5f;
 
+        public override float[] PhaseLifeRatioThresholds => new float[]
+        {
+            Phase2LifeRatio
+        };
+
         public override bool PreAI(NPC npc)
         {
             // Do targeting.

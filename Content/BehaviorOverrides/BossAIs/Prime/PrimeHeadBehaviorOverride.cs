@@ -833,6 +833,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
             bool tooCloseToTarget = MathHelper.Distance(npc.Center.Y, target.Center.Y) < verticalHoverOffset + 100f;
             bool tooFarFromDestination = MathHelper.Distance(npc.Center.Y, target.Center.Y) > verticalHoverOffset - 100f;
+            if (npc.WithinRange(hoverDestination, 50f))
+            {
+                idealVelocity *= 0.2f;
+                hoverAcceleration *= 0.15f;
+            }
 
             npc.SimpleFlyMovement(idealVelocity, hoverAcceleration);
 
@@ -842,7 +847,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             // Slow down and settle in place if near the hover destination.
             if (npc.WithinRange(hoverDestination, 100f))
+            {
                 npc.velocity *= 0.8f;
+                if (npc.velocity.Length() < 0.5f)
+                    npc.velocity = Vector2.Zero;
+            }
         }
 
         public static void SpawnArms(NPC npc, int? lifeOverride = null)

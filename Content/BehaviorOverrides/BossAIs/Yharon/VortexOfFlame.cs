@@ -10,12 +10,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
     public class VortexOfFlame : ModProjectile
     {
         public const int Lifetime = 600;
+        
         public const int AuraCount = 4;
+        
         public ref float Timer => ref Projectile.ai[0];
+        
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Vortex of Flame");
         }
+
         public override void SetDefaults()
         {
             Projectile.width = 408;

@@ -103,27 +103,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public const float Phase3LifeRatio = 0.25f;
 
-        public const int AcidVerticalLineIndex = 7;
+        public const int HasInitializedFlagIndex = 5;
 
-        public const int CurrentPhaseIndex = 8;
+        public const int AcidVerticalLineIndex = 6;
 
-        public const int AttackCycleIndex = 9;
+        public const int CurrentPhaseIndex = 7;
 
-        public const int AcidMeterEverReachedHalfIndex = 10;
+        public const int AttackCycleIndex = 8;
 
-        public const int SkullWasTakenIndex = 11;
+        public const int AcidMeterEverReachedHalfIndex = 9;
 
-        public const int AcidDropDamage = 135;
+        public const int SkullWasTakenIndex = 10;
 
-        public const int AcidBubbleDamage = 135;
+        public static int AcidDropDamage => 135;
 
-        public const int SulphuricGasDamage = 135;
+        public static int AcidBubbleDamage => 135;
 
-        public const int BodySpikeDamage = 140;
+        public static int SulphuricGasDamage => 135;
 
-        public const int SulphurousRockDamage = 140;
+        public static int BodySpikeDamage => 140;
 
-        public const int SulphuricTornadoDamage = 250;
+        public static int SulphurousRockDamage => 140;
+
+        public static int SulphuricTornadoDamage => 250;
 
         public static List<VerletSimulatedSegmentInfernum> WormSegments
         {
@@ -177,8 +179,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float generalTimer = ref npc.ai[1];
             ref float attackType = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[3];
-            ref float attackDelay = ref npc.Infernum().ExtraAI[5];
-            ref float initializedFlag = ref npc.Infernum().ExtraAI[6];
+            ref float initializedFlag = ref npc.Infernum().ExtraAI[HasInitializedFlagIndex];
             ref float acidVerticalLine = ref npc.Infernum().ExtraAI[AcidVerticalLineIndex];
             ref float acidMeterEverReachedHalf = ref npc.Infernum().ExtraAI[AcidMeterEverReachedHalfIndex];
             ref float skullWasTaken = ref npc.Infernum().ExtraAI[SkullWasTakenIndex];
@@ -1619,8 +1620,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.ai[2] = (int)nextAttack;
             npc.ai[3] = 0f;
 
-            // Set an 2 second delay up after the attack.
-            npc.Infernum().ExtraAI[5] = 120f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.noTileCollide = true;

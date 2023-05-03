@@ -319,8 +319,9 @@ namespace InfernumMode.Content.BossBars
             if (InvincibilityTimer >= 0)
             {
                 float invincibilityTimerInterpolant = InvincibilityTimer / 45f;
-                Vector2 invincibilityBarStart = mainBarTipPos + Vector2.UnitX * 4f;
-                spriteBatch.Draw(InvincibilityOverlay, invincibilityBarStart, null, drawColor * invincibilityTimerInterpolant, 0f, InvincibilityOverlay.Size() * new Vector2(0f, 0.5f), 1f, SpriteEffects.None, 0f);
+                Vector2 invincibilityBarStart = mainBarTipPos + Vector2.UnitX * (4f + (1f - currentRatio) * 10f);
+                Rectangle barCutoff = new((int)((1f - currentRatio) * InvincibilityOverlay.Width), 0, (int)(currentRatio * InvincibilityOverlay.Width), InvincibilityOverlay.Height);
+                spriteBatch.Draw(InvincibilityOverlay, invincibilityBarStart, barCutoff, drawColor * invincibilityTimerInterpolant, 0f, InvincibilityOverlay.Size() * new Vector2(0f, 0.5f), 1f, SpriteEffects.None, 0f);
             }
 
             // Draw the icon frame.

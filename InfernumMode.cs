@@ -100,11 +100,25 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.Server)
             {
+                // Cryogen.
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon", -1);
+
+                // Dreadnautilus.
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon", -1);
+
+                // Calamitas' Shadow.
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CalShadowMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CataclysmMapIcon", -1);
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheMapIcon", -1);
+
+                // Devourer of Gods.
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1HeadMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1TailMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2HeadMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2BodyMapIcon", -1);
+                AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2TailMapIcon", -1);
+
+                // Calamitas.
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
                 InfernumEffectsRegistry.LoadEffects();

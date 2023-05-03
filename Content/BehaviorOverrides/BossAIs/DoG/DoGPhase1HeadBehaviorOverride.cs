@@ -172,13 +172,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     return;
                 }
 
+                int p1HeadIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1HeadMapIcon");
+                int p1TailIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP1TailMapIcon");
+                int p2HeadIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2HeadMapIcon");
+                int p2BodyIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2BodyMapIcon");
+                int p2TailIcon = ModContent.GetModBossHeadSlot("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2TailMapIcon");
                 bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
+
                 if (npc.type == ModContent.NPCType<DoGHead>())
-                    index = inPhase2 ? DoGHead.phase2IconIndex : DoGHead.phase1IconIndex;
+                    index = inPhase2 ? p2HeadIcon : p1HeadIcon;
                 else if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
-                    index = inPhase2 ? DevourerofGodsBody.phase2IconIndex : -1;
+                    index = inPhase2 ? p2BodyIcon : -1;
                 else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
-                    index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
+                    index = inPhase2 ? p2TailIcon : p1TailIcon;
             }
         }
 
@@ -193,7 +199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         {
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
 
-            // Apparently DoG got a random nerf somewhere. I don't know why, I don't care why.
+            // Apparently DoG got a random resistance somewhere. I don't know why, I don't care why.
             damage = (int)(damage * 1.4);
             realDamage = (int)(realDamage * 1.4);
 

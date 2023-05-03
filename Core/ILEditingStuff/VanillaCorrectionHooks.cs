@@ -1121,6 +1121,8 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 if (!MakeSulphSeaWaterEasierToSeeInHook.CanUseHighQualityWater)
                     WaterClearingBubble.ClaimAllBubbles();
+                if (NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>()) && InfernumMode.CanUseCustomAIs)
+                    Main.LocalPlayer.Calamity().decayEffigy = false;
             });
 
             int poisonIncrementIndex = 0;

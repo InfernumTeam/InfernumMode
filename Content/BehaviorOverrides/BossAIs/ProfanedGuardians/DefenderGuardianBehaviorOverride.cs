@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -68,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.chaseable = true;
 
             // If the healer is dead, resume taking damage.
-            if (CalamityGlobalNPC.doughnutBossHealer == -1)
+            if (CalamityGlobalNPC.doughnutBossHealer == -1 && !Main.npc.Any(h => h.active && h.type == HealerType))
                 npc.Calamity().DR = 0.35f;
             else
             {
@@ -76,6 +77,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.Calamity().DR = 0.9999f;
                 npc.lifeRegen = 1000000;
                 npc.chaseable = false;
+
+                // Don't take damage if low enough to avoid being killable first somehow.
+                if ((float)npc.life / npc.lifeMax <= 0.8f)
+                    npc.dontTakeDamage = true;
             }
 
             if (commander.Infernum().ExtraAI[DefenderHasBeenYeetedIndex] == 1f)

@@ -20,7 +20,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
         public override void SetDefaults()
         {
-            Item.damage = 188;
+            Item.damage = 198;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 4;
             Item.width = 36;

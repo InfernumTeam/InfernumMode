@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetDefaults()
         {
-            Projectile.Size = Vector2.One * 450f;
+            Projectile.Size = Vector2.One * 420f;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, portal, Main.GameViewMatrix.TransformationMatrix);
-            spriteBatch.Draw(fireNoise, Projectile.Center - Main.screenPosition, null, Color.White, 0f, fireNoise.Size() * 0.5f, Projectile.Opacity * Projectile.width / fireNoise.Width * 4.6f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(fireNoise, Projectile.Center - Main.screenPosition, null, Color.White, 0f, fireNoise.Size() * 0.5f, Projectile.Opacity * Projectile.width / fireNoise.Width * 4.9f, SpriteEffects.None, 0f);
         }
 
         public void PrepareSpriteBatch(SpriteBatch spriteBatch)

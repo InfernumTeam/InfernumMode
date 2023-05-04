@@ -428,7 +428,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
         {
             int redirectTime = 20;
             int telegraphTime = 42;
-            int blackTime = 72;
+            int blackTime = 108;
             float maxInitialSlashDistance = 350f;
             float slashMovementSpeed = 41.5f;
             int finalDelay = 130;
@@ -528,7 +528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     if (attackTimer > telegraphTime && attackTimer < telegraphTime + blackTime - 3f && attackTimer % 3f == 2f)
                     {
                         // Play a sound.
-                        SoundEngine.PlaySound(InfernumSoundRegistry.SignusSlashSound with { Volume = 0.66f, Pitch = 0.4f }, target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.SignusSlashSound with { Volume = 0.3f, Pitch = 0.4f, MaxInstances = 20 }, target.Center);
 
                         // Define a starting point if one has yet to be selected for the slashes.
                         // It attempts to start at Signus' position, but will not start too far off from the target.
@@ -743,7 +743,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     bool canReleaseBomb = attackTimer % 12f == 11f && !npc.WithinRange(target.Center, 200f);
                     if (canReleaseBomb)
                     {
-                        SoundEngine.PlaySound(SoundID.Item73, npc.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.SignusFlameBombShootSound with { Volume = 0.45f }, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, npc.velocity * 0.8f, ModContent.ProjectileType<DarkCosmicBomb>(), 0, 0f, -1, 700f);
                     }
@@ -876,8 +876,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 float opacity = npc.Opacity * 4f;
                 Color glowmaskColor = Color.Lerp(Color.White, Color.Fuchsia, 0.3f) * opacity;
 
-                if (npc.ai[1] != (int)SignusAttackType.ShadowDash)
-                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(glowMaskTexture, drawPosition, glowmaskFrame, glowmaskColor, rotation, origin, scale, direction, 0));
+                if (npc.ai[1] is not (int)SignusAttackType.ShadowDash and not (int)SignusAttackType.CosmicFlameChargeBombs)
+                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(glowMaskTexture, drawPosition, glowmaskFrame, glowmaskColor, rotation, npc.frame.Size() * 0.5f, scale, direction, 0));
             }
 
             Player target = Main.player[npc.target];

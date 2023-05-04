@@ -1,4 +1,5 @@
 using CalamityMod.NPCs;
+using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -61,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
                 if (ShootCountdown == 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, Projectile.position);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.SignusWeaponFireSound with { Volume = 0.45f }, Projectile.position);
 
                     Projectile.velocity = (Projectile.Center - signus.Center).SafeNormalize(Vector2.UnitY) * 34.5f;
                     Projectile.netUpdate = true;
@@ -99,11 +100,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             }
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
-        }
-
-        public override void Kill(int timeLeft)
-        {
-            SoundEngine.PlaySound(SoundID.Item74, Projectile.position);
         }
     }
 }

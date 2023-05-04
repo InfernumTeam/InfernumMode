@@ -182,7 +182,6 @@ namespace InfernumMode.Content.BossBars
             if (npc.type == ModContent.NPCType<Artemis>() || !canAddBar)
                 return;
 
-
             if (canAddBar)
                 ActiveBossBars.Add(new BaseBossBar(npcIndex));
         }

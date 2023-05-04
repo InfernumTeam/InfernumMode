@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -49,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 Projectile.velocity = Projectile.SafeDirectionTo(closestPlayer.Center) * 18f;
                 if (BossRushEvent.BossRushActive)
                     Projectile.velocity *= 1.75f;
-                SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.SignusWeaponFireSound with { Volume = 0.45f }, Projectile.Center);
             }
             if (Time > 26f && Projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 26f))
                 Projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.021f;

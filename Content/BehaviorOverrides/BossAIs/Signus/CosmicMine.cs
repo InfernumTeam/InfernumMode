@@ -1,6 +1,7 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -54,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.SignusKunaiExplosionSound, Projectile.Center);
 
             for (int i = 0; i < 50; i++)
             {

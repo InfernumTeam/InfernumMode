@@ -1,3 +1,4 @@
+using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -49,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item74, Projectile.position);
+            SoundEngine.PlaySound(InfernumSoundRegistry.SignusChargeSound, Projectile.position);
         }
     }
 }

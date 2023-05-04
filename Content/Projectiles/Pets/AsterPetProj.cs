@@ -86,16 +86,6 @@ namespace InfernumMode.Content.Projectiles.Pets
                 Projectile.localAI[0] = 1f;
             }
 
-            if (Owner.ZoneForest)
-            {
-                IdleTextCountdown--;
-                if (IdleTextCountdown <= 0f)
-                {
-                    IdleTextCountdown = Main.rand.Next(3600, 4800);
-                    SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.PassiveTextOnSurface));
-                }
-            }
-
             HandlePetVariables();
 
             switch (AIState)
@@ -153,6 +143,16 @@ namespace InfernumMode.Content.Projectiles.Pets
                 Owner.Infernum_Pet().PetProjectile(Projectile);
                 Time = 0f;
                 Projectile.netUpdate = true;
+            }
+
+            if (Owner.ZoneForest)
+            {
+                IdleTextCountdown--;
+                if (IdleTextCountdown <= 0f)
+                {
+                    IdleTextCountdown = Main.rand.Next(1800, 2400);
+                    SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.PassiveTextOnSurface));
+                }
             }
 
             Projectile.rotation = 0f;

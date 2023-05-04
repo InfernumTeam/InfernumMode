@@ -256,6 +256,10 @@ namespace InfernumMode.Content.BossBars
                 }
                 if (AssociatedNPC.Calamity().ShouldCloseHPBar)
                     currentPhase = GetTotalPhaseIndicators() + 1;
+
+                if (endingHealthPercentForPhase == startingHealthPercentForPhase)
+                    return 0f;
+
                 // Calculate the relative life ratio for the phase. If the phase starts at 100% and ends at 75%, it will return 0 for 100% and 1 for 75%.
                 float phaseHealthInterpolant = Utils.GetLerpValue(endingHealthPercentForPhase, startingHealthPercentForPhase, baseRatio, true);
                 return phaseHealthInterpolant;

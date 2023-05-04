@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float FlingSpeed = 15f;
 
-        public float BeamAmount => CurrentState is StateType.InitialFiring ? 16f : 8f;
+        public float BeamAmount => CurrentState is StateType.InitialFiring ? 12f : 8f;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 

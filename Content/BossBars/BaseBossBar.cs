@@ -47,7 +47,11 @@ namespace InfernumMode.Content.BossBars
         /// </summary>
         public int IntendedNPCType;
 
-        public readonly Texture2D BossIcon;
+        public Texture2D BossIcon
+        {
+            get;
+            private set;
+        }
 
         public NPC AssociatedNPC
         {
@@ -188,11 +192,8 @@ namespace InfernumMode.Content.BossBars
                 IntendedNPCType = AssociatedNPC.type;
                 PreviousLife = CombinedNPCLife;
             }
-            int headIndex = AssociatedNPC.GetBossHeadTextureIndex();
-            if (TextureAssets.NpcHeadBoss.IndexInRange(headIndex))
-                BossIcon = TextureAssets.NpcHeadBoss[headIndex].Value;
-            else
-                BossIcon = TextureAssets.Mana.Value;
+
+            BossIcon = TextureAssets.Mana.Value;
         }
 
         public void Update()
@@ -221,6 +222,11 @@ namespace InfernumMode.Content.BossBars
 
             if (CombinedNPCMaxLife != 0L && (InitialMaxLife == 0L || InitialMaxLife < CombinedNPCMaxLife))
                 InitialMaxLife = CombinedNPCMaxLife;
+
+            // Attempt to acquire a head icon.
+            int headIndex = AssociatedNPC.GetBossHeadTextureIndex();
+            if (TextureAssets.NpcHeadBoss.IndexInRange(headIndex))
+                BossIcon = TextureAssets.NpcHeadBoss[headIndex].Value;
         }
 
         private float GetCurrentRatio(out int currentPhase)

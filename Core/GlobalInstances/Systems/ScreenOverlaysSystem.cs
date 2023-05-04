@@ -36,6 +36,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             private set;
         } = new();
 
+        public static List<DrawData> ThingsToDrawOnTopOfBlurNonPremultiplied
+        {
+            get;
+            private set;
+        } = new();
+
         public static List<DrawData> ThingsToDrawOnTopOfBlurAdditive
         {
             get;

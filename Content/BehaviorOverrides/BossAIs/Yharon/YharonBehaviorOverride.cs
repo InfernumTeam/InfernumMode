@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             CarpetBombing,
             PhoenixSupercharge,
             HeatFlashRing,
-            VorticesOfFlame,
+            TightPhoenixFlameCharges,
             FinalDyingRoar
         }
 
@@ -208,24 +208,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlashRing,
-            YharonAttackType.VorticesOfFlame,
+            YharonAttackType.TightPhoenixFlameCharges,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.TightPhoenixFlameCharges,
             YharonAttackType.HeatFlashRing,
-            YharonAttackType.VorticesOfFlame,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.CarpetBombing,
-            YharonAttackType.VorticesOfFlame,
+            YharonAttackType.TightPhoenixFlameCharges,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.VorticesOfFlame,
+            YharonAttackType.TightPhoenixFlameCharges,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlashRing,
@@ -364,7 +364,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const int DeathAnimationFireballDamage = 600;
 
-        public const int FlameVortexDamage = 750;
+        public const int FlameVortexDamage = 640;
 
         #region Loading
         public override void Load()
@@ -744,8 +744,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 case YharonAttackType.HeatFlashRing:
                     DoBehavior_HeatFlashRing(npc, target, chargeDelay, ref fireIntensity, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
-                case YharonAttackType.VorticesOfFlame:
-                    DoBehavior_VorticesOfFlame(npc, target, ref attackTimer, ref attackType, ref specialFrameType);
+                case YharonAttackType.TightPhoenixFlameCharges:
+                    DoBehavior_TightPhoenixFlameCharges(npc, target, ref attackTimer, ref fireIntensity, ref attackType, ref specialFrameType);
                     break;
                 case YharonAttackType.FinalDyingRoar:
                     DoBehavior_FinalDyingRoar(npc);
@@ -1623,63 +1623,217 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-        public static void DoBehavior_VorticesOfFlame(NPC npc, Player target, ref float attackTimer, ref float attackType, ref float specialFrameType)
+        public static void DoBehavior_TightPhoenixFlameCharges(NPC npc, Player target, ref float attackTimer, ref float fireIntensity, ref float attackType, ref float specialFrameType)
         {
-            int totalFlameVortices = 3;
-            int totalFlameWaves = 7;
-            float flameVortexSpawnDelay = 60f;
+            int hoverTime = 54;
+            int hyperDashDelay = 6;
+            int hyperDashCount = 7;
+            int regularDashCount = 5;
+            int regularDashTime = 30;
+            int regularDashDelay = 36;
+            int regularDashRedirectTime = 11;
+            float hyperDashOffset = 824f;
+            float hyperDashSpeed = 90f;
+            float regularDashSpeed = 25f;
+            float maxRegularDashSpeed = 63f;
+            float regularDashAcceleration = 1.08f;
+            int hyperDashTime = (int)MathF.Round(hyperDashOffset / hyperDashSpeed);
+            ref float horizontalHoverDirection = ref npc.Infernum().ExtraAI[0];
+            ref float hyperDashCounter = ref npc.Infernum().ExtraAI[1];
+            ref float heartOpacity = ref npc.Infernum().ExtraAI[2];
+            ref float spinCenterX = ref npc.Infernum().ExtraAI[3];
+            ref float spinCenterY = ref npc.Infernum().ExtraAI[4];
 
-            npc.velocity *= 0.85f;
-            npc.spriteDirection = -1;
-            npc.rotation = npc.rotation.AngleTowards(0f, 0.185f);
-            npc.damage = 0;
+            Vector2 hoverDestination = new Vector2(spinCenterX, spinCenterY) + (MathHelper.TwoPi * hyperDashCounter / hyperDashCount).ToRotationVector2() * new Vector2(horizontalHoverDirection, 1f) * hyperDashOffset;
+            Vector2 aheadHoverDestination = new Vector2(spinCenterX, spinCenterY) + (MathHelper.TwoPi * (hyperDashCounter + 1f) / hyperDashCount).ToRotationVector2() * new Vector2(horizontalHoverDirection, 1f) * hyperDashOffset;
 
-            // Teleport above the player if somewhat far away from them.
-            if (attackTimer == 1f && !npc.WithinRange(target.Center, 360f))
+            // Hover near the player at first.
+            if (attackTimer <= hoverTime)
             {
-                npc.Center = target.Center - Vector2.UnitY * 480f;
-                if (!Main.dedServ)
+                // Clear leftover projectiles on the first few frames.
+                if (attackTimer <= 5f)
+                    ClearAllEntities();
+
+                // Initialize the hover direction.
+                if (horizontalHoverDirection == 0f)
                 {
-                    for (int j = 0; j < 30; j++)
+                    horizontalHoverDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer <= hoverTime - 1f)
+                {
+                    spinCenterX = target.Center.X + target.velocity.X * 40f;
+                    spinCenterY = target.Center.Y + target.velocity.Y * 40f;
+                }
+
+                hoverDestination = Vector2.Lerp(hoverDestination, target.Center, 0.1f);
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.16f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 39f, 0.95f);
+
+                // Look at the upcoming charge position.
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.rotation = npc.AngleTo(aheadHoverDestination);
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                // Use wing flapping frames.
+                specialFrameType = (int)YharonFrameDrawingType.FlapWings;
+
+                // Become engulphed in flames.
+                fireIntensity = Utils.GetLerpValue(0f, hoverTime - 4f, attackTimer, true);
+
+                // Make the heart appear.
+                heartOpacity = Utils.GetLerpValue(0f, 10f, attackTimer, true);
+
+                // Disable contact damage.
+                npc.damage = 0;
+            }
+            else if (attackTimer <= hoverTime + hyperDashDelay)
+            {
+                // Roar.
+                if (attackTimer == hoverTime + 1f)
+                {
+                    SoundEngine.PlaySound(YharonBoss.RoarSound, target.Center);
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 0.2f, 10);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+                }
+
+                npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.04f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 0.7f);
+
+                // Look at the upcoming charge position.
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.rotation = npc.AngleTo(aheadHoverDestination);
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                // Burn.
+                fireIntensity = 0.6f;
+
+                // Use roaring frames.
+                specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
+
+                // Disable contact damage.
+                npc.damage = 0;
+            }
+            else if (attackTimer <= hoverTime + hyperDashDelay + hyperDashTime * hyperDashCount)
+            {
+                // Clamp the screen shake effect.
+                target.Calamity().GeneralScreenShakePower = 0f;
+                target.Infernum_Camera().CurrentScreenShakePower = 3f;
+
+                // Perform the hyper-dashes.
+                int hyperDashTimer = ((int)attackTimer - hoverTime - hyperDashDelay) % hyperDashTime;
+                if (hyperDashTimer == 0f)
+                {
+                    SoundEngine.PlaySound(YharonBoss.ShortRoarSound with { MaxInstances = 10 }, target.Center);
+
+                    hyperDashCounter++;
+                    npc.Center = hoverDestination;
+                    npc.velocity = npc.SafeDirectionTo(aheadHoverDestination) * hyperDashSpeed;
+                    npc.spriteDirection = -npc.velocity.X.DirectionalSign();
+                    npc.netUpdate = true;
+
+                    // Release a flame vortex.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VortexOfFlame>(), FlameVortexDamage, 0f);
+                }
+
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                // Burn.
+                fireIntensity = 0.6f;
+
+                // Disable contact damage.
+                npc.damage = 0;
+            }
+            else if (attackTimer <= hoverTime + hyperDashDelay + hyperDashTime * hyperDashCount + regularDashDelay + (regularDashTime + regularDashRedirectTime) * regularDashCount)
+            {
+                int dashTimer = ((int)attackTimer - (hoverTime + hyperDashDelay + hyperDashTime * hyperDashCount + regularDashDelay)) % (regularDashTime + regularDashRedirectTime);
+
+                // Hover near the target before the next dash.
+                if (dashTimer <= regularDashRedirectTime || attackTimer <= hoverTime + hyperDashDelay + hyperDashTime * hyperDashCount + regularDashDelay)
+                {
+                    // Perform hover movement.
+                    Vector2 chargeHoverDestination = target.Center + target.SafeDirectionTo(npc.Center, -Vector2.UnitY) * 560f;
+                    npc.Center = Vector2.Lerp(npc.Center, chargeHoverDestination, 0.04f);
+
+                    Vector2 idealVelocity = (chargeHoverDestination - npc.Center) * 0.08f;
+                    npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
+
+                    // Look at the target.
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.rotation = npc.AngleTo(target.Center);
+                    if (npc.spriteDirection == 1)
+                        npc.rotation += MathHelper.Pi;
+
+                    // Use wing flapping frames.
+                    specialFrameType = (int)YharonFrameDrawingType.FlapWings;
+                }
+
+                // Dash at the target.
+                else
+                {
+                    if (dashTimer == regularDashRedirectTime + 1f)
                     {
-                        Dust fire = Dust.NewDustDirect(target.Center, 0, 0, ModContent.DustType<FinalFlame>(), 0f, 0f, 100, default, 3f);
-                        fire.noGravity = true;
-                        fire.noLight = true;
-                        fire.fadeIn = 1.2f;
-                        fire.velocity = (MathHelper.TwoPi * j / 30f).ToRotationVector2() * 5f;
+                        SoundEngine.PlaySound(YharonBoss.ShortRoarSound with { MaxInstances = 10 }, target.Center);
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * regularDashSpeed;
+                        npc.spriteDirection = -npc.velocity.X.DirectionalSign();
+                        npc.netUpdate = true;
+                    }
+
+                    npc.velocity = (npc.velocity * regularDashAcceleration).ClampMagnitude(regularDashSpeed, maxRegularDashSpeed);
+
+                    npc.rotation = npc.velocity.ToRotation();
+                    if (npc.spriteDirection == 1)
+                        npc.rotation += MathHelper.Pi;
+
+                    // Use open mouth frames.
+                    specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
+                }
+
+                // Burn.
+                fireIntensity = 0.6f;
+            }
+            else
+            {
+                int adjustedAttackTimer = (int)attackTimer - (hoverTime + hyperDashDelay + hyperDashTime * hyperDashCount + regularDashDelay + (regularDashTime + regularDashRedirectTime) * regularDashCount);
+
+                // Slow down.
+                npc.velocity *= 0.9f;
+                npc.rotation = npc.rotation.AngleLerp(0f, 0.03f);
+
+                // Roar and make all vortices fly away from the target before exploding.
+                if (adjustedAttackTimer == 1)
+                {
+                    SoundEngine.PlaySound(YharonBoss.RoarSound, target.Center);
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1f, 30);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+
+                    foreach (Projectile vortex in Utilities.AllProjectilesByID(ModContent.ProjectileType<VortexOfFlame>()))
+                    {
+                        vortex.timeLeft = 60;
+                        vortex.velocity = vortex.SafeDirectionTo(target.Center) * -5f;
+                        vortex.netUpdate = true;
                     }
                 }
-                npc.netUpdate = true;
-                specialFrameType = (int)YharonFrameDrawingType.FlapWings;
-            }
 
-            // Spawn vortices of doom. They periodically shoot homing fire projectiles and are telegraphed prior to spawning.
-            if (attackTimer == flameVortexSpawnDelay && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                SoundEngine.PlaySound(YharonBoss.OrbSound);
-
-                for (int i = 0; i < totalFlameVortices; i++)
+                if (adjustedAttackTimer >= 180f)
                 {
-                    float angle = MathHelper.TwoPi * i / totalFlameVortices;
-                    Utilities.NewProjectileBetter(target.Center + angle.ToRotationVector2() * 1780f, Vector2.Zero, ModContent.ProjectileType<VortexOfFlame>(), FlameVortexDamage, 0f, Main.myPlayer);
-                    Utilities.NewProjectileBetter(target.Center, angle.ToRotationVector2(), ModContent.ProjectileType<VortexTelegraphBeam>(), 0, 0f, -1, 0f, 1780f);
+                    Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HomingFireball>());
+                    SelectNextAttack(npc, ref attackType);
                 }
             }
 
-            // Emit splitting fireballs from the side in a fashion similar to that of Old Duke's shark summoning attack.
-            if (attackTimer > flameVortexSpawnDelay && attackTimer % 7 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                float horizontalOffset = (attackTimer - flameVortexSpawnDelay) / 7f * 205f + 260f;
-                Vector2 fireballSpawnPosition = npc.Center + new Vector2(horizontalOffset, -90f);
-                if (!target.WithinRange(fireballSpawnPosition, 350f))
-                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), RegularFireballDamage, 0f, Main.myPlayer);
-
-                fireballSpawnPosition = npc.Center + new Vector2(-horizontalOffset, -90f);
-                if (!target.WithinRange(fireballSpawnPosition, 350f))
-                    Utilities.NewProjectileBetter(fireballSpawnPosition, Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), RegularFireballDamage, 0f, Main.myPlayer);
-            }
-            if (attackTimer > flameVortexSpawnDelay + totalFlameWaves * 7)
-                SelectNextAttack(npc, ref attackType);
+            // Give the target infinite flight for the duration of the attack.
+            target.DoInfiniteFlightCheck(Color.Orange);
         }
 
         public static void DoBehavior_FinalDyingRoar(NPC npc)
@@ -2060,7 +2214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 enraged01Flag = 0f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int width = 9000;
+                    int width = 7500;
                     npc.Infernum().Arena.X = (int)(player.Center.X - width * 0.5f);
                     npc.Infernum().Arena.Y = (int)(player.Center.Y - 160000f);
                     npc.Infernum().Arena.Width = width;
@@ -2121,20 +2275,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     if (npc.frameCounter % 6 == 5)
                     {
                         npc.frame.Y += frameHeight;
-                        if (npc.frame.Y >= 4 * frameHeight)
+                        if (npc.frame.Y >= frameHeight * 4)
                             npc.frame.Y = 0;
                     }
                     break;
                 case YharonFrameDrawingType.IdleWings:
-                    npc.frame.Y = 5 * frameHeight;
+                    npc.frame.Y = frameHeight * 5;
                     break;
                 case YharonFrameDrawingType.Roar:
                     if (npc.frameCounter % 18 < 9)
-                        npc.frame.Y = 5 * frameHeight;
-                    else npc.frame.Y = 6 * frameHeight;
+                        npc.frame.Y = frameHeight * 5;
+                    else npc.frame.Y = frameHeight * 6;
                     break;
                 case YharonFrameDrawingType.OpenMouth:
-                    npc.frame.Y = 5 * frameHeight;
+                    npc.frame.Y = frameHeight * 5;
                     break;
             }
             npc.frameCounter++;
@@ -2165,7 +2319,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
 
             if (fireIntensity > 0f)
-                afterimageCount += (int)(fireIntensity * 8f);
+                afterimageCount += (int)(fireIntensity * 4f);
 
             Main.spriteBatch.EnterShaderRegion();
 
@@ -2284,6 +2438,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
                 }
                 Main.spriteBatch.ResetBlendState();
+            }
+
+            // Draw a pulsating draconic heart if necessary.
+            float heartOpacity = npc.Infernum().ExtraAI[2];
+            if (heartOpacity > 0.01f && npc.ai[0] == (int)YharonAttackType.TightPhoenixFlameCharges)
+            {
+                float heartScale = npc.scale * 4.7f;
+                Vector2 drawPosition = npc.Center - Main.screenPosition + new Vector2(-npc.spriteDirection, 1f).RotatedBy(npc.rotation) * 50f;
+                Texture2D heartTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Yharon/DragonHeart").Value;
+                Texture2D heartOutlineTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Yharon/DragonHeart").Value;
+                for (int i = 0; i < 4; i++)
+                {
+                    float scaleFactor = (Main.GlobalTimeWrappedHourly * 2.1f + i * 0.22f) % 1f;
+                    Color color = npc.GetAlpha(Color.Wheat) * heartOpacity * Utils.GetLerpValue(0.97f, 0.8f, scaleFactor, true) * 0.7f;
+                    ScreenOverlaysSystem.ThingsToDrawOnTopOfBlurAdditive.Add(new(heartOutlineTexture, drawPosition, null, color, 0f, heartTexture.Size() * 0.5f, heartScale * (scaleFactor * 1.25f) * heartOpacity, 0, 0));
+                }
+
+                float mainHeartScale = heartScale * heartOpacity * 0.7f + MathF.Cos(Main.GlobalTimeWrappedHourly * 40f) * 0.15f;
+                ScreenOverlaysSystem.ThingsToDrawOnTopOfBlurNonPremultiplied.Add(new(heartTexture, drawPosition, null, npc.GetAlpha(Color.OrangeRed) with { A = 0 } * heartOpacity, 0f, heartTexture.Size() * 0.5f, mainHeartScale, 0, 0));
             }
 
             return false;

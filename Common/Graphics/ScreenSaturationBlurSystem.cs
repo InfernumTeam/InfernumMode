@@ -161,6 +161,7 @@ namespace InfernumMode.Common.Graphics
                 LargeLumenylCrystal.CrystalCache.Clear();
 
             DrawAdditiveCache();
+            DrawNonPremultipliedCache();
             DrawEntityTargets();
             DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
@@ -173,6 +174,13 @@ namespace InfernumMode.Common.Graphics
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             ThingsToDrawOnTopOfBlurAdditive.EmptyDrawCache();
+        }
+
+        internal static void DrawNonPremultipliedCache()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            ThingsToDrawOnTopOfBlurNonPremultiplied.EmptyDrawCache();
         }
 
         internal static void DrawEntityTargets()

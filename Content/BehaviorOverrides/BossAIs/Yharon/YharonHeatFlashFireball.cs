@@ -30,7 +30,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             if (Projectile.frameCounter++ % 5 == 4)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
-            Projectile.Opacity = Utils.GetLerpValue(0f, 36f, Projectile.timeLeft, true);
             Projectile.gfxOffY = -36;
         }
 

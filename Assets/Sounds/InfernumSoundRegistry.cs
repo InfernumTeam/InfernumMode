@@ -250,8 +250,6 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Assets/Sounds/Custom/AEW/WyrmElectricCharge");
 
-        public static readonly SoundStyle YharonVortexExplosionSound = new("InfernumMode/Assets/Sounds/Custom/Yharon/YharonVortexExplosion");
-
         public const int AresTelegraphSoundLength = 183;
         #endregion Bosses and Enemies
 

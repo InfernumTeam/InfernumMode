@@ -236,6 +236,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle ThanatosTransitionSound = new("InfernumMode/Assets/Sounds/Custom/ExoMechs/ThanatosTransition");
 
+        public static readonly SoundStyle TwinsForcefieldExplosionSound = new("InfernumMode/Assets/Sounds/Custom/Twins/TwinsForcefieldExplosion");
+
         public static readonly SoundStyle VassalAngerSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/VassalAnger") with { Volume = 1.5f };
 
         public static readonly SoundStyle VassalHitSound = new("InfernumMode/Assets/Sounds/NPCHit/VassalHit", 3);

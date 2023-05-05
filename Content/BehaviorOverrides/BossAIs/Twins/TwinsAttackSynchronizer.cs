@@ -230,7 +230,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 otherMechIsInPhase2 = PersonallyInPhase2(Main.npc[NPC.FindFirstNPC(NPCID.Retinazer)]);
             if (isRetinazer && NPC.AnyNPCs(NPCID.Spazmatism))
                 otherMechIsInPhase2 = PersonallyInPhase2(Main.npc[NPC.FindFirstNPC(NPCID.Spazmatism)]);
-
+            
             ref float phase2Timer = ref npc.Infernum().ExtraAI[0];
             ref float phase2TransitionSpin = ref npc.Infernum().ExtraAI[1];
             ref float healCountdown = ref npc.Infernum().ExtraAI[2];
@@ -362,16 +362,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 npc.dontTakeDamage = true;
             }
 
-            if (alone)
+            if (alone && CurrentAttackState != TwinsAttackState.DeathAnimation)
             {
-                if (hasStartedHealFlag == 1f && overdriveTimer < 120f)
+                if (hasStartedHealFlag == 1f && overdriveTimer < 30f)
                 {
                     npc.velocity *= 0.97f;
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
 
                     if (healCountdown <= 0f)
                     {
-                        if (Main.netMode != NetmodeID.MultiplayerClient && overdriveTimer == 105f)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && overdriveTimer == 15f)
                         {
                             int explosion = Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                             Main.projectile[explosion].ai[0] = npc.type;
@@ -1041,12 +1041,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             int slowdownTime = 60;
             int jitterTime = 120;
             int lensFlareTime = TwinsLensFlare.Lifetime;
+            bool otherTwinExists = NPC.AnyNPCs(NPCID.Spazmatism) && NPC.AnyNPCs(NPCID.Retinazer);
 
             // Both twins should temporarily close their HP bars.
             npc.Calamity().ShouldCloseHPBar = true;
 
             // The mech that is still alive fucks off during this attack, flying into the sky and temporarily disappearing.
-            if (npc.Infernum().ExtraAI[3] == 1f)
+            if (npc.Infernum().ExtraAI[3] == 1f && otherTwinExists)
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
@@ -1116,9 +1117,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Utilities.CreateShockwave(npc.Center, 40, 10, 30f);
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, new Color[] { Color.Gray, mainExplosionColor * 0.6f }, 2.3f, 75, 0.4f));
 
+                CurrentAttackState = TwinsAttackState.LazilyObserve;
+                UniversalAttackTimer = 0;
                 npc.life = 0;
                 npc.StrikeNPCNoInteraction(9999, 0f, 1, true);
                 npc.active = false;
+
+                if (!otherTwinExists)
+                    npc.NPCLoot();
             }
         }
         #endregion Specific Attacks
@@ -1844,10 +1850,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 return false;
             }
 
-            // Enter the death animation state if the other twin has a shield or if alone.
-            if (NPC.CountNPCS(NPCID.Retinazer) + NPC.CountNPCS(NPCID.Spazmatism) <= 1 || otherTwinHasCreatedShield)
-                return PrepareForDeathAnimation(npc);
-            return true;
+            return PrepareForDeathAnimation(npc);
         }
         #endregion Death Effects
     }

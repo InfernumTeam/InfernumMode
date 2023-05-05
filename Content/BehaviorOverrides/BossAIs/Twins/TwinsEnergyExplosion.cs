@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
+using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -44,26 +45,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             if (Projectile.localAI[0] == 0f)
             {
-                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.TwinsForcefieldExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
 
-            Radius = MathHelper.Lerp(Radius, 3516f, 0.15f);
+            Radius = MathHelper.Lerp(Radius, 1516f, 0.15f);
             Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
             Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Main.spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             float pulseCompletionRatio = Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true);
             Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value,
+            DrawData drawData = new(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f - MathF.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,
+                new Color(new Vector4(1f - MathF.Sqrt(pulseCompletionRatio))) * Projectile.Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,
@@ -72,7 +74,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Color pulseColor = OwnerType == NPCID.Spazmatism ? Color.LimeGreen : Color.Red;
             GameShaders.Misc["ForceField"].UseColor(pulseColor);
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(Main.spriteBatch);
+
+            for (int i = 0; i < 5; i++)
+                drawData.Draw(Main.spriteBatch);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

@@ -104,7 +104,6 @@ namespace InfernumMode.Content.Projectiles.Melee
         {
             // Create lightning from the sky.
             SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelHitSound, Projectile.Center);
-            SoundEngine.PlaySound(CommonCalamitySounds.LargeWeaponFireSound with { Volume = 0.04f }, Projectile.Center);
             if (Main.myPlayer == Projectile.owner)
             {
                 for (int i = 0; i < 6; i++)

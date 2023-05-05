@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
+using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Play a strike sound on the first frame.
             if (!HasPlayedSound)
             {
-                SoundEngine.PlaySound(HeavenlyGale.LightningStrikeSound with { Volume = 0.3f }, Main.player[Projectile.owner].Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelLightningSound with { Volume = 0.25f }, Main.player[Projectile.owner].Center);
                 HasPlayedSound = true;
             }
 

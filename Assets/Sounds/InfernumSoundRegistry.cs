@@ -144,6 +144,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelHit") with { Volume = 1.8f };
 
+        public static readonly SoundStyle MyrindaelLightningSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelLightning") with { Volume = 0.4f, MaxInstances = 4 };
+
         public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelSpin") with { Volume = 1.7f };
 
         public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelThrow") with { Volume = 1.8f };

@@ -38,9 +38,6 @@ namespace InfernumMode.Common.Graphics.Fluids
             if (Main.gameMenu || (InfernumConfig.Instance?.ReducedGraphicsConfig ?? true))
                 return;
 
-            bool doLava = false;
-            int instanceCount = doLava ? 8 : 56;
-
             CreatedFields.RemoveAll(f => f is null);
 
             if (!CreatedFields.Any())

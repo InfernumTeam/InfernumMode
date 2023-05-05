@@ -5,6 +5,7 @@ using CalamityMod.NPCs.Ravager;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Dusts;
 using InfernumMode.Core.OverridingSystem;
@@ -692,7 +693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 if (attackTimer % fireReleaseRate == fireReleaseRate - 1f)
                 {
                     if (!skipPillar)
-                        SoundEngine.PlaySound(SoundID.Item74, target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.RavagerFlamePillarEruptSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         flamePillarHorizontalOffset += horizontalStepPerPillar;

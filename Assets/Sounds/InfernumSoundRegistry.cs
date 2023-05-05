@@ -198,6 +198,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle QueenSlimeExplosionSound = new("InfernumMode/Assets/Sounds/Custom/QueenSlime/QueenSlimeExplosion");
 
+        public static readonly SoundStyle RavagerFlamePillarEruptSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/Ravager/RavagerFlamePillarErupt") with { MaxInstances = 10, Volume = 0.67f };
+
         public static readonly SoundStyle ReaperSharkIceBreathSound = new("InfernumMode/Assets/Sounds/Custom/Abyss/ReaperSharkIceBreath");
 
         public static readonly SoundStyle SCalBrothersSpawnSound = new("InfernumMode/Assets/Sounds/Custom/SupremeCalamitas/SCalBrothersSpawn");

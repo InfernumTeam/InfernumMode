@@ -31,8 +31,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             OrdinaryCharge,
             FakeoutCharge,
             ThunderCharge,
-            SummonSwarmers,
-            NormalLightningAura,
             PlasmaBursts,
             ElectricOverload,
             RuffleFeathers,
@@ -57,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             DragonfollyAttackType.FeatherSpreadRelease,
             DragonfollyAttackType.OrdinaryCharge,
 
-            DragonfollyAttackType.NormalLightningAura,
+            DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.ThunderCharge,
         };
 
@@ -72,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             DragonfollyAttackType.ExplodingEnergyOrbs,
             DragonfollyAttackType.ThunderCharge,
 
-            DragonfollyAttackType.NormalLightningAura,
+            DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.FakeoutCharge,
 
             DragonfollyAttackType.FeatherSpreadRelease,
@@ -233,14 +231,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     DoAttack_Charge(npc, target, (DragonfollyAttackType)(int)attackType, phase2, phase3, ref fadeToRed, ref attackTimer, ref frameType, ref flapRate);
                     break;
 
-                // Currently unused to attack overlap problems.
-                case DragonfollyAttackType.SummonSwarmers:
-                    DoAttack_SummonSwarmers(npc, target, phase2, phase3, ref attackTimer, ref frameType, ref flapRate);
-                    break;
-
-                case DragonfollyAttackType.NormalLightningAura:
-                    DoAttack_CreateNormalLightningAura(npc, target, ref attackTimer, ref frameType, ref flapRate);
-                    break;
                 case DragonfollyAttackType.FeatherSpreadRelease:
                     DoAttack_FeatherSpreadRelease(npc, target, ref attackTimer, ref frameType, ref flapRate);
                     break;
@@ -678,45 +668,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 if (attackTimer >= ScreamTime + 25f)
                     SelectNextAttack(npc);
             }
-        }
-
-        public static void DoAttack_CreateNormalLightningAura(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
-        {
-            npc.velocity *= 0.96f;
-            npc.rotation *= 0.95f;
-
-            int shootDelay = 75;
-
-            if (attackTimer >= shootDelay - ScreamSoundDelay)
-                frameType = (int)DragonfollyFrameDrawingType.Screm;
-
-            // Terminate the attack early if an aura or flare already exists.
-            if (attackTimer < shootDelay)
-            {
-                if (Utilities.AnyProjectiles(ModContent.ProjectileType<BirbAuraFlare>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<BirbAura>()))
-                    SelectNextAttack(npc);
-                npc.spriteDirection = (npc.SafeDirectionTo(target.Center).X > 0f).ToDirectionInt();
-            }
-
-            if (attackTimer == shootDelay)
-            {
-                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
-                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
-                }
-            }
-
-            if (attackTimer > shootDelay + 12f)
-            {
-                frameType = (int)DragonfollyFrameDrawingType.FlapWings;
-                flapRate = 5f;
-            }
-
-            if (attackTimer == shootDelay + 35f)
-                SelectNextAttack(npc);
         }
 
         public static void DoAttack_FeatherSpreadRelease(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)

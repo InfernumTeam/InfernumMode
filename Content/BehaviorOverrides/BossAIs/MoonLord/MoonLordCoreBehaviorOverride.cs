@@ -364,7 +364,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackTimer)
         {
-            // Don't do damage during spawn effects.
+            // Don't take damage during spawn effects.
             npc.dontTakeDamage = true;
 
             // Roar after a bit of time has passed.

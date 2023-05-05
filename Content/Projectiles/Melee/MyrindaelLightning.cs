@@ -44,7 +44,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Projectile.width = 18;
             Projectile.height = 18;
             Projectile.alpha = 255;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 5;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.friendly = true;

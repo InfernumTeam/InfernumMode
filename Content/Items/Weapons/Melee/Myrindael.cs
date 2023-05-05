@@ -83,7 +83,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 return false;
             }
 
-            Projectile.NewProjectile(source, position, velocity.SafeNormalize(Vector2.UnitY), type, damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity.SafeNormalize(Vector2.UnitY), type, (int)(damage * 1.1f), knockback, player.whoAmI);
             return false;
         }
 

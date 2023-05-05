@@ -121,6 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             ref float hasCreatedSegments = ref npc.localAI[0];
             ref float releasingParticlesFlag = ref npc.localAI[1];
             ref float inFinalPhase = ref npc.Infernum().ExtraAI[7];
+            ref float dontTakeDamage = ref npc.Infernum().ExtraAI[8];
 
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = inFinalPhase == 1f;
@@ -135,6 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 CreateSegments(npc, 65, ModContent.NPCType<AstrumDeusBody>(), ModContent.NPCType<AstrumDeusTail>());
                 attackType = (int)DeusAttackType.AstralMeteorShower;
                 hasCreatedSegments = 1f;
+                dontTakeDamage = 1f;
                 npc.netUpdate = true;
             }
 
@@ -145,6 +147,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Clamp position into the world.
             npc.position.X = MathHelper.Clamp(npc.position.X, 1300f, Main.maxTilesX * 16f - 1300f);
+
+            // Don't take damage if requested.
+            if (dontTakeDamage == 1f)
+                npc.dontTakeDamage = true;
 
             // Have Deus fly high into the sky and shed its shell before flying back down in the final phase.
             if (enteringLastPhase)
@@ -1243,6 +1249,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             npc.ai[3] = (int)oldAttackState;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+
+            // Reset the don't take damage flag.
+            if (npc.Infernum().ExtraAI[8] == 1f)
+                npc.Infernum().ExtraAI[8] = 0f;
             npc.netUpdate = true;
         }
 

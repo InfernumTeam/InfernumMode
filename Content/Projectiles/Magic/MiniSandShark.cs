@@ -62,7 +62,7 @@ namespace InfernumMode.Content.Projectiles.Magic
                 return;
 
             if (Main.rand.NextBool())
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<LingeringSandSkull>(), Projectile.damage / 3, 0f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(4f, 4f) * Main.rand.NextFloat(1f, 2f), ModContent.ProjectileType<LingeringSandSkull>(), Projectile.damage / 3, 0f, Projectile.owner);
         }
 
         public override void Kill(int timeLeft)

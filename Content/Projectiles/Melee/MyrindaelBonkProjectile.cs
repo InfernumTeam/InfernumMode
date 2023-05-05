@@ -24,6 +24,8 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public float LungeProgression => Time / Myrindael.LungeTime;
 
+        public const int CooldownTime = 30;
+
         public ref float Time => ref Projectile.ai[0];
 
         public override string Texture => "InfernumMode/Content/Items/Weapons/Melee/Myrindael";
@@ -42,7 +44,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = Myrindael.LungeTime;
+            Projectile.timeLeft = Myrindael.LungeTime + CooldownTime;
             Projectile.penetrate = -1;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 18;
@@ -76,7 +78,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             float velocityPower = Utils.Remap(CalamityUtils.Convert01To010(LungeProgression), 0f, 1f, 0.25f, 1f);
             Vector2 newVelocity = Projectile.velocity * Myrindael.LungeSpeed * (0.09f + 0.91f * velocityPower);
             Owner.velocity = newVelocity;
-            Owner.Calamity().LungingDown = Projectile.timeLeft >= 5;
+            Owner.Calamity().LungingDown = Projectile.timeLeft >= CooldownTime - 5;
 
             // Release anime-like streak particle effects at the side of the owner to indicate motion.
             if (Main.rand.NextBool(2))

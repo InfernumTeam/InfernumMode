@@ -24,7 +24,7 @@ namespace InfernumMode.Content.MainMenu
 
         internal List<GlowingEmber> Embers;
 
-        private SlotId RainSlot;
+        public static SlotId RainSlot { get; private set; }
 
         private int TimeTilNextFlash;
 

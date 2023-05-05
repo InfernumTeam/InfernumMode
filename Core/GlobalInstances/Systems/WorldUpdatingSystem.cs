@@ -2,11 +2,13 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Content.MainMenu;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -96,6 +98,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             // Make the lost colosseum portal animation timer play if it isn't finished.
             WorldSaveSystem.LostColosseumPortalAnimationTimer = Utils.Clamp(WorldSaveSystem.LostColosseumPortalAnimationTimer + 1, 0, WorldSaveSystem.LostColosseumPortalAnimationTime);
+
+            // Stop the rain sound lingering into the world from the menu.
+            if (SoundEngine.TryGetActiveSound(InfernumMainMenu.RainSlot, out var rain))
+                rain.Stop();
         }
     }
 }

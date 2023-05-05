@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
             Projectile.width = 64;
             Projectile.height = 28;
             Projectile.friendly = true;
-            Projectile.DamageType = DamageClass.Melee;
+            Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;

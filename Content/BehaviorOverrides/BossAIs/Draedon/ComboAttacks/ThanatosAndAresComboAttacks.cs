@@ -228,7 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int attackDelay = 120;
             int slashAnticipationTime = 80;
             int slashTime = 31;
-            int slashCount = 3;
+            int slashCount = 4;
 
             int redirectTime = 22;
             int chargeTime = 84;
@@ -287,15 +287,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             float wrappedAresAttackTimer = (attackTimer - attackDelay) % (slashAnticipationTime + slashTime);
             if (npc.type == ModContent.NPCType<AresBody>())
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 280f;
+                Vector2 hoverDestination = target.Center + new Vector2(target.velocity.X * 25f, -280f);
                 if (target.velocity.Y < 0f)
                     hoverDestination.Y += target.velocity.Y * 20f;
 
-                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.072f;
+                Vector2 idealVelocity = (hoverDestination - npc.Center) * 0.067f;
                 if (wrappedAresAttackTimer >= slashAnticipationTime)
                     idealVelocity.X = 0f;
 
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.06f);
             }
 
             if (npc.type == ModContent.NPCType<AresEnergyKatana>())

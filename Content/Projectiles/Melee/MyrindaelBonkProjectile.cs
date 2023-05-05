@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public Player Owner => Main.player[Projectile.owner];
 
-        public float LungeProgression => Time / Myrindael.LungeTime;
+        public float LungeProgression => Utils.GetLerpValue(0f, Myrindael.LungeTime, Time, true);
 
         public const int CooldownTime = 30;
 
@@ -75,18 +75,21 @@ namespace InfernumMode.Content.Projectiles.Melee
 
             Owner.fallStart = (int)(Owner.position.Y / 16f);
 
-            float velocityPower = Utils.Remap(CalamityUtils.Convert01To010(LungeProgression), 0f, 1f, 0.25f, 1f);
-            Vector2 newVelocity = Projectile.velocity * Myrindael.LungeSpeed * (0.09f + 0.91f * velocityPower);
-            Owner.velocity = newVelocity;
-            Owner.Calamity().LungingDown = Projectile.timeLeft >= CooldownTime - 5;
-
-            // Release anime-like streak particle effects at the side of the owner to indicate motion.
-            if (Main.rand.NextBool(2))
+            if (LungeProgression < 1f)
             {
-                Vector2 energySpawnPosition = Owner.Center + Main.rand.NextVector2Circular(90f, 90f) + Owner.velocity * 2f;
-                Vector2 energyVelocity = -Owner.velocity.SafeNormalize(Vector2.UnitX * Owner.direction) * Main.rand.NextFloat(6f, 8.75f);
-                Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f);
-                GeneralParticleHandler.SpawnParticle(energyLeak);
+                float velocityPower = Utils.Remap(CalamityUtils.Convert01To010(LungeProgression), 0f, 1f, 0.25f, 1f);
+                Vector2 newVelocity = Projectile.velocity * Myrindael.LungeSpeed * (0.09f + 0.91f * velocityPower);
+                Owner.velocity = newVelocity;
+                Owner.Calamity().LungingDown = true;
+
+                // Release anime-like streak particle effects at the side of the owner to indicate motion.
+                if (Main.rand.NextBool(2))
+                {
+                    Vector2 energySpawnPosition = Owner.Center + Main.rand.NextVector2Circular(90f, 90f) + Owner.velocity * 2f;
+                    Vector2 energyVelocity = -Owner.velocity.SafeNormalize(Vector2.UnitX * Owner.direction) * Main.rand.NextFloat(6f, 8.75f);
+                    Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f);
+                    GeneralParticleHandler.SpawnParticle(energyLeak);
+                }
             }
 
             Time++;

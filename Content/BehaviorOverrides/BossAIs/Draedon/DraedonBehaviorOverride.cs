@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             if (isPissed == 1f)
             {
                 npc.ModNPC<DraedonNPC>().ShouldStartStandingUp = true;
-                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound, playerToFollow.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.LaserCannonSound with { MaxInstances = 45, Volume = 0.15f }, playerToFollow.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserSpawnPosition = npc.Center - Vector2.UnitY * 80f;

@@ -266,6 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeImpactSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerProbeReleaseSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = 2;
@@ -481,7 +482,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer % 45f == 44f)
             {
-                SoundEngine.PlaySound(PlasmaCaster.FireSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerProbeReleaseSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
@@ -644,7 +645,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             // Periodically release probes.
             if (attackTimer % 75f == 74f && slowdownInterpolant < 0.3f)
             {
-                SoundEngine.PlaySound(PlasmaCaster.FireSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerProbeReleaseSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probe = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
@@ -689,7 +690,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer % 55f == 54f)
             {
-                SoundEngine.PlaySound(PlasmaCaster.FireSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerProbeReleaseSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 2; i++)

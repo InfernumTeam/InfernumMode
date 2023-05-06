@@ -20,6 +20,9 @@ namespace InfernumMode.Core.Balancing
             [ModContent.ItemType<ShiftingSands>()] = 104,
             [ModContent.ItemType<Tumbleweed>()] = 203,
 
+            // AEW is moved to post Yharon, and this is nerfed as a result.
+            [ModContent.ItemType<HalibutCannon>()] = 25,
+
             // There is no natural force, no higher power, no deity who can stop me.
             // In the marination of apotheotic bliss I look deep within myself;
             // All I see is an eternal and unyielding freedom.

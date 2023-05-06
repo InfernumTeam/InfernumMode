@@ -152,6 +152,12 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelThrow") with { Volume = 1.8f };
 
+        public static readonly SoundStyle NuclearTerrorGroundSlamSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorGroundSlam");
+
+        public static readonly SoundStyle NuclearTerrorJumpSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorJump");
+
+        public static readonly SoundStyle NuclearTerrorTeleportSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorTeleport");
+
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 
         public static readonly SoundStyle PBGMissileLaunchSound = new("InfernumMode/Assets/Sounds/Custom/PlaguebringerGoliath/PBGMissileLaunch");

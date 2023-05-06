@@ -1124,7 +1124,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 npc.active = false;
 
                 if (!otherTwinExists)
+                {
                     npc.NPCLoot();
+                    if (npc.type == NPCID.Retinazer && BossRushEvent.BossRushActive)
+                        BossRushEvent.BossRushStage++;
+                }
             }
         }
         #endregion Specific Attacks

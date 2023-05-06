@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Skies
     {
         public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
 
-        public override float GetWeight(Player player) => 0.6f;
+        public override float GetWeight(Player player) => 0.8f;
 
         public override bool IsSceneEffectActive(Player player)
         {
@@ -160,7 +160,7 @@ namespace InfernumMode.Content.Skies
             DrawCinders(spriteBatch, minDepth, maxDepth);
         }
 
-        public void DrawWaterRays(SpriteBatch spriteBatch)
+        private void DrawWaterRays(SpriteBatch spriteBatch)
         {
             Texture2D noise = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleGradients/BlurryPerlinNoise", AssetRequestMode.ImmediateLoad).Value;
             Effect waterRays = InfernumEffectsRegistry.UnderwaterRayShader.Shader;
@@ -175,16 +175,15 @@ namespace InfernumMode.Content.Skies
             waterRays.Parameters["dissolvePower"].SetValue(1.5f);
             waterRays.Parameters["sceneOpacity"].SetValue(intensity);
 
-            Matrix bgMatrix = Utilities.GetCustomSkyBackgroundMatrix();
             Vector2 scale = new(8f, 4f);
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, Main.Rasterizer, waterRays, bgMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, Main.Rasterizer, waterRays, Utilities.GetCustomSkyBackgroundMatrix());
             spriteBatch.Draw(noise, new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f), null, Color.White, 0f, noise.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, bgMatrix);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Utilities.GetCustomSkyBackgroundMatrix());
         }
 
-        public void DrawRays(SpriteBatch spriteBatch)
+        private void DrawRays(SpriteBatch spriteBatch)
         {
             float maxRays = 60f;
             // Randomly spawn light rays under the moon.
@@ -210,7 +209,7 @@ namespace InfernumMode.Content.Skies
             Rays.RemoveAll(r => r.Timer >= r.Lifetime);
         }
 
-        public void DrawMoon(SpriteBatch spriteBatch)
+        private void DrawMoon(SpriteBatch spriteBatch)
         {
             // Draw the moon.
             Texture2D bloom = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;//InfernumTextureRegistry.DistortedBloomRing.Value;
@@ -257,11 +256,11 @@ namespace InfernumMode.Content.Skies
             return new Vector2(xPos, yPos + Main.moonModY) + sceneArea.SceneLocalScreenPositionOffset;
         }
 
-        public void DrawFish()
+        private static void DrawFish()
         {
             int maxBoids = 200;
-            // Setup the boids if none are present, when the mod loads.
 
+            // Spawn fishes.
             Rectangle spawnRectangle = new(50, 50, Main.screenWidth - 50, Main.screenHeight - 50);
             if (Main.rand.NextBool(2) && Fishes.Count < maxBoids)
                 Fishes.Add(new(Main.rand.Next(600, 1200), Main.rand.NextFloat(0.15f, 0.2f), Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloat(-Main.screenWidth * 0.8f, Main.screenWidth * 0.8f),
@@ -277,11 +276,11 @@ namespace InfernumMode.Content.Skies
             }
         }
 
-        public void DrawCinders(SpriteBatch spriteBatch, float minDepth, float maxDepth)
+        private void DrawCinders(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             float maxCinders = 240f;
 
-            // Randomly spawn symbols.
+            // Randomly spawn cinders.
             if (Main.rand.NextBool(5) && Cinders.Count < maxCinders)
             {
                 bool downwards = Main.rand.NextBool(4);

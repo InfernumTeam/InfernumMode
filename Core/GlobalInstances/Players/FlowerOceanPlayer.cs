@@ -26,9 +26,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override void PostUpdateMiscEffects()
         {
             // If underwater and not in the last zone of the abyss.
-            // TODO: Make this actually work :)
             if (Player.wet && !Player.Calamity().ZoneAbyssLayer4 && MechanicsActive)
-                Lighting.AddLight((int)Player.Center.X, (int)Player.Center.Y, TorchID.Blue, 10f);
+                Lighting.AddLight((int)(Player.Center.X / 16f), (int)(Player.Center.Y / 16f), TorchID.Torch, 20f);
         }
     }
 }

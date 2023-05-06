@@ -43,7 +43,7 @@ namespace InfernumMode.Content.Skies
             MaxScale = scale;
             Position = position;
             Velocity = velocity;
-            DrawColor = Color.Lerp(Color.Black, Color.SlateBlue, Main.rand.NextFloat());
+            DrawColor = Color.Lerp(Color.Black, Color.CadetBlue, Main.rand.NextFloat());
             Depth = Main.rand.Next(1, 4);
         }
 
@@ -71,20 +71,6 @@ namespace InfernumMode.Content.Skies
             Velocity = Velocity.ClampMagnitude(0f, MaxSpeed);
             Position += Velocity;
             Time++;
-        }
-
-        private void WrapAround()
-        {
-            Rectangle screen = new(0, 0, Main.screenWidth, Main.screenHeight);
-            if (Position.X < screen.Left)
-                Position.X = screen.Right;
-            else if (Position.X > screen.Right)
-                Position.X = screen.Left;
-
-            if (Position.Y < screen.Top)
-                Position.Y = screen.Bottom;
-            else if (Position.Y > screen.Bottom)
-                Position.Y = screen.Top;
         }
 
         private void DoBehavior()
@@ -119,11 +105,6 @@ namespace InfernumMode.Content.Skies
 
             if (total == 0)
                 return;
-            //else if (total >= SchoolSize)
-            //{
-            //    coheshion /= total;
-            //    Velocity -= (coheshion - Position) * ClumpCoeffecient * 1.2f;
-            //}
             else
             {
 
@@ -137,6 +118,7 @@ namespace InfernumMode.Content.Skies
                 alignment /= total;
                 Velocity += (alignment - Velocity) * AlignCoeffecient;
             }
+
             // Swim around idly.
             Velocity = Velocity.RotatedBy(MathHelper.Pi * (posInList % 2f == 0f).ToDirectionInt() * 0.002f);
         }

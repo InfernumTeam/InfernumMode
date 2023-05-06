@@ -121,7 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             ref float hasCreatedSegments = ref npc.localAI[0];
             ref float releasingParticlesFlag = ref npc.localAI[1];
             ref float inFinalPhase = ref npc.Infernum().ExtraAI[7];
-            ref float dontTakeDamage = ref npc.Infernum().ExtraAI[8];
+            ref float dontTakeDamage = ref npc.Infernum().ExtraAI[9];
 
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = inFinalPhase == 1f;
@@ -151,6 +151,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Don't take damage if requested.
             if (dontTakeDamage == 1f)
                 npc.dontTakeDamage = true;
+            else
+                npc.dontTakeDamage = false;
 
             // Have Deus fly high into the sky and shed its shell before flying back down in the final phase.
             if (enteringLastPhase)
@@ -1251,8 +1253,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Reset the don't take damage flag.
-            if (npc.Infernum().ExtraAI[8] == 1f)
-                npc.Infernum().ExtraAI[8] = 0f;
+            if (npc.Infernum().ExtraAI[9] == 1f)
+                npc.Infernum().ExtraAI[9] = 0f;
             npc.netUpdate = true;
         }
 
@@ -1317,7 +1319,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             return false;
         }
         #endregion Drawing
-
+        
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {

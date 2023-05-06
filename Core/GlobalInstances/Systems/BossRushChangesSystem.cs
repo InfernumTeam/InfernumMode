@@ -43,6 +43,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using System;
@@ -170,7 +171,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 new Boss(ModContent.NPCType<Bumblefuck>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Bumblefuck2>(), NPCID.Spazmatism, NPCID.Retinazer }),
 
                 new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: new int[] { ModContent.NPCType<SlimeGodCore>(), ModContent.NPCType<EbonianSlimeGod>(), ModContent.NPCType<CrimulanSlimeGod>(), ModContent.NPCType<SplitCrimulanSlimeGod>(),
-                    ModContent.NPCType<SplitEbonianSlimeGod>() }),
+                    ModContent.NPCType<SplitEbonianSlimeGod>(), ModContent.NPCType<SplitBigSlime>() }),
                 
                 // Tier 3.
                 new Boss(NPCID.SkeletronHead, TimeChangeContext.Night, type =>

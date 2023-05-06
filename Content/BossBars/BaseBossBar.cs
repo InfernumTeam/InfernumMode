@@ -3,6 +3,8 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -23,6 +25,8 @@ namespace InfernumMode.Content.BossBars
     {
         #region Fields/Properties
         public FireParticleSet EnrageParticleSet = new(-1, int.MaxValue, Color.Yellow, Color.Red * 1.2f, 10f, 0.65f);
+
+        public List<PhaseNotch> PhaseNotches;
 
         public int NPCIndex = -1;
 
@@ -146,7 +150,7 @@ namespace InfernumMode.Content.BossBars
                 }
                 for (int i = 0; i < 200; i++)
                 {
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && Main.npc[i].Calamity().CurrentlyIncreasingDefenseOrDR)
+                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && (Main.npc[i].Calamity().CurrentlyIncreasingDefenseOrDR || Main.npc[i].Calamity().DR > 0.98f))
                     {
                         return true;
                     }
@@ -193,7 +197,13 @@ namespace InfernumMode.Content.BossBars
                 PreviousLife = CombinedNPCLife;
             }
 
-            BossIcon = TextureAssets.Mana.Value;
+            PhaseNotches = new();
+
+            int length = GetTotalPhaseIndicators();
+            for (int i = 0; i < length; i++)
+                PhaseNotches.Add(new());
+
+            BossIcon = BaseIcon;
         }
 
         public void Update()
@@ -210,8 +220,8 @@ namespace InfernumMode.Content.BossBars
             // Update timers.
             OpenAnimationTimer = Utils.Clamp(OpenAnimationTimer + 1, 0, 25);
             EnrageTimer = Utils.Clamp(EnrageTimer + NPCIsEnraged.ToDirectionInt(), 0, 45);
-            IncreasingDefenseOrDRTimer = Utils.Clamp(IncreasingDefenseOrDRTimer + NPCIsIncreasingDefenseOrDR.ToDirectionInt(), 0, 120);
-            InvincibilityTimer = Utils.Clamp(InvincibilityTimer + NPCIsInvincible.ToDirectionInt(), 0, 45);
+            IncreasingDefenseOrDRTimer = Utils.Clamp(IncreasingDefenseOrDRTimer + NPCIsIncreasingDefenseOrDR.ToDirectionInt(), 0, 20);
+            InvincibilityTimer = Utils.Clamp(InvincibilityTimer + NPCIsInvincible.ToDirectionInt(), 0, 20);
 
             // Update the enrage fire particles.
             if (EnrageTimer > 0)
@@ -227,26 +237,55 @@ namespace InfernumMode.Content.BossBars
             int headIndex = AssociatedNPC.GetBossHeadTextureIndex();
             if (TextureAssets.NpcHeadBoss.IndexInRange(headIndex))
                 BossIcon = TextureAssets.NpcHeadBoss[headIndex].Value;
+
+            // Ensure there is the correct amount of indicators.
+            int indicatorAmount = GetTotalPhaseIndicators();
+            if (PhaseNotches.Count > indicatorAmount)
+            {
+                do
+                {
+                    PhaseNotches.RemoveAt(PhaseNotches.Count - 1);
+                }
+                while (PhaseNotches.Count > indicatorAmount);
+            }
+            else if (PhaseNotches.Count < indicatorAmount)
+            {
+                do
+                {
+                    PhaseNotches.Add(new());
+                }
+                while (PhaseNotches.Count < indicatorAmount);
+            }
         }
 
         private float GetCurrentRatio(out int currentPhase)
         {
             float baseRatio = (float)CombinedNPCLife / CombinedNPCMaxLife;
             currentPhase = 1;
-            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo))
+            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs)
             {
                 float startingHealthPercentForPhase = 1f;
                 float endingHealthPercentForPhase = 0f;
 
+                int phaseCount = phaseInfo.PhaseCount;
                 List<float> phaseThresholds = phaseInfo.PhaseThresholds;
+                if (NPCType == ModContent.NPCType<Yharon>())
+                {
+                    // This is already hardcoded so i dont care.
+                    phaseCount = 4;
+                    if (!YharonBehaviorOverride.InSecondPhase)
+                        phaseThresholds = new List<float> { phaseThresholds[0], phaseThresholds[1], phaseThresholds[2], phaseThresholds[3] };
+                    else
+                        phaseThresholds = new List<float> { 1f, phaseThresholds[4], phaseThresholds[5], phaseThresholds[6], phaseThresholds[7] };
+                }
 
-                for (int i = 0; i < phaseInfo.PhaseCount; i++)
+                for (int i = 0; i < phaseCount; i++)
                 {
                     float currentRatioToCheck = phaseThresholds[i];
                     int index = i;
                     if (baseRatio <= currentRatioToCheck)
                     {
-                        if (i != phaseInfo.PhaseCount - 1)
+                        if (i != phaseCount - 1)
                             continue;
                         currentRatioToCheck = 0f;
                         index++;
@@ -256,7 +295,7 @@ namespace InfernumMode.Content.BossBars
                     if (i > 0)
                     {
                         currentPhase = index;
-                        startingHealthPercentForPhase = phaseInfo.PhaseThresholds[index - 1];
+                        startingHealthPercentForPhase = phaseThresholds[index - 1];
                     }
                     break;
                 }
@@ -272,12 +311,14 @@ namespace InfernumMode.Content.BossBars
             }
 
             // Just return this as a failsafe.
+            if (float.IsNaN(baseRatio))
+                return 0f;
             return baseRatio;
         }
 
         private int GetTotalPhaseIndicators()
         {
-            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo))
+            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs)
             {
                 if (phaseInfo.NPCType == ModContent.NPCType<Yharon>())
                     return phaseInfo.PhaseCount / 2;
@@ -308,7 +349,7 @@ namespace InfernumMode.Content.BossBars
             Vector2 hpOrigin = new(1f, 0.5f);
 
             Color mainBarColor = new(153, 24, 51);
-            Color bloomColor = new(188, 27, 56);
+            Color bloomColor = new(208, 47, 63);
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
@@ -326,12 +367,21 @@ namespace InfernumMode.Content.BossBars
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
             // Draw the invincibility overlay.
-            if (InvincibilityTimer >= 0)
+            if (InvincibilityTimer > 0 || IncreasingDefenseOrDRTimer > 0)
             {
-                float invincibilityTimerInterpolant = InvincibilityTimer / 45f;
-                Vector2 invincibilityBarStart = mainBarTipPos + Vector2.UnitX * (4f + (1f - currentRatio) * 10f);
+                float invincibilityTimerInterpolant = InvincibilityTimer / 20f;
+                float drTimerInterpolant = IncreasingDefenseOrDRTimer / 20f;
+                float activeInterpolant = drTimerInterpolant;
+                if (InvincibilityTimer > 0)
+                    activeInterpolant = invincibilityTimerInterpolant;
+                Vector2 invincibilityBarStart = mainBarTipPos + new Vector2(4f + (1f - currentRatio) * 10f, 0f);
                 Rectangle barCutoff = new((int)((1f - currentRatio) * InvincibilityOverlay.Width), 0, (int)(currentRatio * InvincibilityOverlay.Width), InvincibilityOverlay.Height);
-                spriteBatch.Draw(InvincibilityOverlay, invincibilityBarStart, barCutoff, drawColor * invincibilityTimerInterpolant, 0f, InvincibilityOverlay.Size() * new Vector2(0f, 0.5f), 1f, SpriteEffects.None, 0f);
+                Color color;
+                if (invincibilityTimerInterpolant > 0)
+                    color = Color.White;
+                else
+                    color = new(70, 70, 90);
+                spriteBatch.Draw(InvincibilityOverlay, invincibilityBarStart, barCutoff, color * mainOpacity * activeInterpolant, 0f, InvincibilityOverlay.Size() * new Vector2(0f, 0.5f), 1f, SpriteEffects.None, 0f);
             }
 
             // Draw the icon frame.
@@ -363,21 +413,19 @@ namespace InfernumMode.Content.BossBars
             spriteBatch.Draw(MainBarTip, mainBarTipPos, null, drawColor, 0f, MainBarTip.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw the phase indicators.
-            int totalPhaseIndicators = GetTotalPhaseIndicators();
-
             Vector2 rightPhaseIndicatorShellDrawPos = barCenter + new Vector2(114f, -38f);
 
             // Draw the middle connectors.
             float phaseShellXPos = rightPhaseIndicatorShellDrawPos.X - PhaseIndicatorEnd.Width * 0.5f - PhaseIndicatorMiddle.Width * 0.5f + 4f;
             float phaseNotchXPos = phaseShellXPos + 6f;
-            for (int i = 0; i < totalPhaseIndicators; i++)
+            for (int i = 0; i < PhaseNotches.Count; i++)
             {
-                Texture2D phaseNotchTexture = ((totalPhaseIndicators - i) < currentPhase) || (AssociatedNPC.Calamity().ShouldCloseHPBar || !AssociatedNPC.active) ? PhaseIndicatorNotch : PhaseIndicatorPlate;
+                bool shouldBePopped = ((PhaseNotches.Count - i) < currentPhase);
                 Vector2 phaseNotchDrawPos = new(phaseNotchXPos, rightPhaseIndicatorShellDrawPos.Y + 3f);
-                spriteBatch.Draw(phaseNotchTexture, phaseNotchDrawPos, null, drawColor, 0f, phaseNotchTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                PhaseNotches[i].Draw(spriteBatch, phaseNotchDrawPos, drawColor, shouldBePopped, CloseAnimationTimer > 0 || AssociatedNPC.type != ModContent.NPCType<Yharon>());
                 phaseNotchXPos -= 15f;
 
-                if (i < totalPhaseIndicators - 1)
+                if (i < PhaseNotches.Count - 1)
                 {
                     Vector2 middleDrawPos = new(phaseShellXPos, rightPhaseIndicatorShellDrawPos.Y - 9f);
                     spriteBatch.Draw(PhaseIndicatorMiddle, middleDrawPos, null, drawColor, 0f, PhaseIndicatorMiddle.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
@@ -400,11 +448,11 @@ namespace InfernumMode.Content.BossBars
             if (float.IsNaN(formattedRatio))
                 formattedRatio = 0f;
             string percentText = formattedRatio.ToString() + "%";
-            Vector2 textDrawPos = percentBaseDrawPos + new Vector2(13f, 6.5f);
+            Vector2 textDrawPos = percentBaseDrawPos + new Vector2(16f, 6.5f);
             Color shadowColor = new(210, 158, 68);
             Vector2 size = BarFont.MeasureString(percentText);
             Vector2 origin = new(size.X, size.Y * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, BarFont, percentText, textDrawPos, shadowColor * mainOpacity, 0f, origin, Vector2.One * 0.65f);
+            ChatManager.DrawColorCodedString(spriteBatch, BarFont, percentText, textDrawPos, shadowColor * mainOpacity, 0f, origin, Vector2.One * 0.62f);
         }
         #endregion
     }

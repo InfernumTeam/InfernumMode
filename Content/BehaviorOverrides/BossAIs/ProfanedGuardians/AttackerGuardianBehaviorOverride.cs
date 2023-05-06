@@ -33,21 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianDefender>()).ToInt() +
             NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianHealer>()).ToInt();
 
-        public const float ImmortalUntilPhase2LifeRatio = 0.75f;
-
-        public const float Phase2LifeRatio = 0.6f;
-
-        public const float Phase3LifeRatio = 0.45f;
-
-        public const float Phase4LifeRatio = 0.25f;
-
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianCommander>();
-
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
-            ImmortalUntilPhase2LifeRatio,
-            Phase4LifeRatio
-        };
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)

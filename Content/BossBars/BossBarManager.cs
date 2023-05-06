@@ -59,6 +59,8 @@ namespace InfernumMode.Content.BossBars
         public static Texture2D PhaseIndicatorPlate { get; private set; }
 
         public static Texture2D InvincibilityOverlay { get; private set; }
+
+        public static Texture2D BaseIcon { get; private set; }
         #endregion
 
         #region Overrides
@@ -71,7 +73,7 @@ namespace InfernumMode.Content.BossBars
             {
                 // This was crashing on Linux and such in Calamity, I am unable to check if it will here so I am playing it safe and only allowing custom fonts to work on Windows.
                 if ((int)Environment.OSVersion.Platform == 2)
-                    BarFont = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BarFont", AssetRequestMode.ImmediateLoad).Value;
+                    BarFont = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/HPBarFont", AssetRequestMode.ImmediateLoad).Value;
                 else
                     // If not the correct OS, we need to make it the default Terraria Font, Andy.
                     BarFont = FontAssets.MouseText.Value;
@@ -91,6 +93,7 @@ namespace InfernumMode.Content.BossBars
                 PhaseIndicatorStart = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhaseIndicatorStart", AssetRequestMode.ImmediateLoad).Value;
                 PhaseIndicatorPlate = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/PhasePlate", AssetRequestMode.ImmediateLoad).Value;
                 InvincibilityOverlay = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/InvincibilityOverlay", AssetRequestMode.ImmediateLoad).Value;
+                BaseIcon = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/DefaultIcon", AssetRequestMode.ImmediateLoad).Value;
             }
         }
 
@@ -109,6 +112,8 @@ namespace InfernumMode.Content.BossBars
             PhaseIndicatorStart = null;
             PhaseIndicatorStart = null;
             PhaseIndicatorPlate = null;
+            InvincibilityOverlay = null;
+            BaseIcon = null;
         }
 
         public override string DisplayName => "Infernum Mod";

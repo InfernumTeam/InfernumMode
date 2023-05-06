@@ -21,11 +21,9 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 infLCR.Add(itemID, 1, quantity, quantity + 1);
             }
 
-            // Starter bags provide the Blasted Tophat and Soul-Driven Headphones.
+            // Starter bags provide the Soul-Driven Headphones.
             if (item.type == ModContent.ItemType<StarterBag>())
             {
-                loot.Add(ModContent.ItemType<BlastedTophat>());
-
                 if (InfernumMode.MusicModIsActive && InfernumMode.InfernumMusicMod.TryFind("SoulDrivenHeadphones", out ModItem headphonesItem))
                     loot.Add(headphonesItem.Type);
             }

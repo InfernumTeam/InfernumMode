@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Items
 
             Item.width = 18;
             Item.height = 18;
-            Item.maxStack = 99;
+            Item.maxStack = 1;
             Item.value = 0;
             Item.rare = ModContent.RarityType<InfernumOceanFlowerRarity>();
             Item.Infernum_Tooltips().DeveloperItem = true;

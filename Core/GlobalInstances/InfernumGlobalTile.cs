@@ -90,7 +90,7 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void RandomUpdate(int i, int j, int type)
         {
-            if (type == TileID.VanityTreeSakura && Main.rand.NextBool(100))
+            if (type == TileID.VanityTreeSakura && Main.rand.NextBool(500))
                 Main.tile[i, j].Get<SakuraTreeSystem.BlossomData>().HasBlossom = true;
         }
     }

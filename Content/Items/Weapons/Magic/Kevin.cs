@@ -11,9 +11,9 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 {
     public class Kevin : ModItem
     {
-        public const float TargetingDistance = 736f;
+        public const float TargetingDistance = 884f;
 
-        public const int LightningArea = 1500;
+        public const int LightningArea = 1800;
 
         public override void SetStaticDefaults()
         {

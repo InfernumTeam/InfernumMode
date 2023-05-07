@@ -398,8 +398,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 if (npc.life - realDamage <= 0)
                     npc.NPCLoot();
+                return false;
             }
-            return false;
+            return true;
         }
         #endregion Loading
 

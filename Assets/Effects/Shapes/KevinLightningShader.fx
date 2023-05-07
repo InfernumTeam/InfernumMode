@@ -54,7 +54,7 @@ float4 UpdatePreviousState(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 color = tex2D(uImage0, rotatedCoords);
     float4 result = color;
     
-    // Make the color exponentionally decay towards a cyan.
+    // Make the color exponentionally decay towards an inputted color.
     result *= float4(0.81 + uColor.r * 0.14, 0.81 + uColor.g * 0.14, 0.81 + uColor.b * 0.14, 1) * 0.88;
     
     // Apply the lightning effects. If necessary, this will apply random jumps in the noise to create slightly large, more varied arcs.

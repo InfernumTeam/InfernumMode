@@ -31,7 +31,7 @@ namespace InfernumMode.Common
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return !tile.HasTile;
+                return !tile.HasTile && tile.LiquidAmount <= 0;
             }
         }
 

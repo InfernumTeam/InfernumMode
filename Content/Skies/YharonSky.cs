@@ -194,6 +194,7 @@ namespace InfernumMode.Content.Skies
                 Color.White * intensity,
                 0f
             });
+            ManipulateSunPositionHook.DisableSunForNextFrame = true;
         }
 
         public static void DrawSmoke()
@@ -201,7 +202,7 @@ namespace InfernumMode.Content.Skies
             // Draw all active smoke particles in the background.
             Texture2D smokeTexture = InfernumTextureRegistry.Smoke.Value;
             foreach (BackgroundSmoke smoke in SmokeParticles)
-                Main.spriteBatch.Draw(smokeTexture, smoke.DrawPosition, null, smoke.SmokeColor * 0.56f, smoke.Rotation, smokeTexture.Size() * 0.5f, 1f, 0, 0f);
+                Main.spriteBatch.Draw(smokeTexture, smoke.DrawPosition, null, smoke.SmokeColor * 0.67f, smoke.Rotation, smokeTexture.Size() * 0.5f, 1f, 0, 0f);
         }
     }
 }

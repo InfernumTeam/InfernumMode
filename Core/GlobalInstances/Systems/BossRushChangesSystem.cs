@@ -43,6 +43,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using System;
@@ -127,8 +128,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianDefender>(), ModContent.NPCType<ProfanedGuardianHealer>(), ModContent.NPCType<EtherealHand>(), ModContent.NPCType<HealerShieldCrystal>() }),
                 
                 // Tier 2.
-                new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),
-
                 new Boss(ModContent.NPCType<StormWeaverHead>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>(), }),
 
                 new Boss(ModContent.NPCType<BrimstoneElemental>(), permittedNPCs: ModContent.NPCType<Brimling>()),
@@ -170,7 +169,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 new Boss(ModContent.NPCType<Bumblefuck>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Bumblefuck2>(), NPCID.Spazmatism, NPCID.Retinazer }),
 
                 new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: new int[] { ModContent.NPCType<SlimeGodCore>(), ModContent.NPCType<EbonianSlimeGod>(), ModContent.NPCType<CrimulanSlimeGod>(), ModContent.NPCType<SplitCrimulanSlimeGod>(),
-                    ModContent.NPCType<SplitEbonianSlimeGod>() }),
+                    ModContent.NPCType<SplitEbonianSlimeGod>(), ModContent.NPCType<SplitBigSlime>() }),
                 
                 // Tier 3.
                 new Boss(NPCID.SkeletronHead, TimeChangeContext.Night, type =>

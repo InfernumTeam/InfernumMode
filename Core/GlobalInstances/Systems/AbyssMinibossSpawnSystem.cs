@@ -32,7 +32,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public override void PreUpdateWorld()
         {
             // Don't mess with abyss spawns in worlds without a reworked abyss.
-            if (!WorldSaveSystem.InPostAEWUpdateWorld || MajorAbyssEnemyExists)
+            if (!WorldSaveSystem.InPostAEWUpdateWorld || MajorAbyssEnemyExists || !InfernumMode.CanUseCustomAIs)
                 return;
 
             for (int i = 0; i < Main.maxPlayers; i++)

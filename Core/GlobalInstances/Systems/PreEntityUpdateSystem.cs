@@ -14,7 +14,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     {
         public override void PreUpdateEntities()
         {
-            InfernumMode.BlackFade = MathHelper.Clamp(InfernumMode.BlackFade - 0.025f, 0f, 1f);
+            float minBlackFade = 0f;
+            if (Main.LocalPlayer.WithinRange(WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates(), 3200f))
+                minBlackFade = 0.25f;
+
+            InfernumMode.BlackFade = MathHelper.Clamp(InfernumMode.BlackFade - 0.01f, minBlackFade, 1f);
+
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
             if (CalamityWorld.death)

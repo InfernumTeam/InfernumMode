@@ -31,7 +31,6 @@ namespace InfernumMode.Content.Items.Pets
 
             Item.shoot = ModContent.ProjectileType<HatGirl>();
             Item.buffType = ModContent.BuffType<HatGirlBuff>();
-            Item.UseSound = SoundID.Meowmere;
             Item.Infernum_Tooltips().DeveloperItem = true;
         }
 

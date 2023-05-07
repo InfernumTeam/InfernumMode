@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs.Abyss;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Signus;
@@ -21,6 +22,13 @@ namespace InfernumMode.Core.GlobalInstances
             {
                 spawnRate *= 40000;
                 maxSpawns = 0;
+            }
+
+            // Make enemies much rarer in the blossom garden.
+            if (player.WithinRange(WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates(), 3200f))
+            {
+                spawnRate *= 3;
+                maxSpawns /= 3;
             }
         }
 
@@ -60,6 +68,9 @@ namespace InfernumMode.Core.GlobalInstances
             pool.Remove(ModContent.NPCType<EidolonWyrmHead>());
             pool.Remove(ModContent.NPCType<ReaperShark>());
 
+            // Clear Nuclear Terror spawns from the pool. They are always spawned manually in Tier 3 twice at 50% and 95% of the event's completion.
+            pool.Remove(ModContent.NPCType<NuclearTerror>());
+
             // Clear Devilfish and Toxic Minnows from the pool, so that they can be moved to a different location.
             pool.Remove(ModContent.NPCType<DevilFish>());
             pool.Remove(ModContent.NPCType<DevilFishAlt>());
@@ -68,6 +79,10 @@ namespace InfernumMode.Core.GlobalInstances
                 pool[ModContent.NPCType<DevilFish>()] = 0.12f;
             if (spawnInfo.Player.Calamity().ZoneAbyssLayer1 && spawnInfo.Water)
                 pool[ModContent.NPCType<ToxicMinnow>()] = 0.1f;
+
+            // Clear the pool if a nuclear terror is present.
+            if (NPC.AnyNPCs(ModContent.NPCType<NuclearTerror>()))
+                pool.Clear();
         }
     }
 }

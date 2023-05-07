@@ -138,6 +138,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Assets/Sounds/Custom/Abyss/GulperEelScream");
 
+        public static readonly SoundStyle HatGirlPeckVASound = new("InfernumMode/Assets/Sounds/Custom/Misc/HatGirlPeck", 2);
+
         public static readonly SoundStyle KingSlimeDeathAnimation = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/KingSlimeDeathAnimation");
 
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Assets/Sounds/Custom/Leviathan/LeviathanRumble");
@@ -151,6 +153,12 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelSpin") with { Volume = 1.7f };
 
         public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelThrow") with { Volume = 1.8f };
+
+        public static readonly SoundStyle NuclearTerrorGroundSlamSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorGroundSlam");
+
+        public static readonly SoundStyle NuclearTerrorJumpSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorJump");
+
+        public static readonly SoundStyle NuclearTerrorTeleportSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorTeleport");
 
         public static readonly SoundStyle PBGMechanicalWarning = new("CalamityMod/Sounds/Custom/PlagueSounds/PBGNukeWarning");
 

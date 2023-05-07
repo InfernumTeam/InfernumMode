@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using Microsoft.Xna.Framework;
@@ -23,7 +24,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (WaitingForPlayersToLeaveArchives && !Main.player[Player.FindClosest(voidSpawnPosition, 1, 1)].WithinRange(voidSpawnPosition, 2700f))
                 WaitingForPlayersToLeaveArchives = false;
 
-            if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero || WaitingForPlayersToLeaveArchives)
+            if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero || WaitingForPlayersToLeaveArchives || BossRushEvent.BossRushActive)
                 return;
 
             for (int i = 0; i < Main.maxPlayers; i++)

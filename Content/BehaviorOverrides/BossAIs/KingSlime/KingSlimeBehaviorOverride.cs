@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             // Don't get stuck.
             for (int i = 0; i < 2; i++)
             {
-                if (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 4))
+                if (Collision.SolidCollision(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 4) && !npc.noTileCollide)
                 {
                     npc.position.Y -= 8f;
                     npc.frame.Y = 0;
@@ -427,7 +427,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 npc.noTileCollide = true;
             }
 
-            else if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 32))
+            else if (Utilities.ActualSolidCollisionTop(npc.BottomLeft - Vector2.UnitY * 32f, npc.width, 64) && npc.Bottom.Y >= target.Bottom.Y - 320f)
             {
                 npc.velocity.X *= 0.9f;
                 jumpTimer++;
@@ -509,7 +509,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     teleportDirection = 1f;
 
                 digXPosition = target.Center.X + 600f * teleportDirection;
-                digYPosition = target.Top.Y - 800f;
+                digYPosition = target.Top.Y - 100f;
                 if (digYPosition < 100f)
                     digYPosition = 100f;
 
@@ -518,14 +518,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
                 WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
                 {
-                    new CustomTileConditions.IsSolidOrSolidTop(),
-                    new CustomTileConditions.ActiveAndNotActuated()
+                    new CustomTileConditions.IsSolidOrSolidTop(), new CustomTileConditions.ActiveAndNotActuated(),
                 }), out Point newBottom);
 
                 // Decide the teleport position and prepare the teleport direction for next time by making it go to the other side.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.Bottom = newBottom.ToWorldCoordinates(8, -npc.height - 12);
+                    npc.Bottom = newBottom.ToWorldCoordinates();
+                    npc.velocity.Y = -2f;
                     teleportDirection *= -1f;
                     npc.netUpdate = true;
                 }
@@ -536,6 +536,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (attackTimer > digTime && attackTimer <= digTime + reappearTime)
             {
                 npc.scale = MathHelper.Lerp(0.2f, idealScale, Utils.GetLerpValue(digTime, digTime + reappearTime, attackTimer, true));
+                npc.position.Y -= 2f;
+                npc.velocity.Y = 0f;
                 npc.Opacity = 0.7f;
                 npc.dontTakeDamage = true;
                 npc.damage = 0;

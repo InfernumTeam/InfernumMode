@@ -199,10 +199,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         {
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
 
-            // Apparently DoG got a random resistance somewhere. I don't know why, I don't care why.
-            damage = (int)(damage * 1.4);
-            realDamage = (int)(realDamage * 1.4);
-
             // Disable damage and enter phase 2 if the hit would bring DoG down to a sufficiently low quantity of HP.
             if (life - realDamage <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
             {

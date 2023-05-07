@@ -14,7 +14,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         internal static WishesUIManager wishesUIManager = new();
 
-        internal static UIState CurrentAchievementUI = achievementUIManager;
+        internal static AchievementUIState CurrentAchievementUI = achievementUIManager;
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {

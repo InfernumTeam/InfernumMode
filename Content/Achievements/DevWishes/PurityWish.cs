@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
         {
             Name = "The Tanning Starseed";
             Description = "It feels like solar winds, and solar chimes\n" +
-                "[c/777777:Defeat Infernum Night Providencer in under 3.5 minutes]";
+                "[c/777777:Defeat Infernum Night Providence in under 3.5 minutes]";
             TotalCompletion = 1;
             PositionInMainList = 16;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

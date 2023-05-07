@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BossBars
             {
                 BaseBossBar bossBar = ActiveBossBars[i];
                 bossBar.Update();
-                if (bossBar.CloseAnimationTimer >= 120)
+                if (bossBar.CloseAnimationTimer >= 30)
                 {
                     ActiveBossBars.RemoveAt(i);
                     i--;

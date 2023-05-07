@@ -29,28 +29,44 @@ namespace InfernumMode.Content.UI
             PaddingBottom = 5f;
         }
 
+        // Yes this is disgusting.
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
             CalculatedStyle dimensions = GetDimensions();
             CalculatedStyle innerDimensions = GetInnerDimensions();
-            if ((bool)typeof(UIScrollbar).GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1))
+            if ((bool)typeof(UIScrollbar).GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar))
             {
-                float offset = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - (float)typeof(UIScrollbar).GetField("_dragYOffset", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1);
-                ViewPosition = MathHelper.Clamp(offset / innerDimensions.Height * (float)typeof(UIScrollbar).GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1), 0f, (float)typeof(UIScrollbar).GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) - (float)typeof(UIScrollbar).GetField("_viewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1));
+                float offset = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - 
+                    (float)typeof(UIScrollbar).GetField("_dragYOffset", BindingFlags.NonPublic | BindingFlags.Instance).
+                    GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar);
+                
+                ViewPosition = MathHelper.Clamp(offset / innerDimensions.Height * (float)typeof(UIScrollbar).
+                    GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).
+                    GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar), 0f, (float)typeof(UIScrollbar).
+                    GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar) - (float)typeof(UIScrollbar).
+                    GetField("_viewSize", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar));
             }
 
-            Rectangle handleRectangle = (Rectangle)typeof(UIScrollbar).GetMethod("GetHandleRectangle", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(UIRenderingSystem.achievementUIManager.uIScrollbar1, null);
+            Rectangle handleRectangle = (Rectangle)typeof(UIScrollbar).GetMethod("GetHandleRectangle", BindingFlags.Instance | BindingFlags.NonPublic).
+                Invoke(UIRenderingSystem.CurrentAchievementUI.Scrollbar, null);
+           
             Vector2 mousePosition = UserInterface.ActiveInstance.MousePosition;
-            bool isHoveringOverHandle = (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1);
+            bool isHoveringOverHandle = (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).
+                GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar);
+
             bool tempBool = handleRectangle.Contains(new Point((int)mousePosition.X, (int)mousePosition.Y));
-            typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1, tempBool);
-            if (!isHoveringOverHandle && (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) && Main.hasFocus)
-            {
+            typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar, tempBool);
+            if (!isHoveringOverHandle && (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).
+                GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar) && Main.hasFocus)
                 SoundEngine.PlaySound(SoundID.MenuTick);
-            }
 
             DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), Color.White);
-            DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, Color.White * ((bool)typeof(UIScrollbar).GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) || (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.achievementUIManager.uIScrollbar1) ? 1f : 0.85f));
+            DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, Color.White * ((bool)typeof(UIScrollbar).
+                GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).
+                GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar) || (bool)typeof(UIScrollbar).
+                GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).
+                GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar) ? 1f : 0.85f));
         }
 
         internal static void DrawBar(SpriteBatch spriteBatch, Texture2D texture, Rectangle dimensions, Color color)

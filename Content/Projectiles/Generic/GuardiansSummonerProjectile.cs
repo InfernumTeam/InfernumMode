@@ -181,6 +181,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                 // Create screen shake effects.
                 Player.Infernum_Camera().CurrentScreenShakePower = 3;
                 GuardsGlowAmount = MathHelper.Clamp(GuardsGlowAmount + 0.025f, 0f, 1f);
+
                 if (Time is 250)
                     SoundEngine.PlaySound(new("CalamityMod/Sounds/Custom/ProfanedGuardians/GuardianRockShieldActivate"));
             }

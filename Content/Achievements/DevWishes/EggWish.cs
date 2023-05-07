@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
         public override void Initialize()
         {
             Name = "The Chosen One";
-            Description = "Legends tell of a mighty warrior who will one day venture deep into the world and find the legendary blade hidden within\n" +
+            Description = "Legends tell of a mighty warrior who will venture into the world and find the legendary blade hidden within\n" +
                 "[c/777777:Find an egg sword shrine after defeating Golem]";
             TotalCompletion = 1;
             PositionInMainList = 14;

@@ -221,7 +221,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             bool enraged = !target.IsUnderwater() && !phase3 && !BossRushEvent.BossRushActive;
 
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
-            if (!target.Calamity().ZoneAbyss)
+            if (!target.Calamity().ZoneAbyss && (AquaticScourgeAttackType)attackType != AquaticScourgeAttackType.DeathAnimation)
             {
                 target.breath = target.breathMax;
                 target.ignoreWater = true;
@@ -1534,7 +1534,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Begin disappearing after the flesh is eaten off.
-            if (npc.localAI[1] >= 1f)
+            float maxTimeToWait = 1800;
+            if (npc.localAI[1] >= 1f || attackTimer >= maxTimeToWait)
             {
                 deadTimer++;
                 npc.Opacity = Utils.GetLerpValue(disappearTime, 0f, deadTimer, true);

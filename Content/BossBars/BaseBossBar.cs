@@ -213,7 +213,7 @@ namespace InfernumMode.Content.BossBars
             {
                 EnrageTimer = Utils.Clamp(EnrageTimer - 4, 0, 120);
                 IncreasingDefenseOrDRTimer = Utils.Clamp(IncreasingDefenseOrDRTimer - 4, 0, 120);
-                CloseAnimationTimer = Utils.Clamp(CloseAnimationTimer + 1, 0, 120);
+                CloseAnimationTimer = Utils.Clamp(CloseAnimationTimer + 1, 0, 30);
                 return;
             }
 
@@ -331,7 +331,7 @@ namespace InfernumMode.Content.BossBars
         {
             float currentRatio = GetCurrentRatio(out int currentPhase);
             Vector2 barCenter = new(x, y);
-            float mainOpacity = Utils.GetLerpValue(0f, 25f, OpenAnimationTimer, true) * Utils.GetLerpValue(45f, 0f, CloseAnimationTimer, true);
+            float mainOpacity = Utils.GetLerpValue(0f, 25f, OpenAnimationTimer, true) * Utils.GetLerpValue(30f, 0f, CloseAnimationTimer, true);
             Color drawColor = Color.White * mainOpacity;
 
             // Draw the frame.

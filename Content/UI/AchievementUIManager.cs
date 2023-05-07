@@ -14,16 +14,21 @@ using Terraria.UI.Gamepad;
 
 namespace InfernumMode.Content.UI
 {
+    public abstract class AchievementUIState : UIState
+    {
+        internal abstract UIScrollbar Scrollbar { get; set; }
+    }
+
     // I'd much rather use custom ui than this vanilla stuff but it would look different so :D
-    public class AchievementUIManager : UIState
+    public class AchievementUIManager : AchievementUIState
     {
         private UIList AchivementList;
 
-        private List<InfernumUIAchievementListItem> AchievementElements = new();
+        private readonly List<InfernumUIAchievementListItem> AchievementElements = new();
 
         private UIElement OuterContainer;
 
-        internal UIScrollbar uIScrollbar1;
+        internal override UIScrollbar Scrollbar { get; set; }
 
         public void InitializePage()
         {
@@ -116,7 +121,7 @@ namespace InfernumMode.Content.UI
             uIPanel.Append(uIScrollbar);
 
             AchivementList.SetScrollbar(uIScrollbar);
-            uIScrollbar1 = uIScrollbar;
+            Scrollbar = uIScrollbar;
         }
 
         private void AchivementClick(UIMouseEvent evt, UIElement listeningElement)
@@ -171,15 +176,15 @@ namespace InfernumMode.Content.UI
         }
     }
 
-    public class WishesUIManager : UIState
+    public class WishesUIManager : AchievementUIState
     {
         private UIList AchivementList;
 
-        private List<InfernumUIAchievementListItem> AchievementElements = new();
+        private readonly List<InfernumUIAchievementListItem> AchievementElements = new();
 
         private UIElement OuterContainer;
 
-        internal UIScrollbar uIScrollbar1;
+        internal override UIScrollbar Scrollbar { get; set; }
 
         public void InitializePage()
         {
@@ -272,7 +277,7 @@ namespace InfernumMode.Content.UI
             uIPanel.Append(uIScrollbar);
 
             AchivementList.SetScrollbar(uIScrollbar);
-            uIScrollbar1 = uIScrollbar;
+            Scrollbar = uIScrollbar;
         }
 
         private void WishesClick(UIMouseEvent evt, UIElement listeningElement)

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace InfernumMode.Core.GlobalInstances.Players
 {
@@ -111,7 +112,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust shadowflame = Dust.NewDustDirect(Player.position, Player.width, Player.height, 28);
+                    Dust shadowflame = Dust.NewDustDirect(Player.position, Player.width, Player.height, DustID.Clay);
                     shadowflame.velocity = Player.velocity.SafeNormalize(Vector2.UnitX * Player.direction);
                     shadowflame.velocity = shadowflame.velocity.RotatedByRandom(0.4f) * -Main.rand.NextFloat(2.5f, 5.4f);
                     shadowflame.scale = Main.rand.NextFloat(0.95f, 1.3f);

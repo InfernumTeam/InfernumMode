@@ -102,6 +102,11 @@ namespace InfernumMode.Core.TrackedMusic
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(musicPath));
                     using FileStream saveStream = File.Create(musicPath);
+
+                    // Move onto the next path if the track doesn't exist in the mod.
+                    if (!mod.FileExists(fileName))
+                        continue;
+
                     using Stream musicStream = mod.GetFileStream(fileName, true);
                     musicStream.CopyTo(saveStream);
                 }

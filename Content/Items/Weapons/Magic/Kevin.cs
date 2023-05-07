@@ -18,7 +18,8 @@ namespace InfernumMode.Content.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("kevin");
-            Tooltip.SetDefault("It stands for 'Kinetic Electroplasma Voltage Infuser'");
+            Tooltip.SetDefault("A part of a greater whole, incomprehensible to the layperson\n" +
+                "It stands for 'Kinetic Electroplasma Voltage Infuser'");
             SacrificeTotal = 1;
         }
 

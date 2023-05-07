@@ -2,8 +2,10 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -76,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.width * 0.44f, targetHitbox);
         }
 
-        public float SunWidthFunction(float completionRatio) => Projectile.width * CalamityUtils.Convert01To010(completionRatio);
+        public float SunWidthFunction(float completionRatio) => Projectile.width * MathF.Sin(MathHelper.Pi * completionRatio);
 
         public Color SunColorFunction(float completionRatio)
         {
@@ -130,21 +132,29 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public void DrawSun()
         {
-            FireDrawer ??= new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, InfernumEffectsRegistry.FireVertexShader);
-            InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.25f);
-            InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
+            Texture2D invis = InfernumTextureRegistry.Invisible.Value;
+            Texture2D noise = InfernumTextureRegistry.HarshNoise.Value;
+            Effect fireball = InfernumEffectsRegistry.FireballShader.GetShader().Shader;
 
-            float radius = Projectile.width * 0.36f;
-            for (float offsetAngle = MathHelper.PiOver2; offsetAngle >= -MathHelper.PiOver2; offsetAngle -= MathHelper.Pi / 32f)
+            fireball.Parameters["sampleTexture2"].SetValue(noise);
+            fireball.Parameters["mainColor"].SetValue(Color.Lerp(Color.Red, Color.Yellow, 0.3f).ToVector3() * Projectile.Opacity);
+            fireball.Parameters["resolution"].SetValue(new Vector2(250f, 250f));
+            fireball.Parameters["speed"].SetValue(0.76f);
+            fireball.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            fireball.Parameters["zoom"].SetValue(0.0004f);
+            fireball.Parameters["dist"].SetValue(60f);
+            fireball.Parameters["opacity"].SetValue(Projectile.Opacity);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            fireball.CurrentTechnique.Passes[0].Apply();
+            Main.spriteBatch.Draw(invis, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, invis.Size() * 0.5f, Projectile.width * 1.3f * Projectile.scale, SpriteEffects.None, 0f);
+            if (!InfernumConfig.Instance.ReducedGraphicsConfig)
             {
-                float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 0.6f;
-                Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
-                List<Vector2> drawPoints = new();
-                for (int i = 0; i < 16; i++)
-                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius, Projectile.Center + offsetDirection * radius, i / 16f));
-
-                FireDrawer.Draw(drawPoints, -Main.screenPosition, 29);
+                fireball.Parameters["mainColor"].SetValue(Color.Lerp(Color.Red, Color.OrangeRed, 0.6f).ToVector3() * Projectile.Opacity);
+                fireball.CurrentTechnique.Passes[0].Apply();
+                Main.spriteBatch.Draw(invis, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, invis.Size() * 0.5f, Projectile.width * 1.05f * Projectile.scale, SpriteEffects.None, 0f);
             }
+            Main.spriteBatch.ExitShaderRegion();
         }
     }
 }

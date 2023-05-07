@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles.Generic;
+using InfernumMode.Content.Rarities.Sparkles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -14,11 +15,15 @@ namespace InfernumMode.Content.Items
 {
     public class SakuraBud : ModItem
     {
+        private List<RaritySparkle> spiritSparkles = new();
+        private List<RaritySparkle> waterSparkles = new();
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sakura Bud");
-            Tooltip.SetDefault("You feel a guiding spirit trying to lead you the bloom's home, within the heart of the jungle\n" +
-                "If you find it, toss it in the pond");
+            Tooltip.SetDefault("A delicate, fragile sakura bud, just about to bloom\n" +
+                "You feel a guiding spirit trying to lead you the bloom’s home\n" +
+                "Maybe you should follow its call?");
             SacrificeTotal = 1;
         }
         public override void SetDefaults()
@@ -34,7 +39,40 @@ namespace InfernumMode.Content.Items
             TooltipLine nameLine = tooltips.FirstOrDefault(x => x.Name == "ItemName" && x.Mod == "Terraria");
 
             if (nameLine != null)
-                nameLine.OverrideColor = Color.Pink;
+            {
+                Vector2 currentPosition = Main.LocalPlayer.Center;
+                Vector2 gardencenter = WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates();
+                float distance = currentPosition.Distance(gardencenter);
+                float lerpAmount = Utils.GetLerpValue(15000, 1000, distance, true);
+                nameLine.OverrideColor = Color.Lerp(Color.Gray, Color.Pink, lerpAmount);
+            }
+        }
+
+        public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
+        { 
+            spiritSparkles.RemoveAll(s => s.Time >= s.Lifetime);
+            waterSparkles.RemoveAll(s => s.Time >= s.Lifetime);
+            Vector2 drawOffset = Vector2.UnitY * yOffset;
+            if (line.Text.StartsWith("You feel"))
+            {                
+                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref spiritSparkles, "You feel a ");
+                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref spiritSparkles, "guiding spirit", true);
+                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref spiritSparkles, " trying to lead you the bloom’s home");
+                return false;
+            }
+            if (line.Text.StartsWith("Maybe you"))
+            {
+                if (Main.LocalPlayer.WithinRange(WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates(), 3200f))
+                {
+                    drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref waterSparkles, "The spirit is trying to draw your attention to the ");
+                    drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref waterSparkles, "water", true, overrideColor: new(26, 169, 208));
+                }
+                else
+                    SakuraBloom.DrawLine(line, drawOffset, ref waterSparkles, "Maybe you should follow its call?");
+
+                return false;            
+            }
+            return true;
         }
 
         public override void Update(ref float gravity, ref float maxFallSpeed)

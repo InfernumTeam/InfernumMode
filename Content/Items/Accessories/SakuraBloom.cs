@@ -60,11 +60,14 @@ namespace InfernumMode.Content.Items.Accessories
             return true;
         }
 
-        public static float DrawLine(DrawableTooltipLine line, Vector2 drawOffset, ref List<RaritySparkle> sparkles, string overridingText = null, bool specialText = false, int spawnRate = 16)
+        public static float DrawLine(DrawableTooltipLine line, Vector2 drawOffset, ref List<RaritySparkle> sparkles, string overridingText = null, bool specialText = false, int spawnRate = 16, Color? overrideColor = null)
         {
             Color textOuterColor = new(235, 195, 240);
             if (specialText)
                 textOuterColor = new(244, 127, 255);
+
+            if (overrideColor != null)
+                textOuterColor = overrideColor.Value;
 
             Color textInnerColor = Color.Lerp(Color.Black, textOuterColor, 0.15f);
 

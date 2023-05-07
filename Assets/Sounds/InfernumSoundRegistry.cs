@@ -138,6 +138,8 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle GulperEelScreamSound = new("InfernumMode/Assets/Sounds/Custom/Abyss/GulperEelScream");
 
+        public static readonly SoundStyle HatGirlPeckVASound = new("InfernumMode/Assets/Sounds/Custom/Misc/HatGirlPeck", 2);
+
         public static readonly SoundStyle KingSlimeDeathAnimation = new("InfernumMode/Assets/Sounds/Custom/DeathAnimations/KingSlimeDeathAnimation");
 
         public static readonly SoundStyle LeviathanRumbleSound = new("InfernumMode/Assets/Sounds/Custom/Leviathan/LeviathanRumble");

@@ -1,9 +1,11 @@
-﻿using InfernumMode.Core;
+﻿using InfernumMode.Assets.Sounds;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Pets
@@ -38,6 +40,12 @@ namespace InfernumMode.Content.Projectiles.Pets
         {
             get => Projectile.ai[0] == 0f;
             set => Projectile.ai[0] = value ? 0f : 1f;
+        }
+
+        public bool SaidSillyVALine
+        {
+            get => Projectile.ai[1] == 1f;
+            set => Projectile.ai[1] = value.ToInt();
         }
 
         public ref float TalkAnimationCounter => ref Projectile.localAI[0];
@@ -110,10 +118,9 @@ namespace InfernumMode.Content.Projectiles.Pets
             if (Main.myPlayer == Projectile.owner && modPlayer.ShouldDisplayTips && !Owner.dead)
             {
                 string tipText = TipsManager.PotentialTipToUse;
+                Color messageColor = Color.DeepPink;
                 if (!string.IsNullOrEmpty(tipText))
                 {
-                    Color messageColor = Color.DeepPink;
-
                     if (InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
                         Main.NewText(tipText, messageColor);
                     else
@@ -133,6 +140,17 @@ namespace InfernumMode.Content.Projectiles.Pets
                     TalkAnimationCounter = 1f;
 
                     TipsManager.SaidText.Add(tipText);
+                }
+
+                // Sometimes play a cute VA sound.
+                else if (!SaidSillyVALine)
+                {
+                    if (Main.rand.NextBool(10))
+                    {
+                        CombatText.NewText(Projectile.Hitbox, messageColor, "Peck!", true);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.HatGirlPeckVASound with { Volume = 0.6f }, Projectile.Center);
+                    }
+                    SaidSillyVALine = true;
                 }
             }
 

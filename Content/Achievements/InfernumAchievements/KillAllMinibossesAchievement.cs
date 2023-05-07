@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.NormalNPCs;
+﻿using CalamityMod.NPCs.AcidRain;
+using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.SunkenSea;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             [NPCID.BigMimicCrimson] = MinibossesCompleted[2],
             [NPCID.BigMimicHallow] = MinibossesCompleted[3],
             [NPCID.DD2OgreT2] = MinibossesCompleted[5],
-            [NPCID.DD2Betsy] = MinibossesCompleted[0]
+            [NPCID.DD2Betsy] = MinibossesCompleted[0],
+            [ModContent.NPCType<NuclearTerror>()] = MinibossesCompleted[8],
         };
         #endregion
 
@@ -42,6 +44,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             NPCID.SandElemental,
             ModContent.NPCType<ThiccWaifu>(),
             ModContent.NPCType<GiantClam>(),
+            ModContent.NPCType<NuclearTerror>(),
             // These must be at the end.
             NPCID.DD2DarkMageT3,
             NPCID.DD2OgreT3
@@ -53,7 +56,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             Name = "Mini-Meany!";
             Description = "Defeat the various minor threats across the world!\n[c/777777:Beat every Infernum Miniboss]";
-            TotalCompletion = 9;
+            TotalCompletion = 10;
             PositionInMainList = 7;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
             CreateDict();
@@ -77,6 +80,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             // but someone hasnt run this code we'd need to check for that too and ugh.
             if (MinibossesCompleted.Count is 8 && !MinibossesCompleted.ContainsKey(8))
                 MinibossesCompleted.Add(8, false);
+            if (MinibossesCompleted.Count is 9 && !MinibossesCompleted.ContainsKey(9))
+                MinibossesCompleted.Add(9, false);
 
             CurrentCompletion = tag.Get<int>("MinibossesCurrentCompletion");
             DoneCompletionEffects = tag.Get<bool>("MinibossesDoneCompletionEffects");

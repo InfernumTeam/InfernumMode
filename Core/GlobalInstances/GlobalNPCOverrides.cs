@@ -277,9 +277,7 @@ namespace InfernumMode.Core.GlobalInstances
             foreach (Delegate d in StrikeNPCEvent.GetInvocationList())
             {
                 int realDamage = (int)Math.Ceiling(crit ? damage * 2D : damage);
-
-                bool del = ((StrikeNPCDelegate)d).Invoke(npc, ref damage, realDamage, defense, ref knockback, hitDirection, ref crit);
-                result &= del;
+                result &= ((StrikeNPCDelegate)d).Invoke(npc, ref damage, realDamage, defense, ref knockback, hitDirection, ref crit);
             }
 
             return result;

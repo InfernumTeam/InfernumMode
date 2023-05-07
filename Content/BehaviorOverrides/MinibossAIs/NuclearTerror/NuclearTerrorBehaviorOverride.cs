@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Enemy;
@@ -718,6 +719,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
         {
             int chargeUpTime = 120;
             int deathrayLifetime = 90;
+            ref float deathrayDirection = ref npc.Infernum().ExtraAI[0];
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
 
             // Use flashing frames.
             frameType = (int)NuclearTerrorFrameType.Flashing;
@@ -749,6 +752,15 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                     StrongBloom bloom = new(npc.Center, Vector2.Zero, energyColor, 1f, 15);
                     GeneralParticleHandler.SpawnParticle(bloom);
                 }
+
+                // Define the deathray direction for telegraph purposes.
+                if (attackTimer == chargeUpTime - 60f)
+                {
+                    deathrayDirection = (npc.SafeDirectionTo(target.Center) + Vector2.UnitY * 0.7f).SafeNormalize(Vector2.UnitY).ToRotation();
+                    npc.netUpdate = true;
+                }
+
+                telegraphInterpolant = Utils.GetLerpValue(chargeUpTime - 60f, chargeUpTime - 5f, attackTimer, true);
             }
 
             // Fire the deathray and some energy projectiles.
@@ -757,14 +769,16 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                 SoundEngine.PlaySound(InfernumSoundRegistry.NuclearTerrorTeleportSound with { Pitch = -0.35f, Volume = 2f }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 laserDirection = (npc.SafeDirectionTo(target.Center) + Vector2.UnitY * 2.3f).SafeNormalize(Vector2.UnitY);
-                    Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<GammaSuperDeathray>(), GammaDeathrayDamage, 0f, -1, 0f, deathrayLifetime);
+                    Utilities.NewProjectileBetter(npc.Center, deathrayDirection.ToRotationVector2(), ModContent.ProjectileType<GammaSuperDeathray>(), GammaDeathrayDamage, 0f, -1, 0f, deathrayLifetime);
 
                     for (int i = 0; i < 18; i++)
                     {
                         Vector2 energyVelocity = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * 8f;
                         Utilities.NewProjectileBetter(npc.Center + energyVelocity * 3f, energyVelocity, ModContent.ProjectileType<ConvergingGammaEnergy>(), GammaEnergyDamage, 0f, -1);
                     }
+
+                    // Reset the telegraph interpolant.
+                    telegraphInterpolant = 0f;
 
                     // Look at the target one last time.
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -987,6 +1001,29 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             {
                 Color acidOverlayColor = CalamityUtils.ColorSwap(Color.Yellow, Color.HotPink, 1f) with { A = 0 } * acidOverlayInterpolant * 0.5f;
                 Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(acidOverlayColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            }
+
+            // Draw the laser telegraph if necessary.
+            if (npc.ai[0] == (int)NuclearTerrorAttackType.NuclearSuperDeathray && npc.Infernum().ExtraAI[1] > 0.01f)
+            {
+                Vector2 telegraphDirection = npc.Infernum().ExtraAI[0].ToRotationVector2();
+
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+                float telegraphStrength = npc.Infernum().ExtraAI[1];
+                float pulse = MathF.Cos(Main.GlobalTimeWrappedHourly * 36f);
+                Vector2 laserStart = npc.Center + new Vector2(npc.spriteDirection * -60f, -32f).RotatedBy(npc.rotation);
+                Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
+                Vector2 origin = backglowTexture.Size() * 0.5f;
+                Vector2 glowPosition = laserStart - Main.screenPosition;
+                Vector2 baseScale = new Vector2(1f + pulse * 0.05f, 1f) * npc.scale * 0.7f;
+                Main.spriteBatch.Draw(backglowTexture, glowPosition, null, Color.White * npc.scale * telegraphStrength, 0f, origin, baseScale * 0.7f, 0, 0f);
+                Main.spriteBatch.Draw(backglowTexture, glowPosition, null, Color.Yellow * npc.scale * telegraphStrength * 0.4f, 0f, origin, baseScale * 1.2f, 0, 0f);
+                Main.spriteBatch.Draw(backglowTexture, glowPosition, null, Color.Lime * npc.scale * telegraphStrength * 0.3f, 0f, origin, baseScale * 1.7f, 0, 0f);
+
+                Main.spriteBatch.DrawBloomLine(laserStart, laserStart + telegraphDirection * 2400f, Color.DarkOliveGreen * telegraphStrength, telegraphStrength * 120f);
+                Main.spriteBatch.DrawBloomLine(laserStart, laserStart + telegraphDirection * 2400f, Color.YellowGreen * telegraphStrength, telegraphStrength * 95f);
+                Main.spriteBatch.ResetBlendState();
             }
 
             return false;

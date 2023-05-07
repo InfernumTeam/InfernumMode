@@ -81,7 +81,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             // Determine the scale of the laser.
             CalculateScale();
 
-            Projectile.velocity = (Projectile.velocity - Vector2.UnitY * 0.04f).SafeNormalize(-Vector2.UnitY);
+            float moveInterpolant = Utils.GetLerpValue(5f, 25f, Time, true);
+            Projectile.velocity = (Projectile.velocity - Vector2.UnitY * moveInterpolant * 0.04f).SafeNormalize(-Vector2.UnitY);
             if (Time >= Lifetime)
                 Projectile.Kill();
 
@@ -139,9 +140,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             Vector2 origin = backglowTexture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.scale * 20f;
             Vector2 baseScale = new Vector2(1f + pulse * 0.05f, 1f) * Projectile.scale * 0.7f;
-            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, Color.White * Projectile.scale, 0f, origin, baseScale * 0.7f, 0, 0f);
-            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, Color.Yellow * Projectile.scale * 0.4f, 0f, origin, baseScale * 1.2f, 0, 0f);
-            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, Color.Orange * Projectile.scale * 0.3f, 0f, origin, baseScale * 1.7f, 0, 0f);
+            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, Color.White, 0f, origin, baseScale * 0.7f, 0, 0f);
+            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, Color.Yellow * 0.4f, 0f, origin, baseScale * 1.2f, 0, 0f);
+            Main.spriteBatch.Draw(backglowTexture, drawPosition, null, Color.Orange * 0.3f, 0f, origin, baseScale * 1.7f, 0, 0f);
         }
 
         public void DrawBloomFlare()

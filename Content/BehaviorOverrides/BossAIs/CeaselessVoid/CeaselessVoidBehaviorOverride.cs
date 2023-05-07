@@ -482,7 +482,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (BossRushEvent.BossRushActive)
             {
                 npc.life = 0;
-                BossRushEvent.BossRushStage++;
                 npc.active = false;
             }
         }

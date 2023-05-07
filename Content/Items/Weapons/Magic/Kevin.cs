@@ -30,7 +30,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             Item.mana = 4;
             Item.width = 36;
             Item.height = 30;
-            Item.useTime = Item.useAnimation = 20;
+            Item.useTime = Item.useAnimation = 21;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.knockBack = 0f;

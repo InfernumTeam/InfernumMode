@@ -21,7 +21,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (extraInfo == ModContent.TileType<EggSwordShrine>())
+            if (extraInfo == ModContent.TileType<EggSwordShrine>() && NPC.downedGolemBoss)
                 CurrentCompletion++;
         }
 

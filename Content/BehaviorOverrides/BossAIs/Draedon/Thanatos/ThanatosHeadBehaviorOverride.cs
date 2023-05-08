@@ -86,12 +86,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
             }
 
-            if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<ThanatosBody1>() || npc.type == ModContent.NPCType<ThanatosBody2>())
-            {
-                damage = (int)(damage * npc.takenDamageMultiplier);
-                realDamage = (int)(realDamage * npc.takenDamageMultiplier);
-            }
-
             bool isThanatos = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<ThanatosBody1>() || npc.type == ModContent.NPCType<ThanatosBody2>() || npc.type == ModContent.NPCType<ThanatosTail>();
             if (isThanatos)
             {

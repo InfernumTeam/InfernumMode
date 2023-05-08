@@ -84,8 +84,12 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
         // Also it doesn't run on servers, obviously.
         public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT;
 
+        // Certain characters are prohibited when naming folders. Consequently, it is important that a cleaned version of the name string be used if any such characters appear.
+        public static string CleanedCharacterName => Main.LocalPlayer.name.Replace("\\", string.Empty).Replace("/", string.Empty).Replace(":", string.Empty).Replace("*", string.Empty)
+            .Replace("?", string.Empty).Replace("\"", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty).Replace("|", string.Empty);
+
         // The GIFs are saved in player specific folders, to ensure duplicate gifs are not saved per player.
-        public static string FolderPath => $"{Main.SavePath}/BossFootage/{Main.LocalPlayer.name}";
+        public static string FolderPath => $"{Main.SavePath}/BossFootage/{CleanedCharacterName}";
 
         public const float DownscaleFactor = 3f;
 

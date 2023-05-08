@@ -93,6 +93,8 @@ namespace InfernumMode.Core.CrossCompatibility
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.SkeletronHead)
                 return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.WallofFlesh)
+                return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.QueenSlimeBoss)
                 return NPC.AnyNPCs(npcID);
             if (npcID is NPCID.Retinazer or NPCID.Spazmatism or NPCID.SkeletronPrime or NPCID.TheDestroyer)

@@ -12,11 +12,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
     public class YharonFlamethrower : ModProjectile
     {
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
+
         public ref float Time => ref Projectile.ai[0];
+
         public const float FlameRotation = MathHelper.Pi / 16f;
+
         public const float FadeinTime = 18f;
+
         public const float FadeoutTime = 16f;
+
         public const float Lifetime = FadeinTime + FadeoutTime;
+
         public const float FireMaxLength = 1450f;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Flame Breath");
@@ -162,11 +168,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Time < 32f)
+            if (Time < 25f)
                 return false;
 
             float completelyUselessFuckYouLmao = 0f;
-            float fadeIn = Projectile.ai[0] / 25f;
+            float fadeIn = Projectile.ai[0] / FadeinTime;
             if (fadeIn > 1f)
                 fadeIn = 1f;
 

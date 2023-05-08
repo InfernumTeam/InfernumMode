@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.CalPlayer;
 using CalamityMod.DataStructures;
 using CalamityMod.Events;
@@ -834,6 +835,25 @@ namespace InfernumMode.Core.ILEditingStuff
                 cursor.EmitDelegate(() => CalamityGlobalNPC.DoGHead >= 0 && InfernumMode.CanUseCustomAIs);
                 cursor.Emit(OpCodes.Brtrue, finalReturnBranch);
             }
+        }
+    }
+
+    public class FixAdrenalineRageTriggersHook : IHookEdit
+    {
+        public void Load()
+        {
+            On.Terraria.Player.AddBuff += PerformFix;
+        }
+
+        public void Unload()
+        {
+            On.Terraria.Player.AddBuff -= PerformFix;
+        }
+
+        // I don't know why this works.
+        private void PerformFix(On.Terraria.Player.orig_AddBuff orig, Player self, int type, int timeToAdd, bool quiet, bool foodHack)
+        {
+            orig(self, type, timeToAdd, quiet, foodHack);
         }
     }
 }

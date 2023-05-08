@@ -893,7 +893,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public static void DoBehavior_SpearDashAndGroundSlam(NPC npc, Player target, ref float universalAttackTimer, NPC commander)
         {
             // The commander lines up horizontally, spins his spear around releasing spears in a circle before dashing at a rapid speed at the player.
-            // The won't be ram-able due to the spear.
+            // This won't be ramable due to the spear.
             if (npc.type == CommanderType)
             {
                 ref float substate = ref npc.Infernum().ExtraAI[0];
@@ -918,10 +918,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     // The commander picks the location to hover and moves to it.
                     case 0:
-                        xOffset = -700f * MathF.Sign(target.Center.X - npc.Center.X);
-                        Vector2 hoverDestination = target.Center + new Vector2(xOffset, 0f);
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
-
                         // Spawn the spear if it does not exist.
                         npc.CreateSpearAndAimAtTarget(ref spearStatus, ref spearRotation, target);
                         substate++;
@@ -930,7 +926,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         return;
 
                     case 1:
-                        hoverDestination = target.Center + new Vector2(xOffset, 0f);
+                        xOffset = -700f * MathF.Sign(target.Center.X - npc.Center.X);
+                        Vector2 hoverDestination = target.Center + new Vector2(xOffset, 0f);
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 

@@ -120,6 +120,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Main.spriteBatch.ExitShaderRegion();
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 8f;
+        public override bool? CanDamage() => Time >= 4f;
     }
 }

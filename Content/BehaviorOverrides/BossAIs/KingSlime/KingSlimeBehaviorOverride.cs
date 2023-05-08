@@ -587,6 +587,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     npc.active = false;
                 }
             }
+
+            // Also clear any projectiles.
+            Utilities.DeleteAllProjectiles(true, new int[]
+            {
+                ModContent.ProjectileType<JewelBeam>(),
+                ModContent.ProjectileType<Shuriken>()
+            });
         }
         #endregion AI
 

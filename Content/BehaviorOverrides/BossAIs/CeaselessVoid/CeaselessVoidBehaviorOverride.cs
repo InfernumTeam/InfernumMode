@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             CeaselessVoidAttackType.ConvergingEnergyBarrages
         };
 
-        public static readonly Color InfiniteFlightTextColor = Color.Lerp(Color.Purple, Color.Black, 0.35f);
+        public static readonly Color InfiniteFlightTextColor = Color.Lerp(Color.LightPink, Color.Black, 0.35f);
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {

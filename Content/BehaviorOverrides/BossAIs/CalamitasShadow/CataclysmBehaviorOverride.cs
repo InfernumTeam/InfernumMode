@@ -607,6 +607,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Draw catastrophe's arm.
             if (isCatastrophe)
             {
+                texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheGlowmask").Value;
+                spriteBatch.Draw(texture, mainDrawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 float armRotation = npc.localAI[0] * npc.spriteDirection - MathHelper.PiOver4;
                 float armSquishFactor = 1f - Utils.GetLerpValue(0.3f, 0.9f, npc.localAI[0], true) * Utils.GetLerpValue(MathHelper.Pi - 0.3f, MathHelper.Pi - 0.9f, npc.localAI[0], true) * 0.33f;
                 Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheArm").Value;

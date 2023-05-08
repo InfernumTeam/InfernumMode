@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             float acceleration = 1.034f;
             if (CalamityGlobalNPC.calamitas != -1 && Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Infernum_CalShadowHex().HexIsActive("Zeal"))
             {
-                maxSpeed = 23.5f;
+                maxSpeed = 21.5f;
                 acceleration = 1.031f;
             }
 

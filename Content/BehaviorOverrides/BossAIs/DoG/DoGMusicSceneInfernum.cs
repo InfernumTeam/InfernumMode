@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (CalamityGlobalNPC.DoGHead == -1 || !InfernumMode.CanUseCustomAIs)
                     return phase1Music;
 
-                return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 ? phase2Music : phase1Music;
+                return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 || DoGPhase1HeadBehaviorOverride.InPhase2 ? phase2Music : phase1Music;
             }
         }
 
@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (CalamityGlobalNPC.DoGHead == -1 || !InfernumMode.CanUseCustomAIs)
                     return phase1Music;
 
-                return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 ? phase2Music : phase1Music;
+                return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 || DoGPhase1HeadBehaviorOverride.InPhase2 ? phase2Music : phase1Music;
             }
         }
 
@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (CalamityGlobalNPC.DoGHead == -1 || !InfernumMode.CanUseCustomAIs)
                     return phase1Music;
 
-                return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 ? phase2Music : phase1Music;
+                return DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState != DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NotEnteringPhase2 || DoGPhase1HeadBehaviorOverride.InPhase2 ? phase2Music : phase1Music;
             }
         }
     }

@@ -50,6 +50,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
         }
 
+        public static bool InPhase2
+        {
+            get
+            {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return false;
+
+                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
+                return npc.Infernum().ExtraAI[InPhase2FlagIndex] == 1f;
+            }
+        }
+
         public override int NPCOverrideType => ModContent.NPCType<DoGHead>();
 
         public static int GeneralPortalIndex

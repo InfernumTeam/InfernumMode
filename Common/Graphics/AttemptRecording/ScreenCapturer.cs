@@ -95,7 +95,6 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         public static string InfoFilePath => $"{Main.SavePath}/BossFootage/README.txt";
 
-
         // This is named this due to being compressed, it will not be playable via normal GIF players so having it appear like a normal
         // .gif file would be misleading and cause potential confusion.
         public const string FileExtension = ".compgif";

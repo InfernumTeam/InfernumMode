@@ -771,37 +771,14 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
 
-        private void RemoveClosestSegmentDrops(ILContext il)
-        {
-            ILCursor cursor = new(il);
-
-            cursor.Emit(OpCodes.Ldarg_0);
-            cursor.EmitDelegate<Action<NPC>>(npc =>
-            {
-                if (InfernumMode.CanUseCustomAIs)
-                    return;
-
-                int closestSegmentID = DropHelper.FindClosestWormSegment(npc,
-                    ModContent.NPCType<AquaticScourgeHead>(),
-                    ModContent.NPCType<AquaticScourgeBody>(),
-                    ModContent.NPCType<AquaticScourgeBodyAlt>(),
-                    ModContent.NPCType<AquaticScourgeTail>());
-                npc.position = Main.npc[closestSegmentID].position;
-            });
-            cursor.Emit(OpCodes.Ldc_I4_0);
-            cursor.Emit(OpCodes.Ret);
-        }
-
         public void Load()
         {
             On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
-            AquaticScourgeSpecialOnKill += RemoveClosestSegmentDrops;
         }
 
         public void Unload()
         {
             On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
-            AquaticScourgeSpecialOnKill -= RemoveClosestSegmentDrops;
         }
     }
 

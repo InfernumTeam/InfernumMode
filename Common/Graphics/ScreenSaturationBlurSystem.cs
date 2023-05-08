@@ -147,7 +147,9 @@ namespace InfernumMode.Common.Graphics
 
             AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
             ThingsToDrawOnTopOfBlur.EmptyDrawCache();
-            LargeLumenylCrystal.DefineCrystalDrawers();
+
+            if (Main.GameUpdateCount % 10 == 0)
+                LargeLumenylCrystal.DefineCrystalDrawers();
 
             IcicleDrawer.ApplyShader();
             foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)

@@ -18,6 +18,17 @@ namespace InfernumMode.Core.GlobalInstances
 {
     public class InfernumGlobalTile : GlobalTile
     {
+        public static int LumenylCrystalID
+        {
+            get;
+            private set;
+        }
+
+        public override void Load()
+        {
+            LumenylCrystalID = ModContent.TileType<LumenylCrystals>();
+        }
+
         public static bool ShouldNotBreakDueToAboveTile(int x, int y)
         {
             int[] invincibleTiles = new int[]
@@ -75,7 +86,7 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
         {
-            if (type == ModContent.TileType<LumenylCrystals>())
+            if (type == LumenylCrystalID)
                 return false;
 
             return base.PreDraw(i, j, type, spriteBatch);

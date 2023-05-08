@@ -1095,7 +1095,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void ChangeYharonSkyRequirements(Action<YharonBackgroundScene, Player, bool> orig, YharonBackgroundScene instance, Player player, bool isActive)
         {
-            if (InfernumMode.CanUseCustomAIs)
+            if (InfernumMode.CanUseCustomAIs && !InfernumConfig.Instance.ReducedGraphicsConfig)
                 return;
 
             orig(instance, player, isActive);

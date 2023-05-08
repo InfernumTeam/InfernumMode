@@ -3,6 +3,7 @@ using CalamityMod.NPCs.Yharon;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Core;
 using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -24,7 +25,7 @@ namespace InfernumMode.Content.Skies
         {
             int yharonIndex = NPC.FindFirstNPC(ModContent.NPCType<Yharon>());
             bool transitioningToPhase2 = yharonIndex >= 0 && Main.npc[yharonIndex].ai[0] == (int)YharonBehaviorOverride.YharonAttackType.EnterSecondPhase;
-            return (CalamityGlobalNPC.yharon != -1 || CalamityGlobalNPC.yharonP2 != -1 || transitioningToPhase2) && InfernumMode.CanUseCustomAIs;
+            return (CalamityGlobalNPC.yharon != -1 || CalamityGlobalNPC.yharonP2 != -1 || transitioningToPhase2) && InfernumMode.CanUseCustomAIs && !InfernumConfig.Instance.ReducedGraphicsConfig;
         }
 
         public override void SpecialVisuals(Player player, bool isActive)

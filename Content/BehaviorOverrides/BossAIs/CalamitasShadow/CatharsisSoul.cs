@@ -43,6 +43,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             else
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+                if (target.dead || !target.active)
+                {    
+                    Projectile.Kill();
+                    return; 
+                }
                 Projectile.velocity = (Projectile.velocity * 37f + Projectile.SafeDirectionTo(target.Center) * 11f) / 38f;
             }
 

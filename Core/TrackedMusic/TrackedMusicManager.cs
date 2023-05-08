@@ -182,8 +182,8 @@ namespace InfernumMode.Core.TrackedMusic
                 if (tempFade <= 0f)
                 {
                     tempFade = 0f;
-                    self.AudioTracks[i].SetVariable("Volume", 0f);
-                    self.AudioTracks[i].Stop(AudioStopOptions.Immediate);
+                    self?.AudioTracks[i]?.SetVariable("Volume", 0f);
+                    self?.AudioTracks[i]?.Stop(AudioStopOptions.Immediate);
                 }
                 return;
             }

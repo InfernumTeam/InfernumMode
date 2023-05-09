@@ -64,6 +64,10 @@ namespace InfernumMode.Content.Credits
 
         public void DrawGIF(int textureIndex, float opacity)
         {
+            // Get out if there are no textures loaded.
+            if (Textures == null)
+                return;
+
             // Get the noise intensity.
             float noiseIntensity = 0.1f;
 

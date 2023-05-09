@@ -65,6 +65,7 @@ namespace InfernumMode.Common.Graphics
             }
 
             Main.spriteBatch.End();
+            Main.instance.GraphicsDevice.SetRenderTarget(null);
         }
 
         public static void DrawTarget()

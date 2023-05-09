@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < drawPositionsT.Length; i++)
                     drawPositionsT[i] = Vector2.Lerp(startT, endT, (float)i / drawPositionsT.Length);
 
-                TelegraphDrawer.DrawPixelated(drawPositionsT, -Main.screenPosition, 20);
+                TelegraphDrawer.DrawPixelated(drawPositionsT, -Main.screenPosition, 14);
 
                 Texture2D warningSymbol = InfernumTextureRegistry.VolcanoWarning.Value;
                 Vector2 drawPosition = startT + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 1200f - Main.screenPosition;
@@ -161,7 +161,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < drawPositions.Length; i++)
                     drawPositions[i] = Vector2.Lerp(start, end, (float)i / drawPositions.Length);
 
-                LavaDrawer.DrawPixelated(drawPositions, -Main.screenPosition, 38);
+                LavaDrawer.DrawPixelated(drawPositions, -Main.screenPosition, 23);
             }
         }
 

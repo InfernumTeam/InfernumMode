@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             for (int i = 0; i < 4; i++)
             {
                 Projectile.localAI[0] = (i % 2 == 0f).ToDirectionInt();
-                LavaDrawer.Draw(samplePoints, -Main.screenPosition, 35, 0f);
+                LavaDrawer.Draw(samplePoints, -Main.screenPosition, 19, 0f);
             }
             Main.spriteBatch.ExitShaderRegion();
             return false;

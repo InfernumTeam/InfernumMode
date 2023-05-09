@@ -63,7 +63,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
 
             // This mechanic is ridiculous.
-            c.EmitDelegate(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f);
+            c.EmitDelegate(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor * 0.1f : 1f);
             c.Emit(OpCodes.Div);
         }
 
@@ -779,80 +779,6 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload()
         {
             On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
-        }
-    }
-
-    public class DisableTeleportsInDoGFightHook : IHookEdit
-    {
-        public static bool DisableNextTeleport
-        {
-            get;
-            set;
-        }
-
-        public void Load()
-        {
-            On.Terraria.Player.Teleport += DisableTeleportIfNecessary;
-            CalPlayerProcessTriggers += StopStupidFuckingTeleportEffects;
-        }
-
-        public void Unload()
-        {
-            On.Terraria.Player.Teleport -= DisableTeleportIfNecessary;
-            CalPlayerProcessTriggers -= StopStupidFuckingTeleportEffects;
-        }
-
-        private void DisableTeleportIfNecessary(On.Terraria.Player.orig_Teleport orig, Player self, Vector2 newPos, int Style, int extraInfo)
-        {
-            if (DisableNextTeleport)
-            {
-                UseRestrictionGlobalItem.DisplayTeleportDenialText(self, newPos, self.ActiveItem(), true);
-                DisableNextTeleport = false;
-                return;
-            }
-
-            orig(self, newPos, Style, extraInfo);
-        }
-
-        private void StopStupidFuckingTeleportEffects(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.GotoFinalRet();
-
-            ILLabel finalReturnBranch = cursor.MarkLabel();
-
-            cursor.Goto(0);
-            while (cursor.TryGotoNext(MoveType.Before, i => i.MatchCallOrCallvirt<Player>("Teleport")))
-            {
-                cursor.EmitDelegate(() =>
-                {
-                    if (CalamityGlobalNPC.DoGHead >= 0 && InfernumMode.CanUseCustomAIs)
-                        DisableNextTeleport = true;
-                });
-                cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<Player>("Teleport"));
-
-                cursor.EmitDelegate(() => CalamityGlobalNPC.DoGHead >= 0 && InfernumMode.CanUseCustomAIs);
-                cursor.Emit(OpCodes.Brtrue, finalReturnBranch);
-            }
-        }
-    }
-
-    public class FixAdrenalineRageTriggersHook : IHookEdit
-    {
-        public void Load()
-        {
-            On.Terraria.Player.AddBuff += PerformFix;
-        }
-
-        public void Unload()
-        {
-            On.Terraria.Player.AddBuff -= PerformFix;
-        }
-
-        // I don't know why this works.
-        private void PerformFix(On.Terraria.Player.orig_AddBuff orig, Player self, int type, int timeToAdd, bool quiet, bool foodHack)
-        {
-            orig(self, type, timeToAdd, quiet, foodHack);
         }
     }
 }

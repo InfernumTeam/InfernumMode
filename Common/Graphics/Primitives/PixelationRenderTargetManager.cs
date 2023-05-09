@@ -42,6 +42,9 @@ namespace InfernumMode.Common.Graphics.Primitives
         #region Methods
         private static void DrawScaledTarget(RenderTarget2D target)
         {
+            if (!pixelPrimDrawersList.Any() && !pixelPrimDrawersListBeforeNPCs.Any())
+                return;
+
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Draw the RT. The scale is important, it is 2 here as this RT is 0.5x the main screen size.

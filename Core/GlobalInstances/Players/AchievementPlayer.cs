@@ -71,6 +71,15 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         internal static List<Achievement> GetAchievementsList() => Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements.ToList();
 
+        public static bool UnlockedAchievement<T>(Player player) where T : Achievement
+        {
+            var achievements = player.GetModPlayer<AchievementPlayer>().AchievementInstances;
+            if (!achievements.Any(a => a is T))
+                return false;
+
+            return achievements.First(a => a is T).IsCompleted;
+        }
+
         public static int GetIconIndex(Achievement achievement)
         {
             var sortedAchievements = Main.LocalPlayer.GetModPlayer<AchievementPlayer>().SortedAchievements;

@@ -3,6 +3,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.Biomes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.WorldGeneration;

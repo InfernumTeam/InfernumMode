@@ -1,5 +1,7 @@
 ﻿using CalamityMod.NPCs.ExoMechs;
+using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.Items;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
 using Terraria.ModLoader;
@@ -22,7 +24,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (Main.npc[extraInfo].type == ModContent.NPCType<Draedon>() && WorldSaveSystem.InfernumMode)
+            if (Main.npc[extraInfo].type == ModContent.NPCType<Draedon>() && WorldSaveSystem.InfernumMode && AchievementPlayer.UnlockedAchievement<KillAllBossesAchievement>(player))
                 CurrentCompletion = TotalCompletion;
         }
 

@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Events;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -86,6 +87,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             ModContent.NPCType<OldDuke>(),
             ModContent.NPCType<DevourerofGodsHead>(),
             ModContent.NPCType<Yharon>(),
+            ModContent.NPCType<AdultEidolonWyrmHead>(),
             ModContent.NPCType<Draedon>(),
             ModContent.NPCType<SupremeCalamitas>(),
         };
@@ -184,7 +186,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                             updatedList = true;
                         }
                     }
-                    else if (BossList.Contains(npcID) && !BossesCompleted[Utilities.GetNPCNameFromID(npcID)])
+                    else if (BossList.Contains(npcID) && (!BossesCompleted.ContainsKey(Utilities.GetNPCNameFromID(npcID)) || !BossesCompleted[Utilities.GetNPCNameFromID(npcID)]))
                     {
                         BossesCompleted[Utilities.GetNPCNameFromID(npcID)] = true;
                         updatedList = true;
@@ -197,15 +199,15 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 
         public string GetFirstUncompletedBoss()
         {
-            foreach (var item in BossesCompleted)
+            foreach (var bossID in BossList)
             {
-                if (!item.Value)
+                string bossName = Utilities.GetNPCNameFromID(bossID);
+                if (!BossesCompleted.ContainsKey(bossName) || !BossesCompleted[bossName])
                 {
-                    // Due to these originally using the full name, this gets the id, and then regets the name using
+                    // Due to these originally using the full name, this gets the id, and then gets the name using
                     // a different method to avoid changing the saved names in the dict and fucking with data.
                     // This is a bit scuffed.
-                    int id = Utilities.GetNPCIDFromName(item.Key);
-                    return Utilities.GetNPCFullNameFromID(id);
+                    return Utilities.GetNPCFullNameFromID(bossID);
                 }
             }
             return string.Empty;

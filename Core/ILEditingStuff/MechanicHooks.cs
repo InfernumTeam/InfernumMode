@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.CalPlayer;
 using CalamityMod.DataStructures;
 using CalamityMod.Events;

@@ -85,7 +85,7 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
-            On.Terraria.Main.Draw += HandleDrawMainThreadQueue;
+            Main.OnPreDraw += HandleDrawMainThreadQueue;
             On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
 
@@ -94,6 +94,12 @@ namespace InfernumMode.Common.Graphics
                 IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
             });
             Main.OnPreDraw += PrepareBlurEffects;
+        }
+
+        public override void OnModUnload()
+        {
+            Main.OnPreDraw -= HandleDrawMainThreadQueue;
+            Main.OnPreDraw -= PrepareBlurEffects;
         }
 
         private void LetEffectsDrawOnBudgetLightSettings(ILContext il)
@@ -116,16 +122,10 @@ namespace InfernumMode.Common.Graphics
             c.Emit(OpCodes.Stloc, localIndex);
         }
 
-        // Due to how universal this method is for the game's draw logic, it's inconvenient to have VS' debugger randomly say that the orig Draw method is being called, as that
-        // gives basically no useful information.
-        // As such, it is intentionally invisible to the debugger.
-        [DebuggerHidden]
-        private void HandleDrawMainThreadQueue(On.Terraria.Main.orig_Draw orig, Main self, GameTime gameTime)
+        private void HandleDrawMainThreadQueue(GameTime gameTime)
         {
             while (DrawActionQueue is not null && DrawActionQueue.TryDequeue(out Action a))
                 a();
-
-            orig(self, gameTime);
         }
 
         internal static void GetFinalScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)

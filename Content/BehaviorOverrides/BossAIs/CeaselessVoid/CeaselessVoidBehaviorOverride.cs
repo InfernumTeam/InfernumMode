@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 float lookAtTargetInterpolant = Utils.GetLerpValue(420f, 2700f, ((target.Center - npc.Center) * new Vector2(1f, 1.8f)).Length(), true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;
-                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = Vector2.Lerp(npc.Center, target.Center, lookAtTargetInterpolant);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = Vector2.Lerp(npc.Center, Main.LocalPlayer.Center, lookAtTargetInterpolant);
             }
 
             if (!phase3 && Chains is not null && npc.ai[3] == 0f)

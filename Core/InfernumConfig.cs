@@ -44,6 +44,12 @@ namespace InfernumMode.Core
         [Tooltip("Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.")]
         public bool FlashbangOverlays { get; set; }
 
+        [Label("Boss Footage Credits Recording")]
+        [BackgroundColor(224, 127, 180, 192)]
+        [DefaultValue(false)]
+        [Tooltip("Enables boss footage recordings for the playback during the credits.")]
+        public bool CreditsRecordings { get; set; }
+
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
     }
 }

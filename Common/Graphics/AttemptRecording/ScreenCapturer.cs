@@ -1,5 +1,6 @@
 using Gif.Components;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -82,7 +83,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         // If on a non-Windows operating system, don't use this system. Fundamental parts are not guaranteed to work outside of it.
         // Also it doesn't run on servers, obviously.
-        public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT;
+        public static bool IsSupported => Main.netMode != NetmodeID.Server && Environment.OSVersion.Platform == PlatformID.Win32NT && InfernumConfig.Instance.CreditsRecordings;
 
         // Certain characters are prohibited when naming folders. Consequently, it is important that a cleaned version of the name string be used if any such characters appear.
         public static string CleanedCharacterName => Main.LocalPlayer.name.Replace("\\", string.Empty).Replace("/", string.Empty).Replace(":", string.Empty).Replace("*", string.Empty)

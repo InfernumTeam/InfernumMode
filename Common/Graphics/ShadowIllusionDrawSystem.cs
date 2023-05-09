@@ -37,13 +37,13 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
-            Main.OnPreDraw += PrepareAEWTargets;
+            Main.OnPreDraw += PrepareShadowTargets;
             On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
         }
 
         public override void OnModUnload()
         {
-            Main.OnPreDraw -= PrepareAEWTargets;
+            Main.OnPreDraw -= PrepareShadowTargets;
             On.Terraria.Main.SetDisplayMode -= ResetTargetSizes;
         }
 
@@ -68,7 +68,7 @@ namespace InfernumMode.Common.Graphics
             orig(width, height, fullscreen);
         }
 
-        internal static void PrepareAEWTargets(GameTime obj)
+        internal static void PrepareShadowTargets(GameTime obj)
         {
             if (Main.gameMenu || ShadowDrawTarget.IsDisposed)
                 return;

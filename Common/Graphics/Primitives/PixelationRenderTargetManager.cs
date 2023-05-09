@@ -93,11 +93,14 @@ namespace InfernumMode.Common.Graphics.Primitives
             }
 
             // Draw the prims. The render target gets set here.
-            DrawPrimsToRenderTarget(pixelRenderTarget, pixelPrimDrawersList);
-            DrawPrimsToRenderTarget(pixelRenderTargetBeforeNPCs, pixelPrimDrawersListBeforeNPCs);
+            if (pixelPrimDrawersList.Any() || pixelPrimDrawersListBeforeNPCs.Any())
+            {
+                DrawPrimsToRenderTarget(pixelRenderTarget, pixelPrimDrawersList);
+                DrawPrimsToRenderTarget(pixelRenderTargetBeforeNPCs, pixelPrimDrawersListBeforeNPCs);
 
-            // Clear the current render target.
-            Main.graphics.GraphicsDevice.SetRenderTarget(null);
+                // Clear the current render target.
+                Main.graphics.GraphicsDevice.SetRenderTarget(null);
+            }
 
             // Call the original method.
             orig();

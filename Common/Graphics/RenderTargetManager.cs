@@ -18,8 +18,8 @@ namespace InfernumMode.Common.Graphics
         {
             foreach (ManagedRenderTarget target in ManagedTargets)
             {
-                // Don't attempt to recreate targets that are in the middle of being disposed, are null, or shouldn't be recreated.
-                if (target.IsDisposed || target is null)
+                // Don't attempt to recreate targets that are already initialized or shouldn't be recreated.
+                if (target is null || !target.IsDisposed || target.WaitingForFirstInitialization)
                     continue;
 
                 ScreenSaturationBlurSystem.DrawActionQueue.Enqueue(() =>

@@ -215,7 +215,7 @@ namespace InfernumMode.Common.Graphics
             else
                 return;
 
-            if (InfernumConfig.Instance is null || InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || DownscaledBloomTarget.IsDisposed || !Lighting.NotRetro)
+            if (InfernumConfig.Instance is null || InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || !Lighting.NotRetro || DownscaledBloomTarget.IsDisposed)
                 return;
 
             // Get the downscaled texture.

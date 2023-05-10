@@ -26,7 +26,7 @@ namespace InfernumMode.Common.Graphics
         internal static void PrepareTarget(GameTime obj)
         {
             int weaverHeadID = ModContent.NPCType<StormWeaverHead>();
-            if (Main.gameMenu || WeaverDrawTarget.Target.IsDisposed || !NPC.AnyNPCs(weaverHeadID) || !InfernumMode.CanUseCustomAIs)
+            if (Main.gameMenu || !NPC.AnyNPCs(weaverHeadID) || !InfernumMode.CanUseCustomAIs || WeaverDrawTarget.Target.IsDisposed)
                 return;
 
             Main.instance.GraphicsDevice.SetRenderTarget(WeaverDrawTarget.Target);

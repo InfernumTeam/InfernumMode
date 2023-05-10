@@ -7,11 +7,21 @@ namespace InfernumMode.Common.Graphics
 {
     public class ManagedRenderTarget : IDisposable
     {
+        private RenderTarget2D target = null;
+
+        internal bool WaitingForFirstInitialization
+        {
+            get;
+            private set;
+        } = true;
+
         internal RenderTargetCreationCondition CreationCondition
         {
             get;
             private set;
         }
+
+        public bool IsUninitialized => target is null || target.IsDisposed;
 
         public bool IsDisposed
         {
@@ -27,8 +37,17 @@ namespace InfernumMode.Common.Graphics
 
         public RenderTarget2D Target
         {
-            get;
-            private set;
+            get
+            {
+                if (IsUninitialized)
+                {
+                    target = CreationCondition(Main.screenWidth, Main.screenHeight);
+                    WaitingForFirstInitialization = false;
+                }
+
+                return target;
+            }
+            private set => target = value;
         }
 
         public int Width => Target.Width;
@@ -41,11 +60,6 @@ namespace InfernumMode.Common.Graphics
         {
             ShouldResetUponScreenResize = shouldResetUponScreenResize;
             CreationCondition = creationCondition;
-
-            // Initialize the render target if possible.
-            if (Main.netMode != NetmodeID.Server)
-                Main.QueueMainThreadAction(() => Target = CreationCondition(Main.screenWidth, Main.screenHeight));
-
             RenderTargetManager.ManagedTargets.Add(this);
         }
 
@@ -55,7 +69,7 @@ namespace InfernumMode.Common.Graphics
                 return;
 
             IsDisposed = true;
-            Target?.Dispose();
+            target?.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -64,7 +78,7 @@ namespace InfernumMode.Common.Graphics
             Dispose();
             IsDisposed = false;
 
-            Target = CreationCondition(screenWidth, screenHeight);
+            target = CreationCondition(screenWidth, screenHeight);
         }
     }
 }

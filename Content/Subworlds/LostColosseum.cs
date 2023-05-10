@@ -26,6 +26,8 @@ namespace InfernumMode.Content.Subworlds
     {
         internal static bool VassalWasBeaten = false;
 
+        internal static bool WasInColosseumLastFrame = false;
+
         public static bool HasBereftVassalAppeared
         {
             get;

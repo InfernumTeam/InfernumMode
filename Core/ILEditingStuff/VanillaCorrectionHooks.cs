@@ -302,7 +302,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         internal void ForceDrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
         {
-            orig(self, force || SubworldSystem.IsActive<LostColosseum>() || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
+            orig(self, force || LostColosseum.WasInColosseumLastFrame || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
         }
 
         internal void ChangeDrawBlackLimit(ILContext il)

@@ -231,6 +231,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
             float width = (0.002f + MathF.Pow(opacity, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
+            if (width >= 0.0072f)
+                width = 0.0072f;
+
             laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
             laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
             laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Sqrt(opacity));

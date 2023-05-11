@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
@@ -237,6 +238,8 @@ namespace InfernumMode.Content.BossBars
             int headIndex = AssociatedNPC.GetBossHeadTextureIndex();
             if (TextureAssets.NpcHeadBoss.IndexInRange(headIndex))
                 BossIcon = TextureAssets.NpcHeadBoss[headIndex].Value;
+            if (AssociatedNPC.type == ModContent.NPCType<Draedon>())
+                BossIcon = ModContent.Request<Texture2D>("CalamityMod/Items/Armor/Vanity/DraedonMask").Value;
 
             // Ensure there is the correct amount of indicators.
             int indicatorAmount = GetTotalPhaseIndicators();

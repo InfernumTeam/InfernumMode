@@ -25,8 +25,7 @@ using static Terraria.ModLoader.ModContent;
 namespace InfernumMode.Core.Balancing
 {
     public static class BalancingChangesManager
-    {
-        internal static List<IBalancingRule[]> UniversalBalancingChanges = null;
+    {       
         internal static List<NPCBalancingChange> NPCSpecificBalancingChanges = null;
 
         public const float AdrenalineChargeTimeFactor = 1.6f;
@@ -35,18 +34,6 @@ namespace InfernumMode.Core.Balancing
 
         internal static void Load()
         {
-            int corrosiveSpineCloud1 = ProjectileType<Corrocloud1>();
-            int corrosiveSpineCloud2 = ProjectileType<Corrocloud2>();
-            int corrosiveSpineCloud3 = ProjectileType<Corrocloud3>();
-
-            UniversalBalancingChanges = new List<IBalancingRule[]>()
-            {
-                Do(new ProjectileResistBalancingRule(0.8f, ProjectileID.Flare, ProjectileID.BlueFlare)),
-                Do(new StealthStrikeBalancingRule(0.65f, ProjectileType<AshenStalagmiteProj>())),
-                Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<SporeBomb>(), ProjectileType<LeafArrow>(), ProjectileType<IcicleArrowProj>())),
-                Do(new ProjectileResistBalancingRule(0.25f, corrosiveSpineCloud1, corrosiveSpineCloud2, corrosiveSpineCloud3)),
-            };
-
             var eowIsSplitRequirement = new NPCSpecificRequirementBalancingRule(n => n.type == NPCID.EaterofWorldsBody && n.realLife >= 0 && Main.npc[n.realLife].ai[2] >= 1f);
 
             int inkCloud1 = ProjectileType<InkCloud>();
@@ -139,27 +126,13 @@ namespace InfernumMode.Core.Balancing
             };
         }
 
-        internal static void Unload()
-        {
-            UniversalBalancingChanges = null;
-            NPCSpecificBalancingChanges = null;
-        }
+        internal static void Unload() => NPCSpecificBalancingChanges = null;
 
         public static void ApplyFromProjectile(NPC npc, ref int damage, Projectile proj)
         {
             NPCHitContext hitContext = NPCHitContext.ConstructFromProjectile(proj);
 
-            // Apply universal balancing rules.
-            foreach (IBalancingRule[] balancingRules in UniversalBalancingChanges)
-            {
-                foreach (IBalancingRule balancingRule in balancingRules)
-                {
-                    if (balancingRule.AppliesTo(npc, hitContext))
-                        balancingRule.ApplyBalancingChange(npc, ref damage);
-                }
-            }
-
-            // As well as rules specific to NPCs.
+            // Apply rules specific to NPCs.
             foreach (NPCBalancingChange balanceChange in NPCSpecificBalancingChanges)
             {
                 if (npc.type != balanceChange.NPCType)

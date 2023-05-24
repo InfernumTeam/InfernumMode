@@ -102,7 +102,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())
             {
-                string summoningText = "Summons Providence when used at the alter in the profaned temple at the far right of the underworld";
+                string summoningText = "Summons Providence when used at the altar in the profaned temple at the far right of the underworld";
                 replaceTooltipText("Tooltip1", summoningText);
             }
 

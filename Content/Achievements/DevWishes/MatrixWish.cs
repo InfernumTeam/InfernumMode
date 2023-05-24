@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (Main.npc[extraInfo].type == ModContent.NPCType<Draedon>() && WorldSaveSystem.InfernumMode && AchievementPlayer.UnlockedAchievement<KillAllBossesAchievement>(player))
+            if (Main.npc[extraInfo].type == ModContent.NPCType<Draedon>() && WorldSaveSystem.InfernumMode)
                 CurrentCompletion = TotalCompletion;
         }
 

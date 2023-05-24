@@ -14,6 +14,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override int NPCType => ModContent.NPCType<DevourerofGodsHead>();
 
+        public override int MusicDistance => 100000000;
+
         public override int? MusicModMusic
         {
             get

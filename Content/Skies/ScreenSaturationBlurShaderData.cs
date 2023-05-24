@@ -15,8 +15,12 @@ namespace InfernumMode.Content.Skies
 
         public override void Apply()
         {
+            if (ScreenSaturationBlurSystem.BloomTarget.IsUninitialized)
+                return;
+
             float effectiveIntensity = InfernumConfig.Instance.SaturationBloomIntensity * ScreenSaturationBlurSystem.Intensity;
-            Main.instance.GraphicsDevice.Textures[1] = ScreenSaturationBlurSystem.BloomTarget;
+            Main.instance.GraphicsDevice.Textures[1] = ScreenSaturationBlurSystem.BloomTarget.Target;
+
             Shader.Parameters["maxSaturationAdditive"].SetValue(effectiveIntensity);
             Shader.Parameters["blurExponent"].SetValue(ScreenSaturationBlurSystem.BlurBrightnessExponent);
 

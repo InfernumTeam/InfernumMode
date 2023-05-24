@@ -39,25 +39,25 @@ namespace InfernumMode.Common.Graphics
             private set;
         }
 
-        public static RenderTarget2D BloomTarget
+        public static ManagedRenderTarget BloomTarget
         {
             get;
             private set;
         }
 
-        public static RenderTarget2D FinalScreenTarget
+        public static ManagedRenderTarget FinalScreenTarget
         {
             get;
             private set;
         }
 
-        public static RenderTarget2D DownscaledBloomTarget
+        public static ManagedRenderTarget DownscaledBloomTarget
         {
             get;
             private set;
         }
 
-        public static RenderTarget2D TemporaryAuxillaryTarget
+        public static ManagedRenderTarget TemporaryAuxillaryTarget
         {
             get;
             private set;
@@ -85,8 +85,16 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
+            // Initialize target defintions.
+            BloomTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            FinalScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            DownscaledBloomTarget = new(true, new((width, height) =>
+            {
+                return new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+            }));
+            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+
             Main.OnPreDraw += HandleDrawMainThreadQueue;
-            On.Terraria.Main.SetDisplayMode += ResetSaturationMapSize;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
@@ -131,7 +139,7 @@ namespace InfernumMode.Common.Graphics
         internal static void GetFinalScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
         {
             // Copy the contents of the screen target in the final screen target.
-            FinalScreenTarget.SwapToRenderTarget();
+            FinalScreenTarget.Target.SwapToRenderTarget();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, Color.White);
             Main.spriteBatch.End();
@@ -141,7 +149,7 @@ namespace InfernumMode.Common.Graphics
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
-            orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget, screenTarget2, clearColor);
+            orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget.Target, screenTarget2, clearColor);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -199,29 +207,6 @@ namespace InfernumMode.Common.Graphics
             AEWShadowFormDrawSystem.AEWEyesDrawCache.EmptyDrawCache();
         }
 
-        internal static void ResetSaturationMapSize(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
-        {
-            if (BloomTarget is not null && width == BloomTarget.Width && height == BloomTarget.Height)
-                return;
-
-            DrawActionQueue.Enqueue(() =>
-            {
-                // Free GPU resources for the old targets.
-                BloomTarget?.Dispose();
-                FinalScreenTarget?.Dispose();
-                DownscaledBloomTarget?.Dispose();
-                TemporaryAuxillaryTarget?.Dispose();
-
-                // Recreate targets.
-                BloomTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                FinalScreenTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                DownscaledBloomTarget = new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            });
-
-            orig(width, height, fullscreen);
-        }
-
         internal static void PrepareBlurEffects(GameTime obj)
         {
             // Bullshit to ensure that the scene effect can always capture, thus preventing very bad screen flash effects.
@@ -230,21 +215,21 @@ namespace InfernumMode.Common.Graphics
             else
                 return;
 
-            if (InfernumConfig.Instance is null || InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || DownscaledBloomTarget.IsDisposed || !Lighting.NotRetro)
+            if (InfernumConfig.Instance is null || InfernumConfig.Instance.SaturationBloomIntensity <= 0f || Main.gameMenu || !Lighting.NotRetro || DownscaledBloomTarget.IsDisposed)
                 return;
 
             // Get the downscaled texture.
-            Main.instance.GraphicsDevice.SetRenderTarget(DownscaledBloomTarget);
+            Main.instance.GraphicsDevice.SetRenderTarget(DownscaledBloomTarget.Target);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
-            Main.spriteBatch.Draw(FinalScreenTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f / DownscaleFactor, 0, 0f);
+            Main.spriteBatch.Draw(FinalScreenTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f / DownscaleFactor, 0, 0f);
             Main.spriteBatch.End();
 
             // Upscale the texture again.
-            Main.instance.GraphicsDevice.SetRenderTarget(BloomTarget);
+            Main.instance.GraphicsDevice.SetRenderTarget(BloomTarget.Target);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
-            Main.spriteBatch.Draw(DownscaledBloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, DownscaleFactor, 0, 0f);
+            Main.spriteBatch.Draw(DownscaledBloomTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, DownscaleFactor, 0, 0f);
 
             Main.spriteBatch.ExitShaderRegion();
             while (ThingsToBeManuallyBlurred.Count > 0)
@@ -259,20 +244,20 @@ namespace InfernumMode.Common.Graphics
             string blurPassName = UseFastBlurPass ? "DownsampleFastPass" : "DownsamplePass";
             for (int i = 0; i < TotalBlurIterations; i++)
             {
-                Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);
+                Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget.Target);
                 Main.instance.GraphicsDevice.Clear(Color.Transparent);
 
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
 
                 var shader = InfernumEffectsRegistry.ScreenSaturationBlurScreenShader.GetShader().Shader;
-                shader.Parameters["uImageSize1"].SetValue(BloomTarget.Size());
+                shader.Parameters["uImageSize1"].SetValue(BloomTarget.Target.Size());
                 shader.Parameters["blurMaxOffset"].SetValue(136f);
                 shader.CurrentTechnique.Passes[blurPassName].Apply();
 
-                Main.spriteBatch.Draw(BloomTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
+                Main.spriteBatch.Draw(BloomTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
                 Main.spriteBatch.End();
 
-                BloomTarget.CopyContentsFrom(TemporaryAuxillaryTarget);
+                BloomTarget.Target.CopyContentsFrom(TemporaryAuxillaryTarget.Target);
             }
         }
 

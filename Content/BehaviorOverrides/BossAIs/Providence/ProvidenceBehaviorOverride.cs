@@ -2099,14 +2099,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 int bellIndex = ProvidenceTrackedMusic.Bells.FindIndex(b => attackTimer >= b.StartInFrames && attackTimer < b.EndInFrames);
                 if (bellIndex < ProvidenceTrackedMusic.Bells.Count - 1)
-                    telegraphTime = ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex].StartInFrames + 8;
+                    telegraphTime = ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex].StartInFrames;
                 if (bellIndex < ProvidenceTrackedMusic.Bells.Count - 2)
-                    laserShootTime = ProvidenceTrackedMusic.Bells[bellIndex + 2].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames - 8;
-
-                if (telegraphTime >= 76)
-                    telegraphTime = 76;
-                if (laserShootTime >= 76)
-                    laserShootTime = 76;
+                    laserShootTime = ProvidenceTrackedMusic.Bells[bellIndex + 2].StartInFrames - ProvidenceTrackedMusic.Bells[bellIndex + 1].StartInFrames;
             }
 
             // Force a laser to be shot if there hasn't been one in a while. This is done to prevent awkward transition points in the song without bells from messing with fight flow.

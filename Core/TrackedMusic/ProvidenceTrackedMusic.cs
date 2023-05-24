@@ -31,6 +31,7 @@ namespace InfernumMode.Core.TrackedMusic
             WithMSDelay(1, 41, 835, 150),
             WithMSDelay(1, 42, 551, 150),
             WithMSDelay(1, 43, 864, 150),
+            WithMSDelay(1, 44, 461, 150),
             WithMSDelay(1, 46, 491, 150),
             WithMSDelay(1, 47, 207, 150),
             WithMSDelay(1, 47, 804, 150),

@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Top, Projectile.Bottom - Vector2.UnitY * 125f, Projectile.width * 0.72f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Top + Vector2.UnitY * 60f, Projectile.Bottom - Vector2.UnitY * 125f, Projectile.width * 0.72f, ref _);
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)

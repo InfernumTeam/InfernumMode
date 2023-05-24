@@ -19,6 +19,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WorldUpdatingSystem : ModSystem
     {
+        public override void PostUpdateDusts()
+        {
+            LostColosseum.WasInColosseumLastFrame = SubworldSystem.IsActive<LostColosseum>();
+        }
+
         public override void PostUpdateEverything()
         {
             CalamityMod.CalamityMod.sharkKillCount = 0;

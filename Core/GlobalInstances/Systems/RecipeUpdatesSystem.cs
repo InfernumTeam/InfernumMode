@@ -2,9 +2,11 @@ using CalamityMod;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables;
+using CalamityMod.Items.Placeables.Furniture;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.SummonItems.Invasion;
 using CalamityMod.Items.Tools.ClimateChange;
+using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
@@ -83,6 +85,21 @@ namespace InfernumMode.Content.Items
                 AddIngredient<UrchinStinger>(20).
                 AddIngredient<SulphuricScale>(5).
                 AddIngredient<AbyssGravel>(10).
+                AddTile(TileID.Anvils).
+                Register();
+
+            Recipe.Create(ModContent.ItemType<BlackAnurian>()).
+                AddIngredient(ItemID.Bone, 15).
+                AddIngredient<AbyssGravel>(10).
+                AddIngredient<SulphuricScale>(5).
+                AddTile(TileID.Anvils).
+                Register();
+
+
+            Recipe.Create(ModContent.ItemType<AbyssTreasureChest>()).
+                AddIngredient(ItemID.Chest).
+                AddIngredient<AbyssGravel>(2).
+                AddIngredient<Acidwood>(5).
                 AddTile(TileID.Anvils).
                 Register();
         }

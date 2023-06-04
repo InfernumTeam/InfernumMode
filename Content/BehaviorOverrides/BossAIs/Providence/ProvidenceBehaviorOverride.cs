@@ -2341,11 +2341,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (vfxDelayCountdown > 0f)
                 {
                     vfxDelayCountdown--;
-                    if (vfxDelayCountdown <= 0f && CalamityConfig.Instance.Screenshake && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
+                    if (vfxDelayCountdown <= 0f && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
                     {
+                        if (CalamityConfig.Instance.Screenshake)
+                        {
+                            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
+                            ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 30);
+                        }
                         Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HolyBomb>());
-                        Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
-                        ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 30);
                         SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.65f, Pitch = -0.3f }, target.Center);
                     }
                 }

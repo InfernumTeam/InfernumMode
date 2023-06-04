@@ -28,7 +28,7 @@ namespace InfernumMode.Common.Graphics.Primitives
 
             HeightFunction = heightFunction;
             ColorFunction = colorFunction;
-            BaseEffect = new BasicEffect(Main.instance.GraphicsDevice)
+            BaseEffect ??= new BasicEffect(Main.instance.GraphicsDevice)
             {
                 VertexColorEnabled = true,
                 TextureEnabled = true

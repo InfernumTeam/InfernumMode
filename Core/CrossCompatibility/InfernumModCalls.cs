@@ -1,7 +1,10 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items;
+using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.SunkenSea;
+using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -81,6 +84,25 @@ namespace InfernumMode.Core.CrossCompatibility
             if (BossRushEvent.BossRushActive)
                 return false;
 
+            // Minibosses.
+            if (npcID is NPCID.BigMimicCorruption or NPCID.BigMimicCrimson or NPCID.BigMimicHallow)
+            {
+                int npcIndex = NPC.FindFirstNPC(npcID);
+                if (npcIndex < 0)
+                    return false;
+                return Main.npc[npcIndex].ai[2] >= 1f;
+            }
+            if (npcID is NPCID.SandElemental)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == ModContent.NPCType<GiantClam>())
+            {
+                int npcIndex = NPC.FindFirstNPC(npcID);
+                if (npcIndex < 0)
+                    return false;
+                return Main.npc[npcIndex].Infernum().ExtraAI[5] >= 1f;
+            }
+
+            // Bosses.
             if (npcID == NPCID.KingSlime)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.EyeofCthulhu)
@@ -95,11 +117,15 @@ namespace InfernumMode.Core.CrossCompatibility
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.WallofFlesh)
                 return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.BloodNautilus)
+                return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.QueenSlimeBoss)
                 return NPC.AnyNPCs(npcID);
             if (npcID is NPCID.Retinazer or NPCID.Spazmatism or NPCID.SkeletronPrime or NPCID.TheDestroyer)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.Plantera)
+                return NPC.AnyNPCs(npcID);
+            if (npcID == NPCID.Golem)
                 return NPC.AnyNPCs(npcID);
             if (npcID == NPCID.HallowBoss)
                 return NPC.AnyNPCs(npcID);
@@ -114,8 +140,12 @@ namespace InfernumMode.Core.CrossCompatibility
                     return false;
                 return Main.npc[npcIndex].Infernum().ExtraAI[10] >= MoonLordCoreBehaviorOverride.IntroSoundLength;
             }
+            if (npcID == ModContent.NPCType<AdultEidolonWyrmHead>())
+                return NPC.AnyNPCs(npcID);
             if (npcID == ModContent.NPCType<Draedon>())
                 return NPC.AnyNPCs(npcID) || InfernumMode.DraedonThemeTimer > 0;
+            if (npcID == ModContent.NPCType<SupremeCalamitas>())
+                return NPC.AnyNPCs(npcID);
 
             return false;
         }

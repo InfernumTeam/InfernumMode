@@ -56,16 +56,18 @@ namespace InfernumMode.Content.Skies
             float brightness = 1f;
             bool acceptancePhase = scal.Infernum().ExtraAI[4] == 4f && scal.ai[0] == (int)SCalAttackType.DesperationPhase;
 
-            // Make the backgrounds change based on SCal's HP thresholds in accordance with the Stained Brutal Calamity track.
+            // Make the brightness dissipate.
+            MusicBrightness = MathHelper.Clamp(MusicBrightness - 0.026f, 0f, 3f);
+
             if (acceptancePhase)
                 BackgroundColor = Color.Lerp(BackgroundColor, AcceptanceColor, 0.1f);
-            else if (lifeRatio <= Phase4LifeRatio)
+            else
             {
-                BackgroundColor = Color.Lerp(BackgroundColor, EpiphanyColor, 0.1f);
-                brightness = 2f;
+                if (InfernumMode.MusicModIsActive)
+                    ChangeBackgroundColors_ScarsOfCalamity();
+                else
+                    ChangeBackgroundColors_StainedBrutalCalamity(lifeRatio, ref brightness);
             }
-            else if (lifeRatio <= Phase3LifeRatio)
-                BackgroundColor = Color.Lerp(BackgroundColor, LamentColor, 0.1f);
 
             // Perform various matrix calculations to transform SCal's arena to UV coordinate space.
             Rectangle arena = scal.Infernum().Arena;
@@ -75,21 +77,65 @@ namespace InfernumMode.Content.Skies
             Vector2 downscaleFactor = new(Main.screenWidth, Main.screenHeight);
             Matrix toScreenCoordsTransformation = Main.GameViewMatrix.TransformationMatrix;
             Vector2 coordinatePart = Vector2.Transform(new Vector2(uvScaledArena.X, uvScaledArena.Y), toScreenCoordsTransformation) / downscaleFactor;
-            Vector2 areaPart = Vector2.Transform(new Vector2(uvScaledArena.Z, uvScaledArena.W), toScreenCoordsTransformation with { M41 = 0f, M42 = 0f }) / downscaleFactor;
+            Vector2 areaPart = Vector2.Transform(new Vector2(uvScaledArena.Z, uvScaledArena.W), toScreenCoordsTransformation with
+            {
+                M41 = 0f,
+                M42 = 0f
+            }) / downscaleFactor;
             uvScaledArena = new Vector4(coordinatePart.X, coordinatePart.Y, areaPart.X, areaPart.Y);
 
             Shader.Parameters["uvArenaArea"].SetValue(uvScaledArena);
             UseImage(InfernumTextureRegistry.GrayscaleWater.Value, 0, SamplerState.AnisotropicWrap);
-
-            // Incorporate the music into the background brightness.
-            CheckForMusicIntensity();
 
             UseOpacity(0.36f);
             UseIntensity(brightness + MusicBrightness * 2f);
             base.Apply();
         }
 
-        public static void CheckForMusicIntensity()
+        public static void ChangeBackgroundColors_ScarsOfCalamity()
+        {
+            // Make the backgrounds change based on who's singing in the Scars of Calamity track.
+            var songTime = TrackedMusicManager.SongElapsedTime;
+            var solaria = CalamitasTrackedMusic.SolariaSections.Where(m => m.End >= songTime);
+            var mai = CalamitasTrackedMusic.MaiSections.Where(m => m.End >= songTime);
+            bool solariaIsSinging = solaria.Any() && songTime >= solaria.First().Start && songTime <= solaria.First().End;
+            bool maiIsSinging = mai.Any() && songTime >= mai.First().Start && songTime <= mai.First().End;
+
+            // Make the brightnmess gradually increase as the song goes on.
+            float idealBrightness = MathHelper.Lerp(1f, 1.5f, (float)(songTime.TotalSeconds / TrackedMusicManager.TrackedSong.Duration.TotalSeconds));
+            MusicBrightness = MathHelper.Lerp(MusicBrightness, idealBrightness, 0.09f);
+
+            // If Solaria is singing, use a red background color.
+            // If Mai is singing, use a blue background color.
+            // If both are singing, use a mixture of both colors.
+            // If neither are singing, use an orange color.
+            Color idealBackgroundColor = EpiphanyColor;
+            if (maiIsSinging && solariaIsSinging)
+                idealBackgroundColor = Color.Purple;
+            else if (maiIsSinging)
+                idealBackgroundColor = LamentColor;
+            else if (solariaIsSinging)
+                idealBackgroundColor = Color.DarkRed;
+
+            BackgroundColor = Color.Lerp(BackgroundColor, idealBackgroundColor, 0.1f);
+        }
+
+        public static void ChangeBackgroundColors_StainedBrutalCalamity(float lifeRatio, ref float brightness)
+        {
+            // Make the backgrounds change based on SCal's HP thresholds in accordance with the Stained Brutal Calamity track.
+            if (lifeRatio <= Phase4LifeRatio)
+            {
+                BackgroundColor = Color.Lerp(BackgroundColor, EpiphanyColor, 0.1f);
+                brightness = 2f;
+            }
+            else if (lifeRatio <= Phase3LifeRatio)
+                BackgroundColor = Color.Lerp(BackgroundColor, LamentColor, 0.1f);
+
+            // Incorporate the music into the background brightness.
+            CheckForMusicIntensity_StainedBrutalCalamity();
+        }
+
+        public static void CheckForMusicIntensity_StainedBrutalCalamity()
         {
             static List<(TimeSpan, TimeSpan)> splitMusicPointsIntoSections(List<TimeSpan> musicPoints)
             {
@@ -99,9 +145,6 @@ namespace InfernumMode.Content.Skies
 
                 return sections;
             };
-
-            // Make the brightness dissipate.
-            MusicBrightness = MathHelper.Clamp(MusicBrightness - 0.026f, 0f, 3f);
 
             var songTime = TrackedMusicManager.SongElapsedTime;
 
@@ -121,7 +164,7 @@ namespace InfernumMode.Content.Skies
                     MusicBrightness = MathHelper.Clamp(MusicBrightness + 0.06f, 0f, 1f);
             }
 
-            // Grief section.
+            // Epiphany section.
             else if (CalamityGlobalNPC.SCalEpiphany == CalamityGlobalNPC.SCal && CalamityGlobalNPC.SCalAcceptance != CalamityGlobalNPC.SCal)
             {
                 var epiphany = splitMusicPointsIntoSections(Epiphany_HighPoints.Select(s => s.Key).ToList()).Where(m => m.Item2 >= songTime);

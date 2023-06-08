@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
@@ -1857,7 +1858,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     // However, this is not done if the fight is done outside of the temple, as it's possible that in that circumstance
                     // the player might be fighting Golem near their base, which could result in serious damage happening.
                     // If the player is fighting Golem outside of the temple it is likely that they have already beaten him anyways.
-                    if (inRealTemple)
+                    if (inRealTemple && !BossRushEvent.BossRushActive)
                     {
                         Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
                         if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))

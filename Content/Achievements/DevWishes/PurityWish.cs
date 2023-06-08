@@ -29,7 +29,6 @@ namespace InfernumMode.Content.Achievements.DevWishes
             if (AchievementPlayer.NightProviDefeated)
             {
                 AchievementPlayer.NightProviDefeated = false;
-                CurrentCompletion = TotalCompletion;
                 if (ProviFightTimer < MaxFightTimerLength)
                 {
                     CurrentCompletion++;

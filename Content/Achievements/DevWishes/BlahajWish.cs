@@ -29,7 +29,6 @@ namespace InfernumMode.Content.Achievements.DevWishes
             if (AchievementPlayer.DukeFishronDefeated)
             {
                 AchievementPlayer.DukeFishronDefeated = false;
-                CurrentCompletion = TotalCompletion;
                 if (FishronFightTimer < MaxFightTimerLength)
                 {
                     CurrentCompletion++;

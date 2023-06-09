@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         // Only hit the player if faded in enough and the crystal wall is active.
-        public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.85f && GlobalNPCOverrides.ProfanedCrystal != -1;
+        public override bool CanHitPlayer(Player target) => (Projectile.timeLeft >= 40 || Projectile.scale >= 0.85f) && GlobalNPCOverrides.ProfanedCrystal != -1;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

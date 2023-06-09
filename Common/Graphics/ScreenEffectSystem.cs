@@ -138,6 +138,7 @@ namespace InfernumMode.Common.Graphics
                 {
                     if (i == 0)
                         continue;
+
                     // Increase the scale based on the intensity and lifetime of the blur.
                     float scaleAmount = BaseScaleAmount * BlurIntensity;
                     float blurAmount = BaseBlurAmount * BlurIntensity;

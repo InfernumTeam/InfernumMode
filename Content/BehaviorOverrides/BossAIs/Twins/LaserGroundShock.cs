@@ -48,8 +48,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             ulong lightningSeed = (ulong)Projectile.identity * 6342791uL;
             for (int i = 0; i < 5; i++)
             {
-                Vector2 lightningScale = new Vector2(1f, Projectile.scale) * MathHelper.Lerp(0.3f, 0.5f, Utils.RandomFloat(ref lightningSeed)) * 1.4f;
-                float lightningRotation = MathHelper.Lerp(-0.8f, 0.8f, i / 4f + Utils.RandomFloat(ref lightningSeed) * 0.1f) + MathHelper.PiOver2;
+                Vector2 lightningScale = new Vector2(1f, Projectile.scale) * Lerp(0.3f, 0.5f, Utils.RandomFloat(ref lightningSeed)) * 1.4f;
+                float lightningRotation = Lerp(-0.8f, 0.8f, i / 4f + Utils.RandomFloat(ref lightningSeed) * 0.1f) + PiOver2;
                 Color lightningColor = Color.Lerp(Color.Red, Color.Yellow, Utils.RandomFloat(ref lightningSeed) * 0.56f) * Projectile.Opacity;
                 Main.spriteBatch.Draw(zap, drawPosition, null, lightningColor, lightningRotation, zap.Size() * Vector2.UnitY * 0.5f, lightningScale, 0, 0f);
                 Main.spriteBatch.Draw(zap, drawPosition, null, lightningColor * 0.5f, lightningRotation, zap.Size() * Vector2.UnitY * 0.5f, lightningScale * new Vector2(1f, 1.3f), 0, 0f);

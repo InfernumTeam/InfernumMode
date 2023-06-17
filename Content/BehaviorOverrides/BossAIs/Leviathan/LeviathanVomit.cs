@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
             if (Projectile.localAI[0] == 0f)
             {
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
                 Projectile.localAI[0] = 1f;
             }
             Projectile.rotation += Projectile.velocity.X * 0.02f;

@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public void DrawAboveWater(SpriteBatch spriteBatch)
         {
-            float telegraphWidth = MathHelper.Lerp(0.3f, 5f, CalamityUtils.Convert01To010(Time / Lifetime));
+            float telegraphWidth = Lerp(0.3f, 5f, CalamityUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
             Vector2 start = Projectile.Center;

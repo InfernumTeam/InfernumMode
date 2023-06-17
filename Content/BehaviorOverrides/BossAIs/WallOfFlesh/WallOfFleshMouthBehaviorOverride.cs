@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 totalAttachedEyes++;
             }
 
-            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.GetLerpValue(0f, 3f, totalAttachedEyes, true));
+            npc.Calamity().DR = Lerp(0.225f, 0.725f, Utils.GetLerpValue(0f, 3f, totalAttachedEyes, true));
 
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
-            float lifeRatio = MathHelper.Clamp(npc.life / (float)npc.lifeMax, 0f, 1f);
+            float lifeRatio = Clamp(npc.life / (float)npc.lifeMax, 0f, 1f);
 
             // If the target isn't in the underworld check to see if anyone else is. If not, despawn.
             if (target.Center.Y <= (Main.maxTilesY - 300f) * 16f)
@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
             }
             else
-                npc.localAI[1] = MathHelper.Clamp(npc.localAI[1] - 1f / 30f, 0f, 1f);
+                npc.localAI[1] = Clamp(npc.localAI[1] - 1f / 30f, 0f, 1f);
 
             SetEyePositions(npc);
             PerformMouthMotion(npc, lifeRatio);
@@ -232,7 +232,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
         {
             float verticalDestination = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2 - npc.height / 2;
-            float horizontalSpeed = MathHelper.Lerp(4.1f, 7.2f, 1f - lifeRatio);
+            float horizontalSpeed = Lerp(4.1f, 7.2f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
 
@@ -281,7 +281,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float enrageAttackCountdown = ref npc.ai[2];
             ref float roarTimer = ref npc.localAI[2];
 
-            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.GetLerpValue(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
+            float idealAngerStrength = Lerp(0f, 0.8f, Utils.GetLerpValue(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
 
             // Check if the player is running in one direction.
             if (Math.Abs(Vector2.Dot(target.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)) > 0.74f && Math.Abs(target.Center.X - npc.Center.X) > 500f)
@@ -292,10 +292,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             if (roarTimer > 0)
                 roarTimer--;
 
-            timeSpentRunning = MathHelper.Clamp(timeSpentRunning, 0f, 1200f);
-            idealAngerStrength += MathHelper.Lerp(0f, 0.2f, Utils.GetLerpValue(240f, 420f, timeSpentRunning, true));
-            idealAngerStrength = MathHelper.Clamp(idealAngerStrength, 0f, 1f);
-            angerStrength = MathHelper.Lerp(angerStrength, idealAngerStrength, 0.03f);
+            timeSpentRunning = Clamp(timeSpentRunning, 0f, 1200f);
+            idealAngerStrength += Lerp(0f, 0.2f, Utils.GetLerpValue(240f, 420f, timeSpentRunning, true));
+            idealAngerStrength = Clamp(idealAngerStrength, 0f, 1f);
+            angerStrength = Lerp(angerStrength, idealAngerStrength, 0.03f);
 
             bool targetInHell = target.Center.Y > (Main.maxTilesY - 320f) * 16f;
             if (enrageAttackCountdown > 0)
@@ -360,10 +360,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 if (target.Center.X > npc.Center.X)
                     npc.rotation = npc.AngleTo(target.Center);
                 else
-                    npc.rotation = MathHelper.Pi;
+                    npc.rotation = Pi;
             }
             else if (target.Center.X < npc.Center.X)
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
+                npc.rotation = npc.AngleTo(target.Center) + Pi;
             else
                 npc.rotation = 0f;
         }

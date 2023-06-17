@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     tearShootSpeed = tearTravelDistance / CeaselessVortexTear.Lifetime;
 
                     // Factor acceleration into the speed calculation.
-                    tearShootSpeed /= MathF.Pow(CeaselessVortexTear.Acceleration, CeaselessVortexTear.Lifetime) / 4;
+                    tearShootSpeed /= Pow(CeaselessVortexTear.Acceleration, CeaselessVortexTear.Lifetime) / 4;
 
                     SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound, Projectile.Center);
                 }
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     int gasLifetime = Main.rand.Next(20, 24);
                     float scale = 1.9f;
-                    Vector2 gasSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 72f;
+                    Vector2 gasSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * 72f;
                     Vector2 gasVelocity = Projectile.velocity.RotatedByRandom(0.3f) * Main.rand.NextFloat(10f, 90f);
                     Color gasColor = Color.Lerp(Color.HotPink, Color.Blue, Main.rand.NextFloat(0.6f));
                     Particle gas = new HeavySmokeParticle(gasSpawnPosition, gasVelocity, gasColor, gasLifetime, scale, 1f, 0f, true);
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 int lightLifetime = Main.rand.Next(20, 24);
                 float squishFactor = 2f;
                 float scale = 0.56f;
-                Vector2 lightSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 72f;
+                Vector2 lightSpawnPosition = Projectile.Center + Projectile.velocity.RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * 72f;
                 Vector2 lightVelocity = Projectile.velocity * Main.rand.NextFloat(10f, 20f);
                 Color lightColor = Color.Lerp(Color.MediumPurple, Color.DarkBlue, Main.rand.NextFloat(0f, 0.5f));
                 if (Main.rand.NextBool())
@@ -154,8 +154,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                float telegraphColorInterpolant = MathF.Cos(MathHelper.TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 13f) * 0.5f + 0.5f;
-                float telegraphBaseWidth = MathHelper.Lerp(20f, 36f, telegraphColorInterpolant);
+                float telegraphColorInterpolant = Cos(TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 13f) * 0.5f + 0.5f;
+                float telegraphBaseWidth = Lerp(20f, 36f, telegraphColorInterpolant);
                 Vector2 start = Projectile.Center;
 
                 // Calculate the telegraph length.
@@ -170,7 +170,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public void SpecialDraw(SpriteBatch spriteBatch)
         {
             var portalShader = GameShaders.Misc["CalamityMod:DoGPortal"];
-            float portalColorInterpolant = MathF.Cos(MathHelper.TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f;
+            float portalColorInterpolant = Cos(TwoPi * Projectile.identity / 11f + Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f;
             Texture2D noiseTexture = InfernumTextureRegistry.WavyNeuronsNoise.Value;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

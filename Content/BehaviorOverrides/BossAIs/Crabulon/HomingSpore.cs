@@ -33,17 +33,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             HomeInOnTarget();
 
             Lighting.AddLight(Projectile.Center, Color.CornflowerBlue.ToVector3() * Projectile.Opacity * 0.5f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
 
             if (Projectile.timeLeft > 10f)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             else
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.1f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.1f, 0f, 1f);
         }
 
         public void HomeInOnTarget()
         {
-            float homeSpeed = MathHelper.Lerp(3.5f, 6.75f, HomePower);
+            float homeSpeed = Lerp(3.5f, 6.75f, HomePower);
             if (BossRushEvent.BossRushActive)
                 homeSpeed *= 3f;
 

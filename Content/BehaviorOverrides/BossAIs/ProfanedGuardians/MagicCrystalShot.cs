@@ -48,8 +48,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (Projectile.velocity.Length() < 40f)
                 Projectile.velocity *= 1.04f;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Timer++;
         }
 
@@ -58,8 +58,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Timer <= TelegraphLength)
             {
                 float interpolant = Timer / TelegraphLength;
-                float scalar = MathF.Sin(interpolant * MathF.PI);
-                float yScale = MathHelper.Lerp(0f, 1f, scalar);
+                float scalar = Sin(interpolant * PI);
+                float yScale = Lerp(0f, 1f, scalar);
                 Color telegraphColor = StreakBaseColor;
                 telegraphColor.A = 0;
                 Texture2D telegraphTexture = InfernumTextureRegistry.BloomLineSmall.Value;
@@ -67,8 +67,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 scaleOuter = scaleInner * new Vector2(1.5f, 1f);
                 Vector2 origin = InfernumTextureRegistry.BloomLineSmall.Value.Size() * new Vector2(0.5f, 0f);
 
-                Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, Color.HotPink with { A = 0 } * 2, Projectile.velocity.ToRotation() + MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor * 2, Projectile.velocity.ToRotation() + MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, Color.HotPink with { A = 0 } * 2, Projectile.velocity.ToRotation() + PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor * 2, Projectile.velocity.ToRotation() + PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
 
             }
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
@@ -78,9 +78,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     continue;
 
                 float completionRatio = i / (float)Projectile.oldPos.Length;
-                float fade = MathF.Pow(completionRatio, 2f);
-                float scale = Projectile.scale * MathHelper.Lerp(1.3f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) *
-                    MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
+                float fade = Pow(completionRatio, 2f);
+                float scale = Projectile.scale * Lerp(1.3f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) *
+                    Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
                 Color drawColor = Color.Lerp(StreakBaseColor, new Color(229, 255, 255), fade) * (1f - fade) * Projectile.Opacity;
                 drawColor.A = 0;
 

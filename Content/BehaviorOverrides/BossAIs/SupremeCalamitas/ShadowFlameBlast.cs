@@ -33,12 +33,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
 
             Projectile.velocity *= 0.995f;
             Projectile.frameCounter++;
             Projectile.frame = (int)Math.Ceiling((1f - Projectile.timeLeft / (float)Lifetime) * 4f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 shadowSparkVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 7f;
+                Vector2 shadowSparkVelocity = (TwoPi * i / 6f).ToRotationVector2() * 7f;
                 Utilities.NewProjectileBetter(Projectile.Center, shadowSparkVelocity, ModContent.ProjectileType<ShadowSpark>(), SupremeCalamitasBehaviorOverride.ShadowBoltDamage, 0f);
             }
         }

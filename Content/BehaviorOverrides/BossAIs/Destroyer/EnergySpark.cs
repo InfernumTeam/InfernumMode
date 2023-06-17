@@ -26,8 +26,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.15f;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 8f + Projectile.rotation - PiOver2).ToRotationVector2() * 4f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }

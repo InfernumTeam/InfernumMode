@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BossBars
                 Time = 0;
                 Lifetime = Main.rand.Next(30, 90);
                 MaxScale = Main.rand.NextFloat(0.4f, 0.7f);
-                Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Rotation = Main.rand.NextFloat(TwoPi);
                 RotationSpeed = Main.rand.NextFloat(0.03f, 0.06f);
                 DrawColor = Color.Lerp(Color.Gold, Color.DarkGoldenrod, Main.rand.NextFloat());
             }
@@ -50,10 +50,10 @@ namespace InfernumMode.Content.BossBars
 
                 // Grow rapidly
                 if (Time <= 20)
-                    Scale = MathHelper.Lerp(0f, MaxScale, Time / 20f);
+                    Scale = Lerp(0f, MaxScale, Time / 20f);
                 // Shrink rapidly.
                 if (TimeLeft <= 30)
-                    Scale = MathHelper.Lerp(0f, MaxScale, TimeLeft / 30f);
+                    Scale = Lerp(0f, MaxScale, TimeLeft / 30f);
 
                 Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Particles/ThinSparkle").Value;
                 spriteBatch.Draw(texture, Position, null, DrawColor with { A = 0 }, Rotation, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BossBars
                 }
             }
 
-            Opacity = MathHelper.Clamp(Opacity + (-PoppedOff.ToDirectionInt() * 0.1f), 0f, 1f);
+            Opacity = Clamp(Opacity + (-PoppedOff.ToDirectionInt() * 0.1f), 0f, 1f);
 
             if (PoppedOff || Opacity < 1f)
                 spriteBatch.Draw(PhaseIndicatorNotch, position, null, drawColor, 0f, PhaseIndicatorNotch.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
@@ -110,7 +110,7 @@ namespace InfernumMode.Content.BossBars
                         PhaseIndicatorNotch.Width, PhaseIndicatorNotch.Height));
                     
                     Vector2 velocity = inverseSparkles ? sparklePosition.DirectionTo(position) * Main.rand.NextFloat(0.2f, 0.5f) : 
-                        Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2() * Main.rand.NextFloat(0.2f, 0.5f);
+                        Main.rand.NextFloat(TwoPi).ToRotationVector2() * Main.rand.NextFloat(0.2f, 0.5f);
                     
                     Sparkles.Add(new PhaseNotchSparkle(sparklePosition, velocity));
                 }

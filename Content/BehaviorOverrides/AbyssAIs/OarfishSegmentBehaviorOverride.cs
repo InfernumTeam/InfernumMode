@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Perform segment connection code.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.03f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.03f);
 
             directionToNextSegment = directionToNextSegment.SafeNormalize(Vector2.Zero);
 
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (npc.justHit)
                 head.justHit = true;
 
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale;
             return false;
         }

@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
             Player target = Main.player[Owner.target];
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
 
             if (Timer < WaitTime)
                 Projectile.Center = Projectile.Center.MoveTowards(Owner.Center - ((Timer / 15f) + RotationOffset).ToRotationVector2() * 100f, 30f);
@@ -104,15 +104,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Timer >= WaitTime && Timer < WaitTime + ReelbackTime)
             {
                 Texture2D invis = InfernumTextureRegistry.Invisible.Value;
-                float opacity = MathF.Sin((Timer - WaitTime) / ReelbackTime * MathF.PI);
+                float opacity = Sin((Timer - WaitTime) / ReelbackTime * PI);
                 Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Pow(opacity, 0.5f));
+                laserScopeEffect.Parameters["mainOpacity"].SetValue(Pow(opacity, 0.5f));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(340f));
                 Player target = Main.player[Owner.target];
                 laserScopeEffect.Parameters["laserAngle"].SetValue((target.Center - Projectile.Center).ToRotation() * -1f);
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.0025f + MathF.Pow(opacity, 5f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.002f + 0.002f));
+                laserScopeEffect.Parameters["laserWidth"].SetValue(0.0025f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.002f + 0.002f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(3f);
                 laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(WayfinderSymbol.Colors[1], Color.OrangeRed, 0.5f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(WayfinderSymbol.Colors[2].ToVector3());
@@ -132,13 +132,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float backglowAmount = 12;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(lightColor) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             if (Timer >= WaitTime - 30)
             {
-                float opacityScalar = (1f + MathF.Sin((Timer - WaitTime / 30) / (WaitTime + ReelbackTime) - (Timer - WaitTime / 30) * 2 * MathF.PI)) / 2f;
+                float opacityScalar = (1f + Sin((Timer - WaitTime / 30) / (WaitTime + ReelbackTime) - (Timer - WaitTime / 30) * 2 * PI)) / 2f;
                 backglowColor = Color.Lerp(backglowColor, Color.OrangeRed, opacityScalar);
                 for (int i = 0; i < 3; i++)
                     Main.EntitySpriteDraw(texture, drawPosition, null, backglowColor * Projectile.Opacity * opacityScalar, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);

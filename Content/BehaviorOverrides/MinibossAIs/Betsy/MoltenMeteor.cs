@@ -49,15 +49,15 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                 Vector2 position = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
                 Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 244, 0f, 0f, 0, new Color(255, 127, 0), 1f);
                 fire.position = position;
-                fire.velocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * 0.33f + Projectile.velocity / 4f;
-                fire.position += Projectile.velocity.RotatedBy(MathHelper.PiOver2) + Main.rand.NextVector2Circular(8f, 8f);
+                fire.velocity = Projectile.velocity.RotatedBy(PiOver2) * 0.33f + Projectile.velocity / 4f;
+                fire.position += Projectile.velocity.RotatedBy(PiOver2) + Main.rand.NextVector2Circular(8f, 8f);
                 fire.fadeIn = 0.5f;
                 fire.noGravity = true;
 
                 fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 244, 0f, 0f, 0, new Color(255, 127, 0), 1f);
                 fire.position = position;
-                fire.velocity = Projectile.velocity.RotatedBy(-MathHelper.PiOver2) * 0.33f + Projectile.velocity / 4f;
-                fire.position += Projectile.velocity.RotatedBy(-MathHelper.PiOver2) + Main.rand.NextVector2Circular(8f, 8f);
+                fire.velocity = Projectile.velocity.RotatedBy(-PiOver2) * 0.33f + Projectile.velocity / 4f;
+                fire.position += Projectile.velocity.RotatedBy(-PiOver2) + Main.rand.NextVector2Circular(8f, 8f);
                 fire.fadeIn = 0.5f;
                 fire.noGravity = true;
 

@@ -137,8 +137,8 @@ namespace InfernumMode.Common.Graphics
             // Make the intensity dissipate.
             if (IdealExtraIntensity != 0f)
             {
-                ExtraIntensity = MathHelper.Lerp(ExtraIntensity, IdealExtraIntensity, 0.09f);
-                if (MathHelper.Distance(ExtraIntensity, IdealExtraIntensity) <= 0.01f)
+                ExtraIntensity = Lerp(ExtraIntensity, IdealExtraIntensity, 0.09f);
+                if (Distance(ExtraIntensity, IdealExtraIntensity) <= 0.01f)
                     IdealExtraIntensity = 0f;
             }
             else
@@ -157,7 +157,7 @@ namespace InfernumMode.Common.Graphics
             else
             {
                 if (EffectIsActive)
-                    MonolithIntensity = MathHelper.Clamp(MonolithIntensity + 0.01f, 0f, 1f);
+                    MonolithIntensity = Clamp(MonolithIntensity + 0.01f, 0f, 1f);
                 intensity *= MonolithIntensity;
             }
 

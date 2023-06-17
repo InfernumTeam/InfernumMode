@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Fade in. While this happens the projectile emits large amounts of flames.
             int flameCount = (int)((1f - Projectile.Opacity) * 12f);
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
 
             // Create the fade-in dust.
             for (int i = 0; i < flameCount; i++)
@@ -95,18 +95,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float glowOutwardness = MathHelper.SmoothStep(0f, 5.6f, Utils.GetLerpValue(30f, ChargeupTime, Time, true));
+            float glowOutwardness = SmoothStep(0f, 5.6f, Utils.GetLerpValue(30f, ChargeupTime, Time, true));
             Texture2D bookTexture = ModContent.Request<Texture2D>(Texture).Value;
             Rectangle frame = bookTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition;
             Vector2 origin = frame.Size() * 0.5f;
-            Color glowColor = Color.Lerp(Color.Pink, Color.Red, MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
+            Color glowColor = Color.Lerp(Color.Pink, Color.Red, Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
             glowColor.A = 0;
 
             // Draw an ominous glowing backimage of the book after a bit of time.
             for (int i = 0; i < 8; i++)
             {
-                drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2() * glowOutwardness - Main.screenPosition;
+                drawPosition = Projectile.Center + (TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2() * glowOutwardness - Main.screenPosition;
                 Main.spriteBatch.Draw(bookTexture, drawPosition, frame, Projectile.GetAlpha(glowColor), Projectile.rotation, origin, Projectile.scale, 0, 0);
             }
 

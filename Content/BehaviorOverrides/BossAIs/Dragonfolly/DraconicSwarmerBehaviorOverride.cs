@@ -119,12 +119,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 if (npc.collideX)
                 {
                     npc.velocity.X *= -npc.oldVelocity.X * 0.5f;
-                    npc.velocity.X = MathHelper.Clamp(npc.velocity.X, -4f, 4f);
+                    npc.velocity.X = Clamp(npc.velocity.X, -4f, 4f);
                 }
                 if (npc.collideY)
                 {
                     npc.velocity.Y *= -npc.oldVelocity.Y * 0.5f;
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -4f, 4f);
+                    npc.velocity.Y = Clamp(npc.velocity.Y, -4f, 4f);
                 }
 
                 // If the player is very far away, go to a different attack.
@@ -262,7 +262,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
 
                 // Try to go towards the player and charge, while fading red.
-                fadeToRed = MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, fadeTime, attackTimer, true));
+                fadeToRed = SmoothStep(0f, 1f, Utils.GetLerpValue(0f, fadeTime, attackTimer, true));
                 if (attackTimer >= fadeTime && attackTimer <= fadeTime + chargeDelay)
                 {
                     npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
@@ -275,7 +275,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
                 // After charging for a certain amount of time, fade out of existance.
                 if (attackTimer >= fadeTime + chargeDelay + chargeTime)
-                    npc.Opacity = MathHelper.Lerp(npc.Opacity, 0f, 0.08f);
+                    npc.Opacity = Lerp(npc.Opacity, 0f, 0.08f);
 
                 if (npc.Opacity < 0.425f)
                 {
@@ -307,10 +307,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             if (Main.npc.IndexInRange(follyIndex))
                 backgroundFadeToRed = Main.npc[follyIndex].Infernum().ExtraAI[8];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            int drawInstances = (int)MathHelper.Lerp(1f, 4f, fadeToRed);
+            int drawInstances = (int)Lerp(1f, 4f, fadeToRed);
             Color drawColor = Color.Lerp(lightColor, Color.Red * 0.9f, fadeToRed);
             drawColor = Color.Lerp(drawColor, Color.White, backgroundFadeToRed * 0.9f);
-            drawColor *= MathHelper.Lerp(1f, 0.4f, fadeToRed);
+            drawColor *= Lerp(1f, 0.4f, fadeToRed);
             if (fadeToRed > 0.4f)
                 drawColor.A = 0;
 
@@ -326,7 +326,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     Vector2 drawPosition = baseDrawPosition - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     if (fadeToRed > 0.4f)
-                        drawPosition += (MathHelper.TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 2.5f;
+                        drawPosition += (TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 2.5f;
                     Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
                 }
             }

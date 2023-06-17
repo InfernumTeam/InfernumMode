@@ -186,7 +186,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Dust spore = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.BlueFairy);
             spore.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.4f, 2.7f);
             spore.noGravity = true;
-            spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.GetLerpValue(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
+            spore.scale = Lerp(0.75f, 1.45f, Utils.GetLerpValue(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
 
             if (attackTimer >= 210f || npc.justHit)
                 SelectNextAttack(npc);
@@ -205,11 +205,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             int pillarMushroomSpawnRate = 28;
             float sporeCloudSpeed = 9f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
-            float extraGravity = MathHelper.Lerp(0f, 0.45f, 1f - lifeRatio);
-            float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.GetLerpValue(0f, 0.7f, 1f - lifeRatio));
+            float jumpSpeed = Lerp(13.5f, 18.75f, 1f - lifeRatio);
+            float extraGravity = Lerp(0f, 0.45f, 1f - lifeRatio);
+            float jumpAngularImprecision = Lerp(0.1f, 0f, Utils.GetLerpValue(0f, 0.7f, 1f - lifeRatio));
 
-            jumpSpeed += MathHelper.Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
+            jumpSpeed += Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
             if (BossRushEvent.BossRushActive)
             {
                 sporeCloudSpeed = 18f;
@@ -228,7 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             if (Utilities.AnyProjectiles(ModContent.ProjectileType<MushroomPillar>()))
             {
                 jumpSpeed *= 0.85f;
-                extraGravity = MathHelper.Clamp(extraGravity - 0.1f, 0f, 10f);
+                extraGravity = Clamp(extraGravity - 0.1f, 0f, 10f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % pillarMushroomSpawnRate == pillarMushroomSpawnRate - 1f)
                     Utilities.NewProjectileBetter(target.Center - Vector2.UnitY * 600f, Vector2.UnitY * 6f, ModContent.ProjectileType<MushBomb>(), MushroomBombDamage, 0f, -1, 0f, target.Bottom.Y);
@@ -330,10 +330,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         {
             npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-            float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
+            float horizontalDistanceFromTarget = Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f || Utilities.AnyProjectiles(ModContent.ProjectileType<MushroomPillar>());
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float walkSpeed = MathHelper.Lerp(2.4f, 5.6f, 1f - lifeRatio);
+            float walkSpeed = Lerp(2.4f, 5.6f, 1f - lifeRatio);
             if (enraged)
                 walkSpeed += 1.5f;
             if (BossRushEvent.BossRushActive)
@@ -346,7 +346,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             {
                 bool canShoot = attackTimer % 120f >= 80f && attackTimer % 8f == 7f;
                 shouldSlowDown = attackTimer % 120f >= 60f;
-                float shootPower = MathHelper.Lerp(5f, 10f, Utils.GetLerpValue(80f, 120f, attackTimer % 120f, true));
+                float shootPower = Lerp(5f, 10f, Utils.GetLerpValue(80f, 120f, attackTimer % 120f, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && canShoot)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootPower;
@@ -434,8 +434,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Extend the claws outward.
             if (attackTimer <= clawMoveTime)
             {
-                float moveInterpolant = MathF.Pow(attackTimer / clawMoveTime, 4.81f);
-                Vector2 idealClawOffset = new(MathHelper.Lerp(0f, 168f, moveInterpolant), MathHelper.Lerp(0f, -92f, moveInterpolant));
+                float moveInterpolant = Pow(attackTimer / clawMoveTime, 4.81f);
+                Vector2 idealClawOffset = new(Lerp(0f, 168f, moveInterpolant), Lerp(0f, -92f, moveInterpolant));
                 clawOffset = Vector2.Lerp(clawOffset, idealClawOffset, 0.16f);
 
                 // Walk towards the target.
@@ -455,9 +455,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Press the claws together.
             else if (attackTimer <= clawMoveTime + clawPressTime)
             {
-                float moveInterpolant = MathF.Pow(Utils.GetLerpValue(clawMoveTime, clawMoveTime + clawPressTime, attackTimer, true), 2.9f);
-                clawOffset.X = MathHelper.Lerp(168f, 30f, moveInterpolant);
-                clawOffset.Y = MathHelper.Lerp(-92f, -138f, moveInterpolant);
+                float moveInterpolant = Pow(Utils.GetLerpValue(clawMoveTime, clawMoveTime + clawPressTime, attackTimer, true), 2.9f);
+                clawOffset.X = Lerp(168f, 30f, moveInterpolant);
+                clawOffset.Y = Lerp(-92f, -138f, moveInterpolant);
 
                 // Slow down.
                 npc.velocity.X *= 0.85f;
@@ -466,9 +466,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Make the claws slam into the ground.
             else
             {
-                float moveInterpolant = MathF.Pow(Utils.GetLerpValue(clawMoveTime + clawPressTime, clawMoveTime + clawPressTime + clawSlamTime, attackTimer, true), 8.3f);
-                clawOffset.X = MathHelper.Lerp(30f, 42f, moveInterpolant);
-                clawOffset.Y = MathHelper.Lerp(-138f, 56f, moveInterpolant);
+                float moveInterpolant = Pow(Utils.GetLerpValue(clawMoveTime + clawPressTime, clawMoveTime + clawPressTime + clawSlamTime, attackTimer, true), 8.3f);
+                clawOffset.X = Lerp(30f, 42f, moveInterpolant);
+                clawOffset.Y = Lerp(-138f, 56f, moveInterpolant);
 
                 if (attackTimer == clawMoveTime + clawPressTime + clawSlamTime - 15f)
                     npc.netUpdate = true;
@@ -492,8 +492,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                             for (int j = 0; j < (enraged ? 28 : 16); j++)
                             {
                                 float pointToCrabulonInterpolant = Utils.GetLerpValue(5f, 0f, j, true);
-                                Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - MathF.Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
-                                shroomVelocity.X = MathHelper.Lerp(shroomVelocity.X, (npc.Center - clawCenter).SafeNormalize(Vector2.Zero).X * 4f, pointToCrabulonInterpolant);
+                                Vector2 shroomVelocity = new Vector2(-i * (j * 0.85f + 1f), -8f - Sqrt(j) * 0.5f) + Main.rand.NextVector2Circular(0.2f, 0.2f);
+                                shroomVelocity.X = Lerp(shroomVelocity.X, (npc.Center - clawCenter).SafeNormalize(Vector2.Zero).X * 4f, pointToCrabulonInterpolant);
 
                                 // Make mushrooms go higher up if the target is quite a bit above Crabulon.
                                 if (target.Center.Y < npc.Center.Y - 400f)
@@ -652,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         {
             Color endColors = new(116, 108, 166);
             Color middleColor = new(90, 167, 209);
-            Color baseColor = Color.Lerp(endColors, middleColor, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi * 0.7f)));
+            Color baseColor = Color.Lerp(endColors, middleColor, Math.Abs(Sin(completionRatio * Pi * 0.7f)));
             return baseColor * Utils.GetLerpValue(0f, 0.07f, completionRatio, true) * npc.Opacity;
         }
 
@@ -742,7 +742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
                 // Draw the right arm.
                 clawDrawPosition = drawPosition + new Vector2(-npc.Infernum().ExtraAI[DetachedHandOffsetXIndex], npc.Infernum().ExtraAI[DetachedHandOffsetYIndex]) + GetBaseClawOffset(npc, true);
-                float rightClawRotation = (clawDrawPosition - drawPosition).ToRotation() + MathHelper.Pi + 0.33f;
+                float rightClawRotation = (clawDrawPosition - drawPosition).ToRotation() + Pi + 0.33f;
 
                 drawPosition.X -= npc.scale * 84f;
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(new List<Vector2>()

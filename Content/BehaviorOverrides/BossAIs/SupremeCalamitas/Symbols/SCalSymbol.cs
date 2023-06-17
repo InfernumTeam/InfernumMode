@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             // Fade in and out.
             Projectile.Opacity = Utils.GetLerpValue(0f, 108f, Time, true) * Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true);
             Projectile.scale = Projectile.Opacity * 0.5f + 0.001f;
-            Projectile.velocity.Y = MathF.Sin(Time / 42f + Projectile.identity) * 2.1f;
+            Projectile.velocity.Y = Sin(Time / 42f + Projectile.identity) * 2.1f;
 
             Time++;
         }
@@ -66,14 +66,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             Rectangle frame = tex.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition;
             Vector2 origin = frame.Size() * 0.5f;
-            Color glowColor = Color.Lerp(Color.Pink, Color.Red, MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
+            Color glowColor = Color.Lerp(Color.Pink, Color.Red, Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
 
             // Draw an ominous glowing backimage of the book after a bit of time.
             float outwardFade = Main.GlobalTimeWrappedHourly * 0.4f % 1f;
             for (int i = 0; i < 8; i++)
             {
                 float opacity = (1f - outwardFade) * Utils.GetLerpValue(0f, 0.15f, outwardFade, true) * 0.6f;
-                drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 8f).ToRotationVector2() * outwardFade * Projectile.scale * 32f - Main.screenPosition;
+                drawPosition = Projectile.Center + (TwoPi * i / 8f).ToRotationVector2() * outwardFade * Projectile.scale * 32f - Main.screenPosition;
                 Main.spriteBatch.Draw(tex, drawPosition, frame, Projectile.GetAlpha(glowColor) * opacity, Projectile.rotation, origin, Projectile.scale, 0, 0);
             }
 

@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(500f, 475f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true) * (CompleteFadein ? 0.875f : 0.35f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             if (CompleteFadein && Projectile.velocity.Length() < 27f)
                 Projectile.velocity *= 1.015f;
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 // Release a circle of dust every so often.
                 for (int i = 0; i < 16; i++)
                 {
-                    Vector2 dustOffset = Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 16f) * new Vector2(4f, 1f);
+                    Vector2 dustOffset = Vector2.UnitY.RotatedBy(TwoPi * i / 16f) * new Vector2(4f, 1f);
                     dustOffset = dustOffset.RotatedBy(Projectile.velocity.ToRotation());
 
                     Dust ectoplasm = Dust.NewDustDirect(Projectile.Center, 0, 0, 175, 0f, 0f);

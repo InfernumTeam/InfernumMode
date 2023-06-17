@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public const float LaserLength = 4800f;
 
-        public static float LaserPulse => MathF.Sin(Main.GlobalTimeWrappedHourly * 36f);
+        public static float LaserPulse => Sin(Main.GlobalTimeWrappedHourly * 36f);
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = MathF.Sin(Time / 210f * MathHelper.Pi) * 3f;
+            Projectile.scale = Sin(Time / 210f * Pi) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -83,12 +83,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.05f, completionRatio, true) * Utils.GetLerpValue(1f, 0.95f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, Projectile.width + LaserPulse * 3f, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
+            return SmoothStep(2f, Projectile.width + LaserPulse * 3f, squeezeInterpolant) * Clamp(Projectile.scale, 0.01f, 1f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Orange, Color.DarkRed, MathF.Pow(completionRatio, 0.53f));
+            Color color = Color.Lerp(Color.Orange, Color.DarkRed, Pow(completionRatio, 0.53f));
             return color * (Projectile.Opacity + (LaserPulse * 0.5f + 0.5f) * 1.1f);
         }
 
@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             BeamDrawer.DrawPixelated(points, Projectile.Size * 0.5f - Main.screenPosition, 80);

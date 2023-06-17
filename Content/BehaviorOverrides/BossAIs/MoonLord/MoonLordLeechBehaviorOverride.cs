@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Vector2 mouthOffset = new(0f, 216f);
 
             // Fade in.
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.07f, 0f, 1f);
+            projectile.Opacity = Clamp(projectile.Opacity + 0.07f, 0f, 1f);
 
             // Do animation stuff.
             projectile.frameCounter++;
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Approach the player if they don't have the moon leech buff.
-            projectile.rotation = (Main.npc[headIndex].Center - Main.player[target].Center + mouthOffset).ToRotation() + MathHelper.PiOver2;
+            projectile.rotation = (Main.npc[headIndex].Center - Main.player[target].Center + mouthOffset).ToRotation() + PiOver2;
             if (projectile.ai[0] > 0f && projectile.localAI[0] < 210f)
             {
                 Vector2 playerOffset = Main.player[target].Center - projectile.Center;
@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             projectile.velocity = offsetFromMouth.SafeNormalize(Vector2.Zero) * Math.Min(16f, offsetFromMouth.Length());
             if (offsetFromMouth.Length() < 20f)
                 projectile.Kill();
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.rotation = projectile.velocity.ToRotation() - PiOver2;
             return false;
         }
 

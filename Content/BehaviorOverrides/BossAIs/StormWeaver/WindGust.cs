@@ -65,8 +65,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         public override void AI()
         {
             // Spin in place.
-            float spinAngularVelocity = Utils.Remap(Time, 0f, 45f, MathHelper.Pi / 75f, MathHelper.Pi / 359f);
-            float spinRadius = (1f - MathF.Pow(Utils.GetLerpValue(0f, Lifetime - 4f, Time, true), SpinConvergencePower)) * 600f;
+            float spinAngularVelocity = Utils.Remap(Time, 0f, 45f, Pi / 75f, Pi / 359f);
+            float spinRadius = (1f - Pow(Utils.GetLerpValue(0f, Lifetime - 4f, Time, true), SpinConvergencePower)) * 600f;
             SpinOffsetAngle += spinAngularVelocity * SpinDirection;
             Projectile.Center = SpinCenter + SpinOffsetAngle.ToRotationVector2() * spinRadius;
 
@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
 
             // Emit some dust and air particles.
-            float dustSpawnChance = MathHelper.Lerp(1f, 0.2f, Projectile.Opacity);
+            float dustSpawnChance = Lerp(1f, 0.2f, Projectile.Opacity);
             for (int i = 0; i < 6; i++)
             {
                 if (Main.rand.NextFloat() > dustSpawnChance)
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 int d = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 136, new Color(232, 251, 250, 200), 1.4f);
                 Main.dust[d].noGravity = true;
                 Main.dust[d].position = Projectile.Center + Main.rand.NextVector2Circular(20f, 20f);
-                Main.dust[d].velocity = -Vector2.UnitY * 3f + (Projectile.position - Projectile.oldPosition).RotatedBy(MathHelper.PiOver2).RotatedByRandom(0.37f) * 0.1f;
+                Main.dust[d].velocity = -Vector2.UnitY * 3f + (Projectile.position - Projectile.oldPosition).RotatedBy(PiOver2).RotatedByRandom(0.37f) * 0.1f;
             }
 
             if (Projectile.timeLeft <= 7)
@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         {
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Type]);
 
-            int backglowStartTime = (int)(MathF.Pow(0.1f, 1f / SpinConvergencePower) * Lifetime);
+            int backglowStartTime = (int)(Pow(0.1f, 1f / SpinConvergencePower) * Lifetime);
             float backglowInterpolant = CalamityUtils.Convert01To010(Utils.GetLerpValue(backglowStartTime - 12f, backglowStartTime + 8f, Time, true));
             Projectile.DrawProjectileWithBackglowTemp(Color.Cyan with { A = 0 } * backglowInterpolant * Projectile.Opacity, Color.White, backglowInterpolant * 6f);
             return false;

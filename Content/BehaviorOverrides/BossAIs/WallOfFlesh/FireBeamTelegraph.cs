@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             Projectile.scale = Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * Utils.GetLerpValue(85f, 75f, Projectile.timeLeft, true);
-            Projectile.scale = MathHelper.SmoothStep(0.04f, 4f, Projectile.scale);
+            Projectile.scale = SmoothStep(0.04f, 4f, Projectile.scale);
 
             // Try to aim at the target.
             if (Projectile.timeLeft > 32f)
@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             Owner.rotation = Projectile.velocity.ToRotation();
             if (Owner.direction < 0)
-                Owner.rotation += MathHelper.Pi;
+                Owner.rotation += Pi;
 
             if (Projectile.timeLeft > 30)
             {
@@ -70,8 +70,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             for (int i = 0; i <= 4; i++)
             {
-                float lineWidth = MathHelper.SmoothStep(0.25f, 1f, i / 4f) * Projectile.scale;
-                Color lineColor = Color.Lerp(Color.White, Color.Orange, MathHelper.Lerp(0.15f, 1f, i / 4f));
+                float lineWidth = SmoothStep(0.25f, 1f, i / 4f) * Projectile.scale;
+                Color lineColor = Color.Lerp(Color.White, Color.Orange, Lerp(0.15f, 1f, i / 4f));
                 lineColor.A = 0;
 
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + aimDirection * 2050f, lineColor, lineWidth);

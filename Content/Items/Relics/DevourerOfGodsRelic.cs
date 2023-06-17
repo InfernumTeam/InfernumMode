@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Items.Relics
             "You are in the final stretch. Your determination has proven invaluable up to this point.\n" +
             "May it guide you through the last challenges.";
 
-        public override Color? PersonalMessageColor => Color.Lerp(Color.Cyan, Color.Fuchsia, MathF.Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
+        public override Color? PersonalMessageColor => Color.Lerp(Color.Cyan, Color.Fuchsia, Cos(Main.GlobalTimeWrappedHourly * 2.3f) * 0.5f + 0.5f);
 
         public override int TileID => ModContent.TileType<DevourerOfGodsRelicTile>();
     }

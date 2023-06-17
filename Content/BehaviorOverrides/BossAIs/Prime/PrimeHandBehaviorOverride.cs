@@ -64,13 +64,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
                 npc.SimpleFlyMovement(idealVelocity, 0.4f);
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, telegraphInterpolant * 0.2f);
-                if (MathHelper.Distance(npc.Center.X, hoverDestination.X) > 180f)
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.05f);
+                if (Distance(npc.Center.X, hoverDestination.X) > 180f)
+                    npc.velocity.X = Lerp(npc.velocity.X, idealVelocity.X, 0.05f);
 
                 // Aim at the target.
                 AimAtTarget(npc, aimDestination);
 
-                Vector2 cannonDirection = (npc.rotation + MathHelper.PiOver2).ToRotationVector2();
+                Vector2 cannonDirection = (npc.rotation + PiOver2).ToRotationVector2();
                 PerformTelegraphBehaviors(npc, attackState, telegraphIntensity, cannonDirection);
 
                 // Arms that are busy telegraphing do not do damage.
@@ -89,8 +89,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 // Fly approximately near the hover position.
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 23f;
                 npc.SimpleFlyMovement(idealVelocity, 0.4f);
-                if (MathHelper.Distance(npc.Center.X, hoverDestination.X) > 180f)
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.05f);
+                if (Distance(npc.Center.X, hoverDestination.X) > 180f)
+                    npc.velocity.X = Lerp(npc.velocity.X, idealVelocity.X, 0.05f);
 
                 // Arms that are not attacking do not do damage.
                 npc.damage = 0;
@@ -109,7 +109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 else
                     npc.ai[2] = 0f;
 
-                Vector2 cannonDirection = (npc.rotation + MathHelper.PiOver2).ToRotationVector2();
+                Vector2 cannonDirection = (npc.rotation + PiOver2).ToRotationVector2();
                 PerformAttackBehaviors(npc, attackState, target, wrappedAttackTimer, cannonDirection);
             }
 
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public static void AimAtTarget(NPC npc, Vector2 aimDestination)
         {
-            float idealRotation = npc.AngleTo(aimDestination) - MathHelper.PiOver2;
+            float idealRotation = npc.AngleTo(aimDestination) - PiOver2;
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.02f);
         }
 
@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 Vector2 origin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(telegraphIntensity * 0.5f, 2.4f);
                 Vector2 beamDirection = npc.rotation.ToRotationVector2();
-                float beamRotation = beamDirection.ToRotation() + MathHelper.Pi;
+                float beamRotation = beamDirection.ToRotation() + Pi;
                 Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
                 Main.spriteBatch.ResetBlendState();
@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 Color backglowColor = Color.Lerp(Color.OrangeRed, Color.Red, 0.75f) with { A = 0 };
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * telegraphIntensity * 8f;
+                    Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * telegraphIntensity * 8f;
                     Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
                 }
             }

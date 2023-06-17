@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 shimmer.color = Color.Red;
 
                 if (unstableDust)
-                    shimmer.velocity = (MathHelper.TwoPi * attackTimer / 30f).ToRotationVector2() * Main.rand.NextFloat(5f, 9f);
+                    shimmer.velocity = (TwoPi * attackTimer / 30f).ToRotationVector2() * Main.rand.NextFloat(5f, 9f);
                 else
                     shimmer.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 3f);
 
@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (!Main.player.IndexInRange(npc.type) || !Main.player[npc.target].active || Main.player[npc.target].dead)
                 npc.TargetClosest();
 
-            npc.Center = target.Center - Vector2.UnitY * (350f + MathF.Sin(MathHelper.TwoPi * attackTimer / 120f) * 10f);
+            npc.Center = target.Center - Vector2.UnitY * (350f + Sin(TwoPi * attackTimer / 120f) * 10f);
 
             if (shootRate >= 1 && attackTimer % shootRate == shootRate - 1f)
             {
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             {
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * backglowInterpolant * 6f;
+                    Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * backglowInterpolant * 6f;
                     Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(Color.White) with { A = 0 }, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0f);
                 }
             }

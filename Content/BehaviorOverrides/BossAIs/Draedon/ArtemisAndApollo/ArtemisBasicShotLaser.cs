@@ -45,11 +45,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 1.2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Stick to Artemis.
             float positionOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
-            Projectile.Center = ThingToAttachTo.Center + (ThingToAttachTo.rotation - MathHelper.PiOver2).ToRotationVector2() * positionOffset;
+            Projectile.Center = ThingToAttachTo.Center + (ThingToAttachTo.rotation - PiOver2).ToRotationVector2() * positionOffset;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

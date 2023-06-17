@@ -26,9 +26,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public const int Lifetime = 105;
 
-        public float Height => MathHelper.Lerp(4f, Projectile.height, Projectile.scale * Projectile.Opacity);
+        public float Height => Lerp(4f, Projectile.height, Projectile.scale * Projectile.Opacity);
 
-        public float Width => MathHelper.Lerp(3f, Projectile.width, Projectile.scale * Projectile.Opacity);
+        public float Width => Lerp(3f, Projectile.width, Projectile.scale * Projectile.Opacity);
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -52,9 +52,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void AI()
         {
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
 
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / Lifetime) * 2f;
+            Projectile.scale = Sin(Pi * Time / Lifetime) * 2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -84,9 +84,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public float WidthFunction(float completionRatio)
         {
-            float tipFadeoffInterpolant = MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
-            float baseFadeoffInterpolant = MathHelper.SmoothStep(2.4f, 1f, 1f - CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, 0.19f, completionRatio, true)));
-            float widthAdditionFactor = MathF.Sin(Main.GlobalTimeWrappedHourly * -13f + Projectile.identity + completionRatio * MathHelper.Pi * 4f) * 0.2f;
+            float tipFadeoffInterpolant = SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
+            float baseFadeoffInterpolant = SmoothStep(2.4f, 1f, 1f - CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, 0.19f, completionRatio, true)));
+            float widthAdditionFactor = Sin(Main.GlobalTimeWrappedHourly * -13f + Projectile.identity + completionRatio * Pi * 4f) * 0.2f;
             return Width * tipFadeoffInterpolant * baseFadeoffInterpolant * (1f + widthAdditionFactor);
         }
 
@@ -94,8 +94,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             Color darkFlameColor = new(249, 59, 91);
             Color lightFlameColor = new(174, 45, 237);
-            float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 2.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
-            Color color = Color.Lerp(darkFlameColor, lightFlameColor, MathF.Pow(colorShiftInterpolant, 1.64f));
+            float colorShiftInterpolant = Sin(-Main.GlobalTimeWrappedHourly * 2.7f + completionRatio * TwoPi) * 0.5f + 0.5f;
+            Color color = Color.Lerp(darkFlameColor, lightFlameColor, Pow(colorShiftInterpolant, 1.64f));
             return color * Projectile.Opacity;
         }
 

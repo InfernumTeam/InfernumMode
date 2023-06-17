@@ -101,15 +101,15 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
             // Get an offset to the afterimageOffset based on a sine wave.
             float sine = (float)((1f + Math.Sin(Main.GlobalTimeWrappedHourly * 2.5f)) * 0.5f);
-            float sineOffset = MathHelper.Lerp(0.4f, 0.775f, sine);
+            float sineOffset = Lerp(0.4f, 0.775f, sine);
 
             // Draw text backglow effects.
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * (2f * sineOffset);
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * (2f * sineOffset);
 
                 // Draw the text. Rotate the position based on i.
-                ChatManager.DrawColorCodedString(Main.spriteBatch, line.Font, text, (textPosition + afterimageOffset).RotatedBy(MathHelper.TwoPi * (i / 12)), textOuterColor * 0.9f, line.Rotation, line.Origin, line.BaseScale);
+                ChatManager.DrawColorCodedString(Main.spriteBatch, line.Font, text, (textPosition + afterimageOffset).RotatedBy(TwoPi * (i / 12)), textOuterColor * 0.9f, line.Rotation, line.Origin, line.BaseScale);
             }
 
             // Draw the main inner text.

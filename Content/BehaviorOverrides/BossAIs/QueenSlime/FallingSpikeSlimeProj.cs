@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             // Slam downward.
             if (Projectile.velocity.Y >= 0.1f)
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y * 1.1f + 0.4f, 0.1f, 18f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y * 1.1f + 0.4f, 0.1f, 18f);
 
             // Decide frames.
             Projectile.frame = 1;
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 spikeVelocity = (MathHelper.TwoPi * i / 3f - MathHelper.PiOver2).ToRotationVector2() * 5f;
+                    Vector2 spikeVelocity = (TwoPi * i / 3f - PiOver2).ToRotationVector2() * 5f;
                     spikeVelocity = Vector2.Lerp(spikeVelocity, -Vector2.UnitY * spikeVelocity.Length(), 0.82f);
                     Utilities.NewProjectileBetter(Projectile.Center + spikeVelocity, spikeVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), QueenSlimeBehaviorOverride.SmallCrystalSpikeDamage, 0f);
                 }

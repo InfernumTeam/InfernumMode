@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (Time >= Lifetime)
                 Projectile.Kill();
 
-            LaserLength = MathF.Pow(Utils.GetLerpValue(4f, 30f, Time, true), 2.4f) * MaxLaserLength;
+            LaserLength = Pow(Utils.GetLerpValue(4f, 30f, Time, true), 2.4f) * MaxLaserLength;
 
             // Create very strong screen shakes.
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.Remap(Time, 10f, 90f, 20f, 3f);
@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(1f, 0.92f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.04f, 1f);
+            return SmoothStep(2f, Projectile.width, squeezeInterpolant) * Clamp(Projectile.scale, 0.04f, 1f);
         }
 
         public Color ColorFunction(float completionRatio)
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public void DrawFrontGlow()
         {
-            float pulse = MathF.Cos(Main.GlobalTimeWrappedHourly * 36f);
+            float pulse = Cos(Main.GlobalTimeWrappedHourly * 36f);
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
             Vector2 origin = backglowTexture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.scale * 50f;
@@ -172,12 +172,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             for (int i = 0; i <= 16; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 16f));
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             if (Time >= 2f)
             {
-                float backwardsOffset = MathHelper.Min(LaserLength * 0.1f, 100f);
+                float backwardsOffset = MathF.Min(LaserLength * 0.1f, 100f);
                 BeamDrawer.Draw(points, -Main.screenPosition - Projectile.velocity * backwardsOffset, 47);
             }
         }

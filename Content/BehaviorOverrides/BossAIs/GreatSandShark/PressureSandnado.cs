@@ -96,8 +96,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (Time < Lifetime - 30f)
             {
                 float fuck = Main.rand.NextFloat();
-                Vector2 dustSpawnOffsetFactor = new(Main.rand.NextFloat(0.1f, 1f), MathHelper.Lerp(-1f, 0.9f, fuck));
-                dustSpawnOffsetFactor.X *= MathHelper.Lerp(2.2f, 0.6f, fuck);
+                Vector2 dustSpawnOffsetFactor = new(Main.rand.NextFloat(0.1f, 1f), Lerp(-1f, 0.9f, fuck));
+                dustSpawnOffsetFactor.X *= Lerp(2.2f, 0.6f, fuck);
                 dustSpawnOffsetFactor.X *= -1f;
                 Vector2 dustSpawnPosition = center + dustSpawnArea * dustSpawnOffsetFactor * 0.5f + new Vector2(6f, 10f);
 
@@ -135,7 +135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
-            float baseRotation = MathHelper.TwoPi / -20f * Time * (Projectile.velocity.X <= 0f).ToDirectionInt();
+            float baseRotation = TwoPi / -20f * Time * (Projectile.velocity.X <= 0f).ToDirectionInt();
             SpriteEffects direction = Projectile.velocity.X > 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
             float currentHeightOfTornado = 0f;
             float heightPerTornadoPiece = 5.01f + Time / 150f * -0.9f;
@@ -155,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 currentHeightOfTornado += heightPerTornadoPiece;
                 float verticalCompletionRatio = currentHeightOfTornado / tornadoArea.Y;
-                float heightBasedRotation = currentHeightOfTornado * MathHelper.TwoPi / -10f;
+                float heightBasedRotation = currentHeightOfTornado * TwoPi / -10f;
                 if (Projectile.velocity.X > 0f)
                     heightBasedRotation *= -1f;
 

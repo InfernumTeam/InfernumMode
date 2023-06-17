@@ -72,10 +72,10 @@ namespace InfernumMode.Common.Graphics
                 Main.spriteBatch.ExitShaderRegion();
 
                 if (Main.netMode == NetmodeID.MultiplayerClient)
-                    WhiteningInterpolant = MathHelper.Clamp(WhiteningInterpolant - 0.007f, 0f, 1f);
+                    WhiteningInterpolant = Clamp(WhiteningInterpolant - 0.007f, 0f, 1f);
             }
             else
-                WhiteningInterpolant = MathHelper.Clamp(WhiteningInterpolant - 0.1f, 0f, 1f);
+                WhiteningInterpolant = Clamp(WhiteningInterpolant - 0.1f, 0f, 1f);
         }
 
         public static void DrawCeaselessVoid()
@@ -84,7 +84,7 @@ namespace InfernumMode.Common.Graphics
             bool voidIsCracked = ceaselessVoid.localAI[0] == 1f;
             Texture2D voidMaskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CeaselessVoid/CeaselessMetalShellMask").Value;
             Vector2 voidDrawPosition = ceaselessVoid.Center - Main.screenPosition;
-            Color voidColor = Color.White * MathF.Pow(WhiteningInterpolant, 0.66f) * ceaselessVoid.Opacity;
+            Color voidColor = Color.White * Pow(WhiteningInterpolant, 0.66f) * ceaselessVoid.Opacity;
 
             // Apply the crack effect if necessary.
             if (voidIsCracked)

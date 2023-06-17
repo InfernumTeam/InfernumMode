@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Player target = Main.player[npc.target];
 
             // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Reset shit.
             npc.Calamity().DR = 0f;
@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.7f;
                 npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, maxFlySpeed);
             }
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Periodically release spit balls at the player if not too close and in their line of sight.
             bool readyToFire = attackTimer % toothBallReleaseRate == toothBallReleaseRate - 1f;

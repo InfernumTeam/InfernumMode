@@ -152,11 +152,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static void DoDeathBehavior(NPC npc)
         {
             npc.velocity.X *= 0.9f;
-            npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0.92f, 0.03f);
+            npc.velocity.Y = Lerp(npc.velocity.Y, 0.92f, 0.03f);
             if (npc.velocity.Y < -3f)
                 npc.velocity.Y = -3f;
 
-            npc.rotation = npc.rotation.AngleTowards(MathHelper.PiOver4 * npc.spriteDirection, 0.08f);
+            npc.rotation = npc.rotation.AngleTowards(PiOver4 * npc.spriteDirection, 0.08f);
             npc.ai[2] = 9999999f;
         }
 

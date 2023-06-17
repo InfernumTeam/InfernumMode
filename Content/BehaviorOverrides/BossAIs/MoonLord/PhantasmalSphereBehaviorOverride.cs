@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    float angularDirectionOffset = Main.rand.NextFloat(MathHelper.TwoPi) + projectile.velocity.ToRotation();
+                    float angularDirectionOffset = Main.rand.NextFloat(TwoPi) + projectile.velocity.ToRotation();
                     Vector2 dustSpawnOffset = new Vector2(-projectile.width * 0.65f * projectile.scale, 0f).RotatedBy(angularDirectionOffset);
                     Dust electricity = Dust.NewDustDirect(projectile.Center - Vector2.One * 5f, 10, 10, 229, -projectile.velocity.X / 3f, -projectile.velocity.Y / 3f, 150, Color.Transparent, 0.7f);
                     electricity.velocity = Vector2.Zero;

@@ -271,7 +271,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.Calamity().newAI[1] = 0f;
             if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
                     npc.Center = target.Center - Vector2.UnitY * 1500f;
 
@@ -283,7 +283,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.dontTakeDamage = true;
             }
             else
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             // Reset things.
             ProjectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50 : 0;
@@ -529,7 +529,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Periodically create pulse rings.
             if (deathAnimationTimer > 10f && deathAnimationTimer < implosionRingLifetime - 30f && deathAnimationTimer % pulseRingCreationRate == pulseRingCreationRate - 1f)
             {
-                float finalScale = MathHelper.Lerp(3f, 5f, Utils.GetLerpValue(25f, 160f, deathAnimationTimer, true));
+                float finalScale = Lerp(3f, 5f, Utils.GetLerpValue(25f, 160f, deathAnimationTimer, true));
                 Color pulseColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
 
                 for (int i = 0; i < 3; i++)
@@ -547,7 +547,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Fade away as the explosion progresses.
             float opacityFadeInterpolant = Utils.GetLerpValue(implosionRingLifetime + explosionTime * 0.75f, implosionRingLifetime, deathAnimationTimer, true);
-            npc.Opacity = MathF.Pow(opacityFadeInterpolant, 6.1f);
+            npc.Opacity = Pow(opacityFadeInterpolant, 6.1f);
 
             if (deathAnimationTimer == (int)(implosionRingLifetime + explosionTime * 0.5f))
             {
@@ -665,10 +665,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Create telegraph lines that show where the laserbeams will appear.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == shootDelay + 1f)
             {
-                generalAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                generalAngularOffset = Main.rand.NextFloat(TwoPi);
                 for (int i = 0; i < totalLasers; i++)
                 {
-                    Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
+                    Vector2 laserDirection = (TwoPi * i / totalLasers).ToRotationVector2();
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                     {
@@ -695,7 +695,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     blenderSoundTimer = 1f;
                     for (int i = 0; i < totalLasers; i++)
                     {
-                        Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers).ToRotationVector2();
+                        Vector2 laserDirection = (TwoPi * i / totalLasers).ToRotationVector2();
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                         {
@@ -709,7 +709,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Idly create explosions around the target.
             float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
-            bool aboutToTurn = npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts && MathHelper.Distance(adjustedTimer, spinTime * 0.5f) < 54f;
+            bool aboutToTurn = npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts && Distance(adjustedTimer, spinTime * 0.5f) < 54f;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % burstReleaseRate == burstReleaseRate - 1f && attackTimer > shootDelay + telegraphTime + 60f && !aboutToTurn)
             {
                 Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
@@ -718,7 +718,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Make the laser spin.
-            float spinSpeed = Utils.GetLerpValue(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 196f;
+            float spinSpeed = Utils.GetLerpValue(0f, 420f, adjustedTimer, true) * Pi / 196f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
@@ -834,10 +834,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < 20; i++)
                     {
-                        Vector2 shootDirection = (MathHelper.TwoPi * i / 20f + shootOffsetAngle).ToRotationVector2();
+                        Vector2 shootDirection = (TwoPi * i / 20f + shootOffsetAngle).ToRotationVector2();
                         Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 250f, shootDirection, ModContent.ProjectileType<AresEnergyDeathrayTelegraph>(), 0, 0f);
                     }
                 }
@@ -893,10 +893,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 ScreenEffectSystem.SetFlashEffect(target.Center, 0.8f, 18);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 shootDirection = (MathHelper.TwoPi * i / laserCount + shootOffsetAngle).ToRotationVector2();
+                        Vector2 shootDirection = (TwoPi * i / laserCount + shootOffsetAngle).ToRotationVector2();
                         Utilities.NewProjectileBetter(Vector2.Lerp(npc.Center, target.Center, 0.55f) + Vector2.UnitY * 150f, shootDirection, ModContent.ProjectileType<AresEnergyDeathrayTelegraph>(), 0, 0f);
                     }
                     laserSoundCountdown = AresEnergyDeathrayTelegraph.Lifetime;
@@ -1009,7 +1009,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     shootDelay = (int)Utils.Remap(attackTimer, 0f, cannonAttackTime * 0.55f, startingShootDelay, endingShootDelay);
 
                     // Calculate the overheat interpolant.
-                    overheatInterpolant = MathF.Pow(Utils.GetLerpValue(0f, cannonAttackTime * 0.67f, attackTimer, true), 1.96f) * 0.56f;
+                    overheatInterpolant = Pow(Utils.GetLerpValue(0f, cannonAttackTime * 0.67f, attackTimer, true), 1.96f) * 0.56f;
 
                     // Account for discrepancies caused by countdowns in the charge delay.
                     if (shootDelay < oldShootDelay)
@@ -1051,7 +1051,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     {
                         for (int i = 0; i < laserbeamCount; i++)
                         {
-                            Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
+                            Vector2 laserDirection = (TwoPi * i / laserbeamCount).ToRotationVector2();
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                             {
@@ -1081,7 +1081,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         {
                             for (int i = 0; i < laserbeamCount; i++)
                             {
-                                Vector2 laserDirection = (MathHelper.TwoPi * i / laserbeamCount).ToRotationVector2();
+                                Vector2 laserDirection = (TwoPi * i / laserbeamCount).ToRotationVector2();
 
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                                 {
@@ -1106,7 +1106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     // Make the laser spin.
                     float spinSpeedInterpolant = Utils.GetLerpValue(0f, 360f, attackTimer, true);
-                    laserAngularOffset += MathHelper.ToRadians(spinSpeedInterpolant * 0.86f);
+                    laserAngularOffset += ToRadians(spinSpeedInterpolant * 0.86f);
 
                     // Periodically release slow bursts of sparks in a spread.
                     if (attackTimer % sparkBurstReleaseRate == sparkBurstReleaseRate - 1f)
@@ -1115,10 +1115,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // Fire a burst of circular sparks along with sparks that are loosely fired towards the target.
-                            float circularSpreadAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                            float circularSpreadAngularOffset = Main.rand.NextFloat(TwoPi);
                             for (int i = 0; i < circularBoltCount; i++)
                             {
-                                Vector2 boltShootVelocity = (MathHelper.TwoPi * i / circularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 9f;
+                                Vector2 boltShootVelocity = (TwoPi * i / circularBoltCount + circularSpreadAngularOffset).ToRotationVector2() * 9f;
                                 Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
                                 Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<AresTeslaSpark>(), NormalShotDamage, 0f);
                             }
@@ -1183,7 +1183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.localAI[3] >= 0.36f)
             {
                 smokeDrawer.ParticleSpawnRate = 1;
-                smokeDrawer.BaseMoveRotation = npc.rotation + MathHelper.PiOver2;
+                smokeDrawer.BaseMoveRotation = npc.rotation + PiOver2;
                 smokeDrawer.SpawnAreaCompactness = 120f;
             }
             smokeDrawer.Update();
@@ -1371,7 +1371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
-            return MathHelper.SmoothStep(60f, 22f, completionRatio) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true);
+            return SmoothStep(60f, 22f, completionRatio) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true);
         }
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
@@ -1423,10 +1423,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 arm1Origin = armTexture1.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
                 Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
 
-                float arm1Rotation = MathHelper.Clamp(distanceFromHand * direction / 1200f, -0.12f, 0.12f);
+                float arm1Rotation = Clamp(distanceFromHand * direction / 1200f, -0.12f, 0.12f);
                 float arm2Rotation = (handPosition - armSegmentDrawPosition - Vector2.UnitY * 12f).ToRotation();
                 if (direction == 1)
-                    arm2Rotation += MathHelper.Pi;
+                    arm2Rotation += Pi;
                 float armSegmentRotation = arm2Rotation;
 
                 // Handle offsets for points.
@@ -1434,7 +1434,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 armSegmentDrawPosition -= arm2Rotation.ToRotationVector2() * scale * direction * 20f;
                 Vector2 arm2DrawPosition = armSegmentDrawPosition;
                 arm2DrawPosition -= arm2Rotation.ToRotationVector2() * direction * scale * 40f;
-                arm2DrawPosition += (arm2Rotation - MathHelper.PiOver2).ToRotationVector2() * scale * 14f;
+                arm2DrawPosition += (arm2Rotation - PiOver2).ToRotationVector2() * scale * 14f;
 
                 // Calculate colors.
                 Color shoulderLightColor = npc.GetAlpha(Lighting.GetColor((int)shoulderDrawPosition.X / 16, (int)shoulderDrawPosition.Y / 16));
@@ -1581,8 +1581,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             float arm2Rotation = (float)limbs[1].Rotation;
             if (direction == -1)
             {
-                arm1Rotation += MathHelper.Pi;
-                arm2Rotation += MathHelper.Pi;
+                arm1Rotation += Pi;
+                arm2Rotation += Pi;
             }
 
             // Determine origins.
@@ -1684,7 +1684,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     color = Color.Lerp(color, Color.Red * 0.3f, npc.localAI[3]);
                     color.A = 0;
 
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, scale, SpriteEffects.None, 0f);
                 }
             }
@@ -1716,10 +1716,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                 Vector2 telegraphInnerScale = telegraphScale * 0.75f;
-                Color telegraphColor = new Color(255, 55, 0) * MathF.Pow(telegraphInterpolant, 0.79f);
+                Color telegraphColor = new Color(255, 55, 0) * Pow(telegraphInterpolant, 0.79f);
                 Color innerColor = Color.Lerp(telegraphColor, Color.White, 0.35f);
-                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
-                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, innerColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphInnerScale, 0, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, innerColor, telegraphRotation - PiOver2, telegraphOrigin, telegraphInnerScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
 

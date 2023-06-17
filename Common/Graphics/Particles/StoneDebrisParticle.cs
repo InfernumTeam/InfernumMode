@@ -26,7 +26,7 @@ namespace InfernumMode.Common.Graphics.Particles
             OriginalColor = color;
             Scale = scale;
             Lifetime = lifeTime;
-            Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+            Rotation = Main.rand.NextFloat(TwoPi);
             Spin = rotationSpeed;
             Variant = Main.rand.Next(3);
         }

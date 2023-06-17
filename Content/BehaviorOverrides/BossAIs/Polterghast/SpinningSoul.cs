@@ -76,14 +76,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Projectile.netUpdate = true;
             }
             Radius -= SpinSpeedFactor * 6f;
-            SpinOffsetAngle -= MathHelper.ToRadians(MathHelper.Lerp(SpinSpeedFactor, 1f, 0.3f) * 1.5f) * CounterclockwiseSpin.ToDirectionInt();
+            SpinOffsetAngle -= ToRadians(Lerp(SpinSpeedFactor, 1f, 0.3f) * 1.5f) * CounterclockwiseSpin.ToDirectionInt();
             Projectile.Center = polterghast.Center + SpinOffsetAngle.ToRotationVector2() * Radius;
             if (Radius <= 20f)
                 Projectile.Kill();
 
             // Handle fade effects and rotate.
             Projectile.Opacity = Utils.GetLerpValue(270f, 260f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
-            Projectile.rotation = (Projectile.position - Projectile.oldPosition).ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = (Projectile.position - Projectile.oldPosition).ToRotation() - PiOver2;
 
             // Determine frames.
             Projectile.frameCounter++;
@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 // Release a circle of dust every so often.
                 for (int i = 0; i < 16; i++)
                 {
-                    Vector2 dustOffset = Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 16f) * new Vector2(4f, 1f);
+                    Vector2 dustOffset = Vector2.UnitY.RotatedBy(TwoPi * i / 16f) * new Vector2(4f, 1f);
                     dustOffset = dustOffset.RotatedBy(Projectile.velocity.ToRotation());
 
                     Dust ectoplasm = Dust.NewDustDirect(Projectile.Center, 0, 0, 175, 0f, 0f);
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         {
             if (Main.npc.IndexInRange(CalamityGlobalNPC.ghostBoss) && Main.npc[CalamityGlobalNPC.ghostBoss].active)
             {
-                Main.npc[CalamityGlobalNPC.ghostBoss].ai[2] = MathHelper.Clamp(Main.npc[CalamityGlobalNPC.ghostBoss].ai[2] - 1f, 0f, 500f);
+                Main.npc[CalamityGlobalNPC.ghostBoss].ai[2] = Clamp(Main.npc[CalamityGlobalNPC.ghostBoss].ai[2] - 1f, 0f, 500f);
                 Main.npc[CalamityGlobalNPC.ghostBoss].netUpdate = true;
             }
         }

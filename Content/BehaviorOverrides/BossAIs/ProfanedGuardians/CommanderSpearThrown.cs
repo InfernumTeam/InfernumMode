@@ -59,8 +59,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (ExplodeOnImpact)
                 Projectile.tileCollide = Timer >= TelegraphTime + PassThroughTilesTime;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
 
             // Accelerate.
             if (Projectile.velocity.Length() < 36f)
@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i < 40; i++)
             {
                 // Bias towards lower values. 
-                float size = MathF.Pow(Main.rand.NextFloat(), 2f);
+                float size = Pow(Main.rand.NextFloat(), 2f);
                 FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center - (Projectile.velocity * 0.5f) + (Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f) * size),
                     Main.rand.NextFloat(10f, 15f));
             }
@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 for (int j = 0; j < crossCount; j++)
                 {
-                    Vector2 crossVelocity = (MathHelper.TwoPi * j / crossCount + MathHelper.PiOver4 * i).ToRotationVector2() * speed;
+                    Vector2 crossVelocity = (TwoPi * j / crossCount + PiOver4 * i).ToRotationVector2() * speed;
                     Utilities.NewProjectileBetter(Projectile.Center + crossVelocity, crossVelocity, ModContent.ProjectileType<HolyCross>(), GuardianComboAttackManager.HolyCrossDamage, 0f);
                 }
             }
@@ -131,8 +131,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 BloomLineDrawInfo lineInfo = new()
                 {
                     LineRotation = -Projectile.velocity.ToRotation(),
-                    WidthFactor = 0.003f + MathF.Pow(opacity, 5f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                    BloomIntensity = MathHelper.Lerp(0.06f, 0.16f, opacity),
+                    WidthFactor = 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    BloomIntensity = Lerp(0.06f, 0.16f, opacity),
                     Scale = Vector2.One * 1950f,
                     MainColor = WayfinderSymbol.Colors[1],
                     DarkerColor = WayfinderSymbol.Colors[2],
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Draw the spear as a white hot flame with additive blending before it converge inward to create the actual spear.
                 for (int i = 0; i < 5; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 5f;
+                    Vector2 drawOffset = (TwoPi * i / 5f).ToRotationVector2() * 5f;
                     Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
                     Main.EntitySpriteDraw(texture, drawPosition, null, Color.LightPink with { A = 0 }, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
                 }

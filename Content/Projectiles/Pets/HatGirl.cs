@@ -218,19 +218,19 @@ namespace InfernumMode.Content.Projectiles.Pets
             {
                 TalkAnimationCounter++;
 
-                Projectile.frame = (int)Math.Round(MathHelper.Lerp(7f, 10f, 1f - TalkAnimationCounter / 50f));
+                Projectile.frame = (int)Math.Round(Lerp(7f, 10f, 1f - TalkAnimationCounter / 50f));
                 if (TalkAnimationCounter >= 50f)
                     TalkAnimationCounter = 0f;
             }
 
             // Be affected by gravity.
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.3f, -24f, 12f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.3f, -24f, 12f);
 
             // Attempt to approach the owner if not close.
             if (distanceFromOwner > 120f)
             {
                 float horizontalAcceleration = (Owner.Center.X > Projectile.Center.X).ToDirectionInt() * 0.15f;
-                Projectile.velocity.X = MathHelper.Clamp(Projectile.velocity.X + horizontalAcceleration, -8.4f, 8.4f);
+                Projectile.velocity.X = Clamp(Projectile.velocity.X + horizontalAcceleration, -8.4f, 8.4f);
                 if (distanceFromOwner >= 400f)
                 {
                     WalkingNearOwner = false;
@@ -255,7 +255,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             Projectile.frame = 2;
 
             // Determine rotation.
-            Projectile.rotation = MathHelper.Clamp(Projectile.velocity.X * 0.03f, -0.15f, 0.15f);
+            Projectile.rotation = Clamp(Projectile.velocity.X * 0.03f, -0.15f, 0.15f);
 
             // Move towards the owner.
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Owner.Center) * 23f, 0.04f);

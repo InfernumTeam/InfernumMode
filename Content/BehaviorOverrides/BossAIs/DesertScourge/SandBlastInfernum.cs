@@ -32,10 +32,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         public override void AI()
         {
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             Dust sand = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 85, 0f, 0f, 100, default, 0.8f);
             sand.noGravity = true;

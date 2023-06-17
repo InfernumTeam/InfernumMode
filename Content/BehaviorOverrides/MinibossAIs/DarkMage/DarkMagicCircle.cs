@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
         {
             for (int i = 0; i < TotalMagicPiecesInCircle; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / TotalMagicPiecesInCircle + Projectile.rotation).ToRotationVector2() * Projectile.Opacity * Projectile.width;
+                Vector2 drawOffset = (TwoPi * i / TotalMagicPiecesInCircle + Projectile.rotation).ToRotationVector2() * Projectile.Opacity * Projectile.width;
                 if (CalamityUtils.CircularHitboxCollision(Projectile.Center + drawOffset, 8f, targetHitbox))
                     return true;
             }
@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
 
             for (int i = 0; i < TotalMagicPiecesInCircle; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / TotalMagicPiecesInCircle + Projectile.rotation).ToRotationVector2() * Projectile.Opacity * Projectile.width;
+                Vector2 drawOffset = (TwoPi * i / TotalMagicPiecesInCircle + Projectile.rotation).ToRotationVector2() * Projectile.Opacity * Projectile.width;
 
                 for (int j = 0; j < Projectile.oldPos.Length; j++)
                 {

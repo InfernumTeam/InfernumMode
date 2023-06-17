@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Grow bigger up to a point.
             Projectile.scale = Utils.GetLerpValue(TelegraphTime, TelegraphTime + FadeInTime, Time, true) * Utils.GetLerpValue(0f, -FadeOutTime, Time - Lifetime, true);
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
 
             // Stick near the owner.
             Projectile.Center = Owner.Center + Projectile.velocity * 350f;
@@ -111,17 +111,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (ConvergingState == 1)
             {
                 Player target = Main.player[Owner.target];
-                Projectile.velocity = Projectile.velocity.RotateTowards(Owner.AngleTo(target.Center) + MathHelper.Pi, 0.1f);
+                Projectile.velocity = Projectile.velocity.RotateTowards(Owner.AngleTo(target.Center) + Pi, 0.1f);
                 Projectile.timeLeft = 480;
                 Time = Lifetime - Projectile.timeLeft;
             }
 
             // Sweep.
             if (ConvergingState == 2)
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi * 0.0075f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(Pi * 0.0075f);
 
             if (ConvergingState >= 1)
-                Projectile.Center += Projectile.velocity.RotatedBy(MathHelper.PiOver2) * MathHelper.Lerp(-156f, 156f, Hue);
+                Projectile.Center += Projectile.velocity.RotatedBy(PiOver2) * Lerp(-156f, 156f, Hue);
 
             // Make the beam cast light along its length. The brightness of the light is reliant on the scale of the beam.
             DelegateMethods.v3_1 = Color.White.ToVector3() * Projectile.scale * 0.6f;
@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            float hueOffset = MathF.Cos(completionRatio * 12f + Main.GlobalTimeWrappedHourly * 0.8f) * 0.5f + 0.5f;
+            float hueOffset = Cos(completionRatio * 12f + Main.GlobalTimeWrappedHourly * 0.8f) * 0.5f + 0.5f;
             float opacity = Projectile.Opacity * Utils.GetLerpValue(1f, 0.9f, completionRatio, true) * Utils.GetLerpValue(0f, 0.16f, completionRatio, true);
             Color c = Main.hslToRgb((hueOffset * 0.08f + Hue) % 1f, 1f, 0.7f) * opacity;
             return c;

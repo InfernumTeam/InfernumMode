@@ -238,7 +238,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 if (self.Position.HasValue)
                 {
                     float panValue = (self.Position.Value.X - screenMiddle.X) / (Main.screenWidth * 0.5f);
-                    panValue = MathHelper.Clamp(panValue, -1f, 1f);
+                    panValue = Clamp(panValue, -1f, 1f);
                     self.Sound.Pan = panValue;
 
                     float distance;
@@ -267,7 +267,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         break;
                 }
 
-                volumeModifier = MathHelper.Clamp(volumeModifier, 0f, 1f);
+                volumeModifier = Clamp(volumeModifier, 0f, 1f);
                 self.Sound.Volume = volumeModifier;
             }
         }

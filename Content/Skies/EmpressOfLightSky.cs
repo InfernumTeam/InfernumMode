@@ -50,7 +50,7 @@ namespace InfernumMode.Content.Skies
                 Opacity = Utils.GetLerpValue(0f, 0.025f, LifetimeCompletion, true) * Utils.GetLerpValue(1f, 0.92f, LifetimeCompletion, true);
 
                 if (Timer % 350f > 320f)
-                    Velocity = Velocity.RotatedBy(MathHelper.Pi / 425f);
+                    Velocity = Velocity.RotatedBy(Pi / 425f);
 
                 DrawPosition += Velocity;
                 Direction = (Velocity.X > 0f).ToDirectionInt();
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.Skies
                 Intensity += 0.01f;
             else if (!isActive && Intensity > 0f)
                 Intensity -= 0.01f;
-            Intensity = MathHelper.Clamp(Intensity, 0f, 1f);
+            Intensity = Clamp(Intensity, 0f, 1f);
         }
 
         public override Color OnTileColor(Color inColor)
@@ -111,7 +111,7 @@ namespace InfernumMode.Content.Skies
             if (!EmpressOfLightBehaviorOverride.InPhase3(eolNPC))
                 Lights.Clear();
 
-            int maxFairies = (int)MathHelper.Lerp(90f, 175f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
+            int maxFairies = (int)Lerp(90f, 175f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
             int maxLights = maxFairies + 65;
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
             Rectangle rectangle = new(-1000, -1000, 4000, 4000);

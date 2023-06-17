@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
         {
             int jumpCount = 4;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float jumpDelay = MathHelper.Lerp(35f, 20f, 1f - lifeRatio);
+            float jumpDelay = Lerp(35f, 20f, 1f - lifeRatio);
 
             ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -181,7 +181,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
         {
             int jumpCount = 5;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float jumpDelay = MathHelper.Lerp(24f, 12f, 1f - lifeRatio);
+            float jumpDelay = Lerp(24f, 12f, 1f - lifeRatio);
 
             ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -222,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
                         {
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(baghnakhs =>
                             {
-                                baghnakhs.ModProjectile<FetidBaghnakhs>().SpinOffsetAngle = MathHelper.TwoPi * i / 8f;
+                                baghnakhs.ModProjectile<FetidBaghnakhs>().SpinOffsetAngle = TwoPi * i / 8f;
                             });
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<FetidBaghnakhs>(), 120, 0f, -1, 0f, npc.whoAmI);
                         }

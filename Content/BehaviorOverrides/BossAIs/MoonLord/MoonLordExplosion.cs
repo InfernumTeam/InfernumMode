@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     for (int i = 0; i < 10; i++)
                     {
-                        Vector2 cinderVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * Main.rand.NextFloat(7f, 16f) + Main.rand.NextVector2Circular(4f, 4f);
+                        Vector2 cinderVelocity = (TwoPi * i / 10f).ToRotationVector2() * Main.rand.NextFloat(7f, 16f) + Main.rand.NextVector2Circular(4f, 4f);
                         Utilities.NewProjectileBetter(Projectile.Center + cinderVelocity * 2f, cinderVelocity, ModContent.ProjectileType<MoonLordExplosionCinder>(), 0, 0f);
                     }
                     Projectile.localAI[0] = 1f;
@@ -56,10 +56,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Vector2 scale = Projectile.Size / texture.Size();
             Color color = Color.Lerp(Color.Turquoise, Color.White, Projectile.scale) * Projectile.scale;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * MathF.Pow(Projectile.scale, 1.5f), 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * Pow(Projectile.scale, 1.5f), 0, 0f);
             for (int i = 0; i < 2; i++)
             {
-                float rotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver4, i);
+                float rotation = Lerp(-PiOver4, PiOver4, i);
                 Main.spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale * new Vector2(0.1f, 1f) * 1.45f, 0, 0f);
             }
             Main.spriteBatch.ResetBlendState();

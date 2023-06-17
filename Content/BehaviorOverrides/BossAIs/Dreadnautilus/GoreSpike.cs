@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Target.Center) * 8f, 0.02f);
             Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * 8f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Lighting.AddLight(Projectile.Center, Color.PaleVioletRed.ToVector3() * 0.5f);
         }
 
@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         // Use a rotating hitbox on this spike. Not doing do can result in oddities unless the hitbox is abnormally small to compensate.
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (Projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size(), (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2()))
+            if (Projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size(), (Projectile.rotation - PiOver2).ToRotationVector2()))
                 return null;
             return false;
         }

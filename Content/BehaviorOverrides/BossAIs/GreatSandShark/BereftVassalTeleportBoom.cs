@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
             Projectile.Opacity = 1.8f;
-            return Color.Lerp(Color.DarkOrange, Color.DarkViolet, MathHelper.Clamp(lifetimeCompletionRatio * 1.2f, 0f, 1f));
+            return Color.Lerp(Color.DarkOrange, Color.DarkViolet, Clamp(lifetimeCompletionRatio * 1.2f, 0f, 1f));
         }
     }
 }

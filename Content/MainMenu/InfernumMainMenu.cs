@@ -119,7 +119,7 @@ namespace InfernumMode.Content.MainMenu
                 LightningFlash.DistanceModifier = distanceModifier;
             }
 
-            TimeTilNextFlash = (int)MathHelper.Clamp(TimeTilNextFlash - 1, 0f, int.MaxValue);
+            TimeTilNextFlash = (int)Clamp(TimeTilNextFlash - 1, 0f, int.MaxValue);
             LightningFlash.Draw(drawOffset, scale);
         }
 
@@ -134,7 +134,7 @@ namespace InfernumMode.Content.MainMenu
                 Vector2 position = Main.rand.NextVector2FromRectangle(spawnRectangle);
                 Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f)) * Main.rand.NextFloat(1.2f, 2.4f);
                 Color color = Color.Lerp(Color.Pink, Color.Magenta, Main.rand.NextFloat());
-                Embers.Add(new GlowingEmber(position, velocity, color, Main.rand.NextFloat(MathF.Tau), Main.rand.NextFloat(0f, 0.025f), Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(300, 420)));
+                Embers.Add(new GlowingEmber(position, velocity, color, Main.rand.NextFloat(Tau), Main.rand.NextFloat(0f, 0.025f), Main.rand.NextFloat(0.5f, 1f), Main.rand.Next(300, 420)));
             }
 
             // Draw a large bloom at the bottom of the screen.
@@ -193,8 +193,8 @@ namespace InfernumMode.Content.MainMenu
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
             Vector2 drawPos = new(Main.screenWidth * 0.5f, 100f);
-            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 0.5f)) * 0.5f;
-            logoScale = MathHelper.Lerp(0.85f, 1.05f, interpolant);
+            float interpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 0.5f)) * 0.5f;
+            logoScale = Lerp(0.85f, 1.05f, interpolant);
             spriteBatch.Draw(Logo.Value, drawPos, null, drawColor, logoRotation, Logo.Value.Size() * 0.5f, logoScale, SpriteEffects.None, 0f);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);

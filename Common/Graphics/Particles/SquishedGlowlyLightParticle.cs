@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -53,7 +54,7 @@ namespace InfernumMode.Common.Graphics.Particles
             Opacity = Utils.GetLerpValue(0f, 18f, Time, true) * OriginalOpacity;
             if (Time <= 18f)
                 Scale *= 0.85f;
-            Rotation = Velocity.ToRotation() + MathHelper.PiOver2;
+            Rotation = Velocity.ToRotation() + PiOver2;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)
@@ -61,7 +62,7 @@ namespace InfernumMode.Common.Graphics.Particles
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D bloomTexture = ModContent.Request<Texture2D>("InfernumMode/Common/Graphics/Particles/GlowyLightParticle2").Value;
             Vector2 drawPosition = Position - Main.screenPosition;
-            Vector2 scale = new(MathHelper.Max(Scale - Scale * SquishFactor * 0.3f, 0.03f), Scale * SquishFactor);
+            Vector2 scale = new(MathF.Max(Scale - Scale * SquishFactor * 0.3f, 0.03f), Scale * SquishFactor);
             Vector2 scaleBloom = scale * new Vector2(2f, 1f);
 
             spriteBatch.Draw(bloomTexture, drawPosition, null, BloomColor * Opacity, Rotation, texture.Size() * 0.5f, scaleBloom, SpriteEffects.None, 0f);

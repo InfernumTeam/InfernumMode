@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             if (Projectile.velocity.X < 0f)
             {
                 Projectile.spriteDirection = -1;
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
             }
             else
                 Projectile.spriteDirection = 1;

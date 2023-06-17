@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             else
             {
                 Projectile.scale = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 20f, Time, true);
-                Projectile.scale *= MathHelper.Lerp(0.8f, 1.6f, Projectile.identity % 6f / 6f);
+                Projectile.scale *= Lerp(0.8f, 1.6f, Projectile.identity % 6f / 6f);
             }
 
             if (Time >= Lifetime)

@@ -16,9 +16,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            int globCount = (int)MathHelper.Lerp(7f, 10f, 1f - lifeRatio);
-            float globSpeed = MathHelper.Lerp(6.8f, 8.75f, 1f - lifeRatio);
-            float jumpDelay = MathHelper.Lerp(48f, 26f, 1f - lifeRatio);
+            int globCount = (int)Lerp(7f, 10f, 1f - lifeRatio);
+            float globSpeed = Lerp(6.8f, 8.75f, 1f - lifeRatio);
+            float jumpDelay = Lerp(48f, 26f, 1f - lifeRatio);
             if (alone)
             {
                 globSpeed += 0.8f;
@@ -65,10 +65,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
-                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float offsetAngle = Main.rand.NextFloat(TwoPi);
                         for (int i = 0; i < globCount; i++)
                         {
-                            Vector2 globShootVelocity = (MathHelper.TwoPi * i / globCount + offsetAngle).ToRotationVector2() * globSpeed;
+                            Vector2 globShootVelocity = (TwoPi * i / globCount + offsetAngle).ToRotationVector2() * globSpeed;
                             Utilities.NewProjectileBetter(npc.Bottom, globShootVelocity, globID, 90, 0f);
                         }
                     }
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 npc.noTileCollide = !Collision.SolidCollision(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
                 npc.noGravity = true;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
+                npc.velocity.Y = Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
                 attackTimer = 0f;
             }
 
@@ -154,7 +154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 npc.noGravity = true;
                 npc.velocity.X *= 0.8f;
                 npc.noTileCollide = npc.Bottom.Y < target.Bottom.Y;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + gravity, -12f, 21f);
+                npc.velocity.Y = Clamp(npc.velocity.Y + gravity, -12f, 21f);
                 if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 32) && !npc.noTileCollide)
                 {
                     // Do collision effects after slamming.
@@ -165,7 +165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         {
                             for (int i = 0; i < groundBlobCount; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(-0.98f, 0.98f, i / (float)(groundBlobCount - 1f)) + Main.rand.NextFloatDirection() * 0.04f;
+                                float shootOffsetAngle = Lerp(-0.98f, 0.98f, i / (float)(groundBlobCount - 1f)) + Main.rand.NextFloatDirection() * 0.04f;
                                 Vector2 globVelocity = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * globSpeed;
                                 Utilities.NewProjectileBetter(npc.Bottom, globVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), GroundSlimeDamage, 0f);
                             }
@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                             int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                             for (int i = 0; i < blobCount; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(-0.98f, 0.98f, i / (float)(blobCount - 1f)) + Main.rand.NextFloatDirection() * 0.03f;
+                                float shootOffsetAngle = Lerp(-0.98f, 0.98f, i / (float)(blobCount - 1f)) + Main.rand.NextFloatDirection() * 0.03f;
                                 Vector2 globVelocity = Vector2.UnitX.RotatedBy(shootOffsetAngle) * globSpeed * 0.4f;
                                 if (target.Center.X < npc.Center.X)
                                     globVelocity *= -1f;
@@ -214,7 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            float burstSpeed = MathHelper.Lerp(5.8f, 7f, 1f - lifeRatio);
+            float burstSpeed = Lerp(5.8f, 7f, 1f - lifeRatio);
             float jumpDelay = 20f;
             float coreChargeSpeed = 24.5f;
 
@@ -249,7 +249,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             // Make the core spin.
-            Vector2 coreHoverDestination = npc.Center + (MathHelper.TwoPi * universalSpinTimer / 45f).ToRotationVector2() * 300f;
+            Vector2 coreHoverDestination = npc.Center + (TwoPi * universalSpinTimer / 45f).ToRotationVector2() * 300f;
             core.Center = Vector2.Lerp(core.Center, coreHoverDestination, 0.05f);
             core.velocity = core.SafeDirectionTo(coreHoverDestination) * 32f;
 
@@ -260,7 +260,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 attackTimer++;
 
                 if (attackTimer >= jumpDelay &&
-                    npc.SafeDirectionTo(target.Center).RotatedBy(-MathHelper.PiOver2).AngleBetween(core.Center - npc.Center) < 0.28f &&
+                    npc.SafeDirectionTo(target.Center).RotatedBy(-PiOver2).AngleBetween(core.Center - npc.Center) < 0.28f &&
                     !core.WithinRange(npc.Center, 100f) &&
                     stuckTimer >= 30f)
                 {
@@ -295,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         int globID = npc.type == ModContent.NPCType<CrimulanSlimeGod>() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                         for (int i = 0; i < 7; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 7f);
+                            float shootOffsetAngle = Lerp(-0.63f, 0.63f, i / 7f);
                             Vector2 globShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * burstSpeed;
                             Utilities.NewProjectileBetter(npc.Bottom, globShootVelocity, globID, SlimeGlobDamage, 0f);
                         }
@@ -312,7 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 npc.noTileCollide = !Utilities.ActualSolidCollisionTop(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
                 npc.noGravity = true;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
+                npc.velocity.Y = Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
                 attackTimer = 0f;
             }
 

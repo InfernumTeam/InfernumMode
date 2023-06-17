@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.velocity.X *= 0.994f;
             if (Projectile.Center.Y < 800f)
                 Projectile.velocity.Y += 3f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.1f, -36f, 9f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.1f, -36f, 9f);
 
             // Calculate rotation.
             Projectile.rotation += Projectile.velocity.Length() * Math.Sign(Projectile.velocity.X) * 0.025f;

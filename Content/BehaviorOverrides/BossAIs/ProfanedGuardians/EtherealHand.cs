@@ -100,12 +100,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Reset hand attributes and the hover destination.
             UsingPointerFinger = false;
-            FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
+            FingerSpacingOffset = Lerp(FingerSpacingOffset, ToRadians(9f), 0.25f);
 
             Vector2 destination = AttackerGuardian.Center;
-            destination += new Vector2((float)HandSide * 120f, MathF.Sin(Main.GlobalTimeWrappedHourly * 3f + (float)HandSide * 2.1f) * 30f - 80f);
+            destination += new Vector2((float)HandSide * 120f, Sin(Main.GlobalTimeWrappedHourly * 3f + (float)HandSide * 2.1f) * 30f - 80f);
 
-            FingerOutwardness = MathHelper.Lerp(FingerOutwardness, 35f, 0.2f);
+            FingerOutwardness = Lerp(FingerOutwardness, 35f, 0.2f);
 
             // Close in on the attacker guardian's center when the hands should be invisible.
             if (ShouldBeInvisible)
@@ -117,7 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             AttackerGuardian.Infernum().ExtraAI[HandsShouldUseNotDefaultPositionIndex] = 0f;
 
-            float hoverSpeed = MathHelper.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, NPC.Distance(destination));
+            float hoverSpeed = MathF.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, NPC.Distance(destination));
 
             // GLUE to the position.
             if (ShouldEditDestination)
@@ -157,14 +157,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, NPC.Center, 0.5f);
 
             sagLocation.Y += AttackerGuardian.velocity.ClampMagnitude(1f, 18f).Y * -5f;
-            sagLocation.Y += MathHelper.Lerp(0f, 30f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y + 0.1f), true));
+            sagLocation.Y += Lerp(0f, 30f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y + 0.1f), true));
 
 
             Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, NPC.Center).GetPoints(totalPoints).ToArray();
 
             for (int i = 0; i < 5; i++)
             {
-                float fingerAngle = NPC.rotation + MathHelper.Lerp(-5f, 5f, i / 5f) * FingerSpacingOffset;
+                float fingerAngle = NPC.rotation + Lerp(-5f, 5f, i / 5f) * FingerSpacingOffset;
                 float universalScaleFactor = i != 0 && UsingPointerFinger ? 0f : 1f;
                 float currentFingerOutwardness = FingerOutwardness * universalScaleFactor;
                 Vector2 fingerScale = new Vector2(currentFingerOutwardness / 3f) / texture.Size() * new Vector2(4f, 3f) * universalScaleFactor;
@@ -173,13 +173,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     Vector2 fingerDrawPosition = NPC.Center + fingerAngle.ToRotationVector2() * HandSize * 0.5f - Main.screenPosition;
                     fingerDrawPosition += fingerAngle.ToRotationVector2() * currentFingerOutwardness * j / 3f;
-                    Main.spriteBatch.Draw(texture, fingerDrawPosition, null, handColor, fingerAngle + MathHelper.PiOver2, texture.Size() * new Vector2(0.5f, 0f), fingerScale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, fingerDrawPosition, null, handColor, fingerAngle + PiOver2, texture.Size() * new Vector2(0.5f, 0f), fingerScale, direction, 0f);
                 }
             }
 
             for (int i = 0; i < 30; i++)
             {
-                float handRotation = NPC.rotation + MathHelper.PiOver2 + MathHelper.TwoPi * i / 30f;
+                float handRotation = NPC.rotation + PiOver2 + TwoPi * i / 30f;
                 Main.spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, handColor * 0.08f, handRotation, texture.Size() * 0.5f, handScale, direction, 0f);
             }
 
@@ -200,8 +200,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     fire.scale = 0.8f;
                 }
 
-                float rotation = (nextPoint - currentPoint).ToRotation() + MathHelper.PiOver2;
-                Vector2 segmentScale = handScale * MathHelper.Lerp(0.6f, 1f, Utils.GetLerpValue(0.36f, 0f, completionRatio, true));
+                float rotation = (nextPoint - currentPoint).ToRotation() + PiOver2;
+                Vector2 segmentScale = handScale * Lerp(0.6f, 1f, Utils.GetLerpValue(0.36f, 0f, completionRatio, true));
 
                 Main.spriteBatch.Draw(texture, currentPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
                 Main.spriteBatch.Draw(texture, midPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);

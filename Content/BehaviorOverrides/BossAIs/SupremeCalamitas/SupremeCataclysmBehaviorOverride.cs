@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 NPC cataclysm = Main.npc[cataclysmIndex];
 
                 // Sync if Catastrophe changed attack states or there's a noticeable discrepancy between attack timers.
-                if (attackState != cataclysm.ai[0] || MathHelper.Distance(attackTimer, cataclysm.ai[1]) > 20f)
+                if (attackState != cataclysm.ai[0] || Distance(attackTimer, cataclysm.ai[1]) > 20f)
                     npc.netUpdate = true;
 
                 npc.ai = cataclysm.ai;
@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.dontTakeDamage = SupremeCalamitasBehaviorOverride.Enraged;
 
             // Perform attacks.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.05f, 0f, 1f);
             switch ((SCalBrotherAttackType)attackState)
             {
                 case SCalBrotherAttackType.AttackDelay:
@@ -126,9 +126,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoFastHoverMovement(NPC npc, Vector2 hoverDestination)
         {
             float distanceFromDestination = npc.Distance(hoverDestination);
-            Vector2 closeMoveVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceFromDestination, 24f);
+            Vector2 closeMoveVelocity = npc.SafeDirectionTo(hoverDestination) * MathF.Min(distanceFromDestination, 24f);
             npc.velocity = Vector2.Lerp(closeMoveVelocity, (hoverDestination - npc.Center) * 0.0125f, Utils.GetLerpValue(360f, 1080f, distanceFromDestination, true));
-            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.02f, -0.125f, 0.125f);
+            npc.rotation = Clamp(npc.velocity.X * 0.02f, -0.125f, 0.125f);
         }
 
         public static void DoBehavior_AttackDelay(NPC npc, Player target, bool isCataclysm, ref float currentFrame, ref float attackTimer)
@@ -162,7 +162,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             int projectileFireThreshold = isCataclysm ? 105 : 85;
             float regularShotSpeed = 9.5f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float shootIncrement = MathHelper.Lerp(1.85f, 3.1f, 1f - lifeRatio);
+            float shootIncrement = Lerp(1.85f, 3.1f, 1f - lifeRatio);
             if (lifeRatio < 0.5f)
                 soulShootRate -= 5;
             if (lifeRatio < 0.25f)
@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             currentFrame = (int)SCalBrotherAnimationType.AttackAnimation;
 
             float acceleration = 0.95f;
-            float sinusoidalOffset = MathF.Sin(attackTimer * MathHelper.TwoPi / shootTime) * (!isCataclysm).ToDirectionInt() * 400f;
+            float sinusoidalOffset = Sin(attackTimer * TwoPi / shootTime) * (!isCataclysm).ToDirectionInt() * 400f;
             Vector2 hoverDestination = target.Center + new Vector2(isCataclysm.ToDirectionInt() * -720f, sinusoidalOffset);
             if (attackTimer < 72f)
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.018f).MoveTowards(hoverDestination, 1f);
@@ -215,7 +215,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int i = 0; i < soulCount; i++)
                     {
-                        Vector2 soulVelocity = (MathHelper.TwoPi * i / soulCount).ToRotationVector2() * 8.5f;
+                        Vector2 soulVelocity = (TwoPi * i / soulCount).ToRotationVector2() * 8.5f;
                         Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<LostSoulProj>(), SupremeCalamitasBehaviorOverride.BrothersProjectileDamage, 0f);
                     }
                 }
@@ -312,7 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int projectileType = ModContent.ProjectileType<RedirectingHellfireSCal>();
-                        Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(MathHelper.Pi / 9f) * fireShootSpeed * Main.rand.NextFloat(0.9f, 1.125f);
+                        Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(Pi / 9f) * fireShootSpeed * Main.rand.NextFloat(0.9f, 1.125f);
                         Vector2 projectileSpawnPosition = npc.Center + shootVelocity * 5.4f;
                         if (!isCataclysm)
                         {
@@ -384,7 +384,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int i = 0; i < soulCount; i++)
                     {
-                        Vector2 soulVelocity = (MathHelper.TwoPi * i / soulCount).ToRotationVector2() * 10f;
+                        Vector2 soulVelocity = (TwoPi * i / soulCount).ToRotationVector2() * 10f;
                         Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<LostSoulProj>(), SupremeCalamitasBehaviorOverride.BrothersProjectileDamage, 0f);
                     }
                 }
@@ -410,7 +410,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             else
                 currentFrame = (int)SCalBrotherAnimationType.AttackAnimation;
 
-            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.01f, -0.15f, 0.15f);
+            npc.rotation = Clamp(npc.velocity.X * 0.01f, -0.15f, 0.15f);
 
             if (attackTimer >= (chargeTelegraphTime + chargeTime) * chargeCount + 1f)
                 SelectNextAttack(npc);
@@ -457,7 +457,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalBrotherAnimationType.AttackAnimation:
                     float punchInterpolant = Utils.GetLerpValue(10f, SupremeCataclysm.PunchCounterLimit * 2f, attackSpecificTimer + (firingFromRight != 0f ? 0f : SupremeCataclysm.PunchCounterLimit), true);
-                    currentFrame = (int)Math.Round(MathHelper.Lerp(12f, 21f, punchInterpolant));
+                    currentFrame = (int)Math.Round(Lerp(12f, 21f, punchInterpolant));
                     break;
             }
 
@@ -497,7 +497,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * npc.localAI[2] * npc.scale * 5f;
+                    Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * npc.localAI[2] * npc.scale * 5f;
                     Color backglowColor = Color.Red * npc.Opacity * npc.localAI[2];
                     backglowColor.A = 0;
                     spriteBatch.Draw(texture, mainDrawPosition + drawOffset, npc.frame, backglowColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);

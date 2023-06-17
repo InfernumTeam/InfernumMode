@@ -100,11 +100,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
                     if (Main.netMode != NetmodeID.MultiplayerClient && (attackTimer == 0 || attackTimer == 180))
                     {
                         int projectileType = ModContent.ProjectileType<PearlSwirl>();
-                        for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
+                        for (float angle = 0; angle <= TwoPi; angle += PiOver2)
                             Utilities.NewProjectileBetter(npc.Center, angle.ToRotationVector2() * 10f, projectileType, npc.damage, 0f);
                         if (hardmode)
                         {
-                            for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
+                            for (float angle = 0; angle <= TwoPi; angle += PiOver2)
                                 Utilities.NewProjectileBetter(npc.Center, angle.ToRotationVector2() * 10f, projectileType, npc.damage, 0f, -1, 1f);
                         }
                         npc.netUpdate = true;
@@ -306,19 +306,19 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             if (attackState == (float)GiantClamAttackState.PearlSwirl)
             {
                 if (attackTimer > 180)
-                    npc.frame.Y = ((int)MathHelper.Clamp(attackTimer - 180f, 0f, 6f) + 5) * frameHeight;
+                    npc.frame.Y = ((int)Clamp(attackTimer - 180f, 0f, 6f) + 5) * frameHeight;
             }
 
             else if (attackState == (float)GiantClamAttackState.PearlRain)
             {
                 if (attackTimer > 180)
-                    npc.frame.Y = ((int)MathHelper.Clamp(attackTimer - 180f, 0f, 6f) + 5) * frameHeight;
+                    npc.frame.Y = ((int)Clamp(attackTimer - 180f, 0f, 6f) + 5) * frameHeight;
             }
 
             else if (attackState == (float)GiantClamAttackState.TeleportSlam)
             {
                 if (attackSubstate == 1)
-                    npc.frame.Y = ((int)MathHelper.Clamp(attackTimer, 0f, 6f) + 5) * frameHeight;
+                    npc.frame.Y = ((int)Clamp(attackTimer, 0f, 6f) + 5) * frameHeight;
             }
         }
 

@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 seedShootSpeed *= 2.4f;
             }
 
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * hoverSpeed, hoverSpeed / 32.5f);
@@ -261,7 +261,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_RedBlossom(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
         {
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
             float hoverSpeed = 4f;
             int seedFireRate = enraged ? 10 : 16;
             float seedShootSpeed = 15f;
@@ -286,7 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
                 for (int i = 0; i < petalCount; i++)
                 {
-                    Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / petalCount).ToRotationVector2() * 500f;
+                    Vector2 spawnPosition = target.Center + (TwoPi * i / petalCount).ToRotationVector2() * 500f;
                     spawnPosition += Main.rand.NextVector2Circular(150f, 150f);
                     Vector2 centeredSpawnPosition = spawnPosition.ToTileCoordinates().ToWorldCoordinates();
                     Utilities.NewProjectileBetter(centeredSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExplodingFlower>(), 0, 0f);
@@ -300,7 +300,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    float shootOffsetAngle = MathHelper.Lerp(-0.48f, 0.48f, i / 2f);
+                    float shootOffsetAngle = Lerp(-0.48f, 0.48f, i / 2f);
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * seedShootSpeed;
                     Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, PetalDamage, 0f);
@@ -313,7 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_PetalBurst(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
         {
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
             {
@@ -350,7 +350,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 {
                     for (int i = 0; i < (int)petalCount; i++)
                     {
-                        float rotateOffset = MathHelper.Lerp(-0.33f, 0.33f, i / (petalCount - 1f));
+                        float rotateOffset = Lerp(-0.33f, 0.33f, i / (petalCount - 1f));
                         Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * petalShootSpeed;
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 68f;
                         Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), PetalDamage, 0f);
@@ -370,7 +370,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_PoisonousGasRelease(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 5.7f, 0.15f);
@@ -383,7 +383,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 for (int i = 0; i < 19; i++)
                 {
-                    Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 720f;
+                    Vector2 spawnPosition = target.Center + (TwoPi * i / 24f).ToRotationVector2() * 720f;
                     Vector2 gasSporeVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.Zero) * 5f;
                     Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), SporeGasDamage, 0f);
                 }
@@ -423,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_TentacleSnap(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 1.35f, 0.1f);
@@ -433,7 +433,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             int tentacleSpawnDelay = inPhase4 ? 45 : 60;
             int tentacleSummonTime = 45;
             bool canCreateTentacles = attackTimer >= tentacleSpawnDelay && attackTimer < tentacleSpawnDelay + tentacleSummonTime;
-            float tentacleAngle = Utils.GetLerpValue(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
+            float tentacleAngle = Utils.GetLerpValue(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * TwoPi;
             ref float freeAreaAngle = ref npc.Infernum().ExtraAI[0];
             ref float freeAreaAngle2 = ref npc.Infernum().ExtraAI[1];
             ref float snapCount = ref npc.Infernum().ExtraAI[2];
@@ -448,10 +448,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     if (freeAreaAngle == 0f)
                         freeAreaAngle = npc.AngleTo(target.Center) + Main.rand.NextFloatDirection() * 1.21f;
                     else
-                        freeAreaAngle = (freeAreaAngle + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
+                        freeAreaAngle = (freeAreaAngle + Main.rand.NextFloat(2.28f)) % TwoPi;
 
                     if (freeAreaAngle < 0f)
-                        freeAreaAngle += MathHelper.TwoPi;
+                        freeAreaAngle += TwoPi;
                     tries++;
                 }
                 while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle.ToRotationVector2() * 500f, 1, 1) && tries < 100);
@@ -459,12 +459,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 do
                 {
                     if (freeAreaAngle2 == 0f)
-                        freeAreaAngle2 = Main.rand.NextFloat(MathHelper.TwoPi);
+                        freeAreaAngle2 = Main.rand.NextFloat(TwoPi);
                     else
-                        freeAreaAngle2 = (freeAreaAngle2 + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
+                        freeAreaAngle2 = (freeAreaAngle2 + Main.rand.NextFloat(2.28f)) % TwoPi;
 
                     if (freeAreaAngle2 < 0f)
-                        freeAreaAngle2 += MathHelper.TwoPi;
+                        freeAreaAngle2 += TwoPi;
                     tries++;
                 }
                 while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 500f, 1, 1) && freeAreaAngle2.ToRotationVector2().AngleBetween(freeAreaAngle.ToRotationVector2()) < 2.26f && tries < 100);
@@ -479,20 +479,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 if (inPhase4)
                     time += 30f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.14f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > Pi * 0.14f)
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
+                        float angularStep = TwoPi * i / tentacleSummonTime / 2f;
                         NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 148f, time);
                     }
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle2) > MathHelper.Pi * 0.16f && inPhase4)
+                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle2) > Pi * 0.16f && inPhase4)
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
+                        float angularStep = TwoPi * i / tentacleSummonTime / 2f;
                         NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 112f, time);
                     }
                 }
@@ -530,7 +530,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_NettleBorders(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             // Slow down prior to firing the bursts.
             float idealSpeed = Utils.GetLerpValue(120f, 70f, attackTimer, true) * 6f;
@@ -548,7 +548,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     int vineCount = inPhase4 ? 6 : 4;
                     for (int i = 0; i < vineCount; i++)
                     {
-                        Vector2 thornVelocity = (MathHelper.TwoPi * i / vineCount).ToRotationVector2() * 12f;
+                        Vector2 thornVelocity = (TwoPi * i / vineCount).ToRotationVector2() * 12f;
                         if (BossRushEvent.BossRushActive)
                             thornVelocity *= 1.5f;
                         Utilities.NewProjectileBetter(npc.Center, thornVelocity, ModContent.ProjectileType<NettlevineArenaSeparator>(), NettlevineArenaSeparatorDamage, 0f);
@@ -560,7 +560,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_RoseGrowth(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 3f, 0.15f);
@@ -625,13 +625,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 3f, 0.15f);
                 else
                     npc.velocity *= 0.9f;
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
             }
 
             // Slow down and try to look at the target.
             else if (chargeTimer < chargeSlowdownDelay)
             {
-                float idealRotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                float idealRotation = npc.AngleTo(target.Center) + PiOver2;
                 npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.1f).AngleTowards(idealRotation, 0.2f);
                 npc.velocity *= 0.93f;
 
@@ -643,14 +643,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             else if (chargeTimer == chargeSlowdownDelay)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 chargeCounter++;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / 4f);
+                        float shootOffsetAngle = Lerp(-0.45f, 0.45f, i / 4f);
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
                         Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * (chargeSpeed * 0.67f);
 
@@ -673,7 +673,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public static void DoPhase2Transition(NPC npc, Player target, float transitionCountdown, ref float bulbHueInterpolant)
         {
             npc.velocity *= 0.95f;
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
             npc.dontTakeDamage = true;
             bulbHueInterpolant = Utils.GetLerpValue(105f, 30f, transitionCountdown, true);
 
@@ -693,7 +693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public static void DoPhase3Transition(NPC npc, Player target, float transitionCountdown)
         {
             npc.velocity *= 0.95f;
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             // Focus on the boss as it transforms.
             if (npc.WithinRange(Main.LocalPlayer.Center, 2850f))
@@ -706,7 +706,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             // Roar right and turn into a trap plant thing before transitioning back to attacking.
             if (Main.netMode != NetmodeID.Server && transitionCountdown == 20f)
             {
-                Vector2 goreVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.54f) * Main.rand.NextFloat(10f, 16f);
+                Vector2 goreVelocity = (npc.rotation - PiOver2).ToRotationVector2().RotatedByRandom(0.54f) * Main.rand.NextFloat(10f, 16f);
                 for (int i = 378; i <= 380; i++)
                     Gore.NewGore(npc.GetSource_FromAI(), new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
 

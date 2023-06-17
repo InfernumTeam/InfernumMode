@@ -12,12 +12,12 @@ namespace InfernumMode
 
         public static void SetReverb(this SoundEffectInstance sound, float reverb)
         {
-            ApplyReverbFunction.Invoke(sound, new object[] { MathHelper.Clamp(reverb, 0f, 1f) });
+            ApplyReverbFunction.Invoke(sound, new object[] { Clamp(reverb, 0f, 1f) });
         }
 
         public static void SetLowPassFilter(this SoundEffectInstance sound, float filter)
         {
-            ApplyLowPassFunction.Invoke(sound, new object[] { MathHelper.Clamp(filter, 0f, 1f) });
+            ApplyLowPassFunction.Invoke(sound, new object[] { Clamp(filter, 0f, 1f) });
         }
     }
 }

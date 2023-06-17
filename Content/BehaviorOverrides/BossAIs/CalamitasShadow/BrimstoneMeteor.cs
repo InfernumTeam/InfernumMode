@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             float acceleration = 1.01f;
             float maxSpeed = 17f;
@@ -84,9 +84,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             for (int i = 0; i < 6; i++)
             {
                 Color fireColor = Main.rand.NextBool() ? Color.HotPink : Color.Red;
-                CloudParticle fireCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), fireColor, Color.DarkGray, 33, Main.rand.NextFloat(1.8f, 2f))
+                CloudParticle fireCloud = new(Projectile.Center, (TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), fireColor, Color.DarkGray, 33, Main.rand.NextFloat(1.8f, 2f))
                 {
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                    Rotation = Main.rand.NextFloat(TwoPi)
                 };
                 GeneralParticleHandler.SpawnParticle(fireCloud);
             }

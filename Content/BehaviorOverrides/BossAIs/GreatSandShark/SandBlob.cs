@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         {
             Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3() * 0.64f);
 
-            Projectile.Opacity = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / 360f) * 5f;
+            Projectile.Opacity = Sin(Pi * Projectile.timeLeft / 360f) * 5f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Fall.
             Projectile.rotation += Math.Sign(Projectile.velocity.X) * Projectile.velocity.Length() * 0.01f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.36f, -34f, 13f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.36f, -34f, 13f);
             Projectile.tileCollide = Projectile.Center.Y >= StartingYPosition + 180f && Projectile.timeLeft < 240;
         }
 
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);

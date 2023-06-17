@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                 Projectile.velocity = Vector2.Zero;
                 Projectile.Center = Vector2.Lerp(Projectile.Center, Main.npc[NPCIndex].Center, 0.04f).MoveTowards(Main.npc[NPCIndex].Center, 5f);
             }
-            Projectile.rotation = Main.npc[NPCIndex].AngleTo(Projectile.Center) + MathHelper.PiOver2;
+            Projectile.rotation = Main.npc[NPCIndex].AngleTo(Projectile.Center) + PiOver2;
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                                      SpriteEffects.None,
                                      0f);
                     incrementalBodyLength += chainOffset;
-                    centerOnchain += (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * chainOffset;
+                    centerOnchain += (Projectile.rotation - PiOver2).ToRotationVector2() * chainOffset;
                 }
             }
 

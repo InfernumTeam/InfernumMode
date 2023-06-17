@@ -40,13 +40,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void AI()
         {
-            Projectile.width = (int)MathHelper.Lerp(Projectile.width, 200f, 0.05f);
+            Projectile.width = (int)Lerp(Projectile.width, 200f, 0.05f);
 
             float height = BossRushEvent.BossRushActive ? 2700f : 1000f;
             if (Projectile.ai[1] == 1f)
                 height *= 5f;
 
-            TornadoHeight = MathHelper.Lerp(TornadoHeight, height, 0.05f);
+            TornadoHeight = Lerp(TornadoHeight, height, 0.05f);
             if (!CalamityPlayer.areThereAnyDamnBosses)
             {
                 Projectile.active = false;
@@ -54,14 +54,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 return;
             }
 
-            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 480f) * 10f;
+            Projectile.Opacity = Sin(Projectile.timeLeft / 480f) * 10f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(Sin(completionRatio * Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             if (Main.dayTime)
                 c = Color.Lerp(c, Color.Navy, 0.4f);
 
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         internal float WidthFunction(float completionRatio)
         {
-            return MathHelper.Lerp(Projectile.width * 0.6f, Projectile.width + 16f, 1f - completionRatio);
+            return Lerp(Projectile.width * 0.6f, Projectile.width + 16f, 1f - completionRatio);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

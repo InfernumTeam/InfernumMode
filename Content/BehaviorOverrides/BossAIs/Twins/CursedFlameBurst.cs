@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void AI()
         {
-            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / (float)Lifetime * MathHelper.Pi) * 5f;
+            Projectile.Opacity = Sin(Projectile.timeLeft / (float)Lifetime * Pi) * 5f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 
@@ -76,14 +76,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
-            return MathHelper.SmoothStep(3f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
+            float squeezeInterpolant = Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            return SmoothStep(3f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Green, Color.LimeGreen, MathF.Pow(completionRatio, 2f));
-            color *= 1f - 0.5f * MathF.Pow(completionRatio, 3f);
+            Color color = Color.Lerp(Color.Green, Color.LimeGreen, Pow(completionRatio, 2f));
+            color *= 1f - 0.5f * Pow(completionRatio, 3f);
             return color * Projectile.Opacity;
         }
 

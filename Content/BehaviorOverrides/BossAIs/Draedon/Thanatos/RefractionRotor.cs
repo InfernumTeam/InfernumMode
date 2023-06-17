@@ -50,11 +50,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Initialize the shoot offset angle.
             if (Main.netMode != NetmodeID.MultiplayerClient && LaserShootOffsetAngle == 0f)
             {
-                LaserShootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                LaserShootOffsetAngle = Main.rand.NextFloat(TwoPi);
                 Projectile.netUpdate = true;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation += (Projectile.identity % 2 == 0).ToDirectionInt() * 0.3f;
             Projectile.velocity *= 0.96f;
         }
@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Draedon/Thanatos/RefractionRotorGlowmask").Value;
             Vector2 origin = texture.Size() * 0.5f;
             float pulseInterpolant = Utils.GetLerpValue(60f, 45f, Projectile.timeLeft, true);
-            Color pulseColor = Color.Lerp(Color.White, Color.Red, MathF.Sin(Projectile.identity + Main.GlobalTimeWrappedHourly * 9.1f));
+            Color pulseColor = Color.Lerp(Color.White, Color.Red, Sin(Projectile.identity + Main.GlobalTimeWrappedHourly * 9.1f));
             pulseColor.A = 0;
 
             Color glowmaskColor = Color.Lerp(Color.White, pulseColor, pulseInterpolant);
@@ -80,8 +80,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     // Define the telegraph direction.
                     // As the player moves away the lines focus on them more powerfully.
-                    Vector2 telegraphDirection = (MathHelper.TwoPi * i / TotalLasersToFire + LaserShootOffsetAngle).ToRotationVector2();
-                    Vector2 aimedOffset = (Utils.RandomNextSeed((ulong)(i + Projectile.identity)) * MathHelper.E % MathHelper.TwoPi).ToRotationVector2() * 0.2f;
+                    Vector2 telegraphDirection = (TwoPi * i / TotalLasersToFire + LaserShootOffsetAngle).ToRotationVector2();
+                    Vector2 aimedOffset = (Utils.RandomNextSeed((ulong)(i + Projectile.identity)) * MathF.E % TwoPi).ToRotationVector2() * 0.2f;
                     Vector2 aimedDirection = (Projectile.SafeDirectionTo(Target.Center) + aimedOffset).SafeNormalize(Vector2.UnitY);
                     telegraphDirection = Vector2.Lerp(telegraphDirection, aimedDirection, PointAtTargetInterpolant);
 
@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     Vector2 start = Projectile.Center;
                     Vector2 end = start + telegraphDirection * 1450f;
                     float telegraphWidth = pulseInterpolant * Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true) * 8f;
-                    float telegraphColorInterpolant = (MathF.Sin(Projectile.identity + telegraphDirection.ToRotation()) * 0.5f + 0.5f) * 0.65f;
+                    float telegraphColorInterpolant = (Sin(Projectile.identity + telegraphDirection.ToRotation()) * 0.5f + 0.5f) * 0.65f;
                     Color telegraphColor = Color.Lerp(Color.Red, Color.Wheat, telegraphColorInterpolant) * pulseInterpolant * 0.6f;
 
                     // Use an exo color in the final phase.
@@ -127,9 +127,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 for (int i = 0; i < TotalLasersToFire; i++)
                 {
-                    float laserShootSpeed = MathHelper.Lerp(21f, 35f, PointAtTargetInterpolant);
-                    Vector2 laserDirection = (MathHelper.TwoPi * i / TotalLasersToFire + LaserShootOffsetAngle).ToRotationVector2();
-                    Vector2 aimedOffset = (Utils.RandomNextSeed((ulong)(i + Projectile.identity)) * MathHelper.E % MathHelper.TwoPi).ToRotationVector2() * 0.2f;
+                    float laserShootSpeed = Lerp(21f, 35f, PointAtTargetInterpolant);
+                    Vector2 laserDirection = (TwoPi * i / TotalLasersToFire + LaserShootOffsetAngle).ToRotationVector2();
+                    Vector2 aimedOffset = (Utils.RandomNextSeed((ulong)(i + Projectile.identity)) * MathF.E % TwoPi).ToRotationVector2() * 0.2f;
                     Vector2 aimedDirection = (Projectile.SafeDirectionTo(Target.Center) + aimedOffset).SafeNormalize(Vector2.UnitY);
                     laserDirection = Vector2.Lerp(laserDirection, aimedDirection, PointAtTargetInterpolant);
                     Vector2 laserVelocity = laserDirection * laserShootSpeed;

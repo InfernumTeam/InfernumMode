@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public override void AI()
         {
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / 45f);
+            Projectile.scale = Sin(Pi * Time / 45f);
             Time++;
         }
 

@@ -59,14 +59,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static Vector2 GetHoverDestination(NPC owner)
         {
-            return owner.Center + (owner.rotation - MathHelper.PiOver2).ToRotationVector2() * owner.scale * 108f; ;
+            return owner.Center + (owner.rotation - PiOver2).ToRotationVector2() * owner.scale * 108f; ;
         }
 
-        public float OrbWidthFunction(float completionRatio) => MathHelper.SmoothStep(0f, Radius, MathF.Sin(MathHelper.Pi * completionRatio));
+        public float OrbWidthFunction(float completionRatio) => SmoothStep(0f, Radius, Sin(Pi * completionRatio));
 
         public Color OrbColorFunction(float completionRatio)
         {
-            Color c = Color.Lerp(Color.Yellow, Color.Pink, MathHelper.Lerp(0.2f, 0.8f, Projectile.localAI[0] % 1f));
+            Color c = Color.Lerp(Color.Yellow, Color.Pink, Lerp(0.2f, 0.8f, Projectile.localAI[0] % 1f));
             c = Color.Lerp(c, Color.White, completionRatio * 0.5f);
             c.A = 0;
             return c;
@@ -88,9 +88,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             List<Vector2> drawPoints = new();
 
             spriteBatch.EnterShaderRegion();
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 30f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 30f)
             {
-                Projectile.localAI[0] = MathHelper.Clamp((offsetAngle + MathHelper.PiOver2) / MathHelper.Pi, 0f, 1f);
+                Projectile.localAI[0] = Clamp((offsetAngle + PiOver2) / Pi, 0f, 1f);
 
                 rotationPoints.Clear();
                 drawPoints.Clear();

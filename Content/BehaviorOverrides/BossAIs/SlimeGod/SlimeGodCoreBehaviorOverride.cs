@@ -183,7 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             backglowInterpolant = Utils.GetLerpValue(dustAnimationTime / 2f - 20f, dustAnimationTime - 1f, attackTimer, true);
 
             // Spin 2 win.
-            float spinSpeed = Utils.Remap(attackTimer, 15f, dustAnimationTime - 15f, 0f, MathHelper.Pi / 24f);
+            float spinSpeed = Utils.Remap(attackTimer, 15f, dustAnimationTime - 15f, 0f, Pi / 24f);
             npc.rotation += spinSpeed;
             npc.velocity *= 0.95f;
 
@@ -198,13 +198,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 24f, attackTimer, true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(dustAnimationTime, dustAnimationTime - 10f, attackTimer, true);
 
-                float offsetAngle = MathF.Pow(attackTimer / dustAnimationTime, 4.2f) * MathHelper.Pi;
-                float dustOffsetRadius = MathHelper.Lerp(24f, 300f, attackTimer / dustAnimationTime);
+                float offsetAngle = Pow(attackTimer / dustAnimationTime, 4.2f) * Pi;
+                float dustOffsetRadius = Lerp(24f, 300f, attackTimer / dustAnimationTime);
                 for (int i = 0; i < 6; i++)
                 {
                     for (int j = 0; j < 6; j++)
                     {
-                        Vector2 dustSpawnOffset = -Vector2.UnitY.RotatedBy(offsetAngle + MathHelper.TwoPi * i / 6f) * dustOffsetRadius + Main.rand.NextVector2Circular(20f, 20f);
+                        Vector2 dustSpawnOffset = -Vector2.UnitY.RotatedBy(offsetAngle + TwoPi * i / 6f) * dustOffsetRadius + Main.rand.NextVector2Circular(20f, 20f);
                         Vector2 dustSpawnVelocity = dustSpawnOffset * -0.1f;
                         Dust slime = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 136, dustSpawnVelocity);
                         slime.color = Color.Lerp(Color.Red, Color.Purple, i / 2f);
@@ -249,7 +249,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             // Initialize the spin angle to make it randomized.
             if (attackTimer == 1f)
             {
-                spinAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                spinAngleOffset = Main.rand.NextFloat(TwoPi);
                 npc.netUpdate = true;
             }
 
@@ -262,7 +262,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 420f;
                 npc.Center = npc.Center.MoveTowards(destination, 32f);
 
-                spinAngleOffset += MathHelper.TwoPi * Utils.GetLerpValue(170f, 150f, attackTimer, true) / 90f;
+                spinAngleOffset += TwoPi * Utils.GetLerpValue(170f, 150f, attackTimer, true) / 90f;
                 npc.rotation += spinAngleOffset * 0.3f;
 
                 if (attackTimer % burstShootRate == burstShootRate - 1f && !npc.WithinRange(target.Center, 275f))
@@ -270,11 +270,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     SoundEngine.PlaySound(SoundID.Item171, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float offsetAngle = Main.rand.NextFloat(TwoPi);
                         for (int i = 0; i < blobsInBurst; i++)
                         {
                             int globID = Main.rand.NextBool() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
-                            Vector2 blobShootVelocity = (MathHelper.TwoPi * i / blobsInBurst + offsetAngle).ToRotationVector2() * blobShootSpeed;
+                            Vector2 blobShootVelocity = (TwoPi * i / blobsInBurst + offsetAngle).ToRotationVector2() * blobShootSpeed;
                             Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, SlimeGlobDamage, 0f);
                         }
                     }
@@ -292,7 +292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     for (int i = 0; i < 3; i++)
                     {
                         int globID = Main.rand.NextBool() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
-                        float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
+                        float shootOffsetAngle = Lerp(-0.4f, 0.4f, i / 2f);
                         Vector2 blobShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * blobShootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, SlimeGlobDamage, 0f);
                     }
@@ -422,7 +422,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     for (int i = 0; i < blobsPerBurst; i++)
                     {
                         int globID = Main.rand.NextBool() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
-                        float shootOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, i / (blobsPerBurst - 1f));
+                        float shootOffsetAngle = Lerp(-0.75f, 0.75f, i / (blobsPerBurst - 1f));
                         Vector2 blobShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * blobShootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, blobShootVelocity, globID, SlimeGlobDamage, 0f);
                     }
@@ -505,7 +505,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     backimageColor.A = 0;
                     for (int i = 0; i < 8; i++)
                     {
-                        Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * drawOffsetFactor;
+                        Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * drawOffsetFactor;
                         Main.spriteBatch.Draw(slimeGodTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                     }
                 }
@@ -528,7 +528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
                 for (int i = (int)afterimageCount; i >= 1; i--)
                 {
-                    Color afterimageColor = lightColor.MultiplyRGB(Color.White) * MathF.Pow(1f - i / (float)afterimageCount, 3f);
+                    Color afterimageColor = lightColor.MultiplyRGB(Color.White) * Pow(1f - i / (float)afterimageCount, 3f);
                     DrawCoreInstance(afterimageColor, npc.oldPos[i] + npc.Size * 0.5f, npc.spriteDirection, false);
                 }
             }

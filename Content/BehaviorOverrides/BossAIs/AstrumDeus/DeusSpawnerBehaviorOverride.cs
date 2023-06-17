@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Rise into the sky a bit after oscillating. After even more time has passed, slow down.
             if (timer is >= 60f and < 350f)
-                projectile.velocity.Y = MathHelper.Lerp(projectile.velocity.Y, -3f, 0.06f);
+                projectile.velocity.Y = Lerp(projectile.velocity.Y, -3f, 0.06f);
             else
                 projectile.velocity *= 0.97f;
 
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (leftBorderOpacity > 0f)
             {
                 Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(700f, 755f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * Lerp(700f, 755f, Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, borderColor1, leftBorderOpacity);
 
                 for (int i = 0; i < 150; i++)
@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (rightBorderOpacity > 0f)
             {
                 Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(700f, 755f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * Lerp(700f, 755f, Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, borderColor1, rightBorderOpacity);
 
                 for (int i = 0; i < 150; i++)

@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             Lighting.AddLight(Projectile.Center, 0.3f, 0.5f, 0.1f);
 
@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             if (Time > 150f && Projectile.velocity.Length() < 20f)
                 Projectile.velocity *= 1.01f;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             Time++;
         }

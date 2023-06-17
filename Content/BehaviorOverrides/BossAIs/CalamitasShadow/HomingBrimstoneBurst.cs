@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             // Make an incomplete arc after a certain amount of time has passed.
             if (Projectile.timeLeft <= Lifetime - TimeBeforeSwirl)
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.TwoPi * 0.8f / (Lifetime - TimeBeforeSwirl));
+                Projectile.velocity = Projectile.velocity.RotatedBy(TwoPi * 0.8f / (Lifetime - TimeBeforeSwirl));
 
             if (!Main.dedServ && Main.rand.NextBool(5))
             {
@@ -95,14 +95,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
-            return MathHelper.SmoothStep(3f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
+            float squeezeInterpolant = Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            return SmoothStep(3f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Red, Color.White, MathF.Pow(completionRatio, 2f));
-            color *= MathF.Pow(1f - completionRatio, 2.5f);
+            Color color = Color.Lerp(Color.Red, Color.White, Pow(completionRatio, 2f));
+            color *= Pow(1f - completionRatio, 2.5f);
             return color * Projectile.Opacity * 1.5f;
         }
 

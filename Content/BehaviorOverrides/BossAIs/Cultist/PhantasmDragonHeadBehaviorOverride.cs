@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     if (npc.timeLeft > 180)
                         npc.timeLeft = 180;
                     npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * (npc.velocity.Length() + 1.5f), 0.06f);
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
                     return false;
                 }
             }
@@ -58,11 +58,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 // If close to the target, speed up. Otherwise attempt to rotate towards them.
                 if (!npc.WithinRange(target.Center, 280f))
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 33f : 23.75f, 0.05f);
+                    float newSpeed = Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 33f : 23.75f, 0.05f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.0415f, true) * newSpeed;
                 }
                 else if (npc.velocity.Length() < 24f)
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 43f : 33f, 0.06f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 43f : 33f, 0.06f);
 
                 openMouthFlag = 1f;
 
@@ -72,8 +72,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     for (int i = 0; i < 3; i++)
                     {
                         Vector2 fireballVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 7.8f;
-                        fireballVelocity = fireballVelocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 5f).RotatedByRandom(0.16f);
-                        fireballVelocity = fireballVelocity.RotatedBy(MathHelper.Lerp(-0.27f, 0.27f, i / 2f));
+                        fireballVelocity = fireballVelocity.RotateTowards(npc.AngleTo(target.Center), Pi / 5f).RotatedByRandom(0.16f);
+                        fireballVelocity = fireballVelocity.RotatedBy(Lerp(-0.27f, 0.27f, i / 2f));
 
                         int fireball = Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ProjectileID.CultistBossFireBallClone, CultistBehaviorOverride.ShadowFireballDamage, 0f);
                         if (!Main.projectile.IndexInRange(fireball))
@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
             else
             {
-                openMouthFlag = ((npc.rotation - MathHelper.PiOver2).AngleTowards(npc.AngleTo(target.Center), 0.84f) == npc.AngleTo(target.Center)).ToInt();
+                openMouthFlag = ((npc.rotation - PiOver2).AngleTowards(npc.AngleTo(target.Center), 0.84f) == npc.AngleTo(target.Center)).ToInt();
                 openMouthFlag = (int)openMouthFlag & npc.WithinRange(target.Center, 300f).ToInt();
 
                 float newSpeed = npc.velocity.Length();
@@ -95,20 +95,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
                 float angleBetweenDirectionAndTarget = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center));
 #pragma warning disable IDE0078 // Use pattern matching
-                if (angleBetweenDirectionAndTarget < 0.55f && angleBetweenDirectionAndTarget > (MathHelper.Pi / 3f))
+                if (angleBetweenDirectionAndTarget < 0.55f && angleBetweenDirectionAndTarget > (Pi / 3f))
                     newSpeed += 0.09f;
 
-                if (angleBetweenDirectionAndTarget < MathHelper.Pi / 3 && angleBetweenDirectionAndTarget > MathHelper.Pi * 0.75f)
+                if (angleBetweenDirectionAndTarget < Pi / 3 && angleBetweenDirectionAndTarget > Pi * 0.75f)
                     newSpeed -= 0.0725f;
 #pragma warning restore IDE0078 // Use pattern matching
 
-                newSpeed = MathHelper.Clamp(newSpeed, 8.5f, 19f) * (BossRushEvent.BossRushActive ? 1.8f : 1.32f);
+                newSpeed = Clamp(newSpeed, 8.5f, 19f) * (BossRushEvent.BossRushActive ? 1.8f : 1.32f);
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.04f, true) * newSpeed;
             }
 
             npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.45f);
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             return false;
         }
 

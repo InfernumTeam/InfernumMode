@@ -38,8 +38,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Fall to the side if on ground.
             if (Math.Abs(Projectile.velocity.Y) <= 0.41f)
             {
-                Projectile.rotation = MathHelper.Lerp(Projectile.rotation + Projectile.spriteDirection * 0.08f, Projectile.spriteDirection * MathHelper.PiOver2, 0.1f);
-                Projectile.rotation = MathHelper.Clamp(Projectile.rotation, -MathHelper.PiOver2, MathHelper.PiOver2);
+                Projectile.rotation = Lerp(Projectile.rotation + Projectile.spriteDirection * 0.08f, Projectile.spriteDirection * PiOver2, 0.1f);
+                Projectile.rotation = Clamp(Projectile.rotation, -PiOver2, PiOver2);
             }
             else
                 Projectile.rotation = 0f;
@@ -47,10 +47,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Fade away over time.
             Projectile.Opacity = Utils.GetLerpValue(0f, 120f, Projectile.timeLeft, true);
 
-            Projectile.gfxOffY = Math.Abs(Projectile.rotation / MathHelper.PiOver2) * 24f;
+            Projectile.gfxOffY = Math.Abs(Projectile.rotation / PiOver2) * 24f;
 
             // Fall down.
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.4f, -8f, 20f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.4f, -8f, 20f);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

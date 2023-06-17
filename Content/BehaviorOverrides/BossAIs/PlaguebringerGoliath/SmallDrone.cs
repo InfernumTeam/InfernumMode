@@ -64,8 +64,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (InitialTargetPosition == Vector2.Zero)
                 InitialTargetPosition = Target.Center;
 
-            MoveOffset = MathHelper.Lerp(0f, MoveIncrement * 100f + 1400f, 1f - AttackTimer / LaserAttackTime);
-            MoveOffset += MathHelper.Lerp(450f, 0f, Utils.GetLerpValue(-35f, 0f, AttackTimer, true));
+            MoveOffset = Lerp(0f, MoveIncrement * 100f + 1400f, 1f - AttackTimer / LaserAttackTime);
+            MoveOffset += Lerp(450f, 0f, Utils.GetLerpValue(-35f, 0f, AttackTimer, true));
             NPC.Center = InitialTargetPosition + OffsetDirection.ToRotationVector2() * MoveOffset;
 
             if (AttackTimer == 0f)

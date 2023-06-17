@@ -83,8 +83,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         {
             Texture2D texture = InfernumTextureRegistry.Gleam.Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
-            float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi, npc.ai[1] / 240f);
-            float rotation2 = MathHelper.Lerp(MathHelper.TwoPi, 0f, npc.ai[1] / 240f);
+            float rotation = Lerp(0f, TwoPi, npc.ai[1] / 240f);
+            float rotation2 = Lerp(TwoPi, 0f, npc.ai[1] / 240f);
             Color nextColor = Color.Transparent;
             if (AttackEyeColorPairs.TryGetValue((GolemAttackState)Main.npc[(int)npc.ai[0]].ai[1], out Color fuckYou))
                 nextColor = fuckYou;
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                 float colorRatio;
                 if (body.ai[0] > 120f)
-                    colorRatio = 1 - MathHelper.Clamp((body.ai[0] - 121f) / 30f, 0f, 1f);
+                    colorRatio = 1 - Clamp((body.ai[0] - 121f) / 30f, 0f, 1f);
                 else
                     colorRatio = 0f;
 
@@ -133,15 +133,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     float scale = i / 4f;
                     Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, leftColor * colorRatio, rotation, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                     Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, rightColor * colorRatio, rotation2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-                    Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, leftColor * colorRatio, rotation + MathHelper.PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-                    Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, rightColor * colorRatio, rotation2 + MathHelper.PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, leftColor * colorRatio, rotation + PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, rightColor * colorRatio, rotation2 + PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 }
                 return;
             }
 
             float AttackCooldownRatio = GolemBodyBehaviorOverride.ConstAttackCooldown - body.Infernum().ExtraAI[7];
             Color prevColor = AttackEyeColorPairs[(GolemAttackState)body.Infernum().ExtraAI[8]];
-            float ratio = MathHelper.Clamp(AttackCooldownRatio / (GolemBodyBehaviorOverride.ConstAttackCooldown * 0.67f), 0f, 1f);
+            float ratio = Clamp(AttackCooldownRatio / (GolemBodyBehaviorOverride.ConstAttackCooldown * 0.67f), 0f, 1f);
             Color drawColor = body.Infernum().ExtraAI[5] == 1f || body.Infernum().ExtraAI[6] == 1f ? Color.Red * 0.25f : Color.Lerp(prevColor, nextColor, ratio) * 0.4f;
 
             for (float i = 4; i > 0; i--)
@@ -149,8 +149,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 float scale = i / 4f;
                 Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, drawColor, rotation, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, drawColor, rotation2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, drawColor, rotation + MathHelper.PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, drawColor, rotation2 + MathHelper.PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, drawColor, rotation + PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, drawColor, rotation2 + PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
 
             // Draw laser ray telegraphs.
@@ -165,12 +165,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                 Vector2 drawPosition = drawPos - Main.screenPosition;
                 Vector2 beamDirection = -Vector2.UnitX;
-                float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                float beamRotation = beamDirection.ToRotation() - PiOver2;
                 Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
                 drawPosition = drawPos2 - Main.screenPosition;
                 beamDirection = Vector2.UnitX;
-                beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                beamRotation = beamDirection.ToRotation() - PiOver2;
                 Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
                 Main.spriteBatch.ResetBlendState();

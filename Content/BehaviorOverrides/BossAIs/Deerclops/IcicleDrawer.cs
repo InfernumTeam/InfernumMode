@@ -154,7 +154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             for (int i = 0; i < baseCount; i++)
             {
                 float cutoffDistance = MaxDistanceBeforeCutoff;
-                float baseDirection = RNG.NextFloatDirection() * BranchTurnAngleVariance * 0.1f + BaseDirection - MathHelper.PiOver2;
+                float baseDirection = RNG.NextFloatDirection() * BranchTurnAngleVariance * 0.1f + BaseDirection - PiOver2;
                 float baseSize = RNG.NextFloat(-8f, 8f) + DistanceUsedForBase;
                 float distanceTraversed = baseSize;
                 Vector2 startOfBase = Vector2.UnitY * 10f;
@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                     float directionOfNextBranch = branchToAttachTo.Direction + RNG.NextFloatDirection() * BranchTurnAngleVariance;
                     float downwardBiasFactor = DownwardBiasFactor;
                     float downwardBiasFromGeneration = Utils.Remap(branchToAttachTo.Generation, 0f, 5f, 0f, 0.8f);
-                    downwardBiasFactor = MathHelper.Clamp(downwardBiasFactor + downwardBiasFromGeneration, 0f, 0.95f);
+                    downwardBiasFactor = Clamp(downwardBiasFactor + downwardBiasFromGeneration, 0f, 0.95f);
 
                     if (downwardBiasFactor > 0f && branchToAttachTo != baseBranch)
                     {
@@ -212,7 +212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                         directionOfNextBranch = Vector2.Lerp(directionOfNextBranch.ToRotationVector2(), Vector2.UnitY, randomBias).ToRotation();
                     }
 
-                    float lengthOfNextBranch = MathHelper.Max(MinBranchLength, branchToAttachTo.CurveLength * RNG.NextFloat(0.5f, 0.925f));
+                    float lengthOfNextBranch = MathF.Max(MinBranchLength, branchToAttachTo.CurveLength * RNG.NextFloat(0.5f, 0.925f));
 
                     Vector2 start = branchToAttachTo.EndOfCurve;
                     Vector2 end = start + directionOfNextBranch.ToRotationVector2() * lengthOfNextBranch;
@@ -229,7 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
                 // Go back and make all end branches have a small end width.
                 foreach (Branch branch in existingBranches.Where(b => b.Value.Count <= 0).Select(b => b.Key))
-                    branch.EndingWidth = MathHelper.Min(3f, branch.EndingWidth);
+                    branch.EndingWidth = MathF.Min(3f, branch.EndingWidth);
             }
 
             return existingBranches;
@@ -257,7 +257,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 Vector2? prevBottomRight = null;
                 if (branch.PreviousBranch != null)
                 {
-                    Vector2 previousOrthogonalDirection = (branch.PreviousBranch.Direction + MathHelper.PiOver2).ToRotationVector2();
+                    Vector2 previousOrthogonalDirection = (branch.PreviousBranch.Direction + PiOver2).ToRotationVector2();
                     prevBottomLeft = branch.PreviousBranch.EndOfCurve + previousOrthogonalDirection * branch.PreviousBranch.EndingWidth * 0.5f;
                     prevBottomRight = branch.PreviousBranch.EndOfCurve - previousOrthogonalDirection * branch.PreviousBranch.EndingWidth * 0.5f;
                 }
@@ -277,8 +277,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
                     // Calculate frame coordinates.
                     // This sucked to make.
-                    float topWidth = MathHelper.Lerp(branch.StartingWidth, branch.EndingWidth, topCompletionRatio);
-                    float bottomWidth = MathHelper.Lerp(branch.StartingWidth, branch.EndingWidth, bottomCompletionRatio);
+                    float topWidth = Lerp(branch.StartingWidth, branch.EndingWidth, topCompletionRatio);
+                    float bottomWidth = Lerp(branch.StartingWidth, branch.EndingWidth, bottomCompletionRatio);
                     float topTexCoord = branch.CurveLength * topCompletionRatio / VerticalStretchFactor / icicleTexture.Height;
                     float bottomTexCoord = branch.CurveLength * bottomCompletionRatio / VerticalStretchFactor / icicleTexture.Height;
                     if (VerticalStretchFactor <= 0f)
@@ -300,7 +300,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                     Vector2 bottomRightTexCoord = new(0f, bottomTexCoord);
 
                     // Calculate draw coordinates.
-                    Vector2 orthogonalDirection = (bottom - top).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
+                    Vector2 orthogonalDirection = (bottom - top).SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2);
                     Vector2 topLeft = prevBottomLeft ?? top + orthogonalDirection * topWidth * 0.5f;
                     Vector2 topRight = prevBottomRight ?? top - orthogonalDirection * topWidth * 0.5f;
                     Vector2 bottomLeft = bottom + orthogonalDirection * bottomWidth * 0.5f;
@@ -391,13 +391,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         {
             float distanceBetweenPoints = Vector2.Distance(start, end);
             Vector2[] initialPoints = new Vector2[ControlPointCountPerBranch];
-            Vector2 orthogonalDirection = (end - start).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
+            Vector2 orthogonalDirection = (end - start).SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2);
             for (int i = 0; i < ControlPointCountPerBranch; i++)
                 initialPoints[i] = Vector2.Lerp(start, end, i / (float)(ControlPointCountPerBranch - 1f));
 
             // Create a bend midway.
-            float bendFactor = MathF.Pow(RNG.NextFloat(), 0.66f) * RNG.NextBool().ToDirectionInt() * BranchMaxBendFactor;
-            bendFactor = MathHelper.Lerp(bendFactor, Math.Sign(bendFactor) * BranchMaxBendFactor, Utils.GetLerpValue(DistanceUsedForBase * 0.4f, DistanceUsedForBase * 0.75f, distanceBetweenPoints, true));
+            float bendFactor = Pow(RNG.NextFloat(), 0.66f) * RNG.NextBool().ToDirectionInt() * BranchMaxBendFactor;
+            bendFactor = Lerp(bendFactor, Math.Sign(bendFactor) * BranchMaxBendFactor, Utils.GetLerpValue(DistanceUsedForBase * 0.4f, DistanceUsedForBase * 0.75f, distanceBetweenPoints, true));
 
             initialPoints[ControlPointCountPerBranch / 2] += orthogonalDirection * RNG.NextFloatDirection() * distanceBetweenPoints * bendFactor;
 

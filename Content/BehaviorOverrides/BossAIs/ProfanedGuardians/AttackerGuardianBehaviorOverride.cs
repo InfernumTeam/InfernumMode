@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Player target = Main.player[npc.target];
             if (((!target.active || target.dead) || target.Center.X < WorldSaveSystem.ProvidenceArena.X * 16) || !Main.dayTime)
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
+                npc.velocity.Y = Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
                 if (npc.timeLeft < 180)
                     npc.timeLeft = 180;
                 if (!npc.WithinRange(target.Center, 2000f) || target.dead)
@@ -125,21 +125,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reset opacities depending on whether they are being drawn or not.
             ref float smearOpacity = ref npc.Infernum().ExtraAI[CommanderSpearSmearOpacityIndex];
             if (npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] == 1f)
-                smearOpacity = MathHelper.Clamp(smearOpacity + 0.1f, 0f, 1f);
+                smearOpacity = Clamp(smearOpacity + 0.1f, 0f, 1f);
             else
-                smearOpacity = MathHelper.Clamp(smearOpacity - 0.1f, 0f, 1f);
+                smearOpacity = Clamp(smearOpacity - 0.1f, 0f, 1f);
 
             npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex] = 0f;
 
             ref float fireBorderOpacity = ref npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
             if (npc.Infernum().ExtraAI[FireBorderShouldDrawIndex] == 1f)
-                fireBorderOpacity = MathHelper.Clamp(fireBorderOpacity + 0.1f, 0f, 1f);
+                fireBorderOpacity = Clamp(fireBorderOpacity + 0.1f, 0f, 1f);
             else
-                fireBorderOpacity = MathHelper.Clamp(fireBorderOpacity - 0.1f, 0f, 1f);
+                fireBorderOpacity = Clamp(fireBorderOpacity - 0.1f, 0f, 1f);
 
             // Decrease the extra sky opacity;
             ref float skyOpacity = ref npc.Infernum().ExtraAI[GuardianSkyExtraIntensityIndex];
-            skyOpacity = MathHelper.Clamp(skyOpacity - 0.01f, 0f, 1f);
+            skyOpacity = Clamp(skyOpacity - 0.01f, 0f, 1f);
 
             // Force the player into the area if the opacity is drawn.
             if (fireBorderOpacity > 0f && target.Center.Distance(npc.Center) > 1250f)
@@ -296,9 +296,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 lightPillarPosition = npc.Center - Main.screenPosition + Vector2.UnitY * 3000f;
                 for (int i = 0; i < 16; i++)
                 {
-                    float intensity = MathHelper.Clamp(brightnessWidthFactor * 1.1f - i / 15f, 0f, 1f);
+                    float intensity = Clamp(brightnessWidthFactor * 1.1f - i / 15f, 0f, 1f);
                     Vector2 lightPillarOrigin = new(TextureAssets.MagicPixel.Value.Width / 2f, TextureAssets.MagicPixel.Value.Height);
-                    Vector2 lightPillarScale = new(MathF.Sqrt(intensity + i) * brightnessWidthFactor * 200f, 6f);
+                    Vector2 lightPillarScale = new(Sqrt(intensity + i) * brightnessWidthFactor * 200f, 6f);
                     Color lightPillarColor = new Color(0.7f, 0.55f, 0.38f, 0f) * intensity * npc.Infernum().ExtraAI[0] * 0.4f;
                     spriteBatch.Draw(TextureAssets.MagicPixel.Value, lightPillarPosition, null, lightPillarColor, 0f, lightPillarOrigin, lightPillarScale, 0, 0f);
                 }
@@ -322,9 +322,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 for (int i = 0; i < 24; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * radius;
+                    Vector2 drawOffset = (TwoPi * i / 24f).ToRotationVector2() * radius;
                     Color backimageColor = Color.Black;
-                    backimageColor.A = (byte)MathHelper.Lerp(164f, 0f, npc.Opacity);
+                    backimageColor.A = (byte)Lerp(164f, 0f, npc.Opacity);
                     spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backimageColor * npc.Opacity, npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }
@@ -392,8 +392,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 1; i < distance / 125f; i++)
             {
                 Vector2 arrowOrigin = arrowTexture.Size() * 0.5f;
-                float arrowRotation = direction.ToRotation() + MathHelper.PiOver2;
-                float sineValue = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10.5f - i)) / 2f;
+                float arrowRotation = direction.ToRotation() + PiOver2;
+                float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f - i)) / 2f;
                 float finalOpacity = CalamityUtils.SineInOutEasing(sineValue, 1);
                 Main.spriteBatch.Draw(arrowTexture, drawPosition, null, drawColor * finalOpacity, arrowRotation, arrowOrigin, 0.75f, SpriteEffects.None, 0f);
                 drawPosition += direction * 75f;
@@ -409,7 +409,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (commanderHasAlreadyDoneBoom == 1 || initialWaitIsOver)
             {
-                opacity = MathHelper.Clamp(opacity + 0.05f, 0f, 1f);
+                opacity = Clamp(opacity + 0.05f, 0f, 1f);
                 // Glow effect.
                 Texture2D glow = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
@@ -424,18 +424,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Color glowColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.3f);
                 glowColor.A = 0;
                 float glowRotation = Main.GlobalTimeWrappedHourly * 3;
-                float scaleInterpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
-                float scale = MathHelper.Lerp(3.6f, 4.1f, scaleInterpolant);
+                float scaleInterpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
+                float scale = Lerp(3.6f, 4.1f, scaleInterpolant);
                 Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor * opacity, glowRotation, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(glowBloom, glowPosition, null, glowColor * opacity, glowRotation * -1, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
 
                 // Backglow
                 int backglowAmount = 12;
-                float sine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
-                float backglowDistance = MathHelper.Lerp(4.5f, 6.5f, sine);
+                float sine = (1f + Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+                float backglowDistance = Lerp(4.5f, 6.5f, sine);
                 for (int i = 0; i < backglowAmount; i++)
                 {
-                    Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * backglowDistance;
+                    Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * backglowDistance;
                     Color backglowColor = WayfinderSymbol.Colors[1];
                     backglowColor.A = 0;
                     SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -454,8 +454,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 
-            float scale = MathHelper.Lerp(0.15f, 0.155f, MathF.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * scaleFactor;
-            float noiseScale = MathHelper.Lerp(0.4f, 0.8f, MathF.Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
+            float scale = Lerp(0.15f, 0.155f, Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * scaleFactor;
+            float noiseScale = Lerp(0.4f, 0.8f, Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
 
             Effect shieldEffect = Filters.Scene["CalamityMod:RoverDriveShield"].GetShader().Shader;
             shieldEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.24f);
@@ -464,7 +464,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
 
             // Prepare the forcefield opacity.
-            float baseShieldOpacity = 0.9f + 0.1f * MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+            float baseShieldOpacity = 0.9f + 0.1f * Sin(Main.GlobalTimeWrappedHourly * 2f);
             shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (opacity * 0.9f + 0.1f));
             shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
 
@@ -498,14 +498,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float radius = 1300f;
             Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
             float distanceFromCenter = radius - Main.player[npc.target].Center.Distance(npc.Center);
-            float alpha = MathHelper.Clamp(1f - distanceFromCenter / (radius * 1.5f), 0f, 1f);
+            float alpha = Clamp(1f - distanceFromCenter / (radius * 1.5f), 0f, 1f);
             color *= alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
 
             for (int i = 0; i <= totalPoints; i++)
             {
                 float interpolant = i / totalPoints;
-                Vector2 position = npc.Center - Main.screenPosition + (i * MathHelper.TwoPi / totalPoints).ToRotationVector2() * radius;
-                Vector2 position2 = npc.Center - Main.screenPosition + (i * MathHelper.TwoPi / totalPoints).ToRotationVector2() * (radius + width);
+                Vector2 position = npc.Center - Main.screenPosition + (i * TwoPi / totalPoints).ToRotationVector2() * radius;
+                Vector2 position2 = npc.Center - Main.screenPosition + (i * TwoPi / totalPoints).ToRotationVector2() * (radius + width);
 
                 Vector2 textureCoords = new(interpolant, 0f);
                 Vector2 textureCoords2 = new(interpolant, 1f);
@@ -542,7 +542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 endPos = startPos + new Vector2(0f, 1570f);
             float fadeDistance = 500f;
             float distanceFromBorder = new Vector2(Main.player[npc.target].Center.X, startPos.Y).Distance(startPos);
-            float alpha = MathHelper.Clamp(1f - distanceFromBorder / (fadeDistance * 1.5f), 0f, 1f);
+            float alpha = Clamp(1f - distanceFromBorder / (fadeDistance * 1.5f), 0f, 1f);
             color *= alpha;
 
             for (int i = 0; i < totalPoints; i++)

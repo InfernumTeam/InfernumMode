@@ -364,7 +364,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 SoundEngine.PlaySound(SoundID.Item158, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    lightBoltReleaseDelay = MathHelper.Clamp(lightBoltReleaseDelay - 6f, 15f, 60f);
+                    lightBoltReleaseDelay = Clamp(lightBoltReleaseDelay - 6f, 15f, 60f);
                     lightBoltReleaseCountdown = lightBoltReleaseDelay;
                     lightBoltReleaseCounter++;
 
@@ -391,7 +391,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (!attackingPlayer)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * (timeSincePickedUpLacewing >= 1f ? 0.4f : 3f), 0.05f);
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.01f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.01f, 0f, 1f);
 
                 if (npc.WithinRange(lacewing.Center + Vector2.UnitY * npc.scale * 4f, 20f) && timeSincePickedUpLacewing <= 0f)
                 {
@@ -470,7 +470,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 float oldHoverOffset = hoverOffsetY;
                 hoverOffsetX = Main.rand.NextFloat(730f, 945f) * (barrageCounter % 2f == 1f).ToDirectionInt();
                 hoverOffsetY = Utils.Remap(Math.Abs(hoverOffsetX), 730f, 945f, -270f, -384f);
-                if (MathHelper.Distance(hoverOffsetY, oldHoverOffset) < 72f)
+                if (Distance(hoverOffsetY, oldHoverOffset) < 72f)
                     hoverOffsetY -= 56f;
 
                 npc.netUpdate = true;
@@ -488,7 +488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Fly around and release lances at the target.
             float flySpeedInterpolant = Utils.GetLerpValue(attackDelay, attackDelay + hoverTime, attackTimer, true);
-            float flySpeed = MathHelper.Lerp(10f, 56f, MathF.Pow(flySpeedInterpolant, 1.5f));
+            float flySpeed = Lerp(10f, 56f, Pow(flySpeedInterpolant, 1.5f));
             Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetX, hoverOffsetY);
             npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, flySpeed);
 
@@ -614,7 +614,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % boltReleaseRate == 0f)
                 {
                     float castCompletionInterpolant = Utils.GetLerpValue(boltReleaseDelay, boltReleaseDelay + boltReleaseTime, attackTimer, true);
-                    Vector2 boltVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * castCompletionInterpolant) * boltSpeed;
+                    Vector2 boltVelocity = -Vector2.UnitY.RotatedBy(TwoPi * castCompletionInterpolant) * boltSpeed;
                     Utilities.NewProjectileBetter(npc.Center + handOffset, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f, -1, npc.target, castCompletionInterpolant);
                 }
             }
@@ -711,10 +711,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     int starCount = 24;
                     for (int i = 0; i < starCount; i++)
                     {
-                        Vector2 starVelocity = StarBolt.StarPolarEquation(5, MathHelper.TwoPi * i / starCount) * 9.6f - Vector2.UnitY * 8f;
+                        Vector2 starVelocity = StarBolt.StarPolarEquation(5, TwoPi * i / starCount) * 9.6f - Vector2.UnitY * 8f;
                         Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 30f, starVelocity, ModContent.ProjectileType<StarBolt>(), PrismaticBoltDamage, 0f, -1, 0f, i / (float)starCount);
 
-                        starVelocity = StarBolt.StarPolarEquation(5, MathHelper.TwoPi * (1f - (i + 0.5f) / starCount)) * 3f - Vector2.UnitY * 8f;
+                        starVelocity = StarBolt.StarPolarEquation(5, TwoPi * (1f - (i + 0.5f) / starCount)) * 3f - Vector2.UnitY * 8f;
                         Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 30f, starVelocity, ModContent.ProjectileType<StarBolt>(), PrismaticBoltDamage, 0f, -1, 0f, 1f - (i + 0.5f) / starCount);
                     }
                 }
@@ -812,7 +812,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         if (Main.netMode == NetmodeID.MultiplayerClient)
                             break;
 
-                        wallShootDelay = MathHelper.Clamp(wallShootDelay - 8f, endingWallShootCountdown, startingWallShootCountdown);
+                        wallShootDelay = Clamp(wallShootDelay - 8f, endingWallShootCountdown, startingWallShootCountdown);
                         wallShootCountdown = wallShootDelay;
                         if (goingAgainstWalls)
                             wallShootCountdown *= 0.6f;
@@ -861,7 +861,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                         for (int i = 0; i < verticalLanceCount; i++)
                         {
-                            float verticalLanceOffset = MathHelper.Lerp(-verticalLanceArea, verticalLanceArea, i / 35f);
+                            float verticalLanceOffset = Lerp(-verticalLanceArea, verticalLanceArea, i / 35f);
                             float lanceHue = i / (float)verticalLanceCount * 2f % 1f;
                             Vector2 lanceSpawnPosition = target.Center + new Vector2(target.direction * 950f + target.velocity.X * 40f, verticalLanceOffset + target.velocity.Y * 18f);
 
@@ -994,7 +994,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 // Initialize the lance direction.
                 if (lanceWallDirection == 0f)
                 {
-                    lanceWallDirection = target.velocity.ToRotation() + MathHelper.Pi;
+                    lanceWallDirection = target.velocity.ToRotation() + Pi;
                     lanceWallSpawnCenterX = target.Center.X;
                     lanceWallSpawnCenterY = target.Center.Y;
                     npc.netUpdate = true;
@@ -1006,14 +1006,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 float lanceHue = 1f - Utils.GetLerpValue(0f, wallLanceShootTime, attackTimer - backstabbingLanceTime - hoverRedirectTime, true);
                 float wallPerpendicularOffset = Utils.Remap(attackTimer - backstabbingLanceTime - hoverRedirectTime, 0f, wallLanceShootTime, -maxPerpendicularOffset, maxPerpendicularOffset);
-                Vector2 wallOffset = lanceWallDirection.ToRotationVector2() * wallLanceOffset + (lanceWallDirection + MathHelper.PiOver2).ToRotationVector2() * wallPerpendicularOffset;
+                Vector2 wallOffset = lanceWallDirection.ToRotationVector2() * wallLanceOffset + (lanceWallDirection + PiOver2).ToRotationVector2() * wallPerpendicularOffset;
                 Vector2 lanceSpawnPosition = new Vector2(lanceWallSpawnCenterX, lanceWallSpawnCenterY) + wallOffset;
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                 {
                     lance.ModProjectile<EtherealLance>().Time = delayUntilLanceFires;
                 });
-                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceWallDirection + MathHelper.Pi, lanceHue);
+                Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f, -1, lanceWallDirection + Pi, lanceHue);
             }
 
             if (attackTimer >= backstabbingLanceTime + hoverRedirectTime + wallLanceShootTime + 84f)
@@ -1069,15 +1069,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (!npc.WithinRange(target.Center, 1280f))
                     TeleportTo(npc, target.Center + Main.rand.NextVector2CircularEdge(500f, 500f));
 
-                telegraphRotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                telegraphRotation = Main.rand.NextFloat(TwoPi);
                 npc.netUpdate = true;
             }
 
             // Rotate the telegraphs.
-            telegraphRotation += CalamityUtils.Convert01To010(telegraphInterpolant) * MathHelper.Pi / 75f;
+            telegraphRotation += CalamityUtils.Convert01To010(telegraphInterpolant) * Pi / 75f;
 
             // Release magic on hands and eventually create bolts.
-            int magicDustCount = (int)Math.Round(MathHelper.Lerp(1f, 5f, telegraphInterpolant));
+            int magicDustCount = (int)Math.Round(Lerp(1f, 5f, telegraphInterpolant));
             for (int i = 0; i < 2; i++)
             {
                 int handDirection = (i == 0).ToDirectionInt();
@@ -1111,7 +1111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     {
                         for (int j = 0; j < boltCount; j++)
                         {
-                            Vector2 boltShootVelocity = (MathHelper.TwoPi * j / boltCount + telegraphRotation).ToRotationVector2() * boltShootSpeed;
+                            Vector2 boltShootVelocity = (TwoPi * j / boltCount + telegraphRotation).ToRotationVector2() * boltShootSpeed;
                             Utilities.NewProjectileBetter(handPosition, boltShootVelocity, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), PrismaticBoltDamage, 0f, -1, 0f, j / boltCount);
                         }
                         Utilities.NewProjectileBetter(handPosition, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
@@ -1237,7 +1237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Fade out.
             if (attackTimer <= SecondPhaseFadeoutTime)
-                npc.Opacity = MathHelper.Lerp(1f, 0f, attackTimer / SecondPhaseFadeoutTime);
+                npc.Opacity = Lerp(1f, 0f, attackTimer / SecondPhaseFadeoutTime);
 
             // Fade back in and teleport above the target.
             else if (attackTimer <= SecondPhaseFadeoutTime + reappearTime)
@@ -1287,7 +1287,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         {
                             for (int i = 0; i < 8; i++)
                             {
-                                Vector2 lightBoltVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 5f;
+                                Vector2 lightBoltVelocity = (TwoPi * i / 8f).ToRotationVector2() * 5f;
                                 Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, 1f, i / 8f);
                                 Utilities.NewProjectileBetter(npc.Center, lightBoltVelocity, ModContent.ProjectileType<ArcingLightBolt>(), PrismaticBoltDamage, 0f, -1, -1f, i / 8f);
 
@@ -1417,9 +1417,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (attackTimer == attackDelay)
             {
                 // The sword should pick the side which is between the empress and the player, and then randomly pick a place on the wall that forms from it.
-                swordHoverOffsetAngle = Main.rand.NextFloat(-MathHelper.PiOver2, MathHelper.PiOver2);
+                swordHoverOffsetAngle = Main.rand.NextFloat(-PiOver2, PiOver2);
                 if (target.Center.X < npc.Center.X)
-                    swordHoverOffsetAngle += MathHelper.Pi;
+                    swordHoverOffsetAngle += Pi;
 
                 npc.netUpdate = true;
             }
@@ -1516,7 +1516,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
 
                 animationScreenShaderStrength = Utils.GetLerpValue(0f, chargeUpTime - 90f, attackTimer, true);
-                wispInterpolant = MathF.Pow(animationScreenShaderStrength, 3f);
+                wispInterpolant = Pow(animationScreenShaderStrength, 3f);
                 return;
             }
 
@@ -1526,7 +1526,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 for (int i = 0; i < backstabbingLanceCount; i++)
                 {
                     float lanceHue = (attackTimer / 300f + i / (float)backstabbingLanceCount) % 1f;
-                    float lancePerpendicularAngle = MathHelper.Lerp(-MathHelper.PiOver2, MathHelper.PiOver2, i / (float)(backstabbingLanceCount - 1f));
+                    float lancePerpendicularAngle = Lerp(-PiOver2, PiOver2, i / (float)(backstabbingLanceCount - 1f));
                     Vector2 lanceSpawnPosition = target.Center - target.velocity.SafeNormalize(Vector2.UnitY) * backstabbingLanceOffset;
                     lanceSpawnPosition -= target.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(lancePerpendicularAngle) * backstabbingLanceOffset * 0.3f;
 
@@ -1592,7 +1592,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.Opacity = Utils.GetLerpValue(disappearIntoMoonTime, 0f, attackTimer - chargeUpTime, true);
             if (rainbowState >= 3f)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.04f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.04f, 0f, 1f);
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 5.6f, 0.06f);
                 wispInterpolant = 0f;
 
@@ -1683,7 +1683,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 deathAnimationScreenShaderStrength = Utils.GetLerpValue(1f, fadeInTime, attackTimer, true);
                 outwardExpandFactor = Utils.GetLerpValue(-fadeOutTime, 0f, attackTimer - deathAnimationTime, true);
-                npc.Opacity = MathF.Pow(deathAnimationScreenShaderStrength, 3f) * (1f - outwardExpandFactor);
+                npc.Opacity = Pow(deathAnimationScreenShaderStrength, 3f) * (1f - outwardExpandFactor);
 
                 if (InfernumConfig.Instance.FlashbangOverlays)
                     MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
@@ -1703,7 +1703,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Cast shimmers.
             for (int i = 0; i < 6; i++)
             {
-                float dustPersistence = MathHelper.Lerp(1.3f, 0.7f, npc.Opacity);
+                float dustPersistence = Lerp(1.3f, 0.7f, npc.Opacity);
                 Color newColor = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
                 Dust rainbowMagic = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.RainbowMk2, 0f, 0f, 0, newColor, 1f);
                 rainbowMagic.position = npc.Center + Main.rand.NextVector2Circular(npc.width * 12f, npc.height * 12f) + new Vector2(0f, -150f);
@@ -1915,15 +1915,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         float hue = (i + 5f) / 10f;
                         float drawOffsetFactor = 80f;
                         Vector3 offsetInformation = Vector3.Transform(Vector3.Forward,
-                            Matrix.CreateRotationX((Main.GlobalTimeWrappedHourly - 0.3f + i * 0.1f) * 0.7f * MathHelper.TwoPi) *
-                            Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly - 0.8f + i * 0.3f) * 0.7f * MathHelper.TwoPi) *
-                            Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly + i * 0.5f) * 0.1f * MathHelper.TwoPi));
+                            Matrix.CreateRotationX((Main.GlobalTimeWrappedHourly - 0.3f + i * 0.1f) * 0.7f * TwoPi) *
+                            Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly - 0.8f + i * 0.3f) * 0.7f * TwoPi) *
+                            Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly + i * 0.5f) * 0.1f * TwoPi));
                         drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 150f;
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor * afterimageOffsetFactor;
-                        drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * attackTimer / 180f);
+                        drawOffset = drawOffset.RotatedBy(TwoPi * attackTimer / 180f);
 
                         float luminanceInterpolant = Utils.GetLerpValue(90f, 0f, attackTimer, true);
-                        duplicateColor = Main.hslToRgb(hue, 1f, MathHelper.Lerp(0.5f, 1f, luminanceInterpolant)) * opacity * 0.8f;
+                        duplicateColor = Main.hslToRgb(hue, 1f, Lerp(0.5f, 1f, luminanceInterpolant)) * opacity * 0.8f;
                         duplicateColor.A /= 3;
                         drawPosition += drawOffset;
                     }
@@ -1934,14 +1934,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         float hue = (i + 5f) / 10f % 1f;
                         float drawOffsetFactor = 80f;
                         Vector3 offsetInformation = Vector3.Transform(Vector3.Forward,
-                            Matrix.CreateRotationX((Main.GlobalTimeWrappedHourly * 1.3f - 0.4f + i * 0.16f) * 0.7f * MathHelper.TwoPi) *
-                            Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly * 1.3f - 0.7f + i * 0.32f) * 0.7f * MathHelper.TwoPi) *
-                            Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly * 1.3f + 0.3f + i * 0.6f) * 0.1f * MathHelper.TwoPi));
+                            Matrix.CreateRotationX((Main.GlobalTimeWrappedHourly * 1.3f - 0.4f + i * 0.16f) * 0.7f * TwoPi) *
+                            Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly * 1.3f - 0.7f + i * 0.32f) * 0.7f * TwoPi) *
+                            Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly * 1.3f + 0.3f + i * 0.6f) * 0.1f * TwoPi));
                         drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 30f;
                         drawOffsetFactor *= npc.Infernum().ExtraAI[ScreenShaderIntensityIndex] * 8f + 1f;
 
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor * afterimageOffsetFactor;
-                        drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * attackTimer / 180f);
+                        drawOffset = drawOffset.RotatedBy(TwoPi * attackTimer / 180f);
 
                         duplicateColor = Main.hslToRgb(hue, 1f, 0.6f) * opacity;
                         if (i > baseDuplicateCount)
@@ -1961,7 +1961,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                             if (offsetIndex < 0)
                                 offsetIndex++;
 
-                            Vector2 circularOffset = ((offsetIndex + 0.5f) * MathHelper.PiOver4 + Main.GlobalTimeWrappedHourly * MathHelper.Pi * 1.333f).ToRotationVector2();
+                            Vector2 circularOffset = ((offsetIndex + 0.5f) * PiOver4 + Main.GlobalTimeWrappedHourly * Pi * 1.333f).ToRotationVector2();
                             drawPosition += circularOffset * afterimageOffsetFactor * new Vector2(600f, 150f);
                         }
 
@@ -2024,7 +2024,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 wingData.Draw(spriteBatch);
                 spriteBatch.ExitShaderRegion();
 
-                float pulse = MathF.Sin(Main.GlobalTimeWrappedHourly * MathHelper.Pi) * 0.5f + 0.5f;
+                float pulse = Sin(Main.GlobalTimeWrappedHourly * Pi) * 0.5f + 0.5f;
                 Color tentacleDressColor = Main.hslToRgb((pulse * 0.08f + 0.6f) % 1f, 1f, 0.5f);
                 tentacleDressColor.A = 0;
                 tentacleDressColor *= 0.6f;
@@ -2043,7 +2043,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     spriteBatch.Draw(tentacleTexture, drawPosition, tentacleFrame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 drawOffset = npc.rotation.ToRotationVector2().RotatedBy(MathHelper.TwoPi * i / 4f + MathHelper.PiOver4) * MathHelper.Lerp(2f, 8f, pulse);
+                        Vector2 drawOffset = npc.rotation.ToRotationVector2().RotatedBy(TwoPi * i / 4f + PiOver4) * Lerp(2f, 8f, pulse);
                         spriteBatch.Draw(tentacleTexture, drawPosition + drawOffset, tentacleFrame, tentacleDressColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                     }
                 }
@@ -2056,7 +2056,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 drawOffset = npc.rotation.ToRotationVector2().RotatedBy(MathHelper.TwoPi * i / 4f + MathHelper.PiOver4) * MathHelper.Lerp(2f, 8f, pulse);
+                        Vector2 drawOffset = npc.rotation.ToRotationVector2().RotatedBy(TwoPi * i / 4f + PiOver4) * Lerp(2f, 8f, pulse);
                         spriteBatch.Draw(dressGlowmaskTexture, drawPosition + drawOffset, null, tentacleDressColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                     }
                 }
@@ -2105,7 +2105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                         wispColor.A /= 6;
 
-                        Vector2 drawOffset = (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * spinFactor * 3f).ToRotationVector2() * wispInterpolant * wispOffset * offsetFactor;
+                        Vector2 drawOffset = (TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * spinFactor * 3f).ToRotationVector2() * wispInterpolant * wispOffset * offsetFactor;
                         DrawInstance(baseDrawPosition + drawOffset, wispColor, wispColor);
                     }
                 }
@@ -2134,18 +2134,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 for (int i = 0; i < 2; i++)
                 {
                     int handDirection = (i == 0).ToDirectionInt();
-                    float telegraphWidth = MathHelper.Lerp(0.5f, 4f, telegraphInterpolant);
+                    float telegraphWidth = Lerp(0.5f, 4f, telegraphInterpolant);
                     Vector2 handOffset = new(55f, -30f);
                     Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
 
                     for (int j = 0; j < boltCount; j++)
                     {
-                        Color telegraphColor = Main.hslToRgb(j / (float)boltCount, 1f, 0.5f) * MathF.Sqrt(telegraphInterpolant);
+                        Color telegraphColor = Main.hslToRgb(j / (float)boltCount, 1f, 0.5f) * Sqrt(telegraphInterpolant);
                         if (ShouldBeEnraged)
                             telegraphColor = GetDaytimeColor(j / (float)boltCount);
                         telegraphColor *= 0.6f;
 
-                        Vector2 telegraphDirection = (MathHelper.TwoPi * j / boltCount + telegraphRotation).ToRotationVector2();
+                        Vector2 telegraphDirection = (TwoPi * j / boltCount + telegraphRotation).ToRotationVector2();
                         Vector2 start = handPosition;
                         Vector2 end = start + telegraphDirection * 4500f;
                         spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);

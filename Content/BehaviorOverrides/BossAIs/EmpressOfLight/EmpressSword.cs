@@ -86,8 +86,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
-                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.74f, 0.74f, SwordIndex / (SwordCount - 1f))) * new Vector2(165f, 100f);
-                hoverDestination.Y += MathF.Sin(MathHelper.TwoPi * Time / 60f + MathHelper.PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
+                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(Lerp(-0.74f, 0.74f, SwordIndex / (SwordCount - 1f))) * new Vector2(165f, 100f);
+                hoverDestination.Y += Sin(TwoPi * Time / 60f + PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
                 return hoverDestination;
             }
         }
@@ -148,7 +148,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 return;
             }
 
-            TelegraphInterpolant = MathHelper.Clamp(TelegraphInterpolant - 0.05f, 0f, 1f);
+            TelegraphInterpolant = Clamp(TelegraphInterpolant - 0.05f, 0f, 1f);
             DontDealDamage = false;
 
             if (!ShouldAttack)
@@ -169,7 +169,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.oldPos = new Vector2[Projectile.oldPos.Length];
 
             float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
-            float hoverSpeed = MathHelper.Lerp(40f, 95f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
+            float hoverSpeed = Lerp(40f, 95f, Utils.GetLerpValue(100f, 750f, Projectile.Distance(HoverDestinationAboveOwner)));
 
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, hoverSpeed), 0.32f);
             Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.03f);
@@ -213,12 +213,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             Vector2 hoverDestination = Target.Center + hoverOffsetAngle.ToRotationVector2() * hoverOffset;
-            Vector2 hoverDestinationPerpendicular = Target.Center + (hoverOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * hoverOffset;
+            Vector2 hoverDestinationPerpendicular = Target.Center + (hoverOffsetAngle + PiOver2).ToRotationVector2() * hoverOffset;
 
             // Fly into position near the target.
             if (Time < hoverRedirectTime)
             {
-                float hoverSpeedInterpolant = MathHelper.Lerp(0.03f, 0.25f, Time / hoverRedirectTime);
+                float hoverSpeedInterpolant = Lerp(0.03f, 0.25f, Time / hoverRedirectTime);
                 Projectile.velocity *= 0.7f;
                 Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, hoverSpeedInterpolant);
                 Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(Target.Center), hoverSpeedInterpolant * 2f);
@@ -230,7 +230,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (Time < hoverRedirectTime + chargeAnticipationTime)
             {
                 float anticipationInterpolant = Utils.GetLerpValue(hoverRedirectTime, hoverRedirectTime + chargeAnticipationTime, Time, true);
-                Vector2 anticipationOffset = hoverOffsetAngle.ToRotationVector2() * MathF.Pow(anticipationInterpolant, 2f) * hoverOffset * 0.4f;
+                Vector2 anticipationOffset = hoverOffsetAngle.ToRotationVector2() * Pow(anticipationInterpolant, 2f) * hoverOffset * 0.4f;
 
                 Projectile.Center = hoverDestination + anticipationOffset;
                 Projectile.velocity = Vector2.Zero;
@@ -262,7 +262,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (Time < hoverRedirectTime + chargeAnticipationTime + lanceShootDelay + perpendicularChargeAnticipationTime)
             {
                 float hoverInterpolant = Utils.GetLerpValue(0f, perpendicularChargeAnticipationTime, Time - hoverRedirectTime - chargeAnticipationTime - lanceShootDelay, true);
-                float hoverSpeedInterpolant = MathHelper.Lerp(0.03f, 0.25f, hoverInterpolant);
+                float hoverSpeedInterpolant = Lerp(0.03f, 0.25f, hoverInterpolant);
                 Projectile.velocity *= 0.7f;
                 Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestinationPerpendicular, hoverSpeedInterpolant);
                 Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(Target.Center), hoverSpeedInterpolant * 3f);
@@ -310,7 +310,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 float lanceHue = ((i + 5f) / 10f + Projectile.ai[1]) % 1f;
                 float lanceOffsetDistance = (i - 5f) * lanceSpacing;
-                Vector2 lanceOffset = aimDirection.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * lanceOffsetDistance - aimDirection * 876f;
+                Vector2 lanceOffset = aimDirection.RotatedBy(PiOver2).SafeNormalize(Vector2.UnitY) * lanceOffsetDistance - aimDirection * 876f;
                 Vector2 lanceSpawnPosition = Target.Center + lanceOffset;
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
@@ -341,7 +341,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static float WidthFunction(float completionRatio)
         {
             float fade = (1f - completionRatio) * Utils.GetLerpValue(-0.03f, 0.1f, completionRatio, true);
-            return MathHelper.SmoothStep(0f, 1f, fade) * 20f;
+            return SmoothStep(0f, 1f, fade) * 20f;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -356,22 +356,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                float telegraphHue = MathF.Cos(MathHelper.TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
-                float telegraphWidth = MathHelper.Lerp(0.2f, 1.2f, TelegraphInterpolant);
-                float telegraphOpacity = MathF.Pow(TelegraphInterpolant, 1.7f) * 0.7f;
+                float telegraphHue = Cos(TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
+                float telegraphWidth = Lerp(0.2f, 1.2f, TelegraphInterpolant);
+                float telegraphOpacity = Pow(TelegraphInterpolant, 1.7f) * 0.7f;
                 Vector2 telegraphScale = new(telegraphWidth, TelegraphLength / telegraphTexture.Height);
                 Color telegraphColor = Main.hslToRgb(telegraphHue, 1f, 0.8f) * telegraphOpacity;
                 Vector2 telegraphOrigin = telegraphTexture.Size() * new Vector2(0.5f, 0f);
 
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, Projectile.rotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, Color.White * telegraphOpacity, Projectile.rotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale * new Vector2(0.3f, 1f), 0, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, Projectile.rotation - PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, Color.White * telegraphOpacity, Projectile.rotation - PiOver2, telegraphOrigin, telegraphScale * new Vector2(0.3f, 1f), 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
 
             float opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, MyColor * opacity * 0.3f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, new Color(opacity, opacity, opacity, 0f), Projectile.rotation, origin, Projectile.scale, 0, 0f);

@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (target.dead || !target.active)
                 {
                     npc.velocity.Y -= 0.18f;
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() - PiOver2;
 
                     if (npc.timeLeft > 120)
                         npc.timeLeft = 120;
@@ -157,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 phase2ResetTimer++;
                 if (phase2ResetTimer < 120f)
                 {
-                    npc.Opacity = MathHelper.Lerp(1f, 0f, phase2ResetTimer / 120f);
+                    npc.Opacity = Lerp(1f, 0f, phase2ResetTimer / 120f);
                     npc.velocity *= 0.94f;
                     if (phase2ResetTimer >= 120f - GleamTime)
                         gleamTimer++;
@@ -171,7 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 }
                 if (phase2ResetTimer > 120f)
                     npc.alpha = Utils.Clamp(npc.alpha - 25, 0, 255);
-                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
                 return false;
             }
 
@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             int hoverTime = 60;
             int chargeTime = 45;
-            float chargeSpeed = MathHelper.Lerp(10f, 13.33f, 1f - lifeRatio);
+            float chargeSpeed = Lerp(10f, 13.33f, 1f - lifeRatio);
             if (phase2)
             {
                 chargeSpeed += 1.5f;
@@ -223,8 +223,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 chargeTime -= 8;
             }
 
-            float hoverAcceleration = MathHelper.Lerp(0.1f, 0.25f, 1f - lifeRatio);
-            float hoverSpeed = MathHelper.Lerp(8.5f, 17f, 1f - lifeRatio);
+            float hoverAcceleration = Lerp(0.1f, 0.25f, 1f - lifeRatio);
+            float hoverSpeed = Lerp(8.5f, 17f, 1f - lifeRatio);
 
             if (enraged)
             {
@@ -243,12 +243,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 185f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
-                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
             }
             else if (attackTimer == hoverTime)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
 
                 // Normal boss roar.
                 SoundEngine.PlaySound(SoundID.Roar, npc.Center);
@@ -287,8 +287,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             int servantSpawnRate = servantSummonTime / servantsToSummon;
 
-            float hoverAcceleration = MathHelper.Lerp(0.15f, 0.35f, 1f - lifeRatio);
-            float hoverSpeed = MathHelper.Lerp(14f, 18f, 1f - lifeRatio);
+            float hoverAcceleration = Lerp(0.15f, 0.35f, 1f - lifeRatio);
+            float hoverSpeed = Lerp(14f, 18f, 1f - lifeRatio);
             if (attackTimer < servantSummonDelay)
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 275f;
@@ -313,7 +313,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     {
                         for (int i = 0; i < 20; i++)
                         {
-                            float angle = MathHelper.TwoPi * i / 20f;
+                            float angle = TwoPi * i / 20f;
                             Dust magicBlood = Dust.NewDustPerfect(spawnPosition + angle.ToRotationVector2() * 4f, 261);
                             magicBlood.color = Color.IndianRed;
                             magicBlood.velocity = angle.ToRotationVector2() * 5f;
@@ -331,7 +331,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
             }
 
-            npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+            npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
 
             if (attackTimer >= servantSummonDelay + servantSummonTime)
                 SelectNextAttack(npc);
@@ -370,7 +370,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 float redirectSpeed = attackTimer / 15f + 14f;
                 Vector2 destination = target.Center + new Vector2(-chargeDirection * 720f, -300f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * redirectSpeed, 0.06f);
-                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
                 if (npc.WithinRange(destination, 32f))
                 {
                     attackSubstate = 1f;
@@ -392,7 +392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (attackTimer == 10f)
                     npc.netUpdate = true;
 
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
 
                 // Use afterimages when firing.
                 drawAfterimages = true;
@@ -454,7 +454,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 float redirectSpeed = attackTimer / 24f + 14f;
                 Vector2 destination = target.Center - Vector2.UnitY * 265f;
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * redirectSpeed, 0.06f);
-                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
                 if (npc.WithinRange(destination, 32f))
                 {
                     attackSubstate = 1f;
@@ -470,19 +470,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Release teeth into the sky.
             if (attackSubstate == 1f)
             {
-                float idealAngle = MathHelper.Lerp(-teethRadialSpread, teethRadialSpread, teethBurstCounter / totalTeethBursts);
-                npc.rotation = npc.rotation.AngleTowards(idealAngle - MathHelper.Pi, 0.08f);
+                float idealAngle = Lerp(-teethRadialSpread, teethRadialSpread, teethBurstCounter / totalTeethBursts);
+                npc.rotation = npc.rotation.AngleTowards(idealAngle - Pi, 0.08f);
                 npc.velocity *= 0.9f;
 
-                if (teethBurstDelay <= 0f && Math.Abs(MathHelper.WrapAngle(idealAngle - npc.rotation - MathHelper.Pi)) < 0.07f)
+                if (teethBurstDelay <= 0f && Math.Abs(WrapAngle(idealAngle - npc.rotation - Pi)) < 0.07f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 spawnPosition = npc.Center - Vector2.UnitY * 20f;
                         for (int i = 0; i < teethPerShot; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-0.52f, 0.52f, i / (float)teethPerShot);
-                            offsetAngle += MathHelper.Clamp((target.Center.X - npc.Center.X) * 0.0015f, -0.84f, 0.84f);
+                            float offsetAngle = Lerp(-0.52f, 0.52f, i / (float)teethPerShot);
+                            offsetAngle += Clamp((target.Center.X - npc.Center.X) * 0.0015f, -0.84f, 0.84f);
 
                             Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * teethSpeed;
                             if (BossRushEvent.BossRushActive)
@@ -552,7 +552,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
                 if (spinAngle == 0f)
                 {
-                    spinAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    spinAngle = Main.rand.NextFloat(TwoPi);
                     redirectSpeed = 13f;
                     npc.netUpdate = true;
                 }
@@ -563,7 +563,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 float inertia = Utils.Remap(attackTimer, 0f, 42f, 36f, 5f);
                 Vector2 destination = target.Center + spinAngle.ToRotationVector2() * spinRadius;
                 npc.velocity = (npc.velocity * (inertia - 1f) + npc.SafeDirectionTo(destination) * redirectSpeed) / inertia;
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
 
                 if (npc.WithinRange(destination, redirectSpeed + 8f))
                 {
@@ -588,13 +588,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (phase3)
                     CreateBloodParticles(npc, Color.Red * 0.8f, -npc.velocity * 0.65f);
 
-                spinAngle += MathHelper.TwoPi * spinCycles / spinTime * Utils.GetLerpValue(spinTime + 4f, spinTime - 15f, attackTimer, true);
+                spinAngle += TwoPi * spinCycles / spinTime * Utils.GetLerpValue(spinTime + 4f, spinTime - 15f, attackTimer, true);
                 npc.Center = target.Center + spinAngle.ToRotationVector2() * spinRadius;
                 npc.rotation = spinAngle;
                 if (attackTimer >= spinTime)
                 {
                     attackTimer = 0f;
-                    npc.velocity = (spinAngle + MathHelper.PiOver2).ToRotationVector2() * 9.5f;
+                    npc.velocity = (spinAngle + PiOver2).ToRotationVector2() * 9.5f;
                     attackSubstate = 2f;
                     npc.netUpdate = true;
                 }
@@ -603,13 +603,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Slow down and aim.
             if (attackSubstate == 2f)
             {
-                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - PiOver2, 0.2f);
                 npc.velocity *= 0.985f;
                 if (attackTimer >= chargeDelay)
                 {
                     attackTimer = 0f;
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() - PiOver2;
                     attackSubstate = 3f;
                     npc.netUpdate = true;
 
@@ -656,7 +656,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (npc.velocity.Length() < 8f)
                 {
                     float idealAngle = npc.AngleTo(target.Center);
-                    npc.rotation = npc.rotation.AngleTowards(idealAngle - MathHelper.PiOver2, MathHelper.Pi * 0.08f);
+                    npc.rotation = npc.rotation.AngleTowards(idealAngle - PiOver2, Pi * 0.08f);
                     npc.velocity *= 0.985f;
 
                     attackTimer++;
@@ -665,7 +665,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         attackTimer = 0f;
                         chainChargeCounter++;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed * 1.5f;
-                        npc.velocity *= MathHelper.Lerp(1f, 0.67f, chainChargeCounter / chargeChainCount);
+                        npc.velocity *= Lerp(1f, 0.67f, chainChargeCounter / chargeChainCount);
                         npc.netUpdate = true;
 
                         // High pitched boss roar.
@@ -701,11 +701,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 totalShots += 2;
             }
 
-            Vector2 shootDirection = (npc.rotation + MathHelper.PiOver2).ToRotationVector2();
+            Vector2 shootDirection = (npc.rotation + PiOver2).ToRotationVector2();
             Vector2 shootCenter = npc.Center + shootDirection * 60f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 
-            npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+            npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
             if (attackTimer < shootDelay)
             {
                 // Attempt to get close to the player.
@@ -829,7 +829,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             {
                 for (int i = 0; i < 9; i++)
                 {
-                    Vector2 afterimageDrawPosition = npc.Center - Main.screenPosition + (MathHelper.TwoPi * i / 9f).ToRotationVector2() * backglowInterpolant * 12f;
+                    Vector2 afterimageDrawPosition = npc.Center - Main.screenPosition + (TwoPi * i / 9f).ToRotationVector2() * backglowInterpolant * 12f;
                     Main.spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, npc.GetAlpha(Color.Crimson) with { A = 0 } * 0.3f, npc.rotation, eyeOrigin, npc.scale, spriteEffects, 0f);
                 }
             }
@@ -844,7 +844,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Color pupilColor = Color.Red * 0.6f * Utils.GetLerpValue(0f, 10f, gleamTimer, true) * Utils.GetLerpValue(GleamTime, GleamTime - 10f, gleamTimer, true);
             Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, pupilColor, npc.rotation, pupilOrigin, pupilScale, SpriteEffects.None, 0f);
             pupilScale = new Vector2(0.7f, 2.7f);
-            Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, pupilColor, npc.rotation + MathHelper.PiOver2, pupilOrigin, pupilScale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, pupilColor, npc.rotation + PiOver2, pupilOrigin, pupilScale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion

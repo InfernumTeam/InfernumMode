@@ -37,7 +37,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             {
                 Color afterColor = Color.White * 0.3f;
 
-                Vector2 afterDrawPos = drawPosition + (MathHelper.TwoPi * i / afterimageAmount).ToRotationVector2() * 1f;
+                Vector2 afterDrawPos = drawPosition + (TwoPi * i / afterimageAmount).ToRotationVector2() * 1f;
                 spriteBatch.Draw(Texture, afterDrawPos, BaseFrame, afterColor with { A = 0 }, Rotation, BaseFrame.Value.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
             }
 

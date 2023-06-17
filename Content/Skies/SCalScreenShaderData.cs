@@ -57,7 +57,7 @@ namespace InfernumMode.Content.Skies
             bool acceptancePhase = scal.Infernum().ExtraAI[4] == 4f && scal.ai[0] == (int)SCalAttackType.DesperationPhase;
 
             // Make the brightness dissipate.
-            MusicBrightness = MathHelper.Clamp(MusicBrightness - 0.026f, 0f, 3f);
+            MusicBrightness = Clamp(MusicBrightness - 0.026f, 0f, 3f);
 
             if (acceptancePhase)
                 BackgroundColor = Color.Lerp(BackgroundColor, AcceptanceColor, 0.1f);
@@ -102,8 +102,8 @@ namespace InfernumMode.Content.Skies
             bool maiIsSinging = mai.Any() && songTime >= mai.First().Start && songTime <= mai.First().End;
 
             // Make the brightnmess gradually increase as the song goes on.
-            float idealBrightness = MathHelper.Lerp(1f, 1.5f, (float)(songTime.TotalSeconds / TrackedMusicManager.TrackedSong.Duration.TotalSeconds));
-            MusicBrightness = MathHelper.Lerp(MusicBrightness, idealBrightness, 0.09f);
+            float idealBrightness = Lerp(1f, 1.5f, (float)(songTime.TotalSeconds / TrackedMusicManager.TrackedSong.Duration.TotalSeconds));
+            MusicBrightness = Lerp(MusicBrightness, idealBrightness, 0.09f);
 
             // If Solaria is singing, use a red background color.
             // If Mai is singing, use a blue background color.
@@ -153,7 +153,7 @@ namespace InfernumMode.Content.Skies
             {
                 var grief = splitMusicPointsIntoSections(Grief_HighPoints).Where(m => m.Item2 >= songTime);
                 if (grief.Any() && songTime >= grief.First().Item1 && songTime <= grief.First().Item2)
-                    MusicBrightness = MathHelper.Clamp(MusicBrightness + 0.06f, 0f, 1f);
+                    MusicBrightness = Clamp(MusicBrightness + 0.06f, 0f, 1f);
             }
 
             // Lament section.
@@ -161,7 +161,7 @@ namespace InfernumMode.Content.Skies
             {
                 var lament = splitMusicPointsIntoSections(Lament_HighPoints).Where(m => m.Item2 >= songTime);
                 if (lament.Any() && songTime >= lament.First().Item1 && songTime <= lament.First().Item2)
-                    MusicBrightness = MathHelper.Clamp(MusicBrightness + 0.06f, 0f, 1f);
+                    MusicBrightness = Clamp(MusicBrightness + 0.06f, 0f, 1f);
             }
 
             // Epiphany section.
@@ -171,7 +171,7 @@ namespace InfernumMode.Content.Skies
                 if (epiphany.Any() && songTime >= epiphany.First().Item1 && songTime <= epiphany.First().Item2)
                 {
                     float maxBrightness = Epiphany_HighPoints[epiphany.First().Item1];
-                    MusicBrightness = MathHelper.Clamp(MusicBrightness + 0.08f, 0f, maxBrightness);
+                    MusicBrightness = Clamp(MusicBrightness + 0.08f, 0f, maxBrightness);
                 }
             }
         }

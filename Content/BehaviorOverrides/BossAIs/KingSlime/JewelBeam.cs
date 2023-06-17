@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             // Decide frames.
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Main.dedServ)
                 return;
@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 for (int i = 0; i < 36; i++)
                 {
                     Dust gleamingBurst = Dust.NewDustPerfect(Projectile.Center, 264);
-                    gleamingBurst.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 2.5f;
+                    gleamingBurst.velocity = (TwoPi * i / 36f).ToRotationVector2() * 2.5f;
                     gleamingBurst.color = Color.Red;
                     gleamingBurst.noLight = true;
                     gleamingBurst.noGravity = true;
@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             for (int direction = -1; direction <= 1; direction += 2)
             {
                 gleamingRed = Dust.NewDustPerfect(Projectile.Center, 182);
-                gleamingRed.velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Pi + direction * 0.53f).RotatedByRandom(0.06f) * Main.rand.NextFloat(0.9f, 1.1f) * 3f;
+                gleamingRed.velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Pi + direction * 0.53f).RotatedByRandom(0.06f) * Main.rand.NextFloat(0.9f, 1.1f) * 3f;
                 gleamingRed.noGravity = true;
                 gleamingRed.scale = Main.rand.NextFloat(0.8f, 0.96f);
             }

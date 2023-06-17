@@ -60,8 +60,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ulong lightningSeed = (ulong)Projectile.identity * 7218432uL;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 lightningScale = new Vector2(1.8f, Projectile.scale) * MathHelper.Lerp(0.3f, 0.5f, Utils.RandomFloat(ref lightningSeed)) * 1;
-                float lightningRotation = Projectile.rotation + MathHelper.Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f);
+                Vector2 lightningScale = new Vector2(1.8f, Projectile.scale) * Lerp(0.3f, 0.5f, Utils.RandomFloat(ref lightningSeed)) * 1;
+                float lightningRotation = Projectile.rotation + Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f);
                 Color lightningColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], Utils.RandomFloat(ref lightningSeed) * 0.56f);
                 if (ProvidenceBehaviorOverride.IsEnraged)
                     lightningColor = Color.Lerp(lightningColor, Color.LightSkyBlue, 0.6f);

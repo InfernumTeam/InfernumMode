@@ -49,11 +49,11 @@ namespace InfernumMode.Content.MainMenu
 
             // Grow rapidly
             if (Time <= 20)
-                Scale = MathHelper.Lerp(0f, MaxScale, Time / 20f);
+                Scale = Lerp(0f, MaxScale, Time / 20f);
 
             // Shrink rapidly.
             if (TimeLeft <= 20)
-                Scale = MathHelper.Lerp(0f, MaxScale, (float)TimeLeft / 20f);
+                Scale = Lerp(0f, MaxScale, (float)TimeLeft / 20f);
 
             // Increase the rotation and time.
             Rotation += RotationSpeed;
@@ -67,7 +67,7 @@ namespace InfernumMode.Content.MainMenu
             {
                 Vector2 origin = BaseFrame.Size() * 0.5f;
                 float opacity = 0.5f;
-                Main.spriteBatch.Draw(Texture, Position, BaseFrame, DrawColor with { A = 50 } * opacity, Velocity.ToRotation() + MathHelper.PiOver2, origin, Scale * new Vector2(0.5f, 1.4f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Texture, Position, BaseFrame, DrawColor with { A = 50 } * opacity, Velocity.ToRotation() + PiOver2, origin, Scale * new Vector2(0.5f, 1.4f), SpriteEffects.None, 0f);
             }
         }
     }

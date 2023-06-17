@@ -45,13 +45,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Lighting.AddLight(Projectile.Center, 0.25f, 0f, 0f);
 
             // Fade in quickly.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
 
             // Determine rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Emit small magic particles.
-            Vector2 magicSpawnPosition = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation + MathHelper.PiOver2) * Main.rand.NextFloat(4f, 45f) * Main.rand.NextFromList(-1f, 1f);
+            Vector2 magicSpawnPosition = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation + PiOver2) * Main.rand.NextFloat(4f, 45f) * Main.rand.NextFromList(-1f, 1f);
             Dust magic = Dust.NewDustPerfect(magicSpawnPosition, 261);
             magic.position += Main.rand.NextVector2Circular(10f, 10f);
             magic.velocity = Projectile.velocity * Main.rand.NextFloat(-0.3f, 0.08f);
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Texture2D slashTexture = ModContent.Request<Texture2D>(Texture).Value;
             for (int i = 0; i < 4; i++)
             {
-                Vector2 drawOffset = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * new Vector2(6f, 3f);
+                Vector2 drawOffset = (Projectile.rotation - PiOver2).ToRotationVector2() * new Vector2(6f, 3f);
                 Vector2 drawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(slashTexture, drawPosition, null, drawColor, Projectile.rotation, slashTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }

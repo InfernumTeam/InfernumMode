@@ -40,7 +40,7 @@ namespace InfernumMode.Content.UI
                     (float)typeof(UIScrollbar).GetField("_dragYOffset", BindingFlags.NonPublic | BindingFlags.Instance).
                     GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar);
                 
-                ViewPosition = MathHelper.Clamp(offset / innerDimensions.Height * (float)typeof(UIScrollbar).
+                ViewPosition = Clamp(offset / innerDimensions.Height * (float)typeof(UIScrollbar).
                     GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).
                     GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar), 0f, (float)typeof(UIScrollbar).
                     GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance)

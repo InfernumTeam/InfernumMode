@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 return;
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Vector2 lightningDirection = Projectile.velocity.RotateTowards(Projectile.AngleTo(target.Center + target.velocity * 10f), MathHelper.Pi / 32f);
+            Vector2 lightningDirection = Projectile.velocity.RotateTowards(Projectile.AngleTo(target.Center + target.velocity * 10f), Pi / 32f);
             lightningDirection = lightningDirection.RotatedByRandom(0.05f);
 
             Utilities.NewProjectileBetter(Projectile.Center, lightningDirection * 7f, ModContent.ProjectileType<TwinsRedLightning>(), TwinsAttackSynchronizer.RedLightningDamage, 0f, -1, lightningDirection.ToRotation(), Main.rand.Next(100));

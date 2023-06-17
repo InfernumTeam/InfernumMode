@@ -38,14 +38,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Initialize the rotation.
             if (Projectile.localAI[0] == 0f)
             {
-                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.rotation = Main.rand.NextFloat(TwoPi);
                 Projectile.frame = Main.rand.Next(Main.projFrames[Type]);
                 Projectile.localAI[0] = 1f;
             }
 
             // Fall downward.
             Projectile.velocity.X *= 0.987f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.25f, -20f, 9.6f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.25f, -20f, 9.6f);
             Projectile.rotation += Projectile.velocity.X * 0.014f;
             Time++;
         }

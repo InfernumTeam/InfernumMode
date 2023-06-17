@@ -30,10 +30,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
             Projectile.velocity.X *= 0.99f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.15f, -20f, 10f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.15f, -20f, 10f);
             Projectile.tileCollide = Projectile.timeLeft < 150;
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }

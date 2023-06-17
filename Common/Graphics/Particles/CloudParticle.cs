@@ -58,15 +58,15 @@ namespace InfernumMode.Common.Graphics.Particles
         public override void Update()
         {
             Velocity *= 0.987f;
-            Scale = MathHelper.Lerp(Scale, StartingScale, 0.03f);
+            Scale = Lerp(Scale, StartingScale, 0.03f);
             Color = Color.Lerp(StartingColor, EndingColor, LifetimeCompletion);
-            Color = Color.Lerp(Color, Color.Transparent, MathF.Pow(LifetimeCompletion, 3f));
+            Color = Color.Lerp(Color, Color.Transparent, Pow(LifetimeCompletion, 3f));
             Rotation += Velocity.X * 0.008f;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            float brightness = MathF.Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15f) * 0.9f;
+            float brightness = Pow(Lighting.Brightness((int)(Position.X / 16f), (int)(Position.Y / 16f)), 0.15f) * 0.9f;
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             spriteBatch.Draw(texture, Position - Main.screenPosition, null, Color * brightness, Rotation, texture.Size() * 0.5f, Scale, 0, 0f);
         }

@@ -29,8 +29,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Projectile.timeLeft == 330)
                 SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound with { Volume = 0.5f }, Projectile.Center);
@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         {
             if (Projectile.timeLeft > 330)
             {
-                float width = MathF.Sin(MathHelper.Pi * Utils.GetLerpValue(360f, 330f, Projectile.timeLeft, true)) * 5f + 1f;
+                float width = Sin(Pi * Utils.GetLerpValue(360f, 330f, Projectile.timeLeft, true)) * 5f + 1f;
                 Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 5100f;
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * 0.4f, width * 1.8f);
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.White * 0.6f, width);
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.15f;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 8f + Projectile.rotation - PiOver2).ToRotationVector2() * 4f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }

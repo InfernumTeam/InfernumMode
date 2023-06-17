@@ -50,9 +50,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             float slitherTimer = head.Infernum().ExtraAI[0];
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.03f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.03f);
             if (segmentIndex <= 4f)
-                directionToNextSegment = (aheadSegment.rotation - MathHelper.PiOver2).ToRotationVector2();
+                directionToNextSegment = (aheadSegment.rotation - PiOver2).ToRotationVector2();
 
             directionToNextSegment = directionToNextSegment.SafeNormalize(Vector2.Zero);
 
@@ -60,14 +60,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (npc.justHit)
                 head.justHit = true;
 
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.725f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
 
             // Slither around.
             float maxSlitherOffset = Utils.Remap(head.velocity.Length(), 1f, 13f, 20f, 1f);
-            float slitherOffset = MathF.Sin(-slitherTimer + segmentIndex * 0.4113f) * Utils.Remap(segmentIndex, 2f, 7f, 0f, maxSlitherOffset);
-            npc.Center += npc.SafeDirectionTo(head.Center).RotatedBy(MathHelper.PiOver2) * Utils.GetLerpValue(npc.Distance(head.Center), 145f, 190f, true) * slitherOffset;
+            float slitherOffset = Sin(-slitherTimer + segmentIndex * 0.4113f) * Utils.Remap(segmentIndex, 2f, 7f, 0f, maxSlitherOffset);
+            npc.Center += npc.SafeDirectionTo(head.Center).RotatedBy(PiOver2) * Utils.GetLerpValue(npc.Distance(head.Center), 145f, 190f, true) * slitherOffset;
             return false;
         }
 

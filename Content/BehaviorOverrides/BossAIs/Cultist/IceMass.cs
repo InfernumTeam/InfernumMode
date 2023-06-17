@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 40f, Time, true);
-            Projectile.rotation += MathHelper.Pi / 30f;
+            Projectile.rotation += Pi / 30f;
 
             if (Time >= 110)
                 Projectile.velocity *= 0.975f;
@@ -52,11 +52,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 float lineWidth = Utils.GetLerpValue(45f, 75f, Time, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * 2.5f + 0.2f;
 
                 if (lineWidth > 1f)
-                    lineWidth += MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;
+                    lineWidth += Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;
 
                 for (int i = 0; i < ShardBurstCount; i++)
                 {
-                    Vector2 lineDirection = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2();
+                    Vector2 lineDirection = (TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2();
                     Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + lineDirection * 5980f, Color.SkyBlue, lineWidth);
                 }
             }
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 for (float speed = 6f; speed <= 21f; speed += 3.3f)
                 {
-                    Vector2 iceVelocity = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2() * speed * (BossRushEvent.BossRushActive ? 1.6f : 1f);
+                    Vector2 iceVelocity = (TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2() * speed * (BossRushEvent.BossRushActive ? 1.6f : 1f);
                     Utilities.NewProjectileBetter(Projectile.Center, iceVelocity, ModContent.ProjectileType<IceShard>(), CultistBehaviorOverride.IceShardDamage, 0f);
                 }
             }

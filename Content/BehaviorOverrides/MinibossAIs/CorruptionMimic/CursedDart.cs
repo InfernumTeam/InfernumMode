@@ -33,8 +33,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
             Time++;
 
             Projectile.tileCollide = Time >= 105f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.36f, -32f, 9f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.36f, -32f, 9f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
 
             // Fire flames downward.

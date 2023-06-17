@@ -75,7 +75,7 @@ namespace InfernumMode.Content.Projectiles
                 // Determine if the mouse is hovering over the icon.
                 // If it is, it should display the hover text and increase in size.
                 bool hoveringOverBackground = drawArea.Contains(Main.MouseScreen.ToPoint());
-                Scale = MathHelper.Clamp(Scale + hoveringOverBackground.ToDirectionInt() * 0.04f, 1f, 1.35f);
+                Scale = Clamp(Scale + hoveringOverBackground.ToDirectionInt() * 0.04f, 1f, 1.35f);
 
                 // Draw the icon.
                 Main.spriteBatch.Draw(background, drawPosition, null, Color.White * opacity, 0f, backgroundOrigin, scale, 0, 0f);
@@ -286,7 +286,7 @@ namespace InfernumMode.Content.Projectiles
             }
 
             // Perform the shake effect. The matrix will return to its intended position again on the next frame, giving an illusion of jitter.
-            Projectile.Center += Main.rand.NextVector2Unit() * MathHelper.Lerp(0.4f, 3f, Time / shakeTime);
+            Projectile.Center += Main.rand.NextVector2Unit() * Lerp(0.4f, 3f, Time / shakeTime);
 
             if (Time <= shakeTime)
                 return;
@@ -329,8 +329,8 @@ namespace InfernumMode.Content.Projectiles
             IsRenderingUI = true;
 
             // Make the hologram appear.
-            HologramRayBrightness = MathHelper.Clamp(HologramRayBrightness + 0.03f, 0f, 1f);
-            HologramRayWidth = MathHelper.Clamp(HologramRayWidth + 4f, 1f, MaxHologramWidth);
+            HologramRayBrightness = Clamp(HologramRayBrightness + 0.03f, 0f, 1f);
+            HologramRayWidth = Clamp(HologramRayWidth + 4f, 1f, MaxHologramWidth);
 
             // Prepare the UI once the hologram is sufficiently large.
             if (HologramRayWidth >= MaxHologramWidth)
@@ -345,7 +345,7 @@ namespace InfernumMode.Content.Projectiles
         {
             // Use the UI effect.
             IsRenderingUI = true;
-            UIOptionsOpacity = MathHelper.Clamp(UIOptionsOpacity + 0.045f, 0f, 1f);
+            UIOptionsOpacity = Clamp(UIOptionsOpacity + 0.045f, 0f, 1f);
         }
 
         public void AdjustPlayerValues()
@@ -367,10 +367,10 @@ namespace InfernumMode.Content.Projectiles
 
         public float RayWidthFunction(float completionRatio)
         {
-            float widthOffset = MathF.Cos(completionRatio * 73f - Main.GlobalTimeWrappedHourly * 8f) *
+            float widthOffset = Cos(completionRatio * 73f - Main.GlobalTimeWrappedHourly * 8f) *
                 Utils.GetLerpValue(0f, 0.1f, completionRatio, true) *
                 Utils.GetLerpValue(1f, 0.9f, completionRatio, true);
-            return MathHelper.Lerp(2f, HologramRayWidth + 3f, completionRatio) + widthOffset;
+            return Lerp(2f, HologramRayWidth + 3f, completionRatio) + widthOffset;
         }
 
         public static Color RayColorFunction(float completionRatio)

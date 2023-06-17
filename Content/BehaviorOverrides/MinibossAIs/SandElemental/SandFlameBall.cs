@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             }
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
 
             // Determine frames.
             Projectile.frameCounter++;
@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             for (int i = 0; i < 3; i++)
             {
-                Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.65f, 0.65f, i / 2f)) * 8f;
+                Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.65f, 0.65f, i / 2f)) * 8f;
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, Projectile.damage, 0f, Main.myPlayer, target.whoAmI);
             }
         }
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 3f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, Projectile.GetAlpha(new Color(0.84f, 0.19f, 0.87f, 0f)) * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);

@@ -65,7 +65,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
             // Fade in and out.
             Projectile.Opacity = Utils.GetLerpValue(0f, 108f, Time, true) * Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true);
-            Projectile.scale = MathHelper.Clamp(Utils.GetLerpValue(0f, 108f, Time, true) * Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true), 0, MaxScale);
+            Projectile.scale = Clamp(Utils.GetLerpValue(0f, 108f, Time, true) * Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true), 0, MaxScale);
             Projectile.rotation += RotationAmount;
             Time++;
         }

@@ -39,8 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override void AI()
         {
             Projectile.velocity = Projectile.velocity.RotatedBy(SpinSpeed);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
             Lighting.AddLight(Projectile.Center, 0f, Projectile.Opacity * 0.4f, Projectile.Opacity * 0.4f);
 
             Time++;

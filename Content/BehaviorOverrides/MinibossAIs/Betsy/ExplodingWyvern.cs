@@ -45,10 +45,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            float offsetAngle = Main.rand.NextBool() ? MathHelper.PiOver4 : 0f;
+            float offsetAngle = Main.rand.NextBool() ? PiOver4 : 0f;
             for (int i = 0; i < 4; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 4f + offsetAngle).ToRotationVector2() * 11f;
+                Vector2 shootVelocity = (TwoPi * i / 4f + offsetAngle).ToRotationVector2() * 11f;
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DraconicBurst>(), 170, 0f);
             }
         }

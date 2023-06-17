@@ -198,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 float offsetDirection = (n.type == ModContent.NPCType<CrimulanSlimeGod>()).ToDirectionInt() * n.Infernum().ExtraAI[1];
                 Vector2 destination = target.Center + new Vector2(offsetDirection * 540f, -440f);
-                if (n.WithinRange(target.Center, 360f) && MathHelper.Distance(target.Center.Y, n.Center.Y) < 200f)
+                if (n.WithinRange(target.Center, 360f) && Distance(target.Center.Y, n.Center.Y) < 200f)
                     destination.X -= offsetDirection * 700f;
                 return destination;
             }
@@ -237,7 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 npc.noGravity = true;
                 npc.velocity.X *= 0.8f;
                 npc.noTileCollide = npc.Bottom.Y < target.Bottom.Y;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + gravity, -12f, 21f);
+                npc.velocity.Y = Clamp(npc.velocity.Y + gravity, -12f, 21f);
                 if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height + 4, true) && !npc.noTileCollide)
                 {
                     bool bothSlimesHasSlammed = crimulanSlime.Infernum().ExtraAI[0] == 1f && ebonianSlime.Infernum().ExtraAI[0] == 1f;
@@ -248,10 +248,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
-                            float shootOffsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / globCount;
+                            float shootOffsetAngle = Main.rand.NextBool().ToInt() * Pi / globCount;
                             for (int i = 0; i < globCount; i++)
                             {
-                                Vector2 globVelocity = (MathHelper.TwoPi * i / globCount + shootOffsetAngle).ToRotationVector2() * globSpeed;
+                                Vector2 globVelocity = (TwoPi * i / globCount + shootOffsetAngle).ToRotationVector2() * globSpeed;
                                 Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, SlimeGlobDamage, 0f);
                             }
 
@@ -371,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     Vector2 shootPosition = npc.Center - Vector2.UnitY * 24f;
                     for (int i = 0; i < groundBlobCountPerShot; i++)
                     {
-                        Vector2 shootDestination = target.Center + Vector2.UnitX * MathHelper.Lerp(-200f, 200f, i / (float)(groundBlobCountPerShot - 1f));
+                        Vector2 shootDestination = target.Center + Vector2.UnitX * Lerp(-200f, 200f, i / (float)(groundBlobCountPerShot - 1f));
                         shootDestination.X += Main.rand.NextFloatDirection() * 30f;
 
                         // The ideal velocity for falling can be calculated based on the horizontal range formula in the following way:
@@ -383,8 +383,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         // v = sqrt(R * g), as the solution.
                         // However, to prevent weird looking angles, a clamp is performed to ensure the result stays within natural bounds.
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
-                        float idealShootSpeed = MathF.Sqrt(horizontalDistance * GroundSlimeGlob.Gravity);
-                        float slimeShootSpeed = MathHelper.Clamp(idealShootSpeed, 7.6f, 20f);
+                        float idealShootSpeed = Sqrt(horizontalDistance * GroundSlimeGlob.Gravity);
+                        float slimeShootSpeed = Clamp(idealShootSpeed, 7.6f, 20f);
                         Vector2 slimeShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, GroundSlimeGlob.Gravity, slimeShootSpeed, out _);
                         Utilities.NewProjectileBetter(shootPosition, slimeShootVelocity, ModContent.ProjectileType<GroundSlimeGlob>(), GroundSlimeDamage, 0f, -1, 0f, target.Center.Y);
                     }
@@ -395,7 +395,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                         int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                         for (int i = 0; i < acceleratingGlobPerShot; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.62f, 0.62f, i / (float)(acceleratingGlobPerShot - 1f));
+                            float shootOffsetAngle = Lerp(-0.62f, 0.62f, i / (float)(acceleratingGlobPerShot - 1f));
                             Vector2 globVelocity = Vector2.UnitX.RotatedBy(shootOffsetAngle) * globSpeed;
                             if (target.Center.X < npc.Center.X)
                                 globVelocity *= -1f;
@@ -432,7 +432,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int totalSlimesToSpawn = (int)MathHelper.Lerp(7f, 12f, 1f - npc.life / (float)npc.lifeMax);
+                    int totalSlimesToSpawn = (int)Lerp(7f, 12f, 1f - npc.life / (float)npc.lifeMax);
                     int lifePerSlime = (int)Math.Ceiling(npc.life / (float)totalSlimesToSpawn);
 
                     for (int i = 0; i < totalSlimesToSpawn; i++)
@@ -462,7 +462,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     effectiveTimer += 42f;
                 float chargeWrappedAttackTimer = effectiveTimer % 150f;
 
-                Vector2 flyDestination = target.Center + (MathHelper.TwoPi * effectiveTimer / 150f).ToRotationVector2() * 465f;
+                Vector2 flyDestination = target.Center + (TwoPi * effectiveTimer / 150f).ToRotationVector2() * 465f;
                 if (chargeWrappedAttackTimer > 90f)
                 {
                     // Slow down.
@@ -483,7 +483,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                             int globID = red ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                             for (int i = 0; i < acceleratingGlobPerShot; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(-0.32f, 0.32f, i / (float)(acceleratingGlobPerShot - 1f));
+                                float shootOffsetAngle = Lerp(-0.32f, 0.32f, i / (float)(acceleratingGlobPerShot - 1f));
                                 Vector2 globVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * globSpeed;
                                 Utilities.NewProjectileBetter(npc.Bottom, globVelocity, globID, SlimeGlobDamage, 0f);
                             }
@@ -508,7 +508,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             {
                 splitState = 2f;
                 npc.Opacity = 1f;
-                npc.scale = MathHelper.Clamp(npc.scale + 0.075f, 0f, BigSlimeBaseScale);
+                npc.scale = Clamp(npc.scale + 0.075f, 0f, BigSlimeBaseScale);
             }
             else
                 npc.Opacity = 0f;

@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             npc.Calamity().newAI[0] = 3f;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float beaconAngerFactor = Utils.GetLerpValue(EnrageStartDistance, EnrageStartDistance + 800f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
+            float beaconAngerFactor = Utils.GetLerpValue(EnrageStartDistance, EnrageStartDistance + 800f, Distance(beacons.First().Center.X, target.Center.X), true);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
@@ -146,7 +146,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             bool enteringLastPhase = lifeRatio < Phase3LifeRatio && inFinalPhase == 0f;
 
             // Clamp position into the world.
-            npc.position.X = MathHelper.Clamp(npc.position.X, 1300f, Main.maxTilesX * 16f - 1300f);
+            npc.position.X = Clamp(npc.position.X, 1300f, Main.maxTilesX * 16f - 1300f);
 
             // Don't take damage if requested.
             if (dontTakeDamage == 1f)
@@ -172,8 +172,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 }
 
                 attackTimer = 0f;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -30f, 13.5f);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.velocity.Y = Clamp(npc.velocity.Y - 0.4f, -30f, 13.5f);
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 if (npc.Center.Y < -3500f || !npc.WithinRange(target.Center, 6000f))
                 {
                     HatGirl.SayThingWhileOwnerIsAlive(target, "That thing seems to have shed its outer shell. Brace yourself, it's going to be a lot faster now!");
@@ -188,7 +188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 return false;
             }
             else
-                npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
+                npc.position.Y = Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
 
             // Quickly fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 16, 0, 255);
@@ -237,7 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Ascend into the sky and disappear.
             npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 30f, 0.08f);
             npc.velocity.X *= 0.975f;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Cap the despawn timer so that the boss can swiftly disappear.
             npc.timeLeft = Utils.Clamp(npc.timeLeft - 1, 0, 120);
@@ -257,8 +257,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int chargeTime = 36;
             int chargeCount = 3;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float teleportOutwardness = MathHelper.Lerp(1580f, 1250f, 1f - lifeRatio) - beaconAngerFactor * 240f;
-            float chargeSpeed = MathHelper.Lerp(34f, 42.5f, 1f - lifeRatio) + beaconAngerFactor * 12f;
+            float teleportOutwardness = Lerp(1580f, 1250f, 1f - lifeRatio) - beaconAngerFactor * 240f;
+            float chargeSpeed = Lerp(34f, 42.5f, 1f - lifeRatio) + beaconAngerFactor * 12f;
 
             if (phase2)
             {
@@ -284,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 // Drift towards the player. Contact damage is possible, but should be of little threat.
                 if (!npc.WithinRange(target.Center, 375f) && wrappedTimer < driftTime)
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 16f, 0.085f);
+                    float newSpeed = Lerp(npc.velocity.Length(), 16f, 0.085f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.032f, true) * newSpeed;
                 }
                 else if (wrappedTimer >= driftTime)
@@ -295,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 }
 
                 // Rapidly fade out and do the teleport.
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.13f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.13f, 0f, 1f);
                 if (wrappedTimer == fadeInTime - 1f)
                 {
                     Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.456f);
@@ -314,7 +314,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
                         for (int i = 0; i < 7; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / 6f);
+                            float shootOffsetAngle = Lerp(-0.45f, 0.45f, i / 6f);
                             Vector2 fireVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 9f;
                             if (BossRushEvent.BossRushActive)
                                 fireVelocity *= 2.3f;
@@ -329,11 +329,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Fade back in after the charge.
             else if (wrappedTimer < fadeInTime + chargeTime)
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.15f, 0f, 1f);
 
             else if (wrappedTimer < fadeInTime + chargeTime + fadeOutTime)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.06f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.06f, 0f, 1f);
 
                 // Attempt to rotate towards the target after the teleport if not super close to them.
                 if (!npc.WithinRange(target.Center, 200f))
@@ -357,7 +357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 SelectNextAttack(npc);
 
             // Adjust rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoBehavior_AstralMeteorShower(NPC npc, Player target, bool phase2, bool phase3, float beaconAngerFactor, ref float attackTimer)
@@ -393,16 +393,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Apply distance-enrage buffs.
             meteorReleaseRate = Utils.Clamp((int)(meteorReleaseRate - beaconAngerFactor * 5f), 3, 20);
-            meteorSpeed = MathHelper.Lerp(meteorSpeed, 24.5f, beaconAngerFactor);
+            meteorSpeed = Lerp(meteorSpeed, 24.5f, beaconAngerFactor);
 
             // Initialize the meteor rain angle.
             if (meteorRainAngle == 0f)
-                meteorRainAngle = Main.rand.NextFloatDirection() * MathHelper.Pi / 12f;
+                meteorRainAngle = Main.rand.NextFloatDirection() * Pi / 12f;
 
             // Determine rotation.
             // This technically has a one-frame buffer due to velocity calculations happening below, but it shouldn't be significant enough to make
             // a real difference.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Rise into the sky in anticipation of the downward charge and meteor shower.
             if (attackTimer < upwardRiseTime)
@@ -411,7 +411,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 // A nudge towards the horizontal position of the target is constantly applied to mitigate this as well.
                 if (Math.Abs(npc.velocity.X) > 4f)
                     npc.velocity.X *= 0.97f;
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 540f)
+                if (Distance(npc.Center.X, target.Center.X) > 540f)
                     npc.position.X += npc.SafeDirectionTo(target.Center).X * 11f;
 
                 // Perform vertical movement.
@@ -433,10 +433,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // to allow for consistent damage from the player.
             if (npc.velocity.Y < 0f)
             {
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 19f, 0.1f);
+                npc.velocity.X = Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 19f, 0.1f);
                 npc.velocity *= 0.965f;
             }
-            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + downwardSlamGravity, -maxUpwardRiseSpeed, downwardSlamSpeed);
+            npc.velocity.Y = Clamp(npc.velocity.Y + downwardSlamGravity, -maxUpwardRiseSpeed, downwardSlamSpeed);
 
             // Create meteors.
             bool withinShootInterval = attackTimer >= upwardRiseTime + meteorShootDelay && attackTimer < upwardRiseTime + meteorShootDelay + meteorShootTime;
@@ -467,12 +467,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int minRiseTime = 75;
             int rubbleCount = 15;
             int attackTransitionDelay = 75;
-            float rubbleFlySpeedFactor = MathHelper.Lerp(1f, 1.5f, beaconAngerFactor);
-            float descendGravity = MathHelper.Lerp(0.6f, 1.36f, beaconAngerFactor);
+            float rubbleFlySpeedFactor = Lerp(1f, 1.5f, beaconAngerFactor);
+            float descendGravity = Lerp(0.6f, 1.36f, beaconAngerFactor);
 
             // This is fast, but not too fast, to prevent potential cheap hits if Deus happens to fall on top of the player.
             float maxDescendSpeed = 26f;
-            float riseAcceleration = MathHelper.Lerp(0.84f, 1.56f, beaconAngerFactor);
+            float riseAcceleration = Lerp(0.84f, 1.56f, beaconAngerFactor);
             float maxRiseSpeed = 34.5f;
             bool movingBackDownAgain = attackTimer >= minDescendTime + minRiseTime + 8f;
 
@@ -490,7 +490,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Determine rotation.
             // This technically has a one-frame buffer due to velocity calculations happening below, but it shouldn't be significant enough to make
             // a real difference.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Descend downward and make any remaining horizontal movement fizzle out.
             if (attackTimer < minDescendTime || movingBackDownAgain)
@@ -508,7 +508,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 }
 
                 npc.velocity.X *= 0.985f;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + descendGravity, -16f, maxDescendSpeed);
+                npc.velocity.Y = Clamp(npc.velocity.Y + descendGravity, -16f, maxDescendSpeed);
                 return;
             }
 
@@ -522,14 +522,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     npc.velocity.Y *= 0.925f;
 
                 // Try to stay horizontally near the target.
-                if (MathHelper.Distance(target.Center.X, npc.Center.X) > 150f)
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 20f, 0.05f);
+                if (Distance(target.Center.X, npc.Center.X) > 150f)
+                    npc.velocity.X = Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 20f, 0.05f);
 
                 // Let the rise persist if not sufficiently far down below the target yet.
                 if (isntFarEnoughUp && attackTimer >= minDescendTime + minRiseTime - 5f)
                     attackTimer = minDescendTime + minRiseTime - 5f;
 
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - riseAcceleration, -maxRiseSpeed, maxDescendSpeed);
+                npc.velocity.Y = Clamp(npc.velocity.Y - riseAcceleration, -maxRiseSpeed, maxDescendSpeed);
             }
 
             // Release rubble upward in a mostly even spread at the apex of the rise.
@@ -543,8 +543,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     {
                         for (float j = 0.2f; j <= 1f; j += 0.2f)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-1.24f, 1.24f, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.032f;
-                            Vector2 rubbleVelocity = Vector2.Lerp(-Vector2.UnitY, (npc.rotation + MathHelper.PiOver2).ToRotationVector2(), 0.32f);
+                            float shootOffsetAngle = Lerp(-1.24f, 1.24f, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.032f;
+                            Vector2 rubbleVelocity = Vector2.Lerp(-Vector2.UnitY, (npc.rotation + PiOver2).ToRotationVector2(), 0.32f);
                             rubbleVelocity = rubbleVelocity.SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(17.5f, 25f) * rubbleFlySpeedFactor * j;
                             Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 2f, rubbleVelocity, ModContent.ProjectileType<AstralRubble>(), AstralRubbleDamage, 0f);
                         }
@@ -608,18 +608,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             float flySpeed = 54f;
             if (hasCharged == 0f)
             {
-                float t = MathHelper.TwoPi * attackTimer / 150f;
-                float sinT = MathF.Sin(t);
-                float sin2T = MathF.Sin(t * 2f);
-                float cosT = MathF.Cos(t);
-                float denominator = 1f + 1f * MathF.Pow(MathF.Sin(t), 2f) + MathF.Pow(sinT, 4f);
+                float t = TwoPi * attackTimer / 150f;
+                float sinT = Sin(t);
+                float sin2T = Sin(t * 2f);
+                float cosT = Cos(t);
+                float denominator = 1f + 1f * Pow(Sin(t), 2f) + Pow(sinT, 4f);
 
-                float speedX = flySpeed * (-sinT - MathF.Pow(sinT, 3f) - cosT * sin2T) / denominator;
-                float speedY = flySpeed * (MathF.Pow(cosT, 2f) - MathF.Pow(sinT, 4f) * 2f - sinT * cosT * sin2T) / denominator;
+                float speedX = flySpeed * (-sinT - Pow(sinT, 3f) - cosT * sin2T) / denominator;
+                float speedY = flySpeed * (Pow(cosT, 2f) - Pow(sinT, 4f) * 2f - sinT * cosT * sin2T) / denominator;
                 npc.velocity = new(speedX, speedY);
             }
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Initialize the center of the lemniscate.
             if (lemniscateCenterX == 0f || lemniscateCenterY == 0f)
@@ -686,7 +686,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Try to spin around the target after charging.
             if (hasCharged == 1f)
             {
-                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 1080f;
+                Vector2 spinDestination = target.Center + (attackTimer * TwoPi / 150f).ToRotationVector2() * 1080f;
 
                 // Periodically release plasma fireballs at the target.
                 if (attackTimer % 50f == 49f)
@@ -701,7 +701,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 }
 
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
-                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathF.Min(npc.Distance(spinDestination), 34f);
                 if (!Utilities.AnyProjectiles(ModContent.ProjectileType<AstralVortex>()) && !Utilities.AnyProjectiles(ModContent.ProjectileType<AstralFlame2>()))
                     SelectNextAttack(npc);
             }
@@ -711,7 +711,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         {
             int shootTime = 420;
             int attackTransitionDelay = 105;
-            int plasmaShootRate = (int)MathHelper.Lerp(54f, 28f, beaconAngerFactor);
+            int plasmaShootRate = (int)Lerp(54f, 28f, beaconAngerFactor);
             int crystalShootRate = 45;
             bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
             float flySpeed = 18.5f;
@@ -740,13 +740,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             // Fly near the target and snap at them if sufficiently close.
-            float nextFlySpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.1f);
+            float nextFlySpeed = Lerp(npc.velocity.Length(), flySpeed, 0.1f);
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
             if (closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.59f)
                 npc.velocity *= 1.016f;
             else
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyTurnSpeed, true) * nextFlySpeed;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Periodically release astral plasma fireballs if not close enough to snap at the target.
             if (!closeEnoughToSnap && attackTimer < shootTime)
@@ -797,7 +797,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int planetCount = 7;
             int flyTime = 270;
             int attackTransitionDelay = 210;
-            int plasmaShootRate = (int)MathHelper.Lerp(50f, 28f, beaconAngerFactor);
+            int plasmaShootRate = (int)Lerp(50f, 28f, beaconAngerFactor);
             bool closeEnoughToSnap = npc.WithinRange(target.Center, 375f);
             float plasmaShootSpeed = 12f;
             float flySpeed = 17.25f;
@@ -826,7 +826,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Determine rotation.
             // This technically has a one-frame buffer due to velocity calculations happening below, but it shouldn't be significant enough to make
             // a real difference.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Periodically release astral plasma fireballs if not close enough to snap at the target.
             if (!closeEnoughToSnap && attackTimer < flyTime)
@@ -857,9 +857,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     {
                         // In degrees.
                         float orbitalAngularVelocity = Main.rand.NextFloatDirection() * 4f;
-                        float offsetRadius = MathHelper.Lerp(105f, 360f, i / (float)(planetCount - 1f));
+                        float offsetRadius = Lerp(105f, 360f, i / (float)(planetCount - 1f));
 
-                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, deusSpawnID, npc.whoAmI, MathHelper.TwoPi * i / planetCount, offsetRadius, orbitalAngularVelocity);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, deusSpawnID, npc.whoAmI, TwoPi * i / planetCount, offsetRadius, orbitalAngularVelocity);
                     }
                 }
             }
@@ -867,7 +867,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (attackTimer < flyTime)
             {
                 // Fly near the target and snap at them if sufficiently close.
-                float nextFlySpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.1f);
+                float nextFlySpeed = Lerp(npc.velocity.Length(), flySpeed, 0.1f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 if (closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.59f)
                     npc.velocity *= 1.016f;
@@ -898,7 +898,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         {
             int repositionTimeBuffer = 10;
             int starGrowTime = 165;
-            int laserShootRate = (int)MathHelper.Lerp(12f, 4f, beaconAngerFactor);
+            int laserShootRate = (int)Lerp(12f, 4f, beaconAngerFactor);
             int attackTransitionDelay = 165;
 
             if (phase2)
@@ -942,12 +942,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 // Disable contact damage.
                 npc.damage = 0;
 
-                Vector2 spinDestination = new Vector2(starSpawnCenterX, starSpawnCenterY) + (MathHelper.TwoPi * attackTimer / 135f).ToRotationVector2() * 640f;
+                Vector2 spinDestination = new Vector2(starSpawnCenterX, starSpawnCenterY) + (TwoPi * attackTimer / 135f).ToRotationVector2() * 640f;
                 Vector2 oldCenter = npc.Center;
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
-                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathF.Min(npc.Distance(spinDestination), 34f);
                 if (npc.velocity == Vector2.Zero)
-                    npc.rotation = (spinDestination - oldCenter).ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = (spinDestination - oldCenter).ToRotation() + PiOver2;
 
                 // Don't let the attack proceed until in position for the spin.
                 if ((int)attackTimer == repositionTimeBuffer && !npc.WithinRange(spinDestination, 200f))
@@ -1006,7 +1006,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Determine rotation.
             if (npc.velocity != Vector2.Zero)
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             if (attackTimer >= repositionTimeBuffer + starGrowTime + attackTransitionDelay)
                 SelectNextAttack(npc);
@@ -1041,7 +1041,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
                     for (int i = 0; i < starsInConstellation; i++)
                     {
-                        float offsetAngle = MathHelper.TwoPi * i / starsInConstellation;
+                        float offsetAngle = TwoPi * i / starsInConstellation;
                         Vector2 starPosition = DarkStar.CalculateStarPosition(new Vector2(blackHoleCenterX, blackHoleCenterY), offsetAngle, 0f);
                         Vector2 blackHoleCenter = new(blackHoleCenterX, blackHoleCenterY);
 
@@ -1064,11 +1064,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             npc.damage = 0;
 
             // Circle around the black hole spawn center.
-            Vector2 spinDestination = new Vector2(blackHoleCenterX, blackHoleCenterY) + (MathHelper.TwoPi * attackTimer / 135f).ToRotationVector2() * 640f;
+            Vector2 spinDestination = new Vector2(blackHoleCenterX, blackHoleCenterY) + (TwoPi * attackTimer / 135f).ToRotationVector2() * 640f;
             Vector2 oldCenter = npc.Center;
             npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
-            npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
-            npc.rotation = (spinDestination - oldCenter).ToRotation() + MathHelper.PiOver2;
+            npc.velocity = npc.SafeDirectionTo(spinDestination) * MathF.Min(npc.Distance(spinDestination), 34f);
+            npc.rotation = (spinDestination - oldCenter).ToRotation() + PiOver2;
 
             if (!Utilities.AnyProjectiles(ModContent.ProjectileType<AstralBlackHole>()) && attackTimer >= 2f)
                 SelectNextAttack(npc);
@@ -1085,13 +1085,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             ref float blobShootTimer = ref npc.Infernum().ExtraAI[0];
 
             // Fly near the target and snap at them if sufficiently close.
-            float nextFlySpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.1f);
+            float nextFlySpeed = Lerp(npc.velocity.Length(), flySpeed, 0.1f);
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
             if (closeEnoughToSnap && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.59f)
                 npc.velocity *= 1.016f;
             else
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyTurnSpeed, true) * nextFlySpeed;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Shoot infection globs.
             if (npc.WithinRange(target.Center, 420f))
@@ -1128,7 +1128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             int constellationCount = 3;
             int starCreationTime = totalStarsToCreate * starCreationRate;
             float plasmaShootSpeed = 13f;
-            float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
+            float animationCompletionRatio = Clamp(attackTimer / initialAnimationTime, 0f, 1f);
             float wrappedAttackTimer = attackTimer % (initialAnimationTime + starCreationTime + explosionTime);
             ref float constellationPatternType = ref npc.Infernum().ExtraAI[0];
             ref float constellationSeed = ref npc.Infernum().ExtraAI[1];
@@ -1136,7 +1136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Rotate towards the target.
             if (!npc.WithinRange(target.Center, 250f))
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.032f, true) * 14.5f;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Determine what constellation pattern this arm will use. Each arm has their own pattern that they create.
             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == initialAnimationTime - 30f)
@@ -1172,8 +1172,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     // Horizontal sinusoid.
                     case 2:
                     default:
-                        float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
-                        float verticalOffset = MathF.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        float horizontalOffset = Lerp(-775f, 775f, patternCompletion);
+                        float verticalOffset = Cos(patternCompletion * Pi + constellationSeed * TwoPi) * 420f;
                         currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
                         break;
                 }
@@ -1292,7 +1292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 if (Main.npc[i].active && (Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
                 {
-                    Main.npc[i].Center = npc.Center - (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * segmentCount;
+                    Main.npc[i].Center = npc.Center - (npc.rotation - PiOver2).ToRotationVector2() * segmentCount;
                     Main.npc[i].netUpdate = true;
                     segmentCount++;
                 }

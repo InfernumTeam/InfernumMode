@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override bool UsesScreenshake => false;
 
-        public override Color GetCurrentExplosionColor(float pulseCompletionRatio) => Color.Lerp(Color.Cyan * 1.2f, Color.DeepSkyBlue, MathHelper.Clamp(pulseCompletionRatio * 1.2f, 0f, 1f));
+        public override Color GetCurrentExplosionColor(float pulseCompletionRatio) => Color.Lerp(Color.Cyan * 1.2f, Color.DeepSkyBlue, Clamp(pulseCompletionRatio * 1.2f, 0f, 1f));
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
@@ -49,8 +49,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Expand outward.
-            CurrentRadius = MathHelper.Lerp(CurrentRadius, MaxRadius, 0.25f);
-            Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+            CurrentRadius = Lerp(CurrentRadius, MaxRadius, 0.25f);
+            Projectile.scale = Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
 
             // Adjust the hitbox.
             Projectile.ExpandHitboxBy((int)(CurrentRadius * Projectile.scale * 0.54f), (int)(CurrentRadius * Projectile.scale * 0.54f));

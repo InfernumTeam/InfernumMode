@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
 
                 // Release ashes.
-                int ashCount = (int)MathHelper.Lerp(8f, 2f, Projectile.Opacity);
+                int ashCount = (int)Lerp(8f, 2f, Projectile.Opacity);
                 for (int i = 0; i < ashCount; i++)
                 {
                     Color startingColor = Color.Lerp(Color.Orange, Color.Gray, Main.rand.NextFloat(0.5f, 0.8f));
@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     GeneralParticleHandler.SpawnParticle(ash);
                 }
 
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
                 if (Projectile.Opacity <= 0f)
                     Projectile.Kill();
             }
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Prepare to explode if inside the lava.
             else if (InLava)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
                 if (Projectile.Opacity <= 0f)
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSound with { Volume = 0.6f }, Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center);
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         {
                             // Release a bunch of lava particles from below.
                             int lavaLifetime = Main.rand.Next(120, 167);
-                            float blobSize = MathHelper.Lerp(12f, 34f, MathF.Pow(Main.rand.NextFloat(), 1.85f));
+                            float blobSize = Lerp(12f, 34f, Pow(Main.rand.NextFloat(), 1.85f));
                             if (Main.rand.NextBool(6))
                                 blobSize *= 1.4f;
                             Vector2 lavaVelocity = -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(4f, 5f);
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         // Release four cinders up from below as well.
                         for (int i = 0; i < 4; i++)
                         {
-                            Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.51f, 0.51f, i / 3f)) * 4.25f;
+                            Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Lerp(-0.51f, 0.51f, i / 3f)) * 4.25f;
                             Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<HolyCinder>(), ProvidenceBehaviorOverride.CinderDamage, 0f);
                         }
                     }

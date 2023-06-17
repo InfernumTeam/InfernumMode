@@ -60,8 +60,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
             bool dissipate = hasCooldown || !ForcefieldCanDraw;
             if (!ForcefieldCanDraw)
                 ForcefieldOpacity *= 0.9f;
-            ForcefieldOpacity = MathHelper.Clamp(ForcefieldOpacity - hasCooldown.ToDirectionInt() * 0.025f, 0f, 1f);
-            ForcefieldDissipationInterpolant = MathHelper.Clamp(ForcefieldDissipationInterpolant + dissipate.ToDirectionInt() * 0.023f, 0f, 1f);
+            ForcefieldOpacity = Clamp(ForcefieldOpacity - hasCooldown.ToDirectionInt() * 0.025f, 0f, 1f);
+            ForcefieldDissipationInterpolant = Clamp(ForcefieldDissipationInterpolant + dissipate.ToDirectionInt() * 0.023f, 0f, 1f);
 
             if (!MechanicalEffectsApply)
                 return;

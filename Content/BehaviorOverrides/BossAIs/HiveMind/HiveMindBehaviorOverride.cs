@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public const float NPCSpawnArcSpinTime = 25f;
 
-        public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
+        public const float NPCSpawnArcRotationalOffset = Pi / NPCSpawnArcSpinTime;
 
         public const float LungeSpinTotalRotations = 2f;
 
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
             bool enraged = enrageTimer > 300f;
 
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
+            enrageTimer = Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
             npc.defense = enraged ? -5 : 9999;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
             npc.noTileCollide = true;
@@ -169,7 +169,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             if (finalPhaseInvinciblityTime > 0f)
             {
                 npc.knockBackResist = 0f;
-                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 90f);
+                npc.life = (int)Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 90f);
                 npc.ai = new float[] { 0f, 0f, 0f, 0f };
                 npc.Infernum().ExtraAI[0] = (int)HiveMindAttackState.SuspensionStateDrift;
                 npc.Infernum().ExtraAI[1] = npc.Infernum().ExtraAI[2] = npc.Infernum().ExtraAI[3] = 0f;
@@ -358,7 +358,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                     DoRoar(npc, false);
                     fadeoutCountdown = HiveMindFadeoutTime;
                     spinDirection = Main.rand.NextBool().ToDirectionInt();
-                    npc.velocity = Vector2.UnitX * MathHelper.Pi * SpinRadius / NPCSpawnArcSpinTime * spinDirection;
+                    npc.velocity = Vector2.UnitX * Pi * SpinRadius / NPCSpawnArcSpinTime * spinDirection;
                     npc.alpha = 0;
                     hasFadedInFlag = 1f;
                     npc.netUpdate = true;
@@ -414,7 +414,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             npc.dontTakeDamage = false;
             if (attackTimer == 0f)
             {
-                initialSpinRotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                initialSpinRotation = Main.rand.NextFloat(TwoPi);
 
                 Vector2 teleportPosition = initialSpinRotation.ToRotationVector2() * SpinRadius;
                 teleportOffsetX = teleportPosition.X;
@@ -436,7 +436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 return;
             }
 
-            spinIncrement += MathF.Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer - teleportDelay, true), 0.6f);
+            spinIncrement += Pow(Utils.GetLerpValue(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer - teleportDelay, true), 0.6f);
 
             // Decide the spin direction if it has yet to be.
             while (spinDirection == 0f)
@@ -448,7 +448,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 DoRoar(npc, false);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.6f;
-                npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.GetLerpValue(1f, 0.6f, lifeRatio));
+                npc.velocity *= Lerp(1f, 1.3f, Utils.GetLerpValue(1f, 0.6f, lifeRatio));
                 if (enraged)
                     npc.velocity *= 1.45f;
 
@@ -464,7 +464,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             {
                 npc.Opacity = 1f;
                 npc.velocity = Vector2.Zero;
-                npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
+                npc.Center = target.Center + (TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 12f == 11f && attackTimer < teleportDelay + MaxSlowdownTime)
                 {
@@ -521,7 +521,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                     while (dashDirection == 0f)
                         dashDirection = Main.rand.NextBool().ToDirectionInt();
 
-                    teleportPosition.Y -= RainDashOffset * MathHelper.Lerp(1.2f, 1.5f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
+                    teleportPosition.Y -= RainDashOffset * Lerp(1.2f, 1.5f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
                     teleportPosition.X += RainDashOffset * dashDirection;
                     teleportPositionX = teleportPosition.X;
                     teleportPositionY = teleportPosition.Y;
@@ -545,7 +545,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 {
                     DoRoar(npc, true);
                     npc.velocity = Vector2.UnitX * dashDirection * -10.25f;
-                    npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
+                    npc.velocity *= Lerp(1f, 1.3f, Utils.GetLerpValue(1f, 0.4f, lifeRatio, true));
                     if (enraged)
                         npc.velocity *= 1.5f;
                     if (BossRushEvent.BossRushActive)
@@ -623,7 +623,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < FinalPhaseLifeRatio ? 4.35f : 4.15f);
 
                 Vector2 wallSpawnOffset = new(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
-                Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < FinalPhaseLifeRatio ? MathHelper.ToRadians(10f) : 0f) * 10f;
+                Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < FinalPhaseLifeRatio ? ToRadians(10f) : 0f) * 10f;
 
                 if (enraged)
                     wallVelocity *= 1.35f;
@@ -663,7 +663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = Vector2.Zero;
                 dashDirection = Main.rand.NextBool().ToDirectionInt();
 
-                float horizontalTeleportOffset = MathHelper.Lerp(510f, 400f, 1f - lifeRatio);
+                float horizontalTeleportOffset = Lerp(510f, 400f, 1f - lifeRatio);
                 if (lifeRatio < FinalPhaseLifeRatio)
                     horizontalTeleportOffset -= 75f;
 
@@ -773,7 +773,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 if (npc.ai[3] % clotSpawnRate == clotSpawnRate - 1f)
                 {
                     Vector2 clotSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 540f, Main.rand.NextFloat(-555f, -505f));
-                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 8f;
+                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(ToRadians(36f)) * 8f;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(clot =>
                     {
@@ -846,7 +846,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             }
 
             attackTimer++;
-            hoverOffsetAngle += MathHelper.ToRadians(5f);
+            hoverOffsetAngle += ToRadians(5f);
             if ((int)attackTimer == 120f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -901,8 +901,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             for (int i = 0; i < 72; i++)
             {
-                float angle = MathHelper.TwoPi / 72f * i;
-                Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, DustID.ChlorophyteWeapon, MathF.Cos(angle) * 15f, MathF.Sin(angle) * 15f);
+                float angle = TwoPi / 72f * i;
+                Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, DustID.ChlorophyteWeapon, Cos(angle) * 15f, Sin(angle) * 15f);
                 fire.noGravity = true;
             }
             SoundEngine.PlaySound(HiveMindBoss.RoarSound, npc.Center);
@@ -933,8 +933,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 if (npc.Infernum().ExtraAI[10] == 0f || !CalamityConfig.Instance.Afterimages)
                     break;
 
-                float scale = npc.scale * MathHelper.Lerp(0.9f, 0.45f, i / (float)npc.oldPos.Length);
-                float trailLength = MathHelper.Lerp(70f, 195f, Utils.GetLerpValue(3f, 7f, npc.velocity.Length(), true));
+                float scale = npc.scale * Lerp(0.9f, 0.45f, i / (float)npc.oldPos.Length);
+                float trailLength = Lerp(70f, 195f, Utils.GetLerpValue(3f, 7f, npc.velocity.Length(), true));
                 if (npc.velocity.Length() < 1.8f)
                     trailLength = 8f;
 
@@ -942,7 +942,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 drawColor.A = 0;
                 drawColor *= npc.Opacity;
 
-                Vector2 drawPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * -MathHelper.Lerp(8f, trailLength, i / (float)npc.oldPos.Length);
+                Vector2 drawPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * -Lerp(8f, trailLength, i / (float)npc.oldPos.Length);
                 Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition + new Vector2(0, npc.gfxOffY),
                     frameRectangle, drawColor, npc.rotation, frameRectangle.Size() / 2f, scale, SpriteEffects.None, 0f);
             }
@@ -968,7 +968,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
                 float scale = npc.Infernum().ExtraAI[6] / HiveMindFadeoutTime / Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f);
-                Main.spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] -= 1f;
             }
 

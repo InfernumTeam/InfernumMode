@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             npc.noTileCollide = false;
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
-                flameJetInterpolant = MathHelper.Clamp(flameJetInterpolant + 0.1f, 0f, 1f);
+                flameJetInterpolant = Clamp(flameJetInterpolant + 0.1f, 0f, 1f);
 
                 npc.noTileCollide = true;
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -30f, 0.2f);
@@ -347,7 +347,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         npc.velocity.Y -= 3.84f;
 
                     // Jump far higher if the target is close, to allow them to have openings and encourage close combat.
-                    if (MathHelper.Distance(npc.Center.X, target.Center.X) < 425f || MathHelper.Distance(npc.Center.Y, target.Center.Y) < 240f)
+                    if (Distance(npc.Center.X, target.Center.X) < 425f || Distance(npc.Center.Y, target.Center.Y) < 240f)
                         npc.velocity.Y -= 9.5f;
 
                     // Release fireballs at the target if they're far enough away.
@@ -355,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     {
                         for (int i = 0; i < emberBurstCount; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / (float)(emberBurstCount - 1f));
+                            float offsetAngle = Lerp(-0.51f, 0.51f, i / (float)(emberBurstCount - 1f));
                             Vector2 emberShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 6f;
                             Utilities.NewProjectileBetter(npc.Center + emberShootVelocity * 9f, emberShootVelocity, ModContent.ProjectileType<DarkMagicFireball>(), DarkMagicFireballDamage, 0f);
                         }
@@ -463,8 +463,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         // v = sqrt(R * g), as the solution.
                         // However, to prevent weird looking angles, a clamp is performed to ensure the result stays within natural bounds.
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
-                        float idealShootSpeed = MathF.Sqrt(horizontalDistance * UnholyBloodGlob.Gravity);
-                        float bloodShootSpeed = MathHelper.Clamp(idealShootSpeed, 8.4f, 24f);
+                        float idealShootSpeed = Sqrt(horizontalDistance * UnholyBloodGlob.Gravity);
+                        float bloodShootSpeed = Clamp(idealShootSpeed, 8.4f, 24f);
                         Vector2 bloodShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, UnholyBloodGlob.Gravity, bloodShootSpeed, out _);
                         if (multiplePerShot)
                             bloodShootVelocity += Main.rand.NextVector2Circular(2f, 2f);
@@ -491,7 +491,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
             int projectileShootCount = 27;
             int slamCount = 3;
-            float projectileAngularSpread = MathHelper.ToRadians(61f);
+            float projectileAngularSpread = ToRadians(61f);
             float horizontalSpikeSpeed = 8.4f;
 
             if (phaseInfo.InPhase2)
@@ -531,8 +531,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 // Disable cheap hits.
                 npc.damage = 0;
 
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
+                npc.velocity.X = Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
+                npc.velocity.Y = Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
 
                 // Disable gravity during the hover.
                 gravity = 0f;
@@ -560,7 +560,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 {
                     for (int i = 0; i < projectileShootCount; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-projectileAngularSpread, projectileAngularSpread, i / (float)(projectileShootCount - 1f));
+                        float offsetAngle = Lerp(-projectileAngularSpread, projectileAngularSpread, i / (float)(projectileShootCount - 1f));
                         if (Math.Abs(offsetAngle) < 0.22f)
                             continue;
 
@@ -614,8 +614,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int fireReleaseRate = 20;
             int spikeReleaseRate = 64;
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
-            float horizontalSpikeSpeed = MathHelper.Lerp(7.6f, 10f, 1f - phaseInfo.LifeRatio);
-            float horizontalStepPerPillar = MathHelper.Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
+            float horizontalSpikeSpeed = Lerp(7.6f, 10f, 1f - phaseInfo.LifeRatio);
+            float horizontalStepPerPillar = Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
             ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[1];
 
@@ -645,8 +645,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 // Create flame jets.
                 flameJetInterpolant = Utils.GetLerpValue(0f, 8f, attackTimer, true) * Utils.GetLerpValue(hoverTime, hoverTime - 12f, attackTimer, true);
 
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
+                npc.velocity.X = Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
+                npc.velocity.Y = Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
 
                 // Disable gravity during the hover.
                 gravity = 0f;
@@ -700,7 +700,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                         for (int i = -1; i <= 1; i += 2)
                         {
                             Vector2 fireSpawnPosition = npc.Bottom + Vector2.UnitX * flamePillarHorizontalOffset * i;
-                            if (MathHelper.Distance(target.Center.Y, npc.Center.Y) > 800f)
+                            if (Distance(target.Center.Y, npc.Center.Y) > 800f)
                                 fireSpawnPosition.Y = target.Bottom.Y;
 
                             fireSpawnPosition.Y += 36f;
@@ -732,7 +732,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             int wallCreateRate = 48;
             int wallCreateTime = 360;
             int attackTransitionDelay = 70;
-            float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
+            float spaceBetweenWalls = Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
 
             // WHY ARE YOU SLIDING AWAY YOU MOTHERFUCKER???
             npc.velocity.X *= 0.8f;
@@ -765,7 +765,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             // The head itself does the attack.
             // The body does pretty much nothing lmao
             int wallCreateRate = 60;
-            float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
+            float spaceBetweenWalls = Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
             ref float wallCreationCounter = ref npc.Infernum().ExtraAI[0];
 
             // Create rock pillars.
@@ -858,8 +858,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             for (int i = 0; i < 15; i++)
             {
                 float horizontalOffsetInterpolant = Main.rand.NextFloat();
-                Vector2 sparkSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, MathHelper.Lerp(0.2f, 0.8f, horizontalOffsetInterpolant));
-                Vector2 sparkVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.75f, 0.75f, horizontalOffsetInterpolant)) * Main.rand.NextFloat(7f, 16f);
+                Vector2 sparkSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, Lerp(0.2f, 0.8f, horizontalOffsetInterpolant));
+                Vector2 sparkVelocity = -Vector2.UnitY.RotatedBy(Lerp(-0.75f, 0.75f, horizontalOffsetInterpolant)) * Main.rand.NextFloat(7f, 16f);
                 Color sparkColor = Color.Lerp(Color.Yellow, Color.Orange, Main.rand.NextFloat(0.2f, 0.8f));
                 GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(sparkSpawnPosition, sparkVelocity, 2f, sparkColor, 40, 1f, 4f));
             }
@@ -892,13 +892,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            float widthFunction(float completionRatio) => MathHelper.SmoothStep(160f, 10f, completionRatio);
+            float widthFunction(float completionRatio) => SmoothStep(160f, 10f, completionRatio);
             Color colorFunction(float completionRatio)
             {
                 Color darkFlameColor = new(58, 107, 252);
                 Color lightFlameColor = new(45, 207, 239);
-                float colorShiftInterpolant = MathF.Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
-                Color color = Color.Lerp(darkFlameColor, lightFlameColor, MathF.Pow(colorShiftInterpolant, 1.64f));
+                float colorShiftInterpolant = Sin(-Main.GlobalTimeWrappedHourly * 6.7f + completionRatio * TwoPi) * 0.5f + 0.5f;
+                Color color = Color.Lerp(darkFlameColor, lightFlameColor, Pow(colorShiftInterpolant, 1.64f));
                 return color * npc.Opacity;
             }
 

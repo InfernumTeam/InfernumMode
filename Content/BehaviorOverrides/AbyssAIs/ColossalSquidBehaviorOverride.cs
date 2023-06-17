@@ -214,7 +214,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 }
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 16f, 0.6f);
-                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - PiOver2, 0.2f);
                 return;
             }
 
@@ -229,7 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (attackTimer == hoverTime + chargeDelay)
             {
                 SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
-                npc.velocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * chargeSpeed;
+                npc.velocity = (npc.rotation + PiOver2).ToRotationVector2() * chargeSpeed;
                 npc.netUpdate = true;
             }
 
@@ -245,14 +245,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     {
                         for (int i = 0; i < inkBoltCount; i++)
                         {
-                            float inkOffsetAngle = MathHelper.Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount - 1f));
-                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle + Main.rand.NextFloatDirection() * 0.04f).ToRotationVector2() * 8f;
+                            float inkOffsetAngle = Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount - 1f));
+                            Vector2 inkBoltVelocity = (npc.rotation - PiOver2 + inkOffsetAngle + Main.rand.NextFloatDirection() * 0.04f).ToRotationVector2() * 8f;
                             Utilities.NewProjectileBetter(npc.Center + inkBoltVelocity * 3f, inkBoltVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
                         }
                         for (int i = 0; i < inkBoltCount / 2; i++)
                         {
-                            float inkOffsetAngle = MathHelper.Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount / 2f - 1f));
-                            Vector2 inkBoltVelocity = (npc.rotation - MathHelper.PiOver2 + inkOffsetAngle + Main.rand.NextFloatDirection() * 0.07f).ToRotationVector2() * 5f;
+                            float inkOffsetAngle = Lerp(-0.99f, 0.99f, i / (float)(inkBoltCount / 2f - 1f));
+                            Vector2 inkBoltVelocity = (npc.rotation - PiOver2 + inkOffsetAngle + Main.rand.NextFloatDirection() * 0.07f).ToRotationVector2() * 5f;
                             Utilities.NewProjectileBetter(npc.Center + inkBoltVelocity * 3f, inkBoltVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
                         }
                     }

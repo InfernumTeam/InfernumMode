@@ -84,12 +84,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.03f, completionRatio, true) * Utils.GetLerpValue(1f, 0.97f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.04f, 1f);
+            return SmoothStep(2f, Projectile.width, squeezeInterpolant) * Clamp(Projectile.scale, 0.04f, 1f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.DarkViolet, new(117, 255, 160), MathF.Sin(MathHelper.TwoPi * completionRatio * 10f - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f);
+            Color color = Color.Lerp(Color.DarkViolet, new(117, 255, 160), Sin(TwoPi * completionRatio * 10f - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f);
             return color * Projectile.Opacity;
         }
 
@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             if (Time >= 2f)

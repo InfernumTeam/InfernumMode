@@ -154,7 +154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Define rotation and direction.
             int oldDirection = npc.direction;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             npc.direction = npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
             if (oldDirection != npc.direction)
                 npc.netUpdate = true;
@@ -231,7 +231,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.Calamity().newAI[1] = 0f;
             if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
                     npc.Center = target.Center + Vector2.UnitY * 1600f;
 
@@ -242,7 +242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.dontTakeDamage = true;
             }
             else
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             // Kill debuffs.
             DoGPhase1BodyBehaviorOverride.KillUnbalancedDebuffs(npc);
@@ -264,7 +264,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     npc.dontTakeDamage = true;
                     npc.damage = 0;
                 }
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 attackDelay++;
                 DoProjectileShootInterceptionMovement(npc, target, Utils.GetLerpValue(330f, 100f, attackDelay, true) * 1.8f);
                 return false;
@@ -524,10 +524,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Attempt to get into position for a charge.
             if (attackTimer < initialRedirectTime)
             {
-                float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
+                float idealHoverSpeed = Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
                 idealHoverSpeed *= Utils.GetLerpValue(35f, 300f, npc.Distance(target.Center), true);
 
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.045f, true) * idealVelocity.Length();
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 3f);
 
@@ -543,7 +543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Create the exo bomb.
             if (attackTimer == initialRedirectTime + 1f)
             {
-                Vector2 bombSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
+                Vector2 bombSpawnPosition = npc.Center + npc.velocity.RotatedBy(PiOver2) * spinTime / totalRotations / TwoPi;
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                 {
@@ -555,13 +555,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Spin.
             if (attackTimer >= initialRedirectTime && attackTimer < initialRedirectTime + spinBufferTime)
             {
-                npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi * totalRotations / spinTime);
+                npc.velocity = npc.velocity.RotatedBy(TwoPi * totalRotations / spinTime);
 
                 if (attackTimer >= initialRedirectTime + spinTime && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.1f)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
 
-                    float bombSpeed = MathHelper.Lerp(15f, 35f, Utils.GetLerpValue(750f, 1500f, npc.Distance(target.Center), true));
+                    float bombSpeed = Lerp(15f, 35f, Utils.GetLerpValue(750f, 1500f, npc.Distance(target.Center), true));
                     foreach (Projectile exoBomb in Utilities.AllProjectilesByID(ModContent.ProjectileType<ExolaserBomb>()))
                     {
                         exoBomb.velocity = exoBomb.SafeDirectionTo(target.Center + target.velocity * 25f) * bombSpeed;
@@ -649,7 +649,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Approach the player at an increasingly slow speed.
             if (attackTimer < slowdownTime)
             {
-                float speedMultiplier = MathHelper.Lerp(0.75f, 0.385f, attackTimer / slowdownTime);
+                float speedMultiplier = Lerp(0.75f, 0.385f, attackTimer / slowdownTime);
                 DoAggressiveChargeMovement(npc, target, attackTimer, speedMultiplier);
             }
 
@@ -752,12 +752,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Initialize a hover offset direction.
             if (hoverOffsetDirection == 0f)
             {
-                hoverOffsetDirection = Main.rand.Next(4) * MathHelper.TwoPi / 4f + MathHelper.PiOver4;
+                hoverOffsetDirection = Main.rand.Next(4) * TwoPi / 4f + PiOver4;
                 npc.netUpdate = true;
             }
 
             int totalLightRays = (int)(lightRaySpreadDegrees * 0.257f);
-            float lightRaySpread = MathHelper.ToRadians(lightRaySpreadDegrees);
+            float lightRaySpread = ToRadians(lightRaySpreadDegrees);
             Vector2 outerHoverOffset = hoverOffsetDirection.ToRotationVector2() * 1200f;
             Vector2 outerHoverDestination = target.Center + outerHoverOffset;
 
@@ -773,10 +773,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Attempt to get into position for the light attack.
             if (attackTimer < initialRedirectTime)
             {
-                float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
+                float idealHoverSpeed = Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
                 idealHoverSpeed *= Utils.GetLerpValue(35f, 300f, npc.Distance(target.Center), true);
 
-                Vector2 idealVelocity = npc.SafeDirectionTo(outerHoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(outerHoverDestination) * Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.045f, true) * idealVelocity.Length();
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 8f);
 
@@ -785,7 +785,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     attackTimer = initialRedirectTime;
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.85f);
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.4f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.4f);
                     npc.netUpdate = true;
                 }
             }
@@ -801,7 +801,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     {
                         for (int i = 0; i < totalLightRays; i++)
                         {
-                            float lightRayAngularOffset = MathHelper.Lerp(-lightRaySpread, lightRaySpread, i / (float)(totalLightRays - 1f));
+                            float lightRayAngularOffset = Lerp(-lightRaySpread, lightRaySpread, i / (float)(totalLightRays - 1f));
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lightRayTelegraph =>
                             {
@@ -812,7 +812,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     }
                 }
                 // Approach the ideal position.
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.05f);
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.05f);
             }
 
             // Create a massive laser.
@@ -843,7 +843,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
             {
                 attackTimer = 0f;
-                hoverOffsetDirection += MathHelper.PiOver2;
+                hoverOffsetDirection += PiOver2;
                 redirectCounter++;
                 if (redirectCounter >= redirectCount)
                 {
@@ -870,7 +870,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 chargeDelay = 30;
 
             float chargeSpeedInterpolant = Utils.GetLerpValue(chargeDelay - 16f, chargeDelay + 25f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - 45f, attackTimer - chargeDelay, true);
-            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.2f, chargeSpeedInterpolant);
+            float chargeSpeedFactor = Lerp(0.3f, 1.2f, chargeSpeedInterpolant);
 
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 
@@ -953,7 +953,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (!npc.WithinRange(hoverDestination, 210f))
             {
-                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.05f);
+                float flySpeed = Lerp(npc.velocity.Length(), idealFlySpeed, 0.05f);
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(hoverDestination), flySpeed / 580f, true) * flySpeed;
             }
             else
@@ -969,8 +969,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Don't fret, face fear in the eyes and dash directly into Thanatos' face-plates!");
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float flyAcceleration = MathHelper.Lerp(0.045f, 0.037f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
+            float flyAcceleration = Lerp(0.045f, 0.037f, lifeRatio);
+            float idealFlySpeed = Lerp(13f, 9.6f, lifeRatio);
             float generalSpeedFactor = Utils.GetLerpValue(0f, 35f, attackTimer, true) * 0.825f + 1f;
 
             Vector2 destination = target.Center;
@@ -1031,7 +1031,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
                     flySpeed -= 0.1f;
 
-                flySpeed = MathHelper.Clamp(flySpeed, 14f, 20.5f) * generalSpeedFactor;
+                flySpeed = Clamp(flySpeed, 14f, 20.5f) * generalSpeedFactor;
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
             }
 

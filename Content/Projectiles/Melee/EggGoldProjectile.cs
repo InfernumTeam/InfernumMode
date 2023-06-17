@@ -46,7 +46,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Type];
                 Projectile.frameCounter = 0;
             }
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

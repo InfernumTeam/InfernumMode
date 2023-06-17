@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Time++;
         }
 
@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             for (int i = 0; i < 7; i++)
             {
-                Vector2 seekerVelocity = (MathHelper.TwoPi * (i + 0.5f) / 7f).ToRotationVector2() * 13.5f;
+                Vector2 seekerVelocity = (TwoPi * (i + 0.5f) / 7f).ToRotationVector2() * 13.5f;
                 Utilities.NewProjectileBetter(Projectile.Center, seekerVelocity, ModContent.ProjectileType<HostilePlagueSeeker>(), PlaguebringerGoliathBehaviorOverride.PlagueSeekerDamage, 0f);
             }
         }

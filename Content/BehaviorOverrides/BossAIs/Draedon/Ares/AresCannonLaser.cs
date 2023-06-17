@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             // Fade in after telegraphs have faded.
             if (TelegraphDelay > TelegraphTotalTime)
@@ -153,9 +153,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             float xScale = 1f;
             if (TelegraphDelay < TelegraphFadeTime)
-                xScale = MathHelper.Lerp(0f, 1f, TelegraphDelay / 15f);
+                xScale = Lerp(0f, 1f, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                xScale = MathHelper.Lerp(1f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                xScale = Lerp(1f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(xScale, TelegraphWidth / laserTelegraph.Height);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
@@ -166,8 +166,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             colorInner.A = 0;
             colorOuter.A = 0;
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
             return false;
         }
     }

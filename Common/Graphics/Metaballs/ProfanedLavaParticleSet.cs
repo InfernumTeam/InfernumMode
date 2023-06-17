@@ -59,7 +59,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override void UpdateBehavior(FusableParticle particle)
         {
-            particle.Size = MathHelper.Clamp(particle.Size - 0.5f, 0f, 400f) * 0.978f;
+            particle.Size = Clamp(particle.Size - 0.5f, 0f, 400f) * 0.978f;
         }
 
         public override void PrepareOptionalShaderData(Effect effect, int index)

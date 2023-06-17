@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
-            Radius = MathHelper.Lerp(Radius, MaxRadius, 0.02f);
+            Radius = Lerp(Radius, MaxRadius, 0.02f);
             Projectile.Opacity = Utils.GetLerpValue(8f, 42f, Projectile.timeLeft, true) * 0.55f;
 
             Time++;
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 ExplodeCountdown--;
                 if (ExplodeCountdown < 18)
-                    Radius = MathHelper.Lerp(Radius, 25f, 0.15f);
+                    Radius = Lerp(Radius, 25f, 0.15f);
 
                 if (ExplodeCountdown <= 0)
                 {
@@ -88,12 +88,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             for (int i = 0; i < dartRingCount; i++)
                             {
-                                float dartSpeed = MathHelper.Lerp(8f, 3f, i / (float)(dartRingCount - 1f));
+                                float dartSpeed = Lerp(8f, 3f, i / (float)(dartRingCount - 1f));
                                 for (int j = 0; j < dartsPerRing; j++)
                                 {
-                                    Vector2 dartVelocity = (MathHelper.TwoPi * j / dartsPerRing).ToRotationVector2() * dartSpeed;
+                                    Vector2 dartVelocity = (TwoPi * j / dartsPerRing).ToRotationVector2() * dartSpeed;
                                     if (i % 2 == 0)
-                                        dartVelocity = dartVelocity.RotatedBy(MathHelper.Pi / dartsPerRing);
+                                        dartVelocity = dartVelocity.RotatedBy(Pi / dartsPerRing);
                                     Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), SupremeCalamitasBehaviorOverride.BrimstoneDartDamage, 0f);
                                 }
                                 dartsPerRing += 4;
@@ -115,9 +115,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return;
             }
 
-            float mouthOffset = MathF.Pow(Radius / MaxRadius, 2.3f) * MaxRadius * 0.92f + 45f;
+            float mouthOffset = Pow(Radius / MaxRadius, 2.3f) * MaxRadius * 0.92f + 45f;
             NPC sepulcher = Main.npc[sepulcherIndex];
-            Projectile.Center = sepulcher.Center + sepulcher.velocity.SafeNormalize((sepulcher.rotation - MathHelper.PiOver2).ToRotationVector2()) * mouthOffset;
+            Projectile.Center = sepulcher.Center + sepulcher.velocity.SafeNormalize((sepulcher.rotation - PiOver2).ToRotationVector2()) * mouthOffset;
 
             // Create charge-up particles.
             if (Radius < MaxRadius * 0.98f)

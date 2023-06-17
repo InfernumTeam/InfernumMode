@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.velocity = (Projectile.velocity * 59f + Projectile.SafeDirectionTo(closestPlayer.Center) * 9f) / 60f;
 
             if (Projectile.WithinRange(closestPlayer.Center, 300f) || Projectile.Opacity < 1f)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.05f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.05f, 0f, 1f);
 
             if (Projectile.Opacity <= 0f)
                 Projectile.Kill();

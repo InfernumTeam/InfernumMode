@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Have the rocks expand outward.
             bool collapse = Projectile.timeLeft < 60;
-            Radius = MathHelper.Lerp(Radius, collapse ? 0f : MaxRadius, 0.04f);
+            Radius = Lerp(Radius, collapse ? 0f : MaxRadius, 0.04f);
             if (collapse && Radius >= 3f)
                 Radius -= 1.25f;
 
@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             Projectile.rotation += Projectile.velocity.X * 0.006f;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
             GeneralTimer++;
         }
 
@@ -71,8 +71,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Draw lines.
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawPosition = baseDrawPosition + (MathHelper.TwoPi * (i - 1f) / 6f + GeneralTimer * spinDirection / 54f).ToRotationVector2() * Radius;
-                Vector2 drawPositionNext = baseDrawPosition + (MathHelper.TwoPi * i / 6f + GeneralTimer * spinDirection / 54f).ToRotationVector2() * Radius;
+                Vector2 drawPosition = baseDrawPosition + (TwoPi * (i - 1f) / 6f + GeneralTimer * spinDirection / 54f).ToRotationVector2() * Radius;
+                Vector2 drawPositionNext = baseDrawPosition + (TwoPi * i / 6f + GeneralTimer * spinDirection / 54f).ToRotationVector2() * Radius;
                 Main.spriteBatch.DrawLineBetter(drawPosition, drawPositionNext, (Color.Orange * 0.6f) with { A = 0 }, 8f);
                 Main.spriteBatch.DrawLineBetter(drawPosition, drawPositionNext, (Color.Yellow * 0.85f) with { A = 72 }, 5f);
                 Main.spriteBatch.DrawLineBetter(drawPosition, drawPositionNext, Color.White with { A = 125 }, 2f);
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Texture2D texture = ModContent.Request<Texture2D>($"CalamityMod/Projectiles/Typeless/ArtifactOfResilienceShard{i}").Value;
                 Vector2 origin = texture.Size() * 0.5f;
-                Vector2 drawPosition = baseDrawPosition + (MathHelper.TwoPi * (i - 1f) / 6f + GeneralTimer * spinDirection / 54f).ToRotationVector2() * Radius - Main.screenPosition;
+                Vector2 drawPosition = baseDrawPosition + (TwoPi * (i - 1f) / 6f + GeneralTimer * spinDirection / 54f).ToRotationVector2() * Radius - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
 

@@ -61,12 +61,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             ref float attackTimer = ref npc.Infernum().ExtraAI[AttackTimerIndex];
 
             // Fuck.
-            npc.Calamity().newAI[1] = MathHelper.Clamp(npc.Calamity().newAI[1] + 8f, 0f, 720f);
+            npc.Calamity().newAI[1] = Clamp(npc.Calamity().newAI[1] + 8f, 0f, 720f);
             npc.dontTakeDamage = npc.Calamity().newAI[1] < 700f;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
 
             // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.15f, 0f, 1f);
 
             // Perform initialization logic.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
@@ -83,9 +83,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
             if (!outOfBiome)
-                enrageTimer = MathHelper.Clamp(enrageTimer - 2.4f, 0f, 480f);
+                enrageTimer = Clamp(enrageTimer - 2.4f, 0f, 480f);
             else
-                enrageTimer = MathHelper.Clamp(enrageTimer + 1f, 0f, 480f);
+                enrageTimer = Clamp(enrageTimer + 1f, 0f, 480f);
 
             bool enraged = enrageTimer >= 300f;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
@@ -132,8 +132,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 npc.Infernum().ExtraAI[AttackTimerIndex] = Main.npc[npc.realLife].Infernum().ExtraAI[AttackTimerIndex];
             }
 
-            npc.rotation = npc.rotation.AngleLerp(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.05f);
-            npc.rotation = npc.rotation.AngleTowards(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.15f);
+            npc.rotation = npc.rotation.AngleLerp(npc.velocity.ToRotation() + PiOver2, 0.05f);
+            npc.rotation = npc.rotation.AngleTowards(npc.velocity.ToRotation() + PiOver2, 0.15f);
             attackTimer++;
 
             return false;
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             int totalFireballsPerBurst = 1;
             float flySpeed = enraged ? 11f : 8f;
             float turnSpeedFactor = enraged ? 1.7f : 1f;
-            flySpeed *= MathHelper.Lerp(1f, 1.35f, splitCounter / TotalSplitsToPerform);
+            flySpeed *= Lerp(1f, 1.35f, splitCounter / TotalSplitsToPerform);
             if (splitCounter == 0f)
             {
                 flySpeed *= 1.15f;
@@ -203,7 +203,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                     {
                         float shootOffsetAngle = 0f;
                         if (totalFireballsPerBurst > 1f)
-                            shootOffsetAngle = MathHelper.Lerp(-0.84f, 0.84f, i / (float)(totalFireballsPerBurst - 1f));
+                            shootOffsetAngle = Lerp(-0.84f, 0.84f, i / (float)(totalFireballsPerBurst - 1f));
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * 7f;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedFlameBomb>(), CursedFlameBombDamage, 0f);
                     }
@@ -218,7 +218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         {
             float flySpeed = enraged ? 15f : 9f;
             float turnSpeedFactor = enraged ? 1.3f : 0.85f;
-            flySpeed *= MathHelper.Lerp(1f, 1.2f, splitCounter / TotalSplitsToPerform);
+            flySpeed *= Lerp(1f, 1.2f, splitCounter / TotalSplitsToPerform);
 
             if (attackTimer < 75f)
                 flySpeed *= 0.6f;
@@ -230,7 +230,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.realLife == -1 && attackTimer == 15f)
             {
                 float spacing = enraged ? 380f : 520f;
-                spacing *= MathHelper.Lerp(1f, 1.5f, splitCounter / TotalSplitsToPerform);
+                spacing *= Lerp(1f, 1.5f, splitCounter / TotalSplitsToPerform);
                 for (float dx = -2000f; dx < 2000f; dx += spacing)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
@@ -255,7 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 }
             }
 
-            float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
+            float offsetAngle = Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
             offsetAngle *= Utils.GetLerpValue(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
@@ -284,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         {
             float flySpeed = enraged ? 12f : 8.25f;
             float turnSpeedFactor = enraged ? 1.2f : 0.8f;
-            flySpeed *= MathHelper.Lerp(1f, 1.275f, splitCounter / TotalSplitsToPerform);
+            flySpeed *= Lerp(1f, 1.275f, splitCounter / TotalSplitsToPerform);
             if (splitCounter == 0f)
             {
                 flySpeed *= 1.15f;
@@ -326,7 +326,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         {
             // Hover above the player.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f + target.velocity * 25f;
-            float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
+            float offsetAngle = Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
             offsetAngle *= Utils.GetLerpValue(70f, 240f, npc.Distance(hoverDestination), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 12f;
@@ -370,8 +370,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             if (attackTimer < riseTime)
             {
                 float riseSpeed = !Collision.SolidCollision(npc.Center, 2, 2) ? 19f : 9f;
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -riseSpeed, 0.045f);
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 300f)
+                npc.velocity.Y = Lerp(npc.velocity.Y, -riseSpeed, 0.045f);
+                if (Distance(npc.Center.X, target.Center.X) > 300f)
                     npc.velocity.X = (npc.velocity.X * 24f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 25f;
             }
 
@@ -382,7 +382,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 if (npc.velocity.Y < 26f)
                     npc.velocity.Y += enraged ? 0.9f : 0.5f;
                 if (inTiles)
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -8f, 8f);
+                    npc.velocity.Y = Clamp(npc.velocity.Y, -8f, 8f);
 
                 // Release a shockwave and dark hearts once tiles have been hit.
                 if (inTiles && wasPreviouslyInTiles == 0f)
@@ -395,7 +395,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                         wasPreviouslyInTiles = 1f;
                     }
 
-                    if (MathHelper.Distance(npc.Center.X, target.Center.X) > 240f)
+                    if (Distance(npc.Center.X, target.Center.X) > 240f)
                         npc.velocity.X = (npc.velocity.X * 21f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 22f;
                     npc.netUpdate = true;
                 }
@@ -417,14 +417,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
                 npc.timeLeft = 200;
 
             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 30f, 0.12f);
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             if (!npc.WithinRange(Main.player[npc.target].Center, 2200f))
                 npc.active = false;
         }
 
         public static void DoDefaultMovement(NPC npc, Player target, float flySpeed, float turnSpeedFactor)
         {
-            float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
+            float offsetAngle = Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
             offsetAngle *= Utils.GetLerpValue(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.95f;

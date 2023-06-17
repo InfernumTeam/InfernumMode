@@ -37,10 +37,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         {
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.AngleTo(Owner.Center) + MathHelper.Pi;
+            Projectile.rotation = Projectile.AngleTo(Owner.Center) + Pi;
 
             // Spin around the target.
-            SpinOffsetAngle += MathHelper.Pi / 150f;
+            SpinOffsetAngle += Pi / 150f;
             Projectile.Center = Owner.Center - Vector2.UnitY.RotatedBy(SpinOffsetAngle) * 550f;
 
             // Fade in and release fire mist.

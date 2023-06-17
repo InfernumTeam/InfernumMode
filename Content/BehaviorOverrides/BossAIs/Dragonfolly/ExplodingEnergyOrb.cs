@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
 
             if (Main.rand.NextBool(8))
             {
@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 for (int i = 0; i < 40; i++)
                 {
                     Dust energy = Dust.NewDustPerfect(Projectile.Center, 267);
-                    energy.velocity = (MathHelper.TwoPi * i / 40f).ToRotationVector2() * speed;
+                    energy.velocity = (TwoPi * i / 40f).ToRotationVector2() * speed;
                     energy.noGravity = true;
                     energy.color = Main.hslToRgb(Main.rand.NextFloat(0f, 0.08f), 0.85f, 0.6f);
                     energy.fadeIn = lifePersistance;
@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             for (int i = 0; i < 5; i++)
             {
-                float shootOffsetAngle = MathHelper.Lerp(-0.56f, 0.56f, i / 4f);
+                float shootOffsetAngle = Lerp(-0.56f, 0.56f, i / 4f);
                 Vector2 lightningVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 8f;
                 Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, ModContent.ProjectileType<RedSpark>(), DragonfollyBehaviorOverride.RedSparkDamage, 0f);
             }

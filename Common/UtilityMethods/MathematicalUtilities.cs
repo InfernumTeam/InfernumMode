@@ -15,8 +15,8 @@ namespace InfernumMode
         /// <param name="maxChange">The maximum angular increment to make to approach the destination.</param>
         public static float SimpleAngleTowards(this float originalRotation, float idealRotation, float maxChange)
         {
-            float difference = MathHelper.WrapAngle(idealRotation - originalRotation);
-            difference = MathHelper.Clamp(difference, -maxChange, maxChange);
+            float difference = WrapAngle(idealRotation - originalRotation);
+            difference = Clamp(difference, -maxChange, maxChange);
 
             return originalRotation + difference;
         }
@@ -27,14 +27,14 @@ namespace InfernumMode
         /// <param name="angle">The angular interpolant.</param>
         /// <param name="min">The minimum value.</param>
         /// <param name="max">The maximum value.</param>
-        public static float AngularSmoothstep(float angle, float min, float max) => ((max - min) * (MathF.Cos(angle) * 0.5f)) + min + ((max - min) * 0.5f);
+        public static float AngularSmoothstep(float angle, float min, float max) => ((max - min) * (Cos(angle) * 0.5f)) + min + ((max - min) * 0.5f);
 
         /// <summary>
         /// Determines the angular distance between two vectors based on dot product comparisons. This method ensures underlying normalization is performed safely.
         /// </summary>
         /// <param name="v1">The first vector.</param>
         /// <param name="v2">The second vector.</param>
-        public static float AngleBetween(this Vector2 v1, Vector2 v2) => MathF.Acos(Vector2.Dot(v1.SafeNormalize(Vector2.Zero), v2.SafeNormalize(Vector2.Zero)));
+        public static float AngleBetween(this Vector2 v1, Vector2 v2) => Acos(Vector2.Dot(v1.SafeNormalize(Vector2.Zero), v2.SafeNormalize(Vector2.Zero)));
 
         /// <summary>
         /// Uses a rewritten horizontal range formula to determine the direction to fire a projectile in order for it to hit a destination. Falls back on a certain value if no such direction can exist. If no fallback is provided, a clamp is used.
@@ -49,14 +49,14 @@ namespace InfernumMode
             // Ensure that the gravity has the right sign for Terraria's coordinate system.
             gravity = -Math.Abs(gravity);
 
-            float horizontalRange = MathHelper.Distance(shootingPosition.X, destination.X);
-            float fireAngleSine = gravity * horizontalRange / MathF.Pow(shootSpeed, 2f);
+            float horizontalRange = Distance(shootingPosition.X, destination.X);
+            float fireAngleSine = gravity * horizontalRange / Pow(shootSpeed, 2f);
 
             // Clamp the sine if no fallback is provided.
             if (nanFallback is null)
-                fireAngleSine = MathHelper.Clamp(fireAngleSine, -1f, 1f);
+                fireAngleSine = Clamp(fireAngleSine, -1f, 1f);
 
-            fireAngle = MathF.Asin(fireAngleSine) * 0.5f;
+            fireAngle = Asin(fireAngleSine) * 0.5f;
 
             // Get out of here if no valid firing angle exists. This can only happen if a fallback does indeed exist.
             if (float.IsNaN(fireAngle))
@@ -81,8 +81,8 @@ namespace InfernumMode
         /// <param name="x">The input to the smoothstep. Clamped between 0 and 1.</param>
         public static float UltrasmoothStep(float x)
         {
-            x = MathHelper.Clamp(x, 0f, 1f);
-            return MathHelper.SmoothStep(0f, 1f, MathHelper.SmoothStep(0f, 1f, x));
+            x = Clamp(x, 0f, 1f);
+            return SmoothStep(0f, 1f, SmoothStep(0f, 1f, x));
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace InfernumMode
         /// <param name="interpolant">The interpolant.</param>
         public static Vector2 AngleDirectionLerp(this Vector2 originalVector, Vector2 idealVector, float interpolant)
         {
-            float offsetAngle = originalVector.AngleBetween(idealVector) * MathHelper.Clamp(interpolant, 0f, 1f);
+            float offsetAngle = originalVector.AngleBetween(idealVector) * Clamp(interpolant, 0f, 1f);
             return originalVector.RotateTowards(idealVector.ToRotation(), offsetAngle);
         }
 
@@ -120,7 +120,7 @@ namespace InfernumMode
         /// <param name="max">The maximum magnitude.</param>
         public static Vector2 ClampMagnitude(this Vector2 v, float min, float max)
         {
-            Vector2 result = v.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(v.Length(), min, max);
+            Vector2 result = v.SafeNormalize(Vector2.UnitY) * Clamp(v.Length(), min, max);
             if (result.HasNaNs())
                 return Vector2.UnitY * -min;
 
@@ -203,7 +203,7 @@ namespace InfernumMode
         {
             return value < 0.5f ?
                 4f * value * value * value * value :
-                1f - MathF.Pow(-2f * value + 2f, 3f) / 2f;
+                1f - Pow(-2f * value + 2f, 3f) / 2f;
         }
 
         public static float EndingHeight(this CalamityUtils.CurveSegment segment) => segment.startingHeight + segment.elevationShift;
@@ -218,7 +218,7 @@ namespace InfernumMode
             // a^t * v0 / v1 = 1
             // a^t = v0 / v1
             // a = (v0 / v1) ^ (1 / t)
-            return MathF.Pow(idealSpeed / startingSpeed, 1f / accelerationTime);
+            return Pow(idealSpeed / startingSpeed, 1f / accelerationTime);
         }
 
         // Approximates a derivative based on the following limit:
@@ -247,9 +247,9 @@ namespace InfernumMode
 
         public static Vector2 QuadraticBezier(Vector2 a, Vector2 b, Vector2 c, float interpolant)
         {
-            Vector2 firstTerm = MathF.Pow(1f - interpolant, 2f) * a;
+            Vector2 firstTerm = Pow(1f - interpolant, 2f) * a;
             Vector2 secondTerm = (2f - interpolant * 2f) * interpolant * b;
-            Vector2 thirdTerm = MathF.Pow(interpolant, 2f) * c;
+            Vector2 thirdTerm = Pow(interpolant, 2f) * c;
             return firstTerm + secondTerm + thirdTerm;
         }
     }

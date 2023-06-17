@@ -18,13 +18,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
-            float baseShakePower = MathHelper.Lerp(1f, 5f, MathF.Sin(MathHelper.Pi * lifetimeCompletionRatio));
+            float baseShakePower = Lerp(1f, 5f, Sin(Pi * lifetimeCompletionRatio));
             return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
         }
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            return Color.Lerp(Color.Turquoise, Color.Gray, MathHelper.Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f));
+            return Color.Lerp(Color.Turquoise, Color.Gray, Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f));
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)Projectile.localAI[1]);

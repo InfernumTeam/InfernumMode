@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = MathF.Sin(Time / 120f * MathHelper.Pi) * 3f;
+            Projectile.scale = Sin(Time / 120f * Pi) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             Owner.rotation = Projectile.velocity.ToRotation();
             if (Owner.direction < 0)
-                Owner.rotation += MathHelper.Pi;
+                Owner.rotation += Pi;
 
             CreateDustAtBeginning();
 
@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Red, Color.Orange, 0.65f);
-            return color * Projectile.Opacity * MathF.Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 3f);
+            return color * Projectile.Opacity * Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 3f);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -114,7 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             BeamDrawer.DrawPixelated(points, -Main.screenPosition, 32);

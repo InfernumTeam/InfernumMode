@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public override bool PreAI(NPC npc)
         {
             // Stay within the world you stupid fucking fish I swear to god.
-            npc.position.X = MathHelper.Clamp(npc.position.X, 360f, Main.maxTilesX * 16f - 360f);
+            npc.position.X = Clamp(npc.position.X, 360f, Main.maxTilesX * 16f - 360f);
 
             // Define afterimage variables.
             NPCID.Sets.TrailingMode[npc.type] = 1;
@@ -190,11 +190,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 npc.velocity.X = moveDirection * 6f;
                 npc.spriteDirection = (int)-moveDirection;
             }
-            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, 6f, 16f);
+            npc.velocity.Y = Clamp(npc.velocity.Y + 0.2f, 6f, 16f);
 
             float idealRotation = npc.velocity.ToRotation();
             if (npc.spriteDirection == 1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.08f);
 
@@ -268,7 +268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     npc.netUpdate = true;
                     for (int i = 0; i < illusionCount; i++)
                     {
-                        float offsetAngle = MathHelper.TwoPi * i / illusionCount;
+                        float offsetAngle = TwoPi * i / illusionCount;
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<AnahitaWaterIllusion>(), 0, 0f, -1, 0f, offsetAngle);
                     }
                 }
@@ -315,7 +315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                         Vector2 waterBoltShootVelocity = (target.Center - shootPosition).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * waterBoltShootSpeed;
                         if (waterBoltCount > 1)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / (float)(waterBoltCount - 1f));
+                            float shootOffsetAngle = Lerp(-0.4f, 0.4f, i / (float)(waterBoltCount - 1f));
                             waterBoltShootVelocity = waterBoltShootVelocity.RotatedBy(shootOffsetAngle);
                         }
 
@@ -349,7 +349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             // Hover to the side of the target and bob up and down.
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
             if (attackTimer >= shootDelay)
-                hoverDestination.Y += MathF.Sin((attackTimer - shootDelay) * MathHelper.TwoPi / bobPeriod) * bobAmplitude;
+                hoverDestination.Y += Sin((attackTimer - shootDelay) * TwoPi / bobPeriod) * bobAmplitude;
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             DoDefaultMovement(npc, hoverDestination, new Vector2(19.6f, 12.5f), 0.8f);
 
@@ -465,7 +465,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 if (npc.Center.X > target.Center.X)
                 {
                     npc.spriteDirection = 1;
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
                 }
 
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.12f);
@@ -488,7 +488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 if (npc.Center.X > target.Center.X)
                 {
                     npc.spriteDirection = 1;
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
                 }
             }
 
@@ -503,8 +503,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     {
                         for (int j = 0; j < ringCount; j++)
                         {
-                            Vector2 waterSpearVelocity = (MathHelper.TwoPi * i / waterSpearCount + j * 0.33f).ToRotationVector2() * waterSpearShootSpeed;
-                            waterSpearVelocity *= MathHelper.Lerp(1f, 0.32f, j / (float)(ringCount - 1f));
+                            Vector2 waterSpearVelocity = (TwoPi * i / waterSpearCount + j * 0.33f).ToRotationVector2() * waterSpearShootSpeed;
+                            waterSpearVelocity *= Lerp(1f, 0.32f, j / (float)(ringCount - 1f));
                             Utilities.NewProjectileBetter(npc.Center, waterSpearVelocity, ModContent.ProjectileType<WaterBolt>(), WaterSpearDamage, 0f);
                         }
                     }
@@ -536,7 +536,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 if (npc.Center.X > target.Center.X)
                 {
                     npc.spriteDirection = 1;
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
                 }
 
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.12f);
@@ -559,7 +559,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 if (npc.Center.X > target.Center.X)
                 {
                     npc.spriteDirection = 1;
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
                 }
             }
 
@@ -575,8 +575,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                     int dustCount = 7;
                     for (int i = 0; i < dustCount; i++)
                     {
-                        Vector2 dustSpawnOffset = (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy((i - (dustCount / 2 - 1)) * MathHelper.Pi / dustCount);
-                        Vector2 dustVelocity = Main.rand.NextFloat(-MathHelper.PiOver2, MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(6f, 16f);
+                        Vector2 dustSpawnOffset = (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy((i - (dustCount / 2 - 1)) * Pi / dustCount);
+                        Vector2 dustVelocity = Main.rand.NextFloat(-PiOver2, PiOver2).ToRotationVector2() * Main.rand.NextFloat(6f, 16f);
                         dustSpawnOffset += dustVelocity * 0.5f;
 
                         Dust water = Dust.NewDustDirect(npc.Center + dustSpawnOffset, 0, 0, DustID.DungeonWater, dustVelocity.X, dustVelocity.Y, 100, default, 1.4f);
@@ -588,15 +588,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 }
 
                 Vector2 currentDirection = (npc.position - npc.oldPos[1]).SafeNormalize(Vector2.Zero);
-                Vector2 spearDirection = currentDirection.RotatedBy(npc.direction * MathHelper.Pi * -0.08f);
+                Vector2 spearDirection = currentDirection.RotatedBy(npc.direction * Pi * -0.08f);
 
                 npc.velocity *= 1.003f;
                 npc.rotation = currentDirection.ToRotation();
                 if (npc.spriteDirection == 1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 // Poke the target with Atlantis if close to them and pointing towards them.
-                bool aimingAtPlayer = currentDirection.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.ToRadians(54f);
+                bool aimingAtPlayer = currentDirection.AngleBetween(npc.SafeDirectionTo(target.Center)) < ToRadians(54f);
                 bool closeToPlayer = npc.WithinRange(target.Center, 180f);
                 if (aimingAtPlayer && closeToPlayer && atlantisCooldown <= 0f)
                 {

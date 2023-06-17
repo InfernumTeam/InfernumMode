@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             {
                 for (int i = 0; i < 24; i++)
                 {
-                    Vector2 plasmaVelocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 5f;
+                    Vector2 plasmaVelocity = (TwoPi * i / 24f).ToRotationVector2() * 5f;
                     Vector2 plasmaSpawnPosition = Projectile.Center + plasmaVelocity.SafeNormalize(Vector2.UnitY) * Radius * 0.5f;
                     Utilities.NewProjectileBetter(plasmaSpawnPosition, plasmaVelocity, ModContent.ProjectileType<SmallPlasmaSpark>(), DraedonBehaviorOverride.StrongerNormalShotDamage, 0f);
                 }
@@ -73,11 +73,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Time++;
         }
 
-        public float OrbWidthFunction(float completionRatio) => MathHelper.SmoothStep(0f, Radius, MathF.Sin(MathHelper.Pi * completionRatio));
+        public float OrbWidthFunction(float completionRatio) => SmoothStep(0f, Radius, Sin(Pi * completionRatio));
 
         public Color OrbColorFunction(float completionRatio)
         {
-            Color c = Color.Lerp(Color.Orange, Color.ForestGreen, MathHelper.Lerp(0.2f, 0.8f, Projectile.localAI[0] % 1f));
+            Color c = Color.Lerp(Color.Orange, Color.ForestGreen, Lerp(0.2f, 0.8f, Projectile.localAI[0] % 1f));
             c = Color.Lerp(c, Color.White, completionRatio * 0.5f);
             c.A = 0;
             return c;
@@ -97,9 +97,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             List<Vector2> drawPoints = new();
 
             Main.spriteBatch.EnterShaderRegion();
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 30f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 30f)
             {
-                Projectile.localAI[0] = MathHelper.Clamp((offsetAngle + MathHelper.PiOver2) / MathHelper.Pi, 0f, 1f);
+                Projectile.localAI[0] = Clamp((offsetAngle + PiOver2) / Pi, 0f, 1f);
 
                 drawPoints.Clear();
 

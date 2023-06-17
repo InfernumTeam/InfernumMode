@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (Projectile.velocity.Length() < maxSpeed)
                 Projectile.velocity *= 1.045f;
 
-            Projectile.rotation -= MathHelper.Pi / 12f;
+            Projectile.rotation -= Pi / 12f;
             Projectile.Opacity = Utils.GetLerpValue(300f, 295f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3());
 
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Dust phantoplasm = Dust.NewDustDirect(Projectile.Center - offsetDirection * 30f, 0, 0, 60, 0f, 0f, 0, default, 1f);
                 phantoplasm.noGravity = true;
                 phantoplasm.position = Projectile.Center - offsetDirection * Main.rand.Next(10, 21);
-                phantoplasm.velocity = offsetDirection.RotatedBy(MathHelper.PiOver2) * 6f;
+                phantoplasm.velocity = offsetDirection.RotatedBy(PiOver2) * 6f;
                 phantoplasm.scale = Main.rand.NextFloat(0.9f, 1.9f);
                 phantoplasm.fadeIn = 0.5f;
                 phantoplasm.customData = Projectile;
@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 offsetDirection = Main.rand.NextVector2Unit();
                 phantoplasm.noGravity = true;
                 phantoplasm.position = Projectile.Center - offsetDirection * Main.rand.Next(10, 21);
-                phantoplasm.velocity = offsetDirection.RotatedBy(MathHelper.PiOver2) * 6f;
+                phantoplasm.velocity = offsetDirection.RotatedBy(PiOver2) * 6f;
                 phantoplasm.scale = Main.rand.NextFloat(0.9f, 1.9f);
                 phantoplasm.fadeIn = 0.5f;
                 phantoplasm.customData = Projectile;
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Dust phantoplasm = Dust.NewDustDirect(Projectile.Center - offsetDirection * 30f, 0, 0, 60, 0f, 0f, 0, default, 1f);
                 phantoplasm.noGravity = true;
                 phantoplasm.position = Projectile.Center - offsetDirection * Main.rand.Next(20, 31);
-                phantoplasm.velocity = offsetDirection.RotatedBy(-MathHelper.PiOver2) * 5f;
+                phantoplasm.velocity = offsetDirection.RotatedBy(-PiOver2) * 5f;
                 phantoplasm.scale = Main.rand.NextFloat(0.9f, 1.9f);
                 phantoplasm.fadeIn = 0.5f;
                 phantoplasm.customData = Projectile;

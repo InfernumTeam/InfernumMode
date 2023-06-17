@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 Vector2 destination = owner.Center + new Vector2(armDirection * 125f, -285f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 17f, 0.3f);
 
-                npc.rotation = npc.AngleTo(destination - Vector2.UnitY * 25f) - MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(destination - Vector2.UnitY * 25f) - PiOver2;
             }
             else
             {
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                             {
                                 for (int i = 0; i < 4; i++)
                                 {
-                                    Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(18f, 24f);
+                                    Vector2 flameShootVelocity = (TwoPi * i / 4f).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(18f, 24f);
 
                                     if (Main.netMode != NetmodeID.MultiplayerClient)
                                         Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), ShadowflameFireballArenaDamage, 0f);
@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                         int waveCounter = (int)(attackTimer / 160) % 2;
                         if (facingPlayer && adjustedTimer > 65f && adjustedTimer < 140f)
                         {
-                            float swipeAngularOffset = MathHelper.Lerp(-0.6f, 1.22f, Utils.GetLerpValue(90f, 140f, adjustedTimer, true));
+                            float swipeAngularOffset = Lerp(-0.6f, 1.22f, Utils.GetLerpValue(90f, 140f, adjustedTimer, true));
                             idealPosition = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(swipeAngularOffset) * 250f;
                         }
 
@@ -159,10 +159,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                                float offsetAngle = Main.rand.NextFloat(TwoPi);
                                 for (int i = 0; i < 8; i++)
                                 {
-                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 8.5f;
+                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(TwoPi * i / 8f) * 8.5f;
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 3f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                         destination = owner.Center + new Vector2(armDirection * 620f, 420f);
 
                         if (attackTimer > attackDelay)
-                            destination.Y += MathF.Sin((attackTimer - attackDelay) * MathHelper.Pi / 50f) * shouldAttack.ToInt() * 250f;
+                            destination.Y += Sin((attackTimer - attackDelay) * Pi / 50f) * shouldAttack.ToInt() * 250f;
 
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.065f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 if (npc.velocity.Length() < owner.velocity.Length() * 0.4f)
                     npc.velocity = owner.velocity * 0.4f;
 
-                npc.rotation = npc.AngleFrom(owner.Center) - MathHelper.PiOver2;
+                npc.rotation = npc.AngleFrom(owner.Center) - PiOver2;
             }
 
             return false;

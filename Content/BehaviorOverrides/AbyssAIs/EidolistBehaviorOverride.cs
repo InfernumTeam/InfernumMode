@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Stop at this point and fade in if not hostile, and just sit in place.
             if (isHostile != 1f)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
                 if (!AbyssMinibossSpawnSystem.MajorAbyssEnemyExists && npc.WithinRange(target.Center, 3000f))
                     target.Calamity().adrenaline = 0f;
@@ -188,10 +188,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             float adjustedAttackTimer = attackTimer - initalFadeOutTime;
             if (adjustedAttackTimer == 1f)
             {
-                float teleportOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float teleportOffsetAngle = Main.rand.NextFloat(TwoPi);
                 AffectAllEidolists((n, gIndex) =>
                 {
-                    n.Infernum().ExtraAI[0] = teleportOffsetAngle + MathHelper.TwoPi * gIndex / totalEidolists;
+                    n.Infernum().ExtraAI[0] = teleportOffsetAngle + TwoPi * gIndex / totalEidolists;
                 });
             }
 
@@ -280,7 +280,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     if (totalEidolists is < 4 and >= 2)
                     {
                         int localIndex = eidolists.IndexOf(npc);
-                        hoverOffset = hoverOffset.RotatedBy(MathHelper.TwoPi * localIndex / eidolists.Count + MathHelper.PiOver2);
+                        hoverOffset = hoverOffset.RotatedBy(TwoPi * localIndex / eidolists.Count + PiOver2);
                     }
                     npc.Center = target.Center + hoverOffset;
 
@@ -496,7 +496,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     Main.projectile[lightningOrb].ai[0] = npc.whoAmI;
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 orbOffset = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 3f) * orbOffsetRadius;
+                    Vector2 orbOffset = -Vector2.UnitY.RotatedBy(TwoPi * i / 3f) * orbOffsetRadius;
                     if (orbOffset.AngleBetween(-Vector2.UnitY) < 0.01f)
                         continue;
 

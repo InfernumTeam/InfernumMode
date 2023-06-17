@@ -110,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.CragsC
             }
 
             Projectile.gfxOffY = 6f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.45f, 0f, 12f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.45f, 0f, 12f);
             Time++;
         }
 

@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             if (attackTimer >= attackLength - fadeLength)
             {
                 float interpolant = (attackTimer - (attackLength - fadeLength)) / (attackLength - fadeLength);
-                npc.Opacity = MathHelper.Lerp(0, 1, interpolant);
+                npc.Opacity = Lerp(0, 1, interpolant);
             }
 
             // Take/deal damage again and select a new attack.
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             // Set the position at the beginning of the attack.
             if (attackTimer == fadeTime)
             {
-                npc.Center = target.Center + (Vector2.One * teleportDistance).RotatedByRandom(MathHelper.TwoPi);
+                npc.Center = target.Center + (Vector2.One * teleportDistance).RotatedByRandom(TwoPi);
                 npc.velocity = Vector2.Zero;
 
                 // Sync the randomness.
@@ -140,13 +140,13 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
                 if (attackTimer <= fadeTime)
                 {
                     float interpolant = attackTimer / fadeTime;
-                    npc.Opacity = MathHelper.Lerp(1, 0, interpolant);
+                    npc.Opacity = Lerp(1, 0, interpolant);
                 }
                 // And fade back in.
                 else if (attackTimer >= initialDelay - fadeTime)
                 {
                     float interpolant = (attackTimer - (initialDelay - fadeTime)) / (initialDelay - fadeTime);
-                    npc.Opacity = MathHelper.Lerp(0, 1, interpolant);
+                    npc.Opacity = Lerp(0, 1, interpolant);
                 }
             }
 
@@ -192,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             if (attackTimer <= fadeTime)
             {
                 float interpolant = attackTimer / fadeTime;
-                npc.Opacity = MathHelper.Lerp(1, 0, interpolant);
+                npc.Opacity = Lerp(1, 0, interpolant);
             }
 
             if (attackTimer == fadeTime && Main.netMode != NetmodeID.MultiplayerClient)
@@ -216,7 +216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
                 if (attackTimer >= attackLength - fadeTime)
                 {
                     float interpolant = (attackTimer - (attackLength - fadeTime)) / attackLength;
-                    npc.Opacity = MathHelper.Lerp(0, 1, interpolant);
+                    npc.Opacity = Lerp(0, 1, interpolant);
                 }
             }
 
@@ -236,21 +236,21 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             float fadeTime = 20;
 
             // Float towards the player.
-            float amountToMove = MathHelper.Lerp(0.35f, 0.55f, attackTimer / attackLength);
+            float amountToMove = Lerp(0.35f, 0.55f, attackTimer / attackLength);
             npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 20 * amountToMove, amountToMove);
 
             // Shoot out 4 large hails.
             if ((attackTimer == hailSpawnDelay || attackTimer == (int)(hailSpawnDelay * 2.5f)) && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                float angleOffset = Main.rand.NextBool() ? 0f : MathHelper.PiOver4;
+                float angleOffset = Main.rand.NextBool() ? 0f : PiOver4;
                 for (int i = 0; i <= hailAmount; i++)
-                    Utilities.NewProjectileBetter(target.Center, Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / hailAmount + angleOffset) * hailSpeed, ModContent.ProjectileType<LargeHail>(), 0, 0, Main.myPlayer, (int)LargeHail.HailType.Shatter);
+                    Utilities.NewProjectileBetter(target.Center, Vector2.UnitY.RotatedBy(TwoPi * i / hailAmount + angleOffset) * hailSpeed, ModContent.ProjectileType<LargeHail>(), 0, 0, Main.myPlayer, (int)LargeHail.HailType.Shatter);
             }
 
             if (attackTimer >= attackLength - fadeTime)
             {
                 float interpolant = (attackTimer - (attackLength - fadeTime)) / attackLength;
-                npc.Opacity = MathHelper.Lerp(1, 0, interpolant);
+                npc.Opacity = Lerp(1, 0, interpolant);
             }
 
             if (attackTimer >= attackLength)

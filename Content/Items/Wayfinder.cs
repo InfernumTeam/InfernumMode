@@ -103,7 +103,7 @@ namespace InfernumMode.Content.Items
             {
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 2;
+                    Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 2;
                     Color afterimageColor = new Color(1f, 0.6f, 0.4f, 0f) * 0.7f;
                     Main.spriteBatch.Draw(texture, position + afterimageOffset, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8, false), afterimageColor, 0, origin, scale, SpriteEffects.None, 0f);
                 }
@@ -136,7 +136,7 @@ namespace InfernumMode.Content.Items
             {
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4;
+                    Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 4;
                     Color afterimageColor = new Color(1f, 0.6f, 0.4f, 0f) * 0.7f;
                     Main.spriteBatch.Draw(texture, Item.position - Main.screenPosition + afterimageOffset, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 6, 8, false), afterimageColor, 0, Vector2.Zero, scale, SpriteEffects.None, 0f);
                 }

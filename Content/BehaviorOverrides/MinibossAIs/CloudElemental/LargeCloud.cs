@@ -51,14 +51,14 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
         {
             // Calculate light power. This checks below the position of the fog to check if this fog is underground.
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
-            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / MathF.Sqrt(3f);
-            LightPower = MathHelper.Lerp(LightPower, lightPowerBelow, 0.15f);
+            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
+            LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
 
             // Fade in
             if (Projectile.Opacity < 1 && Projectile.timeLeft > 60)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
             else if (Projectile.timeLeft <= 30)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.03f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.03f, 0f, 1f);
 
             NPC parent = Main.npc[(int)ParentIndex];
             float parentLifeRatio = (float)parent.life / parent.lifeMax;

@@ -62,12 +62,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             }
             if (Time < fadeInTime)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
                 Projectile.scale = Projectile.Opacity * Projectile.ai[1];
             }
 
             if (Time >= lifetime - fadeoutTime)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.2f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.2f, 0f, 1f);
 
             if (Time >= lifetime)
                 Projectile.Kill();

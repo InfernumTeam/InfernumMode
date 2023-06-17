@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             private set;
         }
 
-        public float VariableWidth => Width * MathHelper.SmoothStep(0f, 1f, CurrentLength / MaxLength) * 1.6f;
+        public float VariableWidth => Width * SmoothStep(0f, 1f, CurrentLength / MaxLength) * 1.6f;
 
         public static int Lifetime => MaxTime + TelegraphTime;
 
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             if (Timer >= TelegraphTime - 20)
-                CurrentLength = MaxLength * MathF.Sin((Timer - TelegraphTime - 10f) / (Lifetime - TelegraphTime - 10f) * MathF.PI);
+                CurrentLength = MaxLength * Sin((Timer - TelegraphTime - 10f) / (Lifetime - TelegraphTime - 10f) * PI);
             Timer++;
         }
 
@@ -91,8 +91,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static Color ColorFunction(float _)
         {
-            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
-            float colorInterpolant = MathHelper.Lerp(0.3f, 0.5f, interpolant);
+            float interpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+            float colorInterpolant = Lerp(0.3f, 0.5f, interpolant);
 
             if (ProvidenceBehaviorOverride.IsEnraged)
                 return Color.Lerp(Color.DeepSkyBlue, Color.Cyan, colorInterpolant);
@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 TelegraphDrawer ??= new PrimitiveTrailCopy(TelegraphWidthFunction, TelegraphColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
 
                 InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-                float opacityScalar = MathF.Sin(CalamityUtils.SineInOutEasing(Timer / (TelegraphTime + 10f), 0) * MathF.PI) * 3f;
+                float opacityScalar = Sin(CalamityUtils.SineInOutEasing(Timer / (TelegraphTime + 10f), 0) * PI) * 3f;
                 InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.5f * opacityScalar);
 
                 Vector2 startT = Projectile.Center;
@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Vector2 origin = warningSymbol.Size() * 0.5f;
                 float scale = 0.38f;
 
-                spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * MathF.Sqrt(opacityScalar), 0f, origin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor * Sqrt(opacityScalar), 0f, origin, scale, SpriteEffects.None, 0f);
             }
 
             // Draw the laser.

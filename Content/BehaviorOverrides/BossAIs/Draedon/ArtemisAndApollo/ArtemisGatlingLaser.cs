@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             float positionOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
             if (PositionOffsetVariant != 0f)
                 positionOffset -= ExoMechManagement.ExoTwinsAreInSecondPhase ? 58f : 30f;
-            Vector2 overallOffset = (ThingToAttachTo.rotation - MathHelper.PiOver2).ToRotationVector2() * positionOffset;
+            Vector2 overallOffset = (ThingToAttachTo.rotation - PiOver2).ToRotationVector2() * positionOffset;
             if (PositionOffsetVariant != 0f)
                 overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * PositionOffsetVariant * 88f;
 
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -171,7 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -205,9 +205,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             float xScale = 1f;
             if (TelegraphDelay < TelegraphFadeTime)
-                xScale = MathHelper.Lerp(0f, 1f, TelegraphDelay / 15f);
+                xScale = Lerp(0f, 1f, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                xScale = MathHelper.Lerp(1f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                xScale = Lerp(1f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(xScale, TelegraphWidth / laserTelegraph.Height);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
@@ -218,8 +218,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             colorInner.A = 0;
             colorOuter.A = 0;
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
             return false;
         }
     }

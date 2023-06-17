@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             int hoverTime = 180;
 
             // Rise if ground is close.
-            float distanceToGround = MathHelper.Distance(Utilities.GetGroundPositionFrom(npc.Center).Y, npc.Center.Y);
+            float distanceToGround = Distance(Utilities.GetGroundPositionFrom(npc.Center).Y, npc.Center.Y);
             if (distanceToGround < 64f)
                 npc.directionY = -1;
 
@@ -63,15 +63,15 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                 npc.directionY = 1;
 
             float verticalSpeed = npc.directionY == 1 ? 0.075f : -0.13f;
-            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + verticalSpeed, -2.4f, 2.4f);
+            npc.velocity.Y = Clamp(npc.velocity.Y + verticalSpeed, -2.4f, 2.4f);
             if (Collision.SolidCollision(npc.position, npc.width, npc.height))
                 npc.position.Y -= 5f;
 
             // Attempt to move horizontally towards the target.
-            if (MathHelper.Distance(npc.Center.X, target.Center.X) < 150f)
+            if (Distance(npc.Center.X, target.Center.X) < 150f)
                 npc.velocity.X *= 0.98f;
             else
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 9f, 0.075f);
+                npc.velocity.X = Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 9f, 0.075f);
 
             // Decide the direction and rotation.
             npc.rotation = npc.velocity.X * 0.02f;
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
             // Decide frames.
-            currentFrame = MathHelper.Lerp(0f, 3f, attackTimer / 35f % 1f);
+            currentFrame = Lerp(0f, 3f, attackTimer / 35f % 1f);
 
             if (attackTimer >= hoverTime)
             {
@@ -102,11 +102,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             npc.rotation = npc.velocity.X * 0.02f;
 
             if (attackTimer < animationChangeTime)
-                currentFrame = MathHelper.Lerp(4f, 10f, attackTimer / animationChangeTime);
+                currentFrame = Lerp(4f, 10f, attackTimer / animationChangeTime);
             if (attackTimer >= animationChangeTime)
             {
                 float castInterpolant = Utils.GetLerpValue(0f, castTime, attackTimer - animationChangeTime, true);
-                int frameIncrement = (int)Math.Round(MathHelper.Lerp(0f, 3f, castInterpolant));
+                int frameIncrement = (int)Math.Round(Lerp(0f, 3f, castInterpolant));
 
                 // Create sandnadoes.
                 if (attackTimer == animationChangeTime + castTime / 2)
@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                 if (attackTimer >= animationChangeTime + castTime / 2 + 5f && attackTimer <= animationChangeTime + castTime)
                 {
                     float sandnadoSpeedInterpolant = Utils.GetLerpValue(castTime / 2 + 5f, animationChangeTime + castTime, attackTimer, true);
-                    float sandnadoSpeed = MathHelper.Lerp(0f, 16f, MathF.Pow(sandnadoSpeedInterpolant, 4f));
+                    float sandnadoSpeed = Lerp(0f, 16f, Pow(sandnadoSpeedInterpolant, 4f));
                     foreach (Projectile sandnado in Utilities.AllProjectilesByID(ModContent.ProjectileType<Sandnado2>()))
                         sandnado.velocity = Vector2.UnitX * sandnado.ai[1] * sandnadoSpeed;
                 }
@@ -168,7 +168,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
                         currentFrame = 9f;
                         break;
                     case 3:
-                        currentFrame = MathHelper.Lerp(5f, 8f, attackTimer / 30f % 1f);
+                        currentFrame = Lerp(5f, 8f, attackTimer / 30f % 1f);
                         break;
                 }
             }
@@ -189,7 +189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             // Slow down and perform a cast animation.
             npc.velocity *= 0.96f;
             npc.rotation = npc.velocity.X * 0.02f;
-            currentFrame = MathHelper.Lerp(4f, 12f, attackTimer / castPrepationTime % 1f);
+            currentFrame = Lerp(4f, 12f, attackTimer / castPrepationTime % 1f);
 
             Vector2 sandBallSpawnPosition = npc.Center - Vector2.UnitY * 60f;
             float wrappedAttackTimer = attackTimer % castPrepationTime;
@@ -210,7 +210,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    float offsetAngle = MathHelper.Lerp(-0.27f, 0.27f, i / 2f);
+                    float offsetAngle = Lerp(-0.27f, 0.27f, i / 2f);
                     Vector2 shootVelocity = (target.Center - sandBallSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * 11f;
                     Utilities.NewProjectileBetter(sandBallSpawnPosition, shootVelocity, ModContent.ProjectileType<SandFlameBall>(), 125, 0f);
                 }

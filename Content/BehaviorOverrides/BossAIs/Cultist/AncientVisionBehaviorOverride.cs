@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
 
                     // Decide rotation.
-                    npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection > 0).ToInt() * MathHelper.Pi;
+                    npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection > 0).ToInt() * Pi;
 
                     if (npc.WithinRange(flyDestination, 40f) || attackTimer > 150f)
                     {
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.velocity *= 0.96f;
                     npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.25f);
-                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection > 0).ToInt() * MathHelper.Pi, 0.2f);
+                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection > 0).ToInt() * Pi, 0.2f);
 
                     // Charge once sufficiently slowed down.
                     float chargeSpeed = 23f;
@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         for (int i = 0; i < 36; i++)
                         {
                             Dust magic = Dust.NewDustPerfect(npc.Center, 267);
-                            magic.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 6f;
+                            magic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 6f;
                             magic.scale = 1.1f;
                             magic.color = Color.Yellow;
                             magic.noGravity = true;
@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
                 // Charge and swoop.
                 case 2:
-                    float angularTurnSpeed = MathHelper.Pi / 300f;
+                    float angularTurnSpeed = Pi / 300f;
                     idealVelocity = npc.SafeDirectionTo(target.Center);
                     Vector2 leftVelocity = npc.velocity.RotatedBy(-angularTurnSpeed);
                     Vector2 rightVelocity = npc.velocity.RotatedBy(angularTurnSpeed);
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         npc.velocity = rightVelocity;
 
                     // Decide rotation.
-                    npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection > 0).ToInt() * MathHelper.Pi;
+                    npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection > 0).ToInt() * Pi;
 
                     if (attackTimer > 50f)
                     {

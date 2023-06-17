@@ -190,7 +190,7 @@ namespace InfernumMode.Content.UI
         public static void DrawProgressBar(SpriteBatch spriteBatch, float progress, Vector2 spot, float Width = 169f, Color BackColor = default, Color FillingColor = default, Color BlipColor = default)
         {
             // Initialize things if nothing valid is supplied.
-            progress = MathHelper.Clamp(progress, 0f, 1f);
+            progress = Clamp(progress, 0f, 1f);
             if (BlipColor == Color.Transparent)
                 BlipColor = new Color(255, 165, 0, 127);
 

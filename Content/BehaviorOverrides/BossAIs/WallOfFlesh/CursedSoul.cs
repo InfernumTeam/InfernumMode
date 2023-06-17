@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             if (ShouldFloatUpward)
             {
-                Projectile.velocity.X *= MathHelper.Lerp(0.982f, 0.974f, Projectile.identity % 8f / 8f);
+                Projectile.velocity.X *= Lerp(0.982f, 0.974f, Projectile.identity % 8f / 8f);
                 if (Projectile.velocity.Y > -20f)
                     Projectile.velocity.Y -= 0.24f;
             }
@@ -60,12 +60,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 if (Projectile.timeLeft > 190f)
                 {
                     Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * 8f, 0.05f);
-                    Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                    Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
                 }
                 else if (Projectile.timeLeft > 160f)
                 {
                     Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero, 0.05f).MoveTowards(Vector2.Zero, 0.1f);
-                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(target.Center) - MathHelper.PiOver2, 0.12f);
+                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(target.Center) - PiOver2, 0.12f);
                 }
 
                 float maxSpeed = SoulOfNight ? 14.25f : 12f;
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             for (int i = 0; i < 36; i++)
             {
                 Dust ectoplasm = Dust.NewDustPerfect(Projectile.Center, 267);
-                ectoplasm.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 8f;
+                ectoplasm.velocity = (TwoPi * i / 36f).ToRotationVector2() * 8f;
                 ectoplasm.scale = 1.5f;
                 ectoplasm.noGravity = true;
                 ectoplasm.color = Projectile.GetAlpha(Color.White);

@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         {
             // Equations for a generalized form of an asteroid.
             int n = PointsInStar - 1;
-            Vector2 starOffset = new Vector2(MathF.Sin(offsetAngle) * n - MathF.Sin(offsetAngle * n), MathF.Cos(offsetAngle) * n + MathF.Cos(offsetAngle * n)) * RadiusOfConstellation;
+            Vector2 starOffset = new Vector2(Sin(offsetAngle) * n - Sin(offsetAngle * n), Cos(offsetAngle) * n + Cos(offsetAngle * n)) * RadiusOfConstellation;
             starOffset /= PointsInStar;
             starOffset.Y *= -1f;
             return origin + starOffset.RotatedBy(spinAngle);
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Projectile.ExpandHitboxBy((int)(72 * Projectile.scale));
                 ColorSpectrumHue = Main.rand.NextFloat(0f, 0.9999f);
                 Projectile.netUpdate = true;
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             }
             Time++;
 
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             Projectile.Opacity = Utils.GetLerpValue(0f, FadeinTime, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - FadeoutTime, Time, true);
             Projectile.velocity = Projectile.velocity.RotatedBy(Math.Sin(Time / 20f) * 0.02f);
-            Projectile.scale = MathHelper.Lerp(0.135f, 0.175f, FadeToDarkGodColors) * Projectile.Opacity;
+            Projectile.scale = Lerp(0.135f, 0.175f, FadeToDarkGodColors) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -114,9 +114,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             c1 = Color.Lerp(c1, new(117, 255, 160), FadeToDarkGodColors);
             c2 = Color.Lerp(c2, new(88, 55, 172), FadeToDarkGodColors);
 
-            float hue = MathF.Sin(MathHelper.Pi * ColorSpectrumHue + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f;
+            float hue = Sin(Pi * ColorSpectrumHue + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f;
             Color sparkleColor = CalamityUtils.MulticolorLerp(hue, c1, c2) * Projectile.Opacity * 0.84f;
-            sparkleColor *= MathHelper.Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
+            sparkleColor *= Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
             Vector2 origin = sparkleTexture.Size() / 2f;
 
             Vector2 sparkleScale = Vector2.One * Projectile.Opacity * Projectile.scale;
@@ -144,15 +144,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 scale = new(scaleFactor * 1.5f, (start - end).Length() / lineTexture.Height);
                 Vector2 lineOrigin = new(lineTexture.Width * 0.5f, 0f);
                 Color drawColor = Color.White * Utils.GetLerpValue(1f, 25f, projectileToConnectTo.timeLeft, true);
-                float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
+                float rotation = (end - start).ToRotation() - PiOver2;
                 spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, lineOrigin, scale, 0, 0f);
             }
 
             // Draw the sparkles.
             Vector2 drawCenter = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
             spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
             spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
         }
     }

@@ -34,8 +34,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 Projectile.localAI[0] = 1f;
             }
 
-            Projectile.velocity.Y += MathHelper.ToRadians(1.5f);
-            Vector2 movementDirection = new(-MathF.Sin(Projectile.velocity.Y * 2f) * 4f, Math.Abs(MathF.Cos(Projectile.velocity.Y * 2f)) * 6f);
+            Projectile.velocity.Y += ToRadians(1.5f);
+            Vector2 movementDirection = new(-Sin(Projectile.velocity.Y * 2f) * 4f, Math.Abs(Cos(Projectile.velocity.Y * 2f)) * 6f);
             Vector2 collisionDirection = Collision.TileCollision(Projectile.position, movementDirection, (int)(Projectile.width * Projectile.scale), (int)(Projectile.height * Projectile.scale));
             if (movementDirection != collisionDirection)
                 Projectile.velocity.Y = -1f;

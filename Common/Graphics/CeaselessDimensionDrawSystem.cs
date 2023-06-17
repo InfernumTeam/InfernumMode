@@ -141,8 +141,8 @@ namespace InfernumMode.Common.Graphics
         {
             if (!InfernumMode.CanUseCustomAIs || CalamityGlobalNPC.voidBoss == -1 || Main.npc[CalamityGlobalNPC.voidBoss].ai[0] == 0f)
             {
-                BackgroundChangeInterpolant = MathHelper.Clamp(BackgroundChangeInterpolant - 0.3f, 0f, 1f);
-                ZoomChangeInterpolant = MathHelper.Clamp(ZoomChangeInterpolant - 0.2f, 0f, 1f);
+                BackgroundChangeInterpolant = Clamp(BackgroundChangeInterpolant - 0.3f, 0f, 1f);
+                ZoomChangeInterpolant = Clamp(ZoomChangeInterpolant - 0.2f, 0f, 1f);
                 return;
             }
 
@@ -150,9 +150,9 @@ namespace InfernumMode.Common.Graphics
             BackgroundConvergencePoint = (Main.npc[CalamityGlobalNPC.voidBoss].Center - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight);
 
             // Make interpolants increment.
-            ZoomChangeInterpolant = MathHelper.Clamp(ZoomChangeInterpolant + 0.03f, 0f, 1f);
-            BackgroundChangeInterpolant = MathHelper.Clamp(BackgroundChangeInterpolant + 0.005f, 0f, 1f);
-            if (MathHelper.Distance(BackgroundChangeInterpolant, 0.15f) < 0.0001f)
+            ZoomChangeInterpolant = Clamp(ZoomChangeInterpolant + 0.03f, 0f, 1f);
+            BackgroundChangeInterpolant = Clamp(BackgroundChangeInterpolant + 0.005f, 0f, 1f);
+            if (Distance(BackgroundChangeInterpolant, 0.15f) < 0.0001f)
                 SoundEngine.PlaySound(SoundID.Item163 with { Pitch = -0.32f });
         }
 
@@ -168,7 +168,7 @@ namespace InfernumMode.Common.Graphics
         public override void ModifyLightingBrightness(ref float scale)
         {
             if (BackgroundChangeInterpolant > 0f)
-                scale += MathF.Pow(BackgroundChangeInterpolant, 0.2f) * 0.06f;
+                scale += Pow(BackgroundChangeInterpolant, 0.2f) * 0.06f;
         }
     }
 }

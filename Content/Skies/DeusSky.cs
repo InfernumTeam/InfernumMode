@@ -57,7 +57,7 @@ namespace InfernumMode.Content.Skies
                 Intensity += 0.01f;
             else if (!isActive && Intensity > 0f)
                 Intensity -= 0.01f;
-            nebulaIntensity = MathHelper.Clamp(nebulaIntensity + isActive.ToDirectionInt() * 0.01f, 0f, 1f);
+            nebulaIntensity = Clamp(nebulaIntensity + isActive.ToDirectionInt() * 0.01f, 0f, 1f);
 
             if (DeusIndex < 0)
             {
@@ -119,8 +119,8 @@ namespace InfernumMode.Content.Skies
                     Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
                     Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                     float drawOutwardness = Utils.GetLerpValue(0.45f, 1.1f, i % 18f / 18f) * Utils.GetLerpValue(0f, 180f, nebulaTimer, true);
-                    drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
-                    float rotation = MathHelper.TwoPi * (drawOutwardness + i % 18f / 18f);
+                    drawPosition += (TwoPi * 7f * i / 75f).ToRotationVector2() * MathF.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
+                    float rotation = TwoPi * (drawOutwardness + i % 18f / 18f);
                     float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 15f / 15f) * Utils.GetLerpValue(-40f, 130f, nebulaTimer, true);
                     Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
 
@@ -160,10 +160,10 @@ namespace InfernumMode.Content.Skies
                 if (rectangle.Contains((int)drawPosition.X, (int)drawPosition.Y))
                 {
                     // Handle alpha pulsing. This is what allows the stars to appear, disappear, and reappear.
-                    float opacity = MathF.Sin((Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
-                    float minorFade = MathF.Sin(Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
-                    minorFade = MathHelper.Clamp(minorFade, 0f, 1f);
-                    opacity = MathHelper.Clamp(opacity, 0f, 1f);
+                    float opacity = Sin((Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
+                    float minorFade = Sin(Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
+                    minorFade = Clamp(minorFade, 0f, 1f);
+                    opacity = Clamp(opacity, 0f, 1f);
 
                     Color drawColor = Stars[j].Blue ? new Color(109, 242, 196) : new Color(234, 119, 93);
 
@@ -177,7 +177,7 @@ namespace InfernumMode.Content.Skies
 
                     drawColor.A = 0;
 
-                    Vector2 starScaleBase = new Vector2((baseScale.X * 0.5f + 0.5f) * MathHelper.Lerp(opacity, 0.7f, 1f)) * 0.67f;
+                    Vector2 starScaleBase = new Vector2((baseScale.X * 0.5f + 0.5f) * Lerp(opacity, 0.7f, 1f)) * 0.67f;
                     Vector2 smallScale = starScaleBase * new Vector2(0.8f, 1.25f);
                     Vector2 largeScale = starScaleBase * new Vector2(0.8f, 2.3f + j % 14 / 14f * 0.6f);
                     if (j % 32 == 31)
@@ -186,9 +186,9 @@ namespace InfernumMode.Content.Skies
                         largeScale.Y *= 1.35f;
                     }
 
-                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
                     Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, 0f, starTexture.Size() * 0.5f, smallScale, SpriteEffects.None, 0);
-                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale * 0.6f, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, PiOver2, starTexture.Size() * 0.5f, largeScale * 0.6f, SpriteEffects.None, 0);
                     Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, 0f, starTexture.Size() * 0.5f, smallScale * 0.6f, SpriteEffects.None, 0);
                 }
             }
@@ -213,9 +213,9 @@ namespace InfernumMode.Content.Skies
                 {
                     float verticalRatio = j / (float)verticalArea;
                     Stars[starIndex].Position.X = horizontalRatio * Main.maxTilesX * 16f;
-                    Stars[starIndex].Position.Y = MathHelper.Lerp((float)Main.worldSurface * 16f, -12450f, verticalRatio * verticalRatio);
+                    Stars[starIndex].Position.Y = Lerp((float)Main.worldSurface * 16f, -12450f, verticalRatio * verticalRatio);
                     Stars[starIndex].Depth = Main.rand.NextFloat() * 8f + 1.5f;
-                    Stars[starIndex].AlphaPhaseShift = Main.rand.NextFloat() * MathHelper.TwoPi;
+                    Stars[starIndex].AlphaPhaseShift = Main.rand.NextFloat() * TwoPi;
                     Stars[starIndex].AlphaAmplitude = Main.rand.NextFloat() * 5f;
                     Stars[starIndex].AlphaFrequency = Main.rand.NextFloat() + 0.35f;
                     Stars[starIndex].Blue = Main.rand.NextBool(2);

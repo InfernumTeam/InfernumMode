@@ -71,7 +71,7 @@ namespace InfernumMode.Content.UI
                 GameShaders.Misc["CalamityMod:BlueStatic"].Apply();
 
                 float readjustedInterpolant = Utils.GetLerpValue(0.42f, 1f, DraedonScreenStaticInterpolant, true);
-                Color staticColor = Color.White * MathF.Pow(CalamityUtils.AperiodicSin(readjustedInterpolant * 2.94f) * 0.5f + 0.5f, 0.54f) * MathF.Pow(readjustedInterpolant, 0.51f);
+                Color staticColor = Color.White * Pow(CalamityUtils.AperiodicSin(readjustedInterpolant * 2.94f) * 0.5f + 0.5f, 0.54f) * Pow(readjustedInterpolant, 0.51f);
                 Main.spriteBatch.Draw(panelTexture, panelCenter, null, staticColor, 0f, panelTexture.Size() * 0.5f, panelScale, 0, 0f);
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
@@ -135,15 +135,15 @@ namespace InfernumMode.Content.UI
             float selectionOptionsDrawInterpolant = Utils.GetLerpValue(0.3f, 0f, DraedonScreenStaticInterpolant, true);
             Texture2D selectionOutline = ModContent.Request<Texture2D>("CalamityMod/UI/DraedonSummoning/DraedonSelectionOutline").Value;
             Vector2 selectionCenter = panelArea.BottomLeft() - new Vector2(selectionOutline.Width * -0.5f - 24f, selectionOutline.Height * 0.5f + 24f) * panelScale;
-            Color baseSelectionColor = Color.Lerp(Color.White, Color.Yellow with { A = 0 }, (MathF.Sin(Main.GlobalTimeWrappedHourly * 11f) * 0.5f + 0.5f) * SelectionAreaPulseInterpolant);
-            Vector2 selectionScale = panelScale * MathHelper.Lerp(1f, 1.1f, SelectionAreaPulseInterpolant);
+            Color baseSelectionColor = Color.Lerp(Color.White, Color.Yellow with { A = 0 }, (Sin(Main.GlobalTimeWrappedHourly * 11f) * 0.5f + 0.5f) * SelectionAreaPulseInterpolant);
+            Vector2 selectionScale = panelScale * Lerp(1f, 1.1f, SelectionAreaPulseInterpolant);
             Rectangle selectionArea = Utils.CenteredRectangle(selectionCenter, selectionOutline.Size() * selectionScale);
             Main.spriteBatch.Draw(selectionOutline, selectionCenter, null, baseSelectionColor * selectionOptionsDrawInterpolant, 0f, selectionOutline.Size() * 0.5f, selectionScale, 0, 0f);
 
             // Make the pulse interpolant increase if the box is hovered over or selected.
             if (MouseScreenArea.Intersects(selectionArea) || SelectingTextBox)
             {
-                SelectionAreaPulseInterpolant = MathHelper.Clamp(SelectionAreaPulseInterpolant + (SelectingTextBox ? 0.26f : 0.1f), 0f, 1f);
+                SelectionAreaPulseInterpolant = Clamp(SelectionAreaPulseInterpolant + (SelectingTextBox ? 0.26f : 0.1f), 0f, 1f);
 
                 // Toggle the tex box selection if it's clicked.
                 if ((Main.mouseLeft && Main.mouseLeftRelease) || Main.inputTextEscape)
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.UI
                 }
             }
             else
-                SelectionAreaPulseInterpolant = MathHelper.Clamp(SelectionAreaPulseInterpolant - 0.08f, 0f, 1f);
+                SelectionAreaPulseInterpolant = Clamp(SelectionAreaPulseInterpolant - 0.08f, 0f, 1f);
 
             // Take input from the player if if the text box is being selected.
             InputtedText ??= string.Empty;

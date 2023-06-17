@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             Projectile.velocity = DetermineVelocity(Projectile.velocity, IdealDirection);
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Time++;
         }
 

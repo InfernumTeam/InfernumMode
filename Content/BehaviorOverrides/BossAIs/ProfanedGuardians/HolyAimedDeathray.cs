@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = MathHelper.Clamp(MathF.Sin(Time / 30f * MathHelper.Pi) * 3f, 0f, 1f);
+            Projectile.scale = Clamp(Sin(Time / 30f * Pi) * 3f, 0f, 1f);
             Projectile.Center = Owner.Center + Projectile.velocity * 30f;
 
             // And create bright light.
@@ -109,7 +109,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             BeamDrawer.DrawPixelated(points, -Main.screenPosition, 30);

@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         public override void AI()
         {
             Projectile.tileCollide = Projectile.timeLeft < 120;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
 
             Lighting.AddLight(Projectile.Center, Vector3.One * 0.7f);
@@ -46,10 +46,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
             int burstCount = NPC.CountNPCS(NPCID.EaterofWorldsHead) >= 4 ? 4 : 5;
             float burstSpeed = Projectile.velocity.Length();
-            float initialAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+            float initialAngleOffset = Main.rand.NextFloat(TwoPi);
             for (int i = 0; i < burstCount; i++)
             {
-                Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / burstCount).ToRotationVector2() * burstSpeed;
+                Vector2 shootVelocity = (initialAngleOffset + TwoPi * i / burstCount).ToRotationVector2() * burstSpeed;
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CursedBullet>(), EoWHeadBehaviorOverride.CursedCinderDamage, 0f);
             }
         }

@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 15f, Time, true) * Utils.GetLerpValue(0f, 15f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.9f, 0f, 0f);
 
@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Color magicAfterimageColor = Color.White * Projectile.Opacity * 0.3f;
                 magicAfterimageColor.A = 0;
 
-                Vector2 drawPosition = Projectile.Center - Main.screenPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * Projectile.Opacity * 4f;
+                Vector2 drawPosition = Projectile.Center - Main.screenPosition + (TwoPi * i / 6f).ToRotationVector2() * Projectile.Opacity * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition, sourceRectangle, magicAfterimageColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 

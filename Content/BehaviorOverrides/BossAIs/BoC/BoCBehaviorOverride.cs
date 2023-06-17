@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             bool enraged = enrageTimer > 300f;
             bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
+            enrageTimer = Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
 
             npc.dontTakeDamage = enraged;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
@@ -164,11 +164,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 floatTime -= 40;
             }
 
-            float teleportOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
+            float teleportOffset = Lerp(600f, 475f, 1f - lifeRatio);
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
 
-            float floatSpeed = MathHelper.Lerp(5.8f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.009f;
+            float floatSpeed = Lerp(5.8f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.009f;
             if (enraged)
                 floatSpeed *= 1.5f;
             if (BossRushEvent.BossRushActive)
@@ -298,7 +298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (attackTimer > teleportFadeTime + 10f)
             {
                 if (Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)) < 0.96f)
-                    npc.velocity = npc.velocity.RotatedBy(MathHelper.ToRadians(npc.direction * 2f));
+                    npc.velocity = npc.velocity.RotatedBy(ToRadians(npc.direction * 2f));
                 else
                 {
                     npc.velocity.X *= 0.988f;
@@ -342,7 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 return;
 
             // Creepers do most of the interesting stuff with this attack.
-            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * MathF.Sin((attackTimer - 54f) / 24f) * 6f, 0.007f);
+            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * Sin((attackTimer - 54f) / 24f) * 6f, 0.007f);
 
             if (attackTimer >= shootTime)
                 GotoNextAttackState(npc);
@@ -368,7 +368,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 for (int i = 1; i < 8; i++)
                 {
                     int illusion = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion>());
-                    Main.npc[illusion].ai[1] = MathHelper.TwoPi * i / 8f;
+                    Main.npc[illusion].ai[1] = TwoPi * i / 8f;
                 }
             }
 
@@ -388,7 +388,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (attackTimer > teleportFadeTime + chargeDelay + 50f)
             {
                 npc.velocity *= 0.97f;
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.05f, 0f, 1f);
 
                 if (npc.Opacity <= 0f)
                 {
@@ -416,7 +416,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
 
-            npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.1f);
+            npc.Opacity = Lerp(npc.Opacity, 1f, 0.1f);
             if (attackTimer >= 70f)
                 npc.velocity *= 0.94f;
 
@@ -471,19 +471,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             float spinTime = 120f;
             ref float spinAngle = ref npc.Infernum().ExtraAI[0];
             if (attackTimer == 1f)
-                spinAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                spinAngle = Main.rand.NextFloat(TwoPi);
             Vector2 teleportDestination = target.Center - Vector2.UnitY.RotatedBy(spinAngle) * spinRadius;
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
 
             if (attackTimer > teleportFadeTime * 1.5f)
             {
-                spinAngle += MathHelper.TwoPi * 2f / spinTime * Utils.GetLerpValue(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
+                spinAngle += TwoPi * 2f / spinTime * Utils.GetLerpValue(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
                 if (Main.netMode != NetmodeID.MultiplayerClient && (int)attackTimer % 16f == 15f)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
             }
 
-            npc.localAI[1] = MathF.Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
+            npc.localAI[1] = Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * Pi);
             if (attackTimer == (int)(teleportFadeTime * 1.5f) + spinTime + 15f)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 26f;
@@ -573,7 +573,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             // Fade out and teleport after a bit.
             if (time <= teleportFadeTime)
             {
-                npc.Opacity = MathHelper.Lerp(1f, 0f, time / teleportFadeTime);
+                npc.Opacity = Lerp(1f, 0f, time / teleportFadeTime);
 
                 // Teleport when completely transparent.
                 if (Main.netMode != NetmodeID.MultiplayerClient && time == teleportFadeTime)
@@ -597,7 +597,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
             // Fade back in after teleporting.
             if (time > teleportFadeTime && time <= teleportFadeTime * 1.5f)
-                npc.Opacity = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(teleportFadeTime, teleportFadeTime * 1.5f, time, true));
+                npc.Opacity = Lerp(0f, 1f, Utils.GetLerpValue(teleportFadeTime, teleportFadeTime * 1.5f, time, true));
             return true;
         }
         #endregion AI Utility Methods
@@ -621,13 +621,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             float cyanAuraStrength = npc.localAI[1];
             if (cyanAuraStrength > 0f)
             {
-                float scale = npc.scale * MathHelper.Lerp(0.9f, 1.06f, cyanAuraStrength);
+                float scale = npc.scale * Lerp(0.9f, 1.06f, cyanAuraStrength);
                 Color auraColor = Color.Lerp(Color.Transparent, Color.Cyan, cyanAuraStrength) * npc.Opacity * 0.3f;
                 auraColor.A = 0;
 
                 for (int i = 0; i < 7; i++)
                 {
-                    Vector2 drawPosition = npc.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
+                    Vector2 drawPosition = npc.Center + (TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
                     drawInstance(drawPosition, auraColor, scale);
                 }
             }

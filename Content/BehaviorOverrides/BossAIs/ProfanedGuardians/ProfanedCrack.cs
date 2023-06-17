@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ulong lightningSeed = (ulong)Projectile.identity * 6342791uL;
                 for (int i = 0; i < 8; i++)
                 {
-                    float lightningRotation = MathHelper.Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f) + MathHelper.PiOver2;
+                    float lightningRotation = Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f) + PiOver2;
 
                     InfernumTextureRegistry.StreakLightning.Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles,
                         Projectile.Left, lightningRotation, Projectile.scale, 50f, 100);
@@ -67,8 +67,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             ulong lightningSeed = (ulong)Projectile.identity * 6342791uL;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 lightningScale = new Vector2(1f, Projectile.scale) * MathHelper.Lerp(0.3f, 0.5f, Utils.RandomFloat(ref lightningSeed)) * 1.4f;
-                float lightningRotation = MathHelper.Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f) + MathHelper.PiOver2;
+                Vector2 lightningScale = new Vector2(1f, Projectile.scale) * Lerp(0.3f, 0.5f, Utils.RandomFloat(ref lightningSeed)) * 1.4f;
+                float lightningRotation = Lerp(-1.6f, 1.6f, i / 8f + Utils.RandomFloat(ref lightningSeed) * 0.1f) + PiOver2;
                 Color lightningColor = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], Utils.RandomFloat(ref lightningSeed) * 0.56f) * Projectile.Opacity;
                 Main.spriteBatch.Draw(zap, drawPosition, null, lightningColor, lightningRotation, zap.Size() * Vector2.UnitY * 0.5f, lightningScale, 0, 0f);
                 Main.spriteBatch.Draw(zap, drawPosition, null, lightningColor * 0.5f, lightningRotation, zap.Size() * Vector2.UnitY * 0.5f, lightningScale * new Vector2(1f, 1.3f), 0, 0f);

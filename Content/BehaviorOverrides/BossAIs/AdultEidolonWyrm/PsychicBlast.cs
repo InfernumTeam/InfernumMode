@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 15f, Time, true);
             Projectile.scale = Projectile.Opacity * 1.5f;
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Decide frames.
             Projectile.frameCounter++;
@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Color dissipationColor = Color.Wheat * opacity * 0.8f;
             for (int i = 0; i < 12; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * ((1f - dissipationInterpolant) * 50f + 30f);
+                Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * ((1f - dissipationInterpolant) * 50f + 30f);
                 ScreenOverlaysSystem.ThingsToDrawOnTopOfBlurAdditive.Add(new(texture, drawPosition + drawOffset, frame, dissipationColor, Projectile.rotation, origin, Projectile.scale, 0, 0));
             }
             return false;
@@ -73,10 +73,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                 for (int i = 0; i < 48; i++)
                 {
-                    Vector2 lightBoltVelocity = (MathHelper.TwoPi * i / 48f + shootOffsetAngle).ToRotationVector2() * 3f;
+                    Vector2 lightBoltVelocity = (TwoPi * i / 48f + shootOffsetAngle).ToRotationVector2() * 3f;
                     Utilities.NewProjectileBetter(Projectile.Center, lightBoltVelocity, ModContent.ProjectileType<DivineLightBolt>(), AEWHeadBehaviorOverride.StrongerNormalShotDamage, 0f, -1, 0f, 22f);
                 }
             }

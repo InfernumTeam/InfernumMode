@@ -62,10 +62,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             int splitCount = 6;
             int iceID = ModContent.ProjectileType<EidolistIce>();
-            float shootOffsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / splitCount;
+            float shootOffsetAngle = Main.rand.NextBool().ToInt() * Pi / splitCount;
             for (int i = 0; i < splitCount; i++)
             {
-                Vector2 icicleShootVelocity = (MathHelper.TwoPi * i / splitCount + shootOffsetAngle).ToRotationVector2() * 8f;
+                Vector2 icicleShootVelocity = (TwoPi * i / splitCount + shootOffsetAngle).ToRotationVector2() * 8f;
                 Utilities.NewProjectileBetter(Projectile.Center, icicleShootVelocity, iceID, 160, 0f);
             }
         }

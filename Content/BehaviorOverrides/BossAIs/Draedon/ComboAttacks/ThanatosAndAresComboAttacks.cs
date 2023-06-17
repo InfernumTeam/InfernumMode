@@ -100,14 +100,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (npc.type == ModContent.NPCType<ThanatosHead>() && CalamityGlobalNPC.draedonExoMechPrime != -1)
             {
                 NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-                Vector2 spinDestination = aresBody.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 2000f;
+                Vector2 spinDestination = aresBody.Center + (attackTimer * TwoPi / 150f).ToRotationVector2() * 2000f;
 
-                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathF.Min(npc.Distance(spinDestination), 34f);
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
                 if (npc.WithinRange(spinDestination, 40f))
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 else
-                    npc.rotation = npc.rotation.AngleTowards((attackTimer + 8f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.25f);
+                    npc.rotation = npc.rotation.AngleTowards((attackTimer + 8f) * TwoPi / 150f + PiOver2, 0.25f);
 
                 ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
                 ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
@@ -164,10 +164,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 // Create telegraphs.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == attackDelay - telegraphTime)
                 {
-                    generalAngularOffset = MathHelper.Pi / totalLasers;
+                    generalAngularOffset = Pi / totalLasers;
                     for (int i = 0; i < totalLasers; i++)
                     {
-                        Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+                        Vector2 laserDirection = (TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     {
                         for (int i = 0; i < totalLasers; i++)
                         {
-                            Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+                            Vector2 laserDirection = (TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                             {
@@ -202,7 +202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 if (attackTimer > attackDelay)
                 {
-                    float spinSpeed = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 205f;
+                    float spinSpeed = Utils.GetLerpValue(attackDelay, attackDelay + 60f, attackTimer, true) * Pi / 205f;
 
                     target.Infernum_Camera().CurrentScreenShakePower = 1.5f;
 
@@ -256,7 +256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                     if (!npc.WithinRange(target.Center, 300f))
                         npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 12f, 0.06f);
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
                     return false;
                 }
 
@@ -266,7 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 {
                     float flySpeed = Utils.Remap(npc.Distance(target.Center), 750f, 2700f, 8f, 32f);
                     float aimInterpolant = Utils.Remap(wrappedAttackTimer, 0f, redirectTime - 4f, 0.01f, 0.5f);
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * aimInterpolant, true) * flySpeed;
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), Pi * aimInterpolant, true) * flySpeed;
 
                     if (!npc.WithinRange(target.Center, 1100f) && Vector2.Dot(npc.velocity, npc.SafeDirectionTo(target.Center)) < 0f)
                         npc.velocity *= -0.1f;
@@ -277,7 +277,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     npc.velocity *= flyAcceleration;
 
                 // Decide the current rotation based on velocity.
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                 // Decide frames.
                 frame = (int)ThanatosFrameType.Open;
@@ -319,7 +319,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 // Anticipate the slash.
                 if (wrappedAresAttackTimer <= slashAnticipationTime)
                 {
-                    slashTrailFadeOut = MathHelper.Clamp(slashTrailFadeOut + 0.2f, 0f, 1f);
+                    slashTrailFadeOut = Clamp(slashTrailFadeOut + 0.2f, 0f, 1f);
                     float minHoverSpeed = Utils.Remap(wrappedAresAttackTimer, 7f, slashAnticipationTime * 0.5f, 2f, 42f);
                     Vector2 startingOffset = new(armOffsetDirection * 470f, 0f);
                     Vector2 endingOffset = new(armOffsetDirection * 172f, -175f);
@@ -333,7 +333,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     slashTrailFadeOut = Utils.GetLerpValue(slashAnticipationTime + slashTime - 16f, slashAnticipationTime + slashTime - 11f, wrappedAresAttackTimer, true);
                     Vector2 startingOffset = new(armOffsetDirection * 172f, -175f);
                     Vector2 endingOffset = new(armOffsetDirection * 64f, 250f);
-                    Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, MathF.Pow(Utils.GetLerpValue(slashAnticipationTime, slashAnticipationTime + slashTime - 16f, wrappedAresAttackTimer, true), 0.4f));
+                    Vector2 hoverOffset = Vector2.Lerp(startingOffset, endingOffset, Pow(Utils.GetLerpValue(slashAnticipationTime, slashAnticipationTime + slashTime - 16f, wrappedAresAttackTimer, true), 0.4f));
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, ares.Center + hoverOffset.SafeNormalize(Vector2.Zero) * 300f, flySpeedBoost + 49f, 115f);
                 }
 
@@ -355,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 npc.rotation = (float)npc.ModNPC<AresEnergyKatana>().Limbs[1].Rotation;
                 npc.spriteDirection = (int)armOffsetDirection;
                 if (armOffsetDirection == 1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
             }
 
             return attackTimer >= attackDelay + (slashAnticipationTime + slashTime) * slashCount;

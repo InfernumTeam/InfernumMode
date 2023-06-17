@@ -57,8 +57,8 @@ namespace InfernumMode.Content.Projectiles.Magic
                 NPC potentialTarget = Projectile.Center.ClosestNPCAt(EyeOfMadness.TargetingDistance);
                 if (potentialTarget is not null)
                 {
-                    float angularVelocity = Utils.Remap(Projectile.Distance(potentialTarget.Center), 600f, 200f, MathHelper.Pi / 42f, MathHelper.Pi / 7f);
-                    float angularOffset = MathF.Cos(Time / 7f + Projectile.identity) * Utils.GetLerpValue(150f, 450f, Projectile.Distance(potentialTarget.Center), true) * 0.9f;
+                    float angularVelocity = Utils.Remap(Projectile.Distance(potentialTarget.Center), 600f, 200f, Pi / 42f, Pi / 7f);
+                    float angularOffset = Cos(Time / 7f + Projectile.identity) * Utils.GetLerpValue(150f, 450f, Projectile.Distance(potentialTarget.Center), true) * 0.9f;
 
                     Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(potentialTarget.Center) + angularOffset, angularVelocity);
                     if (Projectile.velocity.Length() <= 12f)

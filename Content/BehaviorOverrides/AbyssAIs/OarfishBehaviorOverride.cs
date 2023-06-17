@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 if (npc.velocity.Length() < 2f)
                     npc.velocity.Y -= 0.36f;
                 npc.velocity = (npc.velocity.RotatedBy(0.01f) * 1.01f).ClampMagnitude(1f, 4f);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 return false;
             }
 
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     chargeTimer = 1f;
                     npc.netUpdate = true;
                 }
-                hoverOffsetAngle += MathHelper.TwoPi / 180f;
+                hoverOffsetAngle += TwoPi / 180f;
             }
             else
             {
@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 hoverOffsetAngle = -npc.velocity.ToRotation();
             }
 
-            npc.rotation = (npc.position - npc.oldPosition).ToRotation() + MathHelper.PiOver2;
+            npc.rotation = (npc.position - npc.oldPosition).ToRotation() + PiOver2;
 
             return false;
         }
@@ -175,8 +175,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
                 // Penalize deviations from the ideal radius offset.
                 float distanceFromCenter = position.Distance(centerOfMass);
-                float deviationFromRadius = MathHelper.Distance(distanceFromCenter, circleRadius);
-                float radiusError = 1f - MathF.Exp(-3f / circleRadius * deviationFromRadius);
+                float deviationFromRadius = Distance(distanceFromCenter, circleRadius);
+                float radiusError = 1f - Exp(-3f / circleRadius * deviationFromRadius);
                 if (deviationFromRadius < 30f)
                     radiusError = 0f;
 

@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         public override void AI()
         {
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.024f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.024f, 0f, 1f);
             Time++;
 
             // Hover into position before slamming.
@@ -46,9 +46,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 Vector2 nextPosition = Projectile.Center;
 
                 if (Vertical)
-                    nextPosition.X = MathHelper.Lerp(nextPosition.X, closestPlayer.Center.X, hoverInterpolant);
+                    nextPosition.X = Lerp(nextPosition.X, closestPlayer.Center.X, hoverInterpolant);
                 else
-                    nextPosition.Y = MathHelper.Lerp(nextPosition.Y, closestPlayer.Center.Y, hoverInterpolant);
+                    nextPosition.Y = Lerp(nextPosition.Y, closestPlayer.Center.Y, hoverInterpolant);
                 Projectile.Center = nextPosition;
                 Projectile.velocity = Vector2.Zero;
             }
@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             if (Vertical)
             {
                 Projectile.velocity.Y *= 1.018f;
-                Projectile.rotation = MathHelper.PiOver2;
+                Projectile.rotation = PiOver2;
                 Projectile.width = 300;
                 Projectile.height = 60;
             }
@@ -104,10 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     {
                         int cinderCount = 4;
                         int cinderDamage = (int)(Projectile.damage * 0.8f);
-                        float offsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / cinderCount;
+                        float offsetAngle = Main.rand.NextBool().ToInt() * Pi / cinderCount;
                         for (int i = 0; i < cinderCount; i++)
                         {
-                            Vector2 cinderShootVelocity = (MathHelper.TwoPi * i / cinderCount + offsetAngle).ToRotationVector2() * 9f;
+                            Vector2 cinderShootVelocity = (TwoPi * i / cinderCount + offsetAngle).ToRotationVector2() * 9f;
                             Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
                         }
                     }

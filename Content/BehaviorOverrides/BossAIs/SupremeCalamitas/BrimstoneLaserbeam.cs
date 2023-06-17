@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Grow bigger up to a point.
-            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.15f, 0.05f, 2f);
+            Projectile.scale = Clamp(Projectile.scale + 0.15f, 0.05f, 2f);
 
             // Decide where to position the laserbeam.
             Vector2 circlePointDirection = Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[2].ToRotationVector2();
@@ -112,10 +112,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         private Color PrimitiveColorFunction(float completionRatio)
         {
-            Color vibrantColor = Color.Lerp(Color.Blue, Color.Red, MathF.Cos(Main.GlobalTimeWrappedHourly * 0.67f - completionRatio / LaserLength * 29f) * 0.5f + 0.5f);
+            Color vibrantColor = Color.Lerp(Color.Blue, Color.Red, Cos(Main.GlobalTimeWrappedHourly * 0.67f - completionRatio / LaserLength * 29f) * 0.5f + 0.5f);
             float opacity = Projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) *
-                Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                MathF.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3f);
+                Utils.GetLerpValue(0f, Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
+                Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3f);
             return Color.Lerp(vibrantColor, Color.White, 0.3f) * opacity * 2f;
         }
 

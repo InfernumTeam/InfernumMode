@@ -21,9 +21,9 @@ namespace InfernumMode.Common.Graphics
         {
             float maxIntensity = 1f;
             if (CalamityGlobalNPC.signus != -1 && Main.npc[CalamityGlobalNPC.signus].ai[1] == 0f)
-                maxIntensity = MathF.Pow(Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9], 2.4f);
+                maxIntensity = Pow(Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9], 2.4f);
 
-            Intensity = MathHelper.Clamp(Intensity + (CalamityGlobalNPC.signus != -1).ToDirectionInt() * 0.03f, 0f, maxIntensity);
+            Intensity = Clamp(Intensity + (CalamityGlobalNPC.signus != -1).ToDirectionInt() * 0.03f, 0f, maxIntensity);
         }
 
         public static void Draw()

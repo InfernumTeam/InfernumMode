@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
                 AngerTimer++;
                 AttackTimer++;
-                if (AttackTimer >= MathHelper.Lerp(90f, 30f, Utils.GetLerpValue(30f, 520f, AngerTimer, true)))
+                if (AttackTimer >= Lerp(90f, 30f, Utils.GetLerpValue(30f, 520f, AngerTimer, true)))
                 {
                     Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 15f) * 21f;
                     int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), CalamitasShadowBehaviorOverride.BrimstoneDartDamage, 0f, -1, 1f);
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             NPC.frameCounter++;
             NPC.frame.Width = 88;
             NPC.frame.Height = 105;
-            NPC.frame.Y = (int)(NPC.frameCounter / 5D + RingAngle / MathHelper.TwoPi * 50f) % 5 * NPC.frame.Height;
+            NPC.frame.Y = (int)(NPC.frameCounter / 5D + RingAngle / TwoPi * 50f) % 5 * NPC.frame.Height;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

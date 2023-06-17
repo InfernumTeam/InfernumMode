@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -147,7 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -165,7 +165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -201,9 +201,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             float xScale = 0.75f;
             if (TelegraphDelay < TelegraphFadeTime)
-                xScale = MathHelper.Lerp(0f, xScale, TelegraphDelay / 15f);
+                xScale = Lerp(0f, xScale, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                xScale = MathHelper.Lerp(xScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                xScale = Lerp(xScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(xScale, 1750f / laserTelegraph.Height);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
@@ -213,8 +213,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Color colorInner = Color.Lerp(colorOuter, Color.White, 0.5f);
             colorOuter.A = 0;
             colorInner.A = 0;
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation() - PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
         }
     }
 }

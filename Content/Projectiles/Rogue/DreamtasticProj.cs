@@ -38,10 +38,10 @@ namespace InfernumMode.Content.Projectiles.Rogue
         }
 
         public Vector2 PikyPosition =>
-            Owner.Center + new Vector2(MathF.Cos(Time / 19f), MathF.Sin(Time / 29f) * 0.4f - 1.48f) * DorkHoverOffset;
+            Owner.Center + new Vector2(Cos(Time / 19f), Sin(Time / 29f) * 0.4f - 1.48f) * DorkHoverOffset;
 
         public Vector2 DunkerPosition =>
-            Owner.Center + new Vector2(-MathF.Cos(Time / 19f), MathF.Sin(Time / 29f + MathHelper.Pi * 0.66f) * 0.4f - 1.48f) * DorkHoverOffset;
+            Owner.Center + new Vector2(-Cos(Time / 19f), Sin(Time / 29f + Pi * 0.66f) * 0.4f - 1.48f) * DorkHoverOffset;
 
         public Player Owner => Main.player[Projectile.owner];
 
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             float chargeUpInterpolant = Utils.GetLerpValue(0f, animationTime * 0.7f, Time, true);
             if (Time <= energyChargeUpTime)
             {
-                SummoningCircleOpacity = MathF.Sqrt(chargeUpInterpolant);
+                SummoningCircleOpacity = Sqrt(chargeUpInterpolant);
                 SummoningCircleScale = chargeUpInterpolant;
 
                 // Create energy pulses.
@@ -126,19 +126,19 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 {
                     SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound with { Pitch = 0.6f }, Projectile.Center);
 
-                    Color energyColor = Color.Lerp(Color.Fuchsia, Color.Cyan, MathHelper.SmoothStep(0f, 1f, chargeUpInterpolant));
+                    Color energyColor = Color.Lerp(Color.Fuchsia, Color.Cyan, SmoothStep(0f, 1f, chargeUpInterpolant));
                     PulseRing inwardPulse = new(Projectile.Center, Vector2.Zero, energyColor, 2.9f, 0f, 45);
                     GeneralParticleHandler.SpawnParticle(inwardPulse);
 
                     for (int i = 0; i < 36; i++)
                     {
-                        Vector2 magicOffset = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * (270f - MathF.Abs(MathF.Cos(MathHelper.Pi * 6f * i / 20f)) * 100f) + Main.rand.NextVector2Circular(15f, 15f);
+                        Vector2 magicOffset = (TwoPi * i / 36f).ToRotationVector2() * (270f - Abs(Cos(Pi * 6f * i / 20f)) * 100f) + Main.rand.NextVector2Circular(15f, 15f);
 
                         Dust magic = Dust.NewDustPerfect(Projectile.Center + magicOffset, 267);
                         magic.color = Color.Lerp(Color.Fuchsia, Color.DeepSkyBlue, Main.rand.NextFloat());
                         magic.velocity = (Projectile.Center - magic.position) * 0.092f;
                         magic.scale = Main.rand.NextFloat(1.1f, 1.8f);
-                        magic.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                        magic.rotation = Main.rand.NextFloat(TwoPi);
                         magic.noGravity = true;
                     }
                 }
@@ -147,13 +147,13 @@ namespace InfernumMode.Content.Projectiles.Rogue
             // Emit idle magic particles.
             for (int i = 0; i < 3; i++)
             {
-                if (Main.rand.NextFloat() <= MathF.Pow(chargeUpInterpolant, 2.4f))
+                if (Main.rand.NextFloat() <= Pow(chargeUpInterpolant, 2.4f))
                 {
                     Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f) * SummoningCircleScale, 267);
                     magic.color = Color.Lerp(Color.Fuchsia, Color.DeepSkyBlue, Main.rand.NextFloat());
-                    magic.velocity = Projectile.SafeDirectionTo(magic.position).RotatedBy(MathHelper.PiOver2) * -Main.rand.NextFloat(1f, 3f);
+                    magic.velocity = Projectile.SafeDirectionTo(magic.position).RotatedBy(PiOver2) * -Main.rand.NextFloat(1f, 3f);
                     magic.scale = Main.rand.NextFloat(0.9f, 1.05f);
-                    magic.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                    magic.rotation = Main.rand.NextFloat(TwoPi);
                     magic.noGravity = true;
                 }
             }

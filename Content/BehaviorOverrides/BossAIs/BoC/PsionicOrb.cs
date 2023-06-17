@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 return;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.06f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.06f, 0f, 1f);
             Projectile.velocity *= 0.97f;
 
             Player nearestTarget = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -94,10 +94,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float offsetAngle = Main.rand.NextFloat(TwoPi);
                         for (int i = 0; i < 10; i++)
                         {
-                            Vector2 shootVelocity = (MathHelper.TwoPi * i / 10f + offsetAngle).ToRotationVector2() * 9f;
+                            Vector2 shootVelocity = (TwoPi * i / 10f + offsetAngle).ToRotationVector2() * 9f;
                             Utilities.NewProjectileBetter(Projectile.position, shootVelocity, ProjectileID.MartianTurretBolt, BoCBehaviorOverride.ElectricBoltDamage, 0f);
                         }
                     }
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             for (int i = 0; i < 36; i++)
             {
                 Dust psychicMagic = Dust.NewDustPerfect(Projectile.Center, 264);
-                psychicMagic.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 5f;
+                psychicMagic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 5f;
                 psychicMagic.scale = 1.45f;
                 psychicMagic.noLight = true;
                 psychicMagic.noGravity = true;
@@ -140,14 +140,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.9f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
-            return MathHelper.SmoothStep(Projectile.width * 0.1f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
+            float squeezeInterpolant = Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.9f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            return SmoothStep(Projectile.width * 0.1f, Projectile.width, squeezeInterpolant) * Projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Cyan, Color.White, CalamityUtils.Convert01To010(MathF.Pow(completionRatio, 2f)));
-            color *= 1f - 0.5f * MathF.Pow(completionRatio, 3f);
+            Color color = Color.Lerp(Color.Cyan, Color.White, CalamityUtils.Convert01To010(Pow(completionRatio, 2f)));
+            color *= 1f - 0.5f * Pow(completionRatio, 3f);
             color *= Projectile.Opacity * 3f;
             return color;
         }
@@ -165,8 +165,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 Vector2 telegraphStart = Projectile.Center - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
-                Color telegraphColor = new Color(50, 255, 232) * MathF.Pow(TelegraphInterpolant, 0.79f) * 1.4f;
-                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                Color telegraphColor = new Color(50, 255, 232) * Pow(TelegraphInterpolant, 0.79f) * 1.4f;
+                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
             return false;
@@ -181,7 +181,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             List<Vector2> drawPoints = new();
 
             // Create a charged circle out of several primitives.
-            for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
+            for (float offsetAngle = 0f; offsetAngle <= TwoPi; offsetAngle += Pi / 6f)
             {
                 drawPoints.Clear();
 

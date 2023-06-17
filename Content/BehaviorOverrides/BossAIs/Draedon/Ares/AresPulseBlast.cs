@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             Projectile.velocity *= 1.049f;
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
         }
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 1.6f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 1.6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, color, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);

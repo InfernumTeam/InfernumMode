@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (SulphuricWaterSafeZoneSystem.NearbySafeTiles.TryGetValue(p, out float s))
                     power = s;
 
-                SulphuricWaterSafeZoneSystem.NearbySafeTiles[p] = MathHelper.Max(power, bubble.scale);
+                SulphuricWaterSafeZoneSystem.NearbySafeTiles[p] = MathF.Max(power, bubble.scale);
             }
         }
 
@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Randomly emit bubbles.
             Vector2 bubbleSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(250f, 250f) * Projectile.scale;
-            bubbleSpawnPosition += Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 14f;
+            bubbleSpawnPosition += Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * 14f;
             if (!Main.rand.NextBool(3))
             {
                 for (int i = 0; i < 7; i++)
@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public Color ColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Pow(Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)), 3f) * 0.5f;
+            float colorInterpolant = Pow(Math.Abs(Sin(completionRatio * Pi + Main.GlobalTimeWrappedHourly)), 3f) * 0.5f;
             return Color.Lerp(new Color(103, 218, 224), new Color(144, 114, 166), colorInterpolant) * Projectile.Opacity * 0.3f;
         }
 
@@ -133,14 +133,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             InfernumEffectsRegistry.DukeTornadoVertexShader.UseImage1("Images/Misc/Perlin");
             List<Vector2> drawPoints = new();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 6f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 6f)
             {
                 drawPoints.Clear();
 
                 float adjustedAngle = offsetAngle + Main.GlobalTimeWrappedHourly * 1.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 Vector2 radius = Vector2.One * Radius;
-                radius.Y *= MathHelper.Lerp(1f, 2f, Math.Abs(MathF.Cos(Main.GlobalTimeWrappedHourly * 1.1f)));
+                radius.Y *= Lerp(1f, 2f, Math.Abs(Cos(Main.GlobalTimeWrappedHourly * 1.1f)));
 
                 for (int i = 0; i <= 8; i++)
                 {
@@ -157,10 +157,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.DeepSkyBlue, Color.Wheat, 0.4f)) * 0.9f;
-            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.8f + MathF.Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.04f);
+            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.8f + Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.04f);
 
             // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.
-            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * MathHelper.TwoPi);
+            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * TwoPi);
             bubbleScale += scalingDirection * (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 3.1f + Projectile.identity) * 0.5f + 0.5f) * 0.16f;
 
             Main.EntitySpriteDraw(bubble, drawPosition, null, bubbleColor, Projectile.rotation, bubble.Size() * 0.5f, bubbleScale, 0, 0);

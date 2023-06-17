@@ -2,6 +2,7 @@ using CalamityMod;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -38,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
-            float arenaFallCompletion = MathHelper.Clamp(InfernumMode.ProvidenceArenaTimer / 120f, 0f, 1f);
+            float arenaFallCompletion = Clamp(InfernumMode.ProvidenceArenaTimer / 120f, 0f, 1f);
             Vector2 top = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(8f, 32f);
             Vector2 bottom = WorldSaveSystem.ProvidenceArena.TopLeft() + Vector2.UnitY * 2f;
             for (int i = 0; i < 200; i++)
@@ -49,8 +50,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             bottom = bottom * 16f + new Vector2(8f, 52f);
-            float distanceToBottom = MathHelper.Distance(top.Y, bottom.Y);
-            float distancePerSegment = MathHelper.Max(texture.Height, 8f) * Projectile.scale;
+            float distanceToBottom = Distance(top.Y, bottom.Y);
+            float distancePerSegment = MathF.Max(texture.Height, 8f) * Projectile.scale;
             for (float y = 0f; y < distanceToBottom; y += distancePerSegment)
             {
                 Rectangle frame = texture.Frame();

@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
                 aimDirection = npc.AngleTo(target.Center);
                 for (int i = 0; i < crystalCount; i++)
                 {
-                    float offsetAngle = MathHelper.Lerp(-0.59f, 0.59f, i / (float)(crystalCount - 1f));
+                    float offsetAngle = Lerp(-0.59f, 0.59f, i / (float)(crystalCount - 1f));
                     for (int j = 0; j < 80; j++)
                     {
                         Vector2 dustSpawnPosition = npc.Center + (offsetAngle + aimDirection).ToRotationVector2() * j * 24f;
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
                 {
                     for (int i = 0; i < crystalCount; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.59f, 0.59f, i / (float)(crystalCount - 1f));
+                        float offsetAngle = Lerp(-0.59f, 0.59f, i / (float)(crystalCount - 1f));
                         Vector2 crystalShootVelocity = (offsetAngle + aimDirection).ToRotationVector2() * 13f;
                         Utilities.NewProjectileBetter(npc.Center, crystalShootVelocity, ModContent.ProjectileType<PiercingCrystalShard>(), 120, 0f, -1, 0f, npc.whoAmI);
                     }

@@ -59,7 +59,7 @@ namespace InfernumMode.Content.Skies
 
         public override Color OnTileColor(Color inColor)
         {
-            return inColor * MathHelper.Lerp(1f, 5f, GetIntensity());
+            return inColor * Lerp(1f, 5f, GetIntensity());
         }
 
         private bool UpdatePIndex()

@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             if (flyingAway == 0f && calShadow.ai[0] != (int)CalamitasShadowBehaviorOverride.CalShadowAttackType.BrothersPhase && !phase3)
             {
                 // Spin outward.
-                spinRadius = MathHelper.Lerp(spinRadius, 840f, 0.05f);
+                spinRadius = Lerp(spinRadius, 840f, 0.05f);
 
                 Vector2 hoverDestination = calShadow.Center + (npc.ai[0] + npc.ai[1]).ToRotationVector2() * spinRadius;
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.034f).MoveTowards(hoverDestination, 6f);
@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 if (!npc.WithinRange(calShadow.Center, 3000f))
                     npc.active = false;
             }
-            npc.ai[1] += MathHelper.ToRadians(0.6f);
+            npc.ai[1] += ToRadians(0.6f);
 
             // Periodically release dark magic bolts.
             if (attackTimer % shootRate == shootRate - 1f && !npc.WithinRange(target.Center, 400f) && flyingAway == 0f)

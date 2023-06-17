@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BossIntroScreens
         public override TextColorData TextColor => new(completionRatio =>
         {
             Color stoneColor = new(130, 68, 8);
-            float sunColorInterpolant = Utils.GetLerpValue(0.77f, 1f, MathF.Sin(AnimationCompletion * MathHelper.Pi * -4f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f);
+            float sunColorInterpolant = Utils.GetLerpValue(0.77f, 1f, Sin(AnimationCompletion * Pi * -4f + completionRatio * TwoPi) * 0.5f + 0.5f);
             return Color.Lerp(stoneColor, new Color(255, 170, 0), sunColorInterpolant);
         });
 

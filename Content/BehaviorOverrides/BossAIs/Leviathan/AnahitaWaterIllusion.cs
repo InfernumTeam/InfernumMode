@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 return;
             }
 
-            OffsetAngle += MathHelper.ToRadians(0.84f);
+            OffsetAngle += ToRadians(0.84f);
             Projectile.Center = Anahita.Center + OffsetAngle.ToRotationVector2() * 125f;
             int frameHeight = Anahita.frame.Height;
             if (frameHeight == 0)
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             // Create back afterimages.
             for (int i = 0; i < 4; i++)
             {
-                Vector2 drawOffset = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 4f) * 4f;
+                Vector2 drawOffset = -Vector2.UnitY.RotatedBy(TwoPi * i / 4f) * 4f;
                 Color drawColor = Projectile.GetAlpha(Main.hslToRgb((Projectile.identity * 0.2875f + i / 4f) % 1f, 1f, 0.75f));
                 drawColor.A = (byte)(Projectile.Opacity * 64f);
                 drawColor *= 0.6f;

@@ -59,11 +59,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             for (int i = 0; i < 35; i++)
             {
-                Vector2 drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 5f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * 2f;
+                Vector2 drawPosition = Projectile.Center + (TwoPi * i / 5f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * 2f;
                 drawPosition -= Main.screenPosition;
 
                 Vector2 scale = new Vector2(0.58f, 1f) * Projectile.scale;
-                scale *= MathHelper.Lerp(0.015f, 1f, i / 35f);
+                scale *= Lerp(0.015f, 1f, i / 35f);
 
                 Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }

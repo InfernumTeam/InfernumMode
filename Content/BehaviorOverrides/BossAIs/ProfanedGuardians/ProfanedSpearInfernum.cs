@@ -33,8 +33,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void AI()
         {
             Projectile.tileCollide = Projectile.timeLeft < 210;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
 
             // Accelerate.
             if (Projectile.velocity.Length() < 36f)

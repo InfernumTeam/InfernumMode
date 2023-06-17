@@ -56,9 +56,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             {
                 float yScale = 2f;
                 if (Time < TelegraphFadeTime)
-                    yScale = MathHelper.Lerp(0f, 2f, Time / 15f);
+                    yScale = Lerp(0f, 2f, Time / 15f);
                 if (Time > TelegraphTotalTime - TelegraphFadeTime)
-                    yScale = MathHelper.Lerp(2f, 0f, (Time - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                    yScale = Lerp(2f, 0f, (Time - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
                 Vector2 scaleInner = new(2500 / InfernumTextureRegistry.TelegraphLine.Value.Width, yScale);
                 Vector2 origin = InfernumTextureRegistry.TelegraphLine.Value.Size() * new Vector2(0f, 0.5f);
@@ -96,9 +96,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public float WidthFunction(float completionRatio)
         {
-            float widthScalar = MathHelper.Clamp(MathHelper.Lerp(0, 1, (Time - TelegraphTotalTime) / 20), 0, 1);
+            float widthScalar = Clamp(Lerp(0, 1, (Time - TelegraphTotalTime) / 20), 0, 1);
             float baseWidth = Projectile.width * Projectile.scale * 2 * widthScalar;
-            return MathHelper.Lerp(baseWidth, baseWidth * 0.5f, completionRatio);
+            return Lerp(baseWidth, baseWidth * 0.5f, completionRatio);
         }
 
         public Color ColorFunction(float completionRatio)

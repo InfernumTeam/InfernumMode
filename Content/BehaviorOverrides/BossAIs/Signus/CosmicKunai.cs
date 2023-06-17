@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                 Projectile.velocity *= 0.7f;
                 Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * spinSlowdown * 0.3f;
                 if (spinSlowdown < 1f)
-                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center) + MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);
+                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center) + PiOver2, (1f - spinSlowdown) * 0.6f);
             }
 
             if (Time == 26f)
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 4f;
                 Color afterimageColor = new Color(1f, 1f, 1f, 0f) * 0.7f;
                 Main.spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }

@@ -49,8 +49,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Main.spriteBatch.EnterShaderRegion();
 
             float deathAnimationTimer = AnimationTimer;
-            float totalDeathRays = MathHelper.Lerp(0f, 8f, Utils.GetLerpValue(0f, 180f, deathAnimationTimer, true));
-            float rayExpandFactor = MathHelper.Lerp(1f, 2f, MathHelper.Clamp((deathAnimationTimer - 230f) / 90f, 0f, 1000f));
+            float totalDeathRays = Lerp(0f, 8f, Utils.GetLerpValue(0f, 180f, deathAnimationTimer, true));
+            float rayExpandFactor = Lerp(1f, 2f, Clamp((deathAnimationTimer - 230f) / 90f, 0f, 1000f));
 
             for (int i = 0; i < (int)totalDeathRays; i++)
             {
@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 rayAnimationCompletion *= rayExpandFactor;
 
                 ulong seed = (ulong)(i + 1) * 3141592uL;
-                float rayDirection = MathHelper.TwoPi * i / 8f + MathF.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
+                float rayDirection = TwoPi * i / 8f + Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
                 rayDirection += Main.GlobalTimeWrappedHourly * 0.48f;
                 DrawLightRay(seed, rayDirection, rayAnimationCompletion, Projectile.Center);
             }
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-                Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * MathF.Pow(coreBloomPower, 2f);
+                Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * Pow(coreBloomPower, 2f);
                 bloomSize *= 1f + (rayExpandFactor - 1f) * 2f;
 
                 Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise * coreBloomPower, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
@@ -112,17 +112,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             float rayWidthFunction(float completionRatio, float rayBrightness2)
             {
-                return MathHelper.Lerp(2f, 28f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
+                return Lerp(2f, 28f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
             }
             Color rayColorFunction(float completionRatio, float rayBrightness2)
             {
-                return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * MathHelper.Clamp(0f, 1.5f, rayBrightness2) * 0.6f;
+                return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * Clamp(0f, 1.5f, rayBrightness2) * 0.6f;
             }
 
             LightDrawer ??= new PrimitiveTrailCopy(c => rayWidthFunction(c, Projectile.Infernum().ExtraAI[8]), c => rayColorFunction(c, Projectile.Infernum().ExtraAI[8]), null, false);
 
             Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
-            float length = MathHelper.Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
+            float length = Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
             List<Vector2> points = new();
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint + initialRayRotation.ToRotationVector2() * length, i / 12f));

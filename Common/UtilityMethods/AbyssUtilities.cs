@@ -29,7 +29,7 @@ namespace InfernumMode
             }
 
             // Apply a square root on the squared distance.
-            distanceToClosestPredator = MathF.Sqrt(distanceToClosestPredator);
+            distanceToClosestPredator = Sqrt(distanceToClosestPredator);
 
             return closestPredator;
         }
@@ -60,8 +60,8 @@ namespace InfernumMode
         public static void SpawnSchoolOfFish(NPC npc, int MinSchoolSize, int MaxSchoolSize)
         {
             // Larger schools are made rarer by this exponent by effectively "squashing" randomness.
-            float fishInterpolant = MathF.Pow(Main.rand.NextFloat(), 4f);
-            int fishCount = (int)MathHelper.Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
+            float fishInterpolant = Pow(Main.rand.NextFloat(), 4f);
+            int fishCount = (int)Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
 
             for (int i = 0; i < fishCount; i++)
                 NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, npc.type, npc.whoAmI, 1f);
@@ -72,10 +72,10 @@ namespace InfernumMode
 
         public static void TurnAroundBehavior(NPC npc, Vector2 ahead, bool aboutToLeaveWorld)
         {
-            float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(-MathHelper.PiOver2)) ?? 999f;
-            float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(MathHelper.PiOver2)) ?? 999f;
+            float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(-PiOver2)) ?? 999f;
+            float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(PiOver2)) ?? 999f;
             float turnDirection = distanceToTileOnLeft > distanceToTileOnRight ? -1f : 1f;
-            Vector2 idealVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2 * turnDirection);
+            Vector2 idealVelocity = npc.velocity.RotatedBy(PiOver2 * turnDirection);
             if (aboutToLeaveWorld)
                 idealVelocity = ahead.X >= Main.maxTilesX * 16f - 700f ? -Vector2.UnitX * 4f : Vector2.UnitX * 4f;
 

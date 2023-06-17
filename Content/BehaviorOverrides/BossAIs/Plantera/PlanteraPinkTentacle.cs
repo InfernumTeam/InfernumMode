@@ -58,17 +58,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             ref float attachOffset = ref NPC.ai[1];
             ref float wiggleSineAngle = ref NPC.Infernum().ExtraAI[0];
 
-            wiggleSineAngle += Utils.Remap(Time, -85, 10f, 0f, MathHelper.Pi / 8.5f + NPC.whoAmI * 0.1f);
-            float wingleOffset = MathF.Sin(wiggleSineAngle) * 0.016f;
+            wiggleSineAngle += Utils.Remap(Time, -85, 10f, 0f, Pi / 8.5f + NPC.whoAmI * 0.1f);
+            float wingleOffset = Sin(wiggleSineAngle) * 0.016f;
 
             // Reel inward prior to snapping.
             if (Time is > 0f and < 45f)
-                attachOffset = MathHelper.Lerp(attachOffset, 108f, 0.05f);
+                attachOffset = Lerp(attachOffset, 108f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.
             if (Time > 180f)
             {
-                attachOffset = MathHelper.Lerp(attachOffset, 3900f, 0.021f);
+                attachOffset = Lerp(attachOffset, 3900f, 0.021f);
                 wingleOffset = 0f;
             }
 
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             attachAngle += wingleOffset;
             NPC.Center = Main.npc[NPC.plantBoss].Center + attachAngle.ToRotationVector2() * (attachOffset + wingleOffset * 150f);
-            NPC.rotation = attachAngle + MathHelper.Pi;
+            NPC.rotation = attachAngle + Pi;
             NPC.dontTakeDamage = true;
 
             Time++;
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             NPC plantera = Main.npc[NPC.plantBoss];
 
             Vector2 drawPosition = plantera.Center;
-            float rotation = NPC.AngleFrom(plantera.Center) + MathHelper.PiOver2;
+            float rotation = NPC.AngleFrom(plantera.Center) + PiOver2;
             bool canStillDraw = true;
             while (canStillDraw)
             {

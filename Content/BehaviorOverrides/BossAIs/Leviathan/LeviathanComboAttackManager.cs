@@ -286,7 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
                     Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 14f, 0.27f);
-                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, npc.SafeDirectionTo(destination).Y * 30f, 0.18f);
+                    npc.velocity.Y = Lerp(npc.velocity.Y, npc.SafeDirectionTo(destination).Y * 30f, 0.18f);
                     npc.spriteDirection = npc.direction;
 
                     // Roar before charging.

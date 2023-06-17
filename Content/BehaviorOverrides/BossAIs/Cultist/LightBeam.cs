@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Spin around slowly.
-            Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi / 90f * (Projectile.identity % 2f == 0f).ToDirectionInt());
+            Projectile.velocity = Projectile.velocity.RotatedBy(Pi / 90f * (Projectile.identity % 2f == 0f).ToDirectionInt());
 
             // Fade effects.
             float cyclicFade = CalamityUtils.Convert01To010(Time / Lifetime);
@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-        public float WidthFunction(float completionRatio) => MathHelper.Lerp(1f, 8f, completionRatio) * MathHelper.Clamp(Projectile.scale, 0.04f, 1f);
+        public float WidthFunction(float completionRatio) => Lerp(1f, 8f, completionRatio) * Clamp(Projectile.scale, 0.04f, 1f);
 
         public Color ColorFunction(float completionRatio) => Color.White * Projectile.Opacity * Utils.GetLerpValue(0.95f, 0.725f, completionRatio, true);
 
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true);
 
             float length = 40f;
-            length += MathHelper.Lerp(0f, 16f, Projectile.identity % 7f / 7f);
+            length += Lerp(0f, 16f, Projectile.identity % 7f / 7f);
             List<Vector2> points = new();
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * length, i / 12f));

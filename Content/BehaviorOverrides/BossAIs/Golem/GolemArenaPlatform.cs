@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             // Fade in.
-            NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.1f, 0f, 1f);
+            NPC.Opacity = Clamp(NPC.Opacity + 0.1f, 0f, 1f);
 
             NPC.gfxOffY = -12;
 

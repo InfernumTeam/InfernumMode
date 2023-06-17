@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Become angry.
             npc.Calamity().CurrentlyEnraged = SupremeCalamitasBehaviorOverride.Enraged;
 
-            npc.localAI[0] = MathHelper.Clamp(npc.localAI[0] - 0.1f, 0f, 1f);
+            npc.localAI[0] = Clamp(npc.localAI[0] - 0.1f, 0f, 1f);
             switch ((SepulcherAttackType)attackState)
             {
                 case SepulcherAttackType.AttackDelay:
@@ -117,7 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     DoBehavior_SoulBombBursts(npc, target, ref attackTimer);
                     break;
             }
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             attackTimer++;
 
             return false;
@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_AttackDelay(NPC npc, Player target, ref float attackTimer)
         {
             // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Do not take damage.
             npc.dontTakeDamage = true;
@@ -183,11 +183,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     bombOffsetInterpolant += 0.23f;
                     if (bombOffsetInterpolant >= 1f)
                     {
-                        bombSpawnOffsetAngle += bombSpawnOffsetAngleDirection * MathHelper.PiOver2;
+                        bombSpawnOffsetAngle += bombSpawnOffsetAngleDirection * PiOver2;
                         bombOffsetInterpolant--;
                     }
 
-                    Vector2 bombSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-maxBombOffset, maxBombOffset, bombOffsetInterpolant % 1f), -maxBombOffset).RotatedBy(bombSpawnOffsetAngle);
+                    Vector2 bombSpawnPosition = target.Center + new Vector2(Lerp(-maxBombOffset, maxBombOffset, bombOffsetInterpolant % 1f), -maxBombOffset).RotatedBy(bombSpawnOffsetAngle);
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                     {
@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center), 0.4f).SafeNormalize(Vector2.UnitY) * moveSpeed;
 
                 else if (!npc.WithinRange(target.Center, 200f))
-                    npc.velocity = npc.velocity.RotatedBy(CalamityUtils.AperiodicSin(MathHelper.TwoPi * attackTimer / 100f) * 0.1f);
+                    npc.velocity = npc.velocity.RotatedBy(CalamityUtils.AperiodicSin(TwoPi * attackTimer / 100f) * 0.1f);
                 return;
             }
 
@@ -293,8 +293,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.NPCHit2, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 leftVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-MathHelper.PiOver2) * 4f;
-                    Vector2 rightVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 4f;
+                    Vector2 leftVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(-PiOver2) * 4f;
+                    Vector2 rightVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * 4f;
                     Utilities.NewProjectileBetter(npc.Center, leftVelocity, ModContent.ProjectileType<SepulcherBone>(), SupremeCalamitasBehaviorOverride.SepulcherBoneDamage, 0f);
                     Utilities.NewProjectileBetter(npc.Center, rightVelocity, ModContent.ProjectileType<SepulcherBone>(), SupremeCalamitasBehaviorOverride.SepulcherBoneDamage, 0f);
                 }
@@ -329,7 +329,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 11f;
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.06f);
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
             }
             if (npc.velocity.Length() > 11.5f)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 11.49f;
@@ -395,18 +395,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Main.npc[arm].rotation = rotationalOffset;
                     }
 
-                    rotationalOffset += MathHelper.Pi / 6f;
+                    rotationalOffset += Pi / 6f;
 
                     arm = NPC.NewNPC(npc.GetSource_FromAI(), (int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SepulcherArm>(), lol);
                     if (Main.npc.IndexInRange(arm))
                     {
                         Main.npc[arm].ai[0] = lol;
                         Main.npc[arm].direction = -1;
-                        Main.npc[arm].rotation = rotationalOffset + MathHelper.Pi;
+                        Main.npc[arm].rotation = rotationalOffset + Pi;
                     }
 
-                    rotationalOffset += MathHelper.Pi / 6f;
-                    rotationalOffset = MathHelper.WrapAngle(rotationalOffset);
+                    rotationalOffset += Pi / 6f;
+                    rotationalOffset = WrapAngle(rotationalOffset);
                 }
 
                 Main.npc[lol].realLife = npc.whoAmI;
@@ -459,7 +459,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backglowInterpolant * 5f;
+                    Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * backglowInterpolant * 5f;
                     spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(Color.Red with { A = 0 }) * backglowInterpolant, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                 }
             }

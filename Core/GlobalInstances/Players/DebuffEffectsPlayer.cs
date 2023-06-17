@@ -40,7 +40,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
-        public float MadnessInterpolant => MathHelper.Clamp(MadnessTime / 600f, 0f, 1f);
+        public float MadnessInterpolant => Clamp(MadnessTime / 600f, 0f, 1f);
 
         #region Reset Effects
         public override void ResetEffects()

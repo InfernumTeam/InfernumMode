@@ -46,11 +46,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                         WingRotation = (-0.6f).AngleLerp(0.36f - instanceRatio * 0.15f, animationCompletion);
                         break;
                     case WingMotionState.Flap:
-                        WingRotation = PiecewiseAnimation((animationCompletion + MathHelper.Lerp(instanceRatio, 0f, 0.5f)) % 1f, Anticipation, Flap, Rest, Recovery);
+                        WingRotation = PiecewiseAnimation((animationCompletion + Lerp(instanceRatio, 0f, 0.5f)) % 1f, Anticipation, Flap, Rest, Recovery);
                         break;
                 }
 
-                WingRotationDifferenceMovingAverage = MathHelper.Lerp(WingRotationDifferenceMovingAverage, WingRotation - PreviousWingRotation, 0.15f);
+                WingRotationDifferenceMovingAverage = Lerp(WingRotationDifferenceMovingAverage, WingRotation - PreviousWingRotation, 0.15f);
             }
         }
 
@@ -66,7 +66,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             set;
         }
 
-        public abstract int WingCount { get; }
+        public abstract int WingCount
+        {
+            get;
+        }
 
         public ref float RuneFadeInInterpolant => ref Projectile.localAI[0];
 
@@ -164,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Color wingsDrawColorWeak = Color.Lerp(Color.Transparent, Color.Red * 0.4f, fadeInterpolant);
 
             // Wings become squished the faster they're moving, to give an illusion of 3D motion.
-            float squishOffset = MathHelper.Min(0.7f, Math.Abs(rotationDifferenceMovingAverage) * 3.5f);
+            float squishOffset = MathF.Min(0.7f, Math.Abs(rotationDifferenceMovingAverage) * 3.5f);
 
             // Draw multiple instances of the wings. This includes afterimages based on how quickly they're flapping.
             Vector2 scale = new Vector2(1f, 1f - squishOffset) * fadeInterpolant;
@@ -173,7 +176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 // Make wings slightly brighter when they're moving at a fast angular pace.
                 Color wingColor = Color.Lerp(wingsDrawColor, wingsDrawColorWeak, i / 4f) * Utils.Remap(rotationDifferenceMovingAverage, 0f, 0.04f, 0.66f, 0.75f);
 
-                float rotationOffset = i * MathHelper.Min(rotationDifferenceMovingAverage, 0.16f) * (1f - squishOffset) * 0.5f;
+                float rotationOffset = i * MathF.Min(rotationDifferenceMovingAverage, 0.16f) * (1f - squishOffset) * 0.5f;
                 float currentWingRotation = wingRotation + rotationOffset;
 
                 Main.spriteBatch.Draw(wingsTexture, drawPosition, null, wingColor, generalRotation + currentWingRotation, leftWingOrigin, scale, SpriteEffects.None, 0f);

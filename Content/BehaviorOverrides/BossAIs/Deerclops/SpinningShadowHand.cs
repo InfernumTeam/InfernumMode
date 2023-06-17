@@ -47,8 +47,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             if (Time <= SpinTime)
             {
                 // Slow down and spin in place.
-                float rotationOffset = MathHelper.TwoPi * ((Time / SpinTime + Projectile.identity / 8f) % 1f);
-                rotationOffset = MathHelper.Lerp(rotationOffset, MathHelper.TwoPi, Utils.GetLerpValue(SpinTime - 16f, SpinTime, Time, true));
+                float rotationOffset = TwoPi * ((Time / SpinTime + Projectile.identity / 8f) % 1f);
+                rotationOffset = Lerp(rotationOffset, TwoPi, Utils.GetLerpValue(SpinTime - 16f, SpinTime, Time, true));
                 Projectile.rotation = Projectile.AngleTo(target.Center) + rotationOffset;
                 Projectile.velocity *= 0.98f;
 
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             for (int j = 0; j < 4; j++)
             {
                 Vector2 offsetDirection = rotation.ToRotationVector2();
-                double spin = Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 24f + MathHelper.TwoPi * j / 4f;
+                double spin = Main.GlobalTimeWrappedHourly * TwoPi / 24f + TwoPi * j / 4f;
                 Main.EntitySpriteDraw(tex, drawPosition + offsetDirection.RotatedBy(spin) * 6f, null, backglowColor, rotation, origin, Projectile.scale, 0, 0);
             }
             Main.spriteBatch.Draw(tex, drawPosition, null, Projectile.GetAlpha(Color.Black), rotation, origin, Projectile.scale, 0, 0f);

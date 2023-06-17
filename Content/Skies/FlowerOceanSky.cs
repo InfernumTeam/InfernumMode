@@ -112,9 +112,9 @@ namespace InfernumMode.Content.Skies
         public override void Update(GameTime gameTime)
         {
             if (isActive && intensity < 1f)
-                intensity = MathHelper.Clamp(intensity + 0.005f, 0f, 1f);
+                intensity = Clamp(intensity + 0.005f, 0f, 1f);
             else if (!isActive && intensity > 0f)
-                intensity = MathHelper.Clamp(intensity - 0.005f, 0f, 1f);
+                intensity = Clamp(intensity - 0.005f, 0f, 1f);
 
             // Kill every cloud
             for (int i = 0; i < Main.maxClouds; i++)
@@ -192,7 +192,7 @@ namespace InfernumMode.Content.Skies
                 Rays.Add(new Godray()
                 {
                     Lifetime = Main.rand.Next(320, 540),
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi),
+                    Rotation = Main.rand.NextFloat(TwoPi),
                     RotationSpeed = Main.rand.NextFloat(0.001f, 0.002f) * Main.rand.NextFromList(-1, 1),
                     ColorLerpAmount = Main.rand.NextFloat(),
                     OpacityScalar = Main.rand.NextFloat(1f, 1.5f),
@@ -251,7 +251,7 @@ namespace InfernumMode.Content.Skies
             };
 
             int xPos = (int)(Main.time / 32400.0 * (double)(sceneArea.totalWidth + (moonTexture.Width * 2))) - moonTexture.Width;
-            float yTimeOffset = MathF.Pow((float)(Main.time / 32400f - 0.5f) * 2.0f, 2.0f);
+            float yTimeOffset = Pow((float)(Main.time / 32400f - 0.5f) * 2.0f, 2.0f);
             int yPos = (int)(sceneArea.bgTopY + yTimeOffset * 230.0 + 100.0);
             return new Vector2(xPos, yPos + Main.moonModY) + sceneArea.SceneLocalScreenPositionOffset;
         }
@@ -265,7 +265,7 @@ namespace InfernumMode.Content.Skies
             if (Main.rand.NextBool(2) && Fishes.Count < maxBoids)
                 Fishes.Add(new(Main.rand.Next(600, 1200), Main.rand.NextFloat(0.15f, 0.2f), Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloat(-Main.screenWidth * 0.8f, Main.screenWidth * 0.8f),
                         Main.rand.NextFloat(-Main.screenHeight * 0.8f, Main.screenHeight * 0.8f)),
-                        Main.rand.NextFloat(MathF.Tau).ToRotationVector2() * Main.rand.NextFloat(2f, 4f)));
+                        Main.rand.NextFloat(Tau).ToRotationVector2() * Main.rand.NextFloat(2f, 4f)));
 
             Fishes.RemoveAll(f => f.Time >= f.Lifetime);
 
@@ -290,7 +290,7 @@ namespace InfernumMode.Content.Skies
                         Main.rand.NextFloat(Main.screenHeight * 0.5f, Main.screenHeight) * (downwards ? -1.2f : 1f)),
                     Velocity = Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.05f, 0.5f)) * Main.rand.NextFloat(1f, 1.5f) * (downwards ? 1f : -1f),
                     Lifetime = Main.rand.Next(2500, 3100),
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi),
+                    Rotation = Main.rand.NextFloat(TwoPi),
                     RotationSpeed = Main.rand.NextFloat(0.003f, 0.006f) * Main.rand.NextFromList(-1, 1),
                     ColorLerpAmount = Main.rand.NextFloat(),
                     Depth = Main.rand.NextFloat(1.3f, 3f) * (downwards ? 0.8f : 1f),

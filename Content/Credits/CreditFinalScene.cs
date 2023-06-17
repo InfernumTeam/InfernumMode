@@ -105,14 +105,14 @@ namespace InfernumMode.Content.Credits
 
             // Accelerate while the portal is being created.
             if (time >= PortalAppearDelay)
-                suckSpeed = MathF.Pow(1 + CalamityUtils.ExpOutEasing(Utils.GetLerpValue(PortalAppearDelay + portalAppearLength, PortalAppearDelay + portalAppearLength + 90f, time, true), 0), 2f);
+                suckSpeed = Pow(1 + CalamityUtils.ExpOutEasing(Utils.GetLerpValue(PortalAppearDelay + portalAppearLength, PortalAppearDelay + portalAppearLength + 90f, time, true), 0), 2f);
 
             foreach (var cd in CreditDevelopers)
             {
                 if (suckSpeed > 0)
                 {
                     cd.Velocity = cd.Position.DirectionTo(PortalPosition) * suckSpeed * 3f;
-                    cd.Rotation = MathF.Abs(cd.Rotation.AngleTowards(cd.Velocity.ToRotation(), 0.08f));
+                    cd.Rotation = Abs(cd.Rotation.AngleTowards(cd.Velocity.ToRotation(), 0.08f));
                 }
                 else
                 {
@@ -197,11 +197,11 @@ namespace InfernumMode.Content.Credits
             {
                 var collapseEffect = InfernumEffectsRegistry.BackgroundDistortionShader;
                 collapseEffect.UseImage1("Images/Misc/Perlin");
-                collapseEffect.Shader.Parameters["distortionIntensity"].SetValue(MathF.Pow(distortionIntensity, 1.05f));
+                collapseEffect.Shader.Parameters["distortionIntensity"].SetValue(Pow(distortionIntensity, 1.05f));
                 collapseEffect.Shader.Parameters["center"].SetValue(PortalPosition / new Vector2(Main.screenWidth, Main.screenHeight));
                 collapseEffect.Apply();
             }
-            Main.spriteBatch.Draw(PortraitTarget.Target, new Vector2(Main.screenWidth, Main.screenHeight - distortionIntensity * 600f) * 0.5f, null, Color.White, 0f, PortraitTarget.Target.Size() * 0.5f, 1f - MathF.Pow(distortionIntensity, 0.4f) * 0.9f, 0, 0f);
+            Main.spriteBatch.Draw(PortraitTarget.Target, new Vector2(Main.screenWidth, Main.screenHeight - distortionIntensity * 600f) * 0.5f, null, Color.White, 0f, PortraitTarget.Target.Size() * 0.5f, 1f - Pow(distortionIntensity, 0.4f) * 0.9f, 0, 0f);
 
             if (portalOpacity > 0f)
             {
@@ -217,8 +217,8 @@ namespace InfernumMode.Content.Credits
             // Get squishyness variables
             float sineX = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 2.25f)) / 2);
             float sineY = (float)((1 + Math.Sin(Main.GlobalTimeWrappedHourly * 1.5f)) / 2);
-            float scaleScalarX = MathHelper.Lerp(0.95f, 1.15f, sineX);
-            float scaleScalarY = MathHelper.Lerp(0.95f, 1.15f, sineY);
+            float scaleScalarX = Lerp(0.95f, 1.15f, sineX);
+            float scaleScalarY = Lerp(0.95f, 1.15f, sineY);
 
             Texture2D texture = InfernumTextureRegistry.WhiteHole.Value;
             Asset<Texture2D> eventHorizonTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise");
@@ -247,8 +247,8 @@ namespace InfernumMode.Content.Credits
 
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
-            scaleScalarX = MathHelper.Lerp(0.97f, 1.13f, sineX);
-            scaleScalarY = MathHelper.Lerp(0.97f, 1.13f, sineY);
+            scaleScalarX = Lerp(0.97f, 1.13f, sineX);
+            scaleScalarY = Lerp(0.97f, 1.13f, sineY);
             Vector2 blackScale = new(0.2f * scaleScalarX, 0.2f * scaleScalarY);
             Main.spriteBatch.Draw(texture, PortalPosition, new(0, 0, texture.Width, texture.Height), Color.Black, 0f, texture.Size() * 0.5f, blackScale * portalScale, SpriteEffects.None, 0f);
 

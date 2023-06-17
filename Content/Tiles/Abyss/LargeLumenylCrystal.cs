@@ -88,8 +88,8 @@ namespace InfernumMode.Content.Tiles.Abyss
             // Cached for performance reasons. Profiling revealed that all of the LocalPlayer/Center getters were causing slowdowns.
             Vector2 playerCenter = Main.LocalPlayer.Center;
 
-            int width = (int)MathF.Ceiling(Main.screenWidth / 18) + 6;
-            int height = (int)MathF.Ceiling(Main.screenHeight / 18) + 6;
+            int width = (int)Ceiling(Main.screenWidth / 18) + 6;
+            int height = (int)Ceiling(Main.screenHeight / 18) + 6;
             for (int k = 0; k < width * height; k++)
             {
                 int dx = k % width - width / 2;
@@ -116,13 +116,13 @@ namespace InfernumMode.Content.Tiles.Abyss
                     Tile left = CalamityUtils.ParanoidTileRetrieval(p.X - 1, p.Y);
                     Tile right = CalamityUtils.ParanoidTileRetrieval(p.X + 1, p.Y);
                     if (top.HasTile && top.Slope == SlopeType.Solid && !top.IsHalfBlock && WorldGen.SolidTile(top))
-                        offsetDirection = MathHelper.Pi;
+                        offsetDirection = Pi;
                     else if (left.HasTile && left.Slope == SlopeType.Solid && !left.IsHalfBlock && WorldGen.SolidTile(left))
-                        offsetDirection = MathHelper.PiOver2;
+                        offsetDirection = PiOver2;
                     else if (right.HasTile && right.Slope == SlopeType.Solid && !right.IsHalfBlock && WorldGen.SolidTile(right))
-                        offsetDirection = -MathHelper.PiOver2;
+                        offsetDirection = -PiOver2;
 
-                    float baseDistance = MathHelper.Lerp(40f, 64f, (i * 0.13f + j * 3.84f) % 1f);
+                    float baseDistance = Lerp(40f, 64f, (i * 0.13f + j * 3.84f) % 1f);
                     if ((i * 2 + j * 3) % 7 == 0)
                         baseDistance *= 1.6f;
 
@@ -139,7 +139,7 @@ namespace InfernumMode.Content.Tiles.Abyss
                         VerticalStretchFactor = 1f,
                         BranchGrowthWidthDecay = 0.6f,
                         MaxCutoffBranchesPerBranch = 2,
-                        BaseDirection = offsetDirection + MathHelper.Lerp(-0.41f, 0.41f, (p.X + p.Y) * 0.1854f % 1f),
+                        BaseDirection = offsetDirection + Lerp(-0.41f, 0.41f, (p.X + p.Y) * 0.1854f % 1f),
                         IcicleColor = Color.LightCyan * 0.3f
                     };
                 }

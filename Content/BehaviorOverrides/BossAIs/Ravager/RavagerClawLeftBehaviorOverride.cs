@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
                     if (npc.WithinRange(stickPosition, reelbackSpeed + 12f))
                     {
-                        npc.rotation = leftClaw.ToInt() * MathHelper.Pi;
+                        npc.rotation = leftClaw.ToInt() * Pi;
                         npc.velocity = Vector2.Zero;
                         npc.Center = stickPosition;
 
@@ -227,7 +227,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     {
                         for (int i = 0; i < 18; i++)
                         {
-                            Vector2 ringOffset = Vector2.UnitX * -npc.width / 2f - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 18f) * new Vector2(8f, 16f);
+                            Vector2 ringOffset = Vector2.UnitX * -npc.width / 2f - Vector2.UnitY.RotatedBy(TwoPi * i / 18f) * new Vector2(8f, 16f);
                             ringOffset = ringOffset.RotatedBy(npc.rotation);
                             Dust darkMagicFire = Dust.NewDustDirect(npc.Center, 0, 0, ModContent.DustType<RavagerMagicDust>(), 0f, 0f, 160, default, 1f);
                             darkMagicFire.scale = 1.35f;
@@ -240,7 +240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     }
                     if (Main.rand.NextBool(4))
                     {
-                        Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * MathHelper.Pi / 16f) * npc.width * 0.5f;
+                        Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * Pi / 16f) * npc.width * 0.5f;
                         Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 100, default, 1f);
                         smoke.position = npc.Center + spawnOffset;
                         smoke.velocity *= 0.1f;
@@ -248,7 +248,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     }
                     if (Main.rand.NextBool(32))
                     {
-                        Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * MathHelper.Pi / 8f) * npc.width * 0.5f;
+                        Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * Pi / 8f) * npc.width * 0.5f;
                         Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 155, default, 0.8f);
                         smoke.velocity *= 0.3f;
                         smoke.position = npc.Center + spawnOffset;
@@ -259,7 +259,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * MathHelper.PiOver4) * npc.width * 0.5f;
+                            Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * PiOver4) * npc.width * 0.5f;
                             Dust darkMagicFire = Dust.NewDustDirect(npc.position, npc.width, npc.height, ModContent.DustType<RavagerMagicDust>(), 0f, 0f, 0, default, 1.45f);
                             darkMagicFire.velocity *= 0.3f;
                             darkMagicFire.position = npc.Center + spawnOffset;
@@ -308,7 +308,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawStart = ravagerBody.Center + new Vector2(-92f * leftclaw.ToDirectionInt(), 46f);
             Vector2 drawPosition = drawStart;
-            float chainRotation = npc.AngleFrom(drawStart) - MathHelper.PiOver2;
+            float chainRotation = npc.AngleFrom(drawStart) - PiOver2;
             while (npc.Infernum().ExtraAI[0] == 0f)
             {
                 if (npc.WithinRange(drawPosition, 14f))

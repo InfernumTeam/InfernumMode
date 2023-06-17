@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Player target = Main.player[npc.target];
 
             // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Fly towards the target.
             float xDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.2f, 1f);
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, maxSpeed);
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.027f);
             }
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             return false;
         }

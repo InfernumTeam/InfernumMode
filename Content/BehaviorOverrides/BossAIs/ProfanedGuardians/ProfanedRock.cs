@@ -179,14 +179,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Timer <= RedHotGlowTimer && !DoNotDrawLine)
             {
                 Texture2D invis = InfernumTextureRegistry.Invisible.Value;
-                float opacity = MathF.Sin(Timer / RedHotGlowTimer * MathF.PI);
+                float opacity = Sin(Timer / RedHotGlowTimer * PI);
                 Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Pow(opacity, 0.5f));
+                laserScopeEffect.Parameters["mainOpacity"].SetValue(Pow(opacity, 0.5f));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(340f));
                 laserScopeEffect.Parameters["laserAngle"].SetValue(Projectile.velocity.ToRotation() * -1f);
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.005f + MathF.Pow(opacity, 5f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.002f + 0.002f));
+                laserScopeEffect.Parameters["laserWidth"].SetValue(0.005f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.002f + 0.002f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
                 laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(WayfinderSymbol.Colors[1], Color.OrangeRed, 0.5f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(WayfinderSymbol.Colors[2].ToVector3());
@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float backglowAmount = 12;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(lightColor) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);

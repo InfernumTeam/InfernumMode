@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public static Color LaserColorFunction(float completionRatio)
         {
             float opacity = Utils.GetLerpValue(0f, 0.12f, completionRatio, true);
-            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 13f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 13f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Red, new(249, 225, 193), colorInterpolant * 0.67f) * opacity;
         }
 

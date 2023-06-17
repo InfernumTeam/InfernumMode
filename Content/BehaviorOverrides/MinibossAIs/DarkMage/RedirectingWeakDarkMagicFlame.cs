@@ -73,12 +73,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                     acceleration *= 1.3f;
                 }
 
-                float angularOffset = MathF.Cos((Projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + Projectile.identity * 0.89f) * 0.01f;
+                float angularOffset = Cos((Projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + Projectile.identity * 0.89f) * 0.01f;
                 Projectile.velocity = Projectile.velocity.RotatedBy(angularOffset);
-                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(Projectile.velocity.Length() * acceleration, minSpeed, maxSpeed);
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * Clamp(Projectile.velocity.Length() * acceleration, minSpeed, maxSpeed);
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             Time++;
         }
@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
 
         public float FlameTrailWidthFunction(float completionRatio)
         {
-            return MathHelper.SmoothStep(20f, 5f, completionRatio) * Projectile.Opacity;
+            return SmoothStep(20f, 5f, completionRatio) * Projectile.Opacity;
         }
 
         public Color FlameTrailColorFunction(float completionRatio)

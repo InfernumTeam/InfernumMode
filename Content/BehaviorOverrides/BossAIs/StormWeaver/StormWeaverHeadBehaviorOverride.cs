@@ -14,6 +14,7 @@ using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -111,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ref float fogInterpolant = ref npc.Infernum().ExtraAI[FogInterpolantIndex];
             ref float lightningSkyBrightness = ref npc.ModNPC<StormWeaverHead>().lightning;
 
-            lightningSkyBrightness = MathHelper.Clamp(lightningSkyBrightness - 0.025f, 0f, 1f);
+            lightningSkyBrightness = Clamp(lightningSkyBrightness - 0.025f, 0f, 1f);
 
             if (attackState != (int)StormWeaverAttackType.HuntSkyCreatures)
             {
@@ -197,10 +198,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             // Determine rotation.
-            npc.rotation = (npc.position - npc.oldPosition).ToRotation() + MathHelper.PiOver2;
+            npc.rotation = (npc.position - npc.oldPosition).ToRotation() + PiOver2;
 
             // Determine the blue fade.
-            npc.Calamity().newAI[0] = MathHelper.Lerp(280f, 400f, MathHelper.Clamp(fadeToBlue, 0f, 1f));
+            npc.Calamity().newAI[0] = Lerp(280f, 400f, Clamp(fadeToBlue, 0f, 1f));
 
             attackTimer++;
             return false;
@@ -228,8 +229,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Make a strong lightning effect on the first frame and teleport near the player, right before the storm rolls in.
             if (attackTimer == 1f)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { PitchVariance = 0.15f }, player.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with { Volume = 1.6f }, player.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with
+                {
+                    PitchVariance = 0.15f
+                }, player.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with
+                {
+                    Volume = 1.6f
+                }, player.Center);
                 npc.netUpdate = true;
 
                 npc.Opacity = 1f;
@@ -290,7 +297,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // It will have an incredibly high wind speed.
             if (attackTimer >= rainCreationDelay)
             {
-                fogInterpolant = MathHelper.Clamp(fogInterpolant + 0.1f, 0f, 1.5f);
+                fogInterpolant = Clamp(fogInterpolant + 0.1f, 0f, 1.5f);
 
                 Main.windSpeedCurrent = 1.07f;
                 Main.windSpeedTarget = Main.windSpeedCurrent;
@@ -408,7 +415,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             else if (npc.velocity.Length() > 25f + attackTimer / 36f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 21f, 32.5f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
+            moveSpeed = Clamp(moveSpeed, 21f, 32.5f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
@@ -426,7 +433,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             else if (npc.velocity.Length() > 13f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 15.4f, 26f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
+            moveSpeed = Clamp(moveSpeed, 15.4f, 26f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
@@ -444,13 +451,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 SoundEngine.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootSpeed = MathHelper.Lerp(7f, 11.5f, 1f - lifeRatio);
+                    float shootSpeed = Lerp(7f, 11.5f, 1f - lifeRatio);
                     if (BossRushEvent.BossRushActive)
                         shootSpeed *= 1.5f;
 
                     for (int i = 0; i < 11; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / 10f);
+                        float offsetAngle = Lerp(-0.51f, 0.51f, i / 10f);
                         Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * shootSpeed;
                         Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                     }
@@ -465,7 +472,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int shootCount = 2;
-            int shotSpacing = (int)MathHelper.Lerp(175f, 145f, 1f - lifeRatio);
+            int shotSpacing = (int)Lerp(175f, 145f, 1f - lifeRatio);
             int delayBeforeFiring = 60;
             int shootRate = delayBeforeFiring + 54;
 
@@ -487,7 +494,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootOffsetAngle = Main.rand.NextFloatDirection() * MathHelper.PiOver4;
+                    float shootOffsetAngle = Main.rand.NextFloatDirection() * PiOver4;
                     for (float dx = -1750; dx < 1750; dx += shotSpacing + Main.rand.NextFloatDirection() * 60f)
                     {
                         Vector2 spawnOffset = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * 1600f + shootOffsetAngle.ToRotationVector2() * dx;
@@ -524,13 +531,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     if (npc.velocity.Length() < 2f)
                         npc.velocity = Vector2.UnitY * -2.4f;
 
-                    float flySpeed = MathHelper.Lerp(27 * 0.5f, 27, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
+                    float flySpeed = Lerp(27 * 0.5f, 27, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
                     flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
                     npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
                     npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
 
                     if (attackTimer >= skyBrightenTime)
-                        lightningSkyBrightness = MathHelper.Lerp(lightningSkyBrightness, MaxLightningBrightness, 0.25f);
+                        lightningSkyBrightness = Lerp(lightningSkyBrightness, MaxLightningBrightness, 0.25f);
 
                     if (attackTimer >= circleTime)
                     {
@@ -576,7 +583,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         NPC tail = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<StormWeaverTail>())];
                         for (int i = 0; i < 4; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-0.37f, 0.37f, i / 3f);
+                            float shootOffsetAngle = Lerp(-0.37f, 0.37f, i / 3f);
                             Vector2 sparkVelocity = tail.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 6.7f;
                             Utilities.NewProjectileBetter(tail.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                         }
@@ -607,14 +614,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 telegraphTime += 40;
 
             // Make the fog appear.
-            fogInterpolant = MathHelper.Clamp(fogInterpolant + 0.02f, 0f, 1f);
+            fogInterpolant = Clamp(fogInterpolant + 0.02f, 0f, 1f);
 
-            float telegraphHoverOffset = MathHelper.Lerp(540f, 436f, chargeCounter / chargeCount);
+            float telegraphHoverOffset = Lerp(540f, 436f, chargeCounter / chargeCount);
             Vector2 teleportPosition = target.Center + telegraphHoverOffsetDirection.ToRotationVector2() * telegraphHoverOffset;
             if (attackTimer <= telegraphTime)
             {
                 // Rapidly fade out.
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.12f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.12f, 0f, 1f);
 
                 electricityFormInterpolant = (1f - npc.Opacity) * 0.4f;
 
@@ -624,7 +631,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 // Initialize the telegraph offset direction.
                 if (attackTimer == 1f)
                 {
-                    telegraphHoverOffsetDirection = Main.rand.NextFloat(MathHelper.TwoPi);
+                    telegraphHoverOffsetDirection = Main.rand.NextFloat(TwoPi);
                     npc.netUpdate = true;
                 }
 
@@ -636,7 +643,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     for (int i = 0; i < 16; i++)
                     {
                         Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Cyan;
-                        CloudParticle fireCloud = new(teleportPosition, (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 6f, fireColor, Color.DarkGray, 20, Main.rand.NextFloat(2.5f, 3.2f));
+                        CloudParticle fireCloud = new(teleportPosition, (TwoPi * i / 16f).ToRotationVector2() * 6f, fireColor, Color.DarkGray, 20, Main.rand.NextFloat(2.5f, 3.2f));
                         GeneralParticleHandler.SpawnParticle(fireCloud);
                     }
                 }
@@ -648,8 +655,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 npc.Opacity = 1f;
                 npc.Center = teleportPosition;
                 lightningSkyBrightness = 0.5f;
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { PitchVariance = 0.15f, Volume = 1.6f }, target.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with { Volume = 0.67f }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with
+                {
+                    PitchVariance = 0.15f,
+                    Volume = 1.6f
+                }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with
+                {
+                    Volume = 0.67f
+                }, target.Center);
 
                 // Create a screen flash effect.
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 0.8f, 25);
@@ -670,7 +684,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     for (int i = 0; i < sparkCount; i++)
                     {
-                        Vector2 sparkVelocity = (MathHelper.TwoPi * i / sparkCount).ToRotationVector2() * sparkSpeed;
+                        Vector2 sparkVelocity = (TwoPi * i / sparkCount).ToRotationVector2() * sparkSpeed;
                         Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                     }
                 }
@@ -718,21 +732,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             if (attackTimer <= redirectTime)
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
-                float flySpeed = MathHelper.Lerp(46f, 7f, attackTimer / redirectTime);
+                float flySpeed = Lerp(46f, 7f, attackTimer / redirectTime);
                 float movementInterpolant = Utils.Remap(attackTimer, 0f, redirectTime - 20f, 0.2f, 0.04f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * flySpeed;
                 if (npc.WithinRange(hoverDestination, 270f))
                     idealVelocity = npc.velocity.ClampMagnitude(15f, 45f);
 
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, movementInterpolant).RotateTowards(idealVelocity.ToRotation(), 0.05f);
-                electricityFormInterpolant = MathHelper.Clamp(electricityFormInterpolant + 0.02f, 0f, 1f);
+                electricityFormInterpolant = Clamp(electricityFormInterpolant + 0.02f, 0f, 1f);
                 return;
             }
 
             // Slow down and arc around towards the player while the segments emit electricity in anticipation of the attack.
             if (attackTimer <= redirectTime + arcRedirectTime)
             {
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 189f) * 0.96f;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), Pi / 189f) * 0.96f;
                 return;
             }
 
@@ -740,8 +754,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             if (attackTimer == redirectTime + arcRedirectTime + 1f)
             {
                 lightningSkyBrightness = 0.4f;
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with { PitchVariance = 0.15f }, target.Center);
-                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with { Volume = 1.6f }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound with
+                {
+                    PitchVariance = 0.15f
+                }, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverElectricDischargeSound with
+                {
+                    Volume = 1.6f
+                }, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -800,14 +820,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Idly emit wind particles.
             Vector2 windSpawnPosition = target.Center + new Vector2(Main.windSpeedCurrent.DirectionalSign() * -1250f, Main.rand.NextFloatDirection() * 900f);
             Vector2 windVelocity = new Vector2(1f, 0.25f) * Main.windSpeedCurrent.DirectionalSign() * Main.rand.NextFloat(0.1f, 1.8f) * 70f;
-            Particle wind = new SnowyIceParticle(windSpawnPosition, windVelocity, Color.White with { A = 0 } * 0.6f, Main.rand.NextFloat(0.7f, 1.1f), 60);
+            Particle wind = new SnowyIceParticle(windSpawnPosition, windVelocity, Color.White with
+            {
+                A = 0
+            } * 0.6f, Main.rand.NextFloat(0.7f, 1.1f), 60);
             GeneralParticleHandler.SpawnParticle(wind);
 
             // Change the wind speeds periodically.
             if (attackTimer % 90f == 0f)
             {
                 Main.windSpeedTarget = Main.rand.NextFloat(-3f, 3f);
-                Main.windSpeedCurrent = MathHelper.Lerp(Main.windSpeedCurrent, Main.windSpeedTarget, 0.85f);
+                Main.windSpeedCurrent = Lerp(Main.windSpeedCurrent, Main.windSpeedTarget, 0.85f);
                 SoundEngine.PlaySound(InfernumSoundRegistry.StormWeaverWindSound);
 
                 // Create a gust of wind particles in the new direction.
@@ -815,7 +838,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     windSpawnPosition = target.Center + new Vector2(Main.windSpeedCurrent.DirectionalSign() * -1250f, Main.rand.NextFloatDirection() * 900f);
                     windVelocity = new Vector2(1f, 0.25f) * Main.windSpeedCurrent.DirectionalSign() * Main.rand.NextFloat(0.1f, 1.8f) * 90f;
-                    wind = new SnowyIceParticle(windSpawnPosition, windVelocity, Color.White with { A = 0 } * 0.6f, Main.rand.NextFloat(1f, 2f), 60);
+                    wind = new SnowyIceParticle(windSpawnPosition, windVelocity, Color.White with
+                    {
+                        A = 0
+                    } * 0.6f, Main.rand.NextFloat(1f, 2f), 60);
                     GeneralParticleHandler.SpawnParticle(wind);
                 }
             }
@@ -829,11 +855,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     centerPointY = target.Center.Y;
                     npc.netUpdate = true;
                 }
-                centerPointX = MathHelper.Lerp(centerPointX, target.Center.X, 0.024f);
-                centerPointY = MathHelper.Lerp(centerPointY, target.Center.Y, 0.024f);
+                centerPointX = Lerp(centerPointX, target.Center.X, 0.024f);
+                centerPointY = Lerp(centerPointY, target.Center.Y, 0.024f);
 
-                Vector2 spinDestination = new Vector2(centerPointX, centerPointY) + (attackTimer * MathHelper.TwoPi / 60f).ToRotationVector2() * 900f;
-                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                Vector2 spinDestination = new Vector2(centerPointX, centerPointY) + (attackTimer * TwoPi / 60f).ToRotationVector2() * 900f;
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathF.Min(npc.Distance(spinDestination), 34f);
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
 
                 // Grant the target infinite flight time, so that they don't run out in the middle of a flight and get screwed by losing the ability to dodge the wind.
@@ -851,7 +877,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                                 wind.ModProjectile<WindGust>().SpinDirection = spinDirection;
                                 wind.ModProjectile<WindGust>().SpinCenter = target.Center;
                             });
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<WindGust>(), WindGustDamage, 0f, -1, MathHelper.TwoPi * i / gustsPerBurst);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<WindGust>(), WindGustDamage, 0f, -1, TwoPi * i / gustsPerBurst);
                         }
                         windBurstCounter++;
                         npc.netUpdate = true;

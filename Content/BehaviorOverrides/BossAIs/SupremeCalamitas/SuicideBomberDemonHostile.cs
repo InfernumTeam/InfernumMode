@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Projectile.owner = Player.FindClosest(Projectile.Center, 1, 1);
 
             // Rapidly fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Anti-clumping behavior.
             float pushForce = 0.08f;
@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // If the other projectile is indeed the same owned by the same player and they're too close, nudge them away.
                 bool sameProjType = otherProj.type == Projectile.type;
-                float taxicabDist = MathHelper.Distance(Projectile.position.X, otherProj.position.X) + MathHelper.Distance(Projectile.position.Y, otherProj.position.Y);
+                float taxicabDist = Distance(Projectile.position.X, otherProj.position.X) + Distance(Projectile.position.Y, otherProj.position.Y);
                 if (sameProjType && taxicabDist < 60f)
                 {
                     if (Projectile.position.X < otherProj.position.X)
@@ -119,16 +119,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Projectile.velocity = Projectile.velocity.MoveTowards(Vector2.Zero, 0.4f) * 0.95f;
 
                 // Handle frames.
-                Projectile.frame = (int)Math.Round(MathHelper.Lerp(5f, 10f, Utils.GetLerpValue(45f, 90f, Time, true)));
+                Projectile.frame = (int)Math.Round(Lerp(5f, 10f, Utils.GetLerpValue(45f, 90f, Time, true)));
 
                 // And look at the target.
                 float idealAngle = target is null ? 0f : Projectile.AngleTo(target.Center);
                 Projectile.spriteDirection = target is null ? 1 : (target.Center.X > Projectile.Center.X).ToDirectionInt();
                 if (Projectile.spriteDirection != oldSpriteDirection)
-                    Projectile.rotation += MathHelper.Pi;
+                    Projectile.rotation += Pi;
 
                 if (Projectile.spriteDirection == -1)
-                    idealAngle += MathHelper.Pi;
+                    idealAngle += Pi;
                 Projectile.rotation = Projectile.rotation.AngleTowards(idealAngle, 0.3f).AngleLerp(idealAngle, 0.08f);
 
                 if (Time == RiseTime + ScreamDelay)
@@ -203,7 +203,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity >= 1f;
 
-        public static float FlameTrailWidthFunction(float completionRatio) => MathHelper.SmoothStep(21f, 8f, completionRatio);
+        public static float FlameTrailWidthFunction(float completionRatio) => SmoothStep(21f, 8f, completionRatio);
 
         public static Color FlameTrailColorFunction(float completionRatio)
         {
@@ -228,7 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Draw the base sprite and glowmask.
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, Projectile.GetAlpha(Color.Yellow) with { A = 0 }, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
             }
             Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
@@ -242,7 +242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Color flameOrbColor = Color.LightCyan * flameOrbGlowIntensity * 0.125f;
                     flameOrbColor.A = 0;
-                    Vector2 flameOrbDrawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2f).ToRotationVector2();
+                    Vector2 flameOrbDrawOffset = (TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2f).ToRotationVector2();
                     flameOrbDrawOffset *= flameOrbGlowIntensity * 3f;
                     Main.spriteBatch.Draw(orbTexture, drawPosition + flameOrbDrawOffset, frame, Projectile.GetAlpha(flameOrbColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
                 }
@@ -263,7 +263,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Time >= 90f)
             {
                 Vector2 trailOffset = Projectile.Size * 0.5f;
-                trailOffset += (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 20f;
+                trailOffset += (Projectile.rotation + PiOver2).ToRotationVector2() * 20f;
                 FlameTrailDrawer.DrawPixelated(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
             }
         }

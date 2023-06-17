@@ -44,13 +44,13 @@ namespace InfernumMode.Content.Projectiles.Ranged
             if (Projectile.localAI[0] == 0f)
             {
                 Projectile.frame = Main.rand.Next(4);
-                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.rotation = Main.rand.NextFloat(TwoPi);
                 Projectile.localAI[0] = 1f;
             }
 
             // Make the heat dissipate over time.
             if (Projectile.timeLeft < 140)
-                FireInterpolant = MathHelper.Clamp(FireInterpolant - 0.019f, 0.25f, 1f);
+                FireInterpolant = Clamp(FireInterpolant - 0.019f, 0.25f, 1f);
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(lightColor, new(1f, 0.3f, 0.12f, 0f), FireInterpolant * 0.87f) * Projectile.Opacity;

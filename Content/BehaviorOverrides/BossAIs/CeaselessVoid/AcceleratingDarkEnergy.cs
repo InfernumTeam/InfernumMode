@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Rotate based on velocity.
             if (Projectile.velocity != Vector2.Zero)
-                Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             Time++;
         }
@@ -151,9 +151,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public void DoBehavior_HoverInPlace()
         {
             float hoverInstabilityInterpolant = Utils.GetLerpValue(40f, 30f, Time, true);
-            float hoverOffsetSine = MathF.Sin(MathHelper.TwoPi * Time / 60f + MathHelper.PiOver4 * Projectile.identity);
+            float hoverOffsetSine = Sin(TwoPi * Time / 60f + PiOver4 * Projectile.identity);
             Vector2 bobHoverOffset = 60f * hoverInstabilityInterpolant * hoverOffsetSine * Vector2.UnitY;
-            Vector2 fallFromAboveOffset = MathHelper.SmoothStep(0f, -950f, Utils.GetLerpValue(32f, 0f, Time, true)) * Vector2.UnitY;
+            Vector2 fallFromAboveOffset = SmoothStep(0f, -950f, Utils.GetLerpValue(32f, 0f, Time, true)) * Vector2.UnitY;
 
             // Hover into position.
             Vector2 hoverDestination = RestingPosition + bobHoverOffset + fallFromAboveOffset;
@@ -161,7 +161,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.velocity = Vector2.Zero;
 
             // Fade in.
-            Projectile.Opacity = MathF.Pow(Utils.GetLerpValue(8f, 36f, Time, true), 2.6f);
+            Projectile.Opacity = Pow(Utils.GetLerpValue(8f, 36f, Time, true), 2.6f);
         }
 
         public void DoBehavior_SpinInPlace()
@@ -183,7 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN!!
-            SpinOffsetAngle += MathHelper.TwoPi / SpinTime;
+            SpinOffsetAngle += TwoPi / SpinTime;
             Projectile.Center = CenterPoint + SpinOffsetAngle.ToRotationVector2() * radius;
 
             // Spawn particles.
@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 if (!Projectile.WithinRange(Target.Center, 250f))
                 {
                     Vector2 idealVelocity = Projectile.SafeDirectionTo(Target.Center, -Vector2.UnitY) * Projectile.velocity.Length();
-                    Projectile.velocity = Projectile.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi / 33f);
+                    Projectile.velocity = Projectile.velocity.RotateTowards(idealVelocity.ToRotation(), Pi / 33f);
                 }
             }
 
@@ -235,7 +235,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             for (int i = 0; i < 8; i++)
             {
                 Color streakColor = Color.Lerp(Color.HotPink, Color.LightCyan, Main.rand.NextFloat());
-                Vector2 streakVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * Main.rand.NextFloat(4f, 13f) + Main.rand.NextVector2Circular(2.5f, 2.5f);
+                Vector2 streakVelocity = (TwoPi * i / 8f).ToRotationVector2() * Main.rand.NextFloat(4f, 13f) + Main.rand.NextVector2Circular(2.5f, 2.5f);
                 SparkParticle streak = new(Projectile.Center + streakVelocity * 5f, streakVelocity, false, Main.rand.Next(8, 12), 1.25f, streakColor);
                 GeneralParticleHandler.SpawnParticle(streak);
 

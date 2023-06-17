@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void AI()
         {
             Projectile.scale += 0.08f;
-            Radius = MathHelper.Lerp(Radius, MaxRadius, 0.1f);
+            Radius = Lerp(Radius, MaxRadius, 0.1f);
             Projectile.Opacity = Utils.GetLerpValue(8f, 42f, Projectile.timeLeft, true) * 0.55f;
 
             Time++;
@@ -64,14 +64,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.37f;
 
-        public float SunWidthFunction(float completionRatio) => Radius * MathF.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * Sin(Pi * completionRatio);
 
         public Color SunColorFunction(float completionRatio)
         {
             if (ProvidenceBehaviorOverride.IsEnraged)
                 return Color.Lerp(Color.Cyan, Color.Lime, 0.33f) with { A = 92 } * Projectile.Opacity;
 
-            return Color.Lerp(Color.Yellow, Color.White, MathF.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
+            return Color.Lerp(Color.Yellow, Color.White, Sin(Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -84,12 +84,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 10f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 10f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + MathHelper.Pi * -0.2f;
+                float adjustedAngle = offsetAngle + Pi * -0.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 16; i++)
                 {

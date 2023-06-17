@@ -55,14 +55,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
             // Fade in at the beginning of the projectile's life.
             if (Time < 60f)
-                Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.35f);
+                Projectile.Opacity = Lerp(Projectile.Opacity, 1f, 0.35f);
 
             // Wither away at the end of the projectile's life.
             else if (Projectile.timeLeft < 40f)
             {
                 Projectile.damage = 0;
-                Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.05f, 0.08f);
-                Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 0f, 0.25f);
+                Projectile.scale = Lerp(Projectile.scale, 0.05f, 0.08f);
+                Projectile.Opacity = Lerp(Projectile.Opacity, 0f, 0.25f);
             }
 
             // Initialize the pillar.
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             // Quickly rise.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time >= 60f && Time < 75f)
             {
-                CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
+                CurrentHeight = Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
                 if (Time % 6 == 0)
                     Projectile.netUpdate = true;
             }
@@ -105,10 +105,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            MaxPillarHeight = MathHelper.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 60f + Math.Abs(target.velocity.Y * 15f);
+            MaxPillarHeight = MathF.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 60f + Math.Abs(target.velocity.Y * 15f);
 
             // Add some variance to the pillar height to make them feel a bit more alive.
-            MaxPillarHeight += MathHelper.Lerp(0f, 100f, Projectile.identity / 7f % 7f) * Main.rand.NextFloat(0.45f, 1.55f);
+            MaxPillarHeight += Lerp(0f, 100f, Projectile.identity / 7f % 7f) * Main.rand.NextFloat(0.45f, 1.55f);
 
             CurrentHeight = StartingHeight;
             Projectile.rotation = Main.rand.NextFloat(-0.1f, 0.1f);
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
             if (Time < 60f)
             {
-                float telegraphLineWidth = MathF.Sin(Time / 60f * MathHelper.Pi) * 3f;
+                float telegraphLineWidth = Sin(Time / 60f * Pi) * 3f;
                 if (telegraphLineWidth > 2f)
                     telegraphLineWidth = 2f;
                 Main.spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.Cyan, telegraphLineWidth);
@@ -157,10 +157,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
                     // Sometimes draw sprouts at an opposite angle.
                     if (sproutRNG.NextBool(3))
-                        offsetRotation = MathHelper.Pi - offsetRotation + MathHelper.PiOver4;
+                        offsetRotation = Pi - offsetRotation + PiOver4;
 
                     float sproutRotation = aimDirection.RotatedBy(offsetRotation).ToRotation();
-                    Vector2 sproutPosition = drawPosition + sproutRotation.ToRotationVector2().RotatedBy(-MathHelper.PiOver2) * 10f;
+                    Vector2 sproutPosition = drawPosition + sproutRotation.ToRotationVector2().RotatedBy(-PiOver2) * 10f;
                     spriteBatch.Draw(mushroomTexture, sproutPosition, null, Projectile.GetAlpha(Color.White), sproutRotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 }
 

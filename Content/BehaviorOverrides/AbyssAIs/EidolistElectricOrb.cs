@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override void AI()
         {
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.067f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.067f, 0f, 1f);
 
             // Disappear if there is no eidolist.
             if (EidolistOwner is not null && !EidolistOwner.active)
@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 int lightningID = ModContent.ProjectileType<EidolistLightning>();
                 for (int i = 0; i < LightningCount; i++)
                 {
-                    Vector2 lightningVelocity = (MathHelper.Lerp(-LightningSpread, LightningSpread, i / (float)(LightningCount - 1f)) + TelegraphDirection).ToRotationVector2() * 13f;
+                    Vector2 lightningVelocity = (Lerp(-LightningSpread, LightningSpread, i / (float)(LightningCount - 1f)) + TelegraphDirection).ToRotationVector2() * 13f;
                     int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 175, 0f);
                     if (Main.projectile.IndexInRange(lightning))
                     {
@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Color telegraphColor = Color.Cyan * Utils.GetLerpValue(16f, 25f, Time, true);
             for (int i = 0; i < LightningCount; i++)
             {
-                Vector2 telegraphDirection = (MathHelper.Lerp(-LightningSpread, LightningSpread, i / (float)(LightningCount - 1f)) + TelegraphDirection).ToRotationVector2();
+                Vector2 telegraphDirection = (Lerp(-LightningSpread, LightningSpread, i / (float)(LightningCount - 1f)) + TelegraphDirection).ToRotationVector2();
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + telegraphDirection * 2000f, telegraphColor, 3f);
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + telegraphDirection * 2000f, telegraphColor with { A = 0 }, 1.2f);
             }

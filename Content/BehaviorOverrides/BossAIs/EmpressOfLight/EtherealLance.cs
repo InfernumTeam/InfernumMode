@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.24f, Projectile.rotation, telegraphOrigin, outerTelegraphScale, 0, 0f);
 
             Vector2 origin = tex.Size() / 2f;
-            float scale = MathHelper.Lerp(0.7f, 1f, Utils.GetLerpValue(FireDelay - 5f, FireDelay, Time, true));
+            float scale = Lerp(0.7f, 1f, Utils.GetLerpValue(FireDelay - 5f, FireDelay, Time, true));
             float telegraphInterpolant = Utils.GetLerpValue(10f, FireDelay, Time, false) * Projectile.Opacity;
             if (telegraphInterpolant > 0f)
             {
@@ -164,7 +164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
                 for (float i = 0f; i < 1f; i += 0.25f)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i + Projectile.rotation).ToRotationVector2() * scale * 2f;
+                    Vector2 drawOffset = (TwoPi * i + Projectile.rotation).ToRotationVector2() * scale * 2f;
                     spriteBatch.Draw(tex, drawPos + drawOffset, null, telegraphColor * telegraphInterpolant, Projectile.rotation, origin, scale, 0, 0f);
                 }
                 spriteBatch.Draw(tex, drawPos, null, telegraphColor * telegraphInterpolant, Projectile.rotation, origin, scale * 1.1f, 0, 0f);

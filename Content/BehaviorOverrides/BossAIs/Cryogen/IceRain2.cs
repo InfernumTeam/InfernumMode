@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             else if (Projectile.ai[0] == 2f)
             {
                 Projectile.velocity.Y += 0.2f;
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
                 if (Projectile.velocity.Y > 6f)
                     Projectile.velocity.Y = 6f;
@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 4f;
                 Color afterimageColor = new Color(90, 206, 244, 0f) * 0.7f;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }

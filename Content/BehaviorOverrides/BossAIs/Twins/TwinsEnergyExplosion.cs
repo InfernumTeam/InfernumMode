@@ -48,10 +48,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 SoundEngine.PlaySound(InfernumSoundRegistry.TwinsForcefieldExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Sin(Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
 
-            Radius = MathHelper.Lerp(Radius, 1516f, 0.15f);
-            Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+            Radius = Lerp(Radius, 1516f, 0.15f);
+            Projectile.scale = Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
             Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
 
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             DrawData drawData = new(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/TechyNoise").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f - MathF.Sqrt(pulseCompletionRatio))) * Projectile.Opacity,
+                new Color(new Vector4(1f - Sqrt(pulseCompletionRatio))) * Projectile.Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,

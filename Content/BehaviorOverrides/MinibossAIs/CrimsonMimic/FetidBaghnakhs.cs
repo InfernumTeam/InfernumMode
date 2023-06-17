@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
         public override void AI()
         {
             Time++;
-            SpinOffsetAngle += MathHelper.TwoPi / 60f;
+            SpinOffsetAngle += TwoPi / 60f;
             Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
             Projectile.Center = Main.npc[OwnerIndex].Center + SpinOffsetAngle.ToRotationVector2() * Projectile.Opacity * 120f;
 

@@ -37,13 +37,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void ModifySunLightColor(ref Color tileColor, ref Color backgroundColor)
         {
-            backgroundColor *= MathHelper.Lerp(1f, 0.4f, BackgroundChangeInterpolant);
+            backgroundColor *= Lerp(1f, 0.4f, BackgroundChangeInterpolant);
         }
 
         public override void PreUpdateWorld()
         {
             bool fadeIn = SoughtTime.HasValue;
-            BackgroundChangeInterpolant = MathHelper.Clamp(BackgroundChangeInterpolant + fadeIn.ToDirectionInt() * 0.05f, 0f, 1f);
+            BackgroundChangeInterpolant = Clamp(BackgroundChangeInterpolant + fadeIn.ToDirectionInt() * 0.05f, 0f, 1f);
             if (!SoughtTime.HasValue)
                 return;
 
@@ -56,7 +56,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
 
             // Disable the effect if very close to the sought time.
-            if (MathHelper.Distance(SoughtTime.Value, (int)Main.time) <= 320f && Main.dayTime == SeekingDayTime)
+            if (Distance(SoughtTime.Value, (int)Main.time) <= 320f && Main.dayTime == SeekingDayTime)
             {
                 Main.time = SoughtTime.Value;
                 SoughtTime = null;

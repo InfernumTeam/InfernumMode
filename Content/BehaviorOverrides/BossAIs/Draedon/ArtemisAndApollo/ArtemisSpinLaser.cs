@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public override void UpdateLaserMotion()
         {
             Projectile.rotation = Main.npc[OwnerIndex].rotation;
-            Projectile.velocity = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2();
+            Projectile.velocity = (Projectile.rotation - PiOver2).ToRotationVector2();
         }
 
         public override void PostAI()
@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Orange, Color.Red, colorInterpolant * 0.67f);
         }
 

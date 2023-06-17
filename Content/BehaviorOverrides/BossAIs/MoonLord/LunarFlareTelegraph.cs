@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 Projectile.Kill();
             }
 
-            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.08f, 0f, 1f);
+            Projectile.scale = Clamp(Projectile.scale + 0.08f, 0f, 1f);
         }
 
         public override bool PreDraw(ref Color lightColor)

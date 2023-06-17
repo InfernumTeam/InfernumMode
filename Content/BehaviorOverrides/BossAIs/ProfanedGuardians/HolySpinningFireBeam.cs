@@ -81,8 +81,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (Time <= TelegraphTime)
             {
-                Projectile.Opacity = MathF.Sin(Time / TelegraphTime * MathHelper.Pi) * 2f;
-                Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + MathHelper.PiOver2 + Projectile.rotation).ToRotationVector2();
+                Projectile.Opacity = Sin(Time / TelegraphTime * Pi) * 2f;
+                Projectile.velocity = (TwoPi * Projectile.ai[1] + PiOver2 + Projectile.rotation).ToRotationVector2();
                 Projectile.Center = owner.Center + Projectile.velocity;
                 Time++;
                 return;
@@ -91,13 +91,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Fade in.
             if (!fadeOut)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
-                Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
+                Projectile.scale = Clamp(Projectile.scale + 0.025f, 0f, 1f);
             }
             else
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
-                Projectile.scale = MathHelper.Clamp(Projectile.scale - 0.025f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
+                Projectile.scale = Clamp(Projectile.scale - 0.025f, 0f, 1f);
                 if (Projectile.Opacity == 0)
                 {
                     Projectile.Kill();
@@ -106,8 +106,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Rotate.
-            Projectile.rotation += MathHelper.Lerp(0f, 0.014f, Projectile.Opacity);
-            Projectile.velocity = (MathHelper.TwoPi * Projectile.ai[1] + MathHelper.PiOver2 + Projectile.rotation).ToRotationVector2();
+            Projectile.rotation += Lerp(0f, 0.014f, Projectile.Opacity);
+            Projectile.velocity = (TwoPi * Projectile.ai[1] + PiOver2 + Projectile.rotation).ToRotationVector2();
             Projectile.Center = owner.Center + Projectile.velocity;
 
             // Sort out length.
@@ -165,8 +165,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Color glowColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.3f);
                 glowColor.A = 0;
                 float glowRotation = Main.GlobalTimeWrappedHourly * 4;
-                float scaleInterpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
-                float scale = MathHelper.Lerp(1.8f, 2.2f, scaleInterpolant);
+                float scaleInterpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 5f)) / 2f;
+                float scale = Lerp(1.8f, 2.2f, scaleInterpolant);
                 Main.spriteBatch.Draw(glowBloom, glowPosition - Main.screenPosition, null, glowColor, glowRotation, glowBloom.Size() * 0.5f, scale * 0.5f, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(glowCircle, glowPosition - Main.screenPosition, null, glowColor, glowRotation, glowCircle.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
@@ -177,8 +177,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public Color ColorFunction(float completionRatio)
         {
-            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
-            float colorInterpolant = MathHelper.Lerp(0.3f, 0.5f, interpolant);
+            float interpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+            float colorInterpolant = Lerp(0.3f, 0.5f, interpolant);
             return Color.Lerp(Color.OrangeRed, Color.Gold, colorInterpolant) * Projectile.Opacity;
         }
 
@@ -215,7 +215,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 drawPosition = (Projectile.Center + Projectile.velocity * 280f) - Main.screenPosition;
                 Color drawColor = Color.Orange * Projectile.Opacity;
                 drawColor.A = 0;
-                float rotation = flipY ? MathHelper.Pi : 0f;
+                float rotation = flipY ? Pi : 0f;
                 Vector2 origin = warningSymbol.Size() * 0.5f;
 
                 spriteBatch.Draw(warningSymbol, drawPosition, null, drawColor, rotation, origin, 0.8f, SpriteEffects.None, 0f);

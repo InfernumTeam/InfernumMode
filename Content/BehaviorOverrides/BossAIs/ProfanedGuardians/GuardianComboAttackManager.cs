@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 if (attackTimer >= initialDelay && !Main.projectile.Any((Projectile p) => (p.type == ModContent.ProjectileType<HolyAimedDeathrayTelegraph>() || p.type == ModContent.ProjectileType<HolyAimedDeathray>()) && p.active))
                 {
-                    float sine = MathF.Sin(movementTimer * 0.05f);
+                    float sine = Sin(movementTimer * 0.05f);
                     npc.velocity.Y = sine * 1.5f;
                     movementTimer++;
                     npc.velocity.X *= 0.8f;
@@ -172,7 +172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             npc.velocity.X = 0f;
                             movedToPosition = 1f;
-                            float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                            float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                             npc.velocity.Y = sine * 1.5f;
                             npc.spriteDirection = -1;
                         }
@@ -204,9 +204,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         // If the crystal is shattering, decrease the scale, else increase it.
                         if (crystal.ai[0] == 1f)
-                            fireSuckupWidth = MathHelper.Clamp(fireSuckupWidth - 0.1f, 0f, 1f);
+                            fireSuckupWidth = Clamp(fireSuckupWidth - 0.1f, 0f, 1f);
                         else
-                            fireSuckupWidth = MathHelper.Clamp(fireSuckupWidth + 0.1f, 0f, 1f);
+                            fireSuckupWidth = Clamp(fireSuckupWidth + 0.1f, 0f, 1f);
                     }
                 }
             }
@@ -245,9 +245,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         // If the crystal is shattering, decrease the scale, else increase it.
                         if (crystal.ai[0] == 1)
-                            connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
+                            connectionsWidthScale = Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
                         else
-                            connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
+                            connectionsWidthScale = Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
                     }
                 }
             }
@@ -269,7 +269,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     // Do not increase until the lasers are present.
                     universalAttackTimer = 0;
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathF.Min(npc.Distance(hoverPosition), 18)) / 8f;
                 }
                 else
                 {
@@ -277,7 +277,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.Center = hoverPosition;
                     npc.velocity *= 0.9f;
                     movedToPosition = 1f;
-                    float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                    float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                     npc.position.Y += sine * 0.5f;
                     npc.spriteDirection = -1;
 
@@ -324,11 +324,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float rockSpawnDelay = 30;
                 float rockAmount = 5;
 
-                npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
+                npc.spriteDirection = Sign(npc.DirectionTo(target.Center).X);
 
-                //float xOffset = 500f * -MathF.Sign(npc.DirectionTo(target.Center).X);
+                //float xOffset = 500f * -Sign(npc.DirectionTo(target.Center).X);
                 Vector2 hoverPosition = target.Center + new Vector2(500f, -350);
-                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), flySpeed)) / 8f;
+                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathF.Min(npc.Distance(hoverPosition), flySpeed)) / 8f;
 
                 if (universalAttackTimer % rockSpawnDelay == 0 && spawnedRockRing == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -344,11 +344,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     for (int i = 0; i < rockAmount; i++)
                     {
-                        Vector2 rockPosition = npc.Center + (MathHelper.TwoPi * i / rockAmount).ToRotationVector2() * 100f;
+                        Vector2 rockPosition = npc.Center + (TwoPi * i / rockAmount).ToRotationVector2() * 100f;
 
                         int waitTimeToUse = Main.rand.Next(0, waitTimes.Count);
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock => rock.ModProjectile<ProfanedCirclingRock>().WaitTime = waitTimes[waitTimeToUse]);
-                        Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), ProfanedRockDamage, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
+                        Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), ProfanedRockDamage, 0f, Main.myPlayer, TwoPi * i / rockAmount, npc.whoAmI);
                         waitTimes.RemoveAt(waitTimeToUse);
                     }
                 }
@@ -368,7 +368,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 hoverPosition = CrystalPosition + new Vector2(150f, 0f);
                 // Sit still behind the commander
                 if (npc.Distance(hoverPosition) > 5f && movedToPosition == 0f)
-                    npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 25)) / 8f;
+                    npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathF.Min(npc.Distance(hoverPosition), 25)) / 8f;
                 else
                 {
                     drawShieldConnections = 1f;
@@ -376,7 +376,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (movedToPosition == 0)
                         npc.Center = hoverPosition;
                     movedToPosition = 1f;
-                    float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                    float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                     npc.velocity.Y = sine * 0.5f;
                     npc.spriteDirection = -1;
                 }
@@ -396,7 +396,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Vector2 projectileSpawnPosition = commander.Center;
                         for (int i = 0; i < crystalAmount; i++)
                         {
-                            Vector2 shootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * 15f;
+                            Vector2 shootVelocity = (TwoPi * i / crystalAmount).ToRotationVector2() * 15f;
                             Utilities.NewProjectileBetter(projectileSpawnPosition, shootVelocity, ModContent.ProjectileType<MagicSpiralCrystalShot>(), MagicShotDamage, 0f, -1, 0f, i % 2f == 0f ? -1f : 1f);
                         }
                         if (crystalsFired >= maxCrystalsFired)
@@ -420,7 +420,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (npc.type == CommanderType)
             {
                 npc.velocity *= 0.9f;
-                float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                 npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = -1;
 
@@ -460,18 +460,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     // Pick a location for the dash.
                     case 0:
-                        npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
+                        npc.spriteDirection = Sign(npc.DirectionTo(target.Center).X);
                         drawDashTelegraph = 0;
                         Vector2 hoverOffset = Vector2.UnitY;
                         for (int i = 0; i < 100; i++)
                         {
-                            float hoverOffsetAngle = Main.rand.Next(4) * MathHelper.TwoPi / 4f + MathHelper.PiOver4;
+                            float hoverOffsetAngle = Main.rand.Next(4) * TwoPi / 4f + PiOver4;
                             hoverOffset = hoverOffsetAngle.ToRotationVector2();
 
                             // Leave and use the current offset to see if the direction of the new offset is perpendicular or less to the previous one. This prevents going to opposite sides and
                             // moving thorugh the player's position to reach it. The 0.01 is added on top to ensure that tiny floating point imprecisions don't become a problem.
                             float angleBetween = oldHoverOffset.AngleBetween(hoverOffset);
-                            if (angleBetween is < (MathHelper.PiOver2 + 0.01f) and not 0)
+                            if (angleBetween is < (PiOver2 + 0.01f) and not 0)
                                 break;
                         }
 
@@ -484,14 +484,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Get into position for the dash.
                     case 1:
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
-                        npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
+                        npc.spriteDirection = Sign(npc.DirectionTo(target.Center).X);
                         float distance = 700f;
                         Vector2 position = target.Center + oldHoverOffset * distance;
 
                         if (npc.velocity.Length() < 2f)
                             npc.velocity = Vector2.UnitY * -2.4f;
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(position) * MathHelper.Min(npc.Distance(position), 33f)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(position) * MathF.Min(npc.Distance(position), 33f)) / 8f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 150f))
@@ -503,7 +503,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         // Increase the opacity.
                         if (drawDashTelegraph == 1)
-                            dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
+                            dashTelegraphOpacity = Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
 
                         // Do not deal contact damage while positioning.
                         npc.damage = 0;
@@ -537,7 +537,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 3:
                         // Decrease the dash telegraph.
                         drawDashTelegraph = 1;
-                        dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
+                        dashTelegraphOpacity = Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         npc.damage = npc.defDamage;
 
@@ -584,18 +584,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (npc.velocity.Length() < 2f)
                     npc.velocity = Vector2.UnitY * -2.4f;
 
-                float flySpeed = MathHelper.Lerp(9f, 23f, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
+                float flySpeed = Lerp(9f, 23f, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
                 flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
                 npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
-                npc.spriteDirection = MathF.Sign(npc.DirectionTo(commander.Center).X);
+                npc.spriteDirection = Sign(npc.DirectionTo(commander.Center).X);
 
                 if (localAttackTimer % crystalShotReleaseRate == crystalShotReleaseRate - 1 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < crystalAmount; i++)
                     {
-                        Vector2 fastShootVelocity = (MathHelper.TwoPi * i / crystalAmount).ToRotationVector2() * crystalShotSpeed;
-                        Vector2 slowShootVelocity = (MathHelper.TwoPi * (i + 0.5f) / crystalAmount).ToRotationVector2() * (crystalShotSpeed / 3f);
+                        Vector2 fastShootVelocity = (TwoPi * i / crystalAmount).ToRotationVector2() * crystalShotSpeed;
+                        Vector2 slowShootVelocity = (TwoPi * (i + 0.5f) / crystalAmount).ToRotationVector2() * (crystalShotSpeed / 3f);
                         Utilities.NewProjectileBetter(commander.Center, fastShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), MagicShotDamage, 0f);
                         Utilities.NewProjectileBetter(commander.Center, slowShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), MagicShotDamage, 0f);
                     }
@@ -611,7 +611,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (npc.type == CommanderType)
             {
                 npc.velocity *= 0.9f;
-                float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                 npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = -1;
 
@@ -658,13 +658,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Move to the dash starting location.
                     case 1:
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
-                        npc.spriteDirection = MathF.Sign(npc.DirectionTo(target.Center).X);
+                        npc.spriteDirection = Sign(npc.DirectionTo(target.Center).X);
                         Vector2 position = target.Center + new Vector2(xOffset, hoverOffsetY);
 
                         if (npc.velocity.Length() < 2f)
                             npc.velocity = Vector2.UnitY * -2.4f;
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(position) * MathHelper.Min(npc.Distance(position), 33f)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(position) * MathF.Min(npc.Distance(position), 33f)) / 8f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 150f))
@@ -676,7 +676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         // Increase the opacity.
                         if (drawDashTelegraph == 1)
-                            dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
+                            dashTelegraphOpacity = Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
 
                         // Do not deal damage.
                         npc.damage = 0;
@@ -710,7 +710,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 3:
                         // Decrease the dash telegraph.
                         drawDashTelegraph = 1;
-                        dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
+                        dashTelegraphOpacity = Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         npc.damage = npc.defDamage;
                         // Create particles to indicate the sudden speed.
@@ -748,14 +748,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Sit still above the commander
                 if (npc.Distance(hoverPosition) > 10f && movedToPosition == 0f)
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathHelper.Min(npc.Distance(hoverPosition), 18)) / 8f;
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverPosition) * MathF.Min(npc.Distance(hoverPosition), 18)) / 8f;
                 else
                 {
                     npc.velocity.X *= 0.9f;
                     if (movedToPosition == 0)
                         npc.Center = hoverPosition;
                     movedToPosition = 1f;
-                    float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                    float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                     npc.velocity.Y = sine * 0.5f;
                     npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0).ToInt();
                 }
@@ -766,7 +766,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     //float xSpeedOffset = target.velocity.X + Main.rand.NextFloat(-5f, 5f);
                     for (int i = 0; i < totalCrystalsPerLayer; i++)
                     {
-                        Vector2 shootVelocity = new(MathHelper.Lerp(-20f, 20f, i / (float)totalCrystalsPerLayer), -10.75f);
+                        Vector2 shootVelocity = new(Lerp(-20f, 20f, i / (float)totalCrystalsPerLayer), -10.75f);
                         shootVelocity.X += Main.rand.NextFloatDirection() * 0.6f;
                         Utilities.NewProjectileBetter(npc.Center + -Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<FallingCrystalShard>(), MagicShotDamage, 0f);
                     }
@@ -793,7 +793,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
 
                 npc.velocity *= 0.9f;
-                float sine = -MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+                float sine = -Sin(Main.GlobalTimeWrappedHourly * 2f);
                 npc.position.Y += sine * 0.5f;
                 npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0) ? 1 : -1;
 
@@ -802,7 +802,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 if (universalAttackTimer >= angerDelay && universalAttackTimer < angerDelay + angerTime)
                 {
-                    float interlopant = MathF.Sin(MathF.PI * ((universalAttackTimer - angerDelay) / angerTime));
+                    float interlopant = Sin(PI * ((universalAttackTimer - angerDelay) / angerTime));
                     glowAmount = CalamityUtils.SineInOutEasing(interlopant, 0);
                 }
 
@@ -831,11 +831,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
 
-                Vector2 hoverDestination = commander.Center + commander.SafeDirectionTo(target.Center) * MathHelper.Lerp(25, 150, MathHelper.Clamp(target.Distance(commander.Center) / 850f, 0f, 1f));
+                Vector2 hoverDestination = commander.Center + commander.SafeDirectionTo(target.Center) * Lerp(25, 150, Clamp(target.Distance(commander.Center) / 850f, 0f, 1f));
                 if (npc.velocity.Length() < 2f)
                     npc.velocity = Vector2.UnitY * -2.4f;
 
-                float flySpeed = MathHelper.Lerp(9f, 23f, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
+                float flySpeed = Lerp(9f, 23f, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
                 flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
                 npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
@@ -865,7 +865,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.Calamity().ShouldCloseHPBar = true;
 
                 if (universalAttackTimer <= whiteGlowTime)
-                    whiteGlowOpacity = CalamityUtils.ExpInEasing(MathHelper.Lerp(0f, 1f, universalAttackTimer / whiteGlowTime), 0);
+                    whiteGlowOpacity = CalamityUtils.ExpInEasing(Lerp(0f, 1f, universalAttackTimer / whiteGlowTime), 0);
 
                 else if (universalAttackTimer == whiteGlowTime + ashesTime - 5)
                 {
@@ -926,9 +926,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         return;
 
                     case 1:
-                        xOffset = -700f * MathF.Sign(target.Center.X - npc.Center.X);
+                        xOffset = -700f * Sign(target.Center.X - npc.Center.X);
                         Vector2 hoverDestination = target.Center + new Vector2(xOffset, 0f);
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         // Make the spear rotation point to the player.
@@ -948,7 +948,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // The commander remains moving to the location, and spins his spear.
                     case 2:
                         hoverDestination = target.Center + new Vector2(xOffset, 0f);
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         drawShieldSmear = 1f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -957,10 +957,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (localAttackTimer < spinLength)
                         {
-                            spearRotation = MathF.Tau * CalamityUtils.SineInOutEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
+                            spearRotation = Tau * CalamityUtils.SineInOutEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
                             if (localAttackTimer % spearReleasePoint == spearReleasePoint - 1f && Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                float positionRotation = MathF.Tau * CalamityUtils.LinearEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
+                                float positionRotation = Tau * CalamityUtils.LinearEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
                                 Vector2 position = npc.Center + positionRotation.ToRotationVector2() * 75f;
                                 Vector2 velocity = npc.SafeDirectionTo(position) * 5f;
                                 Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), HolySpearDamage, 0f);
@@ -1053,7 +1053,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 0:
                         xOffset = Main.rand.NextFloat(25f, 50f) * Main.rand.NextFromList(-1f, 1f);
                         Vector2 hoverDestination = target.Center + new Vector2(xOffset, -400f);
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -1065,11 +1065,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                             for (int i = 0; i < rockAmount; i++)
                             {
-                                Vector2 rockPosition = npc.Center + (MathHelper.TwoPi * i / rockAmount).ToRotationVector2() * 100f;
+                                Vector2 rockPosition = npc.Center + (TwoPi * i / rockAmount).ToRotationVector2() * 100f;
 
                                 int waitTimeToUse = Main.rand.Next(0, waitTimes.Count);
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(rock => rock.ModProjectile<ProfanedCirclingRock>().WaitTime = waitTimes[waitTimeToUse]);
-                                Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), ProfanedRockDamage, 0f, Main.myPlayer, MathHelper.TwoPi * i / rockAmount, npc.whoAmI);
+                                Utilities.NewProjectileBetter(rockPosition, Vector2.Zero, ModContent.ProjectileType<ProfanedCirclingRock>(), ProfanedRockDamage, 0f, Main.myPlayer, TwoPi * i / rockAmount, npc.whoAmI);
                                 waitTimes.RemoveAt(waitTimeToUse);
                             }
                         }
@@ -1083,7 +1083,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     case 1:
                         hoverDestination = target.Center + new Vector2(xOffset, -400f);
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                         // Move out of the way of the target if going around them.
                         if (npc.WithinRange(target.Center, 200f))
@@ -1093,7 +1093,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             if (npc.Opacity == 0f)
                                 CreateFireExplosion(npc.Center, true);
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
                             npc.dontTakeDamage = false;
                         }
 
@@ -1211,7 +1211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 if (npc.Opacity == 1f)
                                     CreateFireExplosion(npc.Center, true);
 
-                                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                                npc.Opacity = Clamp(npc.Opacity - 0.1f, 0f, 1f);
                                 npc.dontTakeDamage = true;
                                 // Switch to next attack. It will stall here if the commander is mid spin/charge until it is free. This is to avoid abruptly stopping mid spin/charge.
                                 if (commander.Infernum().ExtraAI[0] is 0f or 1f && pillarsAreMostlyGone)
@@ -1270,9 +1270,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     // Get an offset from the player.
                     case 0:
-                        commanderOffset += Main.rand.NextFloat(0f, MathHelper.TwoPi) * Main.rand.NextFromList(-1f, 1f);
+                        commanderOffset += Main.rand.NextFloat(0f, TwoPi) * Main.rand.NextFromList(-1f, 1f);
                         if (universalAttackTimer <= fadeInTime)
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.0625f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity - 0.0625f, 0f, 1f);
                         else
                         {
                             substate++;
@@ -1302,10 +1302,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
 
                         if (universalAttackTimer <= fadeInTime)
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.0625f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity + 0.0625f, 0f, 1f);
 
                         if (universalAttackTimer <= hoverWaitTime * 0.9f)
-                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         else
                             npc.velocity *= 0.93f;
 
@@ -1354,7 +1354,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         for (int i = 0; i < 30; i++)
                         {
                             // Bias towards lower values. 
-                            float size = MathF.Pow(Main.rand.NextFloat(), 2f);
+                            float size = Pow(Main.rand.NextFloat(), 2f);
                             FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
                                 Main.rand.NextFloat(15f, 20f));
                         }
@@ -1377,7 +1377,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             Vector2 impactCenter = (npc.Center + defender.Center) / 2f;
                             for (int i = 0; i < 20; i++)
                             {
-                                Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedByRandom(MathF.Tau) * Main.rand.NextFloat(6f, 9f),
+                                Particle rock = new ProfanedRockParticle(impactCenter, -Vector2.UnitY.RotatedByRandom(Tau) * Main.rand.NextFloat(6f, 9f),
                                     Color.White, Main.rand.NextFloat(0.85f, 1.15f), 60, Main.rand.NextFloat(0f, 0.2f), false);
                                 GeneralParticleHandler.SpawnParticle(rock);
                             }
@@ -1396,7 +1396,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                         rock.ModProjectile<ProfanedRock>().RockTypeVarient = (int)ProfanedRock.RockType.Accelerating;
                                     });
 
-                                    Vector2 direction = impactCenter + ((MathHelper.TwoPi * i / rockAmount) + Main.rand.NextFloat(-0.4f, 0.4f)).ToRotationVector2();
+                                    Vector2 direction = impactCenter + ((TwoPi * i / rockAmount) + Main.rand.NextFloat(-0.4f, 0.4f)).ToRotationVector2();
                                     Vector2 velocity = impactCenter.DirectionTo(direction) * Main.rand.NextFloat(5f, 7f);
 
                                     // Aim one directly at the player and make it slightly faster.
@@ -1452,11 +1452,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     case 0:
                         if (universalAttackTimer <= fadeInTime)
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.0625f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity - 0.0625f, 0f, 1f);
                         break;
                     // Move to said offset.
                     case 1:
-                        Vector2 hoverDestination = target.Center + (commanderOffset + MathF.PI).ToRotationVector2() * defenderHoverDistance;
+                        Vector2 hoverDestination = target.Center + (commanderOffset + PI).ToRotationVector2() * defenderHoverDistance;
 
                         if (universalAttackTimer == 1)
                         {
@@ -1472,10 +1472,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         }
 
                         if (universalAttackTimer <= (int)(fadeInTime))
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.0625f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity + 0.0625f, 0f, 1f);
 
                         if (universalAttackTimer <= hoverWaitTime * 0.5f)
-                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         else
                             npc.velocity *= 0.93f;
 
@@ -1513,7 +1513,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         for (int i = 0; i < 30; i++)
                         {
-                            float size = MathF.Pow(Main.rand.NextFloat(), 2f);
+                            float size = Pow(Main.rand.NextFloat(), 2f);
                             FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
                                 Main.rand.NextFloat(15f, 20f));
                         }
@@ -1613,7 +1613,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             for (int i = 0; i < 12; i++)
                             {
-                                Vector2 fireballVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * fireballSpeed * 4.5f;
+                                Vector2 fireballVelocity = (TwoPi * i / 12f).ToRotationVector2() * fireballSpeed * 4.5f;
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(f =>
                                 {
                                     f.ModProjectile<HolyBasicFireball>().GuardiansType = true;
@@ -1632,7 +1632,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         float maxXPos = CrystalPosition.X;
                         float minXPos = CenterOfGarden.X - 2370f;
-                        xPosToMoveTo = MathHelper.Clamp(npc.Center.X, minXPos, maxXPos);
+                        xPosToMoveTo = Clamp(npc.Center.X, minXPos, maxXPos);
 
                         if (target.HasShieldBash())
                             HatGirl.SayThingWhileOwnerIsAlive(target, "Try ramming into the defender!");
@@ -1650,7 +1650,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.damage = 0;
                         Vector2 hoverDestination = new(xPosToMoveTo, CenterOfGarden.Y);
                         if (npc.Distance(hoverDestination) > 100f || universalAttackTimer < 10f)
-                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         else
                             npc.velocity *= 0.9f;
                         if (npc.WithinRange(hoverDestination, flySpeed) || universalAttackTimer >= maxMoveToCenterTime)
@@ -1673,7 +1673,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 float offset = (fireballRingsReleased % 2 == 0 ? 0f : 0.5f);
                                 for (int i = 0; i < fireballCount; i++)
                                 {
-                                    Vector2 fireballVelocity = (MathHelper.TwoPi * i / fireballCount + offset).ToRotationVector2() * fireballSpeed;
+                                    Vector2 fireballVelocity = (TwoPi * i / fireballCount + offset).ToRotationVector2() * fireballSpeed;
                                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(f =>
                                     {
                                         f.ModProjectile<HolyBasicFireball>().GuardiansType = true;
@@ -1752,13 +1752,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Vector2 hoverOffset = Vector2.UnitY;
                         for (int i = 0; i < 100; i++)
                         {
-                            float hoverOffsetAngle = Main.rand.Next(4) * MathHelper.TwoPi / 4f + MathHelper.PiOver4;
+                            float hoverOffsetAngle = Main.rand.Next(4) * TwoPi / 4f + PiOver4;
                             hoverOffset = hoverOffsetAngle.ToRotationVector2();
 
                             // Leave and use the current offset to see if the direction of the new offset is perpendicular or less to the previous one. This prevents going to opposite sides and
                             // moving thorugh the player's position to reach it. The 0.01 is added on top to ensure that tiny floating point imprecisions don't become a problem.
                             float angleBetween = oldHoverOffset.AngleBetween(hoverOffset);
-                            if (angleBetween is < (MathHelper.PiOver2 + 0.01f) and not 0)
+                            if (angleBetween is < (PiOver2 + 0.01f) and not 0)
                                 break;
                         }
                         shieldStatus = (float)DefenderShieldStatus.ActiveAndAiming;
@@ -1774,13 +1774,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             if (npc.Opacity == 0f)
                                 CreateFireExplosion(npc.Center, true);
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
                             npc.dontTakeDamage = false;
                         }
                         float distance = 700f;
                         Vector2 hoverDestination = target.Center + oldHoverOffset * distance;
 
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -1794,7 +1794,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         // Increase the opacity.
                         if (drawDashTelegraph == 1)
-                            dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
+                            dashTelegraphOpacity = Clamp(dashTelegraphOpacity + 0.1f, 0f, 1f);
 
                         // Do not deal contact damage while positioning.
                         npc.damage = 0;
@@ -1830,7 +1830,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 3:
                         // Decrease the dash telegraph.
                         drawDashTelegraph = 1;
-                        dashTelegraphOpacity = MathHelper.Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
+                        dashTelegraphOpacity = Clamp(dashTelegraphOpacity - 0.2f, 0f, 1f);
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         npc.damage = npc.defDamage;
 
@@ -1854,7 +1854,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 if (npc.Opacity == 1f)
                                     CreateFireExplosion(npc.Center, true);
                                 npc.velocity *= 0.8f;
-                                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                                npc.Opacity = Clamp(npc.Opacity - 0.1f, 0f, 1f);
                                 npc.dontTakeDamage = true;
                             }
                             else
@@ -1946,7 +1946,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             npc.Center = hoverDestination;
 
                         if (npc.Distance(hoverDestination) > 2f)
-                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                            npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         else
                             npc.Center = hoverDestination;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
@@ -1996,7 +1996,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (localAttackTimer == 1)
                             npc.Center = hoverDestination;
-                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                        npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         // Generate the shield if it is inactive.
@@ -2154,7 +2154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     float flySpeed = 25f;
                     Vector2 hoverDestination = target.Center + new Vector2(0, 400f);
 
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                     npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
@@ -2232,7 +2232,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (universalAttackTimer >= recoilDownwardsTime + flyUpwardsDelay)
                     {
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 1.4f }, target.Center);
-                        float lerpValue = MathHelper.Clamp(Utils.GetLerpValue(300, 500, npc.Center.Y - target.Center.Y, false), 0f, 0.35f);
+                        float lerpValue = Clamp(Utils.GetLerpValue(300, 500, npc.Center.Y - target.Center.Y, false), 0f, 0.35f);
                         npc.velocity = -Vector2.UnitY * flyUpwardsSpeed * (1 + lerpValue);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -2279,7 +2279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     if (universalAttackTimer > curveTowardsTargetDelay && universalAttackTimer <= completeSlowdownLength)
                     {
                         float interpolant = (universalAttackTimer - curveTowardsTargetDelay) / (completeSlowdownLength - curveTowardsTargetDelay);
-                        float xAmount = MathHelper.Lerp(1.2f, 0f, interpolant);
+                        float xAmount = Lerp(1.2f, 0f, interpolant);
                         npc.velocity.X += npc.SafeDirectionTo(target.Center).X * xAmount;
                         npc.velocity.Y += 0.35f;
                     }
@@ -2308,7 +2308,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     for (int i = 0; i < 50; i++)
                     {
                         // Bias towards lower values. 
-                        float size = MathF.Pow(Main.rand.NextFloat(), 2f);
+                        float size = Pow(Main.rand.NextFloat(), 2f);
                         FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
                             Main.rand.NextFloat(25f, 35f));
                     }
@@ -2376,7 +2376,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             float crossCount = 24f;
                             for (int j = 0; j < crossCount; j++)
                             {
-                                Vector2 crossVelocity = (MathHelper.TwoPi * j / crossCount).ToRotationVector2() * 7f;
+                                Vector2 crossVelocity = (TwoPi * j / crossCount).ToRotationVector2() * 7f;
                                 int type = ModContent.ProjectileType<HolyCross>();
                                 if (Main.rand.NextBool(4))
                                 {
@@ -2454,7 +2454,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     npc.velocity *= 0.94f;
 
                     // Make the spear rotation point upwards.
-                    float idealRotation = -MathHelper.PiOver2;
+                    float idealRotation = -PiOver2;
                     spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
 
                     for (int i = 0; i < 1; i++)
@@ -2467,7 +2467,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         GeneralParticleHandler.SpawnParticle(laserEnergy);
                     }
 
-                    if (npc.velocity.Length() < 2f && spearRotation - -MathHelper.PiOver2 <= 0.3f && !Main.projectile.Any(p => p.type == ModContent.ProjectileType<HolyDogmaFireball>() && p.active))
+                    if (npc.velocity.Length() < 2f && spearRotation - -PiOver2 <= 0.3f && !Main.projectile.Any(p => p.type == ModContent.ProjectileType<HolyDogmaFireball>() && p.active))
                     {
                         npc.velocity = Vector2.Zero;
                         universalAttackTimer = 0;
@@ -2479,7 +2479,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Charge and create a large fireball at the spear position.
                 case 2:
                     // Make the spear rotation point upwards.
-                    idealRotation = -MathHelper.PiOver2;
+                    idealRotation = -PiOver2;
                     spearRotation = spearRotation.AngleTowards(idealRotation, 0.2f);
 
                     if (universalAttackTimer == 1)
@@ -2549,9 +2549,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 0:
                     // Speed up if far enough away.
                     if (!npc.WithinRange(target.Center, minDistanceToSpeedUpAt))
-                        flySpeed = MathHelper.Clamp(MathHelper.SmoothStep(flySpeed, flySpeed * 2f, npc.Distance(target.Center) / minDistanceToSpeedUpAt * 2f), 0f, flySpeed * 2f);
+                        flySpeed = Clamp(SmoothStep(flySpeed, flySpeed * 2f, npc.Distance(target.Center) / minDistanceToSpeedUpAt * 2f), 0f, flySpeed * 2f);
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * (hoverDistance * Math.Sign(npc.Center.X - target.Center.X));
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                     if (npc.WithinRange(hoverDestination, 50f) || universalAttackTimer >= 45f)
                     {
@@ -2564,7 +2564,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 1:
                     // Hover to the side.
                     hoverDestination = target.Center + Vector2.UnitX * (hoverDistance * Math.Sign(npc.Center.X - target.Center.X));
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                     if (universalAttackTimer % shootDelay >= shootDelay * 0.60f)
                     {
@@ -2606,7 +2606,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(s =>
                             {
-                                s.ModProjectile<HolySineSpear>().WaveOffset = Main.rand.NextFloat(0f, MathF.Tau);
+                                s.ModProjectile<HolySineSpear>().WaveOffset = Main.rand.NextFloat(0f, Tau);
                             });
                             Utilities.NewProjectileBetter(spearTip, spearVelocity, ModContent.ProjectileType<HolySineSpear>(), CommanderSpearDamage, 0f, ai1: 1f);
                         }
@@ -2646,8 +2646,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Choose the angle to aim at, as well as the position for the exit portal.
                 case 0:
-                    angleToStab = (MathHelper.TwoPi + Main.rand.NextFloat(0f, MathHelper.TwoPi)) * Main.rand.NextFromList(-1f, 1f);
-                    hoverXOffset = 400f * -MathF.Sign(npc.SafeDirectionTo(target.Center).X);
+                    angleToStab = (TwoPi + Main.rand.NextFloat(0f, TwoPi)) * Main.rand.NextFromList(-1f, 1f);
+                    hoverXOffset = 400f * -Sign(npc.SafeDirectionTo(target.Center).X);
                     exitPosX = Main.rand.NextFloat(0f, 400f) * Main.rand.NextFromList(-1f, 1f);
                     exitPosY = Main.rand.NextFloat(-300f, -400f);
                     npc.netUpdate = true;
@@ -2663,11 +2663,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 1:
                     // Speed up if far enough away.
                     if (!npc.WithinRange(target.Center, minDistanceToSpeedUpAt))
-                        flySpeed = MathHelper.Clamp(MathHelper.SmoothStep(flySpeed, flySpeed * 2f, npc.Distance(target.Center) / minDistanceToSpeedUpAt * 2f), 0f, flySpeed * 2f);
+                        flySpeed = Clamp(SmoothStep(flySpeed, flySpeed * 2f, npc.Distance(target.Center) / minDistanceToSpeedUpAt * 2f), 0f, flySpeed * 2f);
 
                     // Hover to the side.
                     Vector2 hoverDestination = target.Center + new Vector2(hoverXOffset, -350f);
-                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
+                    npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
 
                     // Make the spear rotation point to the player.
                     float idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();
@@ -2694,12 +2694,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     {
                         // Move the spear backwards.
                         float interpolant = (universalAttackTimer - spearSpinTime) / (spearReelbackTime - spearSpinTime);
-                        spearPosOffset = MathHelper.Lerp(0f, -50f, CalamityUtils.SineInOutEasing(interpolant, 0));
+                        spearPosOffset = Lerp(0f, -50f, CalamityUtils.SineInOutEasing(interpolant, 0));
                     }
                     else if (universalAttackTimer <= spearStabTime)
                     {
                         float interpolant = (universalAttackTimer - spearReelbackTime) / (spearStabTime - spearReelbackTime);
-                        spearPosOffset = MathHelper.Lerp(-50f, 30f, CalamityUtils.SineInOutEasing(interpolant, 0));
+                        spearPosOffset = Lerp(-50f, 30f, CalamityUtils.SineInOutEasing(interpolant, 0));
                     }
                     else
                     {
@@ -2731,7 +2731,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         CreateFireExplosion(spawnPosition, false);
 
-                        float baseRotation = MathHelper.TwoPi / spearsAmount;
+                        float baseRotation = TwoPi / spearsAmount;
 
                         // Create the spears.
                         for (int i = 0; i < spearsAmount; i++)
@@ -2796,7 +2796,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 0:
                     // Fade out.
                     if (universalAttackTimer <= fadeOutTime)
-                        npc.Opacity = MathHelper.Clamp(npc.Opacity - 1f / fadeOutTime, 0f, 1f);
+                        npc.Opacity = Clamp(npc.Opacity - 1f / fadeOutTime, 0f, 1f);
 
                     // Slow down rapidly.
                     npc.velocity *= 0.92f;
@@ -2880,7 +2880,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Fade in.
                     if (universalAttackTimer <= fadeOutTime)
-                        npc.Opacity = MathHelper.Clamp(npc.Opacity + 1f / fadeOutTime, 0f, 1f);
+                        npc.Opacity = Clamp(npc.Opacity + 1f / fadeOutTime, 0f, 1f);
 
                     // Accelerate after charging.
                     if (universalAttackTimer < chargeLength && npc.velocity.Length() <= 140f)

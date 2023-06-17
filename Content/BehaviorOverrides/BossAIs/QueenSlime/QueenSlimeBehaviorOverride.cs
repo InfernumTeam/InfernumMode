@@ -113,11 +113,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         WingRotation = (-0.6f).AngleLerp(0.36f - instanceRatio * 0.15f, animationCompletion);
                         break;
                     case WingMotionState.Flap:
-                        WingRotation = PiecewiseAnimation((animationCompletion + MathHelper.Lerp(instanceRatio, 0f, 0.5f)) % 1f, Anticipation, Flap, Rest, Recovery);
+                        WingRotation = PiecewiseAnimation((animationCompletion + Lerp(instanceRatio, 0f, 0.5f)) % 1f, Anticipation, Flap, Rest, Recovery);
                         break;
                 }
 
-                WingRotationDifferenceMovingAverage = MathHelper.Lerp(WingRotationDifferenceMovingAverage, WingRotation - PreviousWingRotation, 0.15f);
+                WingRotationDifferenceMovingAverage = Lerp(WingRotationDifferenceMovingAverage, WingRotation - PreviousWingRotation, 0.15f);
             }
         }
 
@@ -274,7 +274,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             // Accelerate downward.
             if (hasHitGround == 0f)
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + fallAcceleration, startingFallSpeed, endingFallSpeed);
+                npc.velocity.Y = Clamp(npc.velocity.Y + fallAcceleration, startingFallSpeed, endingFallSpeed);
             else
                 npc.velocity.Y = 0f;
 
@@ -338,7 +338,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int slamDelay = 30;
             int slamHoverTime = 35;
             int crystalID = ModContent.ProjectileType<FallingCrystal>();
-            float horizontalJumpSpeed = MathHelper.Distance(target.Center.X, npc.Center.X) * 0.012f + 16f;
+            float horizontalJumpSpeed = Distance(target.Center.X, npc.Center.X) * 0.012f + 16f;
             float baseVerticalJumpSpeed = 23f;
             float fallAcceleration = 0.9f;
 
@@ -549,9 +549,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
 
                 if (hasHitGround == 0f)
-                    npc.velocity = Vector2.UnitY * MathHelper.Clamp(npc.velocity.Y * 1.1f + 2f, 0f, 40f);
+                    npc.velocity = Vector2.UnitY * Clamp(npc.velocity.Y * 1.1f + 2f, 0f, 40f);
                 else
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.3f, -10f, 16f);
+                    npc.velocity.Y = Clamp(npc.velocity.Y + 0.3f, -10f, 16f);
 
                 npc.noTileCollide = false;
             }
@@ -578,7 +578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             int laserChargeupTime = attackDuration - bladeReleaseTime;
             int outwardLaserShootRate = 7;
             float maxRiseSpeed = 10f;
-            float bladeOffsetSpacing = MathHelper.Lerp(180f, 144f, 1f - npc.life / (float)npc.lifeMax);
+            float bladeOffsetSpacing = Lerp(180f, 144f, 1f - npc.life / (float)npc.lifeMax);
             float maxVerticalBladeOffset = 2000f;
 
             bool currentlyAttacking = attackTimer >= redirectTime + upwardRiseTime + laserChargeupTime + 25f;
@@ -607,8 +607,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             else if (attackTimer <= redirectTime + upwardRiseTime)
             {
                 vibranceInterpolant = Utils.GetLerpValue(redirectTime, redirectTime + upwardRiseTime, attackTimer, true);
-                npc.Opacity = MathHelper.Lerp(1f, 0.5f, vibranceInterpolant);
-                npc.velocity = Vector2.UnitY * MathHelper.Lerp(npc.velocity.Y, -maxRiseSpeed, 0.2f);
+                npc.Opacity = Lerp(1f, 0.5f, vibranceInterpolant);
+                npc.velocity = Vector2.UnitY * Lerp(npc.velocity.Y, -maxRiseSpeed, 0.2f);
             }
 
             else
@@ -654,7 +654,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     Utilities.NewProjectileBetter(leftSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, 0f, hue);
 
                 if (target.Center.X > npc.Center.X - 900f)
-                    Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, MathHelper.Pi, 1f - hue);
+                    Utilities.NewProjectileBetter(rightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, Pi, 1f - hue);
             }
 
             // Create an explosion and make the blades go outward.
@@ -686,7 +686,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         int bitch = Utilities.NewProjectileBetter(bladeSpawnPosition + Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, 0f, hue);
                         Main.projectile[bitch].localAI[1] = 3000f;
 
-                        bitch = Utilities.NewProjectileBetter(bladeSpawnPosition - Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, MathHelper.Pi, 1f - hue);
+                        bitch = Utilities.NewProjectileBetter(bladeSpawnPosition - Vector2.UnitX * 8f, Vector2.Zero, ModContent.ProjectileType<HallowBlade>(), HallowBladeDamage, 0f, -1, Pi, 1f - hue);
                         Main.projectile[bitch].localAI[1] = 3000f;
                     }
 
@@ -698,7 +698,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SoundEngine.PlaySound(SoundID.Item164 with { Volume = 0.6f }, target.Center);
 
             if (attackTimer >= redirectTime + upwardRiseTime + attackDuration - 12f)
-                vibranceInterpolant = MathHelper.Clamp(vibranceInterpolant - 0.2f, 0f, 1f);
+                vibranceInterpolant = Clamp(vibranceInterpolant - 0.2f, 0f, 1f);
 
             if (attackTimer >= redirectTime + upwardRiseTime + attackDuration)
                 SelectNextAttack(npc);
@@ -766,7 +766,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         {
                             crystal.ModProjectile<SpinningLaserCrystal>().SpinningCenter = target.Center;
                         });
-                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<SpinningLaserCrystal>(), 0, 0f, -1, MathHelper.TwoPi * i / spinningCrystalCount);
+                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<SpinningLaserCrystal>(), 0, 0f, -1, TwoPi * i / spinningCrystalCount);
                     }
                 }
             }
@@ -818,7 +818,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
                     for (int i = 0; i < splitCount; i++)
                     {
-                        Vector2 splitVelocity = (MathHelper.TwoPi * i / splitCount + Main.rand.NextFloat(0.25f)).ToRotationVector2() * Main.rand.NextFloat(9f, 10.5f) + Main.rand.NextVector2Circular(0.8f, 0.8f);
+                        Vector2 splitVelocity = (TwoPi * i / splitCount + Main.rand.NextFloat(0.25f)).ToRotationVector2() * Main.rand.NextFloat(9f, 10.5f) + Main.rand.NextVector2Circular(0.8f, 0.8f);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(splitSlime =>
                         {
@@ -845,7 +845,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Aim the crystal telegraphs once ready to reform.
             if (canReform == 1f)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.06f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.06f, 0f, 1f);
                 npc.scale = npc.Opacity + 0.001f;
                 telegraphInterpolant = Utils.GetLerpValue(jitterTime, jitterTime + postSplitEffectsTime - 3f, attackTimer, true);
                 if (attackTimer >= jitterTime + postSplitEffectsTime)
@@ -859,13 +859,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
                         for (int i = 0; i < 8; i++)
                         {
-                            Vector2 crystalDirection = (MathHelper.TwoPi * i / 8f).ToRotationVector2();
+                            Vector2 crystalDirection = (TwoPi * i / 8f).ToRotationVector2();
                             Utilities.NewProjectileBetter(npc.Center - crystalDirection * 70f, crystalDirection, ModContent.ProjectileType<HallowCrystalSpike>(), LargeCrystalSpikeDamage, 0f);
                         }
 
                         for (int i = 0; i < 5; i++)
                         {
-                            Vector2 crystalSpikeVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.43f, 0.43f, i / 4f)) * 8f;
+                            Vector2 crystalSpikeVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.43f, 0.43f, i / 4f)) * 8f;
                             Utilities.NewProjectileBetter(npc.Center, crystalSpikeVelocity, ModContent.ProjectileType<QueenSlimeCrystalSpike>(), SmallCrystalSpikeDamage, 0f);
                         }
                     }
@@ -1070,16 +1070,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 float telegraphInterpolant = npc.Infernum().ExtraAI[3];
                 for (int i = 0; i < 8; i++)
                 {
-                    float laserRotation = -MathHelper.TwoPi * i / 8f;
+                    float laserRotation = -TwoPi * i / 8f;
                     BloomLineDrawInfo lineInfo = new()
                     {
                         LineRotation = laserRotation,
-                        WidthFactor = 0.002f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                        BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
+                        WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                        BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
                         Scale = Vector2.One * telegraphInterpolant * 3600f,
                         MainColor = Color.Lerp(Color.HotPink, Color.SkyBlue, telegraphInterpolant * 0.3f),
                         DarkerColor = Color.Purple,
-                        Opacity = MathF.Sqrt(telegraphInterpolant),
+                        Opacity = Sqrt(telegraphInterpolant),
                         BloomOpacity = 0.45f,
                         LightStrength = 6.67f
                     };
@@ -1189,7 +1189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Color wingsDrawColorWeak = Color.Lerp(Color.Transparent, Color.Cyan * 0.6f, fadeInterpolant);
 
             // Wings become squished the faster they're moving, to give an illusion of 3D motion.
-            float squishOffset = MathHelper.Min(0.7f, Math.Abs(rotationDifferenceMovingAverage) * 3.5f);
+            float squishOffset = MathF.Min(0.7f, Math.Abs(rotationDifferenceMovingAverage) * 3.5f);
 
             // Draw multiple instances of the wings. This includes afterimages based on how quickly they're flapping.
             Vector2 scale = new Vector2(1f, 1f - squishOffset) * fadeInterpolant;
@@ -1198,7 +1198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 // Make wings slightly brighter when they're moving at a fast angular pace.
                 Color wingColor = Color.Lerp(wingsDrawColor, wingsDrawColorWeak, i / 4f) * Utils.Remap(rotationDifferenceMovingAverage, 0f, 0.04f, 0.66f, 0.75f) * opacity;
 
-                float rotationOffset = i * MathHelper.Min(rotationDifferenceMovingAverage, 0.16f) * (1f - squishOffset) * 0.5f;
+                float rotationOffset = i * MathF.Min(rotationDifferenceMovingAverage, 0.16f) * (1f - squishOffset) * 0.5f;
                 float currentWingRotation = wingRotation + rotationOffset;
 
                 Main.spriteBatch.Draw(wingsTexture, drawPosition, null, wingColor, generalRotation + currentWingRotation, leftWingOrigin, scale, SpriteEffects.None, 0f);

@@ -78,8 +78,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (Main.netMode != NetmodeID.MultiplayerClient && !HasCreatedSchool && NPC.wet)
             {
                 // Larger schools are made rarer by this exponent by effectively "squashing" randomness.
-                float fishInterpolant = MathF.Pow(Main.rand.NextFloat(), 4f);
-                int fishCount = (int)MathHelper.Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
+                float fishInterpolant = Pow(Main.rand.NextFloat(), 4f);
+                int fishCount = (int)Lerp(MinSchoolSize, MaxSchoolSize, fishInterpolant);
 
                 for (int i = 0; i < fishCount; i++)
                     NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, NPC.type, NPC.whoAmI, 1f);
@@ -119,10 +119,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC closestPredator = NPC.FindClosestAbyssPredator(out _);
             if (shouldTurnAround && (closestPredator is null || !NPC.WithinRange(closestPredator.Center, 400f)))
             {
-                float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(-MathHelper.PiOver2)) ?? 999f;
-                float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(MathHelper.PiOver2)) ?? 999f;
+                float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(-PiOver2)) ?? 999f;
+                float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(PiOver2)) ?? 999f;
                 float turnDirection = distanceToTileOnLeft > distanceToTileOnRight ? -1f : 1f;
-                Vector2 idealVelocity = NPC.velocity.RotatedBy(MathHelper.PiOver2 * turnDirection);
+                Vector2 idealVelocity = NPC.velocity.RotatedBy(PiOver2 * turnDirection);
                 if (aboutToLeaveWorld)
                     idealVelocity = ahead.X >= Main.maxTilesX * 16f - 700f ? -Vector2.UnitX * 4f : Vector2.UnitX * 4f;
 
@@ -147,7 +147,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Define rotation.
             NPC.rotation = NPC.velocity.ToRotation();
             if (NPC.spriteDirection == -1)
-                NPC.rotation += MathHelper.Pi;
+                NPC.rotation += Pi;
         }
 
         // Does schooling movement in conjunction with other sea minnows.
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 flockDirection /= flockNeighbors.Count;
             }
             else
-                flockDirection = NPC.velocity.RotatedBy(MathHelper.Pi * 0.012f);
+                flockDirection = NPC.velocity.RotatedBy(Pi * 0.012f);
 
             // Angle towards the flock's current direction.
             NPC.velocity = NPC.velocity.ToRotation().AngleLerp(flockDirection.ToRotation(), 0.04f).ToRotationVector2() * NPC.velocity.Length();
@@ -221,12 +221,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (closestPredator != null)
             {
                 float predatorAvoidanceInterpolant = Utils.GetLerpValue(400f, 250f, NPC.Distance(NearestPlayer.Center), true);
-                predatorAvoidanceInterpolant *= MathHelper.Lerp(0.1f, 1f, closestPredator.Opacity);
+                predatorAvoidanceInterpolant *= Lerp(0.1f, 1f, closestPredator.Opacity);
                 NPC.velocity += NPC.SafeDirectionTo(NearestPlayer.Center) * predatorAvoidanceInterpolant * -1.3f;
             }
 
             // Swim around idly.
-            NPC.velocity = NPC.velocity.RotatedBy(MathHelper.Pi * (NPC.whoAmI % 2f == 0f).ToDirectionInt() * 0.004f);
+            NPC.velocity = NPC.velocity.RotatedBy(Pi * (NPC.whoAmI % 2f == 0f).ToDirectionInt() * 0.004f);
         }
 
         public override void FindFrame(int frameHeight)

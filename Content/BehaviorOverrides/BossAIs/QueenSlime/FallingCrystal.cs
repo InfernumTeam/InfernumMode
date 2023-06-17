@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             if (Projectile.ai[0] == 1f)
             {
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.4f * Math.Sign(Projectile.velocity.Y), -19f, 19f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.4f * Math.Sign(Projectile.velocity.Y), -19f, 19f);
                 Projectile.tileCollide = true;
             }
 

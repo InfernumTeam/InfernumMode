@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 npc.Opacity = 1f;
 
             // Define a general-purpose mouth position vector.
-            Vector2 mouthPosition = npc.Center + new Vector2(MathF.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 50f);
+            Vector2 mouthPosition = npc.Center + new Vector2(Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 50f);
 
             switch ((OldDukeAttackState)(int)attackState)
             {
@@ -419,7 +419,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
             // Slow down and rotate towards 0 degrees.
             npc.velocity *= 0.965f;
-            npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.02f);
+            npc.velocity.Y = Lerp(npc.velocity.Y, 0f, 0.02f);
             npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
 
             // Decide frames.
@@ -481,7 +481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             {
                 for (int i = 0; i < 36; i++)
                 {
-                    Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2(npc.width / 2f, npc.height) * 0.4f).RotatedBy(MathHelper.TwoPi * i / 36f);
+                    Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2(npc.width / 2f, npc.height) * 0.4f).RotatedBy(TwoPi * i / 36f);
                     Dust acid = Dust.NewDustPerfect(dustSpawnPosition, (int)CalamityDusts.SulfurousSeaAcid);
                     acid.noGravity = true;
                     acid.noLight = true;
@@ -530,7 +530,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 npc.rotation = npc.AngleTo(target.Center + target.velocity * 20f);
 
             if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
 
             // Handle frames.
             frameType = (int)OldDukeFrameType.FlapWings;
@@ -593,7 +593,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == 1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
                 npc.netUpdate = true;
 
                 return;
@@ -606,8 +606,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             int dustCount = 7;
             for (int i = 0; i < dustCount; i++)
             {
-                Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(MathHelper.TwoPi * i / dustCount);
-                Vector2 dustVelocity = (Main.rand.NextFloatDirection() * MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
+                Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(TwoPi * i / dustCount);
+                Vector2 dustVelocity = (Main.rand.NextFloatDirection() * PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
                 Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulfurousSeaAcid, dustVelocity);
                 acid.scale *= 1.45f;
                 acid.velocity *= 0.25f;
@@ -644,7 +644,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == 1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
                 npc.netUpdate = true;
 
                 return;
@@ -657,8 +657,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             int dustCount = 7;
             for (int i = 0; i < dustCount; i++)
             {
-                Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(MathHelper.TwoPi * i / dustCount);
-                Vector2 dustVelocity = (Main.rand.NextFloatDirection() * MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
+                Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(TwoPi * i / dustCount);
+                Vector2 dustVelocity = (Main.rand.NextFloatDirection() * PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
                 Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulfurousSeaAcid, dustVelocity);
                 acid.scale *= 1.45f;
                 acid.velocity *= 0.25f;
@@ -702,7 +702,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.rotation = npc.AngleTo(target.Center);
             if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
 
             // Release balls of acid at the target from the mouth.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
@@ -733,13 +733,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == 1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
                 npc.netUpdate = true;
 
                 // Play sounds and spawn Tooth Balls and a Vortex
                 SoundEngine.PlaySound(OldDukeBoss.RoarSound, npc.Center);
 
-                Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
+                Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * PiOver2) * spinTime / totalRotations / TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(vortexSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummonVortex>(), VortexDamage, 0f);
@@ -762,7 +762,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
             if (attackTimer < spinTime + 30f && attackTimer >= 30f)
             {
-                float rotationalOffset = npc.spriteDirection * MathHelper.TwoPi / spinTime * totalRotations;
+                float rotationalOffset = npc.spriteDirection * TwoPi / spinTime * totalRotations;
                 npc.velocity = npc.velocity.RotatedBy(rotationalOffset);
                 npc.rotation += rotationalOffset;
             }
@@ -805,7 +805,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.rotation = npc.AngleTo(target.Center);
             if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
 
             // Release tooth balls at the target from the mouth.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
@@ -836,11 +836,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 return;
             }
 
-            float idealRotation = MathHelper.Pi / 6f * npc.spriteDirection;
-            if (npc.rotation > MathHelper.Pi)
-                npc.rotation -= MathHelper.Pi;
-            if (npc.rotation < -MathHelper.Pi)
-                npc.rotation += MathHelper.Pi;
+            float idealRotation = Pi / 6f * npc.spriteDirection;
+            if (npc.rotation > Pi)
+                npc.rotation -= Pi;
+            if (npc.rotation < -Pi)
+                npc.rotation += Pi;
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.1f).AngleTowards(idealRotation, 0.1f);
 
             if (attackTimer < goreShootDelay - 5f)
@@ -912,7 +912,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.rotation = npc.AngleTo(target.Center);
             if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
 
             if (attackTimer >= fadeTime * 2f)
                 SelectNextAttack(npc);
@@ -1089,14 +1089,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             if (inTheMiddleOfPhaseTransition && phaseTransitionTimer > 60f)
             {
                 rotationalOffsetImageCount = 6;
-                rotationalOffsetFade = MathF.Sin(MathHelper.Pi * Utils.GetLerpValue(60f, PhaseTransitionTime, phaseTransitionTimer, true)) / 3f;
+                rotationalOffsetFade = Sin(Pi * Utils.GetLerpValue(60f, PhaseTransitionTime, phaseTransitionTimer, true)) / 3f;
                 rotationalOffsetOutwardness = 60f;
             }
 
             if (currentAttack == OldDukeAttackState.TeleportPause)
             {
                 rotationalOffsetImageCount = 6;
-                rotationalOffsetFade = MathF.Sin(MathHelper.Pi * attackTimer / TeleportPauseTime) / 3f;
+                rotationalOffsetFade = Sin(Pi * attackTimer / TeleportPauseTime) / 3f;
                 rotationalOffsetOutwardness = 20f;
             }
 
@@ -1106,7 +1106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 {
                     Color rotationalAfterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade)) * rotationalOffsetFade;
                     Vector2 rotationalDrawPosition = npc.Center - Main.screenPosition;
-                    rotationalDrawPosition += (i / (float)rotationalOffsetImageCount * MathHelper.TwoPi + npc.rotation).ToRotationVector2() * rotationalOffsetOutwardness * rotationalOffsetFade;
+                    rotationalDrawPosition += (i / (float)rotationalOffsetImageCount * TwoPi + npc.rotation).ToRotationVector2() * rotationalOffsetOutwardness * rotationalOffsetFade;
                     Main.spriteBatch.Draw(texture, rotationalDrawPosition, npc.frame, rotationalAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                     Color eyeAfterimageColor = eyeColor;

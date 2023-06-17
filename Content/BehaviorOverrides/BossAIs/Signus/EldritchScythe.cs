@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
             NPC signus = Main.npc[CalamityGlobalNPC.signus];
             Projectile.rotation += 0.5f * Projectile.direction;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.085f, 0f, 0.9f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.085f, 0f, 0.9f);
 
             if (ShootCountdown > 0f)
             {

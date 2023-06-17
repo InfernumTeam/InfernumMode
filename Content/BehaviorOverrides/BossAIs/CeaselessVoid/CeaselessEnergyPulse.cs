@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Utils.Remap(distanceFromPlayer, 600f, 1500f, 8f, 0f);
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio) =>
-            Color.Lerp(Color.MediumPurple, Color.DarkBlue, MathHelper.Clamp(lifetimeCompletionRatio * 5f, 0f, 0.75f));
+            Color.Lerp(Color.MediumPurple, Color.DarkBlue, Clamp(lifetimeCompletionRatio * 5f, 0f, 0.75f));
 
         public override bool PreDraw(ref Color lightColor)
         {

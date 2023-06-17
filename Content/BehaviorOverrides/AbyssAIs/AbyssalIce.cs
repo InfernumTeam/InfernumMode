@@ -33,14 +33,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override void AI()
         {
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Fade in and out.
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 32f, Projectile.timeLeft, true);
 
             // Fall and horizontally decelerate.
             Projectile.velocity.X *= 0.97f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.2f, -8f, 15f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.2f, -8f, 15f);
 
             Time++;
         }

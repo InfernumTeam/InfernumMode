@@ -3,6 +3,7 @@ using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -32,15 +33,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
-            npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.65f);
+            npc.Calamity().DR = MathF.Min(npc.Calamity().DR, 0.65f);
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
             if (aheadSegment.Infernum().ExtraAI[7] == 1f)
                 npc.HitSound = SoundID.NPCHit1;
 
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
 
             return false;

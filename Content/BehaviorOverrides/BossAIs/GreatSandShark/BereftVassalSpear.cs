@@ -48,9 +48,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Fall.
             if (Projectile.localAI[0] == 0f)
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
             if (Time >= 70f)
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + Gravity, -34f, 14f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y + Gravity, -34f, 14f);
 
             // Release lightning before dying.
             if (Projectile.timeLeft is 2 or 15 or 27 && Projectile.localAI[0] == 1f)
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     if (lightningSpawnPosition.Y <= 640f)
                         lightningSpawnPosition.Y = 640f;
 
-                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), BereftVassalComboAttackManager.LightningDamage, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                    Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * 8f, ModContent.ProjectileType<VassalLightning>(), BereftVassalComboAttackManager.LightningDamage, 0f, -1, PiOver2, Main.rand.Next(100));
                 }
             }
 
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            Vector2 sparkVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 8f;
+                            Vector2 sparkVelocity = (TwoPi * i / 8f).ToRotationVector2() * 8f;
                             Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<VassalSpark>(), BereftVassalComboAttackManager.SparkDamage, 0f);
                             Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity * 0.01f, ModContent.ProjectileType<SparkTelegraphLine>(), 0, 0f, -1, 0f, 35f);
                         }
@@ -139,7 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 Color spearAfterimageColor = new Color(0.23f, 0.93f, 0.96f, 0f) * opacity;
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 spearOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2.2f).ToRotationVector2() * (1f - opacity) * 12f;
+                    Vector2 spearOffset = (TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 2.2f).ToRotationVector2() * (1f - opacity) * 12f;
                     Main.EntitySpriteDraw(spearTexture, drawPosition + spearOffset, null, spearAfterimageColor, rotation, spearTexture.Size() * 0.5f, scale, 0, 0);
                 }
             }
@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 Color spearAfterimageColor = new Color(1f, 1f, 1f, 0f) * opacity;
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 spearOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
+                    Vector2 spearOffset = (TwoPi * i / 8f).ToRotationVector2() * 4f;
                     Main.EntitySpriteDraw(spearTexture, drawPosition + spearOffset, null, spearAfterimageColor, rotation, spearTexture.Size() * 0.5f, scale, 0, 0);
                 }
             }

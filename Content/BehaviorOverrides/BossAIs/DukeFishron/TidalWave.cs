@@ -44,15 +44,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
             if (WaveHeight < 60f)
                 WaveHeight = 60f;
-            WaveHeight = MathHelper.Lerp(WaveHeight, 640f, 0.04f);
-            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
+            WaveHeight = Lerp(WaveHeight, 640f, 0.04f);
+            Projectile.Opacity = Sin(Projectile.timeLeft / 360f * Pi) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(Sin(completionRatio * Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             if (Main.dayTime)
                 c = Color.Lerp(c, Color.Navy, 0.4f);
 
@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         internal float WidthFunction(float completionRatio) => WaveHeight;
 
-        internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * MathF.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 60f;
+        internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * Sin(completionRatio * Pi + Time / 11f) * 60f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

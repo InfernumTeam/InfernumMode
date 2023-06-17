@@ -6,6 +6,7 @@ using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -65,14 +66,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             switch (CurrentBehavior)
             {
                 case SpearAttackState.LookAtTarget:
-                    float idealRotation = Projectile.AngleTo(Main.player[Owner.target].Center) + MathHelper.PiOver4;
+                    float idealRotation = Projectile.AngleTo(Main.player[Owner.target].Center) + PiOver4;
                     Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.11f).AngleTowards(idealRotation, 0.032f);
                     break;
                 case SpearAttackState.SpinInPlace:
-                    Projectile.rotation += 0.1f * MathHelper.Pi * Owner.spriteDirection;
+                    Projectile.rotation += 0.1f * Pi * Owner.spriteDirection;
                     break;
                 case SpearAttackState.Charge:
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
                     Projectile.tileCollide = true;
                     if (Projectile.timeLeft >= 240)
                         Projectile.timeLeft = 240;
@@ -87,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (stickToOwner)
             {
                 Projectile.Center = Owner.Center + Projectile.rotation.ToRotationVector2() * 20f;
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             }
 
             Time++;
@@ -109,19 +110,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Utilities.NewProjectileBetter(Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 60f, Projectile.velocity, ModContent.ProjectileType<StrongProfanedCrack>(), 0, 0f);
 
-                float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                 for (int i = 0; i < 15; i++)
                 {
-                    Vector2 spearDirection = (MathHelper.TwoPi * i / 15f + shootOffsetAngle).ToRotationVector2();
+                    Vector2 spearDirection = (TwoPi * i / 15f + shootOffsetAngle).ToRotationVector2();
                     Utilities.NewProjectileBetter(Projectile.Center, spearDirection * 0.01f, ModContent.ProjectileType<CrystalTelegraphLine>(), 0, 0f, -1, 0f, 54f);
                     Utilities.NewProjectileBetter(Projectile.Center, spearDirection * 8f, ModContent.ProjectileType<ProfanedSpearInfernum>(), HolySpearDamage, 0f);
                 }
             }
 
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Max(Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower, 8f);
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Max(Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower, 8f);
             ScreenEffectSystem.SetFlashEffect(Projectile.Center, 1f, 13);
 
-            SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with { Volume = 2f }, Projectile.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceSpearHitSound with
+            {
+                Volume = 2f
+            }, Projectile.Center);
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
@@ -136,17 +140,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Texture2D smear = ModContent.Request<Texture2D>("CalamityMod/Particles/SemiCircularSmear").Value;
                 float opacity = CircularSmearInterpolant * 0.4f;
-                float rotation = Projectile.rotation + MathHelper.PiOver2 * 1.1f;
-                Main.EntitySpriteDraw(smear, Projectile.Center - Main.screenPosition, null, Color.Gold with { A = 0 } * opacity, rotation, smear.Size() * 0.5f, 1f, SpriteEffects.None, 0);
+                float rotation = Projectile.rotation + PiOver2 * 1.1f;
+                Main.EntitySpriteDraw(smear, Projectile.Center - Main.screenPosition, null, Color.Gold with
+                {
+                    A = 0
+                } * opacity, rotation, smear.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
 
             float backglowAmount = 12f;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Color backglowColor = IsEnraged ? Color.Cyan : Color.Gold;
                 backglowColor.A = 0;
-                Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * MathHelper.Clamp(Projectile.Opacity * 2f, 0f, 1f) * Owner.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * Clamp(Projectile.Opacity * 2f, 0f, 1f) * Owner.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }
 
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor * Projectile.Opacity * Owner.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);

@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void AI()
         {
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / 45f);
+            Projectile.scale = Sin(Pi * Projectile.timeLeft / 45f);
             for (int i = 0; i < 16; i++)
             {
                 Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 60, Main.rand.NextVector2Circular(3f, 3f));

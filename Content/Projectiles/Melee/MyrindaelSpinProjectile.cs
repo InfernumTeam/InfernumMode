@@ -74,10 +74,10 @@ namespace InfernumMode.Content.Projectiles.Melee
             {
                 Projectile.Center = Owner.MountedCenter;
                 Projectile.velocity = Vector2.Zero;
-                Projectile.rotation = MathF.Pow(SpinCompletion, 1.62f) * MathHelper.Pi * SpinDirection * 6f + InitialDirection - MathHelper.PiOver4 + MathHelper.Pi;
+                Projectile.rotation = Pow(SpinCompletion, 1.62f) * Pi * SpinDirection * 6f + InitialDirection - PiOver4 + Pi;
 
                 // Spin the player's front arm.
-                Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.Pi + MathHelper.PiOver4);
+                Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - Pi + PiOver4);
 
                 AdjustPlayerValues();
                 return;
@@ -117,15 +117,15 @@ namespace InfernumMode.Content.Projectiles.Melee
             NPC potentialTarget = Projectile.Center.ClosestNPCAt(Myrindael.TargetHomeDistance);
             if (potentialTarget is not null && Projectile.timeLeft > 25)
             {
-                float newSpeed = MathHelper.Clamp(Projectile.velocity.Length() * 1.032f, 6f, 42f);
+                float newSpeed = Clamp(Projectile.velocity.Length() * 1.032f, 6f, 42f);
 
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(potentialTarget.Center) * newSpeed, 0.24f).RotateTowards(Projectile.AngleTo(potentialTarget.Center), 0.1f);
                 Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
             }
             if (Projectile.timeLeft <= 25)
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi / 120f) * 0.9f;
+                Projectile.velocity = Projectile.velocity.RotatedBy(Pi / 120f) * 0.9f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
         }
 
         public void AdjustPlayerValues()
@@ -148,7 +148,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -800f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(24f, 33f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage / 2, 0f, Projectile.owner, MathHelper.PiOver2, Main.rand.Next(100));
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(24f, 33f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage / 2, 0f, Projectile.owner, PiOver2, Main.rand.Next(100));
                 }
             }
 
@@ -164,7 +164,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
             for (int i = 0; i < 2; i++)
             {
-                Vector2 sparkVelocity = Projectile.SafeDirectionTo(potentialTarget.Center).RotatedBy(MathHelper.Lerp(-0.44f, 0.44f, i / 2f)) * 9f;
+                Vector2 sparkVelocity = Projectile.SafeDirectionTo(potentialTarget.Center).RotatedBy(Lerp(-0.44f, 0.44f, i / 2f)) * 9f;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkVelocity, ModContent.ProjectileType<MyrindaelSpark>(), Projectile.damage / 3, Projectile.knockBack, Projectile.owner);
             }
         }
@@ -180,7 +180,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             return width;
         }
 
-        public Color PierceColorFunction(float completionRatio) => Color.Lime * MathF.Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 2.4f) * Projectile.Opacity;
+        public Color PierceColorFunction(float completionRatio) => Color.Lime * Pow(Utils.GetLerpValue(0f, 0.1f, completionRatio, true), 2.4f) * Projectile.Opacity;
 
         public void DrawTrail()
         {
@@ -195,7 +195,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Initialize the trail drawer.
             PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
 
-            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * (SpinCompletion >= 1f ? 58f : 90f);
+            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - PiOver4).ToRotationVector2() * (SpinCompletion >= 1f ? 58f : 90f);
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);
@@ -215,9 +215,9 @@ namespace InfernumMode.Content.Projectiles.Melee
                 {
                     float localRotation = Projectile.oldRot[i];
                     if (i == 0)
-                        localRotation = Projectile.rotation + MathHelper.Pi * SpinDirection * 0.075f;
+                        localRotation = Projectile.rotation + Pi * SpinDirection * 0.075f;
 
-                    Projectile.oldPos[i] = Projectile.position + (localRotation - MathHelper.PiOver4).ToRotationVector2() * 70f - (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
+                    Projectile.oldPos[i] = Projectile.position + (localRotation - PiOver4).ToRotationVector2() * 70f - (Projectile.rotation - PiOver4).ToRotationVector2() * 90f;
                 }
             }
             else
@@ -231,7 +231,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Color spearAfterimageColor = new Color(0.73f, 0.93f, 0.96f, 0f) * Projectile.Opacity;
             for (int i = 0; i < 12; i++)
             {
-                Vector2 spearOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * (1f - Projectile.Opacity) * 12f;
+                Vector2 spearOffset = (TwoPi * i / 12f).ToRotationVector2() * (1f - Projectile.Opacity) * 12f;
                 Main.EntitySpriteDraw(texture, drawPosition + spearOffset, null, spearAfterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0);
             }
 

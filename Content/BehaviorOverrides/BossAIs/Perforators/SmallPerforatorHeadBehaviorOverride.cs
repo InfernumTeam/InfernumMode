@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Player target = Main.player[npc.target];
 
             // Fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Attempt to hover below the target.
             if (wrappedAttackTimer < 150f)
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.8f;
                 npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, maxFlySpeed);
 
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 400f)
+                if (Distance(npc.Center.X, target.Center.X) > 400f)
                 {
                     npc.velocity.X *= 0.9f;
                     npc.position.X += npc.SafeDirectionTo(target.Center).X * 12f;
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (wrappedAttackTimer is >= 180f and < 225f)
             {
                 npc.velocity.X *= 0.96f;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.55f, -maxRiseSpeed, 15f);
+                npc.velocity.Y = Clamp(npc.velocity.Y - 0.55f, -maxRiseSpeed, 15f);
 
                 // Release ichor into the air once above the target and in air.
                 if (hasReleasedFallingIchor == 0f && npc.Top.Y < target.Bottom.Y && !Collision.SolidCollision(npc.position, npc.width, npc.height))
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < fallingIchorCount; i++)
                         {
                             float projectileOffsetInterpolant = i / (float)(fallingIchorCount - 1f);
-                            float horizontalSpeed = MathHelper.Lerp(-21f, 21f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 6f;
+                            float horizontalSpeed = Lerp(-21f, 21f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 6f;
                             float verticalSpeed = Main.rand.NextFloat(-12f, -11f);
                             Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
 
@@ -114,9 +114,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             // Fall.
             if (wrappedAttackTimer >= 225f)
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.16f, -8.5f, 10f);
+                npc.velocity.Y = Clamp(npc.velocity.Y + 0.16f, -8.5f, 10f);
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             attackTimer++;
 
             return false;

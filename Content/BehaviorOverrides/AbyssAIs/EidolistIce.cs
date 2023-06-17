@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override void AI()
         {
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Fade in and out.
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 32f, Projectile.timeLeft, true);

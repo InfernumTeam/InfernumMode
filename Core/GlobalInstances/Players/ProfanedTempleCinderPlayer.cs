@@ -39,8 +39,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             bool createALotOfHolyCinders = CreateALotOfHolyCinders;
             float cinderSpawnInterpolant = CalamityPlayer.areThereAnyDamnBosses ? 0.9f : 0.1f;
-            int cinderSpawnRate = (int)MathHelper.Lerp(6f, 2f, cinderSpawnInterpolant);
-            float cinderFlySpeed = MathHelper.Lerp(6f, 12f, cinderSpawnInterpolant);
+            int cinderSpawnRate = (int)Lerp(6f, 2f, cinderSpawnInterpolant);
+            float cinderFlySpeed = Lerp(6f, 12f, cinderSpawnInterpolant);
             if (createALotOfHolyCinders)
             {
                 cinderSpawnRate = 1;
@@ -57,8 +57,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.23f, 0.98f)) * Main.rand.NextFloat(0.6f, 1.2f) * cinderFlySpeed;
                 if (Main.rand.NextBool())
                 {
-                    cinderSpawnOffset = cinderSpawnOffset.RotatedBy(-MathHelper.PiOver2) * new Vector2(0.9f, 1f);
-                    cinderVelocity = cinderVelocity.RotatedBy(-MathHelper.PiOver2) * new Vector2(1.8f, -1f);
+                    cinderSpawnOffset = cinderSpawnOffset.RotatedBy(-PiOver2) * new Vector2(0.9f, 1f);
+                    cinderVelocity = cinderVelocity.RotatedBy(-PiOver2) * new Vector2(1.8f, -1f);
                 }
 
                 if (Main.rand.NextBool(createALotOfHolyCinders ? 2 : 15))

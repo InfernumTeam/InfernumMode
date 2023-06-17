@@ -212,7 +212,7 @@ namespace InfernumMode.Content.WorldGeneration
                         // If the noise is less than 0, bias to -1, if it's greater than 0, bias away to 1.
                         // This is done instead of biasing to -1 or 1 without exception to ensure that in doing so the noise does not cross into the
                         // cutout threshold near 0 as it interpolates.
-                        noise = MathHelper.Lerp(noise, Math.Sign(noise), biasAwayFrom0Interpolant);
+                        noise = Lerp(noise, Math.Sign(noise), biasAwayFrom0Interpolant);
 
                         if (Math.Abs(noise) < Layer1SpaghettiCaveCarveOutThresholds[c])
                         {
@@ -493,7 +493,7 @@ namespace InfernumMode.Content.WorldGeneration
             // Generate a bunch of preset trenches that reach down to the bottom of the layer. They are mostly vertical, but can wind a bit, and are filled with bioluminescent plants.
             for (int i = 0; i < trenchCount; i++)
             {
-                int trenchX = (int)MathHelper.Lerp(104f, maxWidth * 0.7f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
+                int trenchX = (int)Lerp(104f, maxWidth * 0.7f, i / (float)(trenchCount - 1f)) + WorldGen.genRand.Next(-15, 15);
                 int trenchY = topOfLayer2 - WorldGen.genRand.Next(25, 35);
                 trenchTops.Add(new(GetActualX(trenchX), trenchY));
                 trenchBottoms.Add(GenerateLayer2Trench(new(GetActualX(trenchX), trenchY), bottomOfLayer2 + 4));
@@ -521,7 +521,7 @@ namespace InfernumMode.Content.WorldGeneration
             {
                 float yCompletion = Utils.GetLerpValue(start.Y, cutOffPoint, currentPoint.Y, true);
                 float noiseWidthOffset = FractalBrownianMotion(currentPoint.X * TrenchWidthNoiseMagnificationFactor, currentPoint.Y * TrenchWidthNoiseMagnificationFactor, widthSeed, 5) * endingWidth * 0.2f;
-                int width = (int)(MathHelper.Lerp(startingWidth, endingWidth, MathF.Pow(yCompletion, TrenchTightnessFactor)) + noiseWidthOffset);
+                int width = (int)(Lerp(startingWidth, endingWidth, Pow(yCompletion, TrenchTightnessFactor)) + noiseWidthOffset);
                 width = Utils.Clamp(width, startingWidth, endingWidth);
 
                 // Calculate the horizontal offset of the current trench.
@@ -693,7 +693,7 @@ namespace InfernumMode.Content.WorldGeneration
                     float moveDownwardInterpolant = Utils.GetLerpValue(Layer3Top + 50f, Layer3Top + 20f, caveEndPoints[i].Y, true);
 
                     Vector2 directionToConvergencePoint = (layer4ConvergencePoint.ToVector2() - caveEndPoints[i].ToVector2()).SafeNormalize(Vector2.UnitY);
-                    Vector2 caveMoveDirection = (MathHelper.TwoPi * FractalBrownianMotion(caveNoisePositions[i].X, caveNoisePositions[i].Y, caveSeeds[i], 5)).ToRotationVector2();
+                    Vector2 caveMoveDirection = (TwoPi * FractalBrownianMotion(caveNoisePositions[i].X, caveNoisePositions[i].Y, caveSeeds[i], 5)).ToRotationVector2();
                     caveMoveDirection = Vector2.Lerp(caveMoveDirection, edgeDirection, moveToEdgeInterpolant);
                     caveMoveDirection = Vector2.Lerp(caveMoveDirection, Vector2.UnitY, moveDownwardInterpolant);
                     caveMoveDirection = Vector2.Lerp(caveMoveDirection, directionToConvergencePoint, convergenceInterpolant).SafeNormalize(Vector2.Zero);
@@ -736,7 +736,7 @@ namespace InfernumMode.Content.WorldGeneration
                         // If the noise is less than 0, bias to -1, if it's greater than 0, bias away to 1.
                         // This is done instead of biasing to -1 or 1 without exception to ensure that in doing so the noise does not cross into the
                         // cutout threshold near 0 as it interpolates.
-                        noise = MathHelper.Lerp(noise, Math.Sign(noise), biasAwayFrom0Interpolant);
+                        noise = Lerp(noise, Math.Sign(noise), biasAwayFrom0Interpolant);
 
                         if (Math.Abs(noise) < Layer3SpaghettiCaveCarveOutThresholds[c])
                         {
@@ -838,7 +838,7 @@ namespace InfernumMode.Content.WorldGeneration
 
                 // Ignore steep spaces.
                 float averageY = Math.Abs(floorLeft.Y + floor.Y + floorRight.Y) / 3f;
-                if (MathHelper.Distance(averageY, floor.Y) >= 4f)
+                if (Distance(averageY, floor.Y) >= 4f)
                 {
                     i--;
                     continue;
@@ -882,7 +882,7 @@ namespace InfernumMode.Content.WorldGeneration
                     ModContent.TileType<ThermalVent2>(),
                     ModContent.TileType<ThermalVent3>()
                 });
-                if (MathHelper.Distance(Utilities.GetGroundPositionFrom(new Point(floor.X, floor.Y - moundHeight), new Searches.Up(50)).Y, floor.Y - moundHeight) >= 7f)
+                if (Distance(Utilities.GetGroundPositionFrom(new Point(floor.X, floor.Y - moundHeight), new Searches.Up(50)).Y, floor.Y - moundHeight) >= 7f)
                     PlaceObjectWithGoddamnForce(floor.X, floor.Y - moundHeight, ventID, 0);
 
                 ventPositions.Add(floor);
@@ -1048,7 +1048,7 @@ namespace InfernumMode.Content.WorldGeneration
             Point caveStart = new(WorldSaveSystem.SquidDenCenter.X + Abyss.AtLeftSideOfWorld.ToDirectionInt() * Layer3SquidDenOuterRadius, WorldSaveSystem.SquidDenCenter.Y + Layer3SquidDenOuterRadius);
             for (int i = 0; i < 50; i++)
             {
-                float cavePerpendicularAngle = MathF.Sin(i * 0.39f);
+                float cavePerpendicularAngle = Sin(i * 0.39f);
                 Point currentCavePosition = Vector2.Lerp(caveStart.ToVector2(), WorldSaveSystem.SquidDenCenter.ToVector2(), i / 49f).ToPoint();
                 Vector2 directionToCenter = (WorldSaveSystem.SquidDenCenter.ToVector2() - caveStart.ToVector2()).SafeNormalize(Vector2.Zero);
                 currentCavePosition += (directionToCenter.RotatedBy(cavePerpendicularAngle) * 8f).ToPoint();
@@ -1172,7 +1172,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public static int GetWidth(float yCompletion, int minWidth, int maxWidth)
         {
-            return (int)MathHelper.Lerp(minWidth, maxWidth, MathF.Pow(yCompletion * Utils.GetLerpValue(1f, 0.81f, yCompletion, true), 0.13f));
+            return (int)Lerp(minWidth, maxWidth, Pow(yCompletion * Utils.GetLerpValue(1f, 0.81f, yCompletion, true), 0.13f));
         }
 
         public static void ClearOutStrayTiles(Rectangle area)

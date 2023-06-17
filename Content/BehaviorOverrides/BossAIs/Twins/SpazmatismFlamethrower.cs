@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             // Emit fire particles.
             float lifetimeInterpolant = Timer / Lifetime;
-            float particleScale = MathHelper.Lerp(0.03f, 1.67f, MathF.Pow(lifetimeInterpolant, 0.64f));
+            float particleScale = Lerp(0.03f, 1.67f, Pow(lifetimeInterpolant, 0.64f));
             float opacity = Utils.GetLerpValue(0.96f, 0.7f, lifetimeInterpolant, true);
             float fadeToBlack = Utils.GetLerpValue(0.5f, 0.84f, lifetimeInterpolant, true);
 

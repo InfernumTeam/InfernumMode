@@ -310,7 +310,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
 
             // Reset opacity.
-            npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
+            npc.Opacity = Lerp(npc.Opacity, 1f, 0.25f);
 
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
@@ -410,7 +410,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         for (int i = 0; i < 16; i++)
                         {
-                            Vector2 spawnOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 1650f + Main.rand.NextVector2Circular(130f, 130f);
+                            Vector2 spawnOffset = (TwoPi * i / 16f).ToRotationVector2() * 1650f + Main.rand.NextVector2Circular(130f, 130f);
                             Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(20f, 24f) + Main.rand.NextVector2Circular(2f, 2f);
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
@@ -423,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             return false;
         }
 
@@ -431,7 +431,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         {
             npc.Calamity().CanHaveBossHealthBar = false;
             npc.velocity = npc.velocity.ClampMagnitude(32f, 60f);
-            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 50f, 0.1f);
+            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * Lerp(npc.velocity.Length(), 50f, 0.1f);
             npc.damage = 0;
 
             // Summon the portal and become fully opaque if the portal hasn't been created yet.
@@ -511,8 +511,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     jawBaseOffset *= -1f;
                 }
                 Vector2 jawPosition = drawPosition;
-                jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + MathF.Sin(jawRotation) * 20f));
-                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + MathF.Sin(jawRotation) * 20f);
+                jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + Sin(jawRotation) * 20f));
+                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + Sin(jawRotation) * 20f);
                 Main.spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 

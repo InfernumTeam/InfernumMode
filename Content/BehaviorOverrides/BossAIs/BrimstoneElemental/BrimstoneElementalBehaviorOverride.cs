@@ -164,16 +164,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.Opacity = Utils.GetLerpValue(0f, 40f, spawnAnimationTimer, true);
 
             // Adjust sprite direction to look at the player.
-            if (MathHelper.Distance(target.Center.X, npc.Center.X) > 45f)
+            if (Distance(target.Center.X, npc.Center.X) > 45f)
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-            int brimstoneDustCount = (int)MathHelper.Lerp(2f, 8f, npc.Opacity);
+            int brimstoneDustCount = (int)Lerp(2f, 8f, npc.Opacity);
             for (int i = 0; i < brimstoneDustCount; i++)
             {
                 Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
                 brimstoneFire.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.4f, 0.9f));
                 brimstoneFire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 5.4f);
-                brimstoneFire.scale = MathHelper.SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
+                brimstoneFire.scale = SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
                 brimstoneFire.noGravity = true;
             }
 
@@ -186,10 +186,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             int bombardCount = lifeRatio < Phase2LifeRatio ? 4 : 3;
             int bombardTime = 75;
             int fireballShootRate = lifeRatio < Phase2LifeRatio ? 6 : 9;
-            int fadeOutTime = (int)MathHelper.Lerp(48f, 30f, 1f - lifeRatio);
+            int fadeOutTime = (int)Lerp(48f, 30f, 1f - lifeRatio);
             float skullShootSpeed = 11f;
-            float horizontalTeleportOffset = MathHelper.Lerp(950f, 820f, 1f - lifeRatio);
-            float verticalDestinationOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
+            float horizontalTeleportOffset = Lerp(950f, 820f, 1f - lifeRatio);
+            float verticalDestinationOffset = Lerp(600f, 475f, 1f - lifeRatio);
             Vector2 verticalDestination = target.Center - Vector2.UnitY * verticalDestinationOffset;
             ref float bombardCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackState = ref npc.Infernum().ExtraAI[1];
@@ -214,16 +214,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 case 0:
                     npc.velocity *= 0.92f;
                     npc.rotation = npc.velocity.X * 0.04f;
-                    npc.Opacity = MathHelper.Clamp(npc.Opacity - 1f / fadeOutTime, 0f, 1f);
+                    npc.Opacity = Clamp(npc.Opacity - 1f / fadeOutTime, 0f, 1f);
 
-                    int brimstoneDustCount = (int)MathHelper.Lerp(2f, 8f, npc.Opacity);
+                    int brimstoneDustCount = (int)Lerp(2f, 8f, npc.Opacity);
                     Vector2 teleportPosition = target.Center + Vector2.UnitX * horizontalTeleportOffset * (bombardCounter % 2f == 0f).ToDirectionInt() * 0.8f;
                     for (int i = 0; i < brimstoneDustCount; i++)
                     {
                         Dust brimstoneFire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f, 267);
                         brimstoneFire.color = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.4f, 0.9f));
                         brimstoneFire.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 5.4f);
-                        brimstoneFire.scale = MathHelper.SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
+                        brimstoneFire.scale = SmoothStep(0.9f, 1.56f, Utils.GetLerpValue(2f, 5.4f, brimstoneFire.velocity.Y, true));
                         brimstoneFire.noGravity = true;
                     }
 
@@ -253,7 +253,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         for (int i = 0; i < 20; i++)
                         {
                             fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
-                            fireCloud = new(teleportPosition, (MathHelper.TwoPi * i / 20f).ToRotationVector2() * 11f, fireColor, Color.DarkGray, 45, Main.rand.NextFloat(1.9f, 2.3f));
+                            fireCloud = new(teleportPosition, (TwoPi * i / 20f).ToRotationVector2() * 11f, fireColor, Color.DarkGray, 45, Main.rand.NextFloat(1.9f, 2.3f));
                             GeneralParticleHandler.SpawnParticle(fireCloud);
                         }
 
@@ -266,7 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                 // Rapidly fade back in and move.
                 case 1:
-                    npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.12f, 0f, 1f);
+                    npc.Opacity = Clamp(npc.Opacity + 0.12f, 0f, 1f);
                     npc.rotation = npc.velocity.X * 0.04f;
 
                     if (attackTimer % fireballShootRate == fireballShootRate - 1f)
@@ -320,7 +320,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Vector2 circleCenter = new(circleCenterX, circleCenterY);
 
             // Adjust sprite direction to look at the player.
-            if (MathHelper.Distance(target.Center.X, npc.Center.X) > 45f)
+            if (Distance(target.Center.X, npc.Center.X) > 45f)
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.rotation = npc.velocity.X * 0.04f;
 
@@ -343,7 +343,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             // Make the rose circle move outward.
-            circleRadius = MathHelper.Lerp(circleRadius, RoseCircleRadius, 0.036f);
+            circleRadius = Lerp(circleRadius, RoseCircleRadius, 0.036f);
 
             switch ((int)attackState)
             {
@@ -413,7 +413,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Use the open eye fly animation.
             frameType = (int)BrimmyFrameType.OpenEye;
 
-            int chargeTime = (int)MathHelper.Lerp(150f, 80f, 1f - lifeRatio);
+            int chargeTime = (int)Lerp(150f, 80f, 1f - lifeRatio);
             int totalBursts = 4;
             int burstRate = 45;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
@@ -451,7 +451,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     }
 
                     // Adjust sprite direction to look at the player.
-                    if (MathHelper.Distance(target.Center.X, npc.Center.X) > 45f)
+                    if (Distance(target.Center.X, npc.Center.X) > 45f)
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
                     // Explode and go to the next attack state once done charging.
@@ -476,7 +476,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // Release waving skulls.
-                            int skullCount = (int)MathHelper.Lerp(5f, 11f, 1f - lifeRatio);
+                            int skullCount = (int)Lerp(5f, 11f, 1f - lifeRatio);
                             float skullShootSpeed = 10f;
 
                             if (pissedOff)
@@ -489,7 +489,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                             for (int i = 0; i < skullCount; i++)
                             {
-                                float offsetAngle = MathHelper.Lerp(-0.98f, 0.98f, i / (float)(skullCount - 1f));
+                                float offsetAngle = Lerp(-0.98f, 0.98f, i / (float)(skullCount - 1f));
                                 Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * skullShootSpeed;
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneSkull>(), BrimstoneSkullDamage, 0f);
                             }
@@ -497,7 +497,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                             // And hellblasts.
                             for (int i = 0; i < 3; i++)
                             {
-                                float offsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
+                                float offsetAngle = Lerp(-0.4f, 0.4f, i / 2f);
                                 Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(0.8f, 1.6f);
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), BrimstoneHellblastDamage, 0f);
                             }
@@ -596,7 +596,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         int dartCount = 3;
                         for (int i = 0; i < dartCount; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-0.64f, 0.64f, i / (float)(dartCount - 1f));
+                            float offsetAngle = Lerp(-0.64f, 0.64f, i / (float)(dartCount - 1f));
                             Vector2 dartVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 25f).RotatedBy(offsetAngle) * shootSpeedFactor * 14f;
                             Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstonePetal2>(), BrimstonePetalDamage, 0f);
                         }
@@ -621,7 +621,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float attackState = ref npc.Infernum().ExtraAI[2];
             ref float warningTelegraphOpacity = ref npc.Infernum().ExtraAI[3];
 
-            int hoverTime = (int)MathHelper.Lerp(105f, 200f, 1f - lifeRatio);
+            int hoverTime = (int)Lerp(105f, 200f, 1f - lifeRatio);
             int totalLaserbeamBursts = 2;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
 
@@ -652,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 // This serves as a sort of telegraph as well as a way for Brimmy to redirect.
                 case 1:
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -180f);
-                    Vector2 minVelocity = npc.SafeDirectionTo(target.Center) * MathHelper.Min(8f, npc.Distance(hoverDestination));
+                    Vector2 minVelocity = npc.SafeDirectionTo(target.Center) * MathF.Min(8f, npc.Distance(hoverDestination));
                     Vector2 maxVelocity = ((hoverDestination - npc.Center) / 30f).ClampMagnitude(0f, 36f);
 
                     // Hover more quickly if far from the destination.
@@ -725,7 +725,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (Main.netMode != NetmodeID.MultiplayerClient && rays.Any() && Main.rand.NextBool(2))
                         {
                             Projectile deathray = rays.First();
-                            Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), DeathrayBackPetalDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), DeathrayBackPetalDamage, 0f);
                         }
 
                         if (attackTimer >= attackDuration)
@@ -823,7 +823,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                         for (int j = 0; j < 20; j++)
                         {
                             Vector2 fireVelocity = -Vector2.UnitY.RotatedByRandom(0.93f) * Main.rand.NextFloat(0.7f, 12f);
-                            HeavySmokeParticle fire = new(npc.Center + (MathHelper.TwoPi * i / flameCount).ToRotationVector2() * flameOffsetRadius, fireVelocity, fireColor, 50, Main.rand.NextFloat(0.9f, 1.32f), 1f, 0.01f, true);
+                            HeavySmokeParticle fire = new(npc.Center + (TwoPi * i / flameCount).ToRotationVector2() * flameOffsetRadius, fireVelocity, fireColor, 50, Main.rand.NextFloat(0.9f, 1.32f), 1f, 0.01f, true);
                             GeneralParticleHandler.SpawnParticle(fire);
                         }
                     }
@@ -837,19 +837,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         float fireScale = Main.rand.NextFloat(0.6f, 0.95f) * (flameScaleFactor + 1f);
                         Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.56f, 0.9f));
-                        fireColor = Color.Lerp(fireColor, Color.HotPink, MathF.Pow(Main.rand.NextFloat(0.5f), 2f));
+                        fireColor = Color.Lerp(fireColor, Color.HotPink, Pow(Main.rand.NextFloat(0.5f), 2f));
 
                         Vector2 fireVelocity = -Vector2.UnitY.RotatedByRandom(0.93f) * Main.rand.NextFloat(0.6f, 5.4f);
-                        Vector2 fireSpawnPosition = npc.Center + (MathHelper.TwoPi * i / flameCount + flameOffsetAngle).ToRotationVector2() * flameOffsetRadius + Main.rand.NextVector2Circular(7f, 7f);
+                        Vector2 fireSpawnPosition = npc.Center + (TwoPi * i / flameCount + flameOffsetAngle).ToRotationVector2() * flameOffsetRadius + Main.rand.NextVector2Circular(7f, 7f);
                         HeavySmokeParticle fire = new(fireSpawnPosition, fireVelocity, fireColor, 20, fireScale, 1f, 0.01f, true);
                         GeneralParticleHandler.SpawnParticle(fire);
                     }
                 }
-                float flameOffsetAngleAcceleration = Utils.Remap(attackTimer - flameSummonDelay, 6f, 90f, 0.002f, MathHelper.Pi / 64f);
+                float flameOffsetAngleAcceleration = Utils.Remap(attackTimer - flameSummonDelay, 6f, 90f, 0.002f, Pi / 64f);
                 flameOffsetAngle += flameOffsetAngleAcceleration;
 
                 // Make animations slow down.
-                extraFramesNeededToAnimate = MathHelper.Lerp(extraFramesNeededToAnimate, 24f, 0.01f);
+                extraFramesNeededToAnimate = Lerp(extraFramesNeededToAnimate, 24f, 0.01f);
 
                 // Turn to stone.
                 stoneFormInterpolant = Utils.GetLerpValue(-72f, -12f, attackTimer - flameSummonDelay - fireSpinTime, true);
@@ -860,8 +860,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 if (Main.netMode != NetmodeID.Server && attackTimer == flameSummonDelay + fireSpinTime)
                     SoundEngine.PlaySound(new SoundStyle("CalamityMod/Sounds/Custom/AbilitySounds/BrimflameAbility") with { Volume = 1.5f }, target.Center);
-                flameOffsetRadius = MathHelper.Lerp(flameOffsetRadius, 25f, 0.02f);
-                flameScaleFactor = MathHelper.Lerp(flameScaleFactor, 1.75f, 0.02f);
+                flameOffsetRadius = Lerp(flameOffsetRadius, 25f, 0.02f);
+                flameScaleFactor = Lerp(flameScaleFactor, 1.75f, 0.02f);
             }
 
             // Drop loot and fall the ground as a lifeless shell.
@@ -992,7 +992,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Vector2 vineOrigin = vineTexture.Size() * 0.5f;
                 Vector2 roseOrigin = roseTexture.Size() * 0.5f;
                 Color circleColor = Color.Lerp(Color.OrangeRed with { A = 0 }, Color.White, circleRadius / RoseCircleRadius);
-                while (circleAngle < MathHelper.TwoPi)
+                while (circleAngle < TwoPi)
                 {
                     float vineRotation = circleAngle;
                     Vector2 vineDrawPosition = new(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3]);
@@ -1000,7 +1000,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * (1f - circleRadius / RoseCircleRadius) * 10f;
+                        Vector2 drawOffset = (TwoPi * i / 4f).ToRotationVector2() * (1f - circleRadius / RoseCircleRadius) * 10f;
                         Main.spriteBatch.Draw(vineTexture, vineDrawPosition + drawOffset, null, circleColor, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
                     }
 
@@ -1010,7 +1010,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                     if (roseRNG.NextBool(4))
                     {
-                        float roseRotation = roseRNG.NextFloat(MathHelper.TwoPi);
+                        float roseRotation = roseRNG.NextFloat(TwoPi);
                         float roseScale = roseRNG.NextFloat(0.7f, 1f);
                         Vector2 rosePosition = vineDrawPosition + roseRNG.NextVector2Circular(8f, 1.25f).RotatedBy(circleAngle);
                         Main.spriteBatch.Draw(roseTexture, rosePosition, null, circleColor, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
@@ -1028,12 +1028,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Sqrt(opacity));
+                laserScopeEffect.Parameters["mainOpacity"].SetValue(Sqrt(opacity));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(425f));
-                laserScopeEffect.Parameters["laserAngle"].SetValue(MathHelper.Pi - new Vector2(npc.Infernum().ExtraAI[0], npc.Infernum().ExtraAI[1]).ToRotation());
+                laserScopeEffect.Parameters["laserAngle"].SetValue(Pi - new Vector2(npc.Infernum().ExtraAI[0], npc.Infernum().ExtraAI[1]).ToRotation());
                 laserScopeEffect.Parameters["laserWidth"].SetValue(opacity * 0.01f);
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(10f);
-                laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Red, Color.Yellow, MathF.Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.075f + 0.24f).ToVector3());
+                laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Red, Color.Yellow, Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.075f + 0.24f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Red.ToVector3());
                 laserScopeEffect.Parameters["bloomSize"].SetValue(0.4f + (1f - opacity) * 0.18f);
                 laserScopeEffect.Parameters["bloomMaxOpacity"].SetValue(1f);

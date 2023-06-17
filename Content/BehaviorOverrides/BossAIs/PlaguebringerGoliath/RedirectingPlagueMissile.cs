@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             if (Projectile.Hitbox.Intersects(Target.Hitbox))
                 Projectile.Kill();
 
@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             if (Time >= 30f)
             {
-                float newSpeed = MathHelper.Clamp(Projectile.velocity.Length() * 1.003f, 11f, 18f);
+                float newSpeed = Clamp(Projectile.velocity.Length() * 1.003f, 11f, 18f);
                 Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(Target.Center) * newSpeed) / 30f;
             }
 

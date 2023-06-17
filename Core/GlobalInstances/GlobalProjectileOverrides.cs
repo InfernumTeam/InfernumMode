@@ -76,7 +76,7 @@ namespace InfernumMode.Core.GlobalInstances
 
                 if (FadeAwayTimer >= 1 && projectile.FinalExtraUpdate())
                 {
-                    projectile.Opacity = MathHelper.Min(projectile.Opacity, FadeAwayTimer / (float)FadeAwayTime);
+                    projectile.Opacity = MathF.Min(projectile.Opacity, FadeAwayTimer / (float)FadeAwayTime);
 
                     FadeAwayTimer--;
                     if (FadeAwayTimer <= 0)
@@ -139,11 +139,11 @@ namespace InfernumMode.Core.GlobalInstances
 
                 for (int i = 0; i < totalAurasToDraw; i++)
                 {
-                    float oscillatingTime = MathF.Cos(clampedTime * MathHelper.TwoPi + i / 2f);
+                    float oscillatingTime = Cos(clampedTime * TwoPi + i / 2f);
 
                     posX[i] = oscillatingTime * (xPosOffset - i * 3f);
 
-                    posY[i] = MathF.Sin(clampedTime * MathHelper.TwoPi + MathHelper.Pi / 3f + i) * yPosOffset;
+                    posY[i] = Sin(clampedTime * TwoPi + Pi / 3f + i) * yPosOffset;
                     posY[i] -= i * 3f;
 
                     hue[i] = i / (float)totalAurasToDraw * 2f % 1f;
@@ -159,11 +159,11 @@ namespace InfernumMode.Core.GlobalInstances
                     {
                         float fadeCompletion = projectile.timeLeft / (float)fadeTime;
 
-                        color.A = (byte)MathHelper.Lerp(0, color.A, fadeCompletion);
+                        color.A = (byte)Lerp(0, color.A, fadeCompletion);
                     }
                     color *= Utils.GetLerpValue(0f, 25f, projectile.timeLeft, true);
 
-                    float rotation = MathHelper.PiOver2 + oscillatingTime * MathHelper.PiOver4 * -0.3f + MathHelper.Pi * i;
+                    float rotation = PiOver2 + oscillatingTime * PiOver4 * -0.3f + Pi * i;
 
                     for (int j = 0; j < 2; j++)
                     {
@@ -230,7 +230,7 @@ namespace InfernumMode.Core.GlobalInstances
                 if (projectile.owner == Main.myPlayer)
                 {
                     Vector2 shootFromVector = new(projectile.Center.X, projectile.Center.Y);
-                    float spread = MathHelper.PiOver2;
+                    float spread = PiOver2;
                     float startAngle = projectile.velocity.ToRotation() - spread / 2;
                     float deltaAngle = spread / 4f;
                     float offsetAngle;

@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 npc.frameCounter += 1D;
             if (idealFrameCounter < npc.frameCounter)
                 npc.frameCounter -= 1D;
-            npc.frameCounter = MathHelper.Clamp((float)npc.frameCounter, 0f, 21f);
+            npc.frameCounter = Clamp((float)npc.frameCounter, 0f, 21f);
 
             return false;
         }
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
             Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -70f);
-            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / waveTime - handCloseInterpolant, 0f, 1f));
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, Clamp(attackTimer / waveTime - handCloseInterpolant, 0f, 1f));
             idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
 
             Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
@@ -137,18 +137,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Open the hand right before firing.
             if (attackTimer < sphereShootDelay - 12f || attackTimer >= waveTime)
             {
-                pupilScale = MathHelper.Lerp(pupilScale, 0.3f, 0.1f);
-                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.1f);
+                pupilScale = Lerp(pupilScale, 0.3f, 0.1f);
+                pupilOutwardness = Lerp(pupilOutwardness, 0f, 0.1f);
                 idealFrame = 3;
 
                 // Shut hands faster after the spheres have been released.
                 if (attackTimer >= waveTime && attackTimer < waveTime + 16f)
-                    npc.frameCounter = MathHelper.Clamp((float)npc.frameCounter + 1f, 0f, 21f);
+                    npc.frameCounter = Clamp((float)npc.frameCounter + 1f, 0f, 21f);
             }
             else
             {
-                pupilScale = MathHelper.Lerp(pupilScale, 0.75f, 0.1f);
-                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.5f, 0.1f);
+                pupilScale = Lerp(pupilScale, 0.75f, 0.1f);
+                pupilOutwardness = Lerp(pupilOutwardness, 0.5f, 0.1f);
                 pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
                 idealFrame = 0;
             }
@@ -166,8 +166,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (canShootPhantasmalSpheres)
             {
                 float attackCompletion = Utils.GetLerpValue(0f, waveTime, attackTimer, true);
-                float maximumAngularDisparity = MathHelper.TwoPi;
-                float angularShootOffset = MathHelper.SmoothStep(0f, maximumAngularDisparity, attackCompletion) * -handSide;
+                float maximumAngularDisparity = TwoPi;
+                float angularShootOffset = SmoothStep(0f, maximumAngularDisparity, attackCompletion) * -handSide;
                 Vector2 sphereShootVelocity = -Vector2.UnitY.RotatedBy(angularShootOffset) * sphereShootSpeed;
                 pupilRotation = sphereShootVelocity.ToRotation();
 
@@ -220,13 +220,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             idealFrame = 0;
             pupilRotation = pupilRotation.AngleLerp(0f, 0.1f);
-            pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.1f);
-            pupilScale = MathHelper.Lerp(pupilScale, 0.35f, 0.1f);
+            pupilOutwardness = Lerp(pupilOutwardness, 0f, 0.1f);
+            pupilScale = Lerp(pupilScale, 0.35f, 0.1f);
 
             float handCloseInterpolant = Utils.GetLerpValue(0f, flareReleaseDelay, attackTimer - flareTelegraphTime, true);
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -100f);
             Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -150f);
-            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / flareTelegraphTime - handCloseInterpolant, 0f, 1f));
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, Clamp(attackTimer / flareTelegraphTime - handCloseInterpolant, 0f, 1f));
             idealPosition += (attackTimer / 16f).ToRotationVector2() * 12f;
 
             Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
@@ -273,7 +273,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
 
             int starCreationTime = totalStarsToCreate * starCreationRate;
-            float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
+            float animationCompletionRatio = Clamp(attackTimer / initialAnimationTime, 0f, 1f);
             float wrappedAttackTimer = (attackTimer + (handSide == 0f ? 0f : 36f)) % (initialAnimationTime + starCreationTime + explosionTime);
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
             Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 450f, -350f);
@@ -285,8 +285,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (wrappedAttackTimer < initialAnimationTime - 12f)
             {
                 float chargePowerup = Utils.GetLerpValue(0f, 0.5f, animationCompletionRatio, true);
-                int chargeDustCount = (int)Math.Round(MathHelper.Lerp(1f, 3f, chargePowerup));
-                float chargeDustOffset = MathHelper.Lerp(30f, 75f, chargePowerup);
+                int chargeDustCount = (int)Math.Round(Lerp(1f, 3f, chargePowerup));
+                float chargeDustOffset = Lerp(30f, 75f, chargePowerup);
 
                 for (int i = 0; i < chargeDustCount; i++)
                 {
@@ -294,7 +294,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 chargeDustVelocity = (npc.Center - chargeDustSpawnPosition) * 0.05f;
                     Dust electricity = Dust.NewDustPerfect(chargeDustSpawnPosition, 229);
                     electricity.velocity = chargeDustVelocity * Main.rand.NextFloat(0.9f, 1.1f);
-                    electricity.scale = MathHelper.Lerp(1f, 1.45f, chargePowerup);
+                    electricity.scale = Lerp(1f, 1.45f, chargePowerup);
                     electricity.alpha = 84;
                     electricity.noGravity = true;
                 }
@@ -343,8 +343,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     // Horizontal sinusoid.
                     case 2:
                     default:
-                        float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
-                        float verticalOffset = MathF.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        float horizontalOffset = Lerp(-775f, 775f, patternCompletion);
+                        float verticalOffset = Cos(patternCompletion * Pi + constellationSeed * TwoPi) * 420f;
                         currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
                         break;
                 }
@@ -397,8 +397,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (!isLeftHand)
                 armOrigin.X = armTexture.Width - armOrigin.X;
 
-            float armAngularOffset = MathF.Acos(MathHelper.Clamp(v.Length() / 340f, 0f, 1f)) * -directionThing.X;
-            float armRotation = v.ToRotation() + armAngularOffset - MathHelper.PiOver2;
+            float armAngularOffset = Acos(Clamp(v.Length() / 340f, 0f, 1f)) * -directionThing.X;
+            float armRotation = v.ToRotation() + armAngularOffset - PiOver2;
             Main.spriteBatch.Draw(armTexture, handBottom - Main.screenPosition, null, color, armRotation, armOrigin, 1f, direction, 0f);
             if (npc.ai[0] == -2f)
             {

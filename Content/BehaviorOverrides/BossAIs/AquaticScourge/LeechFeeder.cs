@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Be invisible outside of water.
             if (!Collision.WetCollision(Projectile.TopLeft, Projectile.width, Projectile.height))
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.06f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.06f, 0f, 1f);
 
             // Look at the target.
             NPC target = Main.npc[(int)Projectile.ai[0]];

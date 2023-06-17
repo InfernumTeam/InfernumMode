@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.spriteDirection == 1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             // Try to hover towards the target at first.
             if (Time < 54f)
@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
             for (int i = 0; i < 4; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 8.5f;
+                Vector2 shootVelocity = (TwoPi * i / 4f).ToRotationVector2() * 8.5f;
                 Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<LeviathanVomit>(), LeviathanComboAttackManager.LeviathanVomitDamage, 0f);
             }
         }

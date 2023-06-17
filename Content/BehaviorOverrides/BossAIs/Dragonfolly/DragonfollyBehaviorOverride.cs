@@ -202,15 +202,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             if (phase2TransitionCountdown > 0)
             {
-                npc.Calamity().DR = MathHelper.SmoothStep(0.1f, 0.35f, phase2TransitionCountdown / 600f);
-                npc.defense = (int)MathHelper.SmoothStep(npc.defDefense, 100f, phase2TransitionCountdown / 600f);
+                npc.Calamity().DR = SmoothStep(0.1f, 0.35f, phase2TransitionCountdown / 600f);
+                npc.defense = (int)SmoothStep(npc.defDefense, 100f, phase2TransitionCountdown / 600f);
                 if (phase2)
-                    npc.damage = (int)MathHelper.SmoothStep(npc.defDamage * 1.1f, npc.defDamage * 1.4f, phase2TransitionCountdown / 600f);
+                    npc.damage = (int)SmoothStep(npc.defDamage * 1.1f, npc.defDamage * 1.4f, phase2TransitionCountdown / 600f);
             }
 
             if (phaseTransitionCountdown > 0)
             {
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.185f);
+                npc.Opacity = Lerp(npc.Opacity, 1f, 0.185f);
                 npc.velocity *= 0.95f;
                 npc.rotation *= 0.95f;
                 frameType = (int)DragonfollyFrameDrawingType.Screm;
@@ -255,7 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             if ((DragonfollyAttackType)(int)attackType != DragonfollyAttackType.ElectricOverload)
             {
                 backgroundFadeToRed *= 0.98f;
-                backgroundFadeToRed = MathHelper.Clamp(backgroundFadeToRed - 0.025f, 0f, 1f);
+                backgroundFadeToRed = Clamp(backgroundFadeToRed - 0.025f, 0f, 1f);
             }
 
             attackTimer++;
@@ -320,7 +320,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             if (attackTimer <= 45f)
             {
                 npc.Opacity = Utils.GetLerpValue(25f, 45f, attackTimer, true);
-                npc.Center = Vector2.SmoothStep(npc.Center, target.Center - Vector2.UnitY * 1350f, MathF.Pow(attackTimer / 45f, 3f));
+                npc.Center = Vector2.SmoothStep(npc.Center, target.Center - Vector2.UnitY * 1350f, Pow(attackTimer / 45f, 3f));
                 npc.spriteDirection = (npc.Center.X - target.Center.X < 0).ToDirectionInt();
                 flapRate = 7;
             }
@@ -357,10 +357,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
 
                     // Fade to red and back depending on how much time is left in the charge.
-                    fadeToRed = MathHelper.Lerp(fadeToRed, attackTimer >= 205f + chargeDelay ? 0f : 1f, 0.15f);
+                    fadeToRed = Lerp(fadeToRed, attackTimer >= 205f + chargeDelay ? 0f : 1f, 0.15f);
 
                     // Release lightning clouds from time to time while charging.
-                    bool nearTarget = MathHelper.Distance(target.Center.X, npc.Center.X) < 600f;
+                    bool nearTarget = Distance(target.Center.X, npc.Center.X) < 600f;
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f && nearTarget)
                         Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 }
@@ -489,7 +489,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                         SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Pitch = 0.25f }, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                            Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                             if (phase3)
                             {
                                 Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 7f;
@@ -506,7 +506,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             // Do the actual charge.
             else if (chargeState == 2f)
             {
-                float horizontalSpeed = MathHelper.Lerp(31f, 43.5f, 1f - npc.life / (float)npc.lifeMax);
+                float horizontalSpeed = Lerp(31f, 43.5f, 1f - npc.life / (float)npc.lifeMax);
 
                 // Fly faster than usual after a fakeout.
                 if (hasDoneFakeoutFlag == 1f && chargeType == DragonfollyAttackType.FakeoutCharge)
@@ -534,9 +534,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 }
 
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
-                int cloudSpawnRate = (int)MathHelper.Lerp(8f, 4f, 1f - npc.life / (float)npc.lifeMax);
+                int cloudSpawnRate = (int)Lerp(8f, 4f, 1f - npc.life / (float)npc.lifeMax);
                 float cloudOffsetAngle = npc.velocity.X * 0.01f;
-                bool nearTarget = MathHelper.Distance(target.Center.X, npc.Center.X) < 600f;
+                bool nearTarget = Distance(target.Center.X, npc.Center.X) < 600f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge && nearTarget)
                 {
                     Vector2 cloudSpawnPosition = npc.Center - npc.velocity * 2f;
@@ -554,7 +554,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     if (npc.alpha < 255)
                     {
                         // Turn red as a telegraph for a short moment.
-                        fadeToRed = MathF.Sin(Utils.GetLerpValue(0f, 18f, attackTimer, true) * MathHelper.Pi);
+                        fadeToRed = Sin(Utils.GetLerpValue(0f, 18f, attackTimer, true) * Pi);
 
                         npc.alpha = Utils.Clamp(npc.alpha + 10, 0, 255);
                         npc.damage = 0;
@@ -672,7 +672,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public static void DoAttack_FeatherSpreadRelease(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
         {
-            int totalWaves = (int)MathHelper.Lerp(3f, 7.5f, 1f - npc.life / (float)npc.lifeMax);
+            int totalWaves = (int)Lerp(3f, 7.5f, 1f - npc.life / (float)npc.lifeMax);
             int flyTime = 35;
             int waveDelay = 32;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -713,10 +713,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int featherType = ModContent.ProjectileType<RedLightningRedirectingFeather>();
-                    int totalFeathers = (int)MathHelper.Lerp(8, 26, 1f - lifeRatio);
+                    int totalFeathers = (int)Lerp(8, 26, 1f - lifeRatio);
                     for (int i = 0; i < totalFeathers; i++)
                     {
-                        Vector2 shootVelocity = Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / totalFeathers) * -8f;
+                        Vector2 shootVelocity = Vector2.UnitY.RotatedBy(TwoPi * i / totalFeathers) * -8f;
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 9f, shootVelocity, featherType, FeatherDamage, 0f);
                     }
                 }
@@ -730,7 +730,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                         for (int i = 0; i < 60; i++)
                         {
                             Dust energy = Dust.NewDustPerfect(npc.Center, 267);
-                            energy.velocity = (MathHelper.TwoPi * i / 60f).ToRotationVector2() * speed;
+                            energy.velocity = (TwoPi * i / 60f).ToRotationVector2() * speed;
                             energy.noGravity = true;
                             energy.color = Main.hslToRgb(Main.rand.NextFloat(0f, 0.08f), 0.85f, 0.6f);
                             energy.fadeIn = lifePersistance;
@@ -771,7 +771,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             for (int delay = 0; delay < 60; delay += 20)
             {
-                Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 27f);
+                Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * Cos(npc.rotation) * (npc.width * 0.5f + 27f);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime - 30f + delay)
                 {
                     int plasmaBall = NPC.NewNPC(npc.GetSource_FromAI(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedPlasmaEnergy>());
@@ -832,7 +832,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             {
                 npc.rotation *= 0.96f;
                 npc.velocity *= 0.98f;
-                backgroundFadeToRed = MathHelper.Lerp(backgroundFadeToRed, 1f, 0.1f);
+                backgroundFadeToRed = Lerp(backgroundFadeToRed, 1f, 0.1f);
                 if (attackTimer < ScreamTime + 30f)
                 {
                     frameType = (int)DragonfollyFrameDrawingType.Screm;
@@ -1043,7 +1043,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 // Create the orbs from the mouth.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % energyOrbReleaseRate == energyOrbReleaseRate - 1f)
                 {
-                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                     Vector2 baseShootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.56f) * 11f;
                     Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<ExplodingEnergyOrb>(), 0, 0f);
                 }
@@ -1152,7 +1152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 // Create the bolts from the mouth.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningSpawnerReleaseRate == lightningSpawnerReleaseRate - 1f)
                 {
-                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * MathF.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
+                    Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                     Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 10f;
                     Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                 }
@@ -1218,12 +1218,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             float fadeToRed = npc.localAI[2];
             float phaseTransitionCountdown = npc.Infernum().ExtraAI[6];
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            int drawInstances = (int)MathHelper.Lerp(1f, 4f, fadeToRed);
+            int drawInstances = (int)Lerp(1f, 4f, fadeToRed);
             Color drawColor = Color.Lerp(lightColor, Color.Red * 0.9f, fadeToRed);
-            drawColor *= MathHelper.Lerp(1f, 0.4f, fadeToRed);
+            drawColor *= Lerp(1f, 0.4f, fadeToRed);
             if (fadeToRed > 0.4f)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.1f, 0f, 1f);
                 drawColor.A = 0;
             }
 
@@ -1237,14 +1237,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             {
                 if (phaseTransitionCountdown > 0f)
                 {
-                    float outwardnessFactor = 1f - MathF.Cos(phaseTransitionCountdown * MathHelper.TwoPi / TransitionTime);
+                    float outwardnessFactor = 1f - Cos(phaseTransitionCountdown * TwoPi / TransitionTime);
                     outwardnessFactor /= 3f;
                     for (int i = 0; i < 6; i++)
                     {
                         Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.Red, 0.5f));
                         afterimageColor *= 1f - outwardnessFactor;
 
-                        Vector2 drawPosition = npc.Center + (i / 6f * MathHelper.TwoPi + npc.rotation).ToRotationVector2() * outwardnessFactor * 42f - Main.screenPosition;
+                        Vector2 drawPosition = npc.Center + (i / 6f * TwoPi + npc.rotation).ToRotationVector2() * outwardnessFactor * 42f - Main.screenPosition;
                         Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, spriteEffects, 0f);
                     }
                 }
@@ -1253,7 +1253,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     Vector2 drawPosition = baseDrawPosition - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     if (fadeToRed > 0.4f)
-                        drawPosition += (MathHelper.TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 5f;
+                        drawPosition += (TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 5f;
                     Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
                 }
             }

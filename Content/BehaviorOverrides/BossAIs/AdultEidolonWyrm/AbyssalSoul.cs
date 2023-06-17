@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Decide frames.
             Projectile.frameCounter++;
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             for (int i = 0; i < 4; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 5f;
+                Vector2 drawOffset = (TwoPi * i / 4f).ToRotationVector2() * 5f;
                 ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, frame, soulColor * Projectile.Opacity * 0.4f, Projectile.rotation, origin, Projectile.scale, 0, 0));
 
                 Vector2 afterimageDrawPosition = Vector2.Lerp(Projectile.oldPos[i] + Projectile.Size * 0.5f, Projectile.Center, 0.4f) - Main.screenPosition;

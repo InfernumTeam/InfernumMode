@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
         public override bool PreDraw(ref Color lightColor)
         {
             Color lineColor = Color.Red;
-            float lineWidth = MathHelper.Lerp(0.25f, 3f, Utils.GetLerpValue(0f, 22f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 22f, Time, true));
+            float lineWidth = Lerp(0.25f, 3f, Utils.GetLerpValue(0f, 22f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 22f, Time, true));
             Main.spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 1900f, Projectile.Center + Vector2.UnitY * 1900f, lineColor, lineWidth);
             return false;
         }
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-7f, 7f);
                 spawnPosition.Y -= 2800f;
 
-                Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), DragonfollyBehaviorOverride.RedLightningDamage, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 15f, ModContent.ProjectileType<TwinsRedLightning>(), DragonfollyBehaviorOverride.RedLightningDamage, 0f, -1, PiOver2, Main.rand.Next(100));
             }
         }
     }

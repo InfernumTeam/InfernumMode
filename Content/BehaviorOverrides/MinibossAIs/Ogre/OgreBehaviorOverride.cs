@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 npc.dontTakeDamage = npc.Opacity < 0.7f;
 
                 // Create magic dust while fading.
-                int dustCount = (int)MathHelper.Lerp(15f, 1f, npc.Opacity);
+                int dustCount = (int)Lerp(15f, 1f, npc.Opacity);
                 for (int i = 0; i < dustCount; i++)
                 {
                     if (!Main.rand.NextBool(3))
@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 shouldUseAfterimages = 0f;
                 npc.noGravity = true;
                 npc.noTileCollide = true;
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.75f, 0f);
+                npc.Opacity = Lerp(npc.Opacity, 0.75f, 0f);
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center - Vector2.UnitY * 500f) * 12f, 0.1f);
 
@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                     npc.frameCounter = 0f;
                     currentFrame = 43f;
                 }
-                currentFrame = MathHelper.Lerp(43f, 46f, MathHelper.Clamp((float)npc.frameCounter / 36f, 0f, 1f));
+                currentFrame = Lerp(43f, 46f, Clamp((float)npc.frameCounter / 36f, 0f, 1f));
                 return false;
             }
 
@@ -205,12 +205,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 if (jumpTimer < jumpPreparationDelay)
                 {
                     npc.velocity.X *= 0.92f;
-                    currentFrame = MathHelper.Lerp(39f, 42f, jumpTimer / jumpPreparationDelay);
+                    currentFrame = Lerp(39f, 42f, jumpTimer / jumpPreparationDelay);
                 }
 
                 if (jumpTimer == jumpPreparationDelay)
                 {
-                    float jumpSpeed = MathHelper.Lerp(6f, 11f, jumpAheadSpeedFactor);
+                    float jumpSpeed = Lerp(6f, 11f, jumpAheadSpeedFactor);
                     npc.velocity.X = npc.spriteDirection * jumpSpeed;
                     npc.velocity.Y = -9f;
                     npc.netUpdate = true;
@@ -218,7 +218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 
                 if (jumpTimer > jumpPreparationDelay)
                 {
-                    currentFrame = MathHelper.Lerp(43f, 46f, MathHelper.Clamp((jumpTimer - jumpPreparationDelay) / jumpAnimationTime, 0f, 1f));
+                    currentFrame = Lerp(43f, 46f, Clamp((jumpTimer - jumpPreparationDelay) / jumpAnimationTime, 0f, 1f));
                     if (!onGround)
                         npc.position.Y += 2f;
                 }
@@ -251,9 +251,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             hasMadeGroundPound = 0f;
 
             // Walk forward.
-            if (onGround && MathHelper.Distance(target.Center.X, npc.Center.X) > 90f && !shouldSlowDown)
+            if (onGround && Distance(target.Center.X, npc.Center.X) > 90f && !shouldSlowDown)
             {
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * walkSpeed, 0.05f);
+                npc.velocity.X = Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * walkSpeed, 0.05f);
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
             }
 
@@ -298,7 +298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 npc.netUpdate = true;
             }
 
-            npc.frameCounter += MathHelper.Max(0.5f, Math.Abs(npc.velocity.X) / walkSpeed);
+            npc.frameCounter += MathF.Max(0.5f, Math.Abs(npc.velocity.X) / walkSpeed);
             if (npc.frameCounter >= 4.5f)
             {
                 currentFrame++;
@@ -332,7 +332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             {
                 npc.velocity.X *= 0.92f;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                currentFrame = MathHelper.Lerp(39f, 42f, attackTimer / jumpPreparationDelay);
+                currentFrame = Lerp(39f, 42f, attackTimer / jumpPreparationDelay);
             }
 
             // Grunt before jumping.
@@ -368,11 +368,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 }
                 else
                 {
-                    if (MathHelper.Distance(npc.Center.X, target.Center.X) > 30f)
+                    if (Distance(npc.Center.X, target.Center.X) > 30f)
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 2f).ClampMagnitude(0f, 18f) * 0.85f;
                     npc.Center = npc.Center.MoveTowards(slamHoverDestination, 10f);
-                    currentFrame = MathHelper.Lerp(43f, 46f, (attackTimer - (jumpPreparationDelay + riseTime - hoverTime)) / hoverTime);
+                    currentFrame = Lerp(43f, 46f, (attackTimer - (jumpPreparationDelay + riseTime - hoverTime)) / hoverTime);
                 }
 
                 // Stop in place prior to slamming.
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 if (!canCollideWithThings)
                 {
                     if (hasMadeGroundPound == 0f)
-                        npc.position.Y += MathHelper.Lerp(2f, maxSlamSpeed, Utils.GetLerpValue(jumpPreparationDelay + riseTime, jumpPreparationDelay + riseTime + 25f, attackTimer, true));
+                        npc.position.Y += Lerp(2f, maxSlamSpeed, Utils.GetLerpValue(jumpPreparationDelay + riseTime, jumpPreparationDelay + riseTime + 25f, attackTimer, true));
                     else
                         npc.velocity.Y = 0f;
 
@@ -460,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 else
                 {
                     npc.velocity.X *= 0.85f;
-                    currentFrame = MathHelper.Lerp(11f, 13f, MathHelper.Lerp(attackTimer / chargePreparationTime * 1.3f, 0f, 1f));
+                    currentFrame = Lerp(11f, 13f, Lerp(attackTimer / chargePreparationTime * 1.3f, 0f, 1f));
                 }
             }
 
@@ -470,7 +470,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 if (attackTimer == chargePreparationTime + (int)(jumpTime * 0.5f))
                     SoundEngine.PlaySound(SoundID.DD2_OgreAttack, npc.Center);
 
-                float jumpSpeed = MathHelper.Lerp(-3f, -30f, (attackTimer - chargePreparationTime) / jumpTime);
+                float jumpSpeed = Lerp(-3f, -30f, (attackTimer - chargePreparationTime) / jumpTime);
                 jumpSpeed *= Utils.GetLerpValue(chargePreparationTime + jumpTime - 5f, chargePreparationTime + jumpTime, attackTimer, true);
                 npc.velocity = Vector2.UnitY * jumpSpeed;
                 npc.noTileCollide = true;
@@ -488,7 +488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                     npc.netUpdate = true;
                 }
                 shouldUseAfterimages = 1f;
-                currentFrame = MathHelper.Lerp(15f, 20f, Utils.GetLerpValue(chargePreparationTime + jumpTime, chargePreparationTime + jumpTime + chargeTime, attackTimer, true));
+                currentFrame = Lerp(15f, 20f, Utils.GetLerpValue(chargePreparationTime + jumpTime, chargePreparationTime + jumpTime + chargeTime, attackTimer, true));
 
                 Vector2 idealVelocity = chargeDirection.ToRotationVector2() * chargeSpeed;
                 if (idealVelocity.Y < -22f)
@@ -522,7 +522,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 
                 if (currentFrame < 43f)
                     currentFrame = 43f;
-                currentFrame = MathHelper.Lerp(currentFrame, 46f, 0.18f);
+                currentFrame = Lerp(currentFrame, 46f, 0.18f);
                 shouldUseAfterimages = 1f;
                 if (attackTimer >= chargePreparationTime + jumpTime + chargeTime + 125f || OnGround(npc, out _))
                 {
@@ -549,7 +549,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             int animationTime = 120;
             int frameToShootOn = 32;
             int totalSpitBalls = 11;
-            currentFrame = MathHelper.Lerp(21f, 36f, attackTimer / animationTime);
+            currentFrame = Lerp(21f, 36f, attackTimer / animationTime);
 
             // Slow down and look at the target.
             npc.velocity.X *= 0.93f;
@@ -592,7 +592,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             int animationTime = 120;
             int startOfAnimationFrame = 32;
             int endOfAnimationFrame = 34;
-            currentFrame = MathHelper.Lerp(21f, 36f, attackTimer / animationTime);
+            currentFrame = Lerp(21f, 36f, attackTimer / animationTime);
 
             // Slow down and look at the target.
             npc.velocity.X *= 0.93f;
@@ -610,10 +610,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             float frameBasedTimer = attackTimer % 6f;
             if ((frameBasedTimer == 1f || frameBasedTimer == 5f) && (int)currentFrame >= startOfAnimationFrame && (int)currentFrame <= endOfAnimationFrame)
             {
-                float shootOffsetAngle = MathHelper.Lerp(0.84f, 0f, Utils.GetLerpValue(startOfAnimation, animationTime, attackTimer, true));
+                float shootOffsetAngle = Lerp(0.84f, 0f, Utils.GetLerpValue(startOfAnimation, animationTime, attackTimer, true));
                 Vector2 spitSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 30f, -60f);
-                spitSpawnPosition.X += MathHelper.Lerp(0f, 46f, 1f - shootOffsetAngle / 0.84f) * npc.spriteDirection;
-                spitSpawnPosition.Y += MathHelper.Lerp(0f, 44f, 1f - shootOffsetAngle / 0.84f);
+                spitSpawnPosition.X += Lerp(0f, 46f, 1f - shootOffsetAngle / 0.84f) * npc.spriteDirection;
+                spitSpawnPosition.Y += Lerp(0f, 44f, 1f - shootOffsetAngle / 0.84f);
                 SoundEngine.PlaySound(SoundID.DD2_OgreSpit, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)

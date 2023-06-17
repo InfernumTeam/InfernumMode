@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public ref float Time => ref Projectile.ai[0];
 
-        public Vector2 CurrentDirection => (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2();
+        public Vector2 CurrentDirection => (Projectile.rotation - PiOver4).ToRotationVector2();
 
         public Vector2 TipPosition => Projectile.Center + CurrentDirection * Projectile.width * 0.5f;
 
@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Fade in. While this happens the projectile emits large amounts of flames.
             int flameCount = (int)((1f - Projectile.Opacity) * 12f);
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
 
             // Create the fade-in dust.
             for (int i = 0; i < flameCount; i++)

@@ -53,20 +53,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 float wallAttackTimer = Main.npc[Main.wofNPCIndex].ai[3];
                 float hoverSpeedFactor = 1f;
                 bool doCircleAttack = wallAttackTimer % 1200f < 600f || Main.npc[Main.wofNPCIndex].life > Main.npc[Main.wofNPCIndex].lifeMax * WallOfFleshMouthBehaviorOverride.Phase2LifeRatio;
-                Vector2 hoverOffset = (MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] + wallAttackTimer / laserShootRate) / 4f).ToRotationVector2() * 360f;
+                Vector2 hoverOffset = (TwoPi * (npc.Infernum().ExtraAI[1] + wallAttackTimer / laserShootRate) / 4f).ToRotationVector2() * 360f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 if (!doCircleAttack)
                 {
                     hoverSpeedFactor = 1.3f;
                     hoverDestination = new Vector2(Main.npc[Main.wofNPCIndex].Center.X, target.Center.Y);
-                    hoverDestination.Y += MathF.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
+                    hoverDestination.Y += Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathF.E) * 350f;
                 }
 
                 if (!Main.npc[Main.wofNPCIndex].WithinRange(target.Center, 4000f))
                     hoverDestination = Main.npc[Main.wofNPCIndex].Center;
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * 18f, hoverSpeedFactor * 0.9f);
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
+                npc.rotation = npc.AngleTo(target.Center) + Pi;
                 npc.dontTakeDamage = true;
 
                 int circleHoverOffsetIndex = 0;
@@ -131,12 +131,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                 return false;
             }
 
-            float destinationOffset = MathHelper.Clamp(npc.Distance(target.Center), 60f, 210f);
-            destinationOffset += MathHelper.Lerp(0f, 215f, MathF.Sin(npc.whoAmI % 4f / 4f * MathHelper.Pi + attackTimer / 16f) * 0.5f + 0.5f);
+            float destinationOffset = Clamp(npc.Distance(target.Center), 60f, 210f);
+            destinationOffset += Lerp(0f, 215f, Sin(npc.whoAmI % 4f / 4f * Pi + attackTimer / 16f) * 0.5f + 0.5f);
             destinationOffset += npc.Distance(target.Center) * 0.1f;
 
-            float destinationAngularOffset = MathHelper.Lerp(-1.04f, 1.04f, npc.ai[0]);
-            destinationAngularOffset += MathF.Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
+            float destinationAngularOffset = Lerp(-1.04f, 1.04f, npc.ai[0]);
+            destinationAngularOffset += Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * Pi) * 0.16f;
 
             // Move in sharp, sudden movements while releasing things at the target.
             Vector2 destination = Main.npc[Main.wofNPCIndex].Center;
@@ -144,12 +144,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             float maxSpeed = Utilities.AnyProjectiles(ModContent.ProjectileType<FireBeamWoF>()) ? 1.5f : 15f;
 
-            npc.velocity = (destination - npc.Center).SafeNormalize(Vector2.Zero) * MathHelper.Min(npc.Distance(destination) * 0.5f, maxSpeed);
+            npc.velocity = (destination - npc.Center).SafeNormalize(Vector2.Zero) * MathF.Min(npc.Distance(destination) * 0.5f, maxSpeed);
             if (!npc.WithinRange(Main.npc[Main.wofNPCIndex].Center, 750f))
                 npc.Center = Main.npc[Main.wofNPCIndex].Center + Main.npc[Main.wofNPCIndex].SafeDirectionTo(npc.Center) * 750f;
 
             npc.spriteDirection = 1;
-            npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.1f);
+            npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), Pi * 0.1f);
 
             attackTimer++;
 
@@ -181,20 +181,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             if (Main.wofNPCIndex == -1)
                 return false;
 
-            float yStart = MathHelper.Lerp(Main.wofDrawAreaBottom, Main.wofDrawAreaTop, verticalOffsetFactor);
+            float yStart = Lerp(Main.wofDrawAreaBottom, Main.wofDrawAreaTop, verticalOffsetFactor);
             Vector2 start = new(Main.npc[Main.wofNPCIndex].Center.X, yStart);
 
             Texture2D fleshRopeTexture = TextureAssets.Chain12.Value;
             void drawChainFrom(Vector2 startingPosition)
             {
                 Vector2 drawPosition = startingPosition;
-                float rotation = npc.AngleFrom(drawPosition) - MathHelper.PiOver2;
+                float rotation = npc.AngleFrom(drawPosition) - PiOver2;
                 while (Vector2.Distance(drawPosition, npc.Center) > 40f)
                 {
                     drawPosition += npc.DirectionFrom(drawPosition) * fleshRopeTexture.Height;
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 drawOffset = Vector2.UnitX.RotatedBy(rotation) * MathF.Cos(MathHelper.TwoPi * i / 4f) * 4f;
+                        Vector2 drawOffset = Vector2.UnitX.RotatedBy(rotation) * Cos(TwoPi * i / 4f) * 4f;
                         Color color = Lighting.GetColor((int)(drawPosition + drawOffset).X / 16, (int)(drawPosition + drawOffset).Y / 16);
                         Main.spriteBatch.Draw(fleshRopeTexture, drawPosition + drawOffset - Main.screenPosition, null, color, rotation, fleshRopeTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                     }

@@ -136,7 +136,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.ChangeDir(Math.Sign(Projectile.velocity.X));
 
             // Determine the rotation based on the direction of the velocity.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Update the sound's position.
             if (SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)
@@ -168,7 +168,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.itemRotation = (Projectile.direction * Projectile.velocity).ToRotation();
 
             // Update the player's arm directions to make it look as though they're holding the horn.
-            float frontArmRotation = (MathHelper.PiOver2 - 0.31f) * -Owner.direction;
+            float frontArmRotation = (PiOver2 - 0.31f) * -Owner.direction;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
         }
 
@@ -228,7 +228,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Main.Rasterizer = RasterizerState.CullNone;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation - MathHelper.PiOver2, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation - PiOver2, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
             Main.spriteBatch.ResetBlendState();
 
             return true;

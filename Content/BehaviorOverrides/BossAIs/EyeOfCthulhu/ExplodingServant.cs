@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             NPC.rotation = NPC.velocity.ToRotation();
             NPC.spriteDirection = (Math.Cos(NPC.rotation) > 0).ToDirectionInt();
-            NPC.rotation -= MathHelper.PiOver2;
+            NPC.rotation -= PiOver2;
 
             NPC.alpha = Utils.Clamp(NPC.alpha - 30, 0, 255);
 

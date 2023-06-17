@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (Projectile.velocity.Y != 0f && Projectile.ai[0] == 0f)
             {
                 // Rotate based on velocity, only do this when falling.
-                Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
                 Projectile.frameCounter++;
                 if (Projectile.frameCounter > 6)
@@ -97,18 +97,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     float scale = 1.6f;
                     float scale2 = 0.8f;
                     float scale3 = 2f;
-                    Vector2 dustVelocity = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.velocity.Length();
+                    Vector2 dustVelocity = (Projectile.rotation - PiOver2).ToRotationVector2() * Projectile.velocity.Length();
                     for (int i = 0; i < 10; i++)
                     {
                         Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 200, default, scale);
-                        greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
+                        greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                         greenBlood.noGravity = true;
                         greenBlood.velocity.Y -= 2f;
                         greenBlood.velocity *= 3f;
                         greenBlood.velocity += dustVelocity * Main.rand.NextFloat();
 
                         greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 100, default, scale2);
-                        greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
+                        greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                         greenBlood.velocity.Y -= 2f;
                         greenBlood.velocity *= 2f;
                         greenBlood.noGravity = true;
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     for (int i = 0; i < 5; i++)
                     {
                         Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 0, default, scale3);
-                        greenBlood.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                        greenBlood.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                         greenBlood.noGravity = true;
                         greenBlood.velocity.Y -= 2f;
                         greenBlood.velocity *= 0.5f;

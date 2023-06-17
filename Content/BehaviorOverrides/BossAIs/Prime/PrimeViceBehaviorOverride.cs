@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             if (attackTimer >= extendTime && attackTimer < attackCycleTime)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.12f);
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
                 if (npc.velocity.Length() > arcSpeed)
                     npc.velocity *= 0.97f;
             }
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             {
                 // Initialize the hover offset angle for the first charge.
                 if (notFirstCharge == 0f)
-                    hoverOffsetAngle = npc.type == NPCID.PrimeSaw ? MathHelper.Pi : 0f;
+                    hoverOffsetAngle = npc.type == NPCID.PrimeSaw ? Pi : 0f;
 
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 0.1f);
                 if (npc.WithinRange(hoverDestination, npc.velocity.Length() * 1.5f))
@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 }
 
                 if (notFirstCharge == 1f)
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) - PiOver2;
 
                 // Don't do damage when hovering.
                 npc.damage = 0;
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
                     // Use the original direction on the first charge to ensure that the telegraphs don't lie to the player.
                     else
-                        npc.velocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * chargeSpeed;
+                        npc.velocity = (npc.rotation + PiOver2).ToRotationVector2() * chargeSpeed;
 
                     localTimer = 0f;
                     attackSubstate = 2f;
@@ -137,7 +137,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 }
 
                 if (notFirstCharge == 1f)
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) - PiOver2;
 
                 // Play motor revving sounds.
                 if (attackTimer % 5f == 4f)
@@ -155,11 +155,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     attackSubstate = 0f;
                     localTimer = 0f;
                     notFirstCharge = 1f;
-                    hoverOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    hoverOffsetAngle = Main.rand.NextFloat(TwoPi);
                     npc.netUpdate = true;
                 }
 
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
             }
             localTimer++;
         }
@@ -183,7 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             ref float localTimer = ref npc.Infernum().ExtraAI[1];
             ref float sawSound = ref npc.localAI[3];
 
-            float idealRotation = npc.type == NPCID.PrimeSaw ? MathHelper.Pi / 6f : -MathHelper.Pi / 6f;
+            float idealRotation = npc.type == NPCID.PrimeSaw ? Pi / 6f : -Pi / 6f;
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.05f);
 
             // At first, the arms move into a cross formation.

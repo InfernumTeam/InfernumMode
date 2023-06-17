@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public void AdditiveDraw(SpriteBatch spriteBatch)
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Draw the telegraph line.
             Vector2 start = Projectile.Center - Main.screenPosition;

@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
-            Projectile.scale = MathHelper.Lerp(1f, 1.7f, 1f - Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true));
+            Projectile.scale = Lerp(1f, 1.7f, 1f - Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true));
             Projectile.velocity *= 0.98f;
             Time++;
         }
@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
             for (int i = 0; i < 5; i++)
             {
-                Vector2 spikeVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.43f, 0.43f, i / 4f)) * 12f;
+                Vector2 spikeVelocity = -Vector2.UnitY.RotatedBy(Lerp(-0.43f, 0.43f, i / 4f)) * 12f;
                 Utilities.NewProjectileBetter(Projectile.Center, spikeVelocity, ModContent.ProjectileType<IceRain2>(), CryogenBehaviorOverride.IceRainDamage, 0f);
             }
         }
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 4f;
                 Color afterimageColor = new Color(46, 188, 234, 0f) * 0.3f;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }

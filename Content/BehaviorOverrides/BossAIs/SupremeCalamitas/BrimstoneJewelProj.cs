@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.Center = Main.npc[CalamityGlobalNPC.SCal].Center + Projectile.rotation.ToRotationVector2() * 20f;
 
             // Fade in. While this happens the projectile emits large amounts of flames.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
 
             // Frequently sync.
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 3 == 2)
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (Time < ChargeupTime)
                 Main.spriteBatch.DrawLineBetter(start, end, Color.Red * Utils.GetLerpValue(0f, 12f, Time, true), 3f);
-            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation - MathHelper.PiOver2, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation - PiOver2, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

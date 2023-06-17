@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.Center = Vector2.Lerp(Projectile.Center, hoverDestination, 0.08f).MoveTowards(hoverDestination, 2f);
 
             // Aim in the direction that the bolt will fire in.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Begin flying into the background once ready.
             if (Time >= LockIntoPositionTime)
@@ -114,7 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             Projectile.velocity *= new Vector2(1.1f, 1.076f);
             Projectile.velocity.Y -= 0.26f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Prepare death effects before disappearing into the background.
             Projectile.scale = Utils.GetLerpValue(0f, -15f, Time - DisappearIntoBackgroundTime, true);
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, 24f * Projectile.velocity.SafeNormalize(Vector2.UnitY), 0.0425f);
 
             // Aim in the direction that the bolt is accelerating.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public void DoBehavior_ArcAndAccelerate()
@@ -141,7 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 Projectile.velocity *= acceleration;
 
             // Aim in the direction that the bolt is accelerating.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public override bool? CanDamage() => Projectile.Opacity >= 0.9f && (AttackState == OtherwordlyBoltAttackState.AccelerateFromBelow || AttackState == OtherwordlyBoltAttackState.ArcAndAccelerate);
@@ -159,7 +159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + drawOffset, null, Color.MediumPurple with { A = 160 } * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, scale, 0, 0);
             }
             for (int i = 0; i < 7; i++)

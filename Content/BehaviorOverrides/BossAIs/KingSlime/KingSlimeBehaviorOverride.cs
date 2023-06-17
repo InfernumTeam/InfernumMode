@@ -110,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 npc.timeLeft = 3600;
 
             float oldScale = npc.scale;
-            float idealScale = MathHelper.Lerp(MaxScale, MinScale, 1f - lifeRatio);
+            float idealScale = Lerp(MaxScale, MinScale, 1f - lifeRatio);
             npc.scale = idealScale;
 
             if (npc.localAI[2] == 0f)
@@ -161,7 +161,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             // Enforce slightly stronger gravity.
             if (npc.velocity.Y > 0f)
             {
-                npc.velocity.Y += MathHelper.Lerp(0.05f, 0.25f, 1f - lifeRatio);
+                npc.velocity.Y += Lerp(0.05f, 0.25f, 1f - lifeRatio);
                 if (BossRushEvent.BossRushActive && npc.velocity.Y > 4f)
                     npc.position.Y += 4f;
             }
@@ -294,8 +294,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                     SoundEngine.PlaySound(InfernumSoundRegistry.KingSlimeDeathAnimation, npc.position);
 
                 float interpolant = (deathTimer - 70) / (deathAnimationLength - 70);
-                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathHelper.Lerp(0, 13, interpolant);
-                for (int i = 0; i < MathHelper.Lerp(2, 4, interpolant); i++)
+                Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Lerp(0, 13, interpolant);
+                for (int i = 0; i < Lerp(2, 4, interpolant); i++)
                 {
                     Dust slime = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(100f, 70f), 4);
                     slime.color = new Color(78, 136, 255, 80);
@@ -343,14 +343,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             {
                 Vector2 position = npc.Center + Main.rand.NextVector2Circular(100f, 70f);
                 NPC slime = NPC.NewNPCDirect(npc.GetSource_FromAI(), (int)position.X, (int)position.Y, Main.rand.NextBool() ? NPCID.BlueSlime : NPCID.SlimeSpiked);
-                Vector2 velocity = Vector2.One.RotateRandom(MathHelper.TwoPi) * Main.rand.NextFloat(6.5f, 12.5f);
+                Vector2 velocity = Vector2.One.RotateRandom(TwoPi) * Main.rand.NextFloat(6.5f, 12.5f);
                 if (velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > 0.5f)
                 {
                     slime.velocity = velocity;
                 }
                 else
                 {
-                    velocity = velocity.RotatedBy(Main.rand.NextFloat(MathHelper.PiOver2, MathHelper.Pi));
+                    velocity = velocity.RotatedBy(Main.rand.NextFloat(PiOver2, Pi));
                     slime.velocity = velocity;
                 }
             }
@@ -401,13 +401,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             int jumpCount = 3;
             int jumpDelay = 25;
             float jumpSpeedX = 8.5f;
-            float jumpSpeedY = Utils.Remap(MathHelper.Distance(npc.Center.Y, target.Center.Y), 40f, 480f, 8.25f, 15f);
+            float jumpSpeedY = Utils.Remap(Distance(npc.Center.Y, target.Center.Y), 40f, 480f, 8.25f, 15f);
             if (bigJump || performingDeathAnimation)
             {
                 jumpCount = 1;
                 jumpDelay += 10;
                 jumpSpeedX += 1.75f;
-                jumpSpeedY = Utils.Remap(MathHelper.Distance(npc.Center.Y, target.Center.Y), 40f, 500f, 10f, 20.5f);
+                jumpSpeedY = Utils.Remap(Distance(npc.Center.Y, target.Center.Y), 40f, 500f, 10f, 20.5f);
             }
             if (performingDeathAnimation)
                 jumpCount = 0;
@@ -487,7 +487,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 if (Math.Abs(npc.velocity.X) < 0.1f)
                     npc.velocity.X = 0f;
 
-                npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp(MathF.Pow(attackTimer / digTime, 3f), 0f, 1f));
+                npc.scale = Lerp(idealScale, 0.2f, Clamp(Pow(attackTimer / digTime, 3f), 0f, 1f));
                 npc.Opacity = Utils.GetLerpValue(0.7f, 1f, npc.scale, true) * 0.7f;
                 npc.dontTakeDamage = true;
                 npc.damage = 0;
@@ -535,7 +535,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (attackTimer > digTime && attackTimer <= digTime + reappearTime)
             {
-                npc.scale = MathHelper.Lerp(0.2f, idealScale, Utils.GetLerpValue(digTime, digTime + reappearTime, attackTimer, true));
+                npc.scale = Lerp(0.2f, idealScale, Utils.GetLerpValue(digTime, digTime + reappearTime, attackTimer, true));
                 npc.position.Y -= 2f;
                 npc.velocity.Y = 0f;
                 npc.Opacity = 0.7f;

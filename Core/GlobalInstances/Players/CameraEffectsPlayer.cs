@@ -41,7 +41,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             }
 
             // Naturally pan back to the player if the camera should not be held in place.
-            ScreenFocusInterpolant = MathHelper.Clamp(ScreenFocusInterpolant - 0.1f, 0f, 1f);
+            ScreenFocusInterpolant = Clamp(ScreenFocusInterpolant - 0.1f, 0f, 1f);
         }
 
         public override void ModifyScreenPosition()

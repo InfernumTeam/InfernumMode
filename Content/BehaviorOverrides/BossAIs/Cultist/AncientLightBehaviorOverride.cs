@@ -27,14 +27,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 if (npc.velocity.Length() < 28f)
                     npc.velocity *= 1.01f;
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
                 return false;
             }
 
             if (adjustedAttackTimer <= swerveTime)
             {
-                float moveOffsetAngle = MathF.Cos(npc.Center.Length() / 150f + npc.whoAmI % 10f / 10f * MathHelper.TwoPi);
-                moveOffsetAngle *= MathHelper.Pi * 0.85f / swerveTime;
+                float moveOffsetAngle = Cos(npc.Center.Length() / 150f + npc.whoAmI % 10f / 10f * TwoPi);
+                moveOffsetAngle *= Pi * 0.85f / swerveTime;
 
                 npc.velocity = npc.velocity.RotatedBy(moveOffsetAngle) * 0.97f;
             }
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     if (BossRushEvent.BossRushActive)
                         idealSpeed *= 1.425f;
 
-                    float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 15.4f, idealSpeed);
+                    float newSpeed = Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 15.4f, idealSpeed);
                     if (!target.dead && target.active && !npc.WithinRange(target.Center, 320f) && !canNoLongerHome)
                     {
                         float homingPower = phase2Variant ? 0.067f : 0.062f;
@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
             attackTimer++;
 
-            npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() - PiOver2;
             return false;
         }
     }

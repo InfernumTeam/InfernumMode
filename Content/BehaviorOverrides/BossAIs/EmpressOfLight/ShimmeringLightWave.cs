@@ -20,14 +20,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
-            float baseShakePower = MathHelper.Lerp(1f, 5f, MathF.Sin(MathHelper.Pi * lifetimeCompletionRatio));
+            float baseShakePower = Lerp(1f, 5f, Sin(Pi * lifetimeCompletionRatio));
             return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
         }
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
             Color rainbow = Main.hslToRgb((lifetimeCompletionRatio * 2f + Projectile.identity * 2.3f) % 1f, 1f, 0.5f);
-            return Color.Lerp(rainbow, new Color(1f, 1f, 1f, 0f), MathHelper.Clamp(lifetimeCompletionRatio * 1.35f, 0f, 1f));
+            return Color.Lerp(rainbow, new Color(1f, 1f, 1f, 0f), Clamp(lifetimeCompletionRatio * 1.35f, 0f, 1f));
         }
 
         public override void PostAI()

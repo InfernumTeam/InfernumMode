@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Explode into a burst of ink bolts.
             for (int i = 0; i < 4; i++)
             {
-                Vector2 inkShootVelocity = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * 6f;
+                Vector2 inkShootVelocity = (TwoPi * i / 4f + PiOver4).ToRotationVector2() * 6f;
                 Utilities.NewProjectileBetter(Projectile.Center, inkShootVelocity, ModContent.ProjectileType<InkBolt>(), 250, 0f);
             }
         }

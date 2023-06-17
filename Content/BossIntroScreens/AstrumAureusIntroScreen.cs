@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override void PrepareShader(Effect shader)
         {
-            Color gleamColor = Color.Lerp(new Color(255, 164, 94), new Color(109, 242, 196), MathF.Cos(Main.GlobalTimeWrappedHourly * 6f) * 0.5f + 0.5f);
+            Color gleamColor = Color.Lerp(new Color(255, 164, 94), new Color(109, 242, 196), Cos(Main.GlobalTimeWrappedHourly * 6f) * 0.5f + 0.5f);
             shader.Parameters["uColor"].SetValue(gleamColor.ToVector3());
             shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }

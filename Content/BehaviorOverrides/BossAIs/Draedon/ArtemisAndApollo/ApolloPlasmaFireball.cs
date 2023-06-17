@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.335f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.335f, 0f, 1f);
 
             Lighting.AddLight(Projectile.Center, 0f, 0.6f * Projectile.Opacity, 0f);
 
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (Projectile.frame >= Main.projFrames[Projectile.type])
                 Projectile.frame = 0;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Create a burst of dust on the first frame.
             if (Projectile.localAI[0] == 0f)
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     int randomDustType = Main.rand.NextBool() ? 107 : 110;
 
                     Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVelocity.X, dustVelocity.Y, 0, default, 2f);
-                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     plasma.noGravity = true;
                     plasma.velocity *= 0.5f;
                 }
@@ -146,9 +146,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     int type = ModContent.ProjectileType<AresPlasmaBolt>();
                     for (int i = 0; i < projectileCount; i++)
                     {
-                        Vector2 shootVelocity = (MathHelper.TwoPi * i / projectileCount).ToRotationVector2() * 0.5f;
+                        Vector2 shootVelocity = (TwoPi * i / projectileCount).ToRotationVector2() * 0.5f;
                         if (ShouldExplodeDiagonally)
-                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Pi / projectileCount);
+                            shootVelocity = shootVelocity.RotatedBy(Pi / projectileCount);
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
                     }
                 }

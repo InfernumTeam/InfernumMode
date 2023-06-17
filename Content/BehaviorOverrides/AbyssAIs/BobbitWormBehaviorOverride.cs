@@ -110,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.2f);
             else
             {
-                npc.rotation = npc.AngleFrom(restingPosition) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleFrom(restingPosition) + PiOver2;
                 attackTimer = 0f;
             }
 
@@ -142,11 +142,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             float acceleration = 1.15f;
 
             // Open jaws.
-            frame = (int)MathHelper.Clamp(attackTimer / 4f, 0f, 2f);
+            frame = (int)Clamp(attackTimer / 4f, 0f, 2f);
 
             // Rapidly accelerate.
             npc.velocity = (npc.velocity * acceleration).ClampMagnitude(3f, maxSpeed);
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Create a shockwave on the first frame.
             if (attackTimer == 1f)
@@ -199,7 +199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (attackTimer >= 10f)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY.RotatedBy(wobbleRotation) * 16f, 0.12f);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
             }
 
             // Force the player into the jaws of the worm.
@@ -324,7 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Vector2 currentSegmentPosition = npc.Center;
             Vector2 drawBottom = new(npc.Infernum().ExtraAI[1], npc.Infernum().ExtraAI[2]);
             Vector2 drawOffset = drawBottom - currentSegmentPosition;
-            float rotation = drawOffset.ToRotation() - MathHelper.PiOver2;
+            float rotation = drawOffset.ToRotation() - PiOver2;
             float maxSegmentOffset = npc.scale * 16f;
             Texture2D segmentTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Abyss/BobbitWormSegment").Value;
 

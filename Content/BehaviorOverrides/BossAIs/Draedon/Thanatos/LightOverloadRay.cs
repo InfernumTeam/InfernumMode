@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public PrimitiveTrailCopy LaserDrawer;
         public static NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
-        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.Opacity * 5f;
+        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - PiOver2).ToRotationVector2() * Projectile.Opacity * 5f;
 
         // This is only used in drawing to represent increments as a semi-hack. Don't mess with it.
         public float RayHue = 0f;
@@ -54,12 +54,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             DelegateMethods.v3_1 = Vector3.One * 0.7f;
-            Utils.PlotTileLine(StartingPosition, StartingPosition + (Thanatos.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.Opacity * 400f, 8f, DelegateMethods.CastLight);
+            Utils.PlotTileLine(StartingPosition, StartingPosition + (Thanatos.rotation - PiOver2).ToRotationVector2() * Projectile.Opacity * 400f, 8f, DelegateMethods.CastLight);
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true) * Utils.GetLerpValue(0f, 8f, Projectile.timeLeft, true);
             Projectile.velocity = Vector2.Zero;
             Projectile.Center = StartingPosition;
-            LaserLength = MathHelper.Lerp(LaserLength, 9000f, 0.1f);
+            LaserLength = Lerp(LaserLength, 9000f, 0.1f);
             Time++;
         }
 
@@ -71,9 +71,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             for (int i = 0; i < 45; i++)
             {
                 float _ = 0f;
-                float offsetAngle = MathHelper.Lerp(-LaserSpread, LaserSpread, i / 44f);
+                float offsetAngle = Lerp(-LaserSpread, LaserSpread, i / 44f);
                 Vector2 start = StartingPosition;
-                Vector2 end = start + (Thanatos.rotation - MathHelper.PiOver2 + offsetAngle).ToRotationVector2() * LaserLength;
+                Vector2 end = start + (Thanatos.rotation - PiOver2 + offsetAngle).ToRotationVector2() * LaserLength;
                 if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.scale * 50f, ref _))
                     return true;
             }
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float offsetAngle = Thanatos.rotation - MathHelper.PiOver2 + MathHelper.Lerp(-LaserSpread * Projectile.Opacity, LaserSpread * Projectile.Opacity, i / 44f);
+                float offsetAngle = Thanatos.rotation - PiOver2 + Lerp(-LaserSpread * Projectile.Opacity, LaserSpread * Projectile.Opacity, i / 44f);
                 for (int j = 0; j < 8; j++)
                 {
                     rotationPoints.Add(offsetAngle);

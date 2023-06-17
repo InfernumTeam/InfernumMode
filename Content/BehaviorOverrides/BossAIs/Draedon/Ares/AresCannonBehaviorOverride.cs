@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 hoverOffset = PerformHoverMovement(npc, performingCharge);
 
             // Update the telegraph outline intensity timer.
-            npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + performingCharge.ToDirectionInt(), 0f, 15f);
+            npc.Infernum().ExtraAI[0] = Clamp(npc.Infernum().ExtraAI[0] + performingCharge.ToDirectionInt(), 0f, 15f);
 
             // Check to see if Ares is in the middle of a death animation. If he is, participate in the death animation.
             if (performingDeathAnimation)
@@ -168,7 +168,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             float rotationToEndOfCannon = npc.rotation;
             if (rotationToEndOfCannon < 0f)
-                rotationToEndOfCannon += MathHelper.Pi;
+                rotationToEndOfCannon += Pi;
             return npc.Center + rotationToEndOfCannon.ToRotationVector2() * 74f + Vector2.UnitY * 8f;
         }
 
@@ -194,7 +194,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             bool charging = attackTimer > chargeDelay * 0.45f;
             if (charging)
             {
-                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                float chargeCompletion = Clamp(attackTimer / chargeDelay, 0f, 1f);
                 energyDrawer.ParticleSpawnRate = 3;
                 energyDrawer.SpawnAreaCompactness = 100f;
                 energyDrawer.chargeProgress = chargeCompletion;
@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Ares.localAI[3] >= 0.36f)
             {
                 smokeDrawer.ParticleSpawnRate = 1;
-                smokeDrawer.BaseMoveRotation = MathHelper.PiOver2;
+                smokeDrawer.BaseMoveRotation = PiOver2;
                 smokeDrawer.SpawnAreaCompactness = 40f;
             }
 
@@ -247,20 +247,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         #region Frames and Drawcode
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / npc.ai[1]));
+            int currentFrame = (int)Math.Round(Lerp(0f, 35f, npc.ai[0] / npc.ai[1]));
 
             if (npc.ai[0] > npc.ai[1])
             {
                 npc.frameCounter++;
                 if (npc.frameCounter >= 66f)
                     npc.frameCounter = 0D;
-                currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)npc.frameCounter / 66f));
+                currentFrame = (int)Math.Round(Lerp(36f, 47f, (float)npc.frameCounter / 66f));
             }
             else
                 npc.frameCounter = 0D;
 
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
-                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
+                currentFrame = (int)Math.Round(Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
 
             npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
         }
@@ -281,8 +281,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 beamOrigin = new(line.Width / 2f, line.Height);
                 Vector2 beamScale = new(telegraphIntensity * 0.5f, 2.4f);
                 Vector2 beamDirection = npc.rotation.ToRotationVector2();
-                float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2 * npc.spriteDirection;
-                Vector2 beamCenter = drawPosition - beamDirection.RotatedBy(-MathHelper.PiOver2) * npc.scale * 10f;
+                float beamRotation = beamDirection.ToRotation() - PiOver2 * npc.spriteDirection;
+                Vector2 beamCenter = drawPosition - beamDirection.RotatedBy(-PiOver2) * npc.scale * 10f;
                 Main.spriteBatch.Draw(line, beamCenter, null, outlineColor, beamRotation, beamOrigin, beamScale, 0, 0f);
 
                 Main.spriteBatch.ResetBlendState();

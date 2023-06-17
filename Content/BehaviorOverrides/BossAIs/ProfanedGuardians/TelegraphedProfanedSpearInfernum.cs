@@ -53,14 +53,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.velocity = OriginalVelocity;
 
             Projectile.tileCollide = Timer - TelegraphDuration > 90;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
 
             if (Timer > TelegraphDuration)
             {
                 // Accelerate.
                 if (Projectile.velocity.Length() < 36f)
                     Projectile.velocity *= 1.028f;
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
             }
             else
             {
@@ -98,9 +98,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 colorInner.A = 0;
                 Color colorOuter = Color.Lerp(colorInner, Color.White, 0.5f) * 0.75f;
                 colorOuter.A = 0;
-                float rotation = MathHelper.PiOver2;
+                float rotation = PiOver2;
 
-                float scaleInterpolant = MathHelper.Clamp(MathF.Sin(Timer / TelegraphDuration * MathHelper.Pi) * 3f, 0f, 1f);
+                float scaleInterpolant = Clamp(Sin(Timer / TelegraphDuration * Pi) * 3f, 0f, 1f);
                 Vector2 scaleInner = new(0.75f * scaleInterpolant, 5550f / texture.Height);
                 Vector2 scaleOuter = scaleInner * new Vector2(1.5f, 1f);
                 Vector2 origin = texture.Size() * new Vector2(0.5f, 0f);

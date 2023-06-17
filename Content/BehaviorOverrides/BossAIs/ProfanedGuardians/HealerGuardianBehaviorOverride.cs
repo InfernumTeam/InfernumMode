@@ -84,9 +84,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             if (drawShieldConnections == 1)
-                connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
+                connectionsWidthScale = Clamp(connectionsWidthScale + 0.1f, 0f, 1f);
             else
-                connectionsWidthScale = MathHelper.Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
+                connectionsWidthScale = Clamp(connectionsWidthScale - 0.1f, 0f, 1f);
 
             return false;
         }
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             int backglowAmount = 12;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Color backglowColor = MagicSpiralCrystalShot.ColorSet[0];
                 backglowColor.A = 0;
                 spriteBatch.Draw(npcTexture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
@@ -193,16 +193,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             baseColor.A = 0;
             float widthScale = commander.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
             Color modifiedColor = Color.Lerp(Color.Transparent, baseColor, widthScale);
-            float scaleSine = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly)) / 2f;
-            float glowScale = MathHelper.Lerp(1.1f, 1.15f, scaleSine);
+            float scaleSine = (1f + Sin(Main.GlobalTimeWrappedHourly)) / 2f;
+            float glowScale = Lerp(1.1f, 1.15f, scaleSine);
             Color finalColor = Color.Lerp(modifiedColor, new(1f, 1f, 1f, 0f), scaleSine);
             Main.EntitySpriteDraw(glowTexture, drawPosition, null, finalColor, 0f, glowOrigin, 1f, SpriteEffects.None, 0);
 
             // Draw two spinning gleams over the crystal.
             Texture2D gleamTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 gleamOrigin = gleamTexture.Size() * 0.5f;
-            float gleamScale = MathHelper.Lerp(2.2f, 2.4f, scaleSine);
-            float gleamRotation = MathHelper.Pi * Main.GlobalTimeWrappedHourly * 2f;
+            float gleamScale = Lerp(2.2f, 2.4f, scaleSine);
+            float gleamRotation = Pi * Main.GlobalTimeWrappedHourly * 2f;
             Main.spriteBatch.Draw(gleamTexture, drawPosition, null, finalColor, gleamRotation, gleamOrigin, gleamScale, 0, 0f);
             Main.spriteBatch.Draw(gleamTexture, drawPosition, null, finalColor, -gleamRotation, gleamOrigin, gleamScale, 0, 0f);
         }
@@ -237,14 +237,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 float interlopant = (commanderTimer - whiteGlowTime) / ashesTime;
                 float smoothed = CalamityUtils.SineInEasing(interlopant, 0);
-                float radius = MathHelper.Lerp(0f, 55f, smoothed);
+                float radius = Lerp(0f, 55f, smoothed);
                 if (radius > 0.5f)
                 {
                     for (int i = 0; i < 24; i++)
                     {
-                        Vector2 drawOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * radius;
+                        Vector2 drawOffset = (TwoPi * i / 24f).ToRotationVector2() * radius;
                         Color backimageColor = WayfinderSymbol.Colors[0];
-                        backimageColor.A = (byte)MathHelper.Lerp(164f, 0f, MathHelper.Lerp(1f, 0f, smoothed));
+                        backimageColor.A = (byte)Lerp(164f, 0f, Lerp(1f, 0f, smoothed));
                         spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backimageColor * npc.Opacity * (1f - smoothed), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                     }
                 }
@@ -256,17 +256,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White) * opacityScalar2, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             // Draw a white overlay
-            float overlayAmount = MathHelper.Lerp(0f, 5f, opacityScalar2);
+            float overlayAmount = Lerp(0f, 5f, opacityScalar2);
             for (int i = 0; i < overlayAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / overlayAmount).ToRotationVector2() * 2f;
+                Vector2 backglowOffset = (TwoPi * i / overlayAmount).ToRotationVector2() * 2f;
                 Color backglowColor = Color.Lerp(MagicSpiralCrystalShot.ColorSet[0], Color.White, commanderTimer / whiteGlowTime);
                 backglowColor.A = 0;
                 spriteBatch.Draw(texture, npc.Center + backglowOffset - Main.screenPosition, npc.frame, backglowColor * opacityScalar * opacityScalar2, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
             }
 
             // Easings for making the shield bob in and out opacity wise.
-            float opacity0to1 = MathF.Sin(MathF.PI * (commanderTimer / whiteGlowTime));
+            float opacity0to1 = Sin(PI * (commanderTimer / whiteGlowTime));
             float shieldOpacity;
             if (commanderTimer >= whiteGlowTime / 2f)
                 shieldOpacity = Utilities.EaseInBounce(opacity0to1);

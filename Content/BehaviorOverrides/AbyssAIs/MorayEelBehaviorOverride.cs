@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Become invulnerable and mostly transparent if hiding in a tile.
             npc.dontTakeDamage = InHidingSpot(npc);
-            npc.Opacity = MathHelper.Clamp(npc.Opacity - npc.dontTakeDamage.ToDirectionInt(), 0.35f, 1f);
+            npc.Opacity = Clamp(npc.Opacity - npc.dontTakeDamage.ToDirectionInt(), 0.35f, 1f);
 
             // Also emit some particle effects as an indicator.
             if (InHidingSpot(npc))
@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Decide rotation.
-            npc.rotation = npc.AngleFrom(spotToHideIn) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleFrom(spotToHideIn) + PiOver2;
 
             // Prevent the tile from being destroyed.
             FixExploitManEaters.ProtectSpot((int)(spotToHideIn.X / 16f), (int)(spotToHideIn.Y / 16f));
@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             {
                 int snapTime = peekingOut == 1f ? 45 : 25;
                 float idealSpeed = peekingOut == 1f ? 5f : 26f;
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
+                float newSpeed = Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
                 npc.velocity = currentSnapDirection.ToRotationVector2() * newSpeed;
 
                 // Get closer to the target if one not peeking.
@@ -166,7 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return false;
             }
 
-            Vector2 snapDirection = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * Main.rand.Next(4));
+            Vector2 snapDirection = Vector2.UnitY.RotatedBy(PiOver2 * Main.rand.Next(4));
 
             // Pick a potential direction to snap out.
             // This is important for attacking.
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             while ((CalamityUtils.DistanceToTileCollisionHit(spotToHideIn, snapDirection, 50) ?? 50f) < 5f)
             {
                 snapDirectionTries++;
-                snapDirection = snapDirection.RotatedBy(MathHelper.PiOver2);
+                snapDirection = snapDirection.RotatedBy(PiOver2);
 
                 if (snapDirectionTries >= 8)
                     return false;
@@ -206,7 +206,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
                 // Add some randomness when peeking.
                 if (peekingOut == 1f)
-                    snapDirection = snapDirection.RotatedByRandom(MathHelper.Pi / 6f);
+                    snapDirection = snapDirection.RotatedByRandom(Pi / 6f);
 
                 npc.velocity = snapDirection * 4f;
                 initialSnapDirection = currentSnapDirection = npc.velocity.ToRotation();
@@ -234,7 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             Vector2 hidingSpot = new(npc.Infernum().ExtraAI[HidingSpotXIndex], npc.Infernum().ExtraAI[HidingSpotYIndex]);
             Vector2 idealDrawPosition = hidingSpot;
-            Vector2 backOffset = (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * -18f;
+            Vector2 backOffset = (npc.rotation - PiOver2).ToRotationVector2() * -18f;
             if (Collision.SolidCollision(idealDrawPosition + backOffset, 4, 4))
                 idealDrawPosition += backOffset;
 
@@ -256,7 +256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Generalize points with a bezier curve.
             BezierCurve bezierCurve = new(bezierPoints.ToArray());
             int totalChains = (int)(npc.Distance(idealDrawPosition) / 16f);
-            totalChains = (int)MathHelper.Clamp(totalChains, 2f, 100f);
+            totalChains = (int)Clamp(totalChains, 2f, 100f);
             for (int i = 0; i < totalChains - 1; i++)
             {
                 Texture2D textureToUse = (totalChains - i - 1) switch
@@ -267,8 +267,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 };
                 Vector2 drawPosition = bezierCurve.Evaluate(i / (float)totalChains);
                 lightColor = Lighting.GetColor((int)(drawPosition.X / 16f), (int)(drawPosition.Y / 16f));
-                float angle = (bezierCurve.Evaluate(i / (float)totalChains + 1f / totalChains) - drawPosition).ToRotation() + MathHelper.PiOver2;
-                spriteBatch.Draw(textureToUse, drawPosition - Main.screenPosition + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 36f, null, lightColor, angle, textureToUse.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                float angle = (bezierCurve.Evaluate(i / (float)totalChains + 1f / totalChains) - drawPosition).ToRotation() + PiOver2;
+                spriteBatch.Draw(textureToUse, drawPosition - Main.screenPosition + (npc.rotation - PiOver2).ToRotationVector2() * 36f, null, lightColor, angle, textureToUse.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

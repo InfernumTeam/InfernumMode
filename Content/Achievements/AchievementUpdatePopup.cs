@@ -22,9 +22,9 @@ namespace InfernumMode.Content.Achievements
             get
             {
                 if (IngameDisplayTimeLeft < 30)
-                    return MathHelper.Lerp(0f, 1f, IngameDisplayTimeLeft / 30f);
+                    return Lerp(0f, 1f, IngameDisplayTimeLeft / 30f);
                 if (IngameDisplayTimeLeft > 285)
-                    return MathHelper.Lerp(1f, 0f, (IngameDisplayTimeLeft - 285f) / 15f);
+                    return Lerp(1f, 0f, (IngameDisplayTimeLeft - 285f) / 15f);
 
                 return 1f;
             }
@@ -104,9 +104,9 @@ namespace InfernumMode.Content.Achievements
                 // Draw completion amount.
                 float textScale2 = textScale;
                 if (IngameDisplayTimeLeft is <= 150 and >= 130)
-                    textScale2 = MathHelper.Lerp(textScale, textScale * 1.1f, Utils.GetLerpValue(130, 150, IngameDisplayTimeLeft));
+                    textScale2 = Lerp(textScale, textScale * 1.1f, Utils.GetLerpValue(130, 150, IngameDisplayTimeLeft));
                 else if (IngameDisplayTimeLeft is <= 180 and > 150)
-                    textScale2 = MathHelper.Lerp(textScale, textScale * 1.1f, Utils.GetLerpValue(180, 151, IngameDisplayTimeLeft));
+                    textScale2 = Lerp(textScale, textScale * 1.1f, Utils.GetLerpValue(180, 151, IngameDisplayTimeLeft));
 
                 Utils.DrawBorderString(color: new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor / 5, Main.mouseTextColor) * opacity, sb: sb, text: activeText, pos: drawPosition - Vector2.UnitX * 15f, scale: textScale2 * 0.8f, anchorx: 1f, anchory: 0.3f);
 

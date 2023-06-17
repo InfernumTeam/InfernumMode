@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     return Vector2.UnitY;
 
                 float bestOrthogonality = -100000f;
-                Vector2 aimDirection = (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2();
+                Vector2 aimDirection = (Projectile.rotation - PiOver4).ToRotationVector2();
                 Vector2 edge = Vector2.Zero;
                 Vector2[] edges = new Vector2[]
                 {
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (!lavaProjectiles.Any())
                     return false;
 
-                Rectangle tipHitbox = Utils.CenteredRectangle(Projectile.Center + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 60f, Vector2.One);
+                Rectangle tipHitbox = Utils.CenteredRectangle(Projectile.Center + (Projectile.rotation - PiOver4).ToRotationVector2() * 60f, Vector2.One);
                 return lavaProjectiles.Any(l => l.Colliding(l.Hitbox, tipHitbox));
             }
         }
@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Decide the rotation of the spear based on velocity, if there is any.
             if (Projectile.velocity != Vector2.Zero)
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
 
             // Handle death effects.
             if (DeathCountdown >= 1f)
@@ -119,25 +119,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (DeathCountdown % 5f == 3f)
                 {
                     float perpendicularOffset = Utils.Remap(DeathCountdown, DeathDelay, 0f, 0f, 3600f);
-                    Vector2 pillarDirection = -(Projectile.rotation - MathHelper.PiOver4).ToRotationVector2();
+                    Vector2 pillarDirection = -(Projectile.rotation - PiOver4).ToRotationVector2();
                     if (InLava)
                         pillarDirection = -Vector2.UnitY;
 
                     // Make the gaps a bit wider if the pillars will spawn at around a 45-degree inclination, since it's a bit too tight without this.
                     float evenAngle = pillarDirection.ToRotation();
                     if (evenAngle < 0f)
-                        evenAngle += MathHelper.TwoPi;
-                    bool closeTo45DegreeGap = MathHelper.Distance(evenAngle % MathHelper.PiOver2, MathHelper.PiOver4) < MathHelper.ToRadians(20f);
+                        evenAngle += TwoPi;
+                    bool closeTo45DegreeGap = Distance(evenAngle % PiOver2, PiOver4) < ToRadians(20f);
                     if (closeTo45DegreeGap)
                         perpendicularOffset *= 1.6f;
 
                     SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 pillarSpawnPosition = Projectile.Center + CurrentDirectionEdge.RotatedBy(MathHelper.PiOver2) * perpendicularOffset - pillarDirection * 800f;
+                        Vector2 pillarSpawnPosition = Projectile.Center + CurrentDirectionEdge.RotatedBy(PiOver2) * perpendicularOffset - pillarDirection * 800f;
                         Utilities.NewProjectileBetter(pillarSpawnPosition, pillarDirection, ModContent.ProjectileType<HolySpearFirePillar>(), 400, 0f);
 
-                        pillarSpawnPosition = Projectile.Center - CurrentDirectionEdge.RotatedBy(MathHelper.PiOver2) * perpendicularOffset - pillarDirection * 800f;
+                        pillarSpawnPosition = Projectile.Center - CurrentDirectionEdge.RotatedBy(PiOver2) * perpendicularOffset - pillarDirection * 800f;
                         Utilities.NewProjectileBetter(pillarSpawnPosition, pillarDirection, ModContent.ProjectileType<HolySpearFirePillar>(), 400, 0f);
                     }
                 }
@@ -200,8 +200,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Draw the spear as a white hot flame with additive blending before it converge inward to create the actual spear.
             for (int i = 0; i < 10; i++)
             {
-                float rotation = Projectile.rotation + MathHelper.Lerp(-0.16f, 0.16f, i / 9f) * burnInterpolant;
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * drawOffsetRadius;
+                float rotation = Projectile.rotation + Lerp(-0.16f, 0.16f, i / 9f) * burnInterpolant;
+                Vector2 drawOffset = (TwoPi * i / 10f).ToRotationVector2() * drawOffsetRadius;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
                 Main.EntitySpriteDraw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0);
             }

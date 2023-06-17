@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         fadeOut = true;
                     }
 
-                    TelegraphLength = MathHelper.Distance(laser.Center.X, Projectile.Center.X);
+                    TelegraphLength = Distance(laser.Center.X, Projectile.Center.X);
                     if (TelegraphLength >= 4000f)
                         TelegraphLength = 0f;
                 }
@@ -191,7 +191,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.24f, Projectile.rotation, telegraphOrigin, outerTelegraphScale, 0, 0f);
 
             Vector2 origin = tex.Size() / 2f;
-            float scale = MathHelper.Lerp(0.7f, 1f, Utils.GetLerpValue(FireDelay - 5f, FireDelay, Time, true));
+            float scale = Lerp(0.7f, 1f, Utils.GetLerpValue(FireDelay - 5f, FireDelay, Time, true));
             float telegraphInterpolant = Utils.GetLerpValue(10f, FireDelay, Time, false) * Projectile.Opacity;
             if (telegraphInterpolant > 0f)
             {
@@ -203,13 +203,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
                 for (float i = 0f; i < 1f; i += 0.25f)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i + Projectile.rotation).ToRotationVector2() * scale * 2f;
+                    Vector2 drawOffset = (TwoPi * i + Projectile.rotation).ToRotationVector2() * scale * 2f;
                     spriteBatch.Draw(tex, drawPos + drawOffset, null, telegraphColor * telegraphInterpolant, Projectile.rotation, origin, scale, 0, 0f);
                 }
                 spriteBatch.Draw(tex, drawPos, null, telegraphColor * telegraphInterpolant, Projectile.rotation, origin, scale * 1.1f, 0, 0f);
             }
             spriteBatch.Draw(tex, drawPos, null, outerLanceColor, Projectile.rotation, origin, scale, 0, 0f);
-            spriteBatch.Draw(fullBladeTex, drawPos, fullBladeFrame, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.PiOver2, fullBladeFrame.Size() * 0.5f, scale, 0, 0f);
+            spriteBatch.Draw(fullBladeTex, drawPos, fullBladeFrame, Projectile.GetAlpha(Color.White), Projectile.rotation + PiOver2, fullBladeFrame.Size() * 0.5f, scale, 0, 0f);
         }
     }
 }

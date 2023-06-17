@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (telegraphCompletion < 1f)
             {
                 if (SetAngleToMoveTo == 0)
-                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * MathF.Pow(CalamityUtils.Convert01To010(telegraphCompletion), 15f));
+                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * Pow(CalamityUtils.Convert01To010(telegraphCompletion), 15f));
                 else
                     Projectile.velocity = InitialVelocity.ToRotation().AngleLerp(SetAngleToMoveTo, telegraphCompletion).ToRotationVector2();
             }
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             Color c = Color.Lerp(Color.Orange, Color.Pink, colorInterpolant * 0.67f);
             if (ProvidenceBehaviorOverride.IsEnraged && !FromGuardians)
                 c = Color.Lerp(c, Color.SkyBlue, 0.55f);
@@ -225,18 +225,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         // This technically also draws when the lasers are shot, since the bloom looks super cool.
         public void SpecialDraw(SpriteBatch spriteBatch)
         {
-            float opacity = MathF.Pow(Time / LaserTelegraphTime, 0.4f);
+            float opacity = Pow(Time / LaserTelegraphTime, 0.4f);
             Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
-            float width = (0.002f + MathF.Pow(opacity, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
+            float width = (0.002f + Pow(opacity, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3.5f) * 0.001f + 0.001f)) * Projectile.width / 36f;
             if (width >= 0.0072f)
                 width = 0.0072f;
 
             laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
             laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-            laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Sqrt(opacity));
+            laserScopeEffect.Parameters["mainOpacity"].SetValue(Sqrt(opacity));
             laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(1500f));
             laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
             laserScopeEffect.Parameters["laserWidth"].SetValue(width);

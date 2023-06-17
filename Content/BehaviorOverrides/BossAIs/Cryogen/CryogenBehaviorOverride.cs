@@ -220,27 +220,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             CryogenAttackState[] attackCycle = Subphase1AttackCycle;
             if (subphaseState == 1f)
             {
-                attackPower = MathHelper.Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackPower = Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
                 attackCycle = Subphase2AttackCycle;
             }
             else if (subphaseState == 2f)
             {
-                attackPower = MathHelper.Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackPower = Lerp(1.35f, 2f, 1f - npc.life / (float)npc.lifeMax);
                 attackCycle = Subphase3AttackCycle;
             }
             else if (subphaseState == 3f)
             {
-                attackPower = MathHelper.Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackPower = Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
                 attackCycle = Subphase4AttackCycle;
             }
             else if (subphaseState == 4f)
             {
-                attackPower = MathHelper.Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackPower = Lerp(1.425f, 2f, 1f - npc.life / (float)npc.lifeMax);
                 attackCycle = Subphase5AttackCycle;
             }
             else if (subphaseState == 5f)
             {
-                attackPower = MathHelper.Lerp(1.5f, 2f, 1f - npc.life / (float)npc.lifeMax);
+                attackPower = Lerp(1.5f, 2f, 1f - npc.life / (float)npc.lifeMax);
                 attackCycle = Subphase6AttackCycle;
             }
 
@@ -277,9 +277,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             attackTimer++;
 
             if (npc.damage == 0)
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.55f, 0.1f);
+                npc.Opacity = Lerp(npc.Opacity, 0.55f, 0.1f);
             else
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.1f);
+                npc.Opacity = Lerp(npc.Opacity, 1f, 0.1f);
 
             CalamityMod.CalamityMod.StopRain();
             return false;
@@ -364,13 +364,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 SoundEngine.PlaySound(CryogenBoss.ShieldRegenSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float angleOffset = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < icicleCount; i++)
                     {
-                        float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                        float icicleFireDirection = TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f, -1, icicleFireDirection, npc.whoAmI);
 
-                        icicleFireDirection = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                        icicleFireDirection = TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f, -1, icicleFireDirection, npc.whoAmI);
                     }
 
@@ -379,7 +379,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                     {
                         for (int i = 0; i < icicleCount; i++)
                         {
-                            float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                            float icicleFireDirection = TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(icicle =>
                             {
@@ -444,7 +444,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 icicleVelocity = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * 6f;
+                        Vector2 icicleVelocity = (TwoPi * i / 4f + PiOver4).ToRotationVector2() * 6f;
                         Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), IcicleSpikeDamage, 0f);
                     }
                 }
@@ -496,11 +496,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == teleportWaitTime)
             {
                 npc.Center = new Vector2(teleportPositionX, teleportPositionY);
-                npc.velocity = -Vector2.UnitY.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 3f) * 7f;
+                npc.velocity = -Vector2.UnitY.RotateTowards(npc.AngleTo(target.Center), Pi / 3f) * 7f;
 
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 bombVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 11f;
+                    Vector2 bombVelocity = (TwoPi * i / 6f).ToRotationVector2() * 11f;
                     Utilities.NewProjectileBetter(npc.Center, bombVelocity, ModContent.ProjectileType<IceBomb2>(), IceBombDamage, 0f);
                 }
 
@@ -559,13 +559,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float angleOffset = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < icicleCount; i++)
                     {
                         int icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
-                            Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                            Main.projectile[icicle].ai[0] = TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
                             Main.projectile[icicle].netUpdate = true;
@@ -574,7 +574,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                         icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), IcicleSpikeDamage, 0f);
                         if (Main.projectile.IndexInRange(icicleCount))
                         {
-                            Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                            Main.projectile[icicle].ai[0] = TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
                             Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
                             Main.projectile[icicle].netUpdate = true;
@@ -587,7 +587,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                         icicleCount -= 2;
                         for (int i = 0; i < icicleCount; i++)
                         {
-                            float icicleFireDirection = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
+                            float icicleFireDirection = TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(icicle =>
                             {
@@ -629,7 +629,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             int intialTeleportDelay = 90;
             int teleportDelay = 60;
             int teleportCount = 8;
-            float verticalTeleportOffset = MathHelper.Lerp(560f, 700f, zeroBasedAttackPower);
+            float verticalTeleportOffset = Lerp(560f, 700f, zeroBasedAttackPower);
             int spikeReleaseRate = zeroBasedAttackPower > 0.8f ? 15 : 20;
             Vector2 initialTeleportOffset = target.Center - Vector2.UnitY * 350f;
 
@@ -671,7 +671,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 teleportTimer = 0f;
                 teleportCounter++;
 
-                Vector2 flyOffset = teleportOffset.RotatedBy(MathHelper.PiOver2);
+                Vector2 flyOffset = teleportOffset.RotatedBy(PiOver2);
 
                 npc.Opacity = 1f;
                 npc.Center = target.Center + teleportOffset;
@@ -700,7 +700,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         {
             float zeroBasedAttackPower = attackPower - 1f;
             int chargeCount = 3;
-            float chargeSpeed = MathHelper.Lerp(20.75f, 28f, zeroBasedAttackPower);
+            float chargeSpeed = Lerp(20.75f, 28f, zeroBasedAttackPower);
             if (BossRushEvent.BossRushActive)
                 chargeSpeed *= 1.45f;
 
@@ -847,7 +847,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         public static void DoAttack_EternalWinter(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
         {
             int chargeCount = 8;
-            float chargeSpeed = MathHelper.Lerp(20f, 25f, attackPower - 1f);
+            float chargeSpeed = Lerp(20f, 25f, attackPower - 1f);
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             // Spin around and charge at the target periodically.
@@ -929,7 +929,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 Vector2 velocity = -direction * Main.rand.NextFloat(2f, 6f) + npc.velocity;
 
                 // Add a bit of randomness, but weight towards going in a cone from the hit zone.
-                Vector2 finalVelocity = Main.rand.NextBool(3) ? velocity.RotatedBy(Main.rand.NextFloat(MathHelper.TwoPi)) : velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f));
+                Vector2 finalVelocity = Main.rand.NextBool(3) ? velocity.RotatedBy(Main.rand.NextFloat(TwoPi)) : velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f));
                 Particle iceParticle = new SnowyIceParticle(projectile.position, finalVelocity, Color.White, Main.rand.NextFloat(0.75f, 0.95f), 30);
                 GeneralParticleHandler.SpawnParticle(iceParticle);
             }

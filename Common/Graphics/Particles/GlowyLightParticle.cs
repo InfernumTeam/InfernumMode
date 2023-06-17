@@ -37,9 +37,9 @@ namespace InfernumMode.Common.Graphics.Particles
         public override void Update()
         {
             if (Time <= 5f)
-                Opacity = MathHelper.Lerp(OriginalOpacity, OriginalOpacity * 1.5f, Time / 5f);
+                Opacity = Lerp(OriginalOpacity, OriginalOpacity * 1.5f, Time / 5f);
             else
-                Opacity = MathHelper.Lerp(OriginalOpacity * 1.5f, 0f, CalamityUtils.SineInOutEasing((Time - 5f) / (Lifetime - 5f), 0));
+                Opacity = Lerp(OriginalOpacity * 1.5f, 0f, CalamityUtils.SineInOutEasing((Time - 5f) / (Lifetime - 5f), 0));
             if (Gravity)
             {
                 Velocity.X *= 0.99f;

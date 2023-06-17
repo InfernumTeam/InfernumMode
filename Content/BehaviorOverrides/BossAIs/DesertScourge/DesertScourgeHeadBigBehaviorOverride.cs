@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneDesert && !BossRushEvent.BossRushActive;
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 420f);
+            enrageTimer = Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 420f);
             bool enraged = enrageTimer > 360f;
 
             npc.defense = npc.defDefense;
@@ -157,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 }
 
                 // Create screen shake effects.
-                target.Infernum_Camera().CurrentScreenShakePower = MathF.Pow(groundShakeInterpolant, 1.81f) * 10f;
+                target.Infernum_Camera().CurrentScreenShakePower = Pow(groundShakeInterpolant, 1.81f) * 10f;
 
                 // Stick below the target.
                 npc.velocity = Vector2.UnitY * -9f;
@@ -175,8 +175,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
                 float horizontalDestination = target.Center.X + (target.Center.X < npc.Center.X).ToDirectionInt() * 250f;
 
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(new(horizontalDestination, target.Center.Y)).X * 15f, 0.075f);
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.6f, -25f, 10f);
+                npc.velocity.X = Lerp(npc.velocity.X, npc.SafeDirectionTo(new(horizontalDestination, target.Center.Y)).X * 15f, 0.075f);
+                npc.velocity.Y = Clamp(npc.velocity.Y - 0.6f, -25f, 10f);
 
                 // Check if the scourge has reached the surface. If it has, create some particle effects and go to the next substate.
                 bool inTiles = WorldGen.SolidTile(CalamityUtils.ParanoidTileRetrieval((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f)));
@@ -212,7 +212,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * Utils.Remap(npc.Distance(target.Center), 180f, 60f, 12f, 3f);
                 if (attackTimer < groundShakeTime + riseUpTime + hoverTime - 32f)
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.18f).RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi / 92f);
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.18f).RotateTowards(idealVelocity.ToRotation(), Pi / 92f);
                 else
                     npc.velocity *= 1.018f;
 
@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             npc.Calamity().ShouldCloseHPBar = true;
 
             // Calculate rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoBehavior_SandSpit(NPC npc, Player target, bool enraged, ref float attackTimer)
@@ -251,7 +251,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             int sandBurstShootRate = 80;
             float sandBurstSpeed = 11.25f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlySpeed = MathHelper.Lerp(10f, 13.15f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
+            float idealFlySpeed = Lerp(10f, 13.15f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)
             {
                 sandPerBurst += 5;
@@ -276,7 +276,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             // Otherwise fly towards them and release bursts of sand.
             else
             {
-                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
+                float flySpeed = Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyAcceleration);
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, flyAcceleration * 15f);
@@ -286,7 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 {
                     for (int i = 0; i < sandPerBurst; i++)
                     {
-                        Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * sandBurstSpeed;
+                        Vector2 sandShootVelocity = (TwoPi * i / sandPerBurst).ToRotationVector2() * sandBurstSpeed;
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
                         Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), SandBlastDamage, 0f);
 
@@ -298,7 +298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             // Calculate rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             if (attackTimer > 360f)
                 SelectNextAttack(npc);
@@ -325,13 +325,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
                     float acceleration = 0.3f;
                     if (attackTimer < 30f)
-                        acceleration = MathHelper.Lerp(-0.72f, 0f, attackTimer / 30f);
+                        acceleration = Lerp(-0.72f, 0f, attackTimer / 30f);
                     else if (attackTimer < 70f)
-                        acceleration = MathHelper.Lerp(0f, 0.38f, Utils.GetLerpValue(30f, 70f, attackTimer, true));
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + acceleration, -10f, 16f);
+                        acceleration = Lerp(0f, 0.38f, Utils.GetLerpValue(30f, 70f, attackTimer, true));
+                    npc.velocity.Y = Clamp(npc.velocity.Y + acceleration, -10f, 16f);
 
                     // Try to stay close to the target horizontally.
-                    if (MathHelper.Distance(target.Center.X, npc.Center.X) > 500f)
+                    if (Distance(target.Center.X, npc.Center.X) > 500f)
                     {
                         float idealHorizontalSpeed = Math.Sign(target.Center.X - npc.Center.X) * 16f;
                         npc.velocity.X = (npc.velocity.X * 24f + idealHorizontalSpeed) / 25f;
@@ -364,10 +364,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 // Charge underground.
                 case 1:
                     // Constantly approach 0 vertical movement via linear interpolation.
-                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.175f);
+                    npc.velocity.Y = Lerp(npc.velocity.Y, 0f, 0.175f);
 
                     // And set the horizontal charge speed.
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, chargeSpeed * chargeDirection, 0.08f);
+                    npc.velocity.X = Lerp(npc.velocity.X, chargeSpeed * chargeDirection, 0.08f);
 
                     // Roar if first frame
                     if (attackTimer == 1)
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         // Emit strong dust bursts upward.
                         for (int i = 0; i < 80; i++)
                         {
-                            if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 900f)
+                            if (Distance(target.Center.X, npc.Center.X) >= 900f)
                                 break;
 
                             Vector2 air = Utilities.GetGroundPositionFrom(npc.Center, new Searches.Up(9000)) - Vector2.UnitY * 32f;
@@ -403,21 +403,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         SoundEngine.PlaySound(SoundID.Item21, npc.Center);
                     }
 
-                    if (attackTimer > 360f || MathHelper.Distance(target.Center.X, npc.Center.X) > 1950f)
+                    if (attackTimer > 360f || Distance(target.Center.X, npc.Center.X) > 1950f)
                         SelectNextAttack(npc);
                     break;
             }
 
             // Calculate rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoBehavior_SandstormParticles(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(19f, 14f, 1f - lifeRatio));
+            int sandParticleReleaseRate = (int)Math.Round(Lerp(19f, 14f, 1f - lifeRatio));
             float sandParticleSpeed = 9.5f;
-            float idealFlySpeed = MathHelper.Lerp(4f, 7f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.011f;
+            float idealFlySpeed = Lerp(4f, 7f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.011f;
             if (enraged)
             {
                 sandParticleReleaseRate /= 2;
@@ -445,14 +445,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             // Otherwise fly towards them and release bursts of sand.
             else
             {
-                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
+                float flySpeed = Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyAcceleration);
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, flyAcceleration * 15f);
             }
 
             // Calculate rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Create the sandstorm.
             Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-1020f, 850f));
@@ -479,8 +479,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             int totalSlams = 2;
             float upwardFlySpeed = 16f;
             float slamSpeed = 21f;
-            int sandBurstCount = (int)MathHelper.Lerp(20f, 32f, 1f - lifeRatio);
-            float sandBurstSpeed = MathHelper.Lerp(13f, 18f, 1f - lifeRatio);
+            int sandBurstCount = (int)Lerp(20f, 32f, 1f - lifeRatio);
+            float sandBurstSpeed = Lerp(13f, 18f, 1f - lifeRatio);
             if (enraged)
             {
                 sandBurstCount += 10;
@@ -495,10 +495,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 // Fly upward for a time.
                 case 0:
                     // Fly upward.
-                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -upwardFlySpeed, 0.08f);
+                    npc.velocity.Y = Lerp(npc.velocity.Y, -upwardFlySpeed, 0.08f);
 
                     // Try to stay close to the target horizontally.
-                    if (MathHelper.Distance(target.Center.X, npc.Center.X) > 400f)
+                    if (Distance(target.Center.X, npc.Center.X) > 400f)
                     {
                         float idealHorizontalSpeed = npc.SafeDirectionTo(target.Center).X * 12.5f;
                         npc.velocity.X = (npc.velocity.X * 14f + idealHorizontalSpeed) / 15f;
@@ -521,7 +521,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 // Slam into the ground.
                 case 1:
                     // Fly downward.
-                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, slamSpeed, 0.08f);
+                    npc.velocity.Y = Lerp(npc.velocity.Y, slamSpeed, 0.08f);
 
                     // Slow down horizontally if moving fast enough.
                     if (Math.Abs(npc.velocity.X) > 6.66f)
@@ -537,7 +537,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         // Create the sand burst.
                         for (int i = 0; i < sandBurstCount; i++)
                         {
-                            Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
+                            Vector2 sandShootVelocity = (TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
                             Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlastInfernum>(), SandBlastDamage, 0f);
                             for (int j = 0; j < 2; j++)
                                 CreateSandParticles(npc, Color.White, sandShootVelocity, npc.Center);
@@ -566,7 +566,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             // Calculate rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoBehavior_SummonVultures(NPC npc, Player target, ref float attackTimer)
@@ -590,7 +590,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             // Otherwise fly towards them and release bursts of sand.
             else
             {
-                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
+                float flySpeed = Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyAcceleration);
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, flyAcceleration * 15f);
@@ -606,13 +606,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                     if (NPC.CountNPCS(NPCID.Vulture) >= 8)
                         break;
 
-                    Vector2 vultureSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-600f, 600f, i / 2f), -500f);
+                    Vector2 vultureSpawnPosition = target.Center + new Vector2(Lerp(-600f, 600f, i / 2f), -500f);
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
                 }
             }
 
             // Calculate rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             if (attackTimer > vultureSummonDelay + attackSwitchDelay)
                 SelectNextAttack(npc);

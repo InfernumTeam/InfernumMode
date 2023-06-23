@@ -95,7 +95,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
         {
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<NormalityRelocator>())
             {
-                if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))
+                if (NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) || NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
                     player.Calamity().normalityRelocator = false;
             }
         }

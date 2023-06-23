@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft);
-            Projectile.scale = MathHelper.SmoothStep(0.05f, 5f + Projectile.identity % 4f / 4f * 0.4f, Utils.GetLerpValue(45f, 5f, Projectile.timeLeft));
+            Projectile.scale = SmoothStep(0.05f, 5f + Projectile.identity % 4f / 4f * 0.4f, Utils.GetLerpValue(45f, 5f, Projectile.timeLeft));
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -95,11 +95,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             for (int i = 0; i < 35; i++)
             {
-                Vector2 drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 35f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2();
+                Vector2 drawPosition = Projectile.Center + (TwoPi * i / 35f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2();
                 drawPosition -= Main.screenPosition;
 
                 Vector2 scale = new Vector2(0.6f, 1f) * Projectile.scale;
-                scale *= MathHelper.Lerp(0.015f, 1f, i / 35f);
+                scale *= Lerp(0.015f, 1f, i / 35f);
 
                 Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }

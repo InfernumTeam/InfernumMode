@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             NPC body = Main.npc[(int)npc.ai[0]];
             Vector2 FistCenterPos = leftFist ? new Vector2(body.Left.X, body.Left.Y) : new Vector2(body.Right.X, body.Right.Y);
-            float armRotation = npc.AngleFrom(FistCenterPos) + MathHelper.PiOver2;
+            float armRotation = npc.AngleFrom(FistCenterPos) + PiOver2;
             bool continueDrawing = true;
             while (continueDrawing)
             {

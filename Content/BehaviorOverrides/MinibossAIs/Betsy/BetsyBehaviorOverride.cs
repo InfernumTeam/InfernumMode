@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
             float idealRotation = npc.AngleTo(target.Center);
             if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             if (attackTimer < hoverRedirectTime)
             {
@@ -107,14 +107,14 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
                 idealRotation = npc.AngleTo(target.Center);
                 if (npc.spriteDirection == -1)
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
                 npc.rotation = idealRotation;
 
                 SoundEngine.PlaySound(SoundID.DD2_BetsyWindAttack, target.Center);
             }
 
             // Flap wings faster depending on fly speed.
-            wingArmFrameCounter += MathHelper.Max(npc.velocity.Length() * 0.03f, 0.35f);
+            wingArmFrameCounter += MathF.Max(npc.velocity.Length() * 0.03f, 0.35f);
             if (attackTimer > hoverRedirectTime + chargeTime)
                 npc.velocity *= 0.97f;
 
@@ -152,12 +152,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
                 float idealRotation = npc.AngleTo(target.Center);
                 if (npc.spriteDirection == -1)
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.04f);
 
                 wingArmFrameCounter += 0.9f;
-                currentFrame = MathHelper.Lerp(5f, 8f, attackTimer / hoverRedirectTime);
+                currentFrame = Lerp(5f, 8f, attackTimer / hoverRedirectTime);
             }
 
             // Do the charge.
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.05f).AngleTowards(0f, 0.125f);
                 wingArmFrameCounter += 1.25f;
-                currentFrame = MathHelper.Lerp(currentFrame, 10f, 0.15f);
+                currentFrame = Lerp(currentFrame, 10f, 0.15f);
 
                 if (attackTimer % 6f == 5f)
                 {
@@ -184,7 +184,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 meteorShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * npc.spriteDirection / 16f) * 33f;
+                        Vector2 meteorShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(TwoPi * npc.spriteDirection / 16f) * 33f;
                         meteorShootVelocity += Main.rand.NextVector2Circular(4f, 4f);
                         Utilities.NewProjectileBetter(mouthPosition, meteorShootVelocity, ModContent.ProjectileType<MoltenMeteor>(), 180, 0f);
                     }
@@ -201,7 +201,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
             npc.velocity *= 0.95f;
             if (attackTimer < summonTime)
-                currentFrame = MathHelper.Lerp(0f, 4f, MathHelper.Clamp(attackTimer / summonTime * 3f, 0f, 1f));
+                currentFrame = Lerp(0f, 4f, Clamp(attackTimer / summonTime * 3f, 0f, 1f));
             wingArmFrameCounter += 0.85f;
 
             if (attackTimer == summonTime / 2)
@@ -269,9 +269,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                 if (hasChargedYet01Flag == 0f)
                 {
                     // Spin 2 win.
-                    npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi / spinTime);
+                    npc.velocity = npc.velocity.RotatedBy(TwoPi / spinTime);
 
-                    bool aimedTowardsPlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.ToRadians(18f);
+                    bool aimedTowardsPlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < ToRadians(18f);
                     if (attackTimer >= upwardFlyTime + horizontalMovementDelay + 75f * (totalSpins - 1) && aimedTowardsPlayer)
                     {
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -280,7 +280,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                     }
                 }
                 npc.spriteDirection = (npc.velocity.X > 0).ToDirectionInt();
-                npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == -1).ToInt() * MathHelper.Pi;
+                npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == -1).ToInt() * Pi;
             }
 
             wingArmFrameCounter += 1.05f;
@@ -311,12 +311,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
                 float idealRotation = npc.AngleTo(target.Center);
                 if (npc.spriteDirection == -1)
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.04f);
 
                 wingArmFrameCounter += 0.9f;
-                currentFrame = MathHelper.Lerp(5f, 8f, attackTimer / hoverRedirectTime);
+                currentFrame = Lerp(5f, 8f, attackTimer / hoverRedirectTime);
             }
 
             // Do the charge.
@@ -336,7 +336,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
 
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.05f).AngleTowards(0f, 0.125f);
                 wingArmFrameCounter += 1.25f;
-                currentFrame = MathHelper.Lerp(currentFrame, 10f, 0.15f);
+                currentFrame = Lerp(currentFrame, 10f, 0.15f);
 
                 if (attackTimer % 10f == 9f)
                 {

@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             Projectile.scale += 0.16f;
             Projectile.Opacity = Utils.GetLerpValue(Projectile.MaxUpdates * 300f, Projectile.MaxUpdates * 265f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, Projectile.MaxUpdates * 50f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Projectile.velocity.Length() < 18f)
                 Projectile.velocity *= 1.02f;
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             explosionColor *= Projectile.Opacity * 0.25f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-            for (int i = 0; i < (int)MathHelper.Lerp(3f, 6f, Projectile.Opacity); i++)
+            for (int i = 0; i < (int)Lerp(3f, 6f, Projectile.Opacity); i++)
                 spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
         }
     }

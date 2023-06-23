@@ -45,15 +45,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             float fadeOpacity = Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true) * Utils.GetLerpValue(Lifetime, Lifetime - 60f, Projectile.timeLeft, true);
             float dissipateOpacity = Utils.GetLerpValue(0f, 60f, Projectile.timeLeft, true) * Utils.GetLerpValue(Lifetime, 90f, Projectile.timeLeft, true);
-            dissipateOpacity = MathHelper.Lerp(0.3f, 0.64f, dissipateOpacity);
+            dissipateOpacity = Lerp(0.3f, 0.64f, dissipateOpacity);
             float widthFactorMax = 1200f / texture.Width;
             float widthFactorMin = 640f / texture.Width;
             Vector2 scaleFactor = new(3f, 6f);
             for (int i = 0; i < auroraCount; i++)
             {
-                float timePulse = MathF.Sin(timeInterpolant * MathHelper.TwoPi + MathHelper.PiOver2 + i / 2f);
+                float timePulse = Sin(timeInterpolant * TwoPi + PiOver2 + i / 2f);
                 drawOffsetsX[i] = timePulse * (300f - i * 3f);
-                drawOffsetsY[i] = MathF.Sin(timeInterpolant * MathHelper.TwoPi * 2f + MathHelper.Pi / 3f + i) * 30f;
+                drawOffsetsY[i] = Sin(timeInterpolant * TwoPi * 2f + Pi / 3f + i) * 30f;
                 drawOffsetsY[i] -= i * 3f;
                 scales[i] = widthFactorMin + (i + 1) * (widthFactorMax - widthFactorMin) / auroraCount;
                 scales[i] *= 0.3f;
@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 color *= fadeOpacity * dissipateOpacity;
                 color.A /= 8;
 
-                float rotation = MathHelper.PiOver2 + timePulse * MathHelper.Pi / -20f + MathHelper.Pi * i;
+                float rotation = PiOver2 + timePulse * Pi / -20f + Pi * i;
 
                 Vector2 drawPosition = baseDrawPosition + new Vector2(drawOffsetsX[i], drawOffsetsY[i]);
                 Main.spriteBatch.Draw(texture, drawPosition, null, color, rotation, origin, new Vector2(scales[i], scales[i]) * scaleFactor, 0, 0);

@@ -59,7 +59,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
                 int numDust = 18;
                 for (int i = 0; i < numDust; i++)
                 {
-                    Vector2 ringVelocity = (MathHelper.TwoPi * i / numDust).ToRotationVector2().RotatedBy(Projectile.velocity.ToRotation() + MathHelper.PiOver2) * 5f;
+                    Vector2 ringVelocity = (TwoPi * i / numDust).ToRotationVector2().RotatedBy(Projectile.velocity.ToRotation() + PiOver2) * 5f;
                     Dust ringDust = Dust.NewDustPerfect(Projectile.position, 211, ringVelocity, 100, default, 1.25f);
                     ringDust.noGravity = true;
                 }
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
 
             // Randomly emit bubbles.
             Vector2 bubbleSpawnPosition = Projectile.Center + Projectile.velocity * Main.rand.NextFloat(800f);
-            bubbleSpawnPosition += Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * 14f;
+            bubbleSpawnPosition += Projectile.velocity.RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * 14f;
             if (Main.rand.NextBool(3))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -111,8 +111,8 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.05f, completionRatio, true) * Utils.GetLerpValue(1f, 0.95f, completionRatio, true);
-            float baseWidth = MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
-            return baseWidth * MathHelper.Lerp(1f, 2.3f, Projectile.localAI[0]);
+            float baseWidth = SmoothStep(2f, Projectile.width, squeezeInterpolant) * Clamp(Projectile.scale, 0.01f, 1f);
+            return baseWidth * Lerp(1f, 2.3f, Projectile.localAI[0]);
         }
 
         // Prevent natural movement.
@@ -120,8 +120,8 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
 
         public Color ColorFunction(float completionRatio)
         {
-            float opacty = Utils.GetLerpValue(0.92f, 0.6f, completionRatio, true) * MathHelper.Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity;
-            Color color = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            float opacty = Utils.GetLerpValue(0.92f, 0.6f, completionRatio, true) * Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity;
+            Color color = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(Sin(completionRatio * Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             return color * opacty;
         }
 

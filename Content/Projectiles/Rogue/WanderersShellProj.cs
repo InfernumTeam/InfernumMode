@@ -51,7 +51,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             else
             {
                 Projectile.velocity.X *= 0.95f;
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.54f, -8f, 15.9f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.54f, -8f, 15.9f);
                 Projectile.tileCollide = true;
             }
         }

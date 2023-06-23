@@ -83,9 +83,9 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             if (Time is < RayCreationTime + RayExpandTime + IdleDrawTime and > 10f)
             {
                 float interpolant = (Time - 10f) / (RayCreationTime + RayExpandTime + IdleDrawTime - 10f);
-                int amount = (int)MathHelper.Lerp(0, 6f, interpolant);
-                float offsetAmount = MathHelper.Lerp(0f, 25f, interpolant);
-                float scale = MathHelper.Lerp(0f, 1.3f, interpolant);
+                int amount = (int)Lerp(0, 6f, interpolant);
+                float offsetAmount = Lerp(0f, 25f, interpolant);
+                float scale = Lerp(0f, 1.3f, interpolant);
                 WayfinderHoldout.CreateFlameExplosion(Projectile.Center, offsetAmount, offsetAmount, amount, scale, 30);
             }
 
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 WayfinderHoldout.CreateFlameExplosion(Projectile.Center, 25f, 25f, 30, 1.3f, fireLifetime);
             }
 
-            Projectile.rotation = -MathHelper.PiOver4;
+            Projectile.rotation = -PiOver4;
 
             Time++;
         }
@@ -142,7 +142,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
 
             float dissipateInterpolant = Utils.GetLerpValue(Lifetime, Lifetime - VisualEffectsDissipateTime, Time, true);
-            float rayExpandFactor = MathHelper.Lerp(1f, 2f, MathHelper.Clamp((Time - RayCreationTime - RayExpandTime) / 90f, 0f, 1000f)) * dissipateInterpolant;
+            float rayExpandFactor = Lerp(1f, 2f, Clamp((Time - RayCreationTime - RayExpandTime) / 90f, 0f, 1000f)) * dissipateInterpolant;
             DrawBloomCircle(rayExpandFactor);
             DrawLightRays();
 
@@ -155,8 +155,8 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         {
             // Draw a bunch of god rays.
             float dissipateInterpolant = Utils.GetLerpValue(Lifetime, Lifetime - VisualEffectsDissipateTime, Time, true);
-            float totalDeathRays = MathHelper.Lerp(0f, 8f, Utils.GetLerpValue(0f, RayCreationTime, Time, true)) * dissipateInterpolant;
-            float rayExpandFactor = MathHelper.Lerp(1f, 2f, MathHelper.Clamp((Time - RayCreationTime - RayExpandTime) / 90f, 0f, 1000f)) * dissipateInterpolant;
+            float totalDeathRays = Lerp(0f, 8f, Utils.GetLerpValue(0f, RayCreationTime, Time, true)) * dissipateInterpolant;
+            float rayExpandFactor = Lerp(1f, 2f, Clamp((Time - RayCreationTime - RayExpandTime) / 90f, 0f, 1000f)) * dissipateInterpolant;
 
             for (int i = 0; i < (int)totalDeathRays; i++)
             {
@@ -166,7 +166,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 rayAnimationCompletion *= rayExpandFactor;
 
                 ulong seed = (ulong)(i + 1) * 3141592uL;
-                float rayDirection = MathHelper.TwoPi * i / 8f + MathF.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
+                float rayDirection = TwoPi * i / 8f + Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
                 rayDirection += Main.GlobalTimeWrappedHourly * 0.48f;
                 DrawLightRay(seed, rayDirection, rayAnimationCompletion, Projectile.Center);
             }
@@ -192,7 +192,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             {
                 Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-                Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * MathF.Pow(bloomInterpolant, 2f);
+                Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * Pow(bloomInterpolant, 2f);
                 bloomSize *= 1f + (rayExpandFactor - 1f) * 2f;
 
                 Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Orange * bloomInterpolant, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
@@ -210,18 +210,18 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
             float rayWidthFunction(float completionRatio, float rayBrightness2)
             {
-                return MathHelper.Lerp(2f, 14f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
+                return Lerp(2f, 14f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
             }
             Color rayColorFunction(float completionRatio, float rayBrightness2)
             {
                 float dissipateInterpolant = Utils.GetLerpValue(Lifetime, Lifetime - VisualEffectsDissipateTime, Time, true);
-                return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * MathHelper.Clamp(0f, 0.65f, rayBrightness2) * dissipateInterpolant;
+                return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * Clamp(0f, 0.65f, rayBrightness2) * dissipateInterpolant;
             }
 
             LightDrawer ??= new PrimitiveTrailCopy(c => rayWidthFunction(c, Projectile.Infernum().ExtraAI[8]), c => rayColorFunction(c, Projectile.Infernum().ExtraAI[8]), null, false);
 
             Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
-            float length = MathHelper.Lerp(125f, 220f, Utils.RandomFloat(ref seed)) * rayBrightness;
+            float length = Lerp(125f, 220f, Utils.RandomFloat(ref seed)) * rayBrightness;
             List<Vector2> points = new();
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint + initialRayRotation.ToRotationVector2() * length, i / 12f));

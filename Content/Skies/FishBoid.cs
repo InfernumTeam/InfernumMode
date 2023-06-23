@@ -51,11 +51,11 @@ namespace InfernumMode.Content.Skies
         {
             // Grow rapidly
             if (Time <= 120)
-                Scale = MathHelper.Lerp(0f, MaxScale, Time / 60f);
+                Scale = Lerp(0f, MaxScale, Time / 60f);
 
             // Shrink rapidly.
             if (TimeLeft <= 120)
-                Scale = MathHelper.Lerp(0f, MaxScale, (float)TimeLeft / 60f);
+                Scale = Lerp(0f, MaxScale, (float)TimeLeft / 60f);
 
             // Choose a direction.
 
@@ -120,7 +120,7 @@ namespace InfernumMode.Content.Skies
             }
 
             // Swim around idly.
-            Velocity = Velocity.RotatedBy(MathHelper.Pi * (posInList % 2f == 0f).ToDirectionInt() * 0.002f);
+            Velocity = Velocity.RotatedBy(Pi * (posInList % 2f == 0f).ToDirectionInt() * 0.002f);
         }
 
         public void Draw()
@@ -128,17 +128,17 @@ namespace InfernumMode.Content.Skies
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
             Rectangle screen = new(-1000, -1000, 4000, 4000);
             SpriteEffects effects = (Velocity.X > 0f).ToDirectionInt() == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            //float depthScalar = MathHelper.Lerp(1f, 3f, Depth / 3f);
+            //float depthScalar = Lerp(1f, 3f, Depth / 3f);
             Vector2 scale = Vector2.One / Depth;
             Vector2 position = (Position - screenCenter) * scale + screenCenter - Main.screenPosition;
-            float rotation = (Velocity.X > 0f).ToDirectionInt() == -1 ? Rotation += MathHelper.Pi : Rotation;
+            float rotation = (Velocity.X > 0f).ToDirectionInt() == -1 ? Rotation += Pi : Rotation;
             if (screen.Contains((int)position.X, (int)position.Y))
             {
                 Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/DepthFeeder").Value;
                 Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/DepthFeederGlow").Value;
                 Rectangle frame = new(0, FrameHeight * CurrentFrame, FrameWidth, FrameHeight);
                 Vector2 origin = frame.Size() * 0.5f;
-                float opacityScalar = MathHelper.Lerp(0.4f, 0.7f, (Depth - 1) / 2f);
+                float opacityScalar = Lerp(0.4f, 0.7f, (Depth - 1) / 2f);
                 Main.spriteBatch.Draw(texture, position, frame, DrawColor * opacityScalar, rotation, origin, scale * Scale, effects, 0f);
                 Main.spriteBatch.Draw(glowmask, position, frame, Color.White * 1.3f * opacityScalar, rotation, origin, scale * Scale, effects, 0f);
 

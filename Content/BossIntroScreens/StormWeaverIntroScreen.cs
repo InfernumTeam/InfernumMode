@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
-            float lightningInterpolant = Utils.GetLerpValue(0.77f, 1f, MathF.Sin(AnimationCompletion * -MathHelper.Pi * 4f + completionRatio * MathHelper.Pi * 4f) * 0.5f + 0.5f);
+            float lightningInterpolant = Utils.GetLerpValue(0.77f, 1f, Sin(AnimationCompletion * -Pi * 4f + completionRatio * Pi * 4f) * 0.5f + 0.5f);
             Color skinColor = new(219, 103, 151);
             Color lightningColor = new(190, 233, 215);
             return Color.Lerp(skinColor, lightningColor, lightningInterpolant);

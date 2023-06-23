@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
 
             bool outOfBiome = !target.ZoneJungle && !BossRushEvent.BossRushActive;
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
+            enrageTimer = Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
             npc.defense = enrageTimer >= 300f ? 70 : npc.defDefense;
             npc.damage = npc.defDamage;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
 
-                npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 32f);
+                npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), 32f);
                 if (npc.WithinRange(target.Center, 90f))
                 {
                     npc.Center = target.Center - npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 90f;
@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public static void DoDespawnEffects(NPC npc)
         {
-            npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 17f, 0.1f);
+            npc.velocity.Y = Lerp(npc.velocity.Y, 17f, 0.1f);
             npc.damage = 0;
             if (npc.timeLeft > 180)
                 npc.timeLeft = 180;
@@ -219,7 +219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 frameType = (int)QueenBeeFrameType.UpwardFly;
                 if (npc.WithinRange(destination, 48f) || Math.Abs(target.Center.Y - npc.Center.Y) < 15f)
                 {
-                    npc.Center = new Vector2(MathHelper.Lerp(npc.Center.X, destination.X, 0.1f), MathHelper.Lerp(npc.Center.Y, destination.Y, 0.5f));
+                    npc.Center = new Vector2(Lerp(npc.Center.X, destination.X, 0.1f), Lerp(npc.Center.Y, destination.Y, 0.5f));
                     npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitX) * baseChargeSpeed;
                     if (npc.life < npc.lifeMax * FinalPhaseLifeRatio && Math.Abs(target.velocity.Y) > 3f)
                         npc.velocity.Y += target.velocity.Y * 0.5f;
@@ -240,7 +240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitX) * (npc.velocity.Length() + speedBoost);
 
                 frameType = (int)QueenBeeFrameType.HorizontalCharge;
-                float destinationOffset = MathHelper.Lerp(540f, 450f, 1f - npc.life / (float)npc.lifeMax);
+                float destinationOffset = Lerp(540f, 450f, 1f - npc.life / (float)npc.lifeMax);
 
                 if (npc.spriteDirection == 1 && npc.Center.X - target.Center.X > destinationOffset ||
                     npc.spriteDirection == -1 && npc.Center.X - target.Center.X < -destinationOffset)
@@ -302,11 +302,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                 {
                     for (int i = 0; i < 12; i++)
                     {
-                        float offsetAngle = MathHelper.TwoPi * 1.61808f * i / 12f;
-                        Vector2 stingerSpawnPosition = baseStingerSpawnPosition + offsetAngle.ToRotationVector2() * MathHelper.Lerp(4f, 28f, i / 12f);
+                        float offsetAngle = TwoPi * 1.61808f * i / 12f;
+                        Vector2 stingerSpawnPosition = baseStingerSpawnPosition + offsetAngle.ToRotationVector2() * Lerp(4f, 28f, i / 12f);
                         Vector2 stingerShootVelocity = (target.Center - baseStingerSpawnPosition).SafeNormalize(Vector2.UnitY) * shootSpeed;
-                        float burstOutwardness = MathHelper.Lerp(0.04f, 0.12f, 1f - npc.life / (float)npc.lifeMax);
-                        stingerShootVelocity = stingerShootVelocity.RotatedBy(MathHelper.Lerp(-burstOutwardness, burstOutwardness, i / 11f));
+                        float burstOutwardness = Lerp(0.04f, 0.12f, 1f - npc.life / (float)npc.lifeMax);
+                        stingerShootVelocity = stingerShootVelocity.RotatedBy(Lerp(-burstOutwardness, burstOutwardness, i / 11f));
 
                         int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, StingerDamage, 0f);
                         if (Main.projectile.IndexInRange(stinger))
@@ -316,7 +316,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                     // Determine a new position to fly at.
                     Matrix offsetRotationMatrix = Matrix.CreateRotationX(attackTimer / shootRate * 2.8f + 0.56f);
                     offsetRotationMatrix *= Matrix.CreateRotationY((attackTimer / shootRate * 5.3f + 0.66f) * 0.41f);
-                    offsetRotationMatrix *= Matrix.CreateRotationZ(attackTimer / shootRate * MathHelper.Pi * 0.33f);
+                    offsetRotationMatrix *= Matrix.CreateRotationZ(attackTimer / shootRate * Pi * 0.33f);
 
                     Vector3 tansformedRotationData = Vector3.Transform(Vector3.UnitY, offsetRotationMatrix);
                     Vector2 flyDestinationOffset = new Vector2(tansformedRotationData.X, tansformedRotationData.Y) * new Vector2(210f, 125f);
@@ -407,7 +407,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             if (canShootHornetHives)
                 summonRate = 45;
 
-            if (MathHelper.Distance(target.Center.X, npc.Center.X) > 60f)
+            if (Distance(target.Center.X, npc.Center.X) > 60f)
                 npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % summonRate == summonRate - 1f)
@@ -495,7 +495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
             // Bob up and down.
             if (isTimeToSummonBees)
-                npc.velocity = Vector2.UnitY * MathF.Cos(MathHelper.TwoPi * attackTimer / 150f) * 3f;
+                npc.velocity = Vector2.UnitY * Cos(TwoPi * attackTimer / 150f) * 3f;
 
             // Delete far away stingers.
             foreach (Projectile stinger in Utilities.AllProjectilesByID(ProjectileID.Stinger))
@@ -541,7 +541,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                     SoundEngine.PlaySound(SoundID.Roar, target.Center);
                     for (int i = 0; i < 30; i++)
                     {
-                        Vector2 honeyDustVelocity = (MathHelper.TwoPi * i / 30f).ToRotationVector2() * 5f;
+                        Vector2 honeyDustVelocity = (TwoPi * i / 30f).ToRotationVector2() * 5f;
                         Dust honey = Dust.NewDustPerfect(npc.Center, 153);
                         honey.scale = Main.rand.NextFloat(1f, 1.85f);
                         honey.velocity = honeyDustVelocity;

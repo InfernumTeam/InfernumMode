@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Spin around SCal's arena.
             Vector2 arenaCenter = SCal.Infernum().Arena.Center.ToVector2();
-            npc.Center = arenaCenter - MathHelper.ToRadians(spinOffsetAngle).ToRotationVector2() * (outerSeeker ? 1000f : 500f);
+            npc.Center = arenaCenter - ToRadians(spinOffsetAngle).ToRotationVector2() * (outerSeeker ? 1000f : 500f);
 
             // Begin to disappear if SCal isn't doing the seekers attack anymore.
             npc.dontTakeDamage = false;

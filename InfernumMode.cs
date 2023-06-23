@@ -1,3 +1,5 @@
+global using static System.MathF;
+global using static Microsoft.Xna.Framework.MathHelper;
 using CalamityMod.Cooldowns;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BossBars;

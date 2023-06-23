@@ -44,11 +44,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                     float shootInterpolant = Utils.GetLerpValue(600f, 1450f, Projectile.Distance(target.Center), true);
 
-                    int laserCount = (int)MathHelper.Lerp(5f, 12f, shootInterpolant);
-                    float shootSpeed = MathHelper.Lerp(15f, 25f, shootInterpolant);
+                    int laserCount = (int)Lerp(5f, 12f, shootInterpolant);
+                    float shootSpeed = Lerp(15f, 25f, shootInterpolant);
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(laserCount - 1f))) * shootSpeed;
+                        Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.6f, 0.6f, i / (float)(laserCount - 1f))) * shootSpeed;
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                         {

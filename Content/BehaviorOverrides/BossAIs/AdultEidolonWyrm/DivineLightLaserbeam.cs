@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -3.1f + completionRatio * 20f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -3.1f + completionRatio * 20f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Wheat, Color.Yellow, colorInterpolant * 0.64f);
         }
 

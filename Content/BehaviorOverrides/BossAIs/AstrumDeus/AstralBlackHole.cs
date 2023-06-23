@@ -55,8 +55,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             Projectile.scale = Utilities.UltrasmoothStep(Timer / 60f) * 2.5f + Utilities.UltrasmoothStep(Timer / 32f) * 0.34f;
-            Projectile.scale = MathHelper.Lerp(Projectile.scale, 0f, Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true));
-            Projectile.Opacity = MathHelper.Clamp(Projectile.scale * 0.87f, 0f, 1f);
+            Projectile.scale = Lerp(Projectile.scale, 0f, Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true));
+            Projectile.Opacity = Clamp(Projectile.scale * 0.87f, 0f, 1f);
             Timer++;
 
             // Prepare for death if the lasers are gone.
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     for (int i = 0; i < LaserCount; i++)
                     {
-                        Vector2 laserDirection = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / LaserCount);
+                        Vector2 laserDirection = -Vector2.UnitY.RotatedBy(TwoPi * i / LaserCount);
                         Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<DarkGodLaser>(), AstrumDeusHeadBehaviorOverride.BlackHoleLaserDamage, 0f);
                     }
                 }
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 float width = Utils.GetLerpValue(0f, 8f, Timer, true) * Utils.GetLerpValue(45f, 38f, Timer, true) * 3f;
                 for (int i = 0; i < LaserCount; i++)
                 {
-                    Vector2 lineDirection = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / LaserCount);
+                    Vector2 lineDirection = -Vector2.UnitY.RotatedBy(TwoPi * i / LaserCount);
                     Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + lineDirection * 4500f, Color.Violet, width);
                 }
             }

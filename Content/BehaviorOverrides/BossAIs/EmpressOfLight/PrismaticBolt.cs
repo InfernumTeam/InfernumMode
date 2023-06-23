@@ -63,8 +63,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
             if (canRotate)
             {
-                float offsetInterpolant = MathF.Cos(Projectile.whoAmI % 6f / 6f + Projectile.position.X / 320f + Projectile.position.Y / 160f);
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi * offsetInterpolant / 120f) * 0.98f;
+                float offsetInterpolant = Cos(Projectile.whoAmI % 6f / 6f + Projectile.position.X / 320f + Projectile.position.Y / 160f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(Pi * offsetInterpolant / 120f) * 0.98f;
             }
 
             if (canMoveTowardsTarget)
@@ -78,11 +78,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                         idealVelocity *= Projectile.localAI[0];
                 }
 
-                float amount = MathHelper.Lerp(0.086f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
+                float amount = Lerp(0.086f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
                 Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, amount);
             }
             Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     rainbowMagic.velocity = angularOffset.ToRotationVector2();
                     rainbowMagic.scale = 1.6f;
                 }
-                angularOffset += MathHelper.TwoPi / dustCount;
+                angularOffset += TwoPi / dustCount;
                 rainbowMagic.velocity += Projectile.velocity * Main.rand.NextFloat(0.5f);
             }
         }
@@ -155,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Color smallGleamColor = color * 0.5f;
             float opacity = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) *
                 Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) *
-                (1f + 0.2f * MathF.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * MathHelper.Pi * 6f)) * 0.8f;
+                (1f + 0.2f * Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * Pi * 6f)) * 0.8f;
             Vector2 bigGleamScale = new Vector2(0.5f, 5f) * opacity;
             Vector2 smallGleamScale = new Vector2(0.5f, 2f) * opacity;
             bigGleamColor *= opacity;

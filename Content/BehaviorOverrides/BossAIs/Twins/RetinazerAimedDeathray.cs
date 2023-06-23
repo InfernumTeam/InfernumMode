@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             if (!Main.npc.IndexInRange((int)Projectile.ai[1]) || !Main.npc[(int)Projectile.ai[1]].active)
                 Projectile.Kill();
 
-            Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
+            Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + PiOver2).ToRotationVector2();
             Projectile.Center = Main.npc[(int)Projectile.ai[1]].Center + Projectile.velocity * 40f;
         }
 
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             {
                 for (int direction = -1; direction <= 1; direction += 2)
                 {
-                    Vector2 shootVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * direction) * 4.2f;
+                    Vector2 shootVelocity = Projectile.velocity.RotatedBy(PiOver2 * direction) * 4.2f;
                     Utilities.NewProjectileBetter(Projectile.Center + Projectile.velocity * i, shootVelocity, ModContent.ProjectileType<RetinazerLaser>(), TwinsAttackSynchronizer.SmallLaserDamage, 0f);
                 }
             }
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         public Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = CalamityUtils.Convert01To010(Time / Lifetime) * 0.45f + 0.15f;
-            colorInterpolant = MathHelper.Lerp(colorInterpolant, 1f, 1f - 1f / Projectile.localAI[1]);
+            colorInterpolant = Lerp(colorInterpolant, 1f, 1f - 1f / Projectile.localAI[1]);
 
             return Color.Lerp(Color.Red, Color.White, colorInterpolant) * (1f / Projectile.localAI[1]);
         }

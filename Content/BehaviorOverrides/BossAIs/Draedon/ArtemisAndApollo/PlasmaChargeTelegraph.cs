@@ -78,9 +78,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public Color TelegraphPrimitiveColor(float completionRatio)
         {
-            float opacity = MathHelper.Lerp(0.38f, 1.2f, Projectile.Opacity);
+            float opacity = Lerp(0.38f, 1.2f, Projectile.Opacity);
             opacity *= CalamityUtils.Convert01To010(completionRatio);
-            opacity *= MathHelper.Lerp(0.9f, 0.2f, Projectile.ai[0] / (ChargePositions.Length - 1f));
+            opacity *= Lerp(0.9f, 0.2f, Projectile.ai[0] / (ChargePositions.Length - 1f));
             if (completionRatio > 0.95f)
                 opacity = 0.0000001f;
             return Color.Lime * opacity;

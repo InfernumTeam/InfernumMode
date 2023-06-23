@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             if (Projectile.Hitbox.Intersects(Target.Hitbox))
                 Projectile.Kill();
 

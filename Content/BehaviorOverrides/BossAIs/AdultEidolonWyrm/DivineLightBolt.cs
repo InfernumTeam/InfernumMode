@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Decide frames.
             Projectile.frameCounter++;

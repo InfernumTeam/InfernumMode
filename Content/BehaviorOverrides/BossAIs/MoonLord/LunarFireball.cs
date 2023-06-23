@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override void AI()
         {
             Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt();
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
 
             if (InitialSpeed == 0f)
                 InitialSpeed = Projectile.velocity.Length();

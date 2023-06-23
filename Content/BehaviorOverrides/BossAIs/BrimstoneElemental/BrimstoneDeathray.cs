@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                     Vector2 petalSpawnPosition = OwnerEyePosition + Projectile.velocity * petalOffset;
                     for (int i = -1; i <= 1; i++)
                     {
-                        Vector2 petalVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2 * i) * 8f;
+                        Vector2 petalVelocity = Projectile.velocity.RotatedBy(PiOver2 * i) * 8f;
                         if (BossRushEvent.BossRushActive)
                             petalVelocity *= 1.85f;
                         Utilities.NewProjectileBetter(petalSpawnPosition, petalVelocity, ModContent.ProjectileType<BrimstonePetal2>(), BrimstoneElementalBehaviorOverride.BrimstonePetalDamage, 0f);
@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -5.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -5.2f + completionRatio * 23f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Red, new(255, 0, 25), colorInterpolant) * Utils.GetLerpValue(0.02f, 0.05f, completionRatio, true);
         }
 

@@ -103,7 +103,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
 
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
             Owner.ChangeDir(Projectile.spriteDirection);
 
             Projectile.Center += Projectile.velocity * 20f;

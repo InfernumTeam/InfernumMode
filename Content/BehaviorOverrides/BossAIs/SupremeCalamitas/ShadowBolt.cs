@@ -34,9 +34,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.01f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.01f, 0f, 1f);
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Projectile.velocity *= 0.99f;
             Time++;
         }
@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             for (int i = 0; i < 12; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Type], lightColor);

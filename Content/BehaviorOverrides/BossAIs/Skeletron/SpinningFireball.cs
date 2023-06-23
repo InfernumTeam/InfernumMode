@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         public override void AI()
         {
             Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
-            Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.TwoPi / 120f);
+            Projectile.velocity = Projectile.velocity.RotatedBy(TwoPi / 120f);
 
             if (Main.dedServ)
                 return;

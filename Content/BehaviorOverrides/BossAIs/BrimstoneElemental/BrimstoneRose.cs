@@ -36,11 +36,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override void AI()
         {
             Projectile.scale = Utils.GetLerpValue(0f, 25f, Time, true);
-            Projectile.Opacity = MathF.Sqrt(Projectile.scale) * Utils.GetLerpValue(0f, 18f, Projectile.timeLeft, true);
+            Projectile.Opacity = Sqrt(Projectile.scale) * Utils.GetLerpValue(0f, 18f, Projectile.timeLeft, true);
 
             // Initialize rotation.
             if (Projectile.rotation == 0f)
-                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.rotation = Main.rand.NextFloat(TwoPi);
 
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.9f, 0f, 0f);
 
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                 for (int i = 0; i < petalCount; i++)
                 {
-                    Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.68f, 0.68f, i / (float)petalCount)) * petalShootSpeed;
+                    Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.68f, 0.68f, i / (float)petalCount)) * petalShootSpeed;
                     Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<BrimstonePetal>(), BrimstoneElementalBehaviorOverride.BrimstonePetalDamage, 0f);
                 }
             }

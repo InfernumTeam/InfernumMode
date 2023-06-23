@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             int attackCycleTime = (int)queenSlime.Infernum().ExtraAI[2];
             float wrappedAttackTimer = Time % attackCycleTime;
-            Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * Time / 180f).ToRotationVector2() * 680f;
+            Vector2 hoverDestination = target.Center + (TwoPi * Time / 180f).ToRotationVector2() * 680f;
             if (wrappedAttackTimer > 75f)
                 Projectile.velocity *= 0.925f;
             else
@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 shootVelocity = (target.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * 10f;
-                        shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 4f));
+                        shootVelocity = shootVelocity.RotatedBy(Lerp(-0.49f, 0.49f, i / 4f));
 
                         if (BossRushEvent.BossRushActive)
                             shootVelocity *= 1.7f;
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             for (int i = 0; i < 10; i++)
             {
                 Color backglowColor = new Color(1f, 0.24f, 1f, 0f) * Projectile.Opacity * ChargeGlowTelegraphInterpolant * 0.65f;
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * ChargeGlowTelegraphInterpolant * 10f;
+                Vector2 drawOffset = (TwoPi * i / 10f).ToRotationVector2() * ChargeGlowTelegraphInterpolant * 10f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, backglowColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);

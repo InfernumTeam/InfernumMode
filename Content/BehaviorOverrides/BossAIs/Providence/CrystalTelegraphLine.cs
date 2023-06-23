@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphWidth = MathHelper.Lerp(0.3f, 3f, CalamityUtils.Convert01To010(Time / Lifetime));
+            float telegraphWidth = Lerp(0.3f, 3f, CalamityUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
             Color telegraphColor = !ProvidenceBehaviorOverride.IsEnraged ? Color.Yellow : Color.Lerp(Color.Cyan, Color.Green, 0.15f);

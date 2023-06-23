@@ -157,7 +157,7 @@ namespace InfernumMode.Content.Subworlds
                     Vector2 perpendicularDirection = Vector2.UnitY;
                     float noiseOffset = SulphurousSea.FractalBrownianMotion(baseCurvePoints[i].X / 120f, baseCurvePoints[i].Y / 120f, caveSeed, 3) * 28f;
                     if (i >= 1)
-                        perpendicularDirection = (baseCurvePoints[i] - baseCurvePoints[i - 1]).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
+                        perpendicularDirection = (baseCurvePoints[i] - baseCurvePoints[i - 1]).SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2);
 
                     baseCurvePoints[i] += perpendicularDirection * noiseOffset;
                     if (baseCurvePoints[i].X <= 25f)
@@ -235,7 +235,7 @@ namespace InfernumMode.Content.Subworlds
 
             // 5:00 PM.
             int evening = noon + 18000;
-            Main.time = (int)MathHelper.Lerp(noon, evening, SunsetInterpolant);
+            Main.time = (int)Lerp(noon, evening, SunsetInterpolant);
 
             if (HasBereftVassalBeenDefeated)
                 SunsetInterpolant = 1f;

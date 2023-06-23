@@ -65,10 +65,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             if (QueenBee is null)
                 return;
 
-            Projectile.rotation = MathHelper.Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
+            Projectile.rotation = Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
             Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
             Projectile.frame = Projectile.timeLeft / 4 % Main.projFrames[Projectile.type];
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
 
             if (Projectile.localAI[0] == 0f)
             {
@@ -107,8 +107,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public void DoBehavior_HoverAroundQueen()
         {
-            float hoverOffset = MathHelper.Lerp(120f, 200f, Projectile.identity / 9f % 1f);
-            Vector2 hoverDestination = QueenBee.Center + (MathHelper.TwoPi * Projectile.identity / 11f + Time / 50f).ToRotationVector2() * hoverOffset;
+            float hoverOffset = Lerp(120f, 200f, Projectile.identity / 9f % 1f);
+            Vector2 hoverDestination = QueenBee.Center + (TwoPi * Projectile.identity / 11f + Time / 50f).ToRotationVector2() * hoverOffset;
             Vector2 idealVelocity = Projectile.SafeDirectionTo(hoverDestination) * 9f;
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, idealVelocity, 0.1f);
             Projectile.spriteDirection = (QueenBee.Center.X > Projectile.Center.X).ToDirectionInt();
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * MathF.Pow(Projectile.Opacity, 2f), lightColor, Projectile.Opacity * 6f);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * Pow(Projectile.Opacity, 2f), lightColor, Projectile.Opacity * 6f);
             return false;
         }
 

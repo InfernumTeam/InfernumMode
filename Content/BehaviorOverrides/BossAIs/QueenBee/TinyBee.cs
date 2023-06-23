@@ -33,8 +33,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
-            Projectile.rotation = MathHelper.Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+            Projectile.rotation = Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
             Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
 
             if (Time < 80f)
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * MathF.Pow(Projectile.Opacity, 2f), lightColor, Projectile.Opacity * 6f);
+            Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * Pow(Projectile.Opacity, 2f), lightColor, Projectile.Opacity * 6f);
             return false;
         }
     }

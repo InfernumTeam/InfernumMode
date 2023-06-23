@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Projectiles.Generic
     {
         public override int Lifetime => 32;
         public override bool UsesScreenshake => false;
-        public override Color GetCurrentExplosionColor(float pulseCompletionRatio) => Color.Lerp(Color.Red, Color.Orange, MathHelper.Clamp(pulseCompletionRatio * 1.54f, 0f, 1f)) * 6f;
+        public override Color GetCurrentExplosionColor(float pulseCompletionRatio) => Color.Lerp(Color.Red, Color.Orange, Clamp(pulseCompletionRatio * 1.54f, 0f, 1f)) * 6f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Explosion");
 
         public override void SetDefaults()

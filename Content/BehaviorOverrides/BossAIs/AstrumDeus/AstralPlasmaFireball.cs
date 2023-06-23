@@ -36,12 +36,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Handle frames and rotation.
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * Projectile.scale * 0.5f);
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 spinningPoint = Main.rand.NextVector2Circular(8f, 8f);
                 for (int i = 0; i < totalProjectiles; i++)
                 {
-                    Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);
+                    Vector2 shootVelocity = spinningPoint.RotatedBy(TwoPi / totalProjectiles * i);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
                 }
             }

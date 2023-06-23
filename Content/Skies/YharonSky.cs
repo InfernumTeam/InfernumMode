@@ -85,12 +85,12 @@ namespace InfernumMode.Content.Skies
         public override void Update(GameTime gameTime)
         {
             if (isActive && intensity < 1f)
-                intensity = MathHelper.Clamp(intensity + 0.005f, 0f, 1f);
+                intensity = Clamp(intensity + 0.005f, 0f, 1f);
             else if (!isActive && intensity > 0f)
-                intensity = MathHelper.Clamp(intensity - 0.005f, 0f, 1f);
+                intensity = Clamp(intensity - 0.005f, 0f, 1f);
 
             // Update the phase 2 update interpolant based on whether Yharon is in phase 2.
-            phase2VariantInterpolant = MathHelper.Clamp(phase2VariantInterpolant + YharonBehaviorOverride.InSecondPhase.ToDirectionInt() * 0.007f, 0f, intensity + 0.0001f);
+            phase2VariantInterpolant = Clamp(phase2VariantInterpolant + YharonBehaviorOverride.InSecondPhase.ToDirectionInt() * 0.007f, 0f, intensity + 0.0001f);
 
             // Kill every regular cloud immediately.
             for (int i = 0; i < Main.maxClouds; i++)
@@ -107,7 +107,7 @@ namespace InfernumMode.Content.Skies
                         DrawPosition = new Vector2(Main.rand.NextFloat(-400f, Main.screenWidth + 400f), Main.screenHeight + 250f),
                         Velocity = -Vector2.UnitY * Main.rand.NextFloat(5f, 23f) + Main.rand.NextVector2Circular(3f, 3f),
                         SmokeColor = Color.Lerp(Color.OrangeRed, Color.DarkGray, Main.rand.NextFloat(0.5f, 0.85f)) * 0.67f,
-                        Rotation = Main.rand.NextFloat(MathHelper.TwoPi),
+                        Rotation = Main.rand.NextFloat(TwoPi),
                         Lifetime = Main.rand.Next(120, 480)
                     });
                 }
@@ -130,7 +130,7 @@ namespace InfernumMode.Content.Skies
                     DrawPosition = new Vector2(Main.rand.NextFloat(-400f, Main.screenWidth + 400f), Main.screenHeight + 250f),
                     Velocity = -Vector2.UnitY * Main.rand.NextFloat(9f, 25f) + Main.rand.NextVector2Circular(4f, 4f),
                     SmokeColor = Color.LightGray,
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi),
+                    Rotation = Main.rand.NextFloat(TwoPi),
                     Lifetime = Main.rand.Next(90, 240)
                 });
             }
@@ -139,7 +139,7 @@ namespace InfernumMode.Content.Skies
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             // Force it to be daytime.
-            Main.time = MathHelper.Lerp((float)Main.time, (float)Main.dayLength * 0.5f, 0.01f);
+            Main.time = Lerp((float)Main.time, (float)Main.dayLength * 0.5f, 0.01f);
             Main.dayTime = true;
 
             // Draw the sky background overlay, sun, and smoke.
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.Skies
         public void DrawVibrantSun()
         {
             Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
-            float opacity = intensity * MathHelper.Lerp(0.73f, 0.76f, MathF.Sin(Main.GlobalTimeWrappedHourly * 29f) * 0.5f + 0.5f);
+            float opacity = intensity * Lerp(0.73f, 0.76f, Sin(Main.GlobalTimeWrappedHourly * 29f) * 0.5f + 0.5f);
             Vector2 origin = backglowTexture.Size() * 0.5f;
             Vector2 sunDrawPosition = ManipulateSunPositionHook.SunPosition;
 

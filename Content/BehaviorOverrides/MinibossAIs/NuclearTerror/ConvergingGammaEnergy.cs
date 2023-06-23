@@ -44,13 +44,13 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                 Projectile.Kill();
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
 
             // Release acid particles.
             Color acidColor = Main.rand.NextBool() ? Color.Yellow : Color.Lime;
             CloudParticle acidCloud = new(Projectile.Center, Main.rand.NextVector2Circular(2f, 2f), acidColor * 0.6f, Color.DarkGray * 0.45f, 27, Main.rand.NextFloat(1.1f, 1.32f))
             {
-                Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                Rotation = Main.rand.NextFloat(TwoPi)
             };
             GeneralParticleHandler.SpawnParticle(acidCloud);
 
@@ -66,9 +66,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             for (int i = 0; i < 6; i++)
             {
                 Color acidColor = Main.rand.NextBool() ? Color.Yellow : Color.Lime;
-                CloudParticle acidCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), acidColor, Color.DarkGray, 27, Main.rand.NextFloat(1.1f, 1.32f))
+                CloudParticle acidCloud = new(Projectile.Center, (TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), acidColor, Color.DarkGray, 27, Main.rand.NextFloat(1.1f, 1.32f))
                 {
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                    Rotation = Main.rand.NextFloat(TwoPi)
                 };
                 GeneralParticleHandler.SpawnParticle(acidCloud);
             }

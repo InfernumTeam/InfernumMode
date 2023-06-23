@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Calculate opacity, scale, and rotation.
             Projectile.Opacity = Utils.GetLerpValue(1600, 1555f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, fadeoutTime, Projectile.timeLeft, true);
             Projectile.scale = Projectile.Opacity + 0.01f;
-            Projectile.rotation = (Projectile.position - Projectile.oldPosition).ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = (Projectile.position - Projectile.oldPosition).ToRotation() + PiOver2;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -122,8 +122,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     continue;
 
                 float completionRatio = i / (float)Projectile.oldPos.Length;
-                float fade = MathF.Pow(completionRatio, 2f);
-                float scale = Projectile.scale * MathHelper.Lerp(1f, 0.56f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) * MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
+                float fade = Pow(completionRatio, 2f);
+                float scale = Projectile.scale * Lerp(1f, 0.56f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) * Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
                 Color drawColor = Color.HotPink * (1f - fade) * Projectile.Opacity;
                 drawColor.A = 0;
 
@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, 4, 0, 0);
             Vector2 scale = Vector2.One * Projectile.scale * 0.4f;
-            Main.EntitySpriteDraw(texture, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation + MathHelper.Pi, frame.Size() * 0.5f, scale, 0, 0);
+            Main.EntitySpriteDraw(texture, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation + Pi, frame.Size() * 0.5f, scale, 0, 0);
         }
 
         public override bool? CanDamage() => Projectile.timeLeft < 1480 ? null : false;

@@ -128,7 +128,7 @@ namespace InfernumMode
             SpriteEffects direction = projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             for (int i = 0; i < 10; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * backglowArea;
+                Vector2 drawOffset = (TwoPi * i / 10f).ToRotationVector2() * backglowArea;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, backAfterimageColor, projectile.rotation, origin, projectile.scale, direction, 0f);
             }
         }

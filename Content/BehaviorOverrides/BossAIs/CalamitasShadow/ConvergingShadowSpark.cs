@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
 
             float maxSpeed = 14f;
             float acceleration = 1.023f;
@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
         }
 
         public override void Kill(int timeLeft)
@@ -83,9 +83,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     continue;
 
                 Color fireColor = Main.rand.NextBool() ? Color.HotPink : Color.DarkBlue;
-                CloudParticle fireCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), fireColor, Color.DarkGray, 23, Main.rand.NextFloat(1.8f, 2f))
+                CloudParticle fireCloud = new(Projectile.Center, (TwoPi * i / 8f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), fireColor, Color.DarkGray, 23, Main.rand.NextFloat(1.8f, 2f))
                 {
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                    Rotation = Main.rand.NextFloat(TwoPi)
                 };
                 GeneralParticleHandler.SpawnParticle(fireCloud);
             }
@@ -100,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             for (int i = 0; i < 12; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 2f;
+                Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * 2f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);

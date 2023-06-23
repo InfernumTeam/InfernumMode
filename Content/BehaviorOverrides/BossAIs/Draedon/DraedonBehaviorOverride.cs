@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 // Stay within the world.
-                npc.position.Y = MathHelper.Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
+                npc.position.Y = Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
                 npc.spriteDirection = (playerToFollow.Center.X < npc.Center.X).ToDirectionInt();
 
                 // Fly near the target.
@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 {
                     npc.velocity *= 0.96f;
 
-                    float moveSpeed = MathHelper.Lerp(2f, 8f, Utils.GetLerpValue(45f, 275f, npc.Distance(hoverDestination), true));
+                    float moveSpeed = Lerp(2f, 8f, Utils.GetLerpValue(45f, 275f, npc.Distance(hoverDestination), true));
                     npc.Center = npc.Center.MoveTowards(hoverDestination, moveSpeed);
                 }
                 else
@@ -166,7 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Stay within the world.
-            npc.position.Y = MathHelper.Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
+            npc.position.Y = Clamp(npc.position.Y, 150f, Main.maxTilesY * 16f - 150f);
             npc.spriteDirection = (playerToFollow.Center.X < npc.Center.X).ToDirectionInt();
 
             // Handle delays when re-appearing after being killed.
@@ -413,7 +413,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                         // Transition to the new hue.
                         if (hueTimer < transitionLength && currentHue != newHue)
                         {
-                            currentHue = MathHelper.Lerp(previousHue, newHue, timerInterpolant);
+                            currentHue = Lerp(previousHue, newHue, timerInterpolant);
 
                             // If the mech type is draedon, also change the saturation. This is because white has a saturation of 0, while the
                             // other colors share one of 1.
@@ -560,7 +560,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             // Fade away and disappear when leaving.
             if (leaving)
             {
-                hologramEffectTimer = MathHelper.Clamp(hologramEffectTimer - 1f, 0f, HologramFadeinTime);
+                hologramEffectTimer = Clamp(hologramEffectTimer - 1f, 0f, HologramFadeinTime);
                 if (hologramEffectTimer <= 0f)
                 {
                     // Begin the credits if scal is dead.
@@ -572,7 +572,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
             // Fade back in as a hologram if the player tried to kill Draedon.
             else if (hasBeenKilled)
-                hologramEffectTimer = MathHelper.Clamp(hologramEffectTimer + 1f, 0f, HologramFadeinTime - 5f);
+                hologramEffectTimer = Clamp(hologramEffectTimer + 1f, 0f, HologramFadeinTime - 5f);
 
             // Adjust opacity.
             npc.Opacity = hologramEffectTimer / HologramFadeinTime;

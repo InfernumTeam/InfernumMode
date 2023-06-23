@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = 0.5f * MathF.Cos(-3.2f * Main.GlobalTimeWrappedHourly + completionRatio * 23f) + 0.5f;
+            float colorInterpolant = 0.5f * Cos(-3.2f * Main.GlobalTimeWrappedHourly + completionRatio * 23f) + 0.5f;
             return Color.Lerp(Color.SkyBlue, Color.Blue, 0.3f * colorInterpolant);
         }
 

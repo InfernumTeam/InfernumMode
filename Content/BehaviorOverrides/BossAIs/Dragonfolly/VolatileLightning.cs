@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 for (int i = 0; i < 60; i++)
                 {
                     Dust energy = Dust.NewDustPerfect(Projectile.Center, 267);
-                    energy.velocity = (MathHelper.TwoPi * i / 60f).ToRotationVector2() * speed;
+                    energy.velocity = (TwoPi * i / 60f).ToRotationVector2() * speed;
                     energy.noGravity = true;
                     energy.color = Main.hslToRgb(Main.rand.NextFloat(0f, 0.08f), 0.85f, 0.6f);
                     energy.fadeIn = lifePersistance;

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override bool UsesScreenshake => false;
 
-        public override Color GetCurrentExplosionColor(float pulseCompletionRatio) => Color.Lerp(Color.YellowGreen * 1.2f, Color.MediumPurple, MathHelper.Clamp(pulseCompletionRatio * 1.8f, 0f, 1f));
+        public override Color GetCurrentExplosionColor(float pulseCompletionRatio) => Color.Lerp(Color.YellowGreen * 1.2f, Color.MediumPurple, Clamp(pulseCompletionRatio * 1.8f, 0f, 1f));
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 

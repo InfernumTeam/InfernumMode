@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (smallWormIsPresent)
                 Projectile.tileCollide = false;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             bool shouldDie = Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
             shouldDie &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).TileType];

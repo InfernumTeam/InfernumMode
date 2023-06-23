@@ -80,7 +80,7 @@ namespace InfernumMode.Common.Graphics
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * electricityFormInterpolant * 8f;
+                    Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * electricityFormInterpolant * 8f;
                     Main.spriteBatch.Draw(WeaverDrawTarget.Target, WeaverDrawTarget.Target.Size() * 0.5f + drawOffset, null, Color.Lerp(drawColor, Color.Wheat, 0.5f) with { A = 0 } * 0.7f, 0f, WeaverDrawTarget.Target.Size() * 0.5f, 1f, 0, 0f);
                 }
             }

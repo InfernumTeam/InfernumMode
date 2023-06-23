@@ -64,8 +64,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public float TornadoWidthFunction(float completionRatio)
         {
-            float scale = MathHelper.Lerp(0.04f, 1f, MathF.Pow(completionRatio, 0.82f)) * Projectile.scale;
-            float width = Projectile.width + MathF.Sin(MathHelper.Pi * completionRatio * 3f - Time / 5f) * 16f;
+            float scale = Lerp(0.04f, 1f, Pow(completionRatio, 0.82f)) * Projectile.scale;
+            float width = Projectile.width + Sin(Pi * completionRatio * 3f - Time / 5f) * 16f;
             return width * scale;
         }
 

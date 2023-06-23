@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         {
             if (WaveHeight < 6f)
                 WaveHeight = 6f;
-            WaveHeight = MathHelper.Lerp(WaveHeight, 64f, 0.08f);
+            WaveHeight = Lerp(WaveHeight, 64f, 0.08f);
             Projectile.Opacity = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
@@ -58,13 +58,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         internal Color ColorFunction(float completionRatio)
         {
-            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, Math.Abs(Sin(completionRatio * Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             return c * Projectile.Opacity;
         }
 
         public float WidthFunction(float completionRatio) => WaveHeight;
 
-        public Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * MathF.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 16f;
+        public Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * Sin(completionRatio * Pi + Time / 11f) * 16f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

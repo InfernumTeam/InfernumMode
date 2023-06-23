@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 }
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + Pi + PiOver4;
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
             Time++;
@@ -114,13 +114,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             float telegraphInterpolant = Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 45f, Time, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, telegraphInterpolant, true);
-            float colorPulse = MathF.Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity) * 0.5f + 0.5f;
+            float colorPulse = Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity) * 0.5f + 0.5f;
             float fadePulse = (Main.GlobalTimeWrappedHourly * 0.5f + Projectile.identity * 0.2721f) % 1f;
             if (telegraphInterpolant > 0f)
             {
                 Texture2D explosionTelegraphTexture = InfernumTextureRegistry.DistortedBloomRing.Value;
                 Vector2 scale = Vector2.One * AuraRadius / explosionTelegraphTexture.Size() * Projectile.Opacity * (fadePulse * 0.5f + 1.2f);
-                float telegraphRotation = MathHelper.TwoPi * Projectile.identity / 13f % 1f + Main.GlobalTimeWrappedHourly * 1.427f;
+                float telegraphRotation = TwoPi * Projectile.identity / 13f % 1f + Main.GlobalTimeWrappedHourly * 1.427f;
                 Color telegraphColor = Color.Lerp(Color.Lime, Color.Olive, colorPulse) * circleFadeinInterpolant * 0.3f;
                 telegraphColor *= Utils.GetLerpValue(0f, 0.08f, fadePulse, true) * Utils.GetLerpValue(1f, 0.3f, fadePulse, true);
 

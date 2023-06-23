@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Projectiles.Magic
     {
         public Player Owner => Main.player[Projectile.owner];
 
-        public float ShootIntensity => MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, 275f, Time, true));
+        public float ShootIntensity => SmoothStep(0f, 1f, Utils.GetLerpValue(0f, 275f, Time, true));
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -45,7 +45,7 @@ namespace InfernumMode.Content.Projectiles.Magic
                 return;
             }
 
-            if (AttackTimer >= Main.rand.Next(36, 50) - (int)MathHelper.Lerp(0f, 20f, Utils.GetLerpValue(0f, 120f, Time, true)))
+            if (AttackTimer >= Main.rand.Next(36, 50) - (int)Lerp(0f, 20f, Utils.GetLerpValue(0f, 120f, Time, true)))
                 ReleaseThings();
 
             // Switch frames at a linearly increasing rate to make it look like the player is flipping pages quickly.
@@ -56,7 +56,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
             Owner.ChangeDir(Projectile.velocity.X.DirectionalSign());
             AdjustPlayerValues();
-            Projectile.Center = Owner.Center + (Owner.compositeFrontArm.rotation + MathHelper.PiOver2).ToRotationVector2() * 14f - Vector2.UnitY * 4f;
+            Projectile.Center = Owner.Center + (Owner.compositeFrontArm.rotation + PiOver2).ToRotationVector2() * 14f - Vector2.UnitY * 4f;
             Projectile.timeLeft = 2;
             AttackTimer++;
             Time++;
@@ -94,26 +94,26 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.itemRotation = (Projectile.direction * Projectile.velocity).ToRotation();
 
             // Update the player's arm directions to make it look as though they're flipping through the book.
-            float frontArmRotation = (MathHelper.PiOver2 - 0.46f) * -Owner.direction;
-            float backArmRotation = frontArmRotation + MathHelper.Lerp(0.23f, 0.97f, CalamityUtils.Convert01To010(Projectile.localAI[0] / Main.projFrames[Projectile.type] / 10f)) * -Owner.direction;
+            float frontArmRotation = (PiOver2 - 0.46f) * -Owner.direction;
+            float backArmRotation = frontArmRotation + Lerp(0.23f, 0.97f, CalamityUtils.Convert01To010(Projectile.localAI[0] / Main.projFrames[Projectile.type] / 10f)) * -Owner.direction;
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, backArmRotation);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float glowOutwardness = MathHelper.SmoothStep(0f, 6f, Utils.GetLerpValue(90f, 270f, Time, true));
+            float glowOutwardness = SmoothStep(0f, 6f, Utils.GetLerpValue(90f, 270f, Time, true));
             Texture2D bookTexture = ModContent.Request<Texture2D>(Texture).Value;
             Rectangle frame = bookTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition;
             Vector2 origin = frame.Size() * 0.5f;
-            Color glowColor = Color.Lerp(Color.HotPink, Color.Blue, MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
+            Color glowColor = Color.Lerp(Color.HotPink, Color.Blue, Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
             glowColor.A = 0;
 
             // Draw an ominous glowing version of the book after a bit of time.
             for (int i = 0; i < 12; i++)
             {
-                drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2() * glowOutwardness - Main.screenPosition;
+                drawPosition = Projectile.Center + (TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2() * glowOutwardness - Main.screenPosition;
                 Main.EntitySpriteDraw(bookTexture, drawPosition, frame, Projectile.GetAlpha(glowColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             }
 

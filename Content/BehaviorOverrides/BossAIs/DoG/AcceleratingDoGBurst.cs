@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 6 % Main.projFrames[Projectile.type];
             Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Projectile.velocity.Length() < 38f)
                 Projectile.velocity *= 1.022f;

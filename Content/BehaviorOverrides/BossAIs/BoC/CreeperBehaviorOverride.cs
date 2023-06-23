@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             ref float attackTimer = ref npc.ai[1];
             ref float telegraphInterpolant = ref npc.ai[2];
 
-            Vector2 destinationOffsetDirection = (MathHelper.TwoPi * creeperOffsetAngleFactor + attackTimer / 105f).ToRotationVector2();
+            Vector2 destinationOffsetDirection = (TwoPi * creeperOffsetAngleFactor + attackTimer / 105f).ToRotationVector2();
             Vector2 destination = owner.Center + destinationOffsetDirection * 420f;
             BoCAttackState ownerAttackState = (BoCAttackState)(int)owner.ai[0];
             switch (ownerAttackState)
@@ -54,11 +54,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                     break;
                 case BoCAttackState.CreeperBloodDripping:
                     destination = target.Center + destinationOffsetDirection * 480f;
-                    destination.Y += MathF.Sin(attackTimer / 56f + creeperOffsetAngleFactor * MathHelper.TwoPi) * 40f;
+                    destination.Y += Sin(attackTimer / 56f + creeperOffsetAngleFactor * TwoPi) * 40f;
                     idealAlpha = ownerAttackTimer < 60f ? 255 : 40;
                     break;
                 case BoCAttackState.PsionicBombardment:
-                    destination = owner.Center + (MathHelper.TwoPi * creeperOffsetAngleFactor + attackTimer / 35f).ToRotationVector2() * 160f;
+                    destination = owner.Center + (TwoPi * creeperOffsetAngleFactor + attackTimer / 35f).ToRotationVector2() * 160f;
                     idealAlpha = owner.alpha + 20;
                     break;
                 case BoCAttackState.DashingIllusions:
@@ -101,11 +101,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
                 }
 
                 if (canFire && shootTimer >= 56f)
-                    telegraphInterpolant = MathHelper.Clamp(telegraphInterpolant + 0.12f, 0f, 1f);
+                    telegraphInterpolant = Clamp(telegraphInterpolant + 0.12f, 0f, 1f);
             }
 
             // Make the telegraph interpolant naturally dissipate.
-            telegraphInterpolant = MathHelper.Clamp(telegraphInterpolant - 0.04f, 0f, 1f);
+            telegraphInterpolant = Clamp(telegraphInterpolant - 0.04f, 0f, 1f);
 
             // Drift towards the destination around the brain.
             if (!npc.WithinRange(destination, 75f))
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            float cyanAuraStrength = MathHelper.Max(Main.npc[NPC.crimsonBoss].localAI[1], npc.ai[2]);
+            float cyanAuraStrength = MathF.Max(Main.npc[NPC.crimsonBoss].localAI[1], npc.ai[2]);
 
             void drawInstance(Vector2 drawPosition, Color color, float scale)
             {
@@ -132,13 +132,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             }
             if (cyanAuraStrength > 0f)
             {
-                float scale = npc.scale * MathHelper.Lerp(0.9f, 1.125f, cyanAuraStrength);
+                float scale = npc.scale * Lerp(0.9f, 1.125f, cyanAuraStrength);
                 Color auraColor = Color.Lerp(Color.Transparent, Color.Cyan, cyanAuraStrength) * npc.Opacity * 0.3f;
                 auraColor.A = 0;
 
                 for (int i = 0; i < 7; i++)
                 {
-                    Vector2 drawPosition = npc.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
+                    Vector2 drawPosition = npc.Center + (TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
                     drawInstance(drawPosition, auraColor, scale);
                 }
             }

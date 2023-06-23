@@ -39,8 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (Projectile.frame >= Main.projFrames[Projectile.type])
                 Projectile.frame = 0;
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             if (Projectile.velocity.Y < -1f)
                 Projectile.velocity.Y *= 0.96f;
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.2f;
             for (int i = 0; i < 9; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 9f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 2f;
+                Vector2 drawOffset = (TwoPi * i / 9f + Projectile.rotation - PiOver2).ToRotationVector2() * 2f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, afterimageDrawPosition, frame, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }

@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 {
                     case BodySegmentFadeType.EnteringPortal:
                         if (GeneralPortalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox))
-                            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
+                            npc.Opacity = Clamp(npc.Opacity - 0.275f, 0f, 1f);
 
                         // Update the surprise portal attack state if the tail has entered the portal.
                         bool performTeleportTransition = npc.Opacity <= 0f || !npc.WithinRange(target.Center, 20000f);
@@ -144,9 +144,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                             npc.Opacity = 0f;
                         if (aheadSegment.Opacity > npc.Opacity)
                         {
-                            npc.Opacity = MathHelper.Lerp(npc.Opacity, aheadSegment.Opacity, 0.67f);
+                            npc.Opacity = Lerp(npc.Opacity, aheadSegment.Opacity, 0.67f);
                             if (aheadSegment.Opacity >= 1f)
-                                npc.Opacity = MathHelper.Lerp(npc.Opacity, aheadSegment.Opacity, 0.67f);
+                                npc.Opacity = Lerp(npc.Opacity, aheadSegment.Opacity, 0.67f);
                         }
                         break;
                 }
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
             {
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
                 directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 1f);
                 if (SurprisePortalAttackState != PerpendicularPortalAttackState.NotPerformingAttack)
                     npc.rotation = aheadSegment.rotation;
@@ -197,7 +197,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
                     segmentOffset = 98f;
             }
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * segmentOffset;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
         }

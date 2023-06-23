@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Cultist/CultistRitualInnerRing").Value;
             Texture2D auraTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Cultist/LightBurst").Value;
             float pulse = Main.GlobalTimeWrappedHourly * 0.67f % 1f;
-            float auraScale = Projectile.scale * MathHelper.SmoothStep(0.85f, 1.2f, 1f - pulse);
+            float auraScale = Projectile.scale * SmoothStep(0.85f, 1.2f, 1f - pulse);
             Color auraColor = Color.White * 0.25f;
             auraColor *= pulse;
 

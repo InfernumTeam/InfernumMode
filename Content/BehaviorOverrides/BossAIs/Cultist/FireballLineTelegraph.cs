@@ -80,9 +80,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             float yScale = 5f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = MathHelper.Lerp(0f, yScale, TelegraphDelay / 15f);
+                yScale = Lerp(0f, yScale, TelegraphDelay / 15f);
             if (TelegraphDelay > 45f - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (45f - TelegraphFadeTime)) / 15f);
+                yScale = Lerp(yScale, 0f, (TelegraphDelay - (45f - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);

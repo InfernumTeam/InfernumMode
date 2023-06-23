@@ -36,14 +36,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 Projectile.localAI[0] = 1f;
             }
 
-            Projectile.velocity.Y += MathHelper.ToRadians(2.4f);
-            Vector2 movementDirection = new(-MathF.Sin(Projectile.velocity.Y * 2f) * 4f, Math.Abs(MathF.Cos(Projectile.velocity.Y * 2f)) * 6f);
+            Projectile.velocity.Y += ToRadians(2.4f);
+            Vector2 movementDirection = new(-Sin(Projectile.velocity.Y * 2f) * 4f, Math.Abs(Cos(Projectile.velocity.Y * 2f)) * 6f);
             Vector2 collisionDirection = Collision.TileCollision(Projectile.position, movementDirection, (int)(Projectile.width * Projectile.scale), (int)(Projectile.height * Projectile.scale));
             if (movementDirection != collisionDirection)
                 Projectile.velocity.Y = -1f;
 
             Projectile.position += movementDirection;
-            Projectile.rotation = movementDirection.ToRotation() - MathHelper.PiOver4;
+            Projectile.rotation = movementDirection.ToRotation() - PiOver4;
 
             if (Projectile.timeLeft < 30)
                 Projectile.alpha = Utils.Clamp(Projectile.alpha + 10, 0, 255);
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 for (int i = 0; i < 40; i++)
                 {
                     Dust energy = Dust.NewDustPerfect(Projectile.Center, 267);
-                    energy.velocity = (MathHelper.TwoPi * i / 40f).ToRotationVector2() * speed;
+                    energy.velocity = (TwoPi * i / 40f).ToRotationVector2() * speed;
                     energy.noGravity = true;
                     energy.color = Main.hslToRgb(Main.rand.NextFloat(0f, 0.08f), 0.85f, 0.6f);
                     energy.fadeIn = lifePersistance;

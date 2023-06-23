@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             Color irisColor = new(55, 49, 181);
             Color bloodColor = new(140, 30, 30);
-            return Color.Lerp(irisColor, bloodColor, MathF.Sin(completionRatio * MathHelper.TwoPi + AnimationCompletion * MathHelper.Pi));
+            return Color.Lerp(irisColor, bloodColor, Sin(completionRatio * TwoPi + AnimationCompletion * Pi));
         });
 
         public override bool TextShouldBeCentered => true;

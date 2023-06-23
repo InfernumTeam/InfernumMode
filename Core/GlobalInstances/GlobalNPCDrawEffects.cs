@@ -38,7 +38,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npc.type == ModContent.NPCType<ThanatosTail>())
             {
                 bool dealsNoContactDamage = npc.damage == 0;
-                npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+                npc.Infernum().ExtraAI[20] = Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
                 return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
             }
 

@@ -45,7 +45,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 float distanceFromMoon = Vector2.Distance(new Vector2(x, y).ToWorldCoordinates(), celestialObject.Center);
                 float darknessInterpolant = Utils.GetLerpValue(1200f, 720f, distanceFromMoon, true);
                 float darknessDissipateInterpolant = Utils.GetLerpValue(90f, 8f, celestialObject.timeLeft, true) * Utils.GetLerpValue(72000f, 71960f, celestialObject.timeLeft, true);
-                darknessInterpolant = MathHelper.Lerp(darknessInterpolant, 1f, darknessDissipateInterpolant);
+                darknessInterpolant = Lerp(darknessInterpolant, 1f, darknessDissipateInterpolant);
 
                 outputColor *= darknessInterpolant;
             }

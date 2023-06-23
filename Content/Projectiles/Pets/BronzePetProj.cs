@@ -119,7 +119,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                     Projectile.frameCounter++;
 
                     float flyFrameInterpolant = Projectile.frameCounter / 20f % 1f;
-                    Projectile.frame = (int)MathF.Round(MathHelper.Lerp(4f, 7f, flyFrameInterpolant));
+                    Projectile.frame = (int)Round(Lerp(4f, 7f, flyFrameInterpolant));
                     if (Projectile.frame == 4)
                         Projectile.gfxOffY -= 2;
 
@@ -136,7 +136,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public void DoBehavior_Flying()
         {
-            float verticalOffset = MathF.Cos(MathHelper.TwoPi * Time / 150f) * 30f - 50f;
+            float verticalOffset = Cos(TwoPi * Time / 150f) * 30f - 50f;
             Vector2 hoverDestination = Owner.Top + new Vector2(-Owner.direction * 60f, verticalOffset);
             Vector2 idealVelocity = Projectile.SafeDirectionTo(hoverDestination) * 18f;
 
@@ -162,7 +162,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             // Decide rotation and direction.
             Projectile.rotation = Projectile.velocity.X * 0.01f;
-            if (MathHelper.Distance(hoverDestination.X, Projectile.Center.X) >= 30f)
+            if (Distance(hoverDestination.X, Projectile.Center.X) >= 30f)
                 Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
             else
                 Projectile.spriteDirection = -Owner.direction;
@@ -195,7 +195,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             // Decide rotation and direction.
             Projectile.rotation = Projectile.velocity.X * 0.016f;
-            if (MathHelper.Distance(GroundRestingPosition.X, Projectile.Center.X) >= 30f)
+            if (Distance(GroundRestingPosition.X, Projectile.Center.X) >= 30f)
                 Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
             else
                 Projectile.spriteDirection = -Owner.direction;
@@ -226,7 +226,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             // Cease all horizontal and upward vertical velocity.
             Projectile.velocity.X = 0f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.3f, 0f, 4f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.3f, 0f, 4f);
 
             // Use sitting frames.
             FrameState = BirbFrameState.Sitting;
@@ -286,7 +286,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             Player.CompositeArmStretchAmount stretch = Player.CompositeArmStretchAmount.ThreeQuarters;
             if (Owner.miscCounter % 14 / 7 == 1)
                 stretch = Player.CompositeArmStretchAmount.Full;
-            Owner.SetCompositeArmBack(true, stretch, -MathHelper.TwoPi * Owner.direction * 0.27f);
+            Owner.SetCompositeArmBack(true, stretch, -TwoPi * Owner.direction * 0.27f);
         }
 
         // Prevent dying when touching tiles.

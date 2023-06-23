@@ -69,19 +69,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // There should be a star point that looks directly upward. However, that isn't the case for non-even star counts.
             // To address this, a -90 degree rotation is performed.
             if (pointCount % 2 != 0)
-                spacedAngle -= MathHelper.PiOver2;
+                spacedAngle -= PiOver2;
 
             // Refer to desmos to view the resulting shape this creates. It's basically a black box of trig otherwise.
-            float numerator = MathF.Cos(MathHelper.Pi * (pointCount + 1f) / pointCount);
-            float starAdjustedAngle = MathF.Asin(MathF.Cos(pointCount * spacedAngle)) * 2f;
-            float denominator = MathF.Cos((starAdjustedAngle + MathHelper.PiOver2 * pointCount) / (pointCount * 2f));
+            float numerator = Cos(Pi * (pointCount + 1f) / pointCount);
+            float starAdjustedAngle = Asin(Cos(pointCount * spacedAngle)) * 2f;
+            float denominator = Cos((starAdjustedAngle + PiOver2 * pointCount) / (pointCount * 2f));
             Vector2 result = angle.ToRotationVector2() * numerator / denominator / 1.732051f;
             return result;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Decelerate over time.
             if (Time >= 30f && Time < FireDelay)
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             if (Time >= FireDelay && Projectile.velocity.Length() < 40f)
             {
                 if (Projectile.velocity.Length() < 7f)
-                    Projectile.velocity = StarPolarEquation(5, MathHelper.TwoPi * Projectile.ai[1]) * 13f;
+                    Projectile.velocity = StarPolarEquation(5, TwoPi * Projectile.ai[1]) * 13f;
 
                 Projectile.velocity *= 1.0126f;
             }
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     rainbowMagic.velocity = angularOffset.ToRotationVector2();
                     rainbowMagic.scale = 0.8f;
                 }
-                angularOffset += MathHelper.TwoPi / dustCount;
+                angularOffset += TwoPi / dustCount;
                 rainbowMagic.velocity += Projectile.velocity * Main.rand.NextFloat(0.5f);
             }
         }
@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public float WidthFunction(float completionRatio)
         {
             float fade = (1f - completionRatio) * Utils.GetLerpValue(-0.03f, 0.1f, completionRatio, true);
-            return MathHelper.SmoothStep(0f, 1f, fade) * Projectile.Opacity * 10f;
+            return SmoothStep(0f, 1f, fade) * Projectile.Opacity * 10f;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -176,9 +176,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = sparkleTexture.Size() * 0.5f;
             Vector2 sparkleScale = new Vector2(0.5f, 1f) * Projectile.Opacity * Projectile.scale * 0.18f;
             Vector2 orthogonalsparkleScale = new Vector2(0.5f, 1.6f) * Projectile.Opacity * Projectile.scale * 0.18f;
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
             spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
             spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
         }
     }

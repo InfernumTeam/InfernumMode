@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 Projectile.alpha -= 12;
 
             if (Time < 65f)
-                OffsetRotation += MathHelper.TwoPi * 2f / 55f * Utils.GetLerpValue(30f, 60f, Time, true);
+                OffsetRotation += TwoPi * 2f / 55f * Utils.GetLerpValue(30f, 60f, Time, true);
             if (Time == 80f)
                 Projectile.velocity = Owner.SafeDirectionTo(Projectile.Center) * SpeedPower * 9f;
             if (Time > 80f && Projectile.velocity.Length() < SpeedPower * 33f)
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (Time <= 80f)
             {
                 // Make the bomb radius fade away if the projectile itself is fading away.
-                float offsetRadius = MathHelper.Lerp(110f, 72f, SpeedPower) - InwardRadiusOffset;
+                float offsetRadius = Lerp(110f, 72f, SpeedPower) - InwardRadiusOffset;
                 if (fadingAway)
                     offsetRadius = Projectile.Infernum().FadeAwayTimer / (float)GlobalProjectileOverrides.FadeAwayTime;
                 Projectile.Center = Owner.Center + OffsetRotation.ToRotationVector2() * offsetRadius;
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             }
 
             Projectile.rotation = Time > 80f ? Projectile.velocity.ToRotation() : Owner.AngleTo(Projectile.Center);
-            Projectile.rotation -= MathHelper.PiOver2;
+            Projectile.rotation -= PiOver2;
 
             Time++;
         }
@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 4f;
                 Color afterimageColor = new Color(46, 188, 234, 0f) * 0.2f * Projectile.Opacity;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }

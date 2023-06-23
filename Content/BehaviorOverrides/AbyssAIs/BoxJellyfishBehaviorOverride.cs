@@ -43,9 +43,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Define rotation.
             npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
-            npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection * MathHelper.PiOver2);
+            npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection * PiOver2);
             if (npc.spriteDirection == -1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
 
             if ((AttackType)attackState is AttackType.SwimAimlessly)
             {
@@ -104,7 +104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Change direction periodically
             if (attackTimer % moveTime == 0)
             {
-                Vector2 velocity = Vector2.One.RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(3, 6);
+                Vector2 velocity = Vector2.One.RotatedByRandom(TwoPi) * Main.rand.NextFloat(3, 6);
 
                 Vector2 ahead = npc.Center + velocity * 40f;
                 bool aboutToLeaveWorld = ahead.X >= Main.maxTilesX * 16f - 700f || ahead.X < 700f;

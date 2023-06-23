@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     int randomDustType = Main.rand.NextBool() ? 107 : 110;
 
                     Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVelocity.X, dustVelocity.Y, 0, default, 2f);
-                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     plasma.noGravity = true;
                     plasma.velocity *= 0.5f;
                 }
@@ -86,12 +86,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 Projectile.localAI[0] = 1f;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 0.8f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 0.8f);
 
             Projectile.velocity *= 0.99f;
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Make the bomb radius fade away if the projectile itself is fading away.
             if (Projectile.Infernum().FadeAwayTimer >= 1)
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             float explosionInterpolant = Utils.GetLerpValue(200f, 35f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 45f, Projectile.frameCounter, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, explosionInterpolant, true);
             float pulseInterpolant = Utils.GetLerpValue(0.75f, 0.85f, explosionInterpolant, true);
-            float colorPulse = (MathF.Sin(Main.GlobalTimeWrappedHourly * 6.3f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant;
+            float colorPulse = (Sin(Main.GlobalTimeWrappedHourly * 6.3f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant;
             if (explosionInterpolant > 0f)
             {
                 Texture2D explosionTelegraphTexture = InfernumTextureRegistry.HollowCircleSoftEdge.Value;

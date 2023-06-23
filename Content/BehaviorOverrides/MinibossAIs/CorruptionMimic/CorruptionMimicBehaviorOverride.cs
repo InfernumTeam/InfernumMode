@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
         {
             int jumpCount = 4;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float jumpDelay = MathHelper.Lerp(35f, 24f, 1f - lifeRatio);
+            float jumpDelay = Lerp(35f, 24f, 1f - lifeRatio);
             if (wallSlams)
             {
                 jumpCount--;
@@ -180,8 +180,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
             int cinderCount = 7;
             float cinderSpeed = 9.6f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float gravity = MathHelper.Lerp(0.8f, 1.12f, 1f - lifeRatio);
-            float maxSlamSpeed = MathHelper.Lerp(15.4f, 21f, 1f - lifeRatio);
+            float gravity = Lerp(0.8f, 1.12f, 1f - lifeRatio);
+            float maxSlamSpeed = Lerp(15.4f, 21f, 1f - lifeRatio);
             Color sparkColor = Color.Lerp(Color.Yellow, Color.Green, 0.5f);
             Color stompColor = Color.Lerp(Color.Yellow, Color.Lime, 0.7f);
 
@@ -242,7 +242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                     {
                         for (int i = 0; i < cinderCount; i++)
                         {
-                            float cinderShootOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, i / (float)(cinderCount - 1f));
+                            float cinderShootOffsetAngle = Lerp(-0.75f, 0.75f, i / (float)(cinderCount - 1f));
                             Vector2 cinderVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(cinderShootOffsetAngle) * cinderSpeed;
                             Utilities.NewProjectileBetter(npc.Center, cinderVelocity, projID, 115, 0f);
                         }
@@ -258,7 +258,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                     return false;
                 }
 
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + gravity, -8f, maxSlamSpeed);
+                npc.velocity.Y = Clamp(npc.velocity.Y + gravity, -8f, maxSlamSpeed);
                 return false;
             }
 
@@ -334,7 +334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                     float dartSpeed = npc.Distance(target.Center) * 0.0125f + 15.5f;
                     for (int i = 0; i < dartsPerBurst; i++)
                     {
-                        float dartShootOffsetAngle = MathHelper.Lerp(0.1f, -0.47f, i / (float)(dartsPerBurst - 1f)) * npc.spriteDirection + Main.rand.NextFloatDirection() * 0.05f;
+                        float dartShootOffsetAngle = Lerp(0.1f, -0.47f, i / (float)(dartsPerBurst - 1f)) * npc.spriteDirection + Main.rand.NextFloatDirection() * 0.05f;
                         Vector2 dartVelocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 600f).RotatedBy(dartShootOffsetAngle) * dartSpeed;
                         Utilities.NewProjectileBetter(mouthPosition, dartVelocity, ModContent.ProjectileType<CursedDart>(), 120, 0f);
                     }
@@ -367,7 +367,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                 aimDirection = npc.AngleTo(target.Center);
                 for (int i = 0; i < guillotineCount; i++)
                 {
-                    float offsetAngle = MathHelper.Lerp(-1.18f, 1.18f, i / (float)(guillotineCount - 1f));
+                    float offsetAngle = Lerp(-1.18f, 1.18f, i / (float)(guillotineCount - 1f));
                     for (int j = 0; j < 80; j++)
                     {
                         Vector2 dustSpawnPosition = npc.Center + (offsetAngle + aimDirection).ToRotationVector2() * j * 24f;
@@ -389,7 +389,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                 {
                     for (int i = 0; i < guillotineCount; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-1.18f, 1.18f, i / (float)(guillotineCount - 1f));
+                        float offsetAngle = Lerp(-1.18f, 1.18f, i / (float)(guillotineCount - 1f));
                         Vector2 guillotineShootVelocity = (offsetAngle + aimDirection).ToRotationVector2() * 15f;
                         Utilities.NewProjectileBetter(npc.Center, guillotineShootVelocity, ModContent.ProjectileType<ChainGuillotine>(), 120, 0f, -1, 0f, npc.whoAmI);
                     }
@@ -411,8 +411,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
             for (int i = 0; i < 15; i++)
             {
                 float horizontalOffsetInterpolant = Main.rand.NextFloat();
-                Vector2 sparkSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, MathHelper.Lerp(0.2f, 0.8f, horizontalOffsetInterpolant));
-                Vector2 sparkVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.75f, 0.75f, horizontalOffsetInterpolant)) * Main.rand.NextFloat(7f, 16f);
+                Vector2 sparkSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, Lerp(0.2f, 0.8f, horizontalOffsetInterpolant));
+                Vector2 sparkVelocity = -Vector2.UnitY.RotatedBy(Lerp(-0.75f, 0.75f, horizontalOffsetInterpolant)) * Main.rand.NextFloat(7f, 16f);
                 GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(sparkSpawnPosition, sparkVelocity, 1.1f, sparkColor, 40, 1f, 3f));
             }
         }

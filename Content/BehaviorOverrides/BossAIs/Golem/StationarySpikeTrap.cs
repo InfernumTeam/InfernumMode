@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             bool inPhase2 = Main.npc[NPC.golemBoss].Infernum().ExtraAI[16] >= Phase2TransitionAnimationTime && lifeRatio < Phase2LifeRatio;
 
             if (SpikesShouldExtendOutward || inPhase2)
-                SpikeReach = MathHelper.Clamp(SpikeReach + 8f, 0f, 50f);
+                SpikeReach = Clamp(SpikeReach + 8f, 0f, 50f);
 
             // Create a visual warning effect on the ground before releasing spikes so that the player knows to avoid it.
             else
@@ -91,10 +91,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             float frameTop = TextureAssets.Chain17.Value.Height - frameHeight;
             if (frameHeight > 0f)
             {
-                float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
+                float spikeRotation = SpikeDirection == -1f ? 0f : Pi;
                 Rectangle spikeFrame = new(0, (int)frameTop, TextureAssets.Chain17.Value.Width, (int)frameHeight);
                 Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.White, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
-                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.White, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.White, spikeRotation + Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;

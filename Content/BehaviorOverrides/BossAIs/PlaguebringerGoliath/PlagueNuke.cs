@@ -3,6 +3,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -68,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                     NPC.active = false;
                 }
-                NPC.rotation = NPC.velocity.ToRotation() + MathHelper.PiOver2;
+                NPC.rotation = NPC.velocity.ToRotation() + PiOver2;
                 return;
             }
 
@@ -93,7 +94,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     Target.Infernum_Camera().CurrentScreenShakePower = 12f;
                     ScreenEffectSystem.SetBlurEffect(NPC.Center, 0.4f, 32);
 
-                    SoundEngine.PlaySound(InfernumSoundRegistry.PBGNukeExplosionSound with { Volume = 2f }, NPC.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PBGNukeExplosionSound with
+                    {
+                        Volume = 2f
+                    }, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), PlaguebringerGoliathBehaviorOverride.NuclearExplosionDamage, 0f);
 
@@ -101,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     NPC.checkDead();
                     NPC.active = false;
                 }
-                NPC.rotation = NPC.velocity.ToRotation() + MathHelper.PiOver2;
+                NPC.rotation = NPC.velocity.ToRotation() + PiOver2;
                 return;
             }
             else
@@ -124,12 +128,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                 float distanceToAveragePosition = NPC.Distance(averageBuilderPosition);
 
-                Vector2 idealVelocity = NPC.SafeDirectionTo(averageBuilderPosition) * MathHelper.Min(distanceToAveragePosition, 16f);
+                Vector2 idealVelocity = NPC.SafeDirectionTo(averageBuilderPosition) * MathF.Min(distanceToAveragePosition, 16f);
                 NPC.velocity = (NPC.velocity * 3f + idealVelocity) / 4f;
                 NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 1.5f);
 
                 // Rotate towards the player.
-                float idealRotation = NPC.AngleTo(Target.Center + Target.velocity * 25f) + MathHelper.PiOver2;
+                float idealRotation = NPC.AngleTo(Target.Center + Target.velocity * 25f) + PiOver2;
                 NPC.rotation = NPC.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.025f);
             }
 
@@ -169,8 +173,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override void FindFrame(int frameHeight)
         {
-            float buildCompletion = MathHelper.Clamp(ExistTimer / BuildTime, 0f, 1f);
-            NPC.frame.Y = (int)MathHelper.Lerp(0f, Main.npcFrameCount[NPC.type] - 1f, buildCompletion) * frameHeight;
+            float buildCompletion = Clamp(ExistTimer / BuildTime, 0f, 1f);
+            NPC.frame.Y = (int)Lerp(0f, Main.npcFrameCount[NPC.type] - 1f, buildCompletion) * frameHeight;
             if (ExistTimer >= BuildTime)
             {
                 NPC.frameCounter++;

@@ -46,14 +46,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 0.48f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 0.48f);
 
             Projectile.velocity *= 0.99f;
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             if (Projectile.velocity != Vector2.Zero)
-                Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
             Time++;
@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float explosionInterpolant = Utils.GetLerpValue(200f, 35f, Projectile.timeLeft, true);
             float pulseInterpolant = Utils.GetLerpValue(0.75f, 0.85f, explosionInterpolant, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, explosionInterpolant, true);
-            float colorPulse = (MathF.Cos(Main.GlobalTimeWrappedHourly * 7.2f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant * 0.6f;
+            float colorPulse = (Cos(Main.GlobalTimeWrappedHourly * 7.2f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant * 0.6f;
             colorPulse += (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity * 1.3f) * 0.5f + 0.5f) * 0.4f;
 
             if (explosionInterpolant > 0f)

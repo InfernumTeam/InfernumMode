@@ -43,7 +43,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             Projectile.active = true;
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
 
             // Ensure the position remains accurate.
             Projectile.Center = WorldSaveSystem.WayfinderGateLocation;
@@ -138,8 +138,8 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             else
             {
                 float interpolant = Timer / initialGateCreationTime;
-                float opacity = MathHelper.Lerp(1, 0.55f, interpolant);
-                float scale2 = MathHelper.Lerp(2, 1, interpolant);
+                float opacity = Lerp(1, 0.55f, interpolant);
+                float scale2 = Lerp(2, 1, interpolant);
 
                 Main.spriteBatch.Draw(bloomTexture, drawPos, null, outerColor * opacity, 0, bloomTexture.Size() * 0.5f, scale2, SpriteEffects.None, 0f);
             }
@@ -150,11 +150,11 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
             Main.spriteBatch.Draw(innerTexture, drawPos, null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1, 0, 0);
 
-            float scale = MathF.Sin(Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 2f) * 0.3f + 0.7f;
+            float scale = Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f + 0.7f;
             innerColor.A = 0;
             innerColor = innerColor * 0.1f * scale;
             for (float i = 0f; i < 1f; i += 1f / 16f)
-                Main.spriteBatch.Draw(innerTexture, drawPos + (MathHelper.TwoPi * i).ToRotationVector2() * (6f + 2f), null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1f, 0, 0f);
+                Main.spriteBatch.Draw(innerTexture, drawPos + (TwoPi * i).ToRotationVector2() * (6f + 2f), null, innerColor * Projectile.Opacity, rotInner, innerTexture.Size() * 0.5f, 1f, 0, 0f);
             return false;
         }
 

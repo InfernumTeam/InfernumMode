@@ -46,9 +46,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         {
             float redirectSpeed = RedirectSpeed * (BossRushEvent.BossRushActive ? 2f : 1f);
             if (Time < 45 && NPC.velocity.Length() < redirectSpeed)
-                NPC.velocity *= MathF.Pow(redirectSpeed / InitialSpeed, 1f / 45f);
+                NPC.velocity *= Pow(redirectSpeed / InitialSpeed, 1f / 45f);
             else if (Time >= 45f)
-                NPC.velocity = NPC.velocity.RotateTowards(NPC.AngleTo(Target.Center), MathHelper.ToRadians(2.4f));
+                NPC.velocity = NPC.velocity.RotateTowards(NPC.AngleTo(Target.Center), ToRadians(2.4f));
 
             if (Collision.SolidCollision(NPC.position, NPC.width, NPC.height) || NPC.WithinRange(Target.Center, 40f))
             {
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                     NPC.active = false;
                     NPC.netUpdate = true;
                 }
-                NPC.scale = MathHelper.Lerp(1f, 1.6f, Utils.GetLerpValue(1.8f, 0.7f, NPC.velocity.Length(), true));
+                NPC.scale = Lerp(1f, 1.6f, Utils.GetLerpValue(1.8f, 0.7f, NPC.velocity.Length(), true));
             }
 
             Time++;

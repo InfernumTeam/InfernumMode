@@ -38,7 +38,7 @@ namespace InfernumMode.Content.Projectiles.Generic
         public override void AI()
         {
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
 
             // Rise upward and create a spiral of fire around the core.
             if (Time is >= 70f and < 210f)
@@ -52,8 +52,8 @@ namespace InfernumMode.Content.Projectiles.Generic
                         {
                             float verticalOffset = Main.rand.NextFloat() * -Projectile.velocity.Y;
                             Vector2 dustSpawnOffset = Vector2.UnitX * Main.rand.NextFloatDirection() * 0.05f;
-                            dustSpawnOffset.X += MathF.Sin((Projectile.position.Y + verticalOffset) * 0.06f + MathHelper.TwoPi * j / 3f) * 0.5f;
-                            dustSpawnOffset.X = MathHelper.Lerp(Main.rand.NextFloat() - 0.5f, dustSpawnOffset.X, MathHelper.Clamp(-Projectile.velocity.Y, 0f, 1f));
+                            dustSpawnOffset.X += Sin((Projectile.position.Y + verticalOffset) * 0.06f + TwoPi * j / 3f) * 0.5f;
+                            dustSpawnOffset.X = Lerp(Main.rand.NextFloat() - 0.5f, dustSpawnOffset.X, Clamp(-Projectile.velocity.Y, 0f, 1f));
                             dustSpawnOffset.Y = -Math.Abs(dustSpawnOffset.X) * 0.25f;
                             dustSpawnOffset *= Utils.GetLerpValue(210f, 180f, Time, true) * new Vector2(40f, 50f);
                             dustSpawnOffset.Y += verticalOffset;
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             if (Time >= 210f)
             {
-                float jitterFactor = MathHelper.Lerp(0.4f, 3f, Utils.GetLerpValue(0f, 2f, Projectile.velocity.Length(), true));
+                float jitterFactor = Lerp(0.4f, 3f, Utils.GetLerpValue(0f, 2f, Projectile.velocity.Length(), true));
 
                 Projectile.velocity *= 0.96f;
                 Projectile.Center += Main.rand.NextVector2Circular(jitterFactor, jitterFactor);
@@ -133,8 +133,8 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             for (int i = 0; i < 8; i++)
             {
-                Color color = Color.Lerp(new Color(1f, 0.62f, 0f, 0f), Color.White, MathF.Pow(Projectile.Opacity, 2.7f)) * MathF.Pow(Projectile.Opacity, 2f);
-                Vector2 drawOffset = (Time * MathHelper.TwoPi / 67f + MathHelper.TwoPi * i / 8f).ToRotationVector2() * (1f - Projectile.Opacity) * 75f;
+                Color color = Color.Lerp(new Color(1f, 0.62f, 0f, 0f), Color.White, Pow(Projectile.Opacity, 2.7f)) * Pow(Projectile.Opacity, 2f);
+                Vector2 drawOffset = (Time * TwoPi / 67f + TwoPi * i / 8f).ToRotationVector2() * (1f - Projectile.Opacity) * 75f;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
                 Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
             }

@@ -39,7 +39,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 Projectile.velocity *= 0.93f;
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(360f, 345f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
 
             NPC potentialTarget = Projectile.Center.ClosestNPCAt(Myrindael.TargetHomeDistance);
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Color frontAfterimageColor = new Color(0.23f, 0.93f, 0.96f, 0f) * Projectile.Opacity * 0.6f;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 8f + Projectile.rotation - PiOver2).ToRotationVector2() * 6f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }

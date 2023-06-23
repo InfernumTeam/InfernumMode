@@ -45,8 +45,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             Timer = core.ai[1];
             Projectile.Center = core.Center;
             Projectile.scale = Utilities.UltrasmoothStep(Timer / 120f) * 2.5f + Utilities.UltrasmoothStep(Timer / 32f) * 0.34f;
-            Projectile.scale = MathHelper.Lerp(Projectile.scale, 0f, Utils.GetLerpValue(440f, 480f, Timer, true));
-            Projectile.Opacity = MathHelper.Clamp(Projectile.scale * 0.87f, 0f, 1f);
+            Projectile.scale = Lerp(Projectile.scale, 0f, Utils.GetLerpValue(440f, 480f, Timer, true));
+            Projectile.Opacity = Clamp(Projectile.scale * 0.87f, 0f, 1f);
 
             // Begin releasing fireballs.
             if (Timer > 135f && Timer % 4f == 3f)
@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 for (int i = 0; i < 36; i++)
                 {
                     Vector2 boltSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(40f, 40f);
-                    Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 36).ToRotationVector2() * 5f;
+                    Vector2 boltShootVelocity = (TwoPi * i / 36).ToRotationVector2() * 5f;
                     boltShootVelocity += Main.rand.NextVector2Circular(0.7f, 0.7f);
                     Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 215, 0f);
 

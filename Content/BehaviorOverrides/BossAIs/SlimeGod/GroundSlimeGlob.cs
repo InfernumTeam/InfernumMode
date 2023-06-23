@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             if (Projectile.velocity.Y != 0f && Projectile.ai[0] == 0f)
             {
                 // Rotate based on velocity, only do this here, because it's falling.
-                Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
                 Projectile.frameCounter++;
                 if (Projectile.frameCounter > 6)
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);

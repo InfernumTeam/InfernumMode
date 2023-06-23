@@ -36,13 +36,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Projectile.velocity *= 1.024f;
 
             Projectile.frameCounter++;
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Dissipate into ashes if inside of a wall.
             if (Collision.SolidCollision(Projectile.TopLeft, Projectile.width, Projectile.height) && Time >= 90f)
             {
                 // Release ashes.
-                int ashCount = (int)MathHelper.Lerp(8f, 2f, Projectile.Opacity);
+                int ashCount = (int)Lerp(8f, 2f, Projectile.Opacity);
                 for (int i = 0; i < ashCount; i++)
                 {
                     Color startingColor = Color.Lerp(Color.Orange, Color.Gray, Main.rand.NextFloat(0.5f, 0.8f));
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     GeneralParticleHandler.SpawnParticle(ash);
                 }
 
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.085f, 0f, 1f);
                 if (Projectile.Opacity <= 0f)
                     Projectile.Kill();
             }

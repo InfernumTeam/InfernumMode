@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Projectile.velocity.Length() < 33f)
                 Projectile.velocity *= 1.033f;
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     blood.velocity = angularOffset.ToRotationVector2();
                     blood.scale = 1.6f;
                 }
-                angularOffset += MathHelper.TwoPi / dustCount;
+                angularOffset += TwoPi / dustCount;
                 blood.velocity += Projectile.velocity * Main.rand.NextFloat(0.5f);
             }
         }
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             Color smallGleamColor = color * 0.5f;
             float opacity = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) *
                 Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) *
-                (1f + 0.2f * MathF.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * MathHelper.Pi * 6f)) * 0.8f;
+                (1f + 0.2f * Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * Pi * 6f)) * 0.8f;
             Vector2 bigGleamScale = new Vector2(0.5f, 5f) * opacity;
             Vector2 smallGleamScale = new Vector2(0.5f, 2f) * opacity;
             bigGleamColor *= opacity;

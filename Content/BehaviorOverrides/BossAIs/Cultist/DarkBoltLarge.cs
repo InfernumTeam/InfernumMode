@@ -45,8 +45,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
             if (canRotate)
             {
-                float offsetInterpolant = MathF.Cos(Projectile.whoAmI % 6f / 6f + Projectile.position.X / 320f + Projectile.position.Y / 160f);
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi * offsetInterpolant / 120f) * 0.98f;
+                float offsetInterpolant = Cos(Projectile.whoAmI % 6f / 6f + Projectile.position.X / 320f + Projectile.position.Y / 160f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(Pi * offsetInterpolant / 120f) * 0.98f;
             }
 
             if (canMoveTowardsTarget)
@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (Projectile.hostile && Main.player.IndexInRange(targetIndex))
                     idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 34.5f;
 
-                float amount = MathHelper.Lerp(0.056f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
+                float amount = Lerp(0.056f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
                 Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, amount);
             }
             Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true);

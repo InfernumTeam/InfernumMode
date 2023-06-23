@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Projectile.velocity = Projectile.velocity.RotatedBy(ArcAngularVelocity);
             if (Projectile.velocity.Length() < 16f)
                 Projectile.velocity *= 1.016f;
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Color backAfterimageColor = Projectile.GetAlpha(new Color(85, 224, 60, 0) * 0.5f);
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Utilities.DrawAfterimagesCentered(Projectile, new Color(117, 95, 133, 184) * Projectile.Opacity, ProjectileID.Sets.TrailingMode[Projectile.type], 2);

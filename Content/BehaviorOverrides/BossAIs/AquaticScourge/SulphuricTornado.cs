@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Move upward.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            Projectile.velocity.X = MathF.Cos(MathHelper.TwoPi * Time / 270f) * FlyDirection * Projectile.Opacity * 19.5f;
+            Projectile.velocity.X = Cos(TwoPi * Time / 270f) * FlyDirection * Projectile.Opacity * 19.5f;
             Projectile.velocity.Y = -4.5f;
             Projectile.position.X += Projectile.SafeDirectionTo(target.Center).X * Projectile.Opacity * 13f;
 
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     if (Main.rand.NextBool(25))
                         bubbleID = 424;
 
-                    float horizontalOffset = MathHelper.Lerp(-Projectile.width * 0.65f, Projectile.width * 0.65f, MathF.Pow(Main.rand.NextFloat(), 2f));
+                    float horizontalOffset = Lerp(-Projectile.width * 0.65f, Projectile.width * 0.65f, Pow(Main.rand.NextFloat(), 2f));
                     Vector2 bubbleSpawnPosition = Projectile.Bottom + new Vector2(horizontalOffset, Main.rand.NextFloat(400f, -Projectile.height - 800f));
                     Vector2 bubbleSpawnVelocity = -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(2f, 8f);
                     Gore bubble = Gore.NewGorePerfect(Projectile.GetSource_FromThis(), bubbleSpawnPosition, bubbleSpawnVelocity, bubbleID);
@@ -110,8 +110,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (float dy = 0; dy < Projectile.height; dy += 30f)
             {
-                float rotation = Projectile.rotation + MathHelper.Pi * dy / Projectile.height;
-                float opacity = MathHelper.Lerp(1f, 0.6f, dy / Projectile.height) * Projectile.Opacity * 0.3f;
+                float rotation = Projectile.rotation + Pi * dy / Projectile.height;
+                float opacity = Lerp(1f, 0.6f, dy / Projectile.height) * Projectile.Opacity * 0.3f;
                 Vector2 drawPosition = Projectile.Bottom - Main.screenPosition - Vector2.UnitY * dy;
                 Color tornadoColor = Color.White * opacity;
                 tornadoColor.A /= 3;
@@ -121,7 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             return false;
         }
 
-        public float TornadoPieceScale(float dy) => MathHelper.Lerp(0.3f, 1.4f, dy / Projectile.height) * Projectile.scale;
+        public float TornadoPieceScale(float dy) => Lerp(0.3f, 1.4f, dy / Projectile.height) * Projectile.scale;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

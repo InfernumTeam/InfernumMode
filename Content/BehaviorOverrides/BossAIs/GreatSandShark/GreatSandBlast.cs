@@ -29,10 +29,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
             if (Projectile.timeLeft < 240)
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.2f, -8f, 10f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.2f, -8f, 10f);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 3f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 3f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(new Color(1f, 1f, 1f, 0f)) * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);

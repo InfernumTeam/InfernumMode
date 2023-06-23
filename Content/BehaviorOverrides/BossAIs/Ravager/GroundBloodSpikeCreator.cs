@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float direction = Math.Sign(Projectile.velocity.X);
-                    Vector2 velocity = -Vector2.UnitY.RotatedBy(direction * 0.7f + Main.rand.NextFloatDirection() * MathHelper.Pi / 10f);
+                    Vector2 velocity = -Vector2.UnitY.RotatedBy(direction * 0.7f + Main.rand.NextFloatDirection() * Pi / 10f);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - Vector2.UnitY * 60f, velocity, ModContent.ProjectileType<GroundBloodSpike>(), Projectile.damage, 0f);
                 }
             }

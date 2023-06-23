@@ -93,16 +93,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             // Rotation is relative to predictiveness.
             float idealRotation = aimDirection.ToRotation();
             if (currentlyDisabled)
-                idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
+                idealRotation = Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + PiOver2;
             if (doingHoverCharge)
-                idealRotation = aresBody.velocity.ToRotation() - MathHelper.PiOver2;
+                idealRotation = aresBody.velocity.ToRotation() - PiOver2;
 
             if (npc.spriteDirection == 1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
             if (idealRotation < 0f)
-                idealRotation += MathHelper.TwoPi;
-            if (idealRotation > MathHelper.TwoPi)
-                idealRotation -= MathHelper.TwoPi;
+                idealRotation += TwoPi;
+            if (idealRotation > TwoPi)
+                idealRotation -= TwoPi;
 
             // Turn more sharply during the ultimate attack, to ensure that players don't get fucked due to it taking a long time for their baiting movements to actually matter.
             bool performingUltimateAttack = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.PrecisionBlasts;
@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             npc.rotation = npc.rotation.AngleTowards(idealRotation, angularVelocity);
             currentDirection = npc.rotation;
             if (Math.Sin(currentDirection) < 0f)
-                currentDirection += MathHelper.Pi;
+                currentDirection += Pi;
 
             int direction = Math.Sign(target.Center.X - npc.Center.X);
             if (direction != 0)
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.direction = direction;
 
                 if (npc.spriteDirection != -npc.direction)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 npc.spriteDirection = -npc.direction;
             }
@@ -142,9 +142,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
             if (telegraphGlowInterpolant > 0f)
             {
-                float whiteFade = MathF.Sin(Main.GlobalTimeWrappedHourly * 20f) * 0.5f + 0.5f;
+                float whiteFade = Sin(Main.GlobalTimeWrappedHourly * 20f) * 0.5f + 0.5f;
                 telegraphColor = Color.Lerp(telegraphColor, Color.White, whiteFade);
-                telegraphColor *= Utils.GetLerpValue(0f, 0.65f, telegraphGlowInterpolant, true) * MathF.Pow(Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true), 2f);
+                telegraphColor *= Utils.GetLerpValue(0f, 0.65f, telegraphGlowInterpolant, true) * Pow(Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true), 2f);
 
                 float backAfterimageOffset = telegraphGlowInterpolant * 10f;
                 backAfterimageOffset += Utils.GetLerpValue(0.85f, 1f, telegraphGlowInterpolant, true) * 20f;
@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 {
                     Color color = telegraphColor * 0.6f;
                     color.A = 0;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (TwoPi * i / 13f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
@@ -187,9 +187,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                     color.A = 0;
 
                     if (npc.realLife >= 0 && Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
-                        color *= MathF.Pow(1f - Main.npc[npc.realLife].localAI[3], 1.9f);
+                        color *= Pow(1f - Main.npc[npc.realLife].localAI[3], 1.9f);
 
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.netUpdate = true;
             }
 
-            npc.life = (int)MathHelper.SmoothStep(startingHP, npc.lifeMax * ExoMechManagement.Phase4LifeRatio, phaseTransitionAnimationTime / ExoMechManagement.FinalPhaseTransitionTime);
+            npc.life = (int)SmoothStep(startingHP, npc.lifeMax * ExoMechManagement.Phase4LifeRatio, phaseTransitionAnimationTime / ExoMechManagement.FinalPhaseTransitionTime);
         }
     }
 }

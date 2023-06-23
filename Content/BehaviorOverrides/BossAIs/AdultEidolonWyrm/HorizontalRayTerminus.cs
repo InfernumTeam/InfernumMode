@@ -92,16 +92,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Stay within the world.
             if (Abyss.AtLeftSideOfWorld)
-                Projectile.position.X = MathHelper.Clamp(Projectile.position.X, 720f, AbyssWallWidth);
+                Projectile.position.X = Clamp(Projectile.position.X, 720f, AbyssWallWidth);
             else
-                Projectile.position.X = MathHelper.Clamp(Projectile.position.X, Main.maxTilesX - AbyssWallWidth, Main.maxTilesX - 720f);
+                Projectile.position.X = Clamp(Projectile.position.X, Main.maxTilesX - AbyssWallWidth, Main.maxTilesX - 720f);
             Projectile.rotation = (Projectile.position.X - Projectile.oldPosition.X) * 0.012f;
         }
 
         public void DoBehavior_RiseAndGrowWings()
         {
             WingsFadeInInterpolant = Utils.GetLerpValue(0f, WingGrowTime - 15f, Time, true);
-            float animationCompletion = MathF.Pow(WingsFadeInInterpolant, 1.7f);
+            float animationCompletion = Pow(WingsFadeInInterpolant, 1.7f);
             UpdateWings(WingMotionState.RiseUpward, animationCompletion);
 
             // Rise upward.
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             float time = Time - WingGrowTime - RedirectTime;
 
             // Make the runes fade in.
-            RuneFadeInInterpolant = MathHelper.Clamp(RuneFadeInInterpolant + 0.03f, 0f, 1f);
+            RuneFadeInInterpolant = Clamp(RuneFadeInInterpolant + 0.03f, 0f, 1f);
 
             // Slow down and charge energy.
             if (time < energyChargeTime)
@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             UpdateWings(WingMotionState.Flap, animationCompletion);
 
             // Stay above the target to prevent just flying away from the laser.
-            Projectile.position.Y = MathHelper.Lerp(Projectile.position.Y, Target.Center.Y - 250f, 0.16f);
+            Projectile.position.Y = Lerp(Projectile.position.Y, Target.Center.Y - 250f, 0.16f);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

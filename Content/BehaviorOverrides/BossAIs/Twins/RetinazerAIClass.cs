@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #region Frames and Drawcode
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
-            return MathHelper.SmoothStep(60f, 22f, completionRatio) * npc.Infernum().ExtraAI[6] / 15f;
+            return SmoothStep(60f, 22f, completionRatio) * npc.Infernum().ExtraAI[6] / 15f;
         }
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
 
                 Vector2 drawStart = npc.Center;
-                Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
+                Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
                 Vector2[] drawPositions = new Vector2[]
                 {
                     drawStart,
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             if (!BossRushEvent.BossRushActive && overdriveTimer > 0f)
             {
                 float fadeCompletion = overdriveTimer / TwinsShield.HealTime;
-                totalInstancesToDraw += (int)MathHelper.Lerp(1f, 40f, fadeCompletion);
+                totalInstancesToDraw += (int)Lerp(1f, 40f, fadeCompletion);
 
                 Color endColor = Color.Lerp(Color.White, Color.IndianRed, overdriveTimer / TwinsShield.HealTime);
                 endColor.A = 0;
@@ -124,8 +124,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             for (int i = 0; i < totalInstancesToDraw; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
-                drawOffset *= MathHelper.Lerp(0.85f, 1.2f, MathF.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
+                Vector2 drawOffset = (TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
+                drawOffset *= Lerp(0.85f, 1.2f, Sin(TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
                 drawInstance(npc.Center + drawOffset, color, npc.rotation);
             }
 
@@ -136,8 +136,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 telegraphOpacity = 0f;
             if (!validTelegraphAttack)
             {
-                telegraphOpacity = MathHelper.Clamp(telegraphOpacity - 0.1f, 0f, 1f);
-                telegraphDirection = npc.rotation + MathHelper.PiOver2;
+                telegraphOpacity = Clamp(telegraphOpacity - 0.1f, 0f, 1f);
+                telegraphDirection = npc.rotation + PiOver2;
             }
 
             if (telegraphOpacity > 0f)
@@ -152,10 +152,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                 Color colorOuter = Color.Lerp(Color.Red, Color.White, 0.32f);
                 Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
-                Vector2 telegraphStart = npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.scale * 88f;
+                Vector2 telegraphStart = npc.Center + (npc.rotation + PiOver2).ToRotationVector2() * npc.scale * 88f;
 
-                Main.EntitySpriteDraw(laserTelegraph, telegraphStart - Main.screenPosition, null, colorOuter, telegraphDirection - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
-                Main.EntitySpriteDraw(laserTelegraph, telegraphStart - Main.screenPosition, null, colorInner, telegraphDirection - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(laserTelegraph, telegraphStart - Main.screenPosition, null, colorOuter, telegraphDirection - PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(laserTelegraph, telegraphStart - Main.screenPosition, null, colorInner, telegraphDirection - PiOver2, origin, scaleInner, SpriteEffects.None, 0);
                 Main.spriteBatch.ResetBlendState();
             }
             return false;

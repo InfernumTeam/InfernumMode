@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 Projectile.velocity.Y += 0.25f;
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 36, 0, 255);
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             if (Projectile.timeLeft < 60)
             {
                 Projectile.scale *= 0.992f;
@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             for (int i = 0; i < 9; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 9f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(Color.Red) * 0.65f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public override void Kill(int timeLeft)
         {
             Player closetstPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (Main.netMode == NetmodeID.MultiplayerClient || MathHelper.Distance(closetstPlayer.Center.X, Projectile.Center.X) < 240f)
+            if (Main.netMode == NetmodeID.MultiplayerClient || Distance(closetstPlayer.Center.X, Projectile.Center.X) < 240f)
                 return;
 
             for (int i = 0; i < 2; i++)

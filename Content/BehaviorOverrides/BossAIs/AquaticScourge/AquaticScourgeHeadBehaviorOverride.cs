@@ -326,7 +326,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             UpdateAcidHissSound(npc);
 
             if (attackType != (int)AquaticScourgeAttackType.DeathAnimation)
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
             attackTimer++;
             generalTimer++;
 
@@ -513,7 +513,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             float spinSpeed = 23f;
             float chargeSpeed = 30.5f;
             float bubbleShootSpeed = 13f;
-            float spinArc = MathHelper.Pi / spinTime * 3f;
+            float spinArc = Pi / spinTime * 3f;
 
             if (phase2)
             {
@@ -606,7 +606,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Emit acid mist while charging.
             if (Main.netMode != NetmodeID.MultiplayerClient && charging && attackTimer % 2f == 0f)
             {
-                Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(2f, 6f);
+                Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(PiOver2) * Main.rand.NextFloat(2f, 6f);
                 Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
                 Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.3f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
             }
@@ -667,8 +667,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < acidShootCount; i++)
                     {
                         float acidInterpolant = i / (float)(acidShootCount - 1f);
-                        float angularVelocity = MathHelper.Lerp(0.016f, -0.016f, acidInterpolant);
-                        Vector2 acidShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-1.09f, 1.09f, acidInterpolant)) * 5f;
+                        float angularVelocity = Lerp(0.016f, -0.016f, acidInterpolant);
+                        Vector2 acidShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(Lerp(-1.09f, 1.09f, acidInterpolant)) * 5f;
                         Utilities.NewProjectileBetter(npc.Center + acidShootVelocity * 5f, acidShootVelocity, ModContent.ProjectileType<AcceleratingArcingAcid>(), AcidDropDamage, 0f, -1, 0f, angularVelocity);
                     }
                 }
@@ -730,7 +730,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Attempt to move towards the target before charging.
             if (attackTimer <= chargeDelay)
             {
-                float slowdownInterpolant = MathF.Pow(attackTimer / chargeDelay, 2f);
+                float slowdownInterpolant = Pow(attackTimer / chargeDelay, 2f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * slowdownInterpolant * chargeSpeed;
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
             }
@@ -796,10 +796,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     // Create some silly cartoon anger particles to give a bit of charm.
                     for (int i = 0; i < 3; i++)
                     {
-                        Vector2 angerParticleSpawnPosition = npc.Center + (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 48f + Main.rand.NextVector2Circular(12f, 12f);
+                        Vector2 angerParticleSpawnPosition = npc.Center + (TwoPi * i / 3f).ToRotationVector2() * 48f + Main.rand.NextVector2Circular(12f, 12f);
                         int angerParticleLifetime = Main.rand.Next(54, 67);
                         float angerParticleScale = Main.rand.NextFloat(0.36f, 0.58f);
-                        CartoonAngerParticle angy = new(angerParticleSpawnPosition, Color.Red, Color.DarkRed, angerParticleLifetime, Main.rand.NextFloat(MathHelper.TwoPi), angerParticleScale);
+                        CartoonAngerParticle angy = new(angerParticleSpawnPosition, Color.Red, Color.DarkRed, angerParticleLifetime, Main.rand.NextFloat(TwoPi), angerParticleScale);
                         GeneralParticleHandler.SpawnParticle(angy);
                     }
 
@@ -807,7 +807,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     {
                         for (int i = 0; i < rubbleCount; i++)
                         {
-                            float rubbleOffsetAngle = MathHelper.Lerp(-rubbleArc, rubbleArc, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.05f;
+                            float rubbleOffsetAngle = Lerp(-rubbleArc, rubbleArc, i / (float)(rubbleCount - 1f)) + Main.rand.NextFloatDirection() * 0.05f;
                             Vector2 rubbleVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(rubbleOffsetAngle) * rubbleShootSpeed;
                             Utilities.NewProjectileBetter(npc.Center + rubbleVelocity * 3f, rubbleVelocity, ModContent.ProjectileType<SulphurousRockRubble>(), SulphurousRockDamage, 0f);
                         }
@@ -835,7 +835,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 // Emit acid mist while charging and not inside of tiles.
                 if (Main.netMode != NetmodeID.MultiplayerClient && !insideBlocks && attackTimer % 5f == 0f)
                 {
-                    Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloat(0.7f, 3f);
+                    Vector2 gasVelocity = npc.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedBy(PiOver2) * Main.rand.NextFloat(0.7f, 3f);
                     Utilities.NewProjectileBetter(npc.Center, -gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
                     Utilities.NewProjectileBetter(npc.Center, gasVelocity.RotatedByRandom(0.25f), ModContent.ProjectileType<SulphuricGas>(), SulphuricGasDamage, 0f);
                 }
@@ -981,7 +981,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 shudderOffset -= 0.15f;
 
                 if (segmentShudderIndex <= 3f)
-                    npc.Center += npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * shudderOffset;
+                    npc.Center += npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * shudderOffset;
             }
 
             if (attackTimer >= slowdownTime + attackTime)
@@ -1002,7 +1002,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int rubbleReleaseRate = 90;
             float idealRotation = npc.AngleTo(target.Center);
             float turnAngularVelocity = BossRushEvent.BossRushActive ? 0.0384f : 0.027f;
-            float movementSpeed = MathHelper.Lerp(14.5f, 38f, Utils.GetLerpValue(640f, 3000f, npc.Distance(target.Center), true));
+            float movementSpeed = Lerp(14.5f, 38f, Utils.GetLerpValue(640f, 3000f, npc.Distance(target.Center), true));
 
             if (phase2)
             {
@@ -1038,7 +1038,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 closestBubble = goodBubbles.OrderBy(b => b.DistanceSQ(target.Center)).First();
                 float closenessInterpolant = Utils.GetLerpValue(400f, 180f, closestBubble.Distance(target.Center), true);
                 movementSpeed += closenessInterpolant * 9f;
-                turnAngularVelocity *= MathHelper.Lerp(1f, 1.35f, closenessInterpolant);
+                turnAngularVelocity *= Lerp(1f, 1.35f, closenessInterpolant);
             }
 
             // Create a good bubble above the target on the first frame.
@@ -1055,7 +1055,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Fly towards the target.
             if (!npc.WithinRange(target.Center, 240f))
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, turnAngularVelocity * 3.2f);
+                float newSpeed = Lerp(npc.velocity.Length(), movementSpeed, turnAngularVelocity * 3.2f);
                 npc.velocity = npc.velocity.RotateTowards(idealRotation, turnAngularVelocity, true);
                 npc.velocity = Vector2.Lerp(npc.velocity * newSpeed, idealRotation.ToRotationVector2() * newSpeed, 0.03f);
 
@@ -1093,7 +1093,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 {
                     int projID = ModContent.ProjectileType<SulphurousRockRubble>();
                     Vector2 rubbleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 800f, -30f), new Searches.Up(50));
-                    if (MathHelper.Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f)
+                    if (Distance(rubbleSpawnPosition.Y, target.Center.Y) < 150f)
                         rubbleSpawnPosition.Y = target.Center.Y - 980f + Main.rand.NextFloatDirection() * 40f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && !target.WithinRange(rubbleSpawnPosition, 300f))
@@ -1114,7 +1114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // low that they're in the abyss, a limit is imposed so that the water doesn't take an eternity to rise to the surface.
             if (acidVerticalLine == 0f)
             {
-                acidVerticalLine = MathHelper.Min(target.Bottom.Y + 2000f, CustomAbyss.AbyssTop * 16f + 900f);
+                acidVerticalLine = MathF.Min(target.Bottom.Y + 2000f, CustomAbyss.AbyssTop * 16f + 900f);
                 Utilities.DisplayText("A deluge of acid is quickly rising from below!", Color.GreenYellow);
 
                 SoundEngine.PlaySound(Mauler.RoarSound);
@@ -1160,7 +1160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
             else
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -25f, 0.05f);
-            npc.velocity.X = MathF.Sin(MathHelper.TwoPi * attackTimer / 90f) * 12f;
+            npc.velocity.X = Sin(TwoPi * attackTimer / 90f) * 12f;
 
             // Create very strong rain.
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1225,7 +1225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     else
                     {
                         Vector2 idealVelocity = new(npc.SafeDirectionTo(target.Center).X * 27f, -verticalSpeedAdditive - 24f);
-                        if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 600f)
+                        if (Distance(target.Center.X, npc.Center.X) >= 600f)
                             idealVelocity.X *= 2f;
 
                         npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.11f).MoveTowards(idealVelocity, 0.8f);
@@ -1247,7 +1247,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     npc.damage = 0;
 
                     // Gain horizontal momentum in anticipation of the upcoming fall.
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 7.5f, 0.064f);
+                    npc.velocity.X = Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 7.5f, 0.064f);
 
                     // Release the vomit bursts.
                     if (attackTimer % vomitShootRate == 0f)
@@ -1257,10 +1257,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int vomitShootCounter = (int)(attackTimer / vomitShootRate);
-                            float verticalVomitShootSpeed = MathHelper.Lerp(-10f, -15f, vomitShootCounter / (float)(vomitBurstCount - 1f));
+                            float verticalVomitShootSpeed = Lerp(-10f, -15f, vomitShootCounter / (float)(vomitBurstCount - 1f));
                             for (int i = 0; i < acidPerVomitBurst; i++)
                             {
-                                Vector2 acidVelocity = new Vector2(MathHelper.Lerp(-28f, 28f, i / (float)(acidPerVomitBurst - 1f)), verticalVomitShootSpeed) + Main.rand.NextVector2Circular(0.3f, 0.3f);
+                                Vector2 acidVelocity = new Vector2(Lerp(-28f, 28f, i / (float)(acidPerVomitBurst - 1f)), verticalVomitShootSpeed) + Main.rand.NextVector2Circular(0.3f, 0.3f);
                                 Utilities.NewProjectileBetter(npc.Center + acidVelocity, acidVelocity, ModContent.ProjectileType<FallingAcid>(), AcidDropDamage, 0f);
                             }
                         }
@@ -1282,7 +1282,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     npc.damage = 0;
 
                     npc.velocity.X *= 0.99f;
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
+                    npc.velocity.Y = Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
                     if (npc.Center.Y >= target.Center.Y + 1450f)
                     {
                         attackTimer = 0f;
@@ -1334,10 +1334,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Circle around the tornado.
             Projectile tornado = tornadoes.First();
-            Vector2 hoverPosition = tornado.Center + (MathHelper.TwoPi * attackTimer / 120f).ToRotationVector2() * new Vector2(708f, -330f);
-            hoverPosition.Y += MathF.Sin(MathHelper.TwoPi * attackTimer / 120f) * 15f;
+            Vector2 hoverPosition = tornado.Center + (TwoPi * attackTimer / 120f).ToRotationVector2() * new Vector2(708f, -330f);
+            hoverPosition.Y += Sin(TwoPi * attackTimer / 120f) * 15f;
 
-            npc.velocity = npc.SafeDirectionTo(hoverPosition, (npc.rotation - MathHelper.PiOver2).ToRotationVector2()) * MathHelper.Clamp(npc.Distance(hoverPosition), 0.4f, 50f);
+            npc.velocity = npc.SafeDirectionTo(hoverPosition, (npc.rotation - PiOver2).ToRotationVector2()) * Clamp(npc.Distance(hoverPosition), 0.4f, 50f);
             npc.Center = npc.Center.MoveTowards(hoverPosition, 2f);
 
             // Periodically vomit bubbles at the target.
@@ -1369,8 +1369,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 goreSpitCountdown = 150f;
 
             // Stay inside of the world.
-            npc.position.X = MathHelper.Clamp(npc.position.X, 600f, Main.maxTilesX * 16f - 600f);
-            npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
+            npc.position.X = Clamp(npc.position.X, 600f, Main.maxTilesX * 16f - 600f);
+            npc.position.Y = Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
 
             // Approach the player slowly.
             // The speed over time decreases as an indicator that the scourge is becoming increasingly weak, until it dies.
@@ -1457,12 +1457,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Open and close the jaws.
-            float idealJawRotation = Utils.Remap(goreSpitCountdown, 75f, 27f, 0f, MathHelper.Pi / 5f);
+            float idealJawRotation = Utils.Remap(goreSpitCountdown, 75f, 27f, 0f, Pi / 5f);
 
             // Adhere to gravity when done spitting.
             npc.noGravity = timeAfterSpitting == 0f;
             npc.noTileCollide = timeAfterSpitting == 0f;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             if (timeAfterSpitting != 0f)
             {
                 WormSegments[0].locked = false;
@@ -1477,7 +1477,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.Calamity().newAI[0] = 0f;
                 npc.boss = false;
 
-                npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + MathHelper.PiOver2;
+                npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + PiOver2;
 
                 if (timeAfterSpitting >= 2f)
                     npc.Center = WormSegments[0].position;
@@ -1713,7 +1713,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 for (int j = 0; j < 45; j++)
                 {
                     Dust bubble = Dust.NewDustPerfect(p.Center + Main.rand.NextVector2Circular(32f, 32f), 256);
-                    bubble.velocity = (MathHelper.TwoPi * i / 45f + Main.rand.NextFloatDirection() * 0.1f).ToRotationVector2() * Main.rand.NextFloat(1f, 16f);
+                    bubble.velocity = (TwoPi * i / 45f + Main.rand.NextFloatDirection() * 0.1f).ToRotationVector2() * Main.rand.NextFloat(1f, 16f);
                     bubble.scale = Main.rand.NextFloat(1f, 1.5f);
                     bubble.noGravity = true;
                 }
@@ -1730,7 +1730,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 return;
 
             // Determine the volume of the acid sound.
-            float volumeInterpolant = Utils.GetLerpValue(500f, 60f, MathHelper.Distance(target.Center.Y, acidVerticalLine), true);
+            float volumeInterpolant = Utils.GetLerpValue(500f, 60f, Distance(target.Center.Y, acidVerticalLine), true);
             if (target.Center.Y >= acidVerticalLine)
                 volumeInterpolant = 1f;
 
@@ -1780,7 +1780,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             float skeletonInterpolant = npc.localAI[1];
             float jawRotation = npc.localAI[2];
-            float jawRotationSine = MathF.Sin(jawRotation);
+            float jawRotationSine = Sin(jawRotation);
             float leftJawRotation = npc.rotation - jawRotation;
             float rightJawRotation = npc.rotation + jawRotation;
 
@@ -1795,7 +1795,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Draw the jaws.
             Vector2 leftJawOrigin = new Vector2(1f, 0.5f) * jawTexture.Size();
             Vector2 rightJawOrigin = new Vector2(0f, 0.5f) * jawTexture.Size();
-            Vector2 jawDrawPosition = drawPosition + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * (jawRotationSine * 12f + 11f);
+            Vector2 jawDrawPosition = drawPosition + (npc.rotation - PiOver2).ToRotationVector2() * (jawRotationSine * 12f + 11f);
             Vector2 leftJawDrawPosition = jawDrawPosition - npc.rotation.ToRotationVector2() * jawRotationSine * 30f;
             Vector2 rightJawDrawPosition = jawDrawPosition + npc.rotation.ToRotationVector2() * jawRotationSine * 30f;
             Main.EntitySpriteDraw(jawTexture, leftJawDrawPosition, null, npc.GetAlpha(lightColor), leftJawRotation, leftJawOrigin, npc.scale, SpriteEffects.None, 0);

@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Vector2[] result = new Vector2[125];
                 for (int i = 0; i < result.Length; i++)
                 {
-                    float horizontalOffset = MathHelper.Lerp(-3900f, 3900f, i / (float)(result.Length - 1f));
+                    float horizontalOffset = Lerp(-3900f, 3900f, i / (float)(result.Length - 1f));
                     result[i] = Projectile.Bottom + Vector2.UnitX * horizontalOffset;
                 }
                 return result;
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Drain and eventually disappear once Providence is dead.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss))
             {
-                LavaHeight = MathHelper.Clamp(LavaHeight - 16f, 0f, 16000f) * 0.98f;
+                LavaHeight = Clamp(LavaHeight - 16f, 0f, 16000f) * 0.98f;
                 if (LavaHeight <= 1f)
                     Projectile.Kill();
 
@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public Color ColorFunction(float completionRatio)
         {
-            float colorInterpolant = Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi * 8f + Main.GlobalTimeWrappedHourly));
+            float colorInterpolant = Math.Abs(Sin(completionRatio * Pi * 8f + Main.GlobalTimeWrappedHourly));
             Color c = Color.Lerp(Color.Orange, Color.Red, colorInterpolant * 0.4f);
             if (ProvidenceBehaviorOverride.IsEnraged)
                 c = Color.Lerp(c, Color.Blue, 0.95f);

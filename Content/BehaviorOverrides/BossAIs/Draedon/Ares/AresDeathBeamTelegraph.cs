@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 OldVelocity = Projectile.velocity;
                 Projectile.velocity = Vector2.Zero;
                 Projectile.netUpdate = true;
-                Projectile.rotation = OldVelocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = OldVelocity.ToRotation() + PiOver2;
             }
 
             TelegraphDelay++;
@@ -88,15 +88,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / 15f);
+                yScale = Lerp(0f, 2f, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphLifetime - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(2f, 0f, (TelegraphDelay - (TelegraphLifetime - TelegraphFadeTime)) / 15f);
+                yScale = Lerp(2f, 0f, (TelegraphDelay - (TelegraphLifetime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
             Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.6f);
 
-            Color colorOuter = CalamityUtils.MulticolorLerp(Utils.GetLerpValue(-MathHelper.Pi, MathHelper.Pi, OldVelocity.ToRotation(), true), CalamityUtils.ExoPalette);
+            Color colorOuter = CalamityUtils.MulticolorLerp(Utils.GetLerpValue(-Pi, Pi, OldVelocity.ToRotation(), true), CalamityUtils.ExoPalette);
             colorOuter.A = 36;
             Color colorInner = Color.Lerp(colorOuter, Color.White, 0.4f);
 

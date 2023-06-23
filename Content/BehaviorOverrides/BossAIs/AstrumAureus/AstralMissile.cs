@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             Lighting.AddLight(Projectile.Center, 0.5f, 0.5f, 0.5f);
 
@@ -53,13 +53,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             if (Time >= 45f && Projectile.velocity.Length() < 24f)
                 Projectile.velocity *= 1.021f;
 
-            Vector2 backOfMissile = Projectile.Center - (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
+            Vector2 backOfMissile = Projectile.Center - (Projectile.rotation - PiOver2).ToRotationVector2() * 20f;
             Dust.NewDustDirect(backOfMissile, 5, 5, ModContent.DustType<AstralOrange>());
 
             Time++;
         }
 
-        public static float FlameTrailWidthFunction(float completionRatio) => MathHelper.SmoothStep(21f, 8f, completionRatio);
+        public static float FlameTrailWidthFunction(float completionRatio) => SmoothStep(21f, 8f, completionRatio);
 
         public static Color FlameTrailColorFunction(float completionRatio)
         {
@@ -89,7 +89,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             // Initialize the flame trail drawer.
             FlameTrailDrawer ??= new(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
             Vector2 trailOffset = Projectile.Size * 0.5f;
-            trailOffset += (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 10f;
+            trailOffset += (Projectile.rotation + PiOver2).ToRotationVector2() * 10f;
             FlameTrailDrawer.DrawPixelated(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
         }
 

@@ -332,8 +332,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public static void DoBehavior_WalkToTarget(NPC npc, Player target, bool inPhase3, ref float attackTimer, ref float frameType)
         {
             int maxWalkTime = 210;
-            float walkSpeed = MathHelper.Lerp(3.45f, 5.8f, 1f - npc.life / (float)npc.lifeMax);
-            bool closeToTarget = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
+            float walkSpeed = Lerp(3.45f, 5.8f, 1f - npc.life / (float)npc.lifeMax);
+            bool closeToTarget = Distance(npc.Center.X, target.Center.X) < 100f;
             if (inPhase3)
             {
                 maxWalkTime -= 60;
@@ -605,7 +605,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 // Handle debris creation.
                 for (int i = 0; i < debrisCount; i++)
                 {
-                    Vector2 shootDestination = target.Center + Vector2.UnitX * (MathHelper.Lerp(-640f, 640f, i / (float)(debrisCount - 1f)) + Main.rand.NextFloat(10f));
+                    Vector2 shootDestination = target.Center + Vector2.UnitX * (Lerp(-640f, 640f, i / (float)(debrisCount - 1f)) + Main.rand.NextFloat(10f));
                     Vector2 shootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Bottom, shootDestination, 0.15f, debrisShootSpeed, out _).RotatedByRandom(0.04f);
                     Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ProjectileID.DeerclopsRangedProjectile, RubbleDamage, 0f, -1, 0f, Main.rand.Next(6, 12));
 
@@ -619,7 +619,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 // Handle shadow hand creation.
                 for (int i = 0; i < shadowHandCount; i++)
                 {
-                    float shootOffsetAngle = MathHelper.Lerp(-0.71f, 0.71f, i / (float)(shadowHandCount - 1f));
+                    float shootOffsetAngle = Lerp(-0.71f, 0.71f, i / (float)(shadowHandCount - 1f));
                     Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(12.5f, 16f);
                     Utilities.NewProjectileBetter(npc.Center - shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<SpinningShadowHand>(), ShadowHandDamage, 0f, -1, 0f, 47f);
                 }
@@ -668,7 +668,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             int eyeChargeTelegraphTime = 48;
             float laserOffsetAngle = npc.spriteDirection * -0.32f;
             Vector2 initialDirection = Vector2.UnitY.RotatedBy(laserOffsetAngle);
-            float maxLaserAngle = MathHelper.PiOver2 * 1.33333f;
+            float maxLaserAngle = PiOver2 * 1.33333f;
             if (inPhase3)
                 maxLaserAngle *= 1.3f;
 
@@ -720,7 +720,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             int handSummonCycleCount = 2;
             int totalHandsToSummon = 5;
             float handSpawnOffset = 450f;
-            bool haltMovement = MathHelper.Distance(npc.Center.X, target.Center.X) < 100f;
+            bool haltMovement = Distance(npc.Center.X, target.Center.X) < 100f;
 
             if (BossRushEvent.BossRushActive)
             {
@@ -745,7 +745,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
                     for (int i = 0; i < totalHandsToSummon; i++)
                     {
-                        float spawnOffsetAngle = MathHelper.Lerp(-1.26f, 1.26f, i / (float)(totalHandsToSummon - 1f));
+                        float spawnOffsetAngle = Lerp(-1.26f, 1.26f, i / (float)(totalHandsToSummon - 1f));
                         Vector2 handSpawnPosition = target.Center + handSpawnOffsetDirection.RotatedBy(spawnOffsetAngle) * handSpawnOffset;
                         Vector2 handSpawnVelocity = (target.Center - handSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * -Main.rand.NextFloat(7f, 10f);
                         Utilities.NewProjectileBetter(handSpawnPosition, handSpawnVelocity, ModContent.ProjectileType<SpinningShadowHand>(), ShadowHandDamage, 0f);
@@ -782,7 +782,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // Make the darkness grow.
             if (attackTimer <= darknessFadeTime)
             {
-                radiusDecreaseInterpolant = MathHelper.SmoothStep(0f, maxNaturalRadiusDecreaseInterpolant, attackTimer / darknessFadeTime);
+                radiusDecreaseInterpolant = SmoothStep(0f, maxNaturalRadiusDecreaseInterpolant, attackTimer / darknessFadeTime);
                 return;
             }
 
@@ -797,12 +797,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             float inverseCoveredDistance = 0f;
             NPC[] nearbyHands = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == handID && Vector2.Distance(GetEyePosition(npc), n.Center) < 240f).ToArray();
             inverseCoveredDistance = nearbyHands.Sum(n => 240f - Vector2.Distance(GetEyePosition(npc), n.Center));
-            smoothDistance = MathHelper.Lerp(smoothDistance, inverseCoveredDistance, 0.08f);
+            smoothDistance = Lerp(smoothDistance, inverseCoveredDistance, 0.08f);
 
             // Fade in and out as necessary.
             float fadeInterpolant = Utils.GetLerpValue(180f, 850f, smoothDistance, true);
-            radiusDecreaseInterpolant = MathHelper.Lerp(maxNaturalRadiusDecreaseInterpolant, maxRadiusDecreaseInterpolant, fadeInterpolant);
-            npc.Opacity = MathHelper.Lerp(1f, 0.36f, fadeInterpolant);
+            radiusDecreaseInterpolant = Lerp(maxNaturalRadiusDecreaseInterpolant, maxRadiusDecreaseInterpolant, fadeInterpolant);
+            npc.Opacity = Lerp(1f, 0.36f, fadeInterpolant);
 
             bool summonInterval = attackTimer % handSummonRate == handSummonRate - 1f || attackTimer == darknessFadeTime + 1f;
             if (NPC.CountNPCS(handID) < maxHandCount && summonInterval && attackTimer < attackTime)
@@ -881,7 +881,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // Create a bunch of particles on top of the portal.
             if (dragPortalAppearInterpolant >= 1f)
             {
-                float particleSpawnRate = MathHelper.Lerp(1f, 0.2f, npc.Opacity);
+                float particleSpawnRate = Lerp(1f, 0.2f, npc.Opacity);
                 for (int i = 0; i < 4; i++)
                 {
                     if (Main.rand.NextFloat() > particleSpawnRate)
@@ -922,7 +922,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 return;
 
             Vector2 position = new(x * 16 + 8, y * 16 - scale * 80f);
-            Vector2 velocity = -Vector2.UnitY.RotatedBy(spikeIndex / (float)spikeCount * dir * MathHelper.Pi * 0.175f);
+            Vector2 velocity = -Vector2.UnitY.RotatedBy(spikeIndex / (float)spikeCount * dir * Pi * 0.175f);
             int spike = Utilities.NewProjectileBetter(position, velocity, spikeID, IcicleDamage, 0f, -1, 0f, scale);
             if (Main.projectile.IndexInRange(spike))
                 Main.projectile[spike].localAI[1] = shadow.ToInt();
@@ -946,7 +946,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 npc.velocity.X *= 0.9f;
             else
             {
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(target.Center.X - npc.Center.X) * walkSpeed, 0.2f);
+                npc.velocity.X = Lerp(npc.velocity.X, Math.Sign(target.Center.X - npc.Center.X) * walkSpeed, 0.2f);
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             }
 
@@ -964,7 +964,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // Obey stronger gravity.
             if ((inHorizontalBounds || haltMovement) && inVerticalBounds)
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.8f, 0.001f, 16f);
+                npc.velocity.Y = Clamp(npc.velocity.Y + 0.8f, 0.001f, 16f);
                 return;
             }
 
@@ -978,7 +978,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // Otherwise, if deerclops can rise upward, do so.
             if (riseUpward)
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -8f, 0f);
+                npc.velocity.Y = Clamp(npc.velocity.Y - 0.4f, -8f, 0f);
                 return;
             }
 
@@ -988,7 +988,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 npc.velocity.Y = -8f;
                 return;
             }
-            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.4f, -8f, 16f);
+            npc.velocity.Y = Clamp(npc.velocity.Y + 0.4f, -8f, 16f);
         }
 
         public static int TryMakingSpike_FindBestY(Player target, ref Point sourceTileCoords, int x)
@@ -1182,7 +1182,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             // Ensure that the sprite cuts off as it enters the portal.
             cutoffArea.Y = (int)(npc.Top.Y - Main.screenPosition.Y - 200f);
-            cutoffArea.Height = (int)MathHelper.Max(dragPortalCenterY - npc.Top.Y + 200f, 0f);
+            cutoffArea.Height = (int)MathF.Max(dragPortalCenterY - npc.Top.Y + 200f, 0f);
         }
 
         public static void DrawDeerclopsInstance(NPC npc, Color lightColor)
@@ -1213,7 +1213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             if (shadowFormInterpolant > 0f)
             {
                 shadowBackglowCount = 2;
-                offsetInterpolant = MathF.Pow(shadowFormInterpolant, 2f);
+                offsetInterpolant = Pow(shadowFormInterpolant, 2f);
                 shadowOffset = 20f;
                 shadowColor = new Color(80, 0, 0, 255) * npc.Opacity * 0.5f;
                 forcedFadeToShadow = 1f;
@@ -1224,7 +1224,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             {
                 Color c = npc.GetAlpha(Color.Lerp(lightColor, shadowColor, opacityAffectedFadeToShadow));
                 c = Color.Lerp(c, shadowColor, forcedFadeToShadow) * (1f - offsetInterpolant * 0.5f);
-                Vector2 shadowDrawOffset = Vector2.UnitY.RotatedBy(i * MathHelper.TwoPi / shadowBackglowCount + Main.GlobalTimeWrappedHourly * 10f) * offsetInterpolant * shadowOffset;
+                Vector2 shadowDrawOffset = Vector2.UnitY.RotatedBy(i * TwoPi / shadowBackglowCount + Main.GlobalTimeWrappedHourly * 10f) * offsetInterpolant * shadowOffset;
                 Main.spriteBatch.Draw(tex, baseDrawPosition + shadowDrawOffset, frame, c, npc.rotation, origin, npc.scale, direction, 0f);
             }
             Color opacityAffectedColor = npc.GetAlpha(baseColor);
@@ -1264,7 +1264,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 Color eyeColor = new Color(255, 30, 30, 66) * npc.Opacity * scale * 0.25f;
                 for (int j = 0; j < shadowBackglowCount; j++)
                 {
-                    Vector2 eyeDrawPosition = baseDrawPosition + Vector2.UnitY.RotatedBy(j * MathHelper.TwoPi / shadowBackglowCount + Main.GlobalTimeWrappedHourly * 10f) * offsetInterpolant * 4f;
+                    Vector2 eyeDrawPosition = baseDrawPosition + Vector2.UnitY.RotatedBy(j * TwoPi / shadowBackglowCount + Main.GlobalTimeWrappedHourly * 10f) * offsetInterpolant * 4f;
                     Main.spriteBatch.Draw(eyeTexture, eyeDrawPosition, frame, eyeColor, npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }

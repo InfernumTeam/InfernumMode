@@ -96,8 +96,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
         {
             int shootDelay = 54;
             float animationCompletion = Utils.GetLerpValue(0f, shootDelay, Time, true);
-            float unsharpenedLightningInterpolant = MathF.Sin(MathHelper.Pi * animationCompletion * 2.5f);
-            PinkLightningFormInterpolant = MathF.Pow(unsharpenedLightningInterpolant, 6f);
+            float unsharpenedLightningInterpolant = Sin(Pi * animationCompletion * 2.5f);
+            PinkLightningFormInterpolant = Pow(unsharpenedLightningInterpolant, 6f);
 
             // Play lightning crackle sounds and release sparks when the spear has reached a peak energy state.
             // This doesn't happen once it's fully charged.
@@ -122,20 +122,20 @@ namespace InfernumMode.Content.Projectiles.Rogue
             }
 
             // Stick to the player.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
             Owner.ChangeDir((Projectile.velocity.X > 0f).ToDirectionInt());
-            float frontArmRotation = Projectile.rotation - MathHelper.PiOver4 - animationCompletion * Owner.direction * 0.74f;
+            float frontArmRotation = Projectile.rotation - PiOver4 - animationCompletion * Owner.direction * 0.74f;
             if (Owner.direction == 1)
-                frontArmRotation += MathHelper.Pi;
+                frontArmRotation += Pi;
 
-            Projectile.Center = Owner.Center + (frontArmRotation + MathHelper.PiOver2).ToRotationVector2() * Projectile.scale * 16f + Projectile.velocity * Projectile.scale * 40f;
+            Projectile.Center = Owner.Center + (frontArmRotation + PiOver2).ToRotationVector2() * Projectile.scale * 16f + Projectile.velocity * Projectile.scale * 40f;
             Owner.heldProj = Projectile.whoAmI;
             Owner.SetDummyItemTime(2);
 
             // Perform directioning.
             Projectile.spriteDirection = Owner.direction;
             if (Owner.direction == -1)
-                Projectile.rotation += MathHelper.PiOver2;
+                Projectile.rotation += PiOver2;
 
             // Destroy the spear if the owner can no longer hold it.
             Item heldItem = Owner.ActiveItem();
@@ -209,7 +209,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 Projectile.tileCollide = Projectile.timeLeft < 300;
                 Projectile.penetrate = 1;
             }
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
             Projectile.spriteDirection = 1;
         }
 
@@ -256,7 +256,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             SpriteEffects direction = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             for (int i = 0; i < 10; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * backglowWidth;
+                Vector2 drawOffset = (TwoPi * i / 10f).ToRotationVector2() * backglowWidth;
                 Main.spriteBatch.Draw(glowmaskTexture, drawPosition + drawOffset, frame, backglowColor, Projectile.rotation, origin, Projectile.scale, direction, 0f);
             }
         }

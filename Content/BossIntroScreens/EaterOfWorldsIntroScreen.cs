@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             Color cursedFlameColor = new(0, 145, 45);
             Color corruptFleshColor = new(130, 97, 124);
-            return Color.Lerp(cursedFlameColor, corruptFleshColor, MathF.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2));
+            return Color.Lerp(cursedFlameColor, corruptFleshColor, Sin(completionRatio * Pi * 3f + AnimationCompletion * PiOver2));
         });
 
         public override bool TextShouldBeCentered => true;

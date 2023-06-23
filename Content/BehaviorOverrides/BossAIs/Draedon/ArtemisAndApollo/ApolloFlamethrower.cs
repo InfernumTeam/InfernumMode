@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
     {
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
         public ref float Time => ref Projectile.ai[0];
-        public const float FlameRotation = MathHelper.Pi / 25f;
+        public const float FlameRotation = Pi / 25f;
         public const float FadeinTime = 30f;
         public const float FadeoutTime = 45f;
         public const float Lifetime = FadeinTime + FadeoutTime;
@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void AI()
         {
-            Projectile.Center = Owner.Center + (Owner.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
+            Projectile.Center = Owner.Center + (Owner.rotation - PiOver2).ToRotationVector2() * 85f;
             Projectile.rotation = Owner.AngleTo(Projectile.Center);
 
             Vector2 flameDirection = Projectile.rotation.ToRotationVector2();
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (Main.netMode != NetmodeID.MultiplayerClient && Time % 6f == 5f)
             {
                 Vector2 sparkShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.77f);
-                sparkShootVelocity = sparkShootVelocity.ToRotation().AngleLerp(-MathHelper.PiOver2, 0.75f).ToRotationVector2() * Main.rand.NextFloat(34f, 41f);
+                sparkShootVelocity = sparkShootVelocity.ToRotation().AngleLerp(-PiOver2, 0.75f).ToRotationVector2() * Main.rand.NextFloat(34f, 41f);
                 Utilities.NewProjectileBetter(Projectile.Center, sparkShootVelocity, ModContent.ProjectileType<ApolloFallingPlasmaSpark>(), DraedonBehaviorOverride.NormalShotDamage, 0f);
             }
 
@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Dust smokeDust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 0, default, 1f);
             smokeDust.fadeIn = 1.5f;
             smokeDust.scale = 0.4f;
-            smokeDust.velocity = flameDirection.RotatedBy(Main.rand.NextFloatDirection() * MathHelper.Pi / 8f) * (0.5f + Main.rand.NextFloat() * 2.5f) * 15f;
+            smokeDust.velocity = flameDirection.RotatedBy(Main.rand.NextFloatDirection() * Pi / 8f) * (0.5f + Main.rand.NextFloat() * 2.5f) * 15f;
             smokeDust.velocity += Owner.velocity * 2f;
             smokeDust.velocity *= 0.3f;
             smokeDust.noLight = true;
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             float smokeOffsetInterpolant = Main.rand.NextFloat();
             smokeDust.position = Vector2.Lerp(Projectile.Center + flameDirection * FireMaxLength * fadeOut, Projectile.Center + flameDirection * FireMaxLength * fadeIn, smokeOffsetInterpolant);
-            smokeDust.position += flameDirection.RotatedBy(MathHelper.PiOver2) * (20f + 100f * (smokeOffsetInterpolant - 0.5f));
+            smokeDust.position += flameDirection.RotatedBy(PiOver2) * (20f + 100f * (smokeOffsetInterpolant - 0.5f));
 
             // Update timers.
             Time++;
@@ -122,11 +122,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int flameCount = (int)(FireMaxLength / 6f);
             for (float i = 0f; i < flameCount; i++)
             {
-                float flameOffsetDirectionAngle = MathHelper.Lerp(-0.05f, 0.05f, Utils.RandomFloat(ref flameDrawerSeed));
+                float flameOffsetDirectionAngle = Lerp(-0.05f, 0.05f, Utils.RandomFloat(ref flameDrawerSeed));
                 Vector2 flameDirection = (Projectile.rotation + flameOffsetDirectionAngle).ToRotationVector2();
                 Vector2 endOfFlame = startOfFlame + flameDirection * FireMaxLength;
                 float flameDrawInterpolant = relativeFrameCompletion + i / flameCount;
-                float flameRotation = Projectile.rotation + MathHelper.Pi * (flameDrawInterpolant + Main.GlobalTimeWrappedHourly * 1.2f) * 0.1f + (int)(flameDrawInterpolant * flameCount) * MathHelper.Pi * 0.4f;
+                float flameRotation = Projectile.rotation + Pi * (flameDrawInterpolant + Main.GlobalTimeWrappedHourly * 1.2f) * 0.1f + (int)(flameDrawInterpolant * flameCount) * Pi * 0.4f;
                 flameDrawInterpolant %= 1f;
 
                 if ((flameDrawInterpolant <= relativeFrameCompletion % 1f || Projectile.frameCounter >= 40f) &&
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     else
                         flameDrawColor = Color.Transparent;
 
-                    float flameScale = MathF.Pow(MathHelper.Lerp(0.9f, 1.7f, flameDrawInterpolant), 2f) * 0.8f;
+                    float flameScale = Pow(Lerp(0.9f, 1.7f, flameDrawInterpolant), 2f) * 0.8f;
 
                     Vector2 currentFlameDrawPosition = Vector2.SmoothStep(startOfFlame, endOfFlame, flameDrawInterpolant);
                     Rectangle frame = texture2D5.Frame(1, 7, 0, (int)(flameDrawInterpolant * 7f));

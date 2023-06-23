@@ -38,10 +38,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+            Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
             Projectile.spriteDirection = (Math.Cos(Projectile.rotation) < 0f).ToDirectionInt();
             if (Projectile.spriteDirection == 1)
-                Projectile.rotation -= MathHelper.Pi;
+                Projectile.rotation -= Pi;
 
             if (Time == 0f)
             {
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             if (Projectile.ai[1] == 0f)
             {
                 if (Time < 110f)
-                    Projectile.velocity.Y = MathF.Pow(MathF.Sin(Time / 29f), 10f) * 14.5f;
+                    Projectile.velocity.Y = Pow(Sin(Time / 29f), 10f) * 14.5f;
                 else
                     Projectile.velocity.Y *= 0.93f;
             }
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.02f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.02f, 0f, 1f);
 
             Time++;
         }

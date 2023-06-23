@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true);
-            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(Projectile.velocity.Length() + 0.164f, 1f, BossRushEvent.BossRushActive ? 29f : 17f);
+            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * Clamp(Projectile.velocity.Length() + 0.164f, 1f, BossRushEvent.BossRushActive ? 29f : 17f);
             Projectile.frameCounter++;
             if (Projectile.frameCounter % 5 == 4)
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];

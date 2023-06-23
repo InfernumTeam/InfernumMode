@@ -35,14 +35,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (Projectile.localAI[0] == 0f)
             {
                 Projectile.scale = Main.rand.NextFloat(1f, 1.7f);
-                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.rotation = Main.rand.NextFloat(TwoPi);
                 Projectile.localAI[0] = 1f;
             }
 
             // Calculate light power. This checks below the position of the fog to check if this fog is underground.
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
-            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / MathF.Sqrt(3f);
-            LightPower = MathHelper.Lerp(LightPower, lightPowerBelow, 0.15f);
+            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
+            LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
             Projectile.Opacity = Utils.GetLerpValue(105f, 100f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
             Projectile.rotation += Projectile.velocity.X * 0.003f;
             Projectile.velocity *= 0.98f;

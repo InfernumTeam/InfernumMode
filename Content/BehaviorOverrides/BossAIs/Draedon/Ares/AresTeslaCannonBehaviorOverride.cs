@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float orbCounter = ref npc.ai[OrbCounterIndex];
 
             // Shoot slower if pointing downward.
-            orbShootSpeed *= MathHelper.Lerp(1f, 0.66f, Utils.GetLerpValue(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
+            orbShootSpeed *= Lerp(1f, 0.66f, Utils.GetLerpValue(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
             // Make things in general stronger based on Ares' current phase.
             if (ExoMechManagement.CurrentAresPhase >= 5)

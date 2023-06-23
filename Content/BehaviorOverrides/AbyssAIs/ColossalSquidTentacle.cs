@@ -37,12 +37,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 segmentPositions.Add(stickPosition - Vector2.UnitX * RightSide.ToDirectionInt() * 10f);
                 for (int i = 0; i < 20; i++)
                 {
-                    float moveOffset = MathF.Sin(Owner.Infernum().ExtraAI[9] * 0.113f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
+                    float moveOffset = Sin(Owner.Infernum().ExtraAI[9] * 0.113f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
                     if (Owner.Infernum().ExtraAI[9] <= 0f)
                         moveOffset = 0f;
 
                     Vector2 linearPosition = Vector2.CatmullRom(farLeft, stickPosition, NPC.Center, farRight, i / 19f);
-                    Vector2 perpendicularOffset = (stickPosition - NPC.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2);
+                    Vector2 perpendicularOffset = (stickPosition - NPC.Center).SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2);
                     segmentPositions.Add(linearPosition + perpendicularOffset * moveOffset);
                 }
 
@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 NPC.netUpdate = true;
                 return;
             }
-            NPC.rotation = (SegmentPositions[^22] - SegmentPositions[^1]).ToRotation() - MathHelper.PiOver2;
+            NPC.rotation = (SegmentPositions[^22] - SegmentPositions[^1]).ToRotation() - PiOver2;
             NPC.damage = Owner.dontTakeDamage ? 0 : NPC.defDamage;
         }
 

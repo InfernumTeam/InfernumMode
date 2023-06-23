@@ -40,10 +40,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
 
             // Grow to maximum size.
-            Projectile.scale = MathHelper.Lerp(Projectile.scale, 1.25f, 0.05f);
+            Projectile.scale = Lerp(Projectile.scale, 1.25f, 0.05f);
 
             // Move towards the target if necessary.
             if (HomeInOnTarget)

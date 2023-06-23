@@ -170,7 +170,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 for (int i = 0; i < 36; i++)
                 {
-                    Vector2 velocityDirection = (npc.velocity.SafeNormalize(Vector2.UnitY) * new Vector2(npc.width / 2f, npc.height) * 0.75f * 0.5f).RotatedBy(MathHelper.TwoPi * i / 36f);
+                    Vector2 velocityDirection = (npc.velocity.SafeNormalize(Vector2.UnitY) * new Vector2(npc.width / 2f, npc.height) * 0.75f * 0.5f).RotatedBy(TwoPi * i / 36f);
                     Dust blood = Dust.NewDustDirect(npc.Center, 0, 0, DustID.Blood, 0f, 0f, 100, default, 1.4f);
                     blood.velocity = velocityDirection.SafeNormalize(Vector2.UnitY) * 3f;
                     blood.noGravity = true;
@@ -214,9 +214,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Have the mouth face towards the target.
             npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            float idealRotation = npc.AngleTo(target.Center) - Pi * npc.spriteDirection * 0.15f;
             if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             if (npc.spriteDirection != npc.direction)
             {
@@ -268,7 +268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 Vector2 hoverDestination = target.Center + new Vector2((npc.Center.X > target.Center.X).ToDirectionInt() * 325f, -60f);
                 float distanceToDestination = npc.Distance(hoverDestination);
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceToDestination, 10f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathF.Min(distanceToDestination, 10f);
                 npc.SimpleFlyMovement(Vector2.Lerp(idealVelocity, (hoverDestination - npc.Center) * 0.15f, Utils.GetLerpValue(180f, 540f, distanceToDestination, true)), 0.4f);
             }
 
@@ -291,9 +291,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Slow down, look at the target, and create the gleam effect.
             npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            float idealRotation = npc.AngleTo(target.Center) - Pi * npc.spriteDirection * 0.15f;
             if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             if (npc.spriteDirection != npc.direction)
             {
@@ -312,7 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             // Increase the intensity of the gleam and summon wandering eye fish from the sky.
             else if (attackTimer < slowdownTime + summonTime)
             {
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -6f, 0.02f);
+                npc.velocity.Y = Lerp(npc.velocity.Y, -6f, 0.02f);
                 float gleamInterpolant = Utils.GetLerpValue(0f, summonTime, attackTimer - slowdownTime, true);
                 eyeGleamInterpolant = 1f + CalamityUtils.Convert01To010(gleamInterpolant) * 0.6f;
 
@@ -387,7 +387,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             // Make the gleam fade away again and eventually transition to the next attack.
             else if (attackTimer < slowdownTime + summonTime + phaseTransitionDelay)
             {
-                eyeGleamInterpolant = MathHelper.Clamp(eyeGleamInterpolant - 0.04f, 0f, 1f);
+                eyeGleamInterpolant = Clamp(eyeGleamInterpolant - 0.04f, 0f, 1f);
                 npc.velocity *= 0.95f;
             }
             else
@@ -404,7 +404,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             int upwardChargeTime = 57;
             int perpendicularBoltReleaseRate = 9;
             float upwardChargeSpeed = 28f;
-            float upwardChargeSpinArc = MathHelper.Pi * 0.6f;
+            float upwardChargeSpinArc = Pi * 0.6f;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 400f, 180f);
 
             if (phase2)
@@ -431,10 +431,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 // If far from the destination, look at the target. Otherwise, look downward.
                 npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-                float idealRotation = npc.WithinRange(hoverDestination, 100f) ? -MathHelper.PiOver2 : npc.AngleTo(target.Center);
-                idealRotation -= MathHelper.Pi * npc.spriteDirection * 0.15f;
+                float idealRotation = npc.WithinRange(hoverDestination, 100f) ? -PiOver2 : npc.AngleTo(target.Center);
+                idealRotation -= Pi * npc.spriteDirection * 0.15f;
                 if (npc.spriteDirection == -1)
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
 
                 // Perform hover movement.
                 if (!npc.WithinRange(hoverDestination, 85f) && reachedDestination == 0f)
@@ -454,9 +454,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     {
                         attackTimer = maxHoverTime;
 
-                        npc.rotation = -MathHelper.PiOver2 - MathHelper.Pi * npc.spriteDirection * 0.15f;
+                        npc.rotation = -PiOver2 - Pi * npc.spriteDirection * 0.15f;
                         if (npc.spriteDirection == -1)
-                            npc.rotation += MathHelper.Pi;
+                            npc.rotation += Pi;
 
                         idealRotation = npc.rotation;
                         npc.netUpdate = true;
@@ -489,7 +489,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 {
                     for (int i = 0; i < 13; i++)
                     {
-                        Vector2 bloodBoltVelocity = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * 3f;
+                        Vector2 bloodBoltVelocity = (TwoPi * i / 13f).ToRotationVector2() * 3f;
                         Utilities.NewProjectileBetter(mouthPosition + bloodBoltVelocity * 10f, bloodBoltVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
                     }
                 }
@@ -501,7 +501,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 SoundEngine.PlaySound(SoundID.Item171, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 perpendicularVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 1.3f;
+                    Vector2 perpendicularVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * 1.3f;
                     Utilities.NewProjectileBetter(mouthPosition + perpendicularVelocity * 24f, perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
                     Utilities.NewProjectileBetter(mouthPosition - perpendicularVelocity * 24f, -perpendicularVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
                 }
@@ -547,9 +547,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Look at the target.
             npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            float idealRotation = npc.AngleTo(target.Center) - Pi * npc.spriteDirection * 0.15f;
             if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             if (npc.spriteDirection != npc.direction)
             {
@@ -644,7 +644,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     {
                         for (int i = 0; i < backSpikeCount; i++)
                         {
-                            Vector2 backSpikeShootVelocity = -mouthDirection.RotatedBy(MathHelper.Lerp(-1.5f, 1.5f, i / (float)(backSpikeCount - 1f))) * 7f;
+                            Vector2 backSpikeShootVelocity = -mouthDirection.RotatedBy(Lerp(-1.5f, 1.5f, i / (float)(backSpikeCount - 1f))) * 7f;
                             Utilities.NewProjectileBetter(npc.Center + backSpikeShootVelocity * 8f, backSpikeShootVelocity, ModContent.ProjectileType<GoreSpike>(), GoreSpikeDamage, 0f);
                         }
                     }
@@ -655,9 +655,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
                 // Determine the current rotation and sprite direction.
                 npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-                float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+                float idealRotation = npc.AngleTo(target.Center) - Pi * npc.spriteDirection * 0.15f;
                 if (npc.spriteDirection == -1)
-                    idealRotation += MathHelper.Pi;
+                    idealRotation += Pi;
 
                 if (npc.spriteDirection != npc.direction)
                 {
@@ -721,9 +721,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Look at the target.
             npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            float idealRotation = npc.AngleTo(target.Center) - Pi * npc.spriteDirection * 0.15f;
             if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             if (npc.spriteDirection != npc.direction)
             {
@@ -788,7 +788,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            Vector2 bloodShootVelocity = (MathHelper.TwoPi * (i + (bloodBurstShootCounter % 2f == 0f ? 0.5f : 0f)) / 8f).ToRotationVector2() * 2f;
+                            Vector2 bloodShootVelocity = (TwoPi * (i + (bloodBurstShootCounter % 2f == 0f ? 0.5f : 0f)) / 8f).ToRotationVector2() * 2f;
                             Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodBolt>(), BoltBoltDamage, 0f);
                         }
                         bloodBurstShootCounter++;
@@ -811,9 +811,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             // Look at the target.
             npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
-            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            float idealRotation = npc.AngleTo(target.Center) - Pi * npc.spriteDirection * 0.15f;
             if (npc.spriteDirection == -1)
-                idealRotation += MathHelper.Pi;
+                idealRotation += Pi;
 
             if (npc.spriteDirection != npc.direction)
             {
@@ -926,14 +926,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             // Create a backglow as necessary.
             if (backglowFade > 0f)
             {
-                float drawOffsetFactor = backglowFade * 7.5f + MathF.Cos(Main.GlobalTimeWrappedHourly * 5f) * 3f;
+                float drawOffsetFactor = backglowFade * 7.5f + Cos(Main.GlobalTimeWrappedHourly * 5f) * 3f;
                 if (drawOffsetFactor < 0f)
                     drawOffsetFactor = 0f;
-                Color backglowColor = Color.Red * MathF.Pow(backglowFade, 0.55f);
+                Color backglowColor = Color.Red * Pow(backglowFade, 0.55f);
 
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * drawOffsetFactor;
+                    Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * drawOffsetFactor;
                     spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
                     if (npc.ai[3] != 0f)
@@ -952,9 +952,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
                 Texture2D gleamTexture = InfernumTextureRegistry.EmpressStar.Value;
                 Color gleamColor = new Color(0.93f, 0.03f, 0.11f) * eyeGleamInterpolant * npc.Opacity;
-                float eyeOffsetRotation = npc.rotation + MathHelper.Pi * npc.spriteDirection * 0.15f;
+                float eyeOffsetRotation = npc.rotation + Pi * npc.spriteDirection * 0.15f;
                 if (npc.spriteDirection == -1)
-                    eyeOffsetRotation += MathHelper.Pi;
+                    eyeOffsetRotation += Pi;
                 Vector2 eyePosition = drawPosition + eyeOffsetRotation.ToRotationVector2() * new Vector2(14f, 18f);
 
                 // Calculate the rotation and scale of each piece of the gleam.
@@ -962,13 +962,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 {
                     -Main.GlobalTimeWrappedHourly * 3.74f,
                     Main.GlobalTimeWrappedHourly * 3.74f,
-                    MathHelper.PiOver2
+                    PiOver2
                 };
                 float[] eyeScales = new[]
                 {
                     npc.Opacity * eyeGleamInterpolant * 1.65f,
                     npc.Opacity * eyeGleamInterpolant* 1.65f,
-                    npc.Opacity * eyeGleamInterpolant * Utils.Remap(MathF.Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
+                    npc.Opacity * eyeGleamInterpolant * Utils.Remap(Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
                 };
 
                 for (int i = 0; i < eyeRotations.Length; i++)

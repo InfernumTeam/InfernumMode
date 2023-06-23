@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     int randomDustType = Main.rand.NextBool() ? 107 : 110;
 
                     Dust cursedFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVelocity.X, dustVelocity.Y, 0, default, 2f);
-                    cursedFire.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                    cursedFire.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     cursedFire.noGravity = true;
                     cursedFire.velocity *= 0.5f;
                 }
@@ -67,12 +67,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Projectile.localAI[0] = 1f;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 0.8f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, 0.8f);
 
             Projectile.velocity *= 1.018f;
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Collide with tiles after alive for long enough.
             Projectile.tileCollide = Time >= 20f;

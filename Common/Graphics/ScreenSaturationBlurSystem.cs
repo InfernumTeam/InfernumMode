@@ -269,7 +269,7 @@ namespace InfernumMode.Common.Graphics
 
             // Update the intensity in accordance with the effect state.
             bool effectShouldBeActive = ShouldEffectBeActive && InfernumConfig.Instance.SaturationBloomIntensity > 0f && Lighting.NotRetro;
-            Intensity = MathHelper.Clamp(Intensity + effectShouldBeActive.ToDirectionInt() * 0.05f, 0f, 1f);
+            Intensity = Clamp(Intensity + effectShouldBeActive.ToDirectionInt() * 0.05f, 0f, 1f);
 
             if (effectShouldBeActive)
             {

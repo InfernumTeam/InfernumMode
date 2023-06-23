@@ -48,8 +48,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             if (canRotate)
             {
-                float offsetInterpolant = MathF.Cos(Projectile.whoAmI % 6f / 6f + Projectile.position.X / 380f + Projectile.position.Y / 160f);
-                Projectile.velocity = Projectile.velocity.RotatedBy(MathHelper.Pi * offsetInterpolant / 120f) * 0.98f;
+                float offsetInterpolant = Cos(Projectile.whoAmI % 6f / 6f + Projectile.position.X / 380f + Projectile.position.Y / 160f);
+                Projectile.velocity = Projectile.velocity.RotatedBy(Pi * offsetInterpolant / 120f) * 0.98f;
             }
 
             if (canMoveTowardsTarget)
@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         idealVelocity *= MovementSpeedFactor;
                 }
 
-                float amount = MathHelper.Lerp(0.056f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
+                float amount = Lerp(0.056f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, Projectile.timeLeft, true));
                 Projectile.velocity = Vector2.SmoothStep(Projectile.velocity, idealVelocity, amount);
             }
             Projectile.Opacity = Utils.GetLerpValue(240f, 220f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = (Math.Cos(Projectile.rotation) > 0f).ToDirectionInt();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             float telegraphInterpolant = Utils.GetLerpValue(300f, 275f, Projectile.timeLeft, true);
             if (telegraphInterpolant < 1f)
             {
-                Color telegraphColor = Color.Red * MathF.Sqrt(telegraphInterpolant);
+                Color telegraphColor = Color.Red * Sqrt(telegraphInterpolant);
                 float telegraphWidth = CalamityUtils.Convert01To010(telegraphInterpolant) * 3f;
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3600f, telegraphColor, telegraphWidth);
             }

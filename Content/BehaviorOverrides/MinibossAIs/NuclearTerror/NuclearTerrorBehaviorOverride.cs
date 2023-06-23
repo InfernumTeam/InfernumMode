@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                 npc.RemoveWaterSlowness();
 
             // Determine opacity in accordance to the emergence timer.
-            npc.Opacity = MathF.Sqrt(Utils.GetLerpValue(0f, emergeTime, attackTimer - waterEmergeDelay, true));
+            npc.Opacity = Sqrt(Utils.GetLerpValue(0f, emergeTime, attackTimer - waterEmergeDelay, true));
             npc.dontTakeDamage = npc.Opacity <= 0.7f;
             npc.Calamity().ShouldCloseHPBar = npc.Opacity <= 0.7f;
 
@@ -225,7 +225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                     candidatePosition.Y++;
 
                     // Teleport to the given teleport position if it fits the water condition.
-                    if (IsInLargeWaterPool(candidatePosition) && MathHelper.Distance(candidatePosition.Y * 16f, target.Center.Y) <= 960f)
+                    if (IsInLargeWaterPool(candidatePosition) && Distance(candidatePosition.Y * 16f, target.Center.Y) <= 960f)
                     {
                         if (Main.LocalPlayer.WithinRange(candidatePosition.ToWorldCoordinates(), 4800f))
                             SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound with { Volume = 3f });
@@ -243,7 +243,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
             // Create bubble and and acid particles above where the nuclear terror is.
             var surfaceSearchCriterion = Searches.Chain(new Searches.Up(400), new CustomTileConditions.IsAir());
-            float particleCreationRateInterpolant = MathF.Pow(Utils.GetLerpValue(0f, waterEmergeDelay * 0.8f, attackTimer, true), 0.93f);
+            float particleCreationRateInterpolant = Pow(Utils.GetLerpValue(0f, waterEmergeDelay * 0.8f, attackTimer, true), 0.93f);
             if (!WorldUtils.Find(new Point((int)npc.Center.X / 16, (int)npc.Center.Y / 16), surfaceSearchCriterion, out Point waterSurfacePoint))
             {
                 npc.active = false;
@@ -400,7 +400,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                     npc.damage = 0;
 
                     // Horizontally decelerate if approaching the target on the X axis.
-                    if (MathHelper.Distance(npc.Center.X, target.Center.X) <= 450f)
+                    if (Distance(npc.Center.X, target.Center.X) <= 450f)
                         npc.velocity.X *= 0.987f;
 
                     // Approach the target.
@@ -417,7 +417,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
                     // Check to see if the nuclear terror is above the target and slamming down would hit them. If so, the slam can begin.
                     // As a failsafe, this also happens if enough time has passed.
-                    bool shouldSlam = (MathHelper.Distance(npc.Center.X, target.Center.X) <= npc.scale * 148f && npc.Bottom.Y < target.Top.Y - 120f) || npc.velocity.Y > 0f;
+                    bool shouldSlam = (Distance(npc.Center.X, target.Center.X) <= npc.scale * 148f && npc.Bottom.Y < target.Top.Y - 120f) || npc.velocity.Y > 0f;
                     if ((shouldSlam && attackTimer >= 45f) || attackTimer >= 540f)
                     {
                         SoundEngine.PlaySound(InfernumSoundRegistry.NuclearTerrorJumpSound with { Pitch = 0.8f }, target.Center);
@@ -534,7 +534,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
                     // Release energy puffs before the charge.
                     if (Main.rand.NextBool(16))
-                        CreateAcidPuffInDirection(npc.Center, -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2 * 0.8f), 15f);
+                        CreateAcidPuffInDirection(npc.Center, -Vector2.UnitY.RotatedByRandom(PiOver2 * 0.8f), 15f);
 
                     // Jump into the air.
                     if (attackTimer >= energyChargeupTime)
@@ -560,7 +560,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
                     // Enforce gravity.
                     npc.velocity.X *= 0.9f;
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + jumpGravity, -jumpSpeed, jumpSpeed * 0.67f);
+                    npc.velocity.Y = Clamp(npc.velocity.Y + jumpGravity, -jumpSpeed, jumpSpeed * 0.67f);
 
                     // Check if ground was hit. If it was, the slam can end. This only applies if the Nuclear Terror is below the target.
                     // The slam will also naturally end if enough time has passed.
@@ -633,7 +633,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             if (attackTimer >= flashTime)
             {
                 frameType = (int)NuclearTerrorFrameType.Idle;
-                acidOverlayInterpolant = MathHelper.Clamp(acidOverlayInterpolant + 0.05f, 0f, 1f);
+                acidOverlayInterpolant = Clamp(acidOverlayInterpolant + 0.05f, 0f, 1f);
 
                 // Look at the target.
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -773,7 +773,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
                     for (int i = 0; i < 18; i++)
                     {
-                        Vector2 energyVelocity = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * 8f;
+                        Vector2 energyVelocity = (TwoPi * i / 18f).ToRotationVector2() * 8f;
                         Utilities.NewProjectileBetter(npc.Center + energyVelocity * 3f, energyVelocity, ModContent.ProjectileType<ConvergingGammaEnergy>(), GammaEnergyDamage, 0f, -1);
                     }
 
@@ -1011,7 +1011,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 float telegraphStrength = npc.Infernum().ExtraAI[1];
-                float pulse = MathF.Cos(Main.GlobalTimeWrappedHourly * 36f);
+                float pulse = Cos(Main.GlobalTimeWrappedHourly * 36f);
                 Vector2 laserStart = npc.Center + new Vector2(npc.spriteDirection * -60f, -32f).RotatedBy(npc.rotation);
                 Texture2D backglowTexture = ModContent.Request<Texture2D>("CalamityMod/Skies/XerocLight").Value;
                 Vector2 origin = backglowTexture.Size() * 0.5f;

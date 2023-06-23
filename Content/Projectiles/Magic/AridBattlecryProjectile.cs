@@ -74,7 +74,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.itemRotation = (Projectile.direction * Projectile.velocity).ToRotation();
 
             // Update the player's arm directions to make it look as though they're holding the horn.
-            float frontArmRotation = (MathHelper.PiOver2 - 0.31f) * -Owner.direction;
+            float frontArmRotation = (PiOver2 - 0.31f) * -Owner.direction;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
 
             Owner.eyeHelper.BlinkBecausePlayerGotHurt();

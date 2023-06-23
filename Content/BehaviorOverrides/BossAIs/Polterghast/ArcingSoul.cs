@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             else
                 Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity);
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(0f, 8f, Time, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
 
             Projectile.frameCounter++;

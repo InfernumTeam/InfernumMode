@@ -121,7 +121,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             // Cease all horizontal and upward vertical velocity.
             Projectile.velocity.X *= 0.84f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.3f, 0f, 8f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.3f, 0f, 8f);
 
             // Use sitting frames.
             Projectile.frame = 0;
@@ -164,10 +164,10 @@ namespace InfernumMode.Content.Projectiles.Pets
             Projectile.tileCollide = true;
 
             // Move towards the target.
-            Projectile.velocity.X = MathHelper.Lerp(Projectile.velocity.X, Projectile.SafeDirectionTo(Owner.Center).X * 10f, 0.1f);
+            Projectile.velocity.X = Lerp(Projectile.velocity.X, Projectile.SafeDirectionTo(Owner.Center).X * 10f, 0.1f);
 
             // Jump if there's an obstacle.
-            float? distanceToObstacle = CalamityUtils.DistanceToTileCollisionHit(Projectile.Center, Vector2.UnitX * MathF.Sign(Projectile.velocity.X));
+            float? distanceToObstacle = CalamityUtils.DistanceToTileCollisionHit(Projectile.Center, Vector2.UnitX * Sign(Projectile.velocity.X));
             if ((distanceToObstacle ?? 100f) <= 10f || (Projectile.oldPosition.X == Projectile.position.X && Projectile.velocity.Y == 0f))
             {
                 Projectile.velocity.Y = -8f;
@@ -175,7 +175,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             }
 
             // Adhere to gravity.
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.3f, -15f, 10f);
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.3f, -15f, 10f);
 
             // Sit in place if the owner is close.
             if (Projectile.WithinRange(Owner.Center, 180f))
@@ -187,7 +187,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             // Use walking frames.
             Projectile.frameCounter++;
-            Projectile.frame = (int)MathF.Round(MathHelper.Lerp(3f, 5f, Projectile.frameCounter / 14f % 1f));
+            Projectile.frame = (int)Round(Lerp(3f, 5f, Projectile.frameCounter / 14f % 1f));
 
             // Fly towards the owner if they're super far away or if there are obstacles in the way.
             if (!Collision.CanHitLine(Projectile.Center, 1, 1, Owner.Center, 1, 1) || !Projectile.WithinRange(Owner.Center, 800f) || Collision.CanHitLine(Owner.Center, 1, 1, Owner.Center + Vector2.UnitY * 300f, 1, 1))
@@ -219,14 +219,14 @@ namespace InfernumMode.Content.Projectiles.Pets
 
             // Use flying frames.
             Projectile.frameCounter++;
-            Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
+            Projectile.frame = (int)Round(Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
 
             // Prevent natural tile collision.
             Projectile.tileCollide = false;
 
             // Decide rotation and direction.
             Projectile.rotation = Projectile.velocity.X * 0.017f;
-            if (MathHelper.Distance(hoverDestination.X, Projectile.Center.X) >= 30f)
+            if (Distance(hoverDestination.X, Projectile.Center.X) >= 30f)
                 Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
             else
                 Projectile.spriteDirection = -Owner.direction;
@@ -260,7 +260,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             if (Time >= 3f)
             {
                 Projectile.frameCounter++;
-                Projectile.frame = (int)MathF.Round(MathHelper.Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
+                Projectile.frame = (int)Round(Lerp(6f, 11f, Projectile.frameCounter / 25f % 1f));
                 Projectile.spriteDirection = -Owner.direction;
             }
 
@@ -277,7 +277,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             Player.CompositeArmStretchAmount stretch = Player.CompositeArmStretchAmount.ThreeQuarters;
             if (Owner.miscCounter % 14 >= 7)
                 stretch = Player.CompositeArmStretchAmount.Full;
-            Owner.SetCompositeArmBack(true, stretch, -MathHelper.TwoPi * Owner.direction * 0.27f);
+            Owner.SetCompositeArmBack(true, stretch, -TwoPi * Owner.direction * 0.27f);
         }
 
         public void HandlePetVariables()

@@ -233,7 +233,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 500f;
 
-                npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 32f);
+                npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), 32f);
                 npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.04f, 0.1f);
 
                 if (npc.WithinRange(target.Center, 90f))
@@ -314,7 +314,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             if (BossRushEvent.BossRushActive)
             {
                 spikesPerBurst += 10;
-                hoverSpeed = MathHelper.Max(hoverSpeed, 30f) * 1.2f;
+                hoverSpeed = MathF.Max(hoverSpeed, 30f) * 1.2f;
             }
 
             // Don't do contact damage, to prevent cheap hits.
@@ -340,7 +340,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 {
                     for (int i = 0; i < spikesPerBurst; i++)
                     {
-                        Vector2 spikeVelocity = (MathHelper.TwoPi * i / spikesPerBurst).ToRotationVector2() * 5.5f;
+                        Vector2 spikeVelocity = (TwoPi * i / spikesPerBurst).ToRotationVector2() * 5.5f;
                         if (AnyArms)
                             spikeVelocity *= 0.56f;
                         if (BossRushEvent.BossRushActive)
@@ -441,7 +441,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             if (wrappedTime < hoverTime - 15f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 365f, -300f);
-                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed)) / 8f;
+                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), hoverSpeed)) / 8f;
 
                 if (npc.WithinRange(target.Center, 150f))
                 {
@@ -470,7 +470,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         {
                             for (int i = 0; i < 11; i++)
                             {
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 10f)) * 8f;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.7f, 0.7f, i / 10f)) * 8f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), MetalSpikeDamage, 0f);
                             }
                         }
@@ -530,7 +530,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         Vector2 lightningSpawnPosition = npc.Center - Vector2.UnitY * 1300f + Main.rand.NextVector2Circular(30f, 30f);
                         if (lightningSpawnPosition.Y < 600f)
                             lightningSpawnPosition.Y = 600f;
-                        Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(1.7f, 2f), ModContent.ProjectileType<LightningStrike>(), 0, 0f, -1, MathHelper.PiOver2, Main.rand.Next(100));
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(1.7f, 2f), ModContent.ProjectileType<LightningStrike>(), 0, 0f, -1, PiOver2, Main.rand.Next(100));
                     }
                 }
 
@@ -553,11 +553,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             else if (struckByLightningFlag == 1f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
-                float movementSpeed = MathHelper.Lerp(1f, 0.7f, Utils.GetLerpValue(45f, 90f, attackTimer, true)) * npc.Distance(target.Center) * 0.0074f;
+                float movementSpeed = Lerp(1f, 0.7f, Utils.GetLerpValue(45f, 90f, attackTimer, true)) * npc.Distance(target.Center) * 0.0074f;
                 if (movementSpeed < 4.25f)
                     movementSpeed = 0f;
 
-                npc.velocity = (npc.velocity * 6f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 7f;
+                npc.velocity = (npc.velocity * 6f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), movementSpeed)) / 7f;
                 npc.rotation = npc.velocity.X * 0.04f;
 
                 if (npc.WithinRange(target.Center, 150f))
@@ -572,7 +572,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 if (attackTimer < 165f)
                 {
                     lineTelegraphInterpolant = Utils.GetLerpValue(lightningCreationDelay, 165, attackTimer, true);
-                    laserDirection += Utils.GetLerpValue(0f, 0.6f, lineTelegraphInterpolant, true) * Utils.GetLerpValue(1f, 0.7f, lineTelegraphInterpolant, true) * MathHelper.Pi / 300f;
+                    laserDirection += Utils.GetLerpValue(0f, 0.6f, lineTelegraphInterpolant, true) * Utils.GetLerpValue(1f, 0.7f, lineTelegraphInterpolant, true) * Pi / 300f;
                 }
 
                 // Roar as a telegraph.
@@ -598,7 +598,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                         for (int i = 0; i < 12; i++)
                         {
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
-                            Vector2 individualLaserDirection = (MathHelper.TwoPi * i / 12f).ToRotationVector2();
+                            Vector2 individualLaserDirection = (TwoPi * i / 12f).ToRotationVector2();
                             Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<EvenlySpreadPrimeLaserRay>(), DeathrayDamage, 0f, -1, 0f, npc.whoAmI);
                         }
                     }
@@ -608,7 +608,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 if (attackTimer > 165f)
                 {
                     frameType = (int)PrimeFrameType.Spikes;
-                    laserOffsetAngle += Utils.GetLerpValue(165f, 255f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
+                    laserOffsetAngle += Utils.GetLerpValue(165f, 255f, attackTimer, true) * laserSignDirection * Pi / 300f;
                 }
 
                 // Release electric sparks periodically, along with missiles.
@@ -618,10 +618,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float offsetAngle = Main.rand.NextFloat(TwoPi);
                         for (int i = 0; i < 12; i++)
                         {
-                            Vector2 electricityVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 12f + offsetAngle) * (shootSpeedAdditive + 9f);
+                            Vector2 electricityVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(TwoPi * i / 12f + offsetAngle) * (shootSpeedAdditive + 9f);
                             Utilities.NewProjectileBetter(mouthPosition, electricityVelocity, ProjectileID.MartianTurretBolt, ElectricBoltDamage, 0f);
                         }
                     }
@@ -647,7 +647,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public static void DoBehavior_ReleaseTeslaMines(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
         {
             int slowdownTime = 45;
-            int bombCount = (int)MathHelper.Lerp(10f, 20f, 1f - lifeRatio);
+            int bombCount = (int)Lerp(10f, 20f, 1f - lifeRatio);
 
             // Choose the frame type.
             frameType = (int)PrimeFrameType.Spikes;
@@ -712,7 +712,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             }
 
             // Reduce old velocity so that Prime doesn't fly off somewhere after an attack concludes.
-            npc.velocity *= MathHelper.Lerp(1f, 0.25f, Utils.GetLerpValue(14f, 30f, npc.velocity.Length()));
+            npc.velocity *= Lerp(1f, 0.25f, Utils.GetLerpValue(14f, 30f, npc.velocity.Length()));
 
             do
                 npc.ai[0] = (int)attackSelector.Get();
@@ -831,8 +831,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             bool hoverAboveTarget = attackTimer % (CannonAttackCycleTime * 2f) < CannonAttackCycleTime;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * hoverAboveTarget.ToDirectionInt() * verticalHoverOffset;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
-            bool tooCloseToTarget = MathHelper.Distance(npc.Center.Y, target.Center.Y) < verticalHoverOffset + 100f;
-            bool tooFarFromDestination = MathHelper.Distance(npc.Center.Y, target.Center.Y) > verticalHoverOffset - 100f;
+            bool tooCloseToTarget = Distance(npc.Center.Y, target.Center.Y) < verticalHoverOffset + 100f;
+            bool tooFarFromDestination = Distance(npc.Center.Y, target.Center.Y) > verticalHoverOffset - 100f;
             if (npc.WithinRange(hoverDestination, 50f))
             {
                 idealVelocity *= 0.2f;
@@ -843,7 +843,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             // Snap back into the vertical position if too far from the destination or too close to the target.
             if (tooCloseToTarget || tooFarFromDestination)
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.12f);
+                npc.velocity.Y = Lerp(npc.velocity.Y, idealVelocity.Y, 0.12f);
 
             // Slow down and settle in place if near the hover destination.
             if (npc.WithinRange(hoverDestination, 100f))
@@ -919,10 +919,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             if (superchargePower > 0f)
             {
-                float outwardness = superchargePower * 6f + MathF.Cos(Main.GlobalTimeWrappedHourly * 2f) * 0.5f;
+                float outwardness = superchargePower * 6f + Cos(Main.GlobalTimeWrappedHourly * 2f) * 0.5f;
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 2.9f).ToRotationVector2() * outwardness;
+                    Vector2 drawOffset = (TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 2.9f).ToRotationVector2() * outwardness;
                     Color drawColor = Color.Red * 0.42f;
                     drawColor.A = 0;
 
@@ -945,9 +945,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 beamDirection = (MathHelper.TwoPi * i / 12f + angularOffset).ToRotationVector2();
+                    Vector2 beamDirection = (TwoPi * i / 12f + angularOffset).ToRotationVector2();
                     Vector2 drawPosition = npc.Center - Vector2.UnitY * 16f + beamDirection * 2f - Main.screenPosition;
-                    float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                    float beamRotation = beamDirection.ToRotation() - PiOver2;
                     Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                 }
                 Main.spriteBatch.ResetBlendState();

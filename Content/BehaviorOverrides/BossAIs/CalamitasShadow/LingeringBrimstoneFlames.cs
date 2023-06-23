@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.timeLeft = 32;
             Projectile.Opacity = 0f;
             Projectile.hide = true;
-            Projectile.rotation = Main.rand?.NextFloat(MathHelper.TwoPi) ?? 0f;
+            Projectile.rotation = Main.rand?.NextFloat(TwoPi) ?? 0f;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
@@ -40,17 +40,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             Projectile.Opacity = Projectile.scale;
-            Projectile.scale *= MathHelper.Lerp(0.47f, 0.64f, Projectile.identity % 9f / 9f);
+            Projectile.scale *= Lerp(0.47f, 0.64f, Projectile.identity % 9f / 9f);
             Projectile.Size = Vector2.One * Projectile.scale * 200f;
             Projectile.velocity *= 0.98f;
-            Projectile.rotation += MathHelper.Clamp(Projectile.velocity.X * 0.04f, -0.06f, 0.06f) + Projectile.identity % 8f / 1200f;
+            Projectile.rotation += Clamp(Projectile.velocity.X * 0.04f, -0.06f, 0.06f) + Projectile.identity % 8f / 1200f;
 
             Time++;
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Orange, Color.DarkRed, 1f - MathF.Pow(completionRatio, 2f));
+            Color color = Color.Lerp(Color.Orange, Color.DarkRed, 1f - Pow(completionRatio, 2f));
             color = Color.Lerp(color, Color.Red, 0.5f);
             return color * Projectile.Opacity * 0.7f;
         }

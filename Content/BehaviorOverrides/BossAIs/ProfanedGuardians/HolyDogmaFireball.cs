@@ -102,15 +102,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
-            float telegraphMaxAngularVelocity = MathHelper.ToRadians(1.2f);
+            float telegraphMaxAngularVelocity = ToRadians(1.2f);
 
             // Handle setting the telegraph opacities.
 
             switch (CurrentState)
             {
                 case StateType.Growing:
-                    Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-                    Projectile.scale = MathHelper.Clamp(Projectile.scale += 1f / GrowTime, 0f, 1f);
+                    Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+                    Projectile.scale = Clamp(Projectile.scale += 1f / GrowTime, 0f, 1f);
                     if (Timer >= GrowTime)
                     {
                         CurrentState++;
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             for (int i = 0; i < BeamAmount; i++)
                             {
                                 float angularVelocity = Main.rand.NextFloat(0.65f, 1f) * Main.rand.NextFromList(-1f, 1f) * telegraphMaxAngularVelocity;
-                                Vector2 laserDirection = (MathHelper.TwoPi * i / BeamAmount + Main.rand.NextFloatDirection() * 0.16f).ToRotationVector2();
+                                Vector2 laserDirection = (TwoPi * i / BeamAmount + Main.rand.NextFloatDirection() * 0.16f).ToRotationVector2();
 
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                                 {
@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     float maxDistance = 1000f;
                     if (distanceToTarget > minDistance)
                     {
-                        flingSpeedScalar += MathHelper.Clamp(Utils.GetLerpValue(500f, maxDistance, distanceToTarget, false), 0f, 2.5f);
+                        flingSpeedScalar += Clamp(Utils.GetLerpValue(500f, maxDistance, distanceToTarget, false), 0f, 2.5f);
                     }
                     Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * (FlingSpeed * flingSpeedScalar);
                     CurrentState++;
@@ -187,16 +187,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             for (int i = 1; i <= BeamAmount; i++)
                             {
-                                float angularVelocity = Main.rand.NextFloat(0f, MathHelper.TwoPi) * Main.rand.NextFromList(-1f, 1f) * telegraphMaxAngularVelocity;
-                                float setAngle = MathHelper.TwoPi * i / BeamAmount;
-                                Vector2 laserDirection = (setAngle + Main.rand.NextFloat(0f, MathHelper.Pi) * Main.rand.NextFromList(-1f, 1f)).ToRotationVector2();
+                                float angularVelocity = Main.rand.NextFloat(0f, TwoPi) * Main.rand.NextFromList(-1f, 1f) * telegraphMaxAngularVelocity;
+                                float setAngle = TwoPi * i / BeamAmount;
+                                Vector2 laserDirection = (setAngle + Main.rand.NextFloat(0f, Pi) * Main.rand.NextFromList(-1f, 1f)).ToRotationVector2();
 
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                                 {
                                     laser.ModProjectile<HolyMagicLaserbeam>().LaserTelegraphTime = 90;
                                     laser.ModProjectile<HolyMagicLaserbeam>().LaserShootTime = InitialLaserShootTime;
                                     laser.ModProjectile<HolyMagicLaserbeam>().FromGuardians = true;
-                                    laser.ModProjectile<HolyMagicLaserbeam>().SetAngleToMoveTo = MathHelper.TwoPi * i / BeamAmount;
+                                    laser.ModProjectile<HolyMagicLaserbeam>().SetAngleToMoveTo = TwoPi * i / BeamAmount;
                                 });
                                 Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<HolyMagicLaserbeam>(), ProvidenceBehaviorOverride.MagicLaserbeamDamage, 0f, -1, angularVelocity);
                             }
@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     int minimumTime = InitialLaserTelegraphTime + InitialLaserShootTime;
 
                     if (Timer >= minimumTime && Timer <= minimumTime + GrowTime)
-                        Projectile.scale = MathHelper.Clamp(Projectile.scale -= 1f / GrowTime, 0f, 1f);
+                        Projectile.scale = Clamp(Projectile.scale -= 1f / GrowTime, 0f, 1f);
                     else if (Projectile.scale == 0 || Timer >= minimumTime + GrowTime + 2)
                     {
                         Projectile.Kill();

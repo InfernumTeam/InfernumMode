@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 Projectile.localAI[0] = 1f;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
 
             if (Projectile.Opacity >= 1f)
                 Projectile.velocity = (Projectile.velocity * 1.05f).ClampMagnitude(5f, 36f);

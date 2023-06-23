@@ -45,8 +45,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 return;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Projectile.velocity.Length() < 5f)
                 Projectile.velocity *= 1.0225f;
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frontAfterimageColor.A = 120;
             for (int i = 0; i < 7; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 7f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.scale * 4f;
+                Vector2 drawOffset = (TwoPi * i / 7f + Projectile.rotation - PiOver2).ToRotationVector2() * Projectile.scale * 4f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, afterimageDrawPosition, sourceRectangle, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }

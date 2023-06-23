@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             if (Projectile.timeLeft < 480)
                 Projectile.velocity *= 0.985f;
             else
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(660f, 620f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
         }
 
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 Texture2D textureToUse = fuck % 2 == 0 ? body1Texture : body2Texture;
                 Main.spriteBatch.Draw(textureToUse, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, bodyOrigin, Projectile.scale, SpriteEffects.None, 0f);
-                currentDrawPosition += (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * body1Texture.Height;
+                currentDrawPosition += (Projectile.rotation - PiOver2).ToRotationVector2() * body1Texture.Height;
                 fuck++;
             }
 

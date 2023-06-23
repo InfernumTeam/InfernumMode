@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Utilities.NewProjectileBetter(end, Vector2.Zero, ModContent.ProjectileType<CeaselessEnergyPulse>(), EnergyPulseDamage, 0f);
 
             for (int i = 0; i < 6; i++)
-                Utilities.NewProjectileBetter(end, (MathHelper.TwoPi * i / 6f + MathHelper.Pi / 6f).ToRotationVector2() * 6f, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
+                Utilities.NewProjectileBetter(end, (TwoPi * i / 6f + Pi / 6f).ToRotationVector2() * 6f, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
         }
 
         public float WidthFunction(float completionRatio)

@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             Time++;
 
             Projectile.tileCollide = Time >= 75f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
             if (HasSplit)
                 Projectile.Opacity = 1f;
@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    float shootOffsetAngle = MathHelper.Lerp(-0.54f, 0.54f, i / 4f);
+                    float shootOffsetAngle = Lerp(-0.54f, 0.54f, i / 4f);
                     Vector2 shootVelocity = Projectile.velocity.RotatedBy(shootOffsetAngle);
                     int splitDart = Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, Type, 115, 0f);
                     if (Main.projectile.IndexInRange(splitDart))

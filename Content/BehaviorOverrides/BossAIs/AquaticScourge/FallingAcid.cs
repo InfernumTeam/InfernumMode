@@ -44,8 +44,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Fall downward.
             Projectile.velocity.X *= 0.987f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.4f, -40f, 13f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.4f, -40f, 13f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
             Time++;
         }
 
@@ -60,10 +60,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Effect laserScopeEffect = Filters.Scene["CalamityMod:PixelatedSightLine"].GetShader().Shader;
                 laserScopeEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/CertifiedCrustyNoise").Value);
                 laserScopeEffect.Parameters["noiseOffset"].SetValue(Main.GameUpdateCount * -0.003f);
-                laserScopeEffect.Parameters["mainOpacity"].SetValue(MathF.Sqrt(opacity));
+                laserScopeEffect.Parameters["mainOpacity"].SetValue(Sqrt(opacity));
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(425f));
                 laserScopeEffect.Parameters["laserAngle"].SetValue(-Projectile.velocity.ToRotation());
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.003f + MathF.Pow(opacity, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f));
+                laserScopeEffect.Parameters["laserWidth"].SetValue(0.003f + Pow(opacity, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(5f);
                 laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(Color.Lime, Color.Olive, 0.7f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(Color.Lerp(Color.Yellow, Color.SaddleBrown, 0.8f).ToVector3());
@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Color backAfterimageColor = Projectile.GetAlpha(new Color(85, 224, 60, 0) * 0.5f);
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Utilities.DrawAfterimagesCentered(Projectile, new Color(117, 95, 133, 184) * Projectile.Opacity, ProjectileID.Sets.TrailingMode[Projectile.type], 2);

@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 Projectile.ExpandHitboxBy((int)(72 * Projectile.scale));
                 ColorSpectrumHue = Main.rand.NextFloat(0f, 0.9999f);
                 Projectile.netUpdate = true;
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             }
             Time++;
 
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Texture2D sparkleTexture = ModContent.Request<Texture2D>(Texture).Value;
 
             Color sparkleColor = Main.hslToRgb(ColorSpectrumHue % 1f, 1f, 0.64f) * Projectile.Opacity * 0.7f;
-            sparkleColor *= MathHelper.Lerp(1f, 1.6f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
+            sparkleColor *= Lerp(1f, 1.6f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
             sparkleColor.A = 0;
 
             Color orthogonalsparkleColor = Color.Lerp(sparkleColor, Color.White, 0.5f) * 0.5f;
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              sparkleColor,
-                             MathHelper.PiOver2 + Projectile.rotation,
+                             PiOver2 + Projectile.rotation,
                              origin,
                              orthogonalsparkleScale,
                              SpriteEffects.None,
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              orthogonalsparkleColor,
-                             MathHelper.PiOver2 + Projectile.rotation,
+                             PiOver2 + Projectile.rotation,
                              origin,
                              orthogonalsparkleScale * 0.6f,
                              SpriteEffects.None,

@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                     {
                         Vector2 laserVelocity = cannonDirection * laserSpeed;
                         if (burstCount >= 2)
-                            laserVelocity = laserVelocity.RotatedBy(MathHelper.Lerp(-laserSpread, laserSpread, i / (burstCount - 1f)));
+                            laserVelocity = laserVelocity.RotatedBy(Lerp(-laserSpread, laserSpread, i / (burstCount - 1f)));
 
                         Utilities.NewProjectileBetter(npc.Center + cannonDirection * npc.width * npc.scale * 0.4f, laserVelocity, ModContent.ProjectileType<PrimeSmallLaser>(), SmallLaserDamage, 0f);
                     }

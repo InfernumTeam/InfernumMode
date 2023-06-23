@@ -354,7 +354,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 BezierCurve bezierCurve = new(bezierPoints);
 
                 int totalChains = (int)(Vector2.Distance(chain.First().position, chain.Last().position) / 22.4f);
-                totalChains = (int)MathHelper.Clamp(totalChains, 30f, 1200f);
+                totalChains = (int)Clamp(totalChains, 30f, 1200f);
 
                 // Generate gores.
                 for (int i = 0; i < totalChains - 1; i++)
@@ -383,7 +383,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             for (int i = 0; i < 32; i++)
             {
                 Color darkEnergyColor = Main.rand.NextBool() ? Color.HotPink : Color.Purple;
-                CloudParticle darkEnergyCloud = new(npc.Center, (MathHelper.TwoPi * i / 32f).ToRotationVector2() * 8f, darkEnergyColor, Color.DarkBlue * 0.75f, 25, Main.rand.NextFloat(2.5f, 3.2f));
+                CloudParticle darkEnergyCloud = new(npc.Center, (TwoPi * i / 32f).ToRotationVector2() * 8f, darkEnergyColor, Color.DarkBlue * 0.75f, 25, Main.rand.NextFloat(2.5f, 3.2f));
                 GeneralParticleHandler.SpawnParticle(darkEnergyCloud);
             }
         }
@@ -449,7 +449,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     Chains.Add(new());
 
                     // Determine how far off the chains should go.
-                    Vector2 checkDirection = (MathHelper.TwoPi * i / 4f + MathHelper.PiOver4).ToRotationVector2() * new Vector2(1f, 1.2f);
+                    Vector2 checkDirection = (TwoPi * i / 4f + PiOver4).ToRotationVector2() * new Vector2(1f, 1.2f);
                     if (checkDirection.Y > 0f)
                         checkDirection.Y *= 0.3f;
 
@@ -520,11 +520,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 for (int i = 0; i < totalRings; i++)
                 {
-                    float spinMovementSpeed = MathHelper.Lerp(7f, 1f, i / (float)(totalRings - 1f));
-                    float offsetRadius = MathHelper.Lerp(180f, DarkEnergyOffsetRadius, Convert01To010(i / (float)(energyCountPerRing - 1f)));
+                    float spinMovementSpeed = Lerp(7f, 1f, i / (float)(totalRings - 1f));
+                    float offsetRadius = Lerp(180f, DarkEnergyOffsetRadius, Convert01To010(i / (float)(energyCountPerRing - 1f)));
                     for (int j = 0; j < energyCountPerRing; j++)
                     {
-                        float offsetAngle = MathHelper.TwoPi * j / energyCountPerRing;
+                        float offsetAngle = TwoPi * j / energyCountPerRing;
                         NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, darkEnergyID, npc.whoAmI, offsetAngle, spinMovementSpeed, offsetRadius);
                     }
                 }
@@ -557,7 +557,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Shoot accelerating dark energy.
             darkEnergyShootTimer++;
-            int darkEnergyShootRate = (int)MathHelper.Lerp(45f, 27f, 1f - darkEnergyLifeRatio);
+            int darkEnergyShootRate = (int)Lerp(45f, 27f, 1f - darkEnergyLifeRatio);
             if (darkEnergyShootTimer >= darkEnergyShootRate && attackTimer >= 180f)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidSwirlSound, npc.Center);
@@ -565,7 +565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 energyShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedBy(MathHelper.TwoPi * i / 4f) * 14.75f;
+                        Vector2 energyShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedBy(TwoPi * i / 4f) * 14.75f;
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
                         {
                             darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Time = -8f;
@@ -618,10 +618,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 9; i++)
                     {
-                        Vector2 baseSpawnOffset = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * new Vector2(1f, 1.2f) * 560f;
+                        Vector2 baseSpawnOffset = (TwoPi * i / 9f).ToRotationVector2() * new Vector2(1f, 1.2f) * 560f;
                         for (int j = 0; j < 4; j++)
                         {
-                            Vector2 microSpawnOffset = (MathHelper.TwoPi * j / 4f).ToRotationVector2() * 40f;
+                            Vector2 microSpawnOffset = (TwoPi * j / 4f).ToRotationVector2() * 40f;
                             Vector2 energyRestingPosition = Vector2.Lerp(npc.Center, target.Center, 0.3f) + baseSpawnOffset;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
@@ -667,7 +667,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             int energyDiagonalBootShootRate = 3;
             bool doneShooting = attackTimer >= energyDiagonalShootDelay + energyBoltReleaseCount * energyDiagonalBootShootRate;
             float energyShootSpeed = phase2 ? 14.5f : 9f;
-            float energyBoltArc = MathHelper.ToRadians(300f);
+            float energyBoltArc = ToRadians(300f);
 
             // Play funny sounds.
             if (attackTimer == energySuckTime + 1f)
@@ -679,7 +679,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer >= energySuckTime && attackTimer <= energySuckTime + energyBoltShootTime && attackTimer % energyBoltReleaseRate == 0f)
             {
                 float energyBoltShootInterpolant = Utils.GetLerpValue(energySuckTime, energySuckTime + energyBoltShootTime, attackTimer, true);
-                float energyBoltShootOffsetAngle = MathHelper.Lerp(0.5f * energyBoltArc, -0.5f * energyBoltArc, energyBoltShootInterpolant);
+                float energyBoltShootOffsetAngle = Lerp(0.5f * energyBoltArc, -0.5f * energyBoltArc, energyBoltShootInterpolant);
                 Vector2 energyBoltShootDirection = -Vector2.UnitY.RotatedBy(energyBoltShootOffsetAngle);
                 Vector2 energySpawnPosition = npc.Center + 56f * energyBoltShootDirection;
                 Color energyPuffColor = Color.Lerp(Color.Purple, Color.SkyBlue, Main.rand.NextFloat(0.66f));
@@ -725,11 +725,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
             {
-                float spinOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float spinOffsetAngle = Main.rand.NextFloat(TwoPi);
                 for (int i = 0; i < vortexCount; i++)
                 {
-                    Vector2 vortexSpawnPosition = npc.Center + (MathHelper.TwoPi * i / vortexCount + spinOffsetAngle).ToRotationVector2() * 1350f;
-                    Vector2 aimDestination = npc.Center + (MathHelper.TwoPi * i / vortexCount + spinOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * 136f;
+                    Vector2 vortexSpawnPosition = npc.Center + (TwoPi * i / vortexCount + spinOffsetAngle).ToRotationVector2() * 1350f;
+                    Vector2 aimDestination = npc.Center + (TwoPi * i / vortexCount + spinOffsetAngle + PiOver2).ToRotationVector2() * 136f;
                     Vector2 aimDirection = (aimDestination - vortexSpawnPosition).SafeNormalize(Vector2.UnitY);
                     Utilities.NewProjectileBetter(vortexSpawnPosition, aimDirection, ModContent.ProjectileType<CeaselessVortex>(), 0, 0f);
                 }
@@ -801,11 +801,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     Vector2 energyBoltSpawnPosition = npc.Center;
                     for (int i = 0; i < ringBulletCount; i++)
                     {
-                        Vector2 energyBoltVelocity = (MathHelper.TwoPi * i / ringBulletCount + ringBulletAngularOffset).ToRotationVector2() * 0.02f;
+                        Vector2 energyBoltVelocity = (TwoPi * i / ringBulletCount + ringBulletAngularOffset).ToRotationVector2() * 0.02f;
                         Utilities.NewProjectileBetter(energyBoltSpawnPosition, energyBoltVelocity, ModContent.ProjectileType<OtherworldlyBolt>(), OtherworldlyBoltDamage, 0f, -1, (int)OtherworldlyBolt.OtherwordlyBoltAttackState.AccelerateFromBelow);
                     }
 
-                    ringBulletAngularOffset += MathHelper.ToRadians(11f);
+                    ringBulletAngularOffset += ToRadians(11f);
                     ringBulletCount -= 6f;
                 }
             }
@@ -856,12 +856,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 7; i++)
                     {
-                        Vector2 baseSpawnOffset = new Vector2(MathHelper.Lerp(-775f, 775f, i / 6f), -200f - Convert01To010(i / 6f) * 100f) + Main.rand.NextVector2Circular(30f, 30f);
+                        Vector2 baseSpawnOffset = new Vector2(Lerp(-775f, 775f, i / 6f), -200f - Convert01To010(i / 6f) * 100f) + Main.rand.NextVector2Circular(30f, 30f);
                         for (int j = 0; j < 8; j++)
                         {
-                            Vector2 microSpawnOffset = (MathHelper.TwoPi * j / 8f).ToRotationVector2() * 66f;
+                            Vector2 microSpawnOffset = (TwoPi * j / 8f).ToRotationVector2() * 66f;
                             if (i % 2 == 0)
-                                microSpawnOffset = microSpawnOffset.RotatedBy(MathHelper.Pi / 6f);
+                                microSpawnOffset = microSpawnOffset.RotatedBy(Pi / 6f);
 
                             Vector2 energyRestingPosition = Vector2.Lerp(npc.Center, target.Center, 0.125f) + baseSpawnOffset;
 
@@ -942,7 +942,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     return;
                 }
 
-                float vortexSpawnOffsetAngle = MathHelper.TwoPi * attackCompletion;
+                float vortexSpawnOffsetAngle = TwoPi * attackCompletion;
                 SoundEngine.PlaySound(SoundID.Item104, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -981,7 +981,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 float sliceInterpolant = Utils.GetLerpValue(chargeUpTime - CeaselessVoidLineTelegraph.Lifetime, chargeUpTime - CeaselessVoidLineTelegraph.Lifetime + 6f, attackTimer, true);
                 if (Main.netMode != NetmodeID.MultiplayerClient && sliceInterpolant > 0f && sliceInterpolant < 1f)
                 {
-                    Vector2 lineDirection = (MathHelper.ToRadians(30f) + MathHelper.Pi * sliceInterpolant).ToRotationVector2();
+                    Vector2 lineDirection = (ToRadians(30f) + Pi * sliceInterpolant).ToRotationVector2();
                     Utilities.NewProjectileBetter(npc.Center, lineDirection, ModContent.ProjectileType<CeaselessVoidLineTelegraph>(), 0, 0f);
                 }
 
@@ -1042,7 +1042,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 float energyOrbChargeInterpolant = Utils.GetLerpValue(30f, chargeUpTime - 30f, attackTimer, true);
                 if (energyOrbChargeInterpolant > 0f && attackTimer <= chargeUpTime - 30f)
                 {
-                    float energyOrbPulse = MathF.Sin(MathHelper.TwoPi * attackTimer / 8f) * 0.3f;
+                    float energyOrbPulse = Sin(TwoPi * attackTimer / 8f) * 0.3f;
                     float energyOrbScaleFadeIn = Utils.GetLerpValue(0f, 0.56f, energyOrbChargeInterpolant, true);
                     float energyOrbScaleFadeOut = Utils.GetLerpValue(1f, 0.94f, energyOrbChargeInterpolant, true);
                     float energyOrbScale = energyOrbPulse + energyOrbScaleFadeIn * energyOrbScaleFadeOut * 2.5f;
@@ -1092,8 +1092,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < spiralArmsCount; i++)
                     {
-                        float spiralOffsetAngle = MathHelper.TwoPi * i / spiralArmsCount;
-                        float timeShootOffsetAngle = (attackTimer - chargeUpTime) * MathHelper.ToRadians(3f);
+                        float spiralOffsetAngle = TwoPi * i / spiralArmsCount;
+                        float timeShootOffsetAngle = (attackTimer - chargeUpTime) * ToRadians(3f);
                         Vector2 spiralShootVelocity = (spiralOffsetAngle + timeShootOffsetAngle).ToRotationVector2() * 7f;
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
@@ -1126,7 +1126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
             {
                 for (int i = 0; i < darkEnergyCircleCount; i++)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningDarkEnergy>(), DarkEnergyDamage, 0f, -1, 0f, MathHelper.TwoPi * i / darkEnergyCircleCount);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<SpinningDarkEnergy>(), DarkEnergyDamage, 0f, -1, 0f, TwoPi * i / darkEnergyCircleCount);
             }
 
             // Do contact damage so that the player is punished for being sucked in.
@@ -1152,7 +1152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 27; i++)
                     {
-                        Vector2 spiralShootVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * Main.rand.NextFloat(7f, 9.5f) + Main.rand.NextVector2Circular(0.5f, 0.5f);
+                        Vector2 spiralShootVelocity = (TwoPi * i / 27f).ToRotationVector2() * Main.rand.NextFloat(7f, 9.5f) + Main.rand.NextVector2Circular(0.5f, 0.5f);
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
                         {
                             darkEnergy.ModProjectile<AcceleratingDarkEnergy>().Time = 30f;
@@ -1170,7 +1170,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create various energy particles.
             if (suckPowerInterpolant > 0f)
             {
-                suckAcceleration = MathHelper.Lerp(0.16f, 0.35f, suckPowerInterpolant);
+                suckAcceleration = Lerp(0.16f, 0.35f, suckPowerInterpolant);
                 Vector2 energySuckOffset = Vector2.Zero;
                 CreateEnergySuckParticles(npc, energySuckOffset, 240f, 960f, 0.5f / (energySuckOffset.Length() * 0.0012f + 1f));
 
@@ -1320,7 +1320,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Teleport next to the target.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(MathHelper.Pi - 0.6f);
+                    Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).RotatedByRandom(Pi - 0.6f);
                     TeleportToPosition(npc, target.Center + teleportOffsetDirection * teleportOffset);
 
                     shootCounter++;
@@ -1334,7 +1334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                     for (int i = 0; i < darkBurstCount; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-0.5f, 0.5f, i / (float)(darkBurstCount - 1f));
+                        float shootOffsetAngle = Lerp(-0.5f, 0.5f, i / (float)(darkBurstCount - 1f));
                         Vector2 spiralShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 9f + Main.rand.NextVector2Circular(1.4f, 1.4f);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
@@ -1358,7 +1358,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             float teleportAnimationCompletionFactor = 2.4f;
             float teleportOffset = 540f;
             float startingSpeed = teleportOffset / 172f;
-            float arcingBoltAngularVelocity = MathHelper.ToRadians(0.7f) * Main.rand.NextFromList(-1f, 1f);
+            float arcingBoltAngularVelocity = ToRadians(0.7f) * Main.rand.NextFromList(-1f, 1f);
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
             ref float teleportCenterX = ref npc.Infernum().ExtraAI[1];
             ref float teleportCenterY = ref npc.Infernum().ExtraAI[2];
@@ -1430,7 +1430,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < ringBulletCount; i++)
                     {
-                        Vector2 energyBoltVelocity = (MathHelper.TwoPi * i / ringBulletCount).ToRotationVector2() * 4.5f;
+                        Vector2 energyBoltVelocity = (TwoPi * i / ringBulletCount).ToRotationVector2() * 4.5f;
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bolt =>
                         {
@@ -1443,7 +1443,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Teleport at an offset perpendicular to the player's current velocity.
                 teleportCenterX = target.Center.X + target.velocity.X * 12f;
                 teleportCenterY = target.Center.Y + target.velocity.Y * 12f;
-                TeleportToPosition(npc, new Vector2(teleportCenterX, teleportCenterY) - target.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Main.rand.NextVector2Unit()) * teleportOffset);
+                TeleportToPosition(npc, new Vector2(teleportCenterX, teleportCenterY) - target.velocity.RotatedBy(PiOver2).SafeNormalize(Main.rand.NextVector2Unit()) * teleportOffset);
                 npc.velocity = npc.SafeDirectionTo(new(teleportCenterX, teleportCenterY)) * startingSpeed;
                 chargeCounter++;
             }
@@ -1493,7 +1493,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     playerShootDirection = npc.AngleTo(target.Center);
                     for (int i = 0; i < barrageCount; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
+                        float offsetAngle = Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
 
                         List<Vector2> telegraphPoints = new();
                         for (int frames = 1; frames < 84; frames += 12)
@@ -1520,7 +1520,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 for (int i = 0; i < 16; i++)
                 {
                     Color darkEnergyColor = Main.rand.NextBool() ? Color.HotPink : Color.Purple;
-                    Vector2 darkEnergyVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.88f, 0.88f, i / 16f)) * 14f + Main.rand.NextVector2Circular(2f, 2f);
+                    Vector2 darkEnergyVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.88f, 0.88f, i / 16f)) * 14f + Main.rand.NextVector2Circular(2f, 2f);
                     CloudParticle darkEnergyCloud = new(npc.Center, darkEnergyVelocity, darkEnergyColor, Color.DarkBlue * 0.75f, 25, Main.rand.NextFloat(2.5f, 3.2f));
                     GeneralParticleHandler.SpawnParticle(darkEnergyCloud);
                 }
@@ -1528,7 +1528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound, npc.Center);
                 for (int i = 0; i < barrageCount; i++)
                 {
-                    float offsetAngle = MathHelper.Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
+                    float offsetAngle = Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
                     Vector2 shootVelocity = (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed;
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<TelegraphedOtherwordlyBolt>(), OtherworldlyBoltDamage, 0f, -1, 0f, playerShootDirection);
                 }
@@ -1537,7 +1537,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer >= hoverTime + barrageShootRate + attackTransitionDelay)
             {
                 attackTimer = 0f;
-                hoverOffsetAngle += MathHelper.TwoPi / barrageBurstCount + Main.rand.NextFloatDirection() * 0.36f;
+                hoverOffsetAngle += TwoPi / barrageBurstCount + Main.rand.NextFloatDirection() * 0.36f;
                 barrageBurstCounter++;
                 if (barrageBurstCounter >= barrageBurstCount)
                     SelectNewAttack(npc);
@@ -1616,7 +1616,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                             variant = 2;
 
                         Vector2 shellSpawnPosition = npc.Center + Main.rand.NextVector2Circular(50f, 50f);
-                        Vector2 shellShootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 15f + Main.rand.NextVector2Circular(4f, 4f);
+                        Vector2 shellShootVelocity = (TwoPi * i / 12f).ToRotationVector2() * 15f + Main.rand.NextVector2Circular(4f, 4f);
                         Utilities.NewProjectileBetter(shellSpawnPosition, shellShootVelocity, ModContent.ProjectileType<CeaselessVoidShell>(), 0, 0f, -1, variant);
                     }
                     hasExploded = 1f;
@@ -1656,8 +1656,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < spiralArmsCount; i++)
                     {
-                        float spiralOffsetAngle = MathHelper.TwoPi * i / spiralArmsCount;
-                        float timeShootOffsetAngle = MathF.Cos(MathHelper.TwoPi * (attackTimer - jitterTime) / 90f) * MathHelper.ToRadians(54f);
+                        float spiralOffsetAngle = TwoPi * i / spiralArmsCount;
+                        float timeShootOffsetAngle = Cos(TwoPi * (attackTimer - jitterTime) / 90f) * ToRadians(54f);
                         Vector2 spiralShootVelocity = (spiralOffsetAngle + timeShootOffsetAngle).ToRotationVector2() * 7.5f;
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(darkEnergy =>
@@ -1676,7 +1676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 // Calculate the portal scale.
                 portalScale = Utils.GetLerpValue(0f, 0.25f, energyOrbChargeInterpolant, true);
 
-                float energyOrbPulse = MathF.Sin(MathHelper.TwoPi * attackTimer / 7f) * 0.5f;
+                float energyOrbPulse = Sin(TwoPi * attackTimer / 7f) * 0.5f;
                 float energyOrbScaleFadeIn = Utils.GetLerpValue(0f, 0.56f, energyOrbChargeInterpolant, true);
                 float energyOrbScale = energyOrbPulse + energyOrbScaleFadeIn * 6f;
 
@@ -1691,7 +1691,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Whiten the screen during the wait delay.
             float whiteningInterpolant = Utils.GetLerpValue(jitterTime + outburstTime, jitterTime + outburstTime + waitDelay - 30f, attackTimer, true);
-            CeaselessVoidWhiteningEffect.WhiteningInterpolant = MathF.Pow(whiteningInterpolant, 2f);
+            CeaselessVoidWhiteningEffect.WhiteningInterpolant = Pow(whiteningInterpolant, 2f);
             CeaselessVoidWhiteningEffect.DrawStatus = CeaselessVoidWhiteningEffect.OutlineDrawStatus.DrawChains;
 
             // Die.
@@ -1840,18 +1840,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (teleportEffectInterpolant < 0.5f)
             {
                 float localStretchInterpolant = Utils.GetLerpValue(0f, 0.5f, teleportEffectInterpolant, true);
-                stretchX = MathHelper.Lerp(1f, 0.4f, MathF.Pow(localStretchInterpolant, 2f));
-                stretchY = MathHelper.Lerp(1f, 0f, MathF.Pow(localStretchInterpolant, 0.5f));
+                stretchX = Lerp(1f, 0.4f, Pow(localStretchInterpolant, 2f));
+                stretchY = Lerp(1f, 0f, Pow(localStretchInterpolant, 0.5f));
 
-                opacity = MathF.Pow(1f - localStretchInterpolant, 3f);
+                opacity = Pow(1f - localStretchInterpolant, 3f);
             }
             else if (teleportEffectInterpolant < 0.8f)
             {
                 float localStretchInterpolant = Utils.GetLerpValue(0.5f, 0.8f, teleportEffectInterpolant, true);
                 stretchX = localStretchInterpolant;
-                stretchY = MathF.Sqrt(localStretchInterpolant);
+                stretchY = Sqrt(localStretchInterpolant);
 
-                opacity = MathF.Pow(localStretchInterpolant, 2f);
+                opacity = Pow(localStretchInterpolant, 2f);
             }
 
             Vector2 scale = new Vector2(stretchX, stretchY) * npc.scale;
@@ -1899,8 +1899,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DrawSeal(NPC npc)
         {
-            float scale = MathHelper.Lerp(0.15f, 0.16f, MathF.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * 1.4f;
-            float noiseScale = MathHelper.Lerp(0.4f, 0.8f, MathF.Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
+            float scale = Lerp(0.15f, 0.16f, Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * 1.4f;
+            float noiseScale = Lerp(0.4f, 0.8f, Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
 
             Effect shieldEffect = Filters.Scene["CalamityMod:RoverDriveShield"].GetShader().Shader;
             shieldEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.15f);
@@ -1909,7 +1909,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
 
             // Prepare the forcefield opacity.
-            float baseShieldOpacity = 0.9f + 0.1f * MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+            float baseShieldOpacity = 0.9f + 0.1f * Sin(Main.GlobalTimeWrappedHourly * 2f);
             shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (npc.Opacity * 0.9f + 0.1f) * 0.8f);
             shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
 
@@ -1942,12 +1942,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             float chainScale = 0.8f;
             int totalChains = (int)(Vector2.Distance(chain.First().position, chain.Last().position) / chainTexture.Height / chainScale);
-            totalChains = (int)MathHelper.Clamp(totalChains, 30f, 1200f);
+            totalChains = (int)Clamp(totalChains, 30f, 1200f);
             for (int i = 0; i < totalChains - 1; i++)
             {
                 Vector2 drawPosition = bezierCurve.Evaluate(i / (float)totalChains);
                 float completionRatio = i / (float)totalChains + 1f / totalChains;
-                float angle = (bezierCurve.Evaluate(completionRatio) - drawPosition).ToRotation() - MathHelper.PiOver2;
+                float angle = (bezierCurve.Evaluate(completionRatio) - drawPosition).ToRotation() - PiOver2;
                 Color baseChainColor = Lighting.GetColor((int)drawPosition.X / 16, (int)drawPosition.Y / 16) * 2f;
                 Main.EntitySpriteDraw(chainTexture, drawPosition - Main.screenPosition, null, baseChainColor.MultiplyRGBA(colorFactor), angle, chainTexture.Size() * 0.5f, chainScale, SpriteEffects.None, 0);
             }

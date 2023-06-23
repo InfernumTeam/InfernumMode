@@ -48,15 +48,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Rapidly fade in.
             if (Projectile.timeLeft >= Lifetime - 100)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
-                Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.025f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.025f, 0f, 1f);
+                Projectile.scale = Clamp(Projectile.scale + 0.025f, 0f, 1f);
             }
 
             // Fade out.
             if (Projectile.timeLeft <= 40)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
-                Projectile.scale = MathHelper.Clamp(Projectile.scale - 0.025f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
+                Projectile.scale = Clamp(Projectile.scale - 0.025f, 0f, 1f);
             }
 
             // Force anyone close to it to be to the left.

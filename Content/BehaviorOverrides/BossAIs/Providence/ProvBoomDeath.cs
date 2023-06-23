@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            float colorInterpolant = MathHelper.Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f);
+            float colorInterpolant = Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f);
             if (ProvidenceBehaviorOverride.IsEnraged)
                 return Color.Lerp(Color.SkyBlue, Color.Cyan, colorInterpolant);
 

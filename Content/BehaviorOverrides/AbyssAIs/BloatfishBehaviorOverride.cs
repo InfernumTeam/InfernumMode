@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.damage = 0;
 
             // Avoid being too close to ground.
-            float minHeight = MathHelper.Lerp(100f, 302f, npc.whoAmI / 8f % 1f);
+            float minHeight = Lerp(100f, 302f, npc.whoAmI / 8f % 1f);
             if (WorldUtils.Find(npc.Center.ToTileCoordinates(), Searches.Chain(new Searches.Down((int)(minHeight / 16f)), new Conditions.IsSolid(), new CustomTileConditions.ActiveAndNotActuated()), out _))
                 npc.position.Y -= 0.8f;
 

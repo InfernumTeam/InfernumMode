@@ -46,21 +46,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (IdealScale == 0f)
             {
                 IdealScale = Main.rand.NextFloat(5f, 6.4f);
-                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.rotation = Main.rand.NextFloat(TwoPi);
                 Projectile.netUpdate = true;
             }
 
             // Grow in scale.
             float idealScale = IdealScale + Utils.Remap(Projectile.timeLeft, 72f, 0f, 0f, 12f);
-            Projectile.scale = MathHelper.Lerp(Projectile.scale, idealScale, 0.067f);
+            Projectile.scale = Lerp(Projectile.scale, idealScale, 0.067f);
 
             // Calculate light power. This checks below the position of the fog to check if this fog is underground.
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
-            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / MathF.Sqrt(3f);
+            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
             if (CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).LiquidAmount >= 25)
                 lightPowerBelow = 1f;
 
-            LightPower = MathHelper.Lerp(LightPower, lightPowerBelow, 0.15f);
+            LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
             Projectile.Opacity = Utils.GetLerpValue(Lifetime, Lifetime - 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true) * 0.72f;
             Projectile.rotation += Projectile.velocity.X * 0.002f;
             Projectile.velocity *= 0.97f;
@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;
 
-            int b = 160 + (int)(Math.Sin(MathHelper.Pi * Projectile.identity / 9f + Main.GlobalTimeWrappedHourly * 11f) * 75f);
+            int b = 160 + (int)(Math.Sin(Pi * Projectile.identity / 9f + Main.GlobalTimeWrappedHourly * 11f) * 75f);
             Color drawColor = new Color(141, 255, b) * opacity;
             Vector2 scale = Vector2.One * 50f / texture.Size() * Projectile.scale * 1.35f;
             spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);

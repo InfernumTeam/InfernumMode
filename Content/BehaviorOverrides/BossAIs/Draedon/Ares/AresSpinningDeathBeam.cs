@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 float spinOffset = Main.npc[OwnerIndex].Infernum().ExtraAI[0];
                 Projectile.velocity = (InitialSpinDirection + spinOffset).ToRotationVector2();
                 Vector2 fireFrom = new(Main.npc[OwnerIndex].Center.X - 1f, Main.npc[OwnerIndex].Center.Y + 23f);
-                fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(2f, 16f, Projectile.scale * Projectile.scale);
+                fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * Lerp(2f, 16f, Projectile.scale * Projectile.scale);
                 Projectile.Center = fireFrom;
             }
 
@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 dustCreationPosition = Projectile.Center + Projectile.velocity * (LaserLength - 14f);
             for (int i = 0; i < 2; i++)
             {
-                float dustDirection = Projectile.velocity.ToRotation() + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2;
+                float dustDirection = Projectile.velocity.ToRotation() + Main.rand.NextBool().ToDirectionInt() * PiOver2;
                 Vector2 dustVelocity = dustDirection.ToRotationVector2() * Main.rand.NextFloat(2f, 4f);
                 Dust exoEnergy = Dust.NewDustDirect(dustCreationPosition, 0, 0, dustType, dustVelocity.X, dustVelocity.Y, 0, new Color(0, 255, 255), 1f);
                 exoEnergy.noGravity = true;
@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (Main.rand.NextBool(5))
             {
-                Vector2 dustSpawnOffset = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * Projectile.width * 0.5f;
+                Vector2 dustSpawnOffset = Projectile.velocity.RotatedBy(PiOver2) * Main.rand.NextFloatDirection() * Projectile.width * 0.5f;
                 Dust exoEnergy = Dust.NewDustDirect(dustCreationPosition + dustSpawnOffset - Vector2.One * 4f, 8, 8, dustType, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                 exoEnergy.velocity *= 0.5f;
 
@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public float WidthFunction(float completionRatio)
         {
-            return MathHelper.Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);
+            return Clamp(Projectile.width * Projectile.scale, 0f, Projectile.width);
         }
 
         public Color ColorFunction(float completionRatio)
@@ -144,7 +144,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Color color = Main.hslToRgb((completionRatio * 2f + Main.GlobalTimeWrappedHourly * 0.4f + Projectile.identity * 0.27f) % 1f, 1f, 0.6f);
             if (SuperLaser)
             {
-                Color laserFireColor = Color.Lerp(Color.Orange, Color.Red, MathF.Sin(Main.GlobalTimeWrappedHourly * 1.7f + completionRatio * 2.3f) * 0.5f + 0.5f);
+                Color laserFireColor = Color.Lerp(Color.Orange, Color.Red, Sin(Main.GlobalTimeWrappedHourly * 1.7f + completionRatio * 2.3f) * 0.5f + 0.5f);
                 color = Color.Lerp(color, laserFireColor, 0.8f);
             }
 
@@ -158,7 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false, GameShaders.Misc["CalamityMod:Bordernado"]);
 
-            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(MathHelper.Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
+            GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
             GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
             List<Vector2> points = new();

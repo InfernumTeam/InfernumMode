@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float FlyStraightLength => 15f;
 
-        public float SineOffset => MathF.Sin((Timer - WaveOffset) / 9f - WaveOffset);
+        public float SineOffset => Sin((Timer - WaveOffset) / 9f - WaveOffset);
 
         public ref float Timer => ref Projectile.ai[0];
 
@@ -90,21 +90,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.08f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
 
             //Wave up and down over time.
             if (Timer > FlyStraightLength)
             {
-                Vector2 moveOffset = (StartingRotation + MathHelper.PiOver2).ToRotationVector2() * SineOffset * 8f;
+                Vector2 moveOffset = (StartingRotation + PiOver2).ToRotationVector2() * SineOffset * 8f;
                 Projectile.Center += moveOffset;
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4 + (SineOffset * 0.5f * Projectile.direction);
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4 + (SineOffset * 0.5f * Projectile.direction);
                 Projectile.velocity *= 1.01f;
             }
             //Release spears.
             if (Timer % SpearReleaseRate == SpearReleaseRate - 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2 * SpearDirection) * 7f;
+                Vector2 velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2 * SpearDirection) * 7f;
                 SpearDirection *= -1f;
                 Utilities.NewProjectileBetter(Projectile.Center + velocity.SafeNormalize(Vector2.UnitY), velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), GuardianComboAttackManager.HolySpearDamage, 0f);
             }

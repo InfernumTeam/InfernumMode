@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
+            Projectile.scale = Sin(Pi * Time / Lifetime) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -84,13 +84,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public float WidthFunction(float completionRatio)
         {
-            return MathHelper.Clamp(Projectile.width * Projectile.scale * 1.5f, 0f, Projectile.width * Projectile.scale * 1.5f);
+            return Clamp(Projectile.width * Projectile.scale * 1.5f, 0f, Projectile.width * Projectile.scale * 1.5f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.OrangeRed, Color.LawnGreen, (float)(1f + Math.Sin(Main.GlobalTimeWrappedHourly)) / 2f);
-            color = Color.Lerp(color, Color.White, (MathF.Sin(MathHelper.TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
+            color = Color.Lerp(color, Color.White, (Sin(TwoPi * completionRatio - Main.GlobalTimeWrappedHourly * 1.37f) * 0.5f + 0.5f) * 0.15f + 0.15f);
             color.A = 20;
             return color * Projectile.Opacity;
         }
@@ -110,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             if (Time >= 2f)

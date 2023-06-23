@@ -70,10 +70,10 @@ namespace InfernumMode.Content.Tiles.Abyss
         {
             int movedKelp = 0;
             Vector2 drawCenter = new(i * 16f + 8f, j * 16f + 16f + 2f);
-            float windPushFactor = MathHelper.Lerp(0.2f, 1f, Math.Abs(Main.WindForVisuals) / 1.2f);
+            float windPushFactor = Lerp(0.2f, 1f, Math.Abs(Main.WindForVisuals) / 1.2f);
             float offsetAngle = -0.08f * windPushFactor;
             float windCycle = Utils.GetLerpValue(0.08f, 0.18f, Math.Abs(Main.WindForVisuals), true);
-            windCycle += MathF.Sin(Main.GlobalTimeWrappedHourly * 2.3f + i * 1.1f + j * 0.81f) * 1.9f + 1.27f;
+            windCycle += Sin(Main.GlobalTimeWrappedHourly * 2.3f + i * 1.1f + j * 0.81f) * 1.9f + 1.27f;
 
             if (!Main.SettingsEnabled_TilesSwayInWind)
                 windCycle = 0f;
@@ -114,7 +114,7 @@ namespace InfernumMode.Content.Tiles.Abyss
                         return;
 
                     Main.spriteBatch.Draw(tileDrawTexture, position, new Rectangle(frameX + frameOffsetX, frameY + frameOffsetY, width, num8 - num10), color, windRotation, new Vector2(width / 2, num10 - num9 + num8), 1f, direction, 0f);
-                    drawCenter += (windRotation - MathHelper.PiOver2).ToRotationVector2() * 16f;
+                    drawCenter += (windRotation - PiOver2).ToRotationVector2() * 16f;
                 }
             }
         }

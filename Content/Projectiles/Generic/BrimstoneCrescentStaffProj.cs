@@ -29,7 +29,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public Player Owner => Main.player[Projectile.owner];
 
-        public Vector2 EndOfStaff => Projectile.Center + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * Projectile.scale * 58f;
+        public Vector2 EndOfStaff => Projectile.Center + (Projectile.rotation - PiOver4).ToRotationVector2() * Projectile.scale * 58f;
 
         public ref float Time => ref Projectile.ai[1];
 
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             // Set the initial direction.
             if (InitialDirection == 0f)
-                InitialDirection = -MathHelper.PiOver4;
+                InitialDirection = -PiOver4;
 
             // Stick to the owner.
             AdjustPlayerValues();
@@ -91,14 +91,14 @@ namespace InfernumMode.Content.Projectiles.Generic
             Owner.itemAnimation = 2;
             Owner.itemRotation = (Projectile.direction * Projectile.velocity).ToRotation();
 
-            float rotationCosine = MathF.Cos(Projectile.rotation - MathHelper.PiOver4);
+            float rotationCosine = Cos(Projectile.rotation - PiOver4);
             if (Math.Abs(rotationCosine) >= 0.02f)
                 Owner.ChangeDir((rotationCosine >= 0f).ToDirectionInt());
 
-            Projectile.Center = Owner.MountedCenter + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * OutwardExtension - Vector2.UnitX * Owner.direction * 5f;
+            Projectile.Center = Owner.MountedCenter + (Projectile.rotation - PiOver4).ToRotationVector2() * OutwardExtension - Vector2.UnitX * Owner.direction * 5f;
 
             // Update the player's arm directions to make it look as though they're holding the spear.
-            float frontArmRotation = Projectile.rotation + MathHelper.Pi + MathHelper.PiOver4 - Owner.direction * 0.26f;
+            float frontArmRotation = Projectile.rotation + Pi + PiOver4 - Owner.direction * 0.26f;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
         }
 
@@ -106,10 +106,10 @@ namespace InfernumMode.Content.Projectiles.Generic
         {
             // Perform spin effects.
             float spinInterpolant = Utils.GetLerpValue(0f, BrimstoneCrescentStaff.SpinTime, Time, true);
-            Projectile.rotation = InitialDirection + MathHelper.Pi * MathHelper.SmoothStep(0f, 1f, MathF.Pow(spinInterpolant, 0.8f)) * 4f;
+            Projectile.rotation = InitialDirection + Pi * SmoothStep(0f, 1f, Pow(spinInterpolant, 0.8f)) * 4f;
 
             // Make the spear gradually move out a little bit.
-            OutwardExtension = MathF.Pow(spinInterpolant, 2.3f) * 20f;
+            OutwardExtension = Pow(spinInterpolant, 2.3f) * 20f;
 
             // Release a streak of fire energy.
             CreateFlameEnergy(spinInterpolant >= 0.95f);
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.Projectiles.Generic
         public void DoBehavior_RaiseUpward()
         {
             // Make the spear move further outward.
-            OutwardExtension = MathHelper.Lerp(OutwardExtension, 45f, 0.08f);
+            OutwardExtension = Lerp(OutwardExtension, 45f, 0.08f);
 
             // Release a streak of fire energy.
             CreateFlameEnergy(true);
@@ -142,7 +142,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                 for (int i = 0; i < 36; i++)
                 {
                     Color fireColor = Color.Lerp(Color.OrangeRed, Color.Orange, Main.rand.NextFloat());
-                    Vector2 fireSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(0.4f, 1f) * Projectile.Size.RotatedBy(Projectile.rotation - MathHelper.PiOver4);
+                    Vector2 fireSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(0.4f, 1f) * Projectile.Size.RotatedBy(Projectile.rotation - PiOver4);
                     CloudParticle fire = new(fireSpawnPosition, Main.rand.NextVector2Circular(4f, 4f), fireColor, Color.DarkGray, Main.rand.Next(25, 36), Main.rand.NextFloat(0.8f, 1.3f));
                     GeneralParticleHandler.SpawnParticle(fire);
                 }
@@ -154,7 +154,7 @@ namespace InfernumMode.Content.Projectiles.Generic
         public void CreateFlameEnergy(bool aimUpwards)
         {
             int energyCount = 9;
-            Vector2 energyDirection = -(Projectile.rotation + MathHelper.PiOver4).ToRotationVector2();
+            Vector2 energyDirection = -(Projectile.rotation + PiOver4).ToRotationVector2();
             if (aimUpwards)
             {
                 energyCount = 2;
@@ -164,8 +164,8 @@ namespace InfernumMode.Content.Projectiles.Generic
             for (int i = 0; i < energyCount; i++)
             {
                 float energySizeInterpolant = Main.rand.NextFloat();
-                float energyScale = MathHelper.Lerp(0.3f, 0.9f, energySizeInterpolant);
-                int energyLifetime = (int)MathHelper.Lerp(20f, 45f, energySizeInterpolant);
+                float energyScale = Lerp(0.3f, 0.9f, energySizeInterpolant);
+                int energyLifetime = (int)Lerp(20f, 45f, energySizeInterpolant);
                 Color energyColor = Color.Lerp(Color.Orange, Color.Red, energySizeInterpolant * 0.75f);
                 SquishyLightParticle energy = new(EndOfStaff, energyDirection.RotatedByRandom(0.69f) * Main.rand.NextFloat(0.4f, 2.7f), energyScale, energyColor, energyLifetime, 1f, 3f);
                 GeneralParticleHandler.SpawnParticle(energy);

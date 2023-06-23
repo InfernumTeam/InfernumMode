@@ -34,14 +34,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void AI()
         {
             // Fade in.
-            Projectile.scale = MathF.Sin(Time / 150f * MathHelper.Pi) * 4f;
+            Projectile.scale = Sin(Time / 150f * Pi) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             Projectile.Opacity = Projectile.scale;
-            Projectile.scale *= MathHelper.Lerp(0.8f, 1.1f, Projectile.identity % 9f / 9f);
+            Projectile.scale *= Lerp(0.8f, 1.1f, Projectile.identity % 9f / 9f);
             //Projectile.Size = Vector2.One * Projectile.scale * 200f;
             Projectile.velocity *= 0.98f;
-            Projectile.rotation += MathHelper.Clamp(Projectile.velocity.X * 0.04f, -0.06f, 0.06f);
+            Projectile.rotation += Clamp(Projectile.velocity.X * 0.04f, -0.06f, 0.06f);
 
             Time++;
         }

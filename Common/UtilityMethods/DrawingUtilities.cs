@@ -169,7 +169,7 @@ namespace InfernumMode
             end -= Main.screenPosition;
 
             Texture2D line = InfernumTextureRegistry.BloomLine.Value;
-            float rotation = (end - start).ToRotation() + MathHelper.PiOver2;
+            float rotation = (end - start).ToRotation() + PiOver2;
             Vector2 scale = new Vector2(width, Vector2.Distance(start, end)) / line.Size();
             Vector2 origin = new(line.Width / 2f, line.Height);
 
@@ -415,16 +415,16 @@ namespace InfernumMode
             triangleIndices = new();
 
             // Use the law of cosines to determine the side length of the triangles that compose the inscribed shape.
-            float sideAngle = MathHelper.TwoPi / sideCount;
-            float sideLength = MathF.Sqrt(2f - MathF.Cos(sideAngle) * 2f) * radius;
+            float sideAngle = TwoPi / sideCount;
+            float sideLength = Sqrt(2f - Cos(sideAngle) * 2f) * radius;
 
             // Calculate vertices by approximating a circle with a bunch of triangles.
             for (int i = 0; i < sideCount; i++)
             {
                 float completionRatio = i / (float)(sideCount - 1f);
                 float nextCompletionRatio = (i + 1) / (float)(sideCount - 1f);
-                Vector2 orthogonal = (MathHelper.TwoPi * completionRatio + MathHelper.PiOver2).ToRotationVector2();
-                Vector2 radiusOffset = (MathHelper.TwoPi * completionRatio).ToRotationVector2() * radius;
+                Vector2 orthogonal = (TwoPi * completionRatio + PiOver2).ToRotationVector2();
+                Vector2 radiusOffset = (TwoPi * completionRatio).ToRotationVector2() * radius;
                 Vector2 leftEdgeInner = center;
                 Vector2 rightEdgeInner = center;
                 Vector2 leftEdge = leftEdgeInner + radiusOffset + orthogonal * sideLength * -0.5f;
@@ -472,8 +472,8 @@ namespace InfernumMode
             if (InfernumConfig.Instance.ReducedGraphicsConfig)
                 return;
 
-            int cinderSpawnRate = (int)MathHelper.Lerp(maxCinderSpawnRate, minCinderSpawnRate, lifeRatio);
-            float cinderFlySpeed = MathHelper.Lerp(maxCinderFlySpeed, minCinderFlySpeed, lifeRatio);
+            int cinderSpawnRate = (int)Lerp(maxCinderSpawnRate, minCinderSpawnRate, lifeRatio);
+            float cinderFlySpeed = Lerp(maxCinderFlySpeed, minCinderFlySpeed, lifeRatio);
 
             for (int i = 0; i < 3; i++)
             {
@@ -484,8 +484,8 @@ namespace InfernumMode
                 Vector2 cinderVelocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.23f, 0.98f)) * Main.rand.NextFloat(0.6f, 1.2f) * cinderFlySpeed;
                 if (Main.rand.NextBool())
                 {
-                    cinderSpawnOffset = cinderSpawnOffset.RotatedBy(-MathHelper.PiOver2) * new Vector2(0.9f, 1f);
-                    cinderVelocity = cinderVelocity.RotatedBy(-MathHelper.PiOver2) * new Vector2(1.8f, -1f);
+                    cinderSpawnOffset = cinderSpawnOffset.RotatedBy(-PiOver2) * new Vector2(0.9f, 1f);
+                    cinderVelocity = cinderVelocity.RotatedBy(-PiOver2) * new Vector2(1.8f, -1f);
                 }
 
                 if (Main.rand.NextBool(6))
@@ -521,7 +521,10 @@ namespace InfernumMode
             while (drawCache.Count > 0)
             {
                 if (drawCache[0].position.Length() > 10000f && drawCache[0].position.Between(topLeft, bottomRight))
-                    drawCache[0] = drawCache[0] with { position = drawCache[0].position - Main.screenPosition };
+                    drawCache[0] = drawCache[0] with
+                    {
+                        position = drawCache[0].position - Main.screenPosition
+                    };
                 drawCache[0].Draw(Main.spriteBatch);
                 drawCache.RemoveAt(0);
             }
@@ -531,7 +534,7 @@ namespace InfernumMode
         {
             get
             {
-                float colorInterpolant = (float)(Math.Sin(MathHelper.Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
+                float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
                 Color c = CalamityUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
                 return CalamityUtils.ColorMessage("Imbued with the infernal flames of a defeated foe", c);
             }

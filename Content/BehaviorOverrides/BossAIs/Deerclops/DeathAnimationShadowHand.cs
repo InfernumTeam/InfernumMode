@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             // Fade in, but only to a point that the hand is as opaque as Deerclops is.
             NPC deerclops = Main.npc[deerclopsIndex];
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, deerclops.Opacity + 0.01f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.04f, 0f, deerclops.Opacity + 0.01f);
 
             // Choose a location to stick to.
             float attackTimer = deerclops.ai[1];
@@ -47,10 +47,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             if (attackTimer <= DeerclopsBehaviorOverride.ShadowHandSpinTime)
             {
                 float repositionInterolant = Utils.GetLerpValue(DeerclopsBehaviorOverride.ShadowHandSpinTime - 84f, DeerclopsBehaviorOverride.ShadowHandSpinTime - 1f, attackTimer, true);
-                float horizontalHoverOffset = MathHelper.Lerp(0f, HoverSide * -90f, repositionInterolant);
-                float verticalHoverOffset = MathHelper.Lerp(-192f, -356f, repositionInterolant);
+                float horizontalHoverOffset = Lerp(0f, HoverSide * -90f, repositionInterolant);
+                float verticalHoverOffset = Lerp(-192f, -356f, repositionInterolant);
                 hoverOffset = new Vector2(horizontalHoverOffset, verticalHoverOffset);
-                hoverOffset += (MathHelper.Pi * attackTimer / DeerclopsBehaviorOverride.ShadowHandSpinTime * 4f + HoverSide * MathHelper.PiOver2).ToRotationVector2() * new Vector2(146f, 15f);
+                hoverOffset += (Pi * attackTimer / DeerclopsBehaviorOverride.ShadowHandSpinTime * 4f + HoverSide * PiOver2).ToRotationVector2() * new Vector2(146f, 15f);
 
                 // Look at Deerclops.
                 LookAtDeerclops(deerclops);
@@ -69,13 +69,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             else
             {
                 float grabInterpolant = Utils.GetLerpValue(0f, DeerclopsBehaviorOverride.ShadowHandGrabTime, attackTimer - DeerclopsBehaviorOverride.ShadowHandSpinTime - DeerclopsBehaviorOverride.ShadowHandReelbackTime, true);
-                hoverOffset = Vector2.Lerp(CalculateReelbackHoverOffset(deerclops, 1f), new(HoverSide * -32f - deerclops.spriteDirection * 20f, HoverSide * 82f - 36f), MathF.Pow(grabInterpolant, 1.58f));
+                hoverOffset = Vector2.Lerp(CalculateReelbackHoverOffset(deerclops, 1f), new(HoverSide * -32f - deerclops.spriteDirection * 20f, HoverSide * 82f - 36f), Pow(grabInterpolant, 1.58f));
 
                 // Make the thumbs do a grabbing motion, as though it's locking Deerclops' hands in place.
                 ThumbRotation = grabInterpolant * -0.4f;
 
                 if (grabInterpolant >= 1f)
-                    Projectile.rotation = Projectile.rotation.AngleLerp(MathHelper.Pi, 0.1f);
+                    Projectile.rotation = Projectile.rotation.AngleLerp(Pi, 0.1f);
             }
 
             // Move to the hover destination.
@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public Vector2 CalculateReelbackHoverOffset(NPC deerclops, float reelBackInterpolant)
         {
-            float reelBackDistance = MathHelper.Lerp(0f, 500f, reelBackInterpolant);
+            float reelBackDistance = Lerp(0f, 500f, reelBackInterpolant);
             Vector2 hoverOffset = new(HoverSide * deerclops.spriteDirection * 90f, -156f);
             hoverOffset -= hoverOffset.SafeNormalize(Vector2.Zero) * new Vector2(2f, -0.3f) * reelBackDistance;
             hoverOffset.Y -= reelBackDistance * 0.3f;
@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Projectile.rotation = Projectile.AngleTo(deerclops.Center);
             Projectile.spriteDirection = (Math.Cos(Projectile.rotation) > 0f).ToDirectionInt();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             for (int j = 0; j < 4; j++)
             {
                 Vector2 offsetDirection = rotation.ToRotationVector2();
-                double spin = Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 24f + MathHelper.TwoPi * j / 4f;
+                double spin = Main.GlobalTimeWrappedHourly * TwoPi / 24f + TwoPi * j / 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + offsetDirection.RotatedBy(spin) * 6f, null, backglowColor, rotation, origin, Projectile.scale, direction, 0);
             }
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.Black), rotation, origin, Projectile.scale, direction, 0);

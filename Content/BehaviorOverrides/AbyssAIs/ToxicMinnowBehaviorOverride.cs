@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Define rotation.
             npc.rotation = npc.velocity.ToRotation();
             if (npc.spriteDirection == -1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
             return false;
         }
 
@@ -135,7 +135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 flockDirection /= flockNeighbors.Count;
             }
             else
-                flockDirection = npc.velocity.RotatedBy(MathHelper.Pi * 0.013f);
+                flockDirection = npc.velocity.RotatedBy(Pi * 0.013f);
 
             // Angle towards the flock's current direction.
             npc.velocity = npc.velocity.ToRotation().AngleLerp(flockDirection.ToRotation(), 0.04f).ToRotationVector2() * npc.velocity.Length();
@@ -210,7 +210,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Swim around idly.
-            npc.velocity = npc.velocity.RotatedBy(MathHelper.Pi * (npc.whoAmI % 2f == 0f).ToDirectionInt() * 0.004f);
+            npc.velocity = npc.velocity.RotatedBy(Pi * (npc.whoAmI % 2f == 0f).ToDirectionInt() * 0.004f);
         }
         #endregion AI and Behaviors
     }

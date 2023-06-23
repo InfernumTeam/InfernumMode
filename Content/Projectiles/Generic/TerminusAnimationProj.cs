@@ -98,8 +98,8 @@ namespace InfernumMode.Content.Projectiles.Generic
         {
             Main.spriteBatch.EnterShaderRegion();
 
-            float totalDeathRays = MathHelper.Lerp(0f, 8f, Utils.GetLerpValue(UpwardRiseTime, 180f, Time, true));
-            float rayExpandFactor = MathHelper.Lerp(1f, 2f, MathHelper.Clamp((Time - 150f) / 50f, 0f, 1f));
+            float totalDeathRays = Lerp(0f, 8f, Utils.GetLerpValue(UpwardRiseTime, 180f, Time, true));
+            float rayExpandFactor = Lerp(1f, 2f, Clamp((Time - 150f) / 50f, 0f, 1f));
 
             // Make the light rays dissipate if the AEW is close. This is done to ensure that the light rays don't suddenly vanish the
             // instant the Terminus is snatched, which would look a bit weird.
@@ -116,7 +116,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                 rayAnimationCompletion *= rayExpandFactor * aewProximityOpacityFade;
 
                 ulong seed = (ulong)(i + 1) * 177195uL;
-                float rayDirection = MathHelper.TwoPi * i / 8f + MathF.Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
+                float rayDirection = TwoPi * i / 8f + Sin(Main.GlobalTimeWrappedHourly * (i + 1f) * 0.3f) * 0.51f;
                 rayDirection += Main.GlobalTimeWrappedHourly * 0.48f;
                 DrawLightRay(seed, rayDirection, rayAnimationCompletion, Projectile.Center);
             }
@@ -131,17 +131,17 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             float rayWidthFunction(float completionRatio, float rayBrightness2)
             {
-                return MathHelper.Lerp(2f, 14f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
+                return Lerp(2f, 14f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
             }
             Color rayColorFunction(float completionRatio, float rayBrightness2)
             {
-                return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * MathHelper.Clamp(0f, 1.5f, rayBrightness2) * 0.6f;
+                return Color.White * Projectile.Opacity * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * Clamp(0f, 1.5f, rayBrightness2) * 0.6f;
             }
 
             LightDrawer ??= new PrimitiveTrailCopy(c => rayWidthFunction(c, Projectile.localAI[0]), c => rayColorFunction(c, Projectile.localAI[0]), null, false);
 
             Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
-            float length = MathHelper.Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
+            float length = Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
             List<Vector2> points = new();
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint + initialRayRotation.ToRotationVector2() * length, i / 12f));

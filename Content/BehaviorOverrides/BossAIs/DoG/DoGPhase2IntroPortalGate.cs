@@ -41,13 +41,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         {
             if (Projectile.localAI[1] == 0f)
             {
-                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                Projectile.rotation = Main.rand.NextFloat(TwoPi);
                 Projectile.localAI[1] = 1f;
             }
 
             DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = Projectile.whoAmI;
 
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9f) * 45f + 5f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Pow(Clamp(Time / 160f, 0f, 1f), 9f) * 45f + 5f;
 
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)
@@ -60,8 +60,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float leftCleaveAngularOffset = MathHelper.Pi * -0.18f;
-            float rightCleaveAngularOffset = MathHelper.Pi * 0.18f;
+            float leftCleaveAngularOffset = Pi * -0.18f;
+            float rightCleaveAngularOffset = Pi * 0.18f;
 
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 leftStart = Projectile.Center - Vector2.UnitY.RotatedBy(leftCleaveAngularOffset) * 2700f;
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             void drawLineFromPoints(Vector2 startingPosition, Vector2 endingPosition)
             {
                 Vector2 drawPosition = startingPosition;
-                float rotation = (endingPosition - startingPosition).ToRotation() - MathHelper.PiOver2;
+                float rotation = (endingPosition - startingPosition).ToRotation() - PiOver2;
                 while (Vector2.Distance(drawPosition, endingPosition) > 90f)
                 {
                     drawPosition += (endingPosition - drawPosition).SafeNormalize(Vector2.UnitY) * texture.Width * 0.2f;
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     Player player = Main.player[i];
-                    float pushSpeed = MathHelper.Lerp(0f, 45f, Utils.GetLerpValue(3800f, 250f, Projectile.Distance(player.Center), true));
+                    float pushSpeed = Lerp(0f, 45f, Utils.GetLerpValue(3800f, 250f, Projectile.Distance(player.Center), true));
                     player.velocity -= player.SafeDirectionTo(Projectile.Center) * pushSpeed;
                 }
             }

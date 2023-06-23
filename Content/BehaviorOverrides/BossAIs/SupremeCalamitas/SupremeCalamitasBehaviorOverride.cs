@@ -358,7 +358,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Vanish if the target is gone.
             if (!target.active || target.dead)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.1f, 0f, 1f);
 
                 for (int i = 0; i < 2; i++)
                 {
@@ -569,7 +569,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int shootCounter = (int)((attackTimer - shootDelay) / shootRate);
-                        float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, shootCounter % 3f / 2f) + Main.rand.NextFloatDirection() * 0.25f;
+                        float offsetAngle = Lerp(-0.67f, 0.67f, shootCounter % 3f / 2f) + Main.rand.NextFloatDirection() * 0.25f;
                         Vector2 soulVelocity = (Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt()).RotatedBy(offsetAngle) * soulShootSpeed * new Vector2(0.67f, 1f);
                         soulVelocity.Y += target.velocity.Y;
 
@@ -663,7 +663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Spin condemnation around before aiming it at the target.
-            float spinRotation = MathHelper.WrapAngle(MathHelper.Pi * attackTimer / condemnationSpinTime * 6f);
+            float spinRotation = WrapAngle(Pi * attackTimer / condemnationSpinTime * 6f);
             float aimAtTargetRotation = (target.Center - handPosition + target.velocity * 10f).ToRotation() + Main.rand.NextFloatDirection() * 0.07f;
             if (playerAimLockonDirection != 0f)
                 aimAtTargetRotation = playerAimLockonDirection;
@@ -676,7 +676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Make the aim direction move upward before firing, in anticipation of the fan.
-            aimAtTargetRotation -= angularVariance * fanDirection * fanAngularOffsetInterpolant * MathHelper.Lerp(-0.5f, 0.5f, fanCompletionInterpolant);
+            aimAtTargetRotation -= angularVariance * fanDirection * fanAngularOffsetInterpolant * Lerp(-0.5f, 0.5f, fanCompletionInterpolant);
 
             // Adjust Condemnation's rotation.
             float condemnationSpinInterpolant = Utils.GetLerpValue(condemnationSpinTime + 10f, condemnationSpinTime, attackTimer, true);
@@ -688,12 +688,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTimer % condemnationChargePuffRate == condemnationChargePuffRate - 1f)
             {
                 // Play a sound for additional notification that an arrow has been loaded.
-                SoundEngine.PlaySound(SoundID.Item108 with { Volume = 0.3f });
+                SoundEngine.PlaySound(SoundID.Item108 with
+                {
+                    Volume = 0.3f
+                });
                 Vector2 condemnationTip = condemnationRef.ModProjectile<CondemnationProj>().TipPosition;
                 for (int i = 0; i < 36; i++)
                 {
                     Dust chargeMagic = Dust.NewDustPerfect(condemnationTip, 267);
-                    chargeMagic.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 5f + npc.velocity;
+                    chargeMagic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 5f + npc.velocity;
                     chargeMagic.scale = Main.rand.NextFloat(1f, 1.5f);
                     chargeMagic.color = Color.Violet;
                     chargeMagic.noGravity = true;
@@ -711,7 +714,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int i = 0; i < 6; i++)
                     {
-                        Vector2 dartSpawnOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
+                        Vector2 dartSpawnOffset = (TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
                         Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
                         Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
 
@@ -803,7 +806,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Hover near the target and have the shield laugh at the target before charging.
             if (attackTimer < chargeDelay)
             {
-                ShieldOpacity = MathHelper.Clamp(ShieldOpacity + 0.1f, 0f, 1f);
+                ShieldOpacity = Clamp(ShieldOpacity + 0.1f, 0f, 1f);
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -270f) - npc.velocity;
 
@@ -928,9 +931,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset;
             if (hasBegunFiring)
-                hoverDestination.Y += MathF.Sin((attackTimer - shootDelay) * MathHelper.Pi / verticalBobPeriod) * verticalBobAmplitude;
+                hoverDestination.Y += Sin((attackTimer - shootDelay) * Pi / verticalBobPeriod) * verticalBobAmplitude;
 
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * MathHelper.Min(npc.Distance(hoverDestination), 32f);
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * MathF.Min(npc.Distance(hoverDestination), 32f);
             npc.SimpleFlyMovement(idealVelocity, hoverSpeedFactor * 2.25f);
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
 
@@ -980,7 +983,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         for (int i = 0; i < dartCount; i++)
                         {
-                            float dartOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartCount - 1f));
+                            float dartOffsetAngle = Lerp(-dartSpread, dartSpread, i / (float)(dartCount - 1f));
                             Vector2 dartVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(dartOffsetAngle) * dartSpeed;
                             Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f, Main.myPlayer);
                         }
@@ -1068,10 +1071,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (hasBegunFiring && attackTimer % shootRate == shootRate - 1f && attackTimer < chargeupTime + shootTime)
             {
                 SoundEngine.PlaySound(SCalBoss.HellblastSound, npc.Center);
-                float cinderSpawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float cinderSpawnOffsetAngle = Main.rand.NextFloat(TwoPi);
                 for (int i = 0; i < cindersPerBurst; i++)
                 {
-                    Vector2 shootOffset = (MathHelper.TwoPi * i / cindersPerBurst + cinderSpawnOffsetAngle).ToRotationVector2() * 1000f;
+                    Vector2 shootOffset = (TwoPi * i / cindersPerBurst + cinderSpawnOffsetAngle).ToRotationVector2() * 1000f;
                     Vector2 cinderShootVelocity = shootOffset.SafeNormalize(Vector2.UnitY) * -shootSpeed;
 
                     for (int j = 0; j < 150; j++)
@@ -1104,21 +1107,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (wrappedBombShootTimer == bombShootDelay)
                 {
                     do
-                        bombFireOffsetAngle = MathHelper.TwoPi * Main.rand.NextFloat(8) / 8f;
+                        bombFireOffsetAngle = TwoPi * Main.rand.NextFloat(8) / 8f;
                     while (bombFireOffsetAngle.ToRotationVector2().AngleBetween(target.velocity) < 0.91f);
-                    bombFirePositionX = target.Center.X + MathF.Cos(bombFireOffsetAngle) * 1150f;
-                    bombFirePositionY = target.Center.Y + MathF.Sin(bombFireOffsetAngle) * 1150f;
+                    bombFirePositionX = target.Center.X + Cos(bombFireOffsetAngle) * 1150f;
+                    bombFirePositionY = target.Center.Y + Sin(bombFireOffsetAngle) * 1150f;
                     npc.netUpdate = true;
                 }
 
                 // Create telegraph lines.
                 if (wrappedBombShootTimer <= bombShootDelay + telegraphTime && wrappedBombShootTimer % telegraphReleaseRate == telegraphReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound with { Volume = 0.67f }, target.Center);
+                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound with
+                    {
+                        Volume = 0.67f
+                    }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float bombFireOffset = MathHelper.Lerp(-totalBombOffset, totalBombOffset, Utils.GetLerpValue(0f, telegraphTime, wrappedBombShootTimer - bombShootDelay)) * 0.5f;
-                        Vector2 bombShootPosition = new Vector2(bombFirePositionX, bombFirePositionY) + (bombFireOffsetAngle + MathHelper.PiOver2).ToRotationVector2() * bombFireOffset;
+                        float bombFireOffset = Lerp(-totalBombOffset, totalBombOffset, Utils.GetLerpValue(0f, telegraphTime, wrappedBombShootTimer - bombShootDelay)) * 0.5f;
+                        Vector2 bombShootPosition = new Vector2(bombFirePositionX, bombFirePositionY) + (bombFireOffsetAngle + PiOver2).ToRotationVector2() * bombFireOffset;
                         Vector2 telegraphDirection = bombFireOffsetAngle.ToRotationVector2() * -0.001f;
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
@@ -1204,7 +1210,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Make the orb grow.
             if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay)
-                orbSize = MathHelper.SmoothStep(smallOrbSize, bigOrbSize, Utils.GetLerpValue(0f, orbGrowTime, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay), true));
+                orbSize = SmoothStep(smallOrbSize, bigOrbSize, Utils.GetLerpValue(0f, orbGrowTime, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay), true));
 
             // Eventually make the light orb fade away.
             fadeAwayInterpolant = Utils.GetLerpValue(0f, 60f, attackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + BrimstoneFlameOrb.LaserReleaseDelay + orbAttackTime), true);
@@ -1321,7 +1327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (demonCircleCounter < demonSummonCount && attackTimer % demonSummonRate == demonSummonRate - 1f)
                 {
-                    Vector2 circleSpawnPosition = handPosition + (MathHelper.TwoPi * demonCircleCounter / demonSummonCount).ToRotationVector2() * 225f;
+                    Vector2 circleSpawnPosition = handPosition + (TwoPi * demonCircleCounter / demonSummonCount).ToRotationVector2() * 225f;
 
                     // Create the ritual circle.
                     Dust.QuickDustLine(handPosition, circleSpawnPosition, 45f, Color.Red);
@@ -1345,7 +1351,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int i = 0; i < dartCount; i++)
                     {
-                        float dartOffsetAngle = MathHelper.Lerp(-0.45f, 0.45f, i / (float)(dartCount - 1f));
+                        float dartOffsetAngle = Lerp(-0.45f, 0.45f, i / (float)(dartCount - 1f));
                         Vector2 dartVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(dartOffsetAngle) * dartSpeed;
                         Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f, Main.myPlayer);
                     }
@@ -1398,7 +1404,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             int ritualCreationRate = 85;
             float dartShootSpeed = 16f;
             float bombExplosionRadius = 1100f;
-            float spinArc = MathHelper.TwoPi * 1.25f;
+            float spinArc = TwoPi * 1.25f;
             Vector2 handPosition = CalculateHandPosition();
 
             if (currentPhase >= 2)
@@ -1474,7 +1480,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Adjust the jewel's rotation and create particles.
             if (attackTimer < jewelChargeupTime && jewelRef != null)
             {
-                float angularTurnSpeed = Utils.Remap(attackTimer, 0f, jewelChargeupTime * 0.67f, MathHelper.Pi / 45f, MathHelper.Pi / 355f);
+                float angularTurnSpeed = Utils.Remap(attackTimer, 0f, jewelChargeupTime * 0.67f, Pi / 45f, Pi / 355f);
                 jewelRef.rotation = jewelRef.rotation.AngleTowards(jewelRef.AngleTo(target.Center), angularTurnSpeed);
 
                 float fireParticleScale = Main.rand.NextFloat(1f, 1.25f);
@@ -1488,12 +1494,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create the laserbeam.
             if (jewelRef != null && attackTimer == jewelChargeupTime)
             {
-                SoundEngine.PlaySound(InfernumSoundRegistry.CalamitousEnergyBurstSound with { Pitch = 0.2f }, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.CalamitousEnergyBurstSound with
+                {
+                    Pitch = 0.2f
+                }, npc.Center);
 
                 // Store the jewel's rotation.
                 laserDirection = jewelRef.rotation;
 
-                Vector2 aimDirection = (jewelRef.rotation + MathHelper.PiOver2).ToRotationVector2();
+                Vector2 aimDirection = (jewelRef.rotation + PiOver2).ToRotationVector2();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<BrimstoneLaserbeam>(), RancorLaserbeamDamage, 0f);
             }
@@ -1505,7 +1514,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Initialize the spin direction.
                 if (spinDirection == 0f)
                 {
-                    spinDirection = (MathHelper.WrapAngle(jewelRef.AngleTo(target.Center) - jewelRef.rotation) > 0f).ToDirectionInt();
+                    spinDirection = (WrapAngle(jewelRef.AngleTo(target.Center) - jewelRef.rotation) > 0f).ToDirectionInt();
                     npc.netUpdate = true;
                 }
 
@@ -1622,7 +1631,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Play a summoning sound
             if (attackTimer == 1f)
-                SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound with { Volume = 1.5f });
+                SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound with
+                {
+                    Volume = 1.5f
+                });
 
             // Create the portals.
             if (attackTimer == screenShakeTime - 50f)
@@ -1690,12 +1702,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Spin vigilance around before aiming it upward.
-            float spinRotation = MathHelper.WrapAngle(MathHelper.Pi * attackTimer / vigilanceSpinTime * 10f);
+            float spinRotation = WrapAngle(Pi * attackTimer / vigilanceSpinTime * 10f);
 
             // Adjust vigilance's rotation.
             float vigilanceSpinInterpolant = Utils.GetLerpValue(vigilanceSpinTime + 10f, vigilanceSpinTime, attackTimer, true);
             if (vigilanceRef != null)
-                vigilanceRef.rotation = (-MathHelper.PiOver2).AngleLerp(spinRotation, vigilanceSpinInterpolant) + MathHelper.TwoPi * fanCompletionInterpolant - MathHelper.PiOver4 + MathHelper.Pi;
+                vigilanceRef.rotation = (-PiOver2).AngleLerp(spinRotation, vigilanceSpinInterpolant) + TwoPi * fanCompletionInterpolant - PiOver4 + Pi;
 
             // Release bursts of energy from Vigilance's tip and summon a seeker.
             if (vigilanceRef != null && fanCompletionInterpolant > 0f && fanCompletionInterpolant < 1f && attackTimer % seekerSummonRate == 0f)
@@ -1703,13 +1715,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.Item73, handPosition);
 
                 bool outerSeeker = fanCompletionInterpolant > 0.5f;
-                Vector2 seekerSpawnOffset = (MathHelper.Pi * fanCompletionInterpolant * 4f).ToRotationVector2() * (outerSeeker ? 1000f : 500f);
+                Vector2 seekerSpawnOffset = (Pi * fanCompletionInterpolant * 4f).ToRotationVector2() * (outerSeeker ? 1000f : 500f);
                 Vector2 seekerSpawnPosition = npc.Center + seekerSpawnOffset;
 
                 Dust.QuickDustLine(vigilanceRef.ModProjectile<VigilanceProj>().TipPosition, seekerSpawnPosition, 40f, Color.Red);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float seekerOffsetAngle = MathHelper.ToDegrees(seekerSpawnOffset.ToRotation() + MathHelper.Pi);
+                    float seekerOffsetAngle = ToDegrees(seekerSpawnOffset.ToRotation() + Pi);
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)seekerSpawnPosition.X, (int)seekerSpawnPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, seekerOffsetAngle, 0f, outerSeeker.ToInt(), seekerOffsetAngle);
                 }
             }
@@ -1776,16 +1788,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Make the hearts spin.
             float focusInterpolant = Utils.GetLerpValue(0f, focusTime, adjustedAttackTimer - heartSpinAnimationTime, true);
             if (focusInterpolant <= 0f)
-                heartSpinAngle += Utils.Remap(adjustedAttackTimer, 0f, heartSpinAnimationTime, 0.001f, MathHelper.Pi / 27f) * Utils.GetLerpValue(0f, -36f, adjustedAttackTimer - heartSpinAnimationTime);
+                heartSpinAngle += Utils.Remap(adjustedAttackTimer, 0f, heartSpinAnimationTime, 0.001f, Pi / 27f) * Utils.GetLerpValue(0f, -36f, adjustedAttackTimer - heartSpinAnimationTime);
 
             List<Projectile> brimstoneHearts = Main.projectile.Take(Main.maxProjectiles).Where(n => n.active && n.type == heartID).ToList();
             foreach (Projectile heart in brimstoneHearts)
             {
-                float heartOffsetAngle = MathHelper.WrapAngle(MathHelper.TwoPi * heart.ai[0] + heartSpinAngle);
+                float heartOffsetAngle = WrapAngle(TwoPi * heart.ai[0] + heartSpinAngle);
                 if (heartOffsetAngle < 0f)
-                    heartOffsetAngle += MathHelper.TwoPi;
+                    heartOffsetAngle += TwoPi;
 
-                float focusAngle = -MathHelper.PiOver2 + MathHelper.Lerp(-0.87f, 0.87f, MathF.Sin(heart.ai[0] * MathHelper.TwoPi + attackTimer / 19f) * 0.5f + 0.5f);
+                float focusAngle = -PiOver2 + Lerp(-0.87f, 0.87f, Sin(heart.ai[0] * TwoPi + attackTimer / 19f) * 0.5f + 0.5f);
 
                 // Have hearts hover a fixed distance away from SCal.
                 heart.Center = npc.Center + heartOffsetAngle.AngleLerp(focusAngle, focusInterpolant).ToRotationVector2() * heartRadius;
@@ -2082,9 +2094,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             for (int i = 0; i < 4; i++)
                             {
-                                Vector2 bombShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 16f;
+                                Vector2 bombShootVelocity = (TwoPi * i / 4f).ToRotationVector2() * 16f;
                                 if (bombShootCounter % 2f == 1f)
-                                    bombShootVelocity = bombShootVelocity.RotatedBy(MathHelper.PiOver4);
+                                    bombShootVelocity = bombShootVelocity.RotatedBy(PiOver4);
 
                                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(bomb =>
                                 {
@@ -2106,7 +2118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         for (int i = 0; i < dartsPerBurst; i++)
                         {
-                            float shootOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
+                            float shootOffsetAngle = Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
                             Vector2 dartShootVelocity = (dartTelegraphDirection + shootOffsetAngle).ToRotationVector2() * dartShootSpeed;
                             Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
 
@@ -2121,7 +2133,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int i = 0; i < dartsPerBurst; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
+                        float shootOffsetAngle = Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
                         Vector2 telegraphDirection = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
@@ -2412,7 +2424,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     var color = CalamityUtils.MulticolorLerp(interpolant, Color.Red, Color.Orange, Color.OrangeRed);
                     float speedFactor = Main.rand.NextFloat(2f, 10f) * FireDrawer.Width * ForcefieldScale * 0.95f / (i * 0.04f + 1f);
-                    Vector2 angularSpawnOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2();
+                    Vector2 angularSpawnOffset = (TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2();
                     angularSpawnOffset = Vector2.Lerp(angularSpawnOffset, -Vector2.UnitY, 0.3f) * 2.96f;
 
                     FireDrawer.CreateSource(new Vector2(FireDrawer.Width / 2 + angularSpawnOffset.X, FireDrawer.Height / 2 + angularSpawnOffset.Y).ToPoint(), Vector2.One * 2f, angularSpawnOffset.RotatedByRandom(0.3f) * speedFactor, color, ForcefieldScale);
@@ -2475,8 +2487,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Color auraColor = npc.GetAlpha(Color.Red) * 0.4f;
                 for (int i = 0; i < 7; i++)
                 {
-                    Vector2 rotationalDrawOffset = (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
-                    rotationalDrawOffset *= MathHelper.Lerp(3f, 4.25f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
+                    Vector2 rotationalDrawOffset = (TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
+                    rotationalDrawOffset *= Lerp(3f, 4.25f, Cos(Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
                     Main.spriteBatch.Draw(texture2D15, vector43 + rotationalDrawOffset, frame, auraColor, npc.rotation, vector11, npc.scale * 1.1f, spriteEffects, 0f);
                 }
             }
@@ -2516,7 +2528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Shield intensity is always high during invincibility.
             if (npc.dontTakeDamage)
-                intensity = 0.75f + Math.Abs(MathF.Cos(Main.GlobalTimeWrappedHourly * 1.7f)) * 0.1f;
+                intensity = 0.75f + Math.Abs(Cos(Main.GlobalTimeWrappedHourly * 1.7f)) * 0.1f;
 
             // Make the forcefield weaker in the second phase as a means of showing desparation.
             if (npc.ai[0] >= 3f)
@@ -2532,7 +2544,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 flickerPower += 0.2f;
             if (lifeRatio < 0.05f)
                 flickerPower += 0.1f;
-            float opacity = MathHelper.Lerp(1f, MathHelper.Max(1f - flickerPower, 0.64f), MathF.Pow(MathF.Cos(Main.GlobalTimeWrappedHourly * MathHelper.Lerp(3f, 5f, flickerPower)), 26f));
+            float opacity = Lerp(1f, MathF.Max(1f - flickerPower, 0.64f), Pow(Cos(Main.GlobalTimeWrappedHourly * Lerp(3f, 5f, flickerPower)), 26f));
 
             // During/prior to a charge the forcefield is always darker than usual and thus its intensity is also higher.
             if (!npc.dontTakeDamage && ShieldOpacity > 0f)
@@ -2580,7 +2592,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // And a laugh right before the charge.
             else if (shouldUseShieldLaughAnimation)
-                jawRotationOffset += MathHelper.Lerp(0.04f, -0.82f, MathF.Sin(Main.GlobalTimeWrappedHourly * 17.2f) * 0.5f + 0.5f);
+                jawRotationOffset += Lerp(0.04f, -0.82f, Sin(Main.GlobalTimeWrappedHourly * 17.2f) * 0.5f + 0.5f);
 
             Color shieldColor = Color.White * ShieldOpacity;
             Texture2D shieldSkullTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeShieldTop").Value;
@@ -2589,10 +2601,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 jawDrawPosition = drawPosition;
             SpriteEffects direction = Math.Cos(ShieldRotation) > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
             if (direction == SpriteEffects.FlipVertically)
-                jawDrawPosition += (ShieldRotation - MathHelper.PiOver2).ToRotationVector2() * 42f;
+                jawDrawPosition += (ShieldRotation - PiOver2).ToRotationVector2() * 42f;
             else
             {
-                jawDrawPosition += (ShieldRotation + MathHelper.PiOver2).ToRotationVector2() * 42f;
+                jawDrawPosition += (ShieldRotation + PiOver2).ToRotationVector2() * 42f;
                 jawRotationOffset *= -1f;
             }
 

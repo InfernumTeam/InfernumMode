@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Projectile.rotation += Projectile.velocity.X * 0.02f;
 
             if (Projectile.timeLeft > 80)
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y - 0.12f, -5.5f, 17.5f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y - 0.12f, -5.5f, 17.5f);
             else
             {
                 Projectile.velocity.Y *= 0.98f;
@@ -55,10 +55,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                float offsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / 6f;
+                float offsetAngle = Main.rand.NextBool().ToInt() * Pi / 6f;
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 ichorShootVelocity = (MathHelper.TwoPi * i / 6f + offsetAngle).ToRotationVector2() * 9f;
+                    Vector2 ichorShootVelocity = (TwoPi * i / 6f + offsetAngle).ToRotationVector2() * 9f;
                     Utilities.NewProjectileBetter(Projectile.Center, ichorShootVelocity, ModContent.ProjectileType<IchorSpit>(), PerforatorHiveBehaviorOverride.IchorSpitDamage, 0f);
                 }
             }

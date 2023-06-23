@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = (Math.Cos(Projectile.rotation) > 0f).ToDirectionInt();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             if (Time < 60f)
                 Projectile.velocity *= 0.98f;

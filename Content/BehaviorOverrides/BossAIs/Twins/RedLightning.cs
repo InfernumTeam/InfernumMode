@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             // which allows random turning to occur.
             Projectile.frameCounter++;
 
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / (36f * (Projectile.MaxUpdates - 1))) * 4f;
+            Projectile.scale = Sin(Pi * Projectile.timeLeft / (36f * (Projectile.MaxUpdates - 1))) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             {
                 Projectile.frameCounter = 0;
 
-                float originalSpeed = MathHelper.Min(6f, Projectile.velocity.Length());
+                float originalSpeed = MathF.Min(6f, Projectile.velocity.Length());
                 UnifiedRandom unifiedRandom = new((int)BaseTurnAngleRatio);
                 int turnTries = 0;
                 Vector2 newBaseDirection = -Vector2.UnitY;
@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 do
                 {
                     BaseTurnAngleRatio = unifiedRandom.Next() % 100;
-                    potentialBaseDirection = (BaseTurnAngleRatio / 100f * MathHelper.TwoPi).ToRotationVector2();
+                    potentialBaseDirection = (BaseTurnAngleRatio / 100f * TwoPi).ToRotationVector2();
 
                     // Ensure that the new potential direction base is always moving upwards (this is supposed to be somewhat similar to a -UnitY + RotatedBy).
                     potentialBaseDirection.Y = -Math.Abs(potentialBaseDirection.Y);
@@ -119,8 +119,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 if (Projectile.velocity != Vector2.Zero)
                 {
                     AccumulatedXMovementSpeeds += newBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed;
-                    Projectile.velocity = newBaseDirection.RotatedBy(InitialVelocityAngle + MathHelper.PiOver2) * originalSpeed;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                    Projectile.velocity = newBaseDirection.RotatedBy(InitialVelocityAngle + PiOver2) * originalSpeed;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
                 }
             }
         }
@@ -128,13 +128,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #region Drawing
         internal float WidthFunction(float completionRatio)
         {
-            float baseWidth = MathHelper.Lerp(2f, 4.5f, MathF.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
-            return baseWidth * MathF.Sin(MathHelper.Pi * completionRatio);
+            float baseWidth = Lerp(2f, 4.5f, Sin(Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
+            return baseWidth * Sin(Pi * completionRatio);
         }
         internal Color ColorFunction(float completionRatio)
         {
-            Color baseColor = Color.Lerp(Color.Red, Color.Orange, MathF.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
-            return Color.Lerp(baseColor, Color.DarkRed, (MathF.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
+            Color baseColor = Color.Lerp(Color.Red, Color.Orange, Sin(TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
+            return Color.Lerp(baseColor, Color.DarkRed, (Sin(Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f);
         }
 
         public override bool PreDraw(ref Color lightColor)

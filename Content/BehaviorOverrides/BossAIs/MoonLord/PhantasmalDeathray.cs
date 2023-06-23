@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
+            Projectile.scale = Sin(Pi * Time / Lifetime) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             if (Time >= Lifetime)
@@ -94,12 +94,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(1f, 0.92f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.04f, 1f);
+            return SmoothStep(2f, Projectile.width, squeezeInterpolant) * Clamp(Projectile.scale, 0.04f, 1f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Turquoise, Color.Cyan, MathF.Pow(completionRatio, 2f));
+            Color color = Color.Lerp(Color.Turquoise, Color.Cyan, Pow(completionRatio, 2f));
             return color * Projectile.Opacity * 1.1f;
         }
 
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f) - Projectile.velocity * 500f);
-                originalRotations.Add(MathHelper.PiOver2);
+                originalRotations.Add(PiOver2);
             }
 
             if (Time >= 2f)

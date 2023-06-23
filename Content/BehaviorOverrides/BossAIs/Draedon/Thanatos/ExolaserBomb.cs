@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (Projectile.timeLeft < 60f)
             {
-                Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.015f, 0.06f);
+                Projectile.scale = Lerp(Projectile.scale, 0.015f, 0.06f);
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(18f, 8f, Projectile.timeLeft, true) * 15f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
             }
             else
-                Projectile.scale = MathHelper.Lerp(0.04f, 7.5f, MathHelper.Clamp(Time / GrowTime, 0f, 1f));
+                Projectile.scale = Lerp(0.04f, 7.5f, Clamp(Time / GrowTime, 0f, 1f));
 
             if (Projectile.velocity != Vector2.Zero)
             {
@@ -89,9 +89,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Time++;
         }
 
-        public float SunWidthFunction(float completionRatio) => Radius * MathF.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * Sin(Pi * completionRatio);
 
-        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Red, MathF.Sin(MathHelper.Pi * completionRatio) * 0.4f + 0.3f) * Projectile.Opacity;
+        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Red, Sin(Pi * completionRatio) * 0.4f + 0.3f) * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             List<Vector2> drawPoints = new();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 24f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 24f)
             {
                 drawPoints.Clear();
 

@@ -72,10 +72,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Orbit around deus as necessary.
             if (OrbitAroundDeus)
             {
-                OrbitOffsetAngle += MathHelper.ToRadians(OrbitAngularVelocity);
+                OrbitOffsetAngle += ToRadians(OrbitAngularVelocity);
                 NPC.Center = astrumDeus.Center + OrbitOffsetAngle.ToRotationVector2() * OrbitOffsetRadius;
                 NPC.spriteDirection = (Math.Cos(OrbitOffsetAngle) > 0f).ToDirectionInt();
-                NPC.rotation = MathF.Sin(OrbitOffsetAngle) * 0.11f;
+                NPC.rotation = Sin(OrbitOffsetAngle) * 0.11f;
                 return;
             }
 
@@ -130,7 +130,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Create a spread of homing astral plasma.
             for (int i = 0; i < 8; i++)
             {
-                Vector2 cinderVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 5.5f;
+                Vector2 cinderVelocity = (TwoPi * i / 8f).ToRotationVector2() * 5.5f;
                 Utilities.NewProjectileBetter(NPC.Center, cinderVelocity, ModContent.ProjectileType<AstralPlasmaSpark>(), AstrumDeusHeadBehaviorOverride.AstralPlasmaSparkDamage, 0f, -1, 1f);
             }
             return false;

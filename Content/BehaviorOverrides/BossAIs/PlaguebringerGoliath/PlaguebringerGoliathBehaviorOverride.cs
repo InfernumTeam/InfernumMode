@@ -224,7 +224,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.damage = npc.defDamage;
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 chargeTimer++;
 
@@ -470,7 +470,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.damage = npc.defDamage;
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 chargeTimer++;
 
@@ -562,7 +562,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.damage = npc.defDamage;
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 chargeTimer++;
 
@@ -625,7 +625,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Main.npc[drones[i]].ai[0] = -35f;
                     Main.npc[drones[i]].ai[1] = drones[(i + 1) % drones.Count];
-                    Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + angularOffsetPerIncrement) / drones.Count;
+                    Main.npc[drones[i]].ai[2] = TwoPi * (i + angularOffsetPerIncrement) / drones.Count;
                     Main.npc[drones[i]].ModNPC<SmallDrone>().SpinDirection = spinDirection;
                     Main.npc[drones[i]].ModNPC<SmallDrone>().MoveIncrement = moveIncrement;
                 }
@@ -718,7 +718,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.damage = npc.defDamage;
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 chargeTimer++;
 
@@ -838,7 +838,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.damage = (int)(npc.defDamage * 1.55);
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == -1)
-                    npc.rotation += MathHelper.Pi;
+                    npc.rotation += Pi;
 
                 chargeTimer++;
 

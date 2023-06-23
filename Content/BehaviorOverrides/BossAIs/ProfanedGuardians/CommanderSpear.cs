@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.Center = Owner.Center + offset;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             Projectile.timeLeft = 2000;
         }
 
@@ -93,20 +93,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Texture2D smear = ModContent.Request<Texture2D>("CalamityMod/Particles/SemiCircularSmear").Value;
                 float opacity = Owner.Infernum().ExtraAI[CommanderSpearSmearOpacityIndex] * 0.4f;
-                float rotation = Projectile.rotation + MathHelper.PiOver2 * 1.1f;
+                float rotation = Projectile.rotation + PiOver2 * 1.1f;
                 Main.EntitySpriteDraw(smear, Projectile.Center - Main.screenPosition, null, WayfinderSymbol.Colors[1] with { A = 0 } * opacity, rotation, smear.Size() * 0.5f, 1f, SpriteEffects.None, 0);
             }
 
             float backglowAmount = 12f;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 4f;
                 Color backglowColor = WayfinderSymbol.Colors[1];
                 backglowColor.A = 0;
-                Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * MathHelper.Clamp(Projectile.Opacity * 2f, 0f, 1f) * Owner.Opacity, Projectile.rotation + MathHelper.PiOver4, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(texture, Projectile.Center + backglowOffset - Main.screenPosition, null, backglowColor * Clamp(Projectile.Opacity * 2f, 0f, 1f) * Owner.Opacity, Projectile.rotation + PiOver4, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor * Projectile.Opacity * Owner.Opacity, Projectile.rotation + MathHelper.PiOver4, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, lightColor * Projectile.Opacity * Owner.Opacity, Projectile.rotation + PiOver4, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
     }

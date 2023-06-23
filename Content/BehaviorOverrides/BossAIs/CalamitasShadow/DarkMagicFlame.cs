@@ -98,14 +98,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Projectile.velocity *= acceleration;
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 8f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             Time++;
         }
 
         public float FlameTrailWidthFunction(float completionRatio)
         {
-            return MathHelper.SmoothStep(24f, 5f, completionRatio) * Projectile.Opacity;
+            return SmoothStep(24f, 5f, completionRatio) * Projectile.Opacity;
         }
 
         public Color FlameTrailColorFunction(float completionRatio)

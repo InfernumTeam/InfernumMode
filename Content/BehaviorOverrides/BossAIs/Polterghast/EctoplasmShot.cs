@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             else
                 Projectile.velocity *= 0.985f;
             Projectile.Opacity = Utils.GetLerpValue(1200f, 1180f, Projectile.timeLeft, true) * Utils.GetLerpValue(1200f - Lifetime, 1220f - Lifetime, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Emit ectoplasm dust.
             if (Main.rand.NextBool())
@@ -93,8 +93,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     continue;
 
                 float completionRatio = i / (float)Projectile.oldPos.Length;
-                float fade = MathF.Pow(completionRatio, 2f);
-                float scale = Projectile.scale * MathHelper.Lerp(1.2f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) * MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
+                float fade = Pow(completionRatio, 2f);
+                float scale = Projectile.scale * Lerp(1.2f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) * Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
                 Color drawColor = Color.HotPink * (1f - fade) * Projectile.Opacity;
                 drawColor.A = 0;
 

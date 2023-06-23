@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -64,12 +65,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             }
             if (Time < fadeInTime)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.2f, 0f, 1f);
                 Projectile.scale = Projectile.Opacity * Projectile.ai[1] * 1.3f;
             }
 
             if (Time >= lifetime - fadeoutTime)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.2f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.2f, 0f, 1f);
 
             if (Time >= lifetime)
                 Projectile.Kill();
@@ -99,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * pulseFade * 10f;
+                    Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * pulseFade * 10f;
                     Main.spriteBatch.Draw(tex, drawPosition + drawOffset, frame, pulseColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, 0, 0f);
                 }
             }
@@ -112,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         {
             float _ = 0f;
             Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * Projectile.scale * 30f;
-            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * MathHelper.Max(65f, Projectile.scale * 110f);
+            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * MathF.Max(65f, Projectile.scale * 110f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.scale * 35f, ref _);
         }
 

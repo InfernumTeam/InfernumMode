@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                 npc.dontTakeDamage = npc.Opacity < 0.7f;
 
                 // Create magic dust while fading.
-                int dustCount = (int)MathHelper.Lerp(7f, 1f, npc.Opacity);
+                int dustCount = (int)Lerp(7f, 1f, npc.Opacity);
                 for (int i = 0; i < dustCount; i++)
                 {
                     if (!Main.rand.NextBool(3))
@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             }
 
             // Rise if ground is close.
-            float distanceToGround = MathHelper.Distance(Utilities.GetGroundPositionFrom(npc.Center).Y, npc.Center.Y);
+            float distanceToGround = Distance(Utilities.GetGroundPositionFrom(npc.Center).Y, npc.Center.Y);
             if (distanceToGround < 64f)
                 npc.directionY = -1;
 
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                 npc.directionY = 1;
 
             float verticalSpeed = npc.directionY == 1 ? 0.05f : -0.12f;
-            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + verticalSpeed, -2f, 2f);
+            npc.velocity.Y = Clamp(npc.velocity.Y + verticalSpeed, -2f, 2f);
 
             switch ((DarkMageAttackType)(int)attackState)
             {
@@ -136,13 +136,13 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
 
             if (attackTimer < moveTime)
             {
-                currentFrame = MathHelper.Lerp(0f, 4f, attackTimer / 32f % 1f);
+                currentFrame = Lerp(0f, 4f, attackTimer / 32f % 1f);
 
                 // Attempt to move horizontally towards the target.
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) < 150f)
+                if (Distance(npc.Center.X, target.Center.X) < 150f)
                     npc.velocity.X *= 0.98f;
                 else
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 7f, 0.05f);
+                    npc.velocity.X = Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 7f, 0.05f);
 
                 // Decide the direction.
                 if (Math.Abs(npc.velocity.X) > 0.2f)
@@ -151,7 +151,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             else if (attackTimer < moveTime + chargeShootTime)
             {
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                currentFrame = MathHelper.Lerp(5f, 7f, (attackTimer - moveTime) / (chargeShootTime / 2f) % 1f);
+                currentFrame = Lerp(5f, 7f, (attackTimer - moveTime) / (chargeShootTime / 2f) % 1f);
                 npc.velocity *= 0.97f;
             }
 
@@ -165,11 +165,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                 }
 
                 npc.velocity *= 0.5f;
-                currentFrame = MathHelper.Lerp(8f, 12f, Utils.GetLerpValue(moveTime + chargeShootTime, moveTime + chargeShootTime + shootTime, attackTimer, true));
+                currentFrame = Lerp(8f, 12f, Utils.GetLerpValue(moveTime + chargeShootTime, moveTime + chargeShootTime + shootTime, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && (attackTimer - moveTime - chargeShootTime) % shootRate == shootRate - 1f)
                 {
                     int darkMagicDamage = isBuffed ? 185 : 90;
-                    float offsetAngle = MathHelper.Lerp(-0.48f, 0.48f, Utils.GetLerpValue(0f, shootTime, attackTimer - moveTime - chargeShootTime, true));
+                    float offsetAngle = Lerp(-0.48f, 0.48f, Utils.GetLerpValue(0f, shootTime, attackTimer - moveTime - chargeShootTime, true));
                     Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
                     Vector2 shootVelocity = (aimDirection + offsetAngle).ToRotationVector2() * 16f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.DD2DarkMageBolt, darkMagicDamage, 0f, Main.myPlayer, 0f, 0f);
@@ -221,9 +221,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
             if (attackTimer < castTime)
-                currentFrame = MathHelper.Lerp(29f, 27f, MathF.Sin(attackTimer / castTime * MathHelper.TwoPi) * 0.5f + 0.5f);
+                currentFrame = Lerp(29f, 27f, Sin(attackTimer / castTime * TwoPi) * 0.5f + 0.5f);
             else if (attackTimer < castTime + summonTime)
-                currentFrame = MathHelper.Lerp(30f, 40f, (attackTimer - castTime) / summonTime);
+                currentFrame = Lerp(30f, 40f, (attackTimer - castTime) / summonTime);
 
             // Summon skeletons.
             bool shouldMoveOnToNextAttack = false;
@@ -262,11 +262,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
             if (attackTimer < castTime)
-                currentFrame = MathHelper.Lerp(29f, 27f, MathF.Sin(attackTimer / castTime * MathHelper.TwoPi) * 0.5f + 0.5f);
+                currentFrame = Lerp(29f, 27f, Sin(attackTimer / castTime * TwoPi) * 0.5f + 0.5f);
             else if (attackTimer < castTime + shootTime)
-                currentFrame = MathHelper.Lerp(30f, 40f, (attackTimer - castTime) / shootTime);
+                currentFrame = Lerp(30f, 40f, (attackTimer - castTime) / shootTime);
             else
-                currentFrame = MathHelper.Lerp(0f, 4f, attackTimer / 32f % 1f);
+                currentFrame = Lerp(0f, 4f, attackTimer / 32f % 1f);
 
             // Release flames upwards. They will redirect and accelerate towards targets after a short period of time.
             if (attackTimer >= castTime && attackTimer < castTime + shootTime && attackTimer % shootRate == shootRate - 1f)
@@ -313,11 +313,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
                 SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal, npc.Center);
 
             if (attackTimer < castTime)
-                currentFrame = MathHelper.Lerp(29f, 27f, MathF.Sin(attackTimer / castTime * MathHelper.TwoPi) * 0.5f + 0.5f);
+                currentFrame = Lerp(29f, 27f, Sin(attackTimer / castTime * TwoPi) * 0.5f + 0.5f);
             else if (attackTimer < castTime + shootTime)
-                currentFrame = MathHelper.Lerp(30f, 40f, (attackTimer - castTime) / (shootTime / 3f) % 1f);
+                currentFrame = Lerp(30f, 40f, (attackTimer - castTime) / (shootTime / 3f) % 1f);
             else
-                currentFrame = MathHelper.Lerp(0f, 4f, attackTimer / 32f % 1f);
+                currentFrame = Lerp(0f, 4f, attackTimer / 32f % 1f);
 
             // Release dark magic circles towards the target.
             if (attackTimer >= castTime && attackTimer < castTime + shootTime && attackTimer % shootRate == shootRate - 1f)

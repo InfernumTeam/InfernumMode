@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
         {
             if (Projectile.velocity.Length() < 31f)
                 Projectile.velocity *= 1.054f;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public override bool PreDraw(ref Color lightColor)

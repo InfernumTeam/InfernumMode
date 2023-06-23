@@ -69,11 +69,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 MaxRadius = Main.rand.NextFloat(2000f, 4000f);
                 Projectile.localAI[0] = 1f;
             }
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / Lifetime) * 10f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Sin(Pi * Projectile.timeLeft / Lifetime) * 10f;
 
             Lighting.AddLight(Projectile.Center, 0.2f, 0.1f, 0f);
-            Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);
-            Projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+            Radius = Lerp(Radius, MaxRadius, 0.15f);
+            Projectile.scale = Lerp(1.2f, 5f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
             Projectile.ExpandHitboxBy((int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
 
             if (ShouldDeleteProjectiles)
@@ -99,13 +99,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
-                new Color(new Vector4(1f - MathF.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,
+                new Color(new Vector4(1f - Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,
                 Projectile.rotation,
                 Projectile.Size,
                 scale,
                 SpriteEffects.None, 0);
 
-            Color pulseColor = Color.Lerp(Color.Yellow, Color.Red, MathHelper.Clamp(pulseCompletionRatio * 1.75f, 0f, 1f));
+            Color pulseColor = Color.Lerp(Color.Yellow, Color.Red, Clamp(pulseCompletionRatio * 1.75f, 0f, 1f));
             GameShaders.Misc["ForceField"].UseColor(pulseColor);
             GameShaders.Misc["ForceField"].Apply(drawData);
             drawData.Draw(Main.spriteBatch);

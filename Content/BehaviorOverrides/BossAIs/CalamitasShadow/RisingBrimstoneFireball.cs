@@ -31,8 +31,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
@@ -57,10 +57,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             for (int i = 0; i < 7; i++)
             {
-                shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4).ToRotationVector2() * 8f;
+                shootVelocity = (TwoPi * i / 6f + PiOver4).ToRotationVector2() * 8f;
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasShadowBehaviorOverride.DarkMagicFlameDamage, 0f);
 
-                shootVelocity = (MathHelper.TwoPi * i / 6f + MathHelper.PiOver4 + MathHelper.Pi / 6f).ToRotationVector2() * 11.5f;
+                shootVelocity = (TwoPi * i / 6f + PiOver4 + Pi / 6f).ToRotationVector2() * 11.5f;
                 Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasShadowBehaviorOverride.DarkMagicFlameDamage, 0f);
             }
         }

@@ -29,7 +29,7 @@ namespace InfernumMode.Content.Projectiles.Magic
         public override void AI()
         {
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.15f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.15f, 0f, 1f);
 
             // Play a sound on the first frame.
             if (Projectile.ai[1] == 0f)
@@ -41,7 +41,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             // Home in on targets.
             CalamityUtils.HomeInOnNPC(Projectile, true, 800f, 10f, 20f);

@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Spin around Providence.
-            spinAngle += MathHelper.ToRadians(40f) / idealRadius;
+            spinAngle += ToRadians(40f) / idealRadius;
             NPC providence = Main.npc[CalamityGlobalNPC.holyBoss];
             npc.Center = providence.Center + spinAngle.ToRotationVector2() * offsetRadius;
 
@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             else
             {
                 float incrementalRadiusChange = Utils.Remap(offsetRadius - idealRadius, 120f, 640f, 3f, 12f);
-                offsetRadius = MathHelper.Lerp(offsetRadius, idealRadius, 0.0186f) - incrementalRadiusChange;
+                offsetRadius = Lerp(offsetRadius, idealRadius, 0.0186f) - incrementalRadiusChange;
                 if (offsetRadius <= idealRadius + 2f)
                     offsetRadius = idealRadius;
             }

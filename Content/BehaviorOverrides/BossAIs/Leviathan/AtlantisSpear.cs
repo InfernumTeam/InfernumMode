@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
             if (Projectile.ai[0] == 0f)
             {
                 Projectile.alpha -= 50;
@@ -86,10 +86,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public override void Kill(int timeLeft)
         {
             int numProj = 2;
-            float rotation = MathHelper.ToRadians(20);
+            float rotation = ToRadians(20);
             for (int i = 0; i < numProj; i++)
             {
-                Vector2 perturbedSpeed = new Vector2(Projectile.velocity.X, Projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numProj - 1)));
+                Vector2 perturbedSpeed = new Vector2(Projectile.velocity.X, Projectile.velocity.Y).RotatedBy(Lerp(-rotation, rotation, i / (numProj - 1)));
                 int projectile2 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center.X, Projectile.Center.Y, perturbedSpeed.X, perturbedSpeed.Y, ModContent.ProjectileType<AtlantisSpear2>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, 0f);
                 Main.projectile[projectile2].penetrate = 1;
             }

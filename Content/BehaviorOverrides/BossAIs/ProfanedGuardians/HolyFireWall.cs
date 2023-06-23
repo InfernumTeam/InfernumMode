@@ -60,15 +60,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Rapidly fade in.
             if (Projectile.timeLeft >= Lifetime - 60)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + (SlowerFadeIn ? 0.01f : 0.025f), 0f, 1f);
-                Projectile.scale = MathHelper.Clamp(Projectile.scale + (SlowerFadeIn ? 0.01f : 0.025f), 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + (SlowerFadeIn ? 0.01f : 0.025f), 0f, 1f);
+                Projectile.scale = Clamp(Projectile.scale + (SlowerFadeIn ? 0.01f : 0.025f), 0f, 1f);
             }
 
             // Fade out.
             if (Projectile.timeLeft <= 40)
             {
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
-                Projectile.scale = MathHelper.Clamp(Projectile.scale - 0.025f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.025f, 0f, 1f);
+                Projectile.scale = Clamp(Projectile.scale - 0.025f, 0f, 1f);
             }
         }
 
@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float WidthFunction(float completionRatio) => 150f * Projectile.scale;
 
-        public Color ColorFunction(float completionRatio) => new Color(255, 191, 73) * MathHelper.Clamp(Projectile.Opacity * 2f, 0.1f, 1f);
+        public Color ColorFunction(float completionRatio) => new Color(255, 191, 73) * Clamp(Projectile.Opacity * 2f, 0.1f, 1f);
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 bottomDrawPoints[i] = Vector2.Lerp(bottomBaseDrawPos, new Vector2(bottomBaseDrawPos.X, bottomBaseDrawPos.Y + laserDistance), (float)i / bottomDrawPoints.Length);
 
             InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
-            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150) * MathHelper.Clamp(Projectile.Opacity * 2f, 0.1f, 1f));
+            InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(new Color(255, 255, 150) * Clamp(Projectile.Opacity * 2f, 0.1f, 1f));
             InfernumEffectsRegistry.GenericLaserVertexShader.Shader.Parameters["strongerFade"].SetValue(true);
 
             FlameDrawer.DrawPixelated(topDrawPoints, -Main.screenPosition, 20);

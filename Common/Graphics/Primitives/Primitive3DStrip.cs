@@ -54,10 +54,10 @@ namespace InfernumMode.Common.Graphics.Primitives
             {
                 // Calculates the coordinates of a rectangle wrapped as a ring circle in 3D space.
                 float completionRatio = i / (float)vertexCount;
-                float angleCompletionRatio = MathHelper.TwoPi * completionRatio;
-                float x = MathHelper.Lerp(left.X, right.X, MathF.Cos(angleCompletionRatio) * 0.5f + 0.5f);
-                float z = MathF.Sin(angleCompletionRatio + wobblePhaseShift);
-                float y = MathHelper.Lerp(left.Y, right.Y, MathF.Pow(MathF.Sin(angleCompletionRatio * 0.5f), 2f)) + z * verticalWobble;
+                float angleCompletionRatio = TwoPi * completionRatio;
+                float x = Lerp(left.X, right.X, Cos(angleCompletionRatio) * 0.5f + 0.5f);
+                float z = Sin(angleCompletionRatio + wobblePhaseShift);
+                float y = Lerp(left.Y, right.Y, Pow(Sin(angleCompletionRatio * 0.5f), 2f)) + z * verticalWobble;
                 float height = HeightFunction(z * 0.5f + 0.5f);
                 Color color = ColorFunction(z * 0.5f + 0.5f);
 

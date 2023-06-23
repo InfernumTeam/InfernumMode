@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public int AnimationTimer;
 
-        public float AnimationCompletion => MathHelper.Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
+        public float AnimationCompletion => Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
 
         public bool HasPlayedMainSound = false;
 
@@ -202,9 +202,9 @@ namespace InfernumMode.Content.BossIntroScreens
                     for (int k = 0; k < 4; k++)
                     {
                         float afterimageOpacityInterpolant = Utils.GetLerpValue(1f, TextDelayInterpolant + 0.05f, AnimationCompletion, true);
-                        float afterimageOpacity = MathF.Pow(afterimageOpacityInterpolant, 2f) * 0.3f;
+                        float afterimageOpacity = Pow(afterimageOpacityInterpolant, 2f) * 0.3f;
                         Color afterimageColor = textColor * afterimageOpacity;
-                        Vector2 drawOffset = (MathHelper.TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;
+                        Vector2 drawOffset = (TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;
                         ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + drawOffset + offset, Color.Black * afterimageOpacity * opacity, 0f, origin, textScale, -1, 1.5f);
                         ChatManager.DrawColorCodedString(sb, FontToUse, character, DrawPosition + drawOffset + offset, afterimageColor, 0f, origin, textScale);
                     }

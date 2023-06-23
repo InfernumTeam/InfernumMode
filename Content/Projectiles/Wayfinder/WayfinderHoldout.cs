@@ -91,7 +91,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
             // Fade in.
             if (Time < 60)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Stick to the owner.
             Vector2 ownerCenter = Owner.RotatedRelativePoint(Owner.MountedCenter, true);
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 if (Time >= 120 - FadeOutTime)
                 {
                     float opacityInterpolant = (Time - (120 - FadeOutTime)) / FadeOutTime;
-                    Projectile.Opacity = MathHelper.Lerp(1f, 0f, opacityInterpolant);
+                    Projectile.Opacity = Lerp(1f, 0f, opacityInterpolant);
                 }
             }
             Time++;
@@ -179,7 +179,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public void DoBehavior_Teleport()
         {
-            int dustSpawnRate = (int)MathHelper.Lerp(8, 1, Time / TeleportMaxTime);
+            int dustSpawnRate = (int)Lerp(8, 1, Time / TeleportMaxTime);
             Vector2 baseOffset = new(20 * Projectile.spriteDirection, -15);
 
             // Why is this a problem?
@@ -207,13 +207,13 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 if (Time <= SpinMaxTime)
                 {
                     float spinInterpolant = (Time - SpinDelay) / (SpinMaxTime - SpinDelay);
-                    Projectile.rotation = MathHelper.Lerp(0, -0.75f * Projectile.spriteDirection, spinInterpolant);
+                    Projectile.rotation = Lerp(0, -0.75f * Projectile.spriteDirection, spinInterpolant);
                     CenterOffset = Vector2.Lerp(baseOffset, baseOffset + new Vector2(5 * Projectile.spriteDirection, -10), spinInterpolant);
                 }
                 else
                 {
                     float moveInterpolant = (Time - SpinMaxTime) / (TeleportationTime - SpinMaxTime);
-                    CenterOffset.Y = MathHelper.Lerp(-25, -45, moveInterpolant);
+                    CenterOffset.Y = Lerp(-25, -45, moveInterpolant);
                 }
             }
             if (Time is > 70 and < TeleportationTime && IsGateSet)
@@ -240,14 +240,14 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 {
                     CreateFireDust(tip, Main.rand.NextFloat(4f, 8f));
                     Color color = Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2];
-                    Particle particle = new GenericSparkle(tip, (Vector2.One * Main.rand.NextFloat(1f, 5f)).RotatedByRandom(MathHelper.TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.2f, 0.4f), 60, Main.rand.NextFloat(-0.1f, 0.1f));
+                    Particle particle = new GenericSparkle(tip, (Vector2.One * Main.rand.NextFloat(1f, 5f)).RotatedByRandom(TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.2f, 0.4f), 60, Main.rand.NextFloat(-0.1f, 0.1f));
                     GeneralParticleHandler.SpawnParticle(particle);
                 }
             }
             if (Time >= TeleportMaxTime)
             {
                 float opacityInterpolant = (Time - TeleportMaxTime) / FadeOutTime;
-                Projectile.Opacity = MathHelper.Lerp(1f, 0f, opacityInterpolant);
+                Projectile.Opacity = Lerp(1f, 0f, opacityInterpolant);
             }
             if (Time >= TeleportMaxTime + FadeOutTime)
             {
@@ -260,7 +260,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             int initialMovementTime = 35;
             int initialRotationDelay = 5;
             Vector2 baseOffset = new(20 * Projectile.spriteDirection, -15);
-            int dustSpawnRate = (int)MathHelper.Lerp(8, 2, Time / CreateMaxTime);
+            int dustSpawnRate = (int)Lerp(8, 2, Time / CreateMaxTime);
 
             if (Time == 0)
                 SoundSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderCreateSound with { Volume = 0.7f }, Owner.Center);
@@ -278,7 +278,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 if (Time >= initialRotationDelay)
                 {
                     float interpolant = (Time - initialRotationDelay) / initialMovementTime - initialRotationDelay;
-                    Projectile.rotation = MathHelper.Lerp(0, MathHelper.PiOver2 * 1.57f * Projectile.spriteDirection, interpolant);
+                    Projectile.rotation = Lerp(0, PiOver2 * 1.57f * Projectile.spriteDirection, interpolant);
                 }
             }
             // Slowly rise up, before slamming down.
@@ -286,9 +286,9 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             {
                 float y;
                 if (Time < UpwardsMovementTime)
-                    y = MathHelper.Lerp(0, -15, (Time - initialMovementTime) / (UpwardsMovementTime - initialMovementTime));
+                    y = Lerp(0, -15, (Time - initialMovementTime) / (UpwardsMovementTime - initialMovementTime));
                 else
-                    y = MathHelper.Lerp(-15, 25, (Time - UpwardsMovementTime) / (CreationTime - UpwardsMovementTime));
+                    y = Lerp(-15, 25, (Time - UpwardsMovementTime) / (CreationTime - UpwardsMovementTime));
                 CenterOffset.Y = -25 + y;
             }
             // Set the new gate location.
@@ -327,7 +327,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 {
                     CreateFireDust(tip, Main.rand.NextFloat(4f, 8f));
                     Color color = Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2];
-                    Particle particle = new GenericSparkle(WorldSaveSystem.WayfinderGateLocation, (Vector2.One * Main.rand.NextFloat(1f, 5f)).RotatedByRandom(MathHelper.TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.2f, 0.4f), 60, Main.rand.NextFloat(-0.1f, 0.1f));
+                    Particle particle = new GenericSparkle(WorldSaveSystem.WayfinderGateLocation, (Vector2.One * Main.rand.NextFloat(1f, 5f)).RotatedByRandom(TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.2f, 0.4f), 60, Main.rand.NextFloat(-0.1f, 0.1f));
                     GeneralParticleHandler.SpawnParticle(particle);
                 }
 
@@ -354,8 +354,8 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public void DoBehavior_Destroy()
         {
-            int dustSpawnRate = (int)MathHelper.Lerp(10, 1, Time / DestructionTime);
-            int flameSpawnAmount = (int)MathHelper.Lerp(2, 6, Time / DestructionTime);
+            int dustSpawnRate = (int)Lerp(10, 1, Time / DestructionTime);
+            int flameSpawnAmount = (int)Lerp(2, 6, Time / DestructionTime);
 
             if (Time == 0)
             {
@@ -395,7 +395,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                     {
                         CreateFireDust(tip, Main.rand.NextFloat(4f, 8f));
                         Color color = Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2];
-                        Particle particle = new GenericSparkle(tip, (Vector2.One * Main.rand.NextFloat(1f, 5f)).RotatedByRandom(MathHelper.TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.2f, 0.4f), 60, Main.rand.NextFloat(-0.1f, 0.1f));
+                        Particle particle = new GenericSparkle(tip, (Vector2.One * Main.rand.NextFloat(1f, 5f)).RotatedByRandom(TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.2f, 0.4f), 60, Main.rand.NextFloat(-0.1f, 0.1f));
                         GeneralParticleHandler.SpawnParticle(particle);
                     }
                 }
@@ -414,11 +414,11 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             int dustType = WorldSaveSystem.WayfinderGateLocation == Vector2.Zero ? DustID.Torch : DustID.IceTorch;
 
             Dust fire = Dust.NewDustPerfect(position + positionOffset.Value, dustType, Vector2.One, 0, Color.White * 0.1f, 2f);
-            fire.velocity = fire.velocity.RotatedByRandom(MathHelper.TwoPi) * speed;
+            fire.velocity = fire.velocity.RotatedByRandom(TwoPi) * speed;
             fire.fadeIn = 0.6f;
             fire.noGravity = true;
             Color color = Main.rand.NextBool() ? WayfinderSymbol.Colors[1] : WayfinderSymbol.Colors[2];
-            Particle particle = new GenericSparkle(position, (Vector2.One * Main.rand.NextFloat(2f, 3)).RotatedByRandom(MathHelper.TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.15f, 0.35f), 30, Main.rand.NextFloat(-0.1f, 0.1f));
+            Particle particle = new GenericSparkle(position, (Vector2.One * Main.rand.NextFloat(2f, 3)).RotatedByRandom(TwoPi), color, WayfinderSymbol.Colors[0], Main.rand.NextFloat(0.15f, 0.35f), 30, Main.rand.NextFloat(-0.1f, 0.1f));
             GeneralParticleHandler.SpawnParticle(particle);
         }
         public static void CreateFlameExplosion(Vector2 position, float maxPositionOffsetX, float maxPositionOffsetY, int amount, float baseScale, int lifeTime = 90)
@@ -461,7 +461,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 distance *= 0.5f;
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * distance;
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * distance;
                 Color afterimageColor = new Color(1f, 0.6f, 0.4f, 0f) * 0.7f;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, sourceRectangle, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale * 0.75f, spriteEffects, 0f);
             }
@@ -495,21 +495,21 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             if (CurrentUseContext == UseContext.Teleport && Time >= SpinDelay)
             {
                 float interpolant = (Time - SpinDelay) / (TeleportationTime - SpinDelay);
-                float distance = MathHelper.Lerp(0f, 4f, interpolant);
+                float distance = Lerp(0f, 4f, interpolant);
                 DrawBackglow(texture, distance, sourceRectangle, origin, spriteEffects);
             }
             else if (CurrentUseContext == UseContext.Create && Time is > UpwardsMovementTime)
             {
                 float interpolant = (Time - UpwardsMovementTime) / (CreationTime - UpwardsMovementTime);
-                float distance = MathHelper.Lerp(0f, 3f, interpolant);
-                distance = MathHelper.Clamp(distance, 0, 4);
+                float distance = Lerp(0f, 3f, interpolant);
+                distance = Clamp(distance, 0, 4);
                 DrawBackglow(texture, distance, sourceRectangle, origin, spriteEffects);
             }
             else if (CurrentUseContext == UseContext.Destroy && Time is < DestroyMaxTime)
             {
                 float interpolant = Time / DestroyMaxTime;
-                float distance = MathHelper.Lerp(0f, 8f, interpolant);
-                //distance = MathHelper.Clamp(distance, 0, );
+                float distance = Lerp(0f, 8f, interpolant);
+                //distance = Clamp(distance, 0, );
                 DrawBackglow(texture, distance, sourceRectangle, origin, spriteEffects);
             }
 
@@ -521,19 +521,19 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             if (CurrentUseContext == UseContext.Teleport && Time >= SpinMaxTime && IsGateSet)
             {
                 float interpolant = (Time - SpinMaxTime) / (TeleportationTime - SpinMaxTime);
-                float opacity = MathHelper.Lerp(0, 0.2f, interpolant);
+                float opacity = Lerp(0, 0.2f, interpolant);
                 DrawShaderOverlay(texture, glowTexture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
             }
             else if (CurrentUseContext == UseContext.Create && Time is > UpwardsMovementTime)
             {
                 float interpolant = (Time - UpwardsMovementTime) / (CreationTime - UpwardsMovementTime);
-                float opacity = MathHelper.Lerp(0, 0.2f, interpolant);
+                float opacity = Lerp(0, 0.2f, interpolant);
                 DrawShaderOverlay(texture, glowTexture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
             }
             else if (CurrentUseContext == UseContext.Destroy && Time is < DestroyMaxTime && IsGateSet)
             {
                 float interpolant = Time / DestroyMaxTime;
-                float opacity = MathHelper.Lerp(-0.4f, 0.4f, interpolant);
+                float opacity = Lerp(-0.4f, 0.4f, interpolant);
                 DrawShaderOverlay(texture, glowTexture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
             }
             return false;

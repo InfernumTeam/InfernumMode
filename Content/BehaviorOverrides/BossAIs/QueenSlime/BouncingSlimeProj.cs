@@ -42,11 +42,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             // Slam downward.
             if (Projectile.velocity.Y >= 0.1f && BounceCounter <= 0f)
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y * 1.1f + 0.4f, 0.1f, 18f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y * 1.1f + 0.4f, 0.1f, 18f);
 
             if (BounceCounter >= 1f)
             {
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.42f, -60f, 16f);
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 0.42f, -60f, 16f);
                 if (Projectile.velocity.Y > 0f)
                     Projectile.velocity.X *= 0.98f;
             }

@@ -186,7 +186,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noTileCollide = true;
 
             // Fade away.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.015f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity - 0.015f, 0f, 1f);
 
             // Despawn once invisible.
             if (npc.Opacity <= 0)
@@ -245,11 +245,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noGravity = true;
             npc.noTileCollide = true;
 
-            float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
+            float horizontalDistanceFromTarget = Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
-            int laserShootRate = (int)MathHelper.Lerp(80f, 50f, 1f - lifeRatio);
-            float walkSpeed = MathHelper.Lerp(5.75f, 9f, 1f - lifeRatio);
+            int laserShootRate = (int)Lerp(80f, 50f, 1f - lifeRatio);
+            float walkSpeed = Lerp(5.75f, 9f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
             if (BossRushEvent.BossRushActive)
@@ -294,8 +294,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                     float openAreaAngle = Main.rand.NextFloatDirection() * laserSpread * 0.6f;
                     for (int i = 0; i < laserCount; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-laserSpread, laserSpread, i / (float)(laserCount - 1f));
-                        if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.09f)
+                        float shootOffsetAngle = Lerp(-laserSpread, laserSpread, i / (float)(laserCount - 1f));
+                        if (Distance(openAreaAngle, shootOffsetAngle) < 0.09f)
                             continue;
 
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * 17f;
@@ -432,7 +432,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
                                 for (int i = 0; i < 7; i++)
                                 {
-                                    Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.77f, 0.77f, i / 6f)) * 17.5f;
+                                    Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.77f, 0.77f, i / 6f)) * 17.5f;
                                     Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralBlueComet>(), missileDamage, 0f);
                                 }
                                 if (lifeRatio < Phase2LifeRatio)
@@ -486,7 +486,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
         {
             // Sit in place and periodically release rockets.
             // They shoot more quickly the farther away the target is from the boss.
-            int rocketReleaseRate = (int)MathHelper.Lerp(12f, 8f, 1f - lifeRatio);
+            int rocketReleaseRate = (int)Lerp(12f, 8f, 1f - lifeRatio);
             ref float rocketShootTimer = ref npc.Infernum().ExtraAI[0];
 
             if (BossRushEvent.BossRushActive)
@@ -534,12 +534,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noGravity = true;
             npc.noTileCollide = true;
 
-            float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
+            float horizontalDistanceFromTarget = Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 136;
             float laserSpeed = 10.5f;
-            float walkSpeed = MathHelper.Lerp(7f, 10.4f, 1f - lifeRatio);
+            float walkSpeed = Lerp(7f, 10.4f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
@@ -598,7 +598,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < 25; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 25f).ToRotationVector2() * Main.rand.NextFloat(0.8f, 1f) * laserSpeed;
+                        Vector2 laserShootVelocity = (TwoPi * (i + Main.rand.NextFloat()) / 25f).ToRotationVector2() * Main.rand.NextFloat(0.8f, 1f) * laserSpeed;
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaserInfernum>(), AstralLaserDamage, 0f);
                     }
 
@@ -622,7 +622,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             npc.velocity.X *= 0.9f;
 
             if (rainAngle == 0f)
-                rainAngle = Main.rand.NextFloatDirection() * MathHelper.Pi / 12f;
+                rainAngle = Main.rand.NextFloatDirection() * Pi / 12f;
 
             // Charge up astral energy and gain a good amount of extra defense.
             if (attackTimer < 90f)
@@ -683,14 +683,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noGravity = true;
             npc.noTileCollide = true;
 
-            float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
+            float horizontalDistanceFromTarget = Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 170;
-            float walkSpeed = MathHelper.Lerp(9f, 13.45f, 1f - lifeRatio);
+            float walkSpeed = Lerp(9f, 13.45f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= Utils.GetLerpValue(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
-            walkSpeed *= Utils.GetLerpValue(100f, 180f, MathHelper.Distance(target.Center.X, npc.Center.X), true);
+            walkSpeed *= Utils.GetLerpValue(100f, 180f, Distance(target.Center.X, npc.Center.X), true);
             if (BossRushEvent.BossRushActive)
                 walkSpeed *= 2.64f;
 
@@ -733,7 +733,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                     for (int i = 0; i < 2; i++)
                     {
                         int laserDirection = (i == 0).ToDirectionInt();
-                        float laserAngle = MathHelper.Pi / OrangeLaserbeam.LaserLifetime * laserDirection * 0.84f;
+                        float laserAngle = Pi / OrangeLaserbeam.LaserLifetime * laserDirection * 0.84f;
                         int laserbeamType = i == 0 ? ModContent.ProjectileType<OrangeLaserbeam>() : ModContent.ProjectileType<BlueLaserbeam>();
                         int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, laserbeamType, DrillLaserbeamDamage, 0f, -1, laserAngle, npc.whoAmI);
                         if (Main.projectile.IndexInRange(laser))
@@ -754,7 +754,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < 20; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 20f).ToRotationVector2() * 9.5f;
+                        Vector2 laserShootVelocity = (TwoPi * (i + Main.rand.NextFloat()) / 20f).ToRotationVector2() * 9.5f;
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaserInfernum>(), AstralLaserDamage, 0f);
                     }
 
@@ -772,7 +772,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
                     for (int i = 0; i < 1 + laserLifetimeCompletion * 2f; i++)
                     {
-                        float laserRotation = MathHelper.Pi * laserLifetimeCompletion * OrangeLaserbeam.FullCircleRotationFactor;
+                        float laserRotation = Pi * laserLifetimeCompletion * OrangeLaserbeam.FullCircleRotationFactor;
                         Vector2 laserShootVelocity = Vector2.UnitY.RotatedByRandom(laserRotation) * Main.rand.NextFloat(9f, 18f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaserInfernum>(), AstralLaserDamage, 0f);
                     }
@@ -1044,10 +1044,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    float colorInterpolant = MathF.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
+                    float colorInterpolant = Cos(SmoothStep(0f, TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
                     Color backAfterimageColor = Color.Lerp(new Color(109, 242, 196, 0), new Color(255, 119, 102, 0), colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
+                    Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
                     Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
                 }
             }
@@ -1089,14 +1089,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                     Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
 
                     // Create bloom at the start of the telegraph.
-                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * MathF.Pow(lineTelegraphInterpolant, 2f);
+                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * Pow(lineTelegraphInterpolant, 2f);
                     Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     if (npc.Infernum().ExtraAI[0] >= -100f)
                     {
                         for (int i = -1; i <= 1; i += 2)
                         {
-                            float beamRotation = MathHelper.PiOver2 * (1f - lineTelegraphInterpolant) * i + MathHelper.Pi;
+                            float beamRotation = PiOver2 * (1f - lineTelegraphInterpolant) * i + Pi;
                             Main.spriteBatch.Draw(line, drawPosition - Vector2.UnitY * 12f, null, outlineColor, beamRotation, telegraphOrigin, beamScale, 0, 0f);
                         }
                     }

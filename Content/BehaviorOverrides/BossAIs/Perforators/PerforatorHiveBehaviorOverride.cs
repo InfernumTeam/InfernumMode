@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             // Reset certain things.
             npc.Calamity().DR = 0.1f;
-            backafterimageGlowInterpolant = MathHelper.Clamp(backafterimageGlowInterpolant - 0.1f, 0f, 1f);
+            backafterimageGlowInterpolant = Clamp(backafterimageGlowInterpolant - 0.1f, 0f, 1f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             // Calculate rotation, if not performing the death animation.
             if (deathTimer <= 0f)
-                npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.04f, -MathHelper.Pi / 6f, MathHelper.Pi / 6f);
+                npc.rotation = Clamp(npc.velocity.X * 0.04f, -Pi / 6f, Pi / 6f);
 
             // Make the background glow crimson in the form phase, once the large worm is dead.
             if (inPhase4 && attackState != (int)PerforatorHiveAttackState.LargeWormBursts)
@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         {
             int flinchInterval = 30;
             float animationCompletion = deathTimer / DeathAnimationLength;
-            int bloodReleaseRate = (int)MathHelper.Lerp(1f, 4f, animationCompletion);
+            int bloodReleaseRate = (int)Lerp(1f, 4f, animationCompletion);
             ref float basePositionX = ref npc.Infernum().ExtraAI[DeathAnimationBasePositionXIndex];
             ref float basePositionY = ref npc.Infernum().ExtraAI[DeathAnimationBasePositionYIndex];
 
@@ -245,7 +245,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (deathTimer % flinchInterval == 0)
             {
                 // Move slightly to emulate flinching from something inside the hive.
-                npc.velocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 6;
+                npc.velocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(TwoPi) * 6;
             }
             if (deathTimer % flinchInterval + 20 == 0)
             {
@@ -286,7 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     int goreAmount = 4;
                     for (int i = 1; i <= goreAmount; i++)
                     {
-                        Vector2 goreVelocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(MathHelper.TwoPi) * 3;
+                        Vector2 goreVelocity = npc.SafeDirectionTo(player.Center).RotatedByRandom(TwoPi) * 3;
                         Gore.NewGore(npc.GetSource_FromAI(), npc.position, goreVelocity, InfernumMode.Instance.Find<ModGore>("Perf" + i).Type, 1f);
                     }
                 }
@@ -529,7 +529,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < fallingIchorCount; i++)
                         {
                             float projectileOffsetInterpolant = i / (float)(fallingIchorCount - 1f);
-                            float horizontalSpeed = MathHelper.Lerp(-maxHorizontalSpeed, maxHorizontalSpeed, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 5f;
+                            float horizontalSpeed = Lerp(-maxHorizontalSpeed, maxHorizontalSpeed, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 5f;
                             float verticalSpeed = Main.rand.NextFloat(-8f, -7f);
                             Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
                             Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), IchorSpitDamage, 0f);
@@ -538,7 +538,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < burstIchorCount; i++)
                         {
                             float projectileOffsetInterpolant = i / (float)(burstIchorCount - 1f);
-                            float offsetAngle = MathHelper.Lerp(-0.55f, 0.55f, projectileOffsetInterpolant);
+                            float offsetAngle = Lerp(-0.55f, 0.55f, projectileOffsetInterpolant);
                             Vector2 ichorVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 6.5f;
                             Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), IchorSpitDamage, 0f);
                             CreateBloodParticles(npc.Center + ichorVelocity * 3f, ichorVelocity, Main.rand.NextBool() ? Color.Red : Color.Gold, 60);
@@ -671,7 +671,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             universalTimer++;
 
-            float verticalHoverOffset = MathF.Sin(universalTimer / 13f) * 100f - 50f;
+            float verticalHoverOffset = Sin(universalTimer / 13f) * 100f - 50f;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 480f, verticalHoverOffset);
             if (reboundCoundown <= 0f)
             {
@@ -679,7 +679,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
                 npc.SimpleFlyMovement(idealVelocity, idealVelocity.Length() / 60f);
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.02f);
-                if (MathHelper.Distance(npc.Center.X, hoverDestination.X) < 35f)
+                if (Distance(npc.Center.X, hoverDestination.X) < 35f)
                 {
                     npc.position.X = hoverDestination.X - npc.width * 0.5f;
                     npc.velocity.X = 0f;
@@ -731,7 +731,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-0.41f, 0.41f, i / 2f);
+                            float offsetAngle = Lerp(-0.41f, 0.41f, i / 2f);
                             Vector2 shootVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 3.5f;
                             shootVelocity = shootVelocity.RotatedBy(offsetAngle);
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<IchorBlast>(), IchorBlobDamage, 0f);
@@ -755,7 +755,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             int chargeTime = 35;
             int chargeSlowdownTime = 108;
             float spinRadius = 325f;
-            float totalSpinArc = MathHelper.TwoPi;
+            float totalSpinArc = TwoPi;
             float chargeSpeed = 16.5f;
             float blobSpeedFactor = -1f;
 
@@ -799,7 +799,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             // Intiialize the ideal spin offset angle on the first frame.
             if (attackSubstate == 0f && attackTimer == 1f)
             {
-                spinOffsetAngle = target.Center.X > npc.Center.X ? MathHelper.Pi : 0f;
+                spinOffsetAngle = target.Center.X > npc.Center.X ? Pi : 0f;
                 spinDirection = Main.rand.NextBool().ToDirectionInt();
                 npc.netUpdate = true;
             }
@@ -910,7 +910,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             {
                 npc.damage = 0;
 
-                float hoverSpeed = MathHelper.Lerp(maxHoverSpeed, 0f, Utils.GetLerpValue(wormSummonTime - 45f, 0f, attackTimer, true));
+                float hoverSpeed = Lerp(maxHoverSpeed, 0f, Utils.GetLerpValue(wormSummonTime - 45f, 0f, attackTimer, true));
                 if (doneReelingBack)
                     hoverSpeed = maxHoverSpeed;
 
@@ -1110,7 +1110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                         for (int i = 0; i < burstIchorCount; i++)
                         {
                             float projectileOffsetInterpolant = i / (float)(burstIchorCount - 1f);
-                            float offsetAngle = MathHelper.Lerp(-0.49f, 0.49f, projectileOffsetInterpolant);
+                            float offsetAngle = Lerp(-0.49f, 0.49f, projectileOffsetInterpolant);
                             Vector2 ichorVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 5.4f;
                             Utilities.NewProjectileBetter(npc.Center + ichorVelocity * 3f, ichorVelocity, ModContent.ProjectileType<FlyingIchor>(), IchorSpitDamage, 0f);
                         }
@@ -1268,11 +1268,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     // Avoid colliding directly with the target by turning the ideal velocity 90 degrees.
                     // The side at which angular directions happen is dependant on whichever angle has the greatest disparity between the direction to the target.
                     // This means that the direction that gets the hive farther from the player is the one that is favored.
-                    if (idealVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.PiOver4)
+                    if (idealVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < PiOver4)
                     {
-                        float leftAngleDisparity = idealVelocity.RotatedBy(-MathHelper.PiOver2).AngleBetween(npc.SafeDirectionTo(target.Center));
-                        float rightAngleDisparity = idealVelocity.RotatedBy(MathHelper.PiOver2).AngleBetween(npc.SafeDirectionTo(target.Center));
-                        idealVelocity = idealVelocity.RotatedBy(leftAngleDisparity > rightAngleDisparity ? -MathHelper.PiOver2 : MathHelper.PiOver2);
+                        float leftAngleDisparity = idealVelocity.RotatedBy(-PiOver2).AngleBetween(npc.SafeDirectionTo(target.Center));
+                        float rightAngleDisparity = idealVelocity.RotatedBy(PiOver2).AngleBetween(npc.SafeDirectionTo(target.Center));
+                        idealVelocity = idealVelocity.RotatedBy(leftAngleDisparity > rightAngleDisparity ? -PiOver2 : PiOver2);
                     }
 
                     npc.SimpleFlyMovement(idealVelocity, chargeHoverSpeed * 0.05f);
@@ -1295,7 +1295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                                 for (int i = 0; i < ichorBlobCount; i++)
                                 {
                                     float projectileShootInterpolant = i / (float)(ichorBlobCount - 1f);
-                                    float horizontalShootSpeed = MathHelper.Lerp(-10f, 10f, projectileShootInterpolant) + Main.rand.NextFloatDirection() * 0.64f;
+                                    float horizontalShootSpeed = Lerp(-10f, 10f, projectileShootInterpolant) + Main.rand.NextFloatDirection() * 0.64f;
                                     Vector2 blobVelocity = new(horizontalShootSpeed, -7f);
                                     Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), IchorBlobDamage, 0f, -1, 0f, target.Center.Y);
                                 }
@@ -1411,7 +1411,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     for (int i = 0; i < ichorWallShotCount; i++)
                     {
                         float ichorShootInterpolant = i / (float)(ichorWallShotCount - 1f);
-                        float verticalWallOffset = MathHelper.Lerp(-0.5f, 0.5f, ichorShootInterpolant) * ichorWallSpacing * ichorWallShotCount;
+                        float verticalWallOffset = Lerp(-0.5f, 0.5f, ichorShootInterpolant) * ichorWallSpacing * ichorWallShotCount;
                         Vector2 wallOffset = new(ichorOffsetDirection * 560f, verticalWallOffset);
                         Vector2 wallVelocity = Vector2.UnitX * ichorOffsetDirection * -6.5f;
                         Utilities.NewProjectileBetter(target.Center + wallOffset, wallVelocity, ModContent.ProjectileType<IchorBolt>(), IchorSpitDamage, 0f);
@@ -1437,7 +1437,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     // Spawn blood particles below the hive.
                     Vector2 bloodPosition = npc.Center + new Vector2(0, 70) + new Vector2(Main.rand.NextFloat(-10, 10));
                     Vector2 bloodVelocity = npc.SafeDirectionTo(bloodPosition) * 2;
-                    CreateBloodParticles(bloodPosition, bloodVelocity.RotatedBy(MathHelper.ToRadians(Main.rand.NextFloat(-20, 20))), Main.rand.NextBool(3) ? Color.Gold : Color.Crimson, 30);
+                    CreateBloodParticles(bloodPosition, bloodVelocity.RotatedBy(ToRadians(Main.rand.NextFloat(-20, 20))), Main.rand.NextBool(3) ? Color.Gold : Color.Crimson, 30);
                 }
             }
 
@@ -1521,7 +1521,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 backAfterimageColor.A = 0;
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 drawPosition = baseDrawPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backafterimageGlowInterpolant * 4f;
+                    Vector2 drawPosition = baseDrawPosition + (TwoPi * i / 6f).ToRotationVector2() * backafterimageGlowInterpolant * 4f;
                     Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(backAfterimageColor), npc.rotation, origin, npc.scale, direction, 0f);
                 }
             }

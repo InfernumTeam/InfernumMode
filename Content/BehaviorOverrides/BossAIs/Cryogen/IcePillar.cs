@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
             // Fade in at the beginning of the projectile's life.
             if (Time < 60f)
-                Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.35f);
+                Projectile.Opacity = Lerp(Projectile.Opacity, 1f, 0.35f);
 
             // Stop doing damage at the end of the projectile's life.
             else if (Projectile.timeLeft < 40f)
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Quickly rise.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time >= 60f && Time < 75f)
             {
-                CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
+                CurrentHeight = Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
                 if (Time % 6 == 0)
                     Projectile.netUpdate = true;
             }
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            MaxPillarHeight = MathHelper.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 100f + Math.Abs(target.velocity.Y * 15f);
+            MaxPillarHeight = MathF.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 100f + Math.Abs(target.velocity.Y * 15f);
 
             CurrentHeight = StartingHeight;
 
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
             if (Time < 60f)
             {
-                float telegraphOpacity = MathF.Pow(CalamityUtils.Convert01To010(Time / 60f), 0.6f);
+                float telegraphOpacity = Pow(CalamityUtils.Convert01To010(Time / 60f), 0.6f);
                 float telegraphLineWidth = telegraphOpacity * 6f;
                 if (telegraphLineWidth > 5f)
                     telegraphLineWidth = 5f;
@@ -172,7 +172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             }
 
             // Release some ice spikes that redirect and accelerate towards the target.
-            int spikeCount = (int)MathHelper.Lerp(1f, 4f, Utils.GetLerpValue(100f, 960f, CurrentHeight, true));
+            int spikeCount = (int)Lerp(1f, 4f, Utils.GetLerpValue(100f, 960f, CurrentHeight, true));
             for (int i = 0; i < spikeCount; i++)
             {
                 Vector2 icicleSpawnPosition = Projectile.Bottom - aimDirection * CurrentHeight * i / spikeCount;

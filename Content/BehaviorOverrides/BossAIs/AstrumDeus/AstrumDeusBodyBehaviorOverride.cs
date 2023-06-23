@@ -39,14 +39,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Perform segment positioning and rotation.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.12f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.12f);
             if (headSegment.Infernum().ExtraAI[7] == 1f)
             {
                 npc.HitSound = SoundID.NPCHit1;
                 npc.Calamity().DR = 0.45f;
             }
 
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
 
             // Emit particles if the head says to do so.

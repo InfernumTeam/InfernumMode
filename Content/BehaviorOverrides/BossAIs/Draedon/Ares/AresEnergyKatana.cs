@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
     {
         private bool katanaIsInUse;
 
-        public LimbCollection Limbs = new(new CyclicCoordinateDescentUpdateRule(0.27f, MathHelper.Pi * 0.75f), 140f, 154f);
+        public LimbCollection Limbs = new(new CyclicCoordinateDescentUpdateRule(0.27f, Pi * 0.75f), 140f, 154f);
 
         public AresCannonChargeParticleSet EnergyDrawer = new(-1, 15, 40f, Color.Red);
 
@@ -249,8 +249,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (ArmOffsetDirection == 1f)
                     lockedRotation = 0.23f;
                 else
-                    lockedRotation = MathHelper.Pi - 0.23f;
-                Limbs[0].Rotation = MathHelper.Clamp((float)Limbs[0].Rotation, lockedRotation - 0.45f, lockedRotation + 0.45f);
+                    lockedRotation = Pi - 0.23f;
+                Limbs[0].Rotation = Clamp((float)Limbs[0].Rotation, lockedRotation - 0.45f, lockedRotation + 0.45f);
 
                 Limbs.Update(connectPosition, endPosition);
             }
@@ -299,7 +299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 NPC.velocity.X *= 0.6f;
                 NPC.velocity.Y *= 0.1f;
-                SlashTrailFadeOut = MathHelper.Clamp(SlashTrailFadeOut + 0.5f, 0f, 1f);
+                SlashTrailFadeOut = Clamp(SlashTrailFadeOut + 0.5f, 0f, 1f);
             }
 
             // Prepare the slash.
@@ -335,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC.rotation = (float)Limbs[1].Rotation;
             NPC.spriteDirection = (int)ArmOffsetDirection;
             if (ArmOffsetDirection == 1)
-                NPC.rotation += MathHelper.Pi;
+                NPC.rotation += Pi;
 
             // Ensure that the katanas are drawn.
             KatanaIsInUse = true;
@@ -374,7 +374,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             else
             {
                 NPC.velocity *= 0.27f;
-                SlashTrailFadeOut = MathHelper.Clamp(SlashTrailFadeOut + 0.25f, 0f, 1f);
+                SlashTrailFadeOut = Clamp(SlashTrailFadeOut + 0.25f, 0f, 1f);
             }
 
             // Prepare the slash.
@@ -399,7 +399,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 NPC.rotation = (float)Limbs[1].Rotation;
                 NPC.spriteDirection = (int)ArmOffsetDirection;
                 if (ArmOffsetDirection == 1)
-                    NPC.rotation += MathHelper.Pi;
+                    NPC.rotation += Pi;
             }
 
             // Ensure that the katanas are drawn.
@@ -452,7 +452,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC.rotation = (float)Limbs[1].Rotation;
             NPC.spriteDirection = (int)ArmOffsetDirection;
             if (ArmOffsetDirection == 1)
-                NPC.rotation += MathHelper.Pi;
+                NPC.rotation += Pi;
 
             // Ensure that the katanas are drawn.
             KatanaIsInUse = true;
@@ -558,7 +558,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public void DrawSlash()
         {
             PrepareSlashShader();
-            SlashDrawer.Draw(SlashControlPoints, -Main.screenPosition, 20, (float)Limbs.Limbs[1].Rotation + MathHelper.PiOver2);
+            SlashDrawer.Draw(SlashControlPoints, -Main.screenPosition, 20, (float)Limbs.Limbs[1].Rotation + PiOver2);
         }
 
         public static void PrepareSlashShader()
@@ -601,7 +601,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 float squish = NPC.position.Distance(NPC.oldPosition) * 0.006f;
                 bladeScale.X -= squish;
 
-                Main.EntitySpriteDraw(bladeTexture, bladeDrawPosition, bladeFrame, NPC.GetAlpha(Color.White), NPC.rotation - ArmOffsetDirection * MathHelper.PiOver2, bladeOrigin, bladeScale, 0, 0);
+                Main.EntitySpriteDraw(bladeTexture, bladeDrawPosition, bladeFrame, NPC.GetAlpha(Color.White), NPC.rotation - ArmOffsetDirection * PiOver2, bladeOrigin, bladeScale, 0, 0);
             }
 
             return false;

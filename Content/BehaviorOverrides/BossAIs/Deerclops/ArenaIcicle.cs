@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 VerticalStretchFactor = 12f,
                 BranchGrowthWidthDecay = 0.6f,
                 MaxCutoffBranchesPerBranch = 2,
-                BaseDirection = MathHelper.Pi * Direction / 9f,
+                BaseDirection = Pi * Direction / 9f,
             };
             Drawer.Draw(Projectile.Center.ToPoint(), true);
             return false;

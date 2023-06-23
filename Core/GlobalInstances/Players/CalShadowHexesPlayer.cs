@@ -70,7 +70,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             foreach (HexStatus status in HexStatuses.Values)
             {
-                status.Intensity = MathHelper.Clamp(status.Intensity - 0.02f, 0f, 1f);
+                status.Intensity = Clamp(status.Intensity - 0.02f, 0f, 1f);
                 status.IsActive = false;
             }
         }
@@ -93,7 +93,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (HexIsActive("Weakness"))
             {
                 Player.statDefense -= 35;
-                Player.endurance = MathHelper.Clamp(Player.endurance * 0.5f, 0f, 0.25f);
+                Player.endurance = Clamp(Player.endurance * 0.5f, 0f, 0.25f);
             }
 
             // Apply indicator buffs if the player has a hex.
@@ -121,7 +121,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             {
                 if (status.IsActive)
                 {
-                    status.Intensity = MathHelper.Clamp(status.Intensity + 0.1f, 0f, 1f);
+                    status.Intensity = Clamp(status.Intensity + 0.1f, 0f, 1f);
                     Main.spriteBatch.Draw(backglowTexture, Player.Center + Vector2.UnitY * (offset + 4f) - Main.screenPosition, null, status.HexColor * status.Intensity * 0.8f, 0f, backglowTexture.Size() * 0.5f, new Vector2(0.27f, 0.15f) * status.Intensity, 0, 0f);
                     CalamitasShadowBehaviorOverride.DrawHexOnTarget(Player, status.HexColor, offset * hoverOffsetFactor, status.Intensity);
                     offset += 40f;

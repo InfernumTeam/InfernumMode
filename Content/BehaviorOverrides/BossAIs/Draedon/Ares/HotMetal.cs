@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Projectile.localAI[0] = 1f;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.067f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.067f, 0f, 1f);
             Projectile.rotation += Projectile.velocity.Y * 0.02f;
 
             Projectile.velocity.X *= 0.993f;
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public float WidthFunction(float completionRatio)
         {
             float baseWidth = Projectile.scale * Projectile.width * 1.5f;
-            return MathHelper.SmoothStep(baseWidth, 3.5f, completionRatio);
+            return SmoothStep(baseWidth, 3.5f, completionRatio);
         }
 
         public Color ColorFunction(float completionRatio) => Color.Lerp(Color.Lerp(Color.Red, Color.OrangeRed, 0.5f), Color.Transparent, completionRatio) * 0.7f * Projectile.Opacity;

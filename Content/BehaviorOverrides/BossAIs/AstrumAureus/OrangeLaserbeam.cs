@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
             Projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center - Vector2.UnitY * 12f;
             Projectile.Opacity = 1f;
-            RotationalSpeed = MathHelper.Pi / Lifetime * FullCircleRotationFactor;
+            RotationalSpeed = Pi / Lifetime * FullCircleRotationFactor;
         }
 
         public override bool? CanDamage() => Time > 35f ? null : false;
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
         public static Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             return Color.Lerp(new(255, 164, 94), new(237, 93, 83), colorInterpolant * 0.67f);
         }
 

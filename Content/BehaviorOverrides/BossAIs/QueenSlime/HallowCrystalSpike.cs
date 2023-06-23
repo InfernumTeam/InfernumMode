@@ -54,13 +54,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY);
 
             // Decide rotation
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Make the spike extend outward until it hits a tile.
             if (!HasHitTile)
             {
                 float stretchInterpolant = Utils.Remap(CurrentLength, 600f, 1600f, 0.018f, 0.055f);
-                float nextLength = MathHelper.Lerp(CurrentLength, MaxLength, stretchInterpolant);
+                float nextLength = Lerp(CurrentLength, MaxLength, stretchInterpolant);
                 Vector2 previousPosition = Projectile.Center + Projectile.velocity * CurrentLength;
                 Vector2 nextPosition = Projectile.Center + Projectile.velocity * nextLength;
 

@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             npc.Calamity().newAI[1] = 0f;
             if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
                     npc.Center = target.Center - Vector2.UnitY * 2700f;
 
@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 npc.dontTakeDamage = true;
             }
             else
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)
@@ -178,9 +178,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             npc.frame = new Rectangle(npc.width * frameX, npc.height * frameY, npc.width, npc.height);
         }
 
-        public static float FlameTrailWidthFunction(NPC npc, float completionRatio) => MathHelper.SmoothStep(21f, 8f, completionRatio) * npc.ModNPC<Artemis>().ChargeFlash;
+        public static float FlameTrailWidthFunction(NPC npc, float completionRatio) => SmoothStep(21f, 8f, completionRatio) * npc.ModNPC<Artemis>().ChargeFlash;
 
-        public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio) => MathHelper.SmoothStep(34f, 12f, completionRatio) * npc.ModNPC<Artemis>().ChargeFlash;
+        public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio) => SmoothStep(34f, 12f, completionRatio) * npc.ModNPC<Artemis>().ChargeFlash;
 
         public static float RibbonTrailWidthFunction(float completionRatio)
         {
@@ -213,7 +213,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             Color startingColor = new(34, 40, 48);
             Color endColor = new(219, 82, 28);
-            return Color.Lerp(startingColor, endColor, MathF.Pow(completionRatio, 1.5f)) * npc.Opacity;
+            return Color.Lerp(startingColor, endColor, Pow(completionRatio, 1.5f)) * npc.Opacity;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

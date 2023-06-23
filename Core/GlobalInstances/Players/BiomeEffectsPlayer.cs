@@ -129,13 +129,13 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
             // Make the map turn black if in the final layer of the abyss.
             bool obscureMap = Player.Calamity().ZoneAbyssLayer4 && !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
-            MapObscurityInterpolant = MathHelper.Clamp(MapObscurityInterpolant + obscureMap.ToDirectionInt() * 0.008f, 0f, 1f);
+            MapObscurityInterpolant = Clamp(MapObscurityInterpolant + obscureMap.ToDirectionInt() * 0.008f, 0f, 1f);
 
             // Disable Acid Rain in the Lost Colosseum.
             if (SubworldSystem.IsActive<LostColosseum>())
                 Player.Calamity().noStupidNaturalARSpawns = true;
 
-            LostColosseumTeleportInterpolant = MathHelper.Clamp(LostColosseumTeleportInterpolant - 0.008f, 0f, 1f);
+            LostColosseumTeleportInterpolant = Clamp(LostColosseumTeleportInterpolant - 0.008f, 0f, 1f);
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.
@@ -226,7 +226,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public void PrepareScreenDistortionShaderParameters()
         {
             InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
-            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(MathF.Pow(LostColosseumTeleportInterpolant, 0.89f) * 50f);
+            InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(Pow(LostColosseumTeleportInterpolant, 0.89f) * 50f);
             InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["uvSampleFactors"].SetValue(new Vector2(1f, 5f));
             InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(6f);
         }

@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            return Color.Lerp(Color.Yellow, Color.Orange * 0.8f, MathHelper.Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f));
+            return Color.Lerp(Color.Yellow, Color.Orange * 0.8f, Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f));
         }
     }
 }

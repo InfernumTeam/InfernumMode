@@ -50,9 +50,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
 
-            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale * 0.9f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
 
@@ -104,7 +104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 float segmentFireTime = head.Infernum().ExtraAI[1];
                 float segmentFireCountdown = head.Infernum().ExtraAI[2];
-                int fireDelay = (int)MathHelper.Lerp(segmentFireCountdown * -0.32f, segmentFireCountdown * 0.32f, segmentAttackIndex / SegmentCount);
+                int fireDelay = (int)Lerp(segmentFireCountdown * -0.32f, segmentFireCountdown * 0.32f, segmentAttackIndex / SegmentCount);
 
                 frameType = (int)ThanatosFrameType.Open;
                 npc.frameCounter = Utils.GetLerpValue(0f, segmentFireTime * 0.5f + fireDelay, segmentFireCountdown, true);

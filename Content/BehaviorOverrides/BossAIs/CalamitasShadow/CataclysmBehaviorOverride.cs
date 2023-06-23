@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 NPC cataclysm = Main.npc[cataclysmIndex];
 
                 // Sync if Catastrophe changed attack states or there's a noticeable discrepancy between attack timers.
-                if (attackState != cataclysm.ai[0] || MathHelper.Distance(attackTimer, cataclysm.ai[1]) > 20f)
+                if (attackState != cataclysm.ai[0] || Distance(attackTimer, cataclysm.ai[1]) > 20f)
                     npc.netUpdate = true;
 
                 npc.ai = cataclysm.ai;
@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             npc.width = 90;
 
             // Perform attacks.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity + 0.05f, 0f, 1f);
             npc.damage = npc.defDamage;
             switch ((SCalBrotherAttackType)attackState)
             {
@@ -148,7 +148,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Decide the state of the particle drawers.
             if (attackTimer > chargeDelay * 0.45f)
             {
-                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                float chargeCompletion = Clamp(attackTimer / chargeDelay, 0f, 1f);
                 energyDrawer.ParticleSpawnRate = 2;
                 energyDrawer.SpawnAreaCompactness = 100f;
                 energyDrawer.chargeProgress = chargeCompletion;
@@ -307,7 +307,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     Vector2 idealVelocity = ((target.Center + new Vector2(isCataclysm.ToDirectionInt() * 400f, -255f) - npc.Center) * 0.15f).ClampMagnitude(4f, 50f);
                     npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.25f);
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                    npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
+                    npc.rotation = Clamp(npc.velocity.X * 0.026f, -0.2f, 0.2f);
                 }
             }
             else
@@ -339,7 +339,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                             Vector2 fireSpawnPosition = npc.Center - Vector2.UnitY.RotatedBy(npc.rotation * npc.spriteDirection) * 64f;
                             for (int i = 0; i < 5; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(-0.6f, 0.6f, i / 4f);
+                                float shootOffsetAngle = Lerp(-0.6f, 0.6f, i / 4f);
                                 Vector2 fireShootVelocity = (target.Center - fireSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * fireShootSpeed;
                                 Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), DarkMagicFlameDamage, 0f);
                             }
@@ -356,7 +356,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                             Vector2 slashSpawnPosition = npc.Center - Vector2.UnitX * npc.spriteDirection * 30f;
                             for (int i = 0; i < 3; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(-0.46f, 0.46f, i / 2f);
+                                float shootOffsetAngle = Lerp(-0.46f, 0.46f, i / 2f);
                                 Vector2 slashShootVelocity = (target.Center - slashSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * slashShootSpeed;
                                 Utilities.NewProjectileBetter(slashSpawnPosition, slashShootVelocity, ModContent.ProjectileType<BrimstoneSlash>(), BrimstoneSlashDamage, 0f);
                             }
@@ -424,7 +424,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 {
                     npc.velocity.Y -= uppercutAcceleration;
 
-                    if (MathHelper.Distance(MathHelper.WrapAngle(armRotation), MathHelper.Pi) > 0.3f)
+                    if (Distance(WrapAngle(armRotation), Pi) > 0.3f)
                         armRotation += 0.29f;
 
                     // Creation motion blur particles.
@@ -450,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
                             for (int i = 0; i < 7; i++)
                             {
-                                float offsetAngle = MathHelper.Lerp(-1.09f, 1.09f, i / 6f) + Main.rand.NextFloatDirection() * 0.04f;
+                                float offsetAngle = Lerp(-1.09f, 1.09f, i / 6f) + Main.rand.NextFloatDirection() * 0.04f;
                                 Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(10f, 13.6f);
                                 shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
                                 Utilities.NewProjectileBetter(npc.Top, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), BrimstoneBombDamage, 0f);
@@ -596,7 +596,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * npc.localAI[2] * npc.scale * 5f;
+                    Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * npc.localAI[2] * npc.scale * 5f;
                     Color backglowColor = Color.Red * npc.Opacity * npc.localAI[2];
                     backglowColor.A = 0;
                     spriteBatch.Draw(texture, mainDrawPosition + drawOffset, npc.frame, backglowColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
@@ -609,10 +609,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             {
                 texture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheGlowmask").Value;
                 spriteBatch.Draw(texture, mainDrawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
-                float armRotation = npc.localAI[0] * npc.spriteDirection - MathHelper.PiOver4;
-                float armSquishFactor = 1f - Utils.GetLerpValue(0.3f, 0.9f, npc.localAI[0], true) * Utils.GetLerpValue(MathHelper.Pi - 0.3f, MathHelper.Pi - 0.9f, npc.localAI[0], true) * 0.33f;
+                float armRotation = npc.localAI[0] * npc.spriteDirection - PiOver4;
+                float armSquishFactor = 1f - Utils.GetLerpValue(0.3f, 0.9f, npc.localAI[0], true) * Utils.GetLerpValue(Pi - 0.3f, Pi - 0.9f, npc.localAI[0], true) * 0.33f;
                 Texture2D armTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/CalamitasShadow/CatastropheArm").Value;
-                Vector2 armTextureDrawPosition = mainDrawPosition + new Vector2(npc.spriteDirection * -12f, MathF.Cos(armRotation) * -8f - 40f).RotatedBy(npc.rotation) * npc.scale;
+                Vector2 armTextureDrawPosition = mainDrawPosition + new Vector2(npc.spriteDirection * -12f, Cos(armRotation) * -8f - 40f).RotatedBy(npc.rotation) * npc.scale;
                 Vector2 armOrigin = armTexture.Size() * 0f;
                 Vector2 armScale = new Vector2(armSquishFactor, 1f + (1f - armSquishFactor) * 1.45f) * npc.scale;
                 if (npc.spriteDirection == -1)
@@ -622,7 +622,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 }
                 else
                 {
-                    armRotation += MathHelper.PiOver2;
+                    armRotation += PiOver2;
                     armTextureDrawPosition.X += armTexture.Width * npc.scale * 0.5f;
                 }
 

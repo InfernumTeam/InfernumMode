@@ -69,13 +69,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.timeLeft = 240;
                 if (!MarkedAsDead)
                 {
-                    Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
-                    Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.1f, 0f, 1f);
+                    Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+                    Projectile.scale = Clamp(Projectile.scale + 0.1f, 0f, 1f);
                 }
                 else
                 {
-                    Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.05f, 0f, 1f);
-                    Projectile.scale = MathHelper.Clamp(Projectile.scale - 0.1f, 0f, 1f);
+                    Projectile.Opacity = Clamp(Projectile.Opacity - 0.05f, 0f, 1f);
+                    Projectile.scale = Clamp(Projectile.scale - 0.1f, 0f, 1f);
 
                     if (Projectile.scale == 0f || Projectile.Opacity == 0f)
                         Projectile.Kill();
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return false;
             }
             float scaleInterpolant = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) * (1f + 0.1f *
-                MathF.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (MathHelper.Pi * 2f) * 3f)) * 0.225f;
+                Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (Pi * 2f) * 3f)) * 0.225f;
 
             Texture2D texture = InfernumTextureRegistry.Gleam.Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
@@ -142,10 +142,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Projectile.spriteDirection == -1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            float upRight = Projectile.rotation + MathHelper.PiOver4;
-            float up = Projectile.rotation + MathHelper.PiOver2;
-            float upLeft = Projectile.rotation + 3f * MathHelper.PiOver4;
-            float left = Projectile.rotation + MathHelper.Pi;
+            float upRight = Projectile.rotation + PiOver4;
+            float up = Projectile.rotation + PiOver2;
+            float upLeft = Projectile.rotation + 3f * PiOver4;
+            float left = Projectile.rotation + Pi;
             Main.EntitySpriteDraw(texture, drawPos, null, colorA, upLeft, origin, scale, spriteEffects, 0);
             Main.EntitySpriteDraw(texture, drawPos, null, colorA, upRight, origin, scale, spriteEffects, 0);
             Main.EntitySpriteDraw(texture, drawPos, null, colorB, upLeft, origin, scale * 0.6f, spriteEffects, 0);

@@ -76,21 +76,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             if (isEitherExoTwin)
             {
                 NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
-                Vector2 hoverDestination = thanatosHead.Center + (MathHelper.TwoPi * attackTimer / 180f).ToRotationVector2() * isApollo.ToDirectionInt() * 210f;
+                Vector2 hoverDestination = thanatosHead.Center + (TwoPi * attackTimer / 180f).ToRotationVector2() * isApollo.ToDirectionInt() * 210f;
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 40f, 84f);
 
                 Vector2 aimDestination = target.Center + target.velocity * 10f;
                 Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
                 // Look at the target.
-                npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = aimDirection.ToRotation() + PiOver2;
 
                 // Disable contact damage.
                 npc.damage = 0;
 
                 // Handle frames.
                 npc.frameCounter++;
-                frameType = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frameType = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (attackTimer > fastFlyDelay)
                     frameType += 10f;
                 if (ExoTwinsAreInSecondPhase)
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 // Decide frames.
                 frameType = (int)ThanatosFrameType.Open;
                 DoAggressiveChargeMovement(npc, target, attackTimer, thanatosFlySpeedFactor);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
             }
 
             // Delete blasts and gas before transitioning to the next attack.
@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             bool isExoTwin = npc.type == ModContent.NPCType<Artemis>() || npc.type == ModContent.NPCType<Apollo>();
             bool isAttackingExoTwin = npc.type == exoTwinThatShouldAttack;
             float artemisSpinRadius = 560f;
-            float artemisSpinArc = MathHelper.Pi * 0.95f;
+            float artemisSpinArc = Pi * 0.95f;
             float artemisSpinSpeed = artemisSpinArc * artemisSpinRadius / artemisSpinTime;
 
             float baseApolloChargeSpeed = 19f;
@@ -195,7 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                     if (!npc.WithinRange(target.Center, 300f))
                         npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 13f, 0.06f);
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
                     return false;
                 }
 
@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 {
                     float flySpeed = Utils.Remap(npc.Distance(target.Center), 750f, 2700f, 6f, 24f);
                     float aimInterpolant = Utils.Remap(wrappedAttackTimer, 0f, redirectTime - 4f, 0.01f, 0.5f);
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * aimInterpolant, true) * flySpeed;
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), Pi * aimInterpolant, true) * flySpeed;
 
                     if (!npc.WithinRange(target.Center, 1100f) && Vector2.Dot(npc.velocity, npc.SafeDirectionTo(target.Center)) < 0f)
                         npc.velocity *= -0.1f;
@@ -216,7 +216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     npc.velocity *= thanatosFlyAcceleration;
 
                 // Decide the current rotation based on velocity.
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                 // Decide frames.
                 frameType = (int)ThanatosFrameType.Open;
@@ -229,7 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             {
                 // Decide frames.
                 npc.frameCounter++;
-                frameType = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frameType = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (ExoTwinsAreInSecondPhase)
                     frameType += 60f;
 
@@ -248,7 +248,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             {
                                 for (int i = 0; i < 2; i++)
                                 {
-                                    float telegraphAngularOffset = MathHelper.Lerp(-0.62f, 0.62f, i);
+                                    float telegraphAngularOffset = Lerp(-0.62f, 0.62f, i);
                                     Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<ArtemisLaserbeamTelegraph>(), 0, 0f, -1, npc.whoAmI, telegraphAngularOffset);
                                 }
                             }
@@ -262,7 +262,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             Vector2 idealVelocity = (hoverDestination - npc.Center) * (1f - slowdownInterpolant) * 0.1f;
                             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.16f);
 
-                            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                             if (slowdownInterpolant >= 1f)
                                 npc.rotation = 0f;
                         }
@@ -270,7 +270,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         // Initialize Artemis' spin direction.
                         if (artemisSpinDirection == 0f && localAttackTimer >= artemisHoverTime - 9f)
                         {
-                            float angularOffset = MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.rotation + MathHelper.PiOver2);
+                            float angularOffset = WrapAngle(npc.AngleTo(target.Center) - npc.rotation + PiOver2);
                             if (Math.Abs(angularOffset) > 0.01f)
                             {
                                 artemisSpinDirection = Math.Sign(angularOffset);
@@ -299,7 +299,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             npc.velocity = npc.velocity.RotatedBy(artemisSpinArc / artemisSpinTime * -artemisSpinDirection);
                             npc.rotation = npc.velocity.ToRotation();
                             if (artemisSpinDirection == -1f)
-                                npc.rotation += MathHelper.Pi;
+                                npc.rotation += Pi;
                         }
                     }
 
@@ -346,7 +346,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                             // Look at the target.
                             if (slowdownInterpolant < 1f)
-                                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                         }
 
                         // Perform charge behaviors.
@@ -356,7 +356,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             if (localAttackTimer == apolloTelegraphDelay + 1f)
                             {
                                 SoundEngine.PlaySound(Artemis.ChargeSound, target.Center);
-                                npc.velocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * baseApolloChargeSpeed;
+                                npc.velocity = (npc.rotation - PiOver2).ToRotationVector2() * baseApolloChargeSpeed;
                             }
 
                             // Release a lot of plasma.
@@ -382,7 +382,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             if (localAttackTimer >= apolloTelegraphDelay + 1f)
                             {
                                 npc.damage = npc.defDamage;
-                                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                             }
                         }
                     }
@@ -401,7 +401,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
 
                     // Look at the target.
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                 }
             }
 

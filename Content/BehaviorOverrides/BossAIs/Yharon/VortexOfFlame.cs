@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void AI()
         {
-            Projectile.rotation += MathHelper.ToRadians(14f);
+            Projectile.rotation += ToRadians(14f);
             Projectile.Opacity = Utils.GetLerpValue(0f, 40f, Timer, true) * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true);
             if (Projectile.owner == Main.myPlayer)
             {
@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 {
                     for (int i = 0; i < 4; i++)
                     {
-                        float offsetAngle = MathHelper.TwoPi * i / 4f;
+                        float offsetAngle = TwoPi * i / 4f;
                         Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, YharonBehaviorOverride.RegularFireballDamage, 0f, Main.myPlayer);
                     }
                 }
@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (int j = 0; j < 16f; j++)
             {
-                float angle = MathHelper.TwoPi / j * 16f;
+                float angle = TwoPi / j * 16f;
                 Vector2 offset = angle.ToRotationVector2() * 32f;
                 Color drawColor = Color.White * Projectile.Opacity * 0.08f;
                 drawColor.A = 127;

@@ -68,7 +68,7 @@ namespace InfernumMode.Content.Tiles
                 return true;
 
             // Draw the Terminus at an angle below the rest of the rubble.
-            float terminusRotation = MathHelper.PiOver2 - 0.43f;
+            float terminusRotation = PiOver2 - 0.43f;
             Texture2D terminusTexture = ModContent.Request<Texture2D>("CalamityMod/Items/SummonItems/Terminus").Value;
             Vector2 drawPosition = new Vector2(i * 16f, j * 16f) - Main.screenPosition + new Vector2(40f, -24f);
             if (!Main.drawToScreen)

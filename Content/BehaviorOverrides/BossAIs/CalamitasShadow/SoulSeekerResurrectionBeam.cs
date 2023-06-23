@@ -100,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
                         if (n.active && n.type == seekerID)
                         {
-                            n.ai[0] = MathHelper.TwoPi * seekerIndex / totalSeekers;
+                            n.ai[0] = TwoPi * seekerIndex / totalSeekers;
                             n.ai[1] = 0f;
                             n.ai[3] = 0f;
                             n.netUpdate = true;
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 for (int i = 0; i < 10; i++)
                 {
                     Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
-                    CloudParticle fireCloud = new(seekerSpawnPosition, (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 6f, fireColor, Color.DarkGray, 36, Main.rand.NextFloat(1.9f, 2.3f));
+                    CloudParticle fireCloud = new(seekerSpawnPosition, (TwoPi * i / 10f).ToRotationVector2() * 6f, fireColor, Color.DarkGray, 36, Main.rand.NextFloat(1.9f, 2.3f));
                     GeneralParticleHandler.SpawnParticle(fireCloud);
                 }
                 HasSummonedSeeker = true;
@@ -133,16 +133,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(0f, 0.16f, completionRatio, true) * Utils.GetLerpValue(1f, 0.95f, completionRatio, true);
-            float baseWidth = MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
-            return baseWidth * MathHelper.Lerp(1f, 2.3f, Projectile.localAI[0]);
+            float baseWidth = SmoothStep(2f, Projectile.width, squeezeInterpolant) * Clamp(Projectile.scale, 0.01f, 1f);
+            return baseWidth * Lerp(1f, 2.3f, Projectile.localAI[0]);
         }
 
         public override bool ShouldUpdatePosition() => false;
 
         public Color ColorFunction(float completionRatio)
         {
-            float opacity = Utils.GetLerpValue(0.92f, 0.6f, completionRatio, true) * MathHelper.Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity * 0.4f;
-            Color color = Color.Lerp(Color.Red, Color.Yellow, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
+            float opacity = Utils.GetLerpValue(0.92f, 0.6f, completionRatio, true) * Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity * 0.4f;
+            Color color = Color.Lerp(Color.Red, Color.Yellow, Math.Abs(Sin(completionRatio * Pi + Main.GlobalTimeWrappedHourly)) * 0.5f);
             return color * opacity;
         }
 

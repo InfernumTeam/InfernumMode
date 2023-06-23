@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
 
             Projectile.rotation = Projectile.velocity.X * 0.01f;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
 
             float wrappedAttackTimer = Projectile.ai[1] % 120f;
             if (wrappedAttackTimer < 45f)
@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * (GlowBlue ? 5f : 3f);
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * (GlowBlue ? 5f : 3f);
                 Color mainBackColor = GlowBlue ? new Color(0f, 0.9f, 1f, 0f) : new Color(1f, 1f, 1f, 0f);
                 Color backlightColor = Projectile.GetAlpha(mainBackColor) * Lighting.Brightness((int)(Projectile.Center.X / 16f), (int)(Projectile.Center.Y / 16f)) * 0.65f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, backlightColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);

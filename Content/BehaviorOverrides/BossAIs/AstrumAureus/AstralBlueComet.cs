@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             // Emit light.
             Lighting.AddLight(Projectile.Center, 0.3f, 0.5f, 0.1f);
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
                 astralFire.noGravity = true;
                 astralFire.velocity *= 3f;
 
-                astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 173, 0f, 0f, 50, default, 1f);
+                astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralBlue>(), 0f, 0f, 50, default, 1f);
                 astralFire.velocity *= 2f;
                 astralFire.noGravity = true;
             }

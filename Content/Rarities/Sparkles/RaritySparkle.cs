@@ -34,11 +34,11 @@ namespace InfernumMode.Content.Rarities.Sparkles
 
             // Grow rapidly
             if (Time <= 20)
-                Scale = MathHelper.Lerp(0f, MaxScale, Time / 20f);
+                Scale = Lerp(0f, MaxScale, Time / 20f);
 
             // Shrink rapidly.
             if (TimeLeft <= 20)
-                Scale = MathHelper.Lerp(0f, MaxScale, (float)TimeLeft / 20f);
+                Scale = Lerp(0f, MaxScale, (float)TimeLeft / 20f);
 
             // Increase the rotation and time.
             Rotation += RotationSpeed;

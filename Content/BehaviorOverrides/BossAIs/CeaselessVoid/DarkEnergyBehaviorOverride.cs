@@ -42,10 +42,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
             }
-            npc.Opacity = MathHelper.Clamp(npc.Opacity - shouldFadeAway.ToDirectionInt() * 0.03f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity - shouldFadeAway.ToDirectionInt() * 0.03f, 0f, 1f);
 
             // Spin around.
-            spinAngle += spinDirection * spinMovementSpeed * MathHelper.ToRadians(0.27f);
+            spinAngle += spinDirection * spinMovementSpeed * ToRadians(0.27f);
             npc.rotation = spinAngle;
 
             // Stick to the Ceaseless Void.

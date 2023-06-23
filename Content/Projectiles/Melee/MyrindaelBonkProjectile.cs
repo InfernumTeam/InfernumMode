@@ -66,11 +66,11 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Stick to the owner.
             Projectile.Center = Owner.MountedCenter;
 
-            float angularVelocity = MathHelper.Pi * MathF.Pow(LungeProgression, 3f) * 0.024f;
+            float angularVelocity = Pi * Pow(LungeProgression, 3f) * 0.024f;
             float currentRotation = Projectile.velocity.ToRotation();
             float idealRotation = Owner.MountedCenter.AngleTo(Owner.Calamity().mouseWorld);
             Projectile.velocity = currentRotation.AngleTowards(idealRotation, angularVelocity).ToRotationVector2();
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
             Owner.heldProj = Projectile.whoAmI;
 
             Owner.fallStart = (int)(Owner.position.Y / 16f);
@@ -109,7 +109,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 30f, -700f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(50f, 70f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner, MathHelper.PiOver2, Main.rand.Next(100));
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), lightningSpawnPosition, Vector2.UnitY * Main.rand.NextFloat(50f, 70f), ModContent.ProjectileType<MyrindaelLightning>(), Projectile.damage, 0f, Projectile.owner, PiOver2, Main.rand.Next(100));
                 }
             }
 
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.Projectiles.Melee
         public float PierceWidthFunction(float completionRatio)
         {
             float width = Utils.GetLerpValue(0f, 0.1f, completionRatio, true) * Projectile.scale * 20f;
-            width *= 1f - MathF.Pow(LungeProgression, 5f);
+            width *= 1f - Pow(LungeProgression, 5f);
             return width;
         }
 
@@ -140,9 +140,9 @@ namespace InfernumMode.Content.Projectiles.Melee
             Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
             Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
 
-            mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * MathF.Pow(LungeProgression, 0.5f));
-            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * MathF.Pow(LungeProgression, 0.5f));
-            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - MathHelper.PiOver4).ToRotationVector2() * 90f;
+            mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * Pow(LungeProgression, 0.5f));
+            secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * Pow(LungeProgression, 0.5f));
+            Vector2 trailOffset = Projectile.Size * 0.5f - Main.screenPosition + (Projectile.rotation - PiOver4).ToRotationVector2() * 90f;
             GameShaders.Misc["CalamityMod:ExobladePierce"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/EternityStreak"));
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseImage2("Images/Extra_189");
             GameShaders.Misc["CalamityMod:ExobladePierce"].UseColor(mainColor);

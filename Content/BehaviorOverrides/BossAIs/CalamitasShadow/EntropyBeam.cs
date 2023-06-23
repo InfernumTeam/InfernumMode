@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             LaserLength = Utils.GetLerpValue(-1f, 10f, Time, true) * MaxLaserLength;
 
             // Inherit the direction from the shadow's arm.
-            Projectile.velocity = (CalShadow.Infernum().ExtraAI[CalamitasShadowBehaviorOverride.ArmRotationIndex] + MathHelper.PiOver2).ToRotationVector2();
+            Projectile.velocity = (CalShadow.Infernum().ExtraAI[CalamitasShadowBehaviorOverride.ArmRotationIndex] + PiOver2).ToRotationVector2();
             Projectile.BottomRight = CalShadow.Center;
 
             Time++;
@@ -87,16 +87,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.GetLerpValue(1f, 0.95f, completionRatio, true);
-            float baseWidth = MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.01f, 1f);
-            return baseWidth * MathHelper.Lerp(1f, 2.3f, Projectile.localAI[0]);
+            float baseWidth = SmoothStep(2f, Projectile.width, squeezeInterpolant) * Clamp(Projectile.scale, 0.01f, 1f);
+            return baseWidth * Lerp(1f, 2.3f, Projectile.localAI[0]);
         }
 
         public override bool ShouldUpdatePosition() => false;
 
         public Color ColorFunction(float completionRatio)
         {
-            float opacity = Utils.GetLerpValue(0.97f, 0.6f, completionRatio, true) * MathHelper.Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity * 0.95f;
-            Color color = Color.Lerp(Color.Red, Color.Yellow, Math.Abs(MathF.Sin(completionRatio * MathHelper.Pi * 10f - 4f * Main.GlobalTimeWrappedHourly)) * 0.5f + 0.2f);
+            float opacity = Utils.GetLerpValue(0.97f, 0.6f, completionRatio, true) * Lerp(1f, 0.45f, Projectile.localAI[0]) * Projectile.Opacity * 0.95f;
+            Color color = Color.Lerp(Color.Red, Color.Yellow, Math.Abs(Sin(completionRatio * Pi * 10f - 4f * Main.GlobalTimeWrappedHourly)) * 0.5f + 0.2f);
             return color * opacity;
         }
 

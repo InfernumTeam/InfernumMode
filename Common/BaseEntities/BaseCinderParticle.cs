@@ -40,12 +40,12 @@ namespace InfernumMode.Common.BaseEntities
             else
             {
                 Scale = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 20f, Time, true);
-                Scale *= MathHelper.Lerp(MinRandomScale, MaxRandomScale, ID % 6f / 6f);
+                Scale *= Lerp(MinRandomScale, MaxRandomScale, ID % 6f / 6f);
             }
 
             // Fly up and down.
             if (Math.Abs(Velocity.X) > 4f && ID % 2 == 1)
-                Velocity.Y += MathF.Sin(MathHelper.TwoPi * Time / 42f) * 0.0667f;
+                Velocity.Y += Sin(TwoPi * Time / 42f) * 0.0667f;
 
             if (Time >= Lifetime)
                 Kill();

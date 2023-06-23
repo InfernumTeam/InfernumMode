@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #region Frames and Drawcode
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
-            return MathHelper.SmoothStep(60f, 22f, completionRatio) * npc.Infernum().ExtraAI[6] / 15f;
+            return SmoothStep(60f, 22f, completionRatio) * npc.Infernum().ExtraAI[6] / 15f;
         }
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     continue;
 
                 bool chainIsTooLong = !npc.WithinRange(n.Center, 2000f);
-                float rotation = npc.AngleTo(n.Center) - MathHelper.PiOver2;
+                float rotation = npc.AngleTo(n.Center) - PiOver2;
                 Vector2 currentChainPosition = npc.Center;
                 Texture2D chainTexture = TextureAssets.Chain12.Value;
 
@@ -100,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 InfernumEffectsRegistry.TwinsFlameTrailVertexShader.UseImage1("Images/Misc/Perlin");
 
                 Vector2 drawStart = npc.Center;
-                Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
+                Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
                 Vector2[] drawPositions = new Vector2[]
                 {
                     drawStart,
@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 if (overdriveTimer > 0f)
                     fadeCompletion = overdriveTimer / TwinsShield.HealTime;
 
-                totalInstancesToDraw += (int)MathHelper.Lerp(1f, 20f, fadeCompletion);
+                totalInstancesToDraw += (int)Lerp(1f, 20f, fadeCompletion);
 
                 Color endColor = Color.LimeGreen;
                 if (overdriveTimer > 0f)
@@ -158,8 +158,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
             for (int i = 0; i < totalInstancesToDraw; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
-                drawOffset *= MathHelper.Lerp(0.85f, 1.2f, MathF.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
+                Vector2 drawOffset = (TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
+                drawOffset *= Lerp(0.85f, 1.2f, Sin(TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
                 drawInstance(npc.Center + drawOffset, color * npc.Opacity, npc.rotation);
             }
             return false;

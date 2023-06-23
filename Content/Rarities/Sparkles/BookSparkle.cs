@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
 
         public override bool CustomUpdate()
         {
-            float sine = MathF.Sin(Time * 0.03f) * DirectionMultiplier;
+            float sine = Sin(Time * 0.03f) * DirectionMultiplier;
             Velocity.Y = sine * 0.15f;
             return true;
         }

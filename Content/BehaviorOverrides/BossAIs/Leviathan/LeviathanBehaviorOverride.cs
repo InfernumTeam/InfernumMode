@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public override bool PreAI(NPC npc)
         {
             // Stay within the world you stupid fucking fish I swear to god.
-            npc.position.X = MathHelper.Clamp(npc.position.X, 360f, Main.maxTilesX * 16f - 360f);
+            npc.position.X = Clamp(npc.position.X, 360f, Main.maxTilesX * 16f - 360f);
 
             // Select a target and reset damage and invulnerability.
             npc.TargetClosestIfTargetIsInvalid();
@@ -102,9 +102,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
                 float minSpawnVelocity = 0.4f;
                 float maxSpawnVelocity = 4f;
-                float velocityY = maxSpawnVelocity - MathHelper.Lerp(minSpawnVelocity, maxSpawnVelocity, spawnAnimationTime / 180f);
+                float velocityY = maxSpawnVelocity - Lerp(minSpawnVelocity, maxSpawnVelocity, spawnAnimationTime / 180f);
                 npc.velocity = Vector2.UnitY * -velocityY;
-                npc.Opacity = MathHelper.Clamp(spawnAnimationTime / 180f, 0f, 1f);
+                npc.Opacity = Clamp(spawnAnimationTime / 180f, 0f, 1f);
                 spawnAnimationTime++;
                 return false;
             }
@@ -167,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 {
                     for (int i = 0; i < vomitShootCount; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.67f, 0.67f, i / (float)(vomitShootCount - 1f));
+                        float offsetAngle = Lerp(-0.67f, 0.67f, i / (float)(vomitShootCount - 1f));
                         Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * vomitShootSpeed;
                         Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanVomit>(), LeviathanComboAttackManager.LeviathanVomitDamage, 0f);
                     }
@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 npc.Center = Vector2.Lerp(npc.Center, new Vector2(npc.Center.X, destination.Y), 0.075f);
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 14f, 0.27f);
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, npc.SafeDirectionTo(destination).Y * 30f, 0.18f);
+                npc.velocity.Y = Lerp(npc.velocity.Y, npc.SafeDirectionTo(destination).Y * 30f, 0.18f);
                 npc.spriteDirection = npc.direction;
 
                 // Roar before charging.

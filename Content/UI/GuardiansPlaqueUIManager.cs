@@ -68,14 +68,14 @@ namespace InfernumMode.Content.UI
             if (!ShouldDraw)
             {
                 // Keep drawing while the opacity fades out.
-                Opacity = MathHelper.Clamp(Opacity - 0.2f, 0f, 1f);
+                Opacity = Clamp(Opacity - 0.2f, 0f, 1f);
                 if (Opacity == 0f)
                     return;
             }
 
             // Increase the opacity.
             else
-                Opacity = MathHelper.Clamp(Opacity + 0.2f, 0f, 1f);
+                Opacity = Clamp(Opacity + 0.2f, 0f, 1f);
 
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.DepthRead, Main.Rasterizer, null, Main.UIScaleMatrix);

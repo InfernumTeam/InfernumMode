@@ -18,7 +18,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (Main.LocalPlayer.WithinRange(WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates(), 3200f))
                 minBlackFade = 0.25f;
 
-            InfernumMode.BlackFade = MathHelper.Clamp(InfernumMode.BlackFade - 0.01f, minBlackFade, 1f);
+            InfernumMode.BlackFade = Clamp(InfernumMode.BlackFade - 0.01f, minBlackFade, 1f);
 
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
@@ -26,7 +26,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 CalamityWorld.revenge = true;
 
             bool arenaShouldApply = Utilities.AnyProjectiles(ModContent.ProjectileType<ProvidenceSummonerProjectile>()) || NPC.AnyNPCs(ModContent.NPCType<Providence>());
-            InfernumMode.ProvidenceArenaTimer = MathHelper.Clamp(InfernumMode.ProvidenceArenaTimer + arenaShouldApply.ToDirectionInt(), 0f, 120f);
+            InfernumMode.ProvidenceArenaTimer = Clamp(InfernumMode.ProvidenceArenaTimer + arenaShouldApply.ToDirectionInt(), 0f, 120f);
             if (Main.netMode != NetmodeID.MultiplayerClient && InfernumMode.ProvidenceArenaTimer > 0 && !Utilities.AnyProjectiles(ModContent.ProjectileType<ProvidenceArenaBorder>()))
                 Utilities.NewProjectileBetter(Vector2.One * 9999f, Vector2.Zero, ModContent.ProjectileType<ProvidenceArenaBorder>(), 0, 0f);
         }

@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Do not take damage by default.
             NPC.dontTakeDamage = true;
 
-            NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.01f, 0f, 1f);
+            NPC.Opacity = Clamp(NPC.Opacity + 0.01f, 0f, 1f);
 
             NPC commander = Main.npc[CalamityGlobalNPC.doughnutBoss];
 
@@ -117,7 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (Main.rand.NextBool())
                     sparkle = new GenericSparkle(position, velocity, color, Color.White, Main.rand.NextFloat(0.5f, 0.75f), 75, Main.rand.NextFloat(0.05f), 2f);
                 else
-                    sparkle = new FlareShine(position, velocity, color, Color.White, -MathHelper.PiOver2, scale, scale * 1.5f, 60, Main.rand.NextFloat(0.05f), 2f);
+                    sparkle = new FlareShine(position, velocity, color, Color.White, -PiOver2, scale, scale * 1.5f, 60, Main.rand.NextFloat(0.05f), 2f);
                 GeneralParticleHandler.SpawnParticle(sparkle);
             }
         }
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void DoBehavior_Shatter(Player target)
         {
             float attackLength = 180;
-            float offsetAmount = MathHelper.Lerp(0, 15, ShatteringTimer / attackLength * NPC.Opacity);
+            float offsetAmount = Lerp(0, 15, ShatteringTimer / attackLength * NPC.Opacity);
             NPC.Center = InitialPosition + Main.rand.NextVector2Circular(offsetAmount, offsetAmount);
             NPC.netUpdate = true;
 
@@ -192,9 +192,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // More variables
             spriteBatch.EnterShaderRegion();
             float lifeRatio = (float)NPC.life / NPC.lifeMax;
-            float opacity = MathHelper.Lerp(0f, 0.125f, lifeRatio);
+            float opacity = Lerp(0f, 0.125f, lifeRatio);
             float interpolant = CurrentState == (float)CrystalState.Shattering ? ShatteringTimer / 120f : 0f;
-            float shaderWallOpacity = MathHelper.Lerp(0.02f, 0f, interpolant);
+            float shaderWallOpacity = Lerp(0.02f, 0f, interpolant);
 
             // Initialize the shader.
             Asset<Texture2D> shaderLayer = InfernumTextureRegistry.HolyCrystalLayer;
@@ -222,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float backglowAmount = 12;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount).ToRotationVector2() * 2f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 2f;
                 Color backglowColor = MagicSpiralCrystalShot.ColorSet[0];
                 backglowColor.A = 0;
                 spriteBatch.Draw(npcTexture, drawPosition + backglowOffset, frame, backglowColor * NPC.Opacity, NPC.rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);
@@ -234,7 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float backglowAmount = 5;
             for (int i = 0; i < backglowAmount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowAmount + Main.GlobalTimeWrappedHourly * 2f).ToRotationVector2() * 7f;
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount + Main.GlobalTimeWrappedHourly * 2f).ToRotationVector2() * 7f;
                 Color backglowColor = Color.Lerp(MagicSpiralCrystalShot.ColorSet[0], MagicSpiralCrystalShot.ColorSet[1], 0.5f);
                 backglowColor.A = 0;
                 spriteBatch.Draw(npcTexture, drawPosition + backglowOffset, frame, backglowColor * NPC.Opacity, NPC.rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0);

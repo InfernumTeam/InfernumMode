@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
 
             Projectile.scale = Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * Utils.GetLerpValue(85f, 75f, Projectile.timeLeft, true);
-            Projectile.scale = MathHelper.SmoothStep(0.04f, 4f, Projectile.scale);
+            Projectile.scale = SmoothStep(0.04f, 4f, Projectile.scale);
 
             // Try to aim at the target.
             if (Projectile.timeLeft > 32f)
@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            float aimDirection = (MathHelper.WrapAngle(Projectile.AngleTo(Target.Center) - Projectile.velocity.ToRotation()) > 0f).ToDirectionInt();
+            float aimDirection = (WrapAngle(Projectile.AngleTo(Target.Center) - Projectile.velocity.ToRotation()) > 0f).ToDirectionInt();
             Vector2 beamDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
             Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<FireBeam>(), CultistBehaviorOverride.FireBeamDamage, 0f, -1, 0f, aimDirection * 0.0277f);
         }

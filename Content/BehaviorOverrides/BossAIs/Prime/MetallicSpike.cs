@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Projectile.velocity.Length() < 18f)
                 Projectile.velocity *= 1.02f;
@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
 

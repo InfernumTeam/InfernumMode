@@ -35,11 +35,11 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
 
             Projectile.frameCounter++;
             if (Projectile.ai[0] == 1f)
-                Projectile.velocity = InitialVelocity.RotatedBy(-(MathHelper.TwoPi - (Math.Log(Projectile.frameCounter) * MathHelper.TwoPi + 1)));
+                Projectile.velocity = InitialVelocity.RotatedBy(-(TwoPi - (Math.Log(Projectile.frameCounter) * TwoPi + 1)));
             else
-                Projectile.velocity = InitialVelocity.RotatedBy(MathHelper.TwoPi - (Math.Log(Projectile.frameCounter) * MathHelper.TwoPi + 1));
+                Projectile.velocity = InitialVelocity.RotatedBy(TwoPi - (Math.Log(Projectile.frameCounter) * TwoPi + 1));
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             int frame = (int)(Projectile.frameCounter / 5f);
             if (frame > 3)

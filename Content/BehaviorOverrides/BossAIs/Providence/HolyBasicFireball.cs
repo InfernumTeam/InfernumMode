@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Make the fire grow in size.
-            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.067f, 0f, 1.2f);
+            Projectile.scale = Clamp(Projectile.scale + 0.067f, 0f, 1.2f);
             Vector2 newScale = Vector2.One * Projectile.scale * 36f;
             if (Projectile.Size != newScale)
                 Projectile.Size = newScale;
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float scaleInterpolant = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) * (1f + 0.1f * MathF.Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (MathHelper.Pi * 2f) * 3f)) * 0.225f;
+            float scaleInterpolant = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(240f, 200f, Projectile.timeLeft, true) * (1f + 0.1f * Cos(Main.GlobalTimeWrappedHourly % 30f / 0.5f * (Pi * 2f) * 3f)) * 0.225f;
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
@@ -104,10 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Projectile.spriteDirection == -1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            float upRight = Projectile.rotation + MathHelper.PiOver4;
-            float up = Projectile.rotation + MathHelper.PiOver2;
-            float upLeft = Projectile.rotation + 3f * MathHelper.PiOver4;
-            float left = Projectile.rotation + MathHelper.Pi;
+            float upRight = Projectile.rotation + PiOver4;
+            float up = Projectile.rotation + PiOver2;
+            float upLeft = Projectile.rotation + 3f * PiOver4;
+            float left = Projectile.rotation + Pi;
             Main.EntitySpriteDraw(texture, drawPos, null, colorA, upLeft, origin, scale, spriteEffects, 0);
             Main.EntitySpriteDraw(texture, drawPos, null, colorA, upRight, origin, scale, spriteEffects, 0);
             Main.EntitySpriteDraw(texture, drawPos, null, colorB, upLeft, origin, scale * 0.6f, spriteEffects, 0);

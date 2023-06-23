@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 fireSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(16f, 16f);
-                    Vector2 fireVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * Main.rand.NextFloat(1.5f, 2f);
+                    Vector2 fireVelocity = (TwoPi * i / 8f).ToRotationVector2() * Main.rand.NextFloat(1.5f, 2f);
                     Particle fire = new MediumMistParticle(fireSpawnPosition, fireVelocity, Color.Orange, Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 236f, Main.rand.NextFloat(-0.04f, 0.04f));
                     GeneralParticleHandler.SpawnParticle(fire);
                 }
@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Decide rotation.
             Projectile.rotation = Projectile.velocity.ToRotation();

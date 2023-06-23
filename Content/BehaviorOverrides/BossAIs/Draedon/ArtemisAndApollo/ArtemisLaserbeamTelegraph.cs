@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public NPC Artemis => Main.npc.IndexInRange((int)Projectile.ai[0]) ? Main.npc[(int)Projectile.ai[0]] : null;
 
-        public float ConvergenceRatio => MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(25f, 120f, Time, true));
+        public float ConvergenceRatio => SmoothStep(0f, 1f, Utils.GetLerpValue(25f, 120f, Time, true));
 
         public ref float StartingRotationalOffset => ref Projectile.ai[1];
 
@@ -75,12 +75,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Projectile.Center = Artemis.Center;
 
             // Add the forwards offset, measured in pixels.
-            float normalizedArtemisDirection = Artemis.rotation - MathHelper.PiOver2;
+            float normalizedArtemisDirection = Artemis.rotation - PiOver2;
             Projectile.position += normalizedArtemisDirection.ToRotationVector2() * beamStartForwardsOffset;
             Projectile.rotation = StartingRotationalOffset.AngleLerp(ConvergenceAngle, ConvergenceRatio) + normalizedArtemisDirection;
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.03f, 0f, 1f);
 
             Time++;
         }
@@ -101,8 +101,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Color colorOuter = Color.Lerp(Color.Orange, Color.White, Utils.GetLerpValue(67f, 0f, Projectile.timeLeft, true) * 0.8f);
             Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
 
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.rotation - MathHelper.PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.rotation - MathHelper.PiOver2, origin, scaleInner, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.rotation - PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.rotation - PiOver2, origin, scaleInner, SpriteEffects.None, 0);
             Main.spriteBatch.ResetBlendState();
             return false;
         }

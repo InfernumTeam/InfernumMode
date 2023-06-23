@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void AI()
         {
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Emit particles.
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -86,12 +86,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     {
                         for (int i = 0; i < 27; i++)
                         {
-                            Vector2 icicleVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * 8.4f;
+                            Vector2 icicleVelocity = (TwoPi * i / 27f).ToRotationVector2() * 8.4f;
                             Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f, -1, 0f, 1f);
                         }
                         for (int i = 0; i < 14; i++)
                         {
-                            Vector2 icicleVelocity = (MathHelper.TwoPi * i / 14f).ToRotationVector2() * 16f;
+                            Vector2 icicleVelocity = (TwoPi * i / 14f).ToRotationVector2() * 16f;
                             Utilities.NewProjectileBetter(Projectile.Center, icicleVelocity, ModContent.ProjectileType<EidolistIce>(), AEWHeadBehaviorOverride.NormalShotDamage, 0f, -1, 0f, 1f);
                         }
                     }
@@ -190,7 +190,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 for (int j = 0; j < 3; j++)
                 {
-                    float offsetAngle = MathHelper.Lerp(-MathHelper.PiOver2, MathHelper.PiOver2, j / 2f);
+                    float offsetAngle = Lerp(-PiOver2, PiOver2, j / 2f);
                     Vector2 drawOffset = (Projectile.rotation + offsetAngle).ToRotationVector2() * Projectile.scale * new Vector2(10f, 5f);
                     ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(texture, drawPosition + drawOffset, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0));
                 }

@@ -399,7 +399,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 }
 
                 // Create explosions periodically.
-                float explosionCreationRate = MathHelper.Lerp(0.075f, 0.24f, Utils.GetLerpValue(75f, 300f, attackTimer, true));
+                float explosionCreationRate = Lerp(0.075f, 0.24f, Utils.GetLerpValue(75f, 300f, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() < explosionCreationRate)
                 {
                     Vector2 explosionSpawnPosition = npc.Center + Main.rand.NextVector2Circular(200f, 450f);
@@ -450,7 +450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            float verticalOffset = MathHelper.Lerp(0f, 45f, MathF.Cos(attackTimer / 32f) * 0.5f + 0.5f);
+            float verticalOffset = Lerp(0f, 45f, Cos(attackTimer / 32f) * 0.5f + 0.5f);
             Vector2 hoverDestination = target.Center - Vector2.UnitY * verticalOffset;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * BaseFlySpeedFactor * 0.75f;
             npc.SimpleFlyMovement(idealVelocity, BaseFlySpeedFactor / 20f);
@@ -609,8 +609,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 shoulderPosition = center + new Vector2(220f, -60f) * directionThing;
                     Vector2 shoulderOffset = (Main.npc[armIndex].Center + new Vector2(0f, 76f) - shoulderPosition) * 0.5f;
-                    float rotationalOffset = MathF.Acos(MathHelper.Clamp(shoulderOffset.Length() / 340f, 0f, 1f)) * -directionThing.X;
-                    float forearmRotation = shoulderOffset.ToRotation() - rotationalOffset - MathHelper.PiOver2;
+                    float rotationalOffset = Acos(Clamp(shoulderOffset.Length() / 340f, 0f, 1f)) * -directionThing.X;
+                    float forearmRotation = shoulderOffset.ToRotation() - rotationalOffset - PiOver2;
                     SpriteEffects direction = !leftArm ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                     Vector2 forearmOrigin = new(76f, 66f);
                     if (!leftArm)

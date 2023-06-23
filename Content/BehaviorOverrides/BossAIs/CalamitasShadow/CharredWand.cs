@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             if (explosionInterpolant > 0f)
             {
                 Main.spriteBatch.EnterShaderRegion();
-                Color explosionTelegraphColor = Color.Lerp(Color.Red, Color.White, 0.4f) * MathF.Sqrt(explosionInterpolant);
+                Color explosionTelegraphColor = Color.Lerp(Color.Red, Color.White, 0.4f) * Sqrt(explosionInterpolant);
 
                 Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
                 Texture2D noise = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes2").Value;
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             {
                 for (int i = 0; i < 35; i++)
                 {
-                    Vector2 cinderVelocity = (MathHelper.TwoPi * i / 35f).ToRotationVector2() * (speedBoost + 13.5f);
+                    Vector2 cinderVelocity = (TwoPi * i / 35f).ToRotationVector2() * (speedBoost + 13.5f);
                     Utilities.NewProjectileBetter(Projectile.Center, cinderVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasShadowBehaviorOverride.DarkMagicFlameDamage, 0f);
                 }
             }
@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             for (int i = 0; i < 20; i++)
             {
                 Color fireColor = Main.rand.NextBool() ? Color.Yellow : Color.Red;
-                CloudParticle fireCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 20f).ToRotationVector2() * 9f, fireColor, Color.DarkGray, 45, Main.rand.NextFloat(1.9f, 2.3f));
+                CloudParticle fireCloud = new(Projectile.Center, (TwoPi * i / 20f).ToRotationVector2() * 9f, fireColor, Color.DarkGray, 45, Main.rand.NextFloat(1.9f, 2.3f));
                 GeneralParticleHandler.SpawnParticle(fireCloud);
             }
         }

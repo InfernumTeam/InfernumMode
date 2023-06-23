@@ -30,7 +30,7 @@ namespace InfernumMode.Common.Graphics.Particles
             Color = color;
             Scale = scale;
             Lifetime = lifeTime;
-            Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+            Rotation = Main.rand.NextFloat(TwoPi);
             Spin = rotationSpeed;
             Variant = Main.rand.Next(12);
             Frame = new Rectangle(Variant % 6 * 12, 12 + Variant / 6 * 12, 10, 10);
@@ -38,7 +38,7 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override void Update()
         {
-            opacity = MathF.Cos(MathHelper.PiOver2 * LifetimeCompletion);
+            opacity = Cos(PiOver2 * LifetimeCompletion);
             Velocity *= 0.99f;
             Rotation += Spin * (Velocity.X > 0f ? 1f : -1f);
             Scale *= 0.98f;

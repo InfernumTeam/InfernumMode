@@ -33,7 +33,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void PostUpdateMiscEffects()
         {
-            ForcefieldStrengthInterpolant = MathHelper.Clamp(ForcefieldStrengthInterpolant + ForcefieldIsActive.ToDirectionInt() * 0.02f, 0f, 1f);
+            ForcefieldStrengthInterpolant = Clamp(ForcefieldStrengthInterpolant + ForcefieldIsActive.ToDirectionInt() * 0.02f, 0f, 1f);
             if (ForcefieldIsActive)
                 Player.AddBuff(ModContent.BuffType<BrimstoneBarrier>(), CalamityUtils.SecondsToFrames(DebuffTime));
         }

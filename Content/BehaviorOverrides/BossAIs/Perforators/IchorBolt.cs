@@ -34,14 +34,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Accelerate.
             if (Projectile.velocity.Length() < 20f)
                 Projectile.velocity *= 1.022f;
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
         }
 
         public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, Projectile.alpha);

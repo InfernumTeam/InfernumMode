@@ -43,7 +43,7 @@ namespace InfernumMode.Common.Graphics.Particles
         public override void Update()
         {
             Color = Color.Lerp(StartingColor, EndingColor, LifetimeCompletion);
-            Color = Color.Lerp(Color, Color.Transparent, MathF.Pow(LifetimeCompletion, 2.6f));
+            Color = Color.Lerp(Color, Color.Transparent, Pow(LifetimeCompletion, 2.6f));
             Velocity *= 0.94f;
         }
 

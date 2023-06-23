@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             List<Vector2> points = new();
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            Vector2 perpendicularDirection = direction.RotatedBy(MathHelper.PiOver2);
+            Vector2 perpendicularDirection = direction.RotatedBy(PiOver2);
             Vector2 left = Projectile.Center - perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
             Vector2 right = Projectile.Center + perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;
             Vector2 middle = Projectile.Center + direction * Projectile.height / Projectile.scale * 2f;

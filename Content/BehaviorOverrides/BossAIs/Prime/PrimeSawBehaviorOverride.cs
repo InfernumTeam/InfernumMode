@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             }
 
             // Quickly attempt to saw through the target if sufficiently close.
-            if (attackTimer >= extendTime && npc.velocity.Y != 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 42f)
+            if (attackTimer >= extendTime && npc.velocity.Y != 0f && Distance(target.Center.Y, npc.Center.Y) < 42f)
             {
                 npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * sawSpeed * 0.35f;
                 npc.netUpdate = true;

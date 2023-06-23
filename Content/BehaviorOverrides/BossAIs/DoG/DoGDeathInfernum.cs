@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     OldVelocity = Vector2.Zero;
                     Projectile.netUpdate = true;
                 }
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             }
             // Otherwise, be sure to save the velocity the projectile started with. It will be set again when the telegraph is over.
             else if (OldVelocity == Vector2.Zero)
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 OldVelocity = Projectile.velocity;
                 Projectile.velocity = Vector2.Zero;
                 Projectile.netUpdate = true;
-                Projectile.rotation = OldVelocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = OldVelocity.ToRotation() + PiOver2;
             }
             TelegraphDelay++;
         }
@@ -108,9 +108,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / TelegraphFadeTime);
+                yScale = Lerp(0f, 2f, TelegraphDelay / TelegraphFadeTime);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / TelegraphFadeTime);
+                yScale = Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / TelegraphFadeTime);
 
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);

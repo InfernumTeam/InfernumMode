@@ -140,7 +140,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     if (!npc.WithinRange(target.Center, 2400f))
                         npc.active = false;
 
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
                     return false;
                 }
             }
@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             int chargeTime = 36;
             int chargeSlowdownTime = 12;
             int chargeCount = 2;
-            float idealChargeSpeed = MathHelper.Lerp(27.5f, 34.75f, 1f - lifeRatio);
+            float idealChargeSpeed = Lerp(27.5f, 34.75f, 1f - lifeRatio);
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -222,11 +222,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             // Attempt to get into position for a charge.
             if (attackTimer < hoverRedirectTime)
             {
-                float idealHoverSpeed = MathHelper.Lerp(24.5f, 39f, attackTimer / hoverRedirectTime);
+                float idealHoverSpeed = Lerp(24.5f, 39f, attackTimer / hoverRedirectTime);
                 if (BossRushEvent.BossRushActive)
                     idealHoverSpeed *= 1.45f;
 
-                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true) * idealVelocity.Length();
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f);
 
@@ -291,7 +291,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 npc.netUpdate = true;
             }
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoAttack_UpwardBombLunge(NPC npc, Player target, ref float attackTimer)
@@ -330,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     else
                     {
                         Vector2 idealVelocity = new(npc.SafeDirectionTo(target.Center).X * 27f, -verticalSpeedAdditive - 24f);
-                        if (MathHelper.Distance(target.Center.X, npc.Center.X) >= 600f)
+                        if (Distance(target.Center.X, npc.Center.X) >= 600f)
                             idealVelocity.X *= 2f;
 
                         npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.11f).MoveTowards(idealVelocity, 0.8f);
@@ -352,7 +352,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     npc.damage = 0;
 
                     // Gain horizontal momentum in anticipation of the upcoming fall.
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 12f, 0.064f);
+                    npc.velocity.X = Lerp(npc.velocity.X, Math.Sign(npc.velocity.X) * 12f, 0.064f);
 
                     // Release the bombs.
                     if (attackTimer == bombReleaseDelay)
@@ -388,7 +388,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     npc.damage = 0;
 
                     npc.velocity.X *= 0.99f;
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
+                    npc.velocity.Y = Clamp(npc.velocity.Y + 0.5f, -32f, 25f);
                     if (npc.Center.Y >= target.Center.Y + 1450f)
                     {
                         attackTimer = 0f;
@@ -403,7 +403,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     break;
             }
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoAttack_LaserWalls(NPC npc, Player target, float lifeRatio, ref float attackTimer)
@@ -416,7 +416,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 2300f;
                 if (npc.WithinRange(destination, 23f))
                 {
-                    npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * MathHelper.Lerp(17f, 12f, 1f - lifeRatio);
+                    npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * Lerp(17f, 12f, 1f - lifeRatio);
                     npc.velocity.Y = 8f;
                     attackTimer = 90f;
                 }
@@ -465,27 +465,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 }
             }
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
             if (attackTimer >= 450f)
                 SelectNewAttack(npc);
         }
 
         public static void DoAttack_ProbeBombing(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
-            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            Vector2 destination = target.Center + (attackTimer * TwoPi / 150f).ToRotationVector2() * Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathF.Min(Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
             npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
             if (npc.WithinRange(destination, 30f))
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
             else
-                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
+                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * TwoPi / 150f + PiOver2, 0.15f);
 
             if (attackTimer % 45f == 44f)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerProbeReleaseSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
+                    int probeCount = (int)Lerp(1f, 3f, 1f - lifeRatio);
                     for (int i = 0; i < probeCount; i++)
                     {
                         int probe = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
@@ -516,7 +516,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                     SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeImpactSound, target.Center);
 
                     npc.Center = flyDestination;
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), Pi * 0.66f);
                     attackTimer = 0f;
                     attackState = 1f;
                 }
@@ -542,7 +542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                         SelectNewAttack(npc);
                 }
             }
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoAttack_EnergyBlasts(NPC npc, Player target, ref float attackTimer)
@@ -553,7 +553,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             {
                 if (!npc.WithinRange(target.Center, 300f))
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 23.5f, 0.15f);
+                    float newSpeed = Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 23.5f, 0.15f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
                 }
 
@@ -605,7 +605,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 if (npc.WithinRange(flyDestination, 70f))
                 {
                     npc.Center = flyDestination;
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), Pi * 0.66f);
                     attackTimer = 0f;
                     attackState = 2f;
                 }
@@ -615,27 +615,27 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (attackState == 2f && attackTimer > 115f)
                 SelectNewAttack(npc);
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
         }
 
         public static void DoAttack_HyperspeedCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.03f, 0.043f, 1f - lifeRatio);
-            float movementSpeed = MathHelper.Lerp(14f, 26f, Utils.GetLerpValue(0f, 120f, attackTimer, true));
+            float acceleration = Lerp(0.03f, 0.043f, 1f - lifeRatio);
+            float movementSpeed = Lerp(14f, 26f, Utils.GetLerpValue(0f, 120f, attackTimer, true));
             float slowdownInterpolant = Utils.GetLerpValue(480f, 510f, attackTimer, true);
-            movementSpeed *= MathHelper.Lerp(1f, 0.35f, slowdownInterpolant);
-            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
+            movementSpeed *= Lerp(1f, 0.35f, slowdownInterpolant);
+            movementSpeed += Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
             movementSpeed *= BossRushEvent.BossRushActive ? 2.1f : 1f;
             acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
-            acceleration *= MathHelper.Lerp(1f, 0.5f, slowdownInterpolant);
+            acceleration *= Lerp(1f, 0.5f, slowdownInterpolant);
 
             if (attackTimer == 1f)
                 SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeUpSound with { Volume = 2f }, target.Center);
 
             if (!npc.WithinRange(target.Center, 240f))
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, acceleration * 3.2f);
+                float newSpeed = Lerp(npc.velocity.Length(), movementSpeed, acceleration * 3.2f);
                 npc.velocity = npc.velocity.RotateTowards(idealRotation, acceleration, true);
                 npc.velocity = Vector2.Lerp(npc.velocity * newSpeed, npc.SafeDirectionTo(target.Center) * newSpeed, 0.03f);
             }
@@ -663,7 +663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 smoke.scale *= Main.rand.NextFloat(1.3f, 1.8f);
             }
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             if (attackTimer > 750f)
                 SelectNewAttack(npc);
@@ -673,13 +673,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         {
             ref float segmentToFire = ref npc.Infernum().ExtraAI[0];
 
-            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
-            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            Vector2 destination = target.Center + (attackTimer * TwoPi / 150f).ToRotationVector2() * Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathF.Min(Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
             npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
             if (npc.WithinRange(destination, 30f))
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
             else
-                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
+                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * TwoPi / 150f + PiOver2, 0.15f);
 
             if (attackTimer % 8f == 0f && attackTimer > 60f)
             {

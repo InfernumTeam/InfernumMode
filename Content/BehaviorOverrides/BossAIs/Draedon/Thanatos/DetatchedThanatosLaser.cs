@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -121,7 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (Projectile.velocity.X < 0f)
                 {
                     Projectile.spriteDirection = -1;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
                 }
                 else
                 {
@@ -179,9 +179,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / 15f);
+                yScale = Lerp(0f, 2f, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                yScale = Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);

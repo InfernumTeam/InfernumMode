@@ -42,12 +42,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Time++;
         }
 
-        public float SunWidthFunction(float completionRatio) => Radius * Projectile.scale * MathF.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * Projectile.scale * Sin(Pi * completionRatio);
 
         public Color SunColorFunction(float completionRatio)
         {
             Color sunColor = !ProvidenceBehaviorOverride.IsEnraged ? Color.Yellow : Color.Cyan;
-            return Color.Lerp(sunColor, Color.White, MathF.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
+            return Color.Lerp(sunColor, Color.White, Sin(Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -61,12 +61,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 80f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 80f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + MathHelper.Pi * -0.2f;
+                float adjustedAngle = offsetAngle + Pi * -0.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 16; i++)
                 {

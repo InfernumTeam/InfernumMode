@@ -2,6 +2,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -22,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             get
             {
                 int deerclopsIndex = NPC.FindFirstNPC(NPCID.Deerclops);
-                float radius = RingRadius * MathHelper.Lerp(2.5f, 1f, Projectile.Opacity);
+                float radius = RingRadius * Lerp(2.5f, 1f, Projectile.Opacity);
                 if (deerclopsIndex >= 0)
                     radius *= 1f - Main.npc[deerclopsIndex].Infernum().ExtraAI[DeerclopsBehaviorOverride.ShadowRadiusDecreaseInterpolantIndex];
                 return radius;
@@ -57,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             // Fade in.
             Projectile.timeLeft = 30;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.017f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.017f, 0f, 1f);
 
             // Move towards the target.
             Projectile.Center = Projectile.Center.MoveTowards(Main.npc[deerclopsIndex].Center, 1.1f);
@@ -80,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Vector2 origin = tex.Size() * 0.5f;
 
             // Draw the circle.
-            Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
+            Vector2 circleScale = new Vector2(MathF.Max(Main.screenWidth, Main.screenHeight)) * 5f;
             Main.spriteBatch.EnterShaderRegion();
 
             var circleCutoutShader = InfernumEffectsRegistry.CircleCutoutShader;
@@ -92,13 +93,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             for (int i = 0; i < HandCount; i++)
             {
-                float rotation = MathHelper.TwoPi * i / HandCount + Time / 31f + MathHelper.Pi;
-                Vector2 ringOffset = (MathHelper.TwoPi * i / HandCount + Time / 31f).ToRotationVector2() * RingRadius;
+                float rotation = TwoPi * i / HandCount + Time / 31f + Pi;
+                Vector2 ringOffset = (TwoPi * i / HandCount + Time / 31f).ToRotationVector2() * RingRadius;
                 Color backglowColor = Color.Violet * Projectile.Opacity * 0.5f;
                 for (int j = 0; j < 4; j++)
                 {
                     Vector2 offsetDirection = rotation.ToRotationVector2();
-                    double spin = Main.GlobalTimeWrappedHourly * MathHelper.TwoPi / 24f + MathHelper.TwoPi * j / 4f;
+                    double spin = Main.GlobalTimeWrappedHourly * TwoPi / 24f + TwoPi * j / 4f;
                     Main.EntitySpriteDraw(tex, drawPosition + ringOffset + offsetDirection.RotatedBy(spin) * 6f, null, backglowColor, rotation, origin, Projectile.scale, 0, 0);
                 }
                 Main.spriteBatch.Draw(tex, drawPosition + ringOffset, null, Projectile.GetAlpha(Color.White), rotation, origin, Projectile.scale, 0, 0f);
@@ -111,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         {
             for (int i = 0; i < HandCount; i++)
             {
-                Vector2 ringOffset = (MathHelper.TwoPi * i / HandCount + Time / 31f).ToRotationVector2() * RingRadius;
+                Vector2 ringOffset = (TwoPi * i / HandCount + Time / 31f).ToRotationVector2() * RingRadius;
                 if (Utils.CenteredRectangle(Projectile.Center + ringOffset, projHitbox.Size()).Intersects(targetHitbox))
                     return true;
             }

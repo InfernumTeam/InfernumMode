@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             ref float hasCreatedSplash = ref npc.Infernum().ExtraAI[4];
 
             // Make segments slowly regrow their spikes.
-            segmentGrowInterpolant = MathHelper.Clamp(segmentGrowInterpolant + segmentRegrowRate, 0f, 1f);
+            segmentGrowInterpolant = Clamp(segmentGrowInterpolant + segmentRegrowRate, 0f, 1f);
             if (segmentRegrowRate <= 0f)
             {
                 segmentRegrowRate = Main.rand.NextFloat(0.0014f, 0.0023f);
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.gfxOffY = headSegment.gfxOffY;
             npc.Opacity = headSegment.Opacity;
             npc.Calamity().newAI[0] = npc.chaseable.ToInt();
-            npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.4f);
+            npc.Calamity().DR = MathF.Min(npc.Calamity().DR, 0.4f);
 
             // Always use max HP. This doesn't affect the worm as a whole, but it does prevent problems in the death animation where segments otherwise just disappear when killed.
             npc.lifeMax = headSegment.lifeMax;
@@ -81,17 +81,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (aheadSegment.rotation != npc.rotation)
                 {
                     float segmentMoveInterpolant = 0.075f;
-                    directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * segmentMoveInterpolant);
+                    directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * segmentMoveInterpolant);
                 }
 
-                npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
                 npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
 
                 // Shudder if the head says to do so.
                 if (headSegment.ai[2] == (int)AquaticScourgeHeadBehaviorOverride.AquaticScourgeAttackType.PerpendicularSpikeBarrage)
                 {
                     if (headSegment.Infernum().ExtraAI[3] >= 1f && npc.ai[3] >= 2f)
-                        npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(MathHelper.PiOver2) * MathF.Sin(MathHelper.Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
+                        npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(PiOver2) * Sin(Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
                 }
 
                 if (AquaticScourgeHeadBehaviorOverride.WormSegments.Any())
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 npc.Center = AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex + 1].position;
 
-                float idealRotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + MathHelper.PiOver2;
+                float idealRotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + PiOver2;
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.03f).AngleLerp(idealRotation, 0.05f);
 
                 // Release blood if in water. If the flesh is eaten, release acid instead as it disappears.
@@ -165,7 +165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Draw spikes.
             int index = 0;
-            float spikeScale = MathF.Pow(npc.Infernum().ExtraAI[0], 1.64f) * npc.scale;
+            float spikeScale = Pow(npc.Infernum().ExtraAI[0], 1.64f) * npc.scale;
             foreach (Vector2 spikePosition in GetSpikePositions(npc))
             {
                 SpriteEffects direction = index < 2 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

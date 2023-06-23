@@ -411,12 +411,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 // Fade in for the first 60 frames
                 // Hold black for the second 60 frames
                 if (Timer < 180f)
-                    DarknessRatio = MathHelper.Clamp(Timer / 60f, 0f, 1f);
+                    DarknessRatio = Clamp(Timer / 60f, 0f, 1f);
 
                 // Fade out for the last 60 frames
                 else if (Timer < 240f)
                 {
-                    DarknessRatio = 1f - MathHelper.Clamp((Timer - 180f) / 60f, 0f, 1f);
+                    DarknessRatio = 1f - Clamp((Timer - 180f) / 60f, 0f, 1f);
                     npc.Opacity = 1f;
                     freeHead.Opacity = 1f;
                     leftFist.Opacity = 1f;
@@ -535,7 +535,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 {
                     for (int i = 0; i < 10; i++)
                     {
-                        Vector2 shootVelocity = freeHead.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(MathHelper.Lerp(-0.72f, 0.72f, i / 9f)) * 10f;
+                        Vector2 shootVelocity = freeHead.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(Lerp(-0.72f, 0.72f, i / 9f)) * 10f;
                         Utilities.NewProjectileBetter(freeHead.Center, shootVelocity, ProjectileID.Fireball, EnrageFireballDamage, 0f);
                     }
                 }
@@ -706,7 +706,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 {
                     attackTimer = 0f;
                     jumpState = 1f;
-                    npc.velocity.X = MathHelper.Lerp(5f, 9f, lifeRatio) * (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.velocity.X = Lerp(5f, 9f, lifeRatio) * (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.velocity.Y = -12.5f;
                     npc.netUpdate = true;
                 }
@@ -893,11 +893,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer <= 300f)
             {
                 // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
-                float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi * 2, attackTimer / 240f);
+                float rotation = Lerp(0f, TwoPi * 2, attackTimer / 240f);
                 float distance = 145f;
                 rightFist.Center = GetRightFistAttachmentPosition(npc) + rotation.ToRotationVector2() * distance;
                 rightFist.rotation = rotation;
-                leftFist.Center = GetLeftFistAttachmentPosition(npc) + MathHelper.WrapAngle(rotation + MathHelper.Pi).ToRotationVector2() * distance;
+                leftFist.Center = GetLeftFistAttachmentPosition(npc) + WrapAngle(rotation + Pi).ToRotationVector2() * distance;
                 leftFist.rotation = rotation;
 
                 // Release fist bullets.
@@ -918,7 +918,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     {
                         Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
                         Main.projectile[bullet].Infernum().ExtraAI[2] = target.whoAmI;
-                        Main.projectile[bullet].rotation = MathHelper.WrapAngle(rotation + MathHelper.Pi);
+                        Main.projectile[bullet].rotation = WrapAngle(rotation + Pi);
                         Main.projectile[bullet].netUpdate = true;
                     }
                 }
@@ -966,7 +966,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             // Make fists slam into the wall.
             if (attackTimer < fistSlamTime)
             {
-                fistSlamInterpolant = MathF.Pow(attackTimer / fistSlamTime, 2f);
+                fistSlamInterpolant = Pow(attackTimer / fistSlamTime, 2f);
 
                 // Create impact effects.
                 if (attackTimer == fistSlamTime - 1f)
@@ -1037,9 +1037,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             // Do the slam animation.
             leftFist.Center = GetLeftFistAttachmentPosition(npc);
-            leftFist.position.X = MathHelper.Lerp(leftFist.position.X, npc.Infernum().Arena.Left + 8f, fistSlamInterpolant) - leftFist.width * 0.5f;
+            leftFist.position.X = Lerp(leftFist.position.X, npc.Infernum().Arena.Left + 8f, fistSlamInterpolant) - leftFist.width * 0.5f;
             rightFist.Center = GetRightFistAttachmentPosition(npc);
-            rightFist.position.X = MathHelper.Lerp(rightFist.position.X, npc.Infernum().Arena.Right - 8f, fistSlamInterpolant) - rightFist.width * 0.5f;
+            rightFist.position.X = Lerp(rightFist.position.X, npc.Infernum().Arena.Right - 8f, fistSlamInterpolant) - rightFist.width * 0.5f;
             leftFist.rotation = 0f;
             rightFist.rotation = 0f;
 
@@ -1089,8 +1089,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer < hoverTelegraphTime)
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f - freeHead.velocity * 4f;
-                float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.GetLerpValue(hoverTelegraphTime / 2, hoverTelegraphTime - 5f, attackTimer, true));
-                freeHead.velocity = (freeHead.velocity * 7f + freeHead.SafeDirectionTo(hoverDestination) * MathHelper.Min(freeHead.Distance(hoverDestination), movementSpeed)) / 8f;
+                float movementSpeed = Lerp(33f, 4.5f, Utils.GetLerpValue(hoverTelegraphTime / 2, hoverTelegraphTime - 5f, attackTimer, true));
+                freeHead.velocity = (freeHead.velocity * 7f + freeHead.SafeDirectionTo(hoverDestination) * MathF.Min(freeHead.Distance(hoverDestination), movementSpeed)) / 8f;
 
                 // Calculate the telegraph interpolant.
                 eyeLaserRayInterpolant = Utils.GetLerpValue(0f, hoverTelegraphTime - 20f, attackTimer, true);
@@ -1116,7 +1116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     {
                         Vector2 beamSpawnPosition = freeHead.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = Vector2.UnitX * i;
-                        Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), EyeLaserRayDamage, 0f, -1, i * MathHelper.PiOver2 / 120f * 0.46f, freeHead.whoAmI);
+                        Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), EyeLaserRayDamage, 0f, -1, i * PiOver2 / 120f * 0.46f, freeHead.whoAmI);
                     }
                 }
             }
@@ -1135,10 +1135,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < fireCircleCount; i++)
                     {
-                        Vector2 fireShootVelocity = (MathHelper.TwoPi * i / fireCircleCount + shootOffsetAngle).ToRotationVector2() * 6.7f;
+                        Vector2 fireShootVelocity = (TwoPi * i / fireCircleCount + shootOffsetAngle).ToRotationVector2() * 6.7f;
                         Utilities.NewProjectileBetter(freeHead.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), LaserDamage, 0f);
                     }
                 }
@@ -1159,7 +1159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             int laserTelegraphTime = 75;
             int laserLifetime = 160;
             int coreLaserFireRate = 40;
-            float laserArc = MathHelper.Pi * 0.44f;
+            float laserArc = Pi * 0.44f;
             if (inPhase3)
             {
                 coreLaserFireRate -= 10;
@@ -1177,13 +1177,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             {
                 coreLaserRayInterpolant = Utils.GetLerpValue(0f, laserTelegraphTime - 32f, attackTimer, true);
                 if (coreLaserRayInterpolant < 1f)
-                    coreLaserRayDirection = npc.AngleTo(target.Center).AngleLerp(-MathHelper.PiOver2, 0.84f);
+                    coreLaserRayDirection = npc.AngleTo(target.Center).AngleLerp(-PiOver2, 0.84f);
                 npc.Infernum().ExtraAI[25] = 0f;
             }
             // Store the angular velocity for the laser to read.
             else if (npc.Infernum().ExtraAI[25] == 0f || Math.Abs(npc.Infernum().ExtraAI[25]) > 0.2f)
             {
-                npc.Infernum().ExtraAI[25] = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
+                npc.Infernum().ExtraAI[25] = (WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
                 if (Main.netMode == NetmodeID.Server)
                     npc.netUpdate = true;
             }
@@ -1192,10 +1192,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer % platformReleaseRate == 0f)
             {
                 float platformVerticalInterpolant = attackTimer / platformReleaseRate % 3f / 3f;
-                Vector2 platformSpawnOffset = new(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
+                Vector2 platformSpawnOffset = new(0f, npc.Infernum().Arena.Height * Lerp(0.2f, 0.8f, platformVerticalInterpolant));
                 CreatePlatform(npc, npc.Infernum().Arena.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
 
-                platformSpawnOffset = new Vector2(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
+                platformSpawnOffset = new Vector2(0f, npc.Infernum().Arena.Height * Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
                 CreatePlatform(npc, npc.Infernum().Arena.TopRight() + platformSpawnOffset, Vector2.UnitX * -3f);
             }
 
@@ -1210,7 +1210,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             // Maintain screen shake effects.
             if (attackTimer >= laserTelegraphTime)
-                target.Calamity().GeneralScreenShakePower = MathHelper.Max(target.Calamity().GeneralScreenShakePower, 2f);
+                target.Calamity().GeneralScreenShakePower = MathF.Max(target.Calamity().GeneralScreenShakePower, 2f);
 
             // Create lasers from the core after firing.
             if (attackTimer > laserTelegraphTime && attackTimer % coreLaserFireRate == coreLaserFireRate - 1f)
@@ -1271,7 +1271,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             NPC otherFist = fistToChargeWith.whoAmI == leftFist.whoAmI ? rightFist : leftFist;
             fistToChargeWith.rotation = slingshotRotation;
             if (fistToChargeWith.whoAmI == leftFist.whoAmI)
-                fistToChargeWith.rotation += MathHelper.Pi;
+                fistToChargeWith.rotation += Pi;
 
             otherFist.rotation = 0f;
 
@@ -1311,10 +1311,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
                 float platformVerticalInterpolant = attackTimer / platformReleaseRate % 3f / 3f;
-                Vector2 platformSpawnOffset = new(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
+                Vector2 platformSpawnOffset = new(0f, npc.Infernum().Arena.Height * Lerp(0.2f, 0.8f, platformVerticalInterpolant));
                 CreatePlatform(npc, npc.Infernum().Arena.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
 
-                platformSpawnOffset = new Vector2(0f, npc.Infernum().Arena.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
+                platformSpawnOffset = new Vector2(0f, npc.Infernum().Arena.Height * Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
                 CreatePlatform(npc, npc.Infernum().Arena.TopRight() + platformSpawnOffset, Vector2.UnitX * -3f);
             }
 
@@ -1332,7 +1332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             // Make arms do a slam effect.
             else if (attackTimer <= dustTelegraphTime + fistSlamTime)
             {
-                armSlamInterpolant = MathF.Pow(Utils.GetLerpValue(0f, fistSlamTime, attackTimer - dustTelegraphTime, true), 2f);
+                armSlamInterpolant = Pow(Utils.GetLerpValue(0f, fistSlamTime, attackTimer - dustTelegraphTime, true), 2f);
 
                 if (attackTimer == dustTelegraphTime + fistSlamTime)
                 {
@@ -1350,7 +1350,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             else if (attackTimer <= dustTelegraphTime + fistSlamTime + bodyReelTime)
             {
                 armSlamInterpolant = 1f;
-                bodySlamInterpolant = MathF.Pow(Utils.GetLerpValue(0f, bodyReelTime, attackTimer - dustTelegraphTime - fistSlamTime, true), 2f);
+                bodySlamInterpolant = Pow(Utils.GetLerpValue(0f, bodyReelTime, attackTimer - dustTelegraphTime - fistSlamTime, true), 2f);
 
                 // Play a launch sound.
                 if (attackTimer == dustTelegraphTime + fistSlamTime + 4f)
@@ -1366,11 +1366,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 bodySlamInterpolant = 1f;
 
                 // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
-                float rotation = npc.AngleTo(target.Center) + MathF.Cos(attackTimer / 13f) * 0.31f;
+                float rotation = npc.AngleTo(target.Center) + Cos(attackTimer / 13f) * 0.31f;
                 otherFist.Center = npc.Center + rotation.ToRotationVector2() * 180f;
                 otherFist.rotation = rotation;
                 if (otherFist.whoAmI == leftFist.whoAmI)
-                    otherFist.rotation += MathHelper.Pi;
+                    otherFist.rotation += Pi;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fistShootRate == 0f && attackTimer < dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime - 75f)
                 {
@@ -1392,10 +1392,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                         for (int i = 0; i < 15; i++)
                         {
-                            Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 15f + shootOffsetAngle).ToRotationVector2() * 8f;
+                            Vector2 fireShootVelocity = (TwoPi * i / 15f + shootOffsetAngle).ToRotationVector2() * 8f;
                             Utilities.NewProjectileBetter(attachedHead.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), LaserDamage, 0f);
                         }
                     }
@@ -1447,7 +1447,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             fistToChargeWith.Center = Vector2.Lerp(fistStart, fistEnd, armSlamInterpolant);
             Vector2 bodyDestination = fistEnd - offsetDirection * 100f;
-            npc.Center = Vector2.Lerp(npc.Center, bodyDestination, MathF.Pow(bodySlamInterpolant, 8.4f));
+            npc.Center = Vector2.Lerp(npc.Center, bodyDestination, Pow(bodySlamInterpolant, 8.4f));
 
             if (bodySlamInterpolant > 0f)
                 npc.velocity = Vector2.Zero;
@@ -1470,7 +1470,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        int platformX = (int)MathHelper.Lerp(npc.Infernum().Arena.Left + 60f, npc.Infernum().Arena.Right - 60f, i / 2f);
+                        int platformX = (int)Lerp(npc.Infernum().Arena.Left + 60f, npc.Infernum().Arena.Right - 60f, i / 2f);
                         int platformY = npc.Infernum().Arena.Bottom - 16;
                         CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -platformRiseSpeed);
                     }
@@ -1494,7 +1494,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             // Create new platforms afterwards.
             if (attackTimer % platformReleaseRate == platformReleaseRate - 1f)
             {
-                int platformX = (int)MathHelper.Lerp(npc.Infernum().Arena.Left + 150f, npc.Infernum().Arena.Right - 150f, Main.rand.NextFloat());
+                int platformX = (int)Lerp(npc.Infernum().Arena.Left + 150f, npc.Infernum().Arena.Right - 150f, Main.rand.NextFloat());
                 int platformY = npc.Infernum().Arena.Bottom - 16;
                 CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -platformRiseSpeed);
             }
@@ -1577,7 +1577,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    int platformX = (int)MathHelper.Lerp(npc.Infernum().Arena.Left + 60f, npc.Infernum().Arena.Right - 60f, i / 6f);
+                    int platformX = (int)Lerp(npc.Infernum().Arena.Left + 60f, npc.Infernum().Arena.Right - 60f, i / 6f);
                     int platformY = npc.Infernum().Arena.Bottom - 16;
                     CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -2.5f);
                 }
@@ -1602,10 +1602,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 SoundEngine.PlaySound(HolyBlast.ImpactSound);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float shootOffsetAngle = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < 16; i++)
                     {
-                        Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 16f + shootOffsetAngle).ToRotationVector2() * 8f;
+                        Vector2 fireShootVelocity = (TwoPi * i / 16f + shootOffsetAngle).ToRotationVector2() * 8f;
                         Utilities.NewProjectileBetter(npc.Center, fireShootVelocity, ModContent.ProjectileType<GolemLaser>(), 200, 0f);
                     }
                     npc.netUpdate = true;
@@ -1763,11 +1763,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    float colorInterpolant = MathF.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
+                    float colorInterpolant = Cos(SmoothStep(0f, TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
                     Color backAfterimageColor = Color.Lerp(Color.Yellow, Color.Orange, colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
                     backAfterimageColor.A /= 8;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
+                    Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
                     Main.spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, npc.frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
@@ -1787,7 +1787,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
                 Vector2 drawPosition = drawPos + Vector2.UnitY * 20f;
                 Vector2 beamDirection = -npc.Infernum().ExtraAI[18].ToRotationVector2();
-                float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                float beamRotation = beamDirection.ToRotation() - PiOver2;
                 Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
                 Main.spriteBatch.ResetBlendState();

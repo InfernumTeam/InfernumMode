@@ -39,13 +39,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
             // Circle around the player slowly, releasing bolts when at the cardinal directions.
             int cinderShootRate = 270;
-            Vector2 hoverOffset = (MathHelper.TwoPi * (attackTimer / cinderShootRate) / 4f).ToRotationVector2() * 360f;
+            Vector2 hoverOffset = (TwoPi * (attackTimer / cinderShootRate) / 4f).ToRotationVector2() * 360f;
             Vector2 hoverDestination = target.Center + hoverOffset;
 
             // Look at the player.
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center, -Vector2.UnitY);
             Vector2 cinderShootPosition = npc.Center + aimDirection * 36f;
-            npc.rotation = aimDirection.ToRotation() - MathHelper.PiOver2;
+            npc.rotation = aimDirection.ToRotation() - PiOver2;
             bool dontFire = currentAttack is RavagerBodyBehaviorOverride.RavagerAttackType.DownwardFistSlam or RavagerBodyBehaviorOverride.RavagerAttackType.SlamAndCreateMovingFlamePillars;
 
             // Create a dust telegraph prior to releasing cinders.

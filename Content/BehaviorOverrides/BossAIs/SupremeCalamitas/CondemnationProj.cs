@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Fade in. While this happens the projectile emits large amounts of flames.
             int flameCount = (int)((1f - Projectile.Opacity) * 12f);
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
 
             // Create the fade-in dust.
             for (int i = 0; i < flameCount; i++)
@@ -75,9 +75,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Define the direction.
-            Projectile.direction = (MathF.Cos(Projectile.rotation) > 0f).ToDirectionInt();
+            Projectile.direction = (Cos(Projectile.rotation) > 0f).ToDirectionInt();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
             Projectile.spriteDirection = Projectile.direction;
 
             Time++;

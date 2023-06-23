@@ -27,21 +27,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void AI()
         {
-            Projectile.Opacity = MathF.Sin(Projectile.timeLeft / 30f * MathHelper.Pi) * 1.6f;
+            Projectile.Opacity = Sin(Projectile.timeLeft / 30f * Pi) * 1.6f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
         }
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = MathF.Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
-            return MathHelper.SmoothStep(3f, Projectile.width, squeezeInterpolant);
+            float squeezeInterpolant = Pow(Utils.GetLerpValue(0f, 0.27f, completionRatio, true), 0.4f) * Utils.GetLerpValue(1f, 0.86f, completionRatio, true);
+            return SmoothStep(3f, Projectile.width, squeezeInterpolant);
         }
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Green, Color.LimeGreen, MathF.Pow(completionRatio, 2f));
-            color *= 1f - 0.5f * MathF.Pow(completionRatio, 3f);
+            Color color = Color.Lerp(Color.Green, Color.LimeGreen, Pow(completionRatio, 2f));
+            color *= 1f - 0.5f * Pow(completionRatio, 3f);
             return color * Projectile.Opacity;
         }
 

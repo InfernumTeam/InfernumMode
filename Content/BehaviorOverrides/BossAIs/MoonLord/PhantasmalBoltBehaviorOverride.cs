@@ -1,6 +1,7 @@
 using InfernumMode.Core;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -26,9 +27,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
 
             projectile.alpha = Utils.Clamp(projectile.alpha - 40, 0, 255);
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            projectile.rotation = projectile.velocity.ToRotation() + PiOver2;
             projectile.velocity = Vector2.Clamp(projectile.velocity, new Vector2(-10f), new Vector2(10f));
-            projectile.timeLeft = (int)MathHelper.Min(250 * projectile.MaxUpdates, projectile.timeLeft);
+            projectile.timeLeft = (int)MathF.Min(250 * projectile.MaxUpdates, projectile.timeLeft);
 
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
             {

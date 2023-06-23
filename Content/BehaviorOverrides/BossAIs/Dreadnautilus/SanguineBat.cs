@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             if (!Projectile.WithinRange(Target.Center, 50f))
             {
                 float flySpeed = Utils.GetLerpValue(LocalLifetime, LocalLifetime - 70f, Time, true) * Utils.GetLerpValue(0f, 120f, Time, true) * 17f;
-                Vector2 destinationOffset = (MathHelper.TwoPi * Projectile.identity / 13f).ToRotationVector2() * 18f;
+                Vector2 destinationOffset = (TwoPi * Projectile.identity / 13f).ToRotationVector2() * 18f;
                 Projectile.velocity = (Projectile.velocity * 35f + Projectile.SafeDirectionTo(Target.Center + destinationOffset) * flySpeed) / 36f;
             }
             else if (Time >= LocalLifetime - 75f)
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             Projectile.rotation = Math.Abs(Projectile.velocity.X * 0.04f);
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
             if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 boltShootVelocity = Projectile.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 2.25f;
+                    Vector2 boltShootVelocity = Projectile.SafeDirectionTo(Target.Center).RotatedBy(TwoPi * i / 3f) * 2.25f;
                     Utilities.NewProjectileBetter(Projectile.Center, boltShootVelocity, ModContent.ProjectileType<BloodBolt>(), DreadnautilusBehaviorOverride.BoltBoltDamage, 0f);
                 }
             }
@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             for (int i = 0; i < 4; i++)
             {
-                Vector2 drawOffset = (Projectile.rotation + MathHelper.TwoPi * i / 4f).ToRotationVector2() * 2f;
+                Vector2 drawOffset = (Projectile.rotation + TwoPi * i / 4f).ToRotationVector2() * 2f;
                 Main.EntitySpriteDraw(texture, drawPosition + drawOffset, frame, afterimageColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, direction, 0);
             }
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type]);

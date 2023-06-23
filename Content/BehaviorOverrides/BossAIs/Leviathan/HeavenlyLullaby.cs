@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             // Determine opacity and scale.
             Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 10f, Time, true);
             Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
-            Projectile.scale = Projectile.Opacity * MathHelper.Lerp(0.8f, 1.2f, MathF.Sin(Time / 7f + Projectile.identity * 23f) * 0.5f + 0.5f);
+            Projectile.scale = Projectile.Opacity * Lerp(0.8f, 1.2f, Sin(Time / 7f + Projectile.identity * 23f) * 0.5f + 0.5f);
             Time++;
 
             Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.5f);

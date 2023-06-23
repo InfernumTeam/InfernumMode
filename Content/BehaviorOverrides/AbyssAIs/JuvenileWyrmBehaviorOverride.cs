@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Decide rotation.
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             attackTimer++;
 
@@ -140,17 +140,17 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 soundSlotID = SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center).ToFloat();
 
                 // Determine the teleport offset.
-                teleportOffset = MathHelper.Lerp(1436f, 450f, MathF.Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
+                teleportOffset = Lerp(1436f, 450f, Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
 
                 // Teleport near target.
                 float angleOffsetDirection = Main.rand.NextBool().ToDirectionInt();
                 do
-                    teleportOffsetDirection += Main.rand.NextFloat(MathHelper.PiOver2);
-                while ((teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(directionToTarget) < 1.18f ||
-                        (teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(target.velocity) < 0.9f);
+                    teleportOffsetDirection += Main.rand.NextFloat(PiOver2);
+                while ((teleportOffsetDirection + angleOffsetDirection * PiOver2).ToRotationVector2().AngleBetween(directionToTarget) < 1.18f ||
+                        (teleportOffsetDirection + angleOffsetDirection * PiOver2).ToRotationVector2().AngleBetween(target.velocity) < 0.9f);
 
                 npc.Center = target.Center + teleportOffsetDirection.ToRotationVector2() * teleportOffset;
-                npc.velocity = (teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2() * swimSpeed;
+                npc.velocity = (teleportOffsetDirection + angleOffsetDirection * PiOver2).ToRotationVector2() * swimSpeed;
                 npc.Center -= npc.velocity.SafeNormalize(Vector2.UnitY) * 600f;
 
                 nextTeleportDelay = delayBetweenTeleports;
@@ -189,7 +189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
             npc.rotation = npc.velocity.ToRotation();
 
-            if (attackTimer >= stalkTime && MathHelper.Distance(target.Center.X, npc.Center.X) > 800f)
+            if (attackTimer >= stalkTime && Distance(target.Center.X, npc.Center.X) > 800f)
                 SelectNextAttack(npc);
         }
 
@@ -215,7 +215,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (attackTimer < attackDelay)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.24f);
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.04f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.04f, 0f, 1f);
                 return;
             }
 
@@ -259,7 +259,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 {
                     for (int i = 0; i < 24; i++)
                     {
-                        Vector2 electricBoltVelocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * Main.rand.NextFloat(18f, 23f) + Main.rand.NextVector2Circular(1.6f, 1.6f);
+                        Vector2 electricBoltVelocity = (TwoPi * i / 24f).ToRotationVector2() * Main.rand.NextFloat(18f, 23f) + Main.rand.NextVector2Circular(1.6f, 1.6f);
                         Utilities.NewProjectileBetter(npc.Center, electricBoltVelocity, ProjectileID.MartianTurretBolt, 275, 0f);
                     }
 
@@ -293,7 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (attackTimer < attackDelay)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 13f, 0.24f);
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.04f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.04f, 0f, 1f);
                 return;
             }
 

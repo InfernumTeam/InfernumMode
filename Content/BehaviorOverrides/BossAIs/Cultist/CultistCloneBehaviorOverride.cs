@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             if (fadingOut)
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.1f, 0f, 1f);
                 if (npc.Opacity <= 0f)
                     npc.active = false;
             }

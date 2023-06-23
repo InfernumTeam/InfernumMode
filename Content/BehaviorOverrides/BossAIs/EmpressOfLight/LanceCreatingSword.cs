@@ -59,8 +59,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
-                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.94f, 0.94f, SwordIndex / (SwordCount - 1f))) * new Vector2(500f, 100f);
-                hoverDestination.Y += MathF.Sin(MathHelper.TwoPi * Timer / 60f + MathHelper.PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
+                Vector2 hoverDestination = Owner.Top - Vector2.UnitY.RotatedBy(Lerp(-0.94f, 0.94f, SwordIndex / (SwordCount - 1f))) * new Vector2(500f, 100f);
+                hoverDestination.Y += Sin(TwoPi * Timer / 60f + PiOver2 * SwordIndex / SwordCount) * 24f - 40f;
                 return hoverDestination;
             }
         }
@@ -141,7 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Aim at the target in anticipation of a lunge.
             if (Timer < lungeDelay)
             {
-                float idealRotation = (Target.Center.Y > Projectile.Center.Y).ToDirectionInt() * MathHelper.PiOver2;
+                float idealRotation = (Target.Center.Y > Projectile.Center.Y).ToDirectionInt() * PiOver2;
                 Projectile.velocity = Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - Projectile.Center, 30f);
                 Projectile.rotation = Projectile.rotation.AngleLerp(idealRotation, 0.3f).AngleTowards(idealRotation, 0.3f);
 
@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 dustSpawnPosition = Projectile.Center + Projectile.rotation.ToRotationVector2() * Main.rand.NextFloat(TelegraphLength * 0.9f);
-                    dustSpawnPosition += (Projectile.rotation + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2).ToRotationVector2() * 30f;
+                    dustSpawnPosition += (Projectile.rotation + Main.rand.NextBool().ToDirectionInt() * PiOver2).ToRotationVector2() * 30f;
 
                     Dust rainbowSparkle = Dust.NewDustPerfect(dustSpawnPosition, 267);
                     rainbowSparkle.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
@@ -179,10 +179,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float offsetAngle = MathHelper.TwoPi * Timer / (EmpressOfLightBehaviorOverride.ShouldBeEnraged ? 40f : 32f);
+                    float offsetAngle = TwoPi * Timer / (EmpressOfLightBehaviorOverride.ShouldBeEnraged ? 40f : 32f);
                     offsetAngle += 1.14f;
                     if (SwordIndex / (SwordCount - 1f) < 0.5f)
-                        offsetAngle = -offsetAngle + MathHelper.Pi;
+                        offsetAngle = -offsetAngle + Pi;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(lance =>
                     {
@@ -207,7 +207,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public static float WidthFunction(float completionRatio)
         {
             float fade = (1f - completionRatio) * Utils.GetLerpValue(-0.03f, 0.1f, completionRatio, true);
-            return MathHelper.SmoothStep(0f, 1f, fade) * 20f;
+            return SmoothStep(0f, 1f, fade) * 20f;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -222,22 +222,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                float telegraphHue = MathF.Cos(MathHelper.TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
-                float telegraphWidth = MathHelper.Lerp(0.2f, 1.2f, TelegraphInterpolant);
-                float telegraphOpacity = MathF.Pow(TelegraphInterpolant, 1.7f) * 0.7f;
+                float telegraphHue = Cos(TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
+                float telegraphWidth = Lerp(0.2f, 1.2f, TelegraphInterpolant);
+                float telegraphOpacity = Pow(TelegraphInterpolant, 1.7f) * 0.7f;
                 Vector2 telegraphScale = new(telegraphWidth, TelegraphLength / telegraphTexture.Height);
                 Color telegraphColor = Main.hslToRgb(telegraphHue, 1f, 0.8f) * telegraphOpacity;
                 Vector2 telegraphOrigin = telegraphTexture.Size() * new Vector2(0.5f, 0f);
 
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, Projectile.rotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, Color.White * telegraphOpacity, Projectile.rotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale * new Vector2(0.3f, 1f), 0, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, Projectile.rotation - PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, Color.White * telegraphOpacity, Projectile.rotation - PiOver2, telegraphOrigin, telegraphScale * new Vector2(0.3f, 1f), 0, 0f);
                 Main.spriteBatch.ResetBlendState();
             }
 
             float opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, MyColor * opacity * 0.3f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, new Color(opacity, opacity, opacity, 0f), Projectile.rotation, origin, Projectile.scale, 0, 0f);

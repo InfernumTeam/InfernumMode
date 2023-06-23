@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
             // Home in on the target at first.
             if (Time < 35f)
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             else if (Projectile.velocity.Length() < 36f)
                 Projectile.velocity *= 1.026f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Time++;
         }
 
@@ -71,12 +71,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
         public float TrailWidthFunction(float completionRatio)
         {
-            return MathHelper.SmoothStep(25f, 2f, completionRatio) * Projectile.Opacity;
+            return SmoothStep(25f, 2f, completionRatio) * Projectile.Opacity;
         }
 
         public Color TrailColorFunction(float completionRatio)
         {
-            return Color.Cyan * MathF.Sqrt(completionRatio) * Projectile.Opacity;
+            return Color.Cyan * Sqrt(completionRatio) * Projectile.Opacity;
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)

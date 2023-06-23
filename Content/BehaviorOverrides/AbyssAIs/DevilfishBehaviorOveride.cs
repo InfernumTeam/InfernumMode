@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     npc.rotation = npc.AngleTo(target.Center);
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     if (npc.spriteDirection == -1)
-                        npc.rotation += MathHelper.Pi;
+                        npc.rotation += Pi;
 
                     if (npc.WithinRange(hoverDestination, 108f) && attackTimer >= 45f && Collision.CanHit(npc, target))
                     {
@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                         npc.rotation = npc.AngleTo(target.Center);
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         if (npc.spriteDirection == -1)
-                            npc.rotation += MathHelper.Pi;
+                            npc.rotation += Pi;
                         break;
                     }
 
@@ -167,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 case 2:
                     npc.rotation = npc.velocity.ToRotation();
                     if (npc.spriteDirection == -1)
-                        npc.rotation += MathHelper.Pi;
+                        npc.rotation += Pi;
 
                     // Explode if the mask is off.
                     if (kamikazeMode)

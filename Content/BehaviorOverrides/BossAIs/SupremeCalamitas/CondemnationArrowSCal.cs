@@ -35,9 +35,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
             Projectile.velocity *= 1.025f;
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override bool PreDraw(ref Color lightColor)
         {
             float telegraphInterpolant = Utils.GetLerpValue(0f, 20f, Time, true);
-            float telegraphWidth = MathHelper.Lerp(0.3f, 3f, CalamityUtils.Convert01To010(telegraphInterpolant));
+            float telegraphWidth = Lerp(0.3f, 3f, CalamityUtils.Convert01To010(telegraphInterpolant));
 
             // Draw a telegraph line outward.
             if (telegraphInterpolant < 1f)

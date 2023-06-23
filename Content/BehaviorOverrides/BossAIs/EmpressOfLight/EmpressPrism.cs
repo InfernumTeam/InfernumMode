@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        float laserOffsetAngle = MathHelper.PiOver2 + MathHelper.Lerp(-MaxLaserbeamCoverage, MaxLaserbeamCoverage, i / 4f);
+                        float laserOffsetAngle = PiOver2 + Lerp(-MaxLaserbeamCoverage, MaxLaserbeamCoverage, i / 4f);
                         Utilities.NewProjectileBetter(Projectile.Center, laserOffsetAngle.ToRotationVector2(), ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightBehaviorOverride.SmallLaserbeamDamage, 0f, -1, Projectile.identity, i / 4f);
                     }
                 }
@@ -91,14 +91,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             float telegraphInterpolant = Utils.GetLerpValue(-40f, -8f, Time, true);
             if (telegraphInterpolant > 0f && Time < 0f)
             {
-                float maxOffsetAngle = MathHelper.Lerp(0.0012f, MaxLaserbeamCoverage, telegraphInterpolant);
-                float telegraphWidth = MathHelper.Lerp(2f, 9f, telegraphInterpolant);
+                float maxOffsetAngle = Lerp(0.0012f, MaxLaserbeamCoverage, telegraphInterpolant);
+                float telegraphWidth = Lerp(2f, 9f, telegraphInterpolant);
                 for (int i = 0; i < 5; i++)
                 {
-                    Color telegraphColor = Main.hslToRgb(i / 4f, 1f, 0.5f) * MathF.Sqrt(telegraphInterpolant) * 0.5f;
+                    Color telegraphColor = Main.hslToRgb(i / 4f, 1f, 0.5f) * Sqrt(telegraphInterpolant) * 0.5f;
                     telegraphColor.A = 0;
 
-                    Vector2 aimDirection = (MathHelper.PiOver2 + MathHelper.Lerp(-maxOffsetAngle, maxOffsetAngle, i / 5f)).ToRotationVector2();
+                    Vector2 aimDirection = (PiOver2 + Lerp(-maxOffsetAngle, maxOffsetAngle, i / 5f)).ToRotationVector2();
                     Vector2 start = Projectile.Center;
                     Vector2 end = start + aimDirection * 2500f;
                     Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
@@ -123,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Draw the prism itself. It will converge as a bunch of transparent "copies" before becoming the complete prism.
             float fadeInInterpolant = Utils.GetLerpValue(Lifetime, Lifetime - 20f, Projectile.timeLeft, true);
-            float fadeOffset = MathHelper.Lerp(45f, 6f, fadeInInterpolant);
+            float fadeOffset = Lerp(45f, 6f, fadeInInterpolant);
             for (int i = 0; i < 8; i++)
             {
                 float hue = (i / 8f + Main.GlobalTimeWrappedHourly * 0.5f) % 1f;
@@ -131,10 +131,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (EmpressOfLightBehaviorOverride.ShouldBeEnraged)
                     color = EmpressOfLightBehaviorOverride.GetDaytimeColor(hue);
 
-                color *= Utils.GetLerpValue(0f, 30f, Lifetime, true) * MathF.Sqrt(fadeInInterpolant);
+                color *= Utils.GetLerpValue(0f, 30f, Lifetime, true) * Sqrt(fadeInInterpolant);
                 color.A = 0;
 
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + fadeInInterpolant * MathHelper.TwoPi + Main.GlobalTimeWrappedHourly * 1.5f).ToRotationVector2() * fadeOffset;
+                Vector2 drawOffset = (TwoPi * i / 8f + fadeInInterpolant * TwoPi + Main.GlobalTimeWrappedHourly * 1.5f).ToRotationVector2() * fadeOffset;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, color, 0f, origin, Projectile.scale, 0, 0f);
             }
 

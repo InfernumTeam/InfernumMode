@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Time++;
         }
 

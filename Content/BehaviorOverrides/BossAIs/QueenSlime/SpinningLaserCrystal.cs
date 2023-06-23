@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true);
-            SpinOffsetAngle += 0.09f * MathF.Pow(Utils.GetLerpValue(54f, 0f, Time, true), 2f);
+            SpinOffsetAngle += 0.09f * Pow(Utils.GetLerpValue(54f, 0f, Time, true), 2f);
             Projectile.Center = SpinningCenter + SpinOffsetAngle.ToRotationVector2() * 300f;
 
             // Look at the player.
@@ -110,12 +110,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             BloomLineDrawInfo lineInfo = new()
             {
                 LineRotation = -AimDirection,
-                WidthFactor = 0.002f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
+                WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
                 Scale = Vector2.One * telegraphInterpolant * 1900f,
                 MainColor = Color.Lerp(Color.Cyan, Color.SkyBlue, telegraphInterpolant * 0.6f + 0.4f),
                 DarkerColor = Color.Blue,
-                Opacity = MathF.Sqrt(telegraphInterpolant),
+                Opacity = Sqrt(telegraphInterpolant),
                 BloomOpacity = 0.35f,
                 LightStrength = 5f
             };

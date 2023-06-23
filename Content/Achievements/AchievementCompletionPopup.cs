@@ -25,9 +25,9 @@ namespace InfernumMode.Content.Achievements
             get
             {
                 if (IngameDisplayTimeLeft < 30)
-                    return MathHelper.Lerp(0f, 1f, IngameDisplayTimeLeft / 30f);
+                    return Lerp(0f, 1f, IngameDisplayTimeLeft / 30f);
                 if (IngameDisplayTimeLeft > 285)
-                    return MathHelper.Lerp(1f, 0f, (IngameDisplayTimeLeft - 285f) / 15f);
+                    return Lerp(1f, 0f, (IngameDisplayTimeLeft - 285f) / 15f);
 
                 return 1f;
             }

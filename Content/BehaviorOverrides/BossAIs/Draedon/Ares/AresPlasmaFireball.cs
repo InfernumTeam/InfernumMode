@@ -59,14 +59,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     Projectile.tileCollide = true;
             }
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.35f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.35f, 0f, 1f);
 
             Lighting.AddLight(Projectile.Center, 0f, 0.6f * Projectile.Opacity, 0f);
 
             // Handle frames and rotation.
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Create a burst of dust on the first frame.
             if (Projectile.localAI[0] == 0f)
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     int randomDustType = Main.rand.NextBool() ? 107 : 110;
 
                     Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVelocity.X, dustVelocity.Y, 0, default, 2f);
-                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     plasma.noGravity = true;
                     plasma.velocity *= 0.5f;
                 }
@@ -145,7 +145,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 spinningPoint = Main.rand.NextVector2Circular(0.5f, 0.5f);
                 for (int i = 0; i < totalProjectiles; i++)
                 {
-                    Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);
+                    Vector2 shootVelocity = spinningPoint.RotatedBy(TwoPi / totalProjectiles * i);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, shootVelocity, boltID, (int)(Projectile.damage * 0.85), 0f, Main.myPlayer);
                 }
             }

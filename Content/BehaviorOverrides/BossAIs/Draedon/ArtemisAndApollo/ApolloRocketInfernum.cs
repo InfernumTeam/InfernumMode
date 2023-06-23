@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             // Rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             // Spawn effects.
             if (Projectile.localAI[0] == 0f)
@@ -79,12 +79,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     int randomDustType = Main.rand.NextBool(2) ? 107 : 110;
 
                     Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVel.X, dustVel.Y, 200, default, 1.7f);
-                    plasma.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
+                    plasma.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                     plasma.noGravity = true;
                     plasma.velocity *= 3f;
 
                     plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVel.X, dustVel.Y, 100, default, 0.8f);
-                    plasma.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
+                    plasma.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                     plasma.velocity *= 2f;
                     plasma.fadeIn = 1f;
                     plasma.color = Color.Green * 0.5f;
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     int randomDustType = Main.rand.NextBool(2) ? 107 : 110;
 
                     Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVel.X, dustVel.Y, 0, default, 2f);
-                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     plasma.noGravity = true;
                     plasma.velocity *= 0.5f;
                 }
@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             return false;
         }
 
-        public static float FlameTrailWidthFunction(float completionRatio) => MathHelper.SmoothStep(27f, 8f, completionRatio);
+        public static float FlameTrailWidthFunction(float completionRatio) => SmoothStep(27f, 8f, completionRatio);
 
         public static Color FlameTrailColorFunction(float completionRatio)
         {

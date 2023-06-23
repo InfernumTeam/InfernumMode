@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             for (int i = 0; i < 10; i++)
             {
                 Color drawColor = Color.Magenta * Projectile.Opacity * 0.18f;
-                Vector2 drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 4.4f).ToRotationVector2() * 5f;
+                Vector2 drawPosition = Projectile.Center + (TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 4.4f).ToRotationVector2() * 5f;
                 Main.spriteBatch.Draw(doomTexture, drawPosition, frame, drawColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
@@ -82,9 +82,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 float lineWidth = CalamityUtils.Convert01To010(widthInterpolant) * 2f;
                 for (int i = 0; i < 9; i++)
                 {
-                    Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
+                    Vector2 beamDirection = (TwoPi * i / 9f).ToRotationVector2();
                     if (Projectile.localAI[1] == 1f)
-                        beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
+                        beamDirection = beamDirection.RotatedBy(TwoPi / 18f);
 
                     Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, lineWidth);
                 }
@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
             for (int i = 0; i < 35; i++)
             {
-                Vector2 doomVelocity = (MathHelper.TwoPi * i / 35f).ToRotationVector2() * 3.15f;
+                Vector2 doomVelocity = (TwoPi * i / 35f).ToRotationVector2() * 3.15f;
                 if (BossRushEvent.BossRushActive)
                     doomVelocity *= 1.5f;
 
@@ -117,9 +117,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             }
             for (int i = 0; i < 9; i++)
             {
-                Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
+                Vector2 beamDirection = (TwoPi * i / 9f).ToRotationVector2();
                 if (Projectile.localAI[1] == 1f)
-                    beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
+                    beamDirection = beamDirection.RotatedBy(TwoPi / 18f);
                 Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<DoomBeam>(), CultistBehaviorOverride.DoomBeamDamage, 0f);
             }
         }

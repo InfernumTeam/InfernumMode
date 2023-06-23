@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void AI()
         {
             // Rapidly fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.15f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.15f, 0f, 1f);
         }
 
         public override void Kill(int timeLeft)

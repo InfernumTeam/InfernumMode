@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             acid.velocity = Main.rand.NextVector2Circular(5f, 5f);
             acid.noGravity = true;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Time++;
         }
 
@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 18f;
+                Vector2 shootVelocity = (TwoPi * i / 6f).ToRotationVector2() * 18f;
                 Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<HomingAcid>(), OldDukeBehaviorOverride.HomingAcidDamage, 0f);
             }
         }

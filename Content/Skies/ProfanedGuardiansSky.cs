@@ -86,9 +86,9 @@ namespace InfernumMode.Content.Skies
                 extraOpacity = Main.npc[CalamityGlobalNPC.doughnutBoss].Infernum().ExtraAI[GuardianComboAttackManager.GuardianSkyExtraIntensityIndex];
 
             if (isActive && intensity < 1f)
-                intensity = MathHelper.Clamp(intensity + 0.005f, 0f, MaxIntensity);
+                intensity = Clamp(intensity + 0.005f, 0f, MaxIntensity);
             else if (!isActive && intensity > 0f)
-                intensity = MathHelper.Clamp(intensity - 0.005f, 0f, MaxIntensity);
+                intensity = Clamp(intensity - 0.005f, 0f, MaxIntensity);
 
             intensity += extraOpacity;
 
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.Skies
             // Remove all things that should die.
             Symbols.RemoveAll(s => s.Timer >= s.Lifetime);
 
-            float maxSymbols = MathHelper.Lerp(75, 150, 1f - (float)commander.life / commander.lifeMax);
+            float maxSymbols = Lerp(75, 150, 1f - (float)commander.life / commander.lifeMax);
 
             // Randomly spawn symbols.
             if (Main.rand.NextBool(10) && Symbols.Count < maxSymbols)

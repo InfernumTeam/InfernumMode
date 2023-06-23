@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (totalReleasedSouls < 0f)
                 totalReleasedSouls = 0f;
 
-            npc.scale = MathHelper.Lerp(1.225f, 0.68f, MathHelper.Clamp(totalReleasedSouls / 60f, 0f, 1f));
+            npc.scale = Lerp(1.225f, 0.68f, Clamp(totalReleasedSouls / 60f, 0f, 1f));
 
             // Play phase transition sounds.
             if (currentPhase == 0f && phase2)
@@ -238,7 +238,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             int totalClones = NPC.CountNPCS(ModContent.NPCType<PolterPhantom>());
             if (totalClones > 0)
-                npc.scale = MathHelper.Lerp(0.7f, 1.225f, 1f - totalClones / 2f);
+                npc.scale = Lerp(0.7f, 1.225f, 1f - totalClones / 2f);
 
             // Reset things every frame.
             telegraphOpacity = 0f;
@@ -299,8 +299,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         {
             npc.velocity.Y += 0.4f;
             npc.velocity *= 1.035f;
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.01f, 0f, 1f);
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
+            npc.Opacity = Clamp(npc.Opacity - 0.01f, 0f, 1f);
             npc.dontTakeDamage = true;
 
             if (npc.timeLeft > 200)
@@ -342,7 +342,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             float turnSpeed = Utils.GetLerpValue(slowdownTime + 30f, 45f, dyingTimer, true);
             if (turnSpeed > 0f)
-                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) + MathHelper.PiOver2, turnSpeed);
+                npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) + PiOver2, turnSpeed);
 
             // Begin releasing souls.
             if (dyingTimer > slowdownTime && dyingTimer % 2f == 0f && totalReleasedSouls < 60f)
@@ -532,8 +532,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -225f);
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
             npc.SimpleFlyMovement(idealVelocity, acceleration);
-            npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.03f);
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.velocity.Y = Lerp(npc.velocity.Y, idealVelocity.Y, 0.03f);
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (doneAttacking == 1f)
             {
@@ -561,7 +561,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (legToManuallyControlIndex != 0f)
             {
                 float swingAnimationCompletion = PiecewiseAnimation(swingCompletion, Anticipation, Slash, Recovery);
-                float legOffsetAngle = (MathHelper.Lerp(-swipeArc, swipeArc, swingAnimationCompletion) - 0.24f) * legToControl.ModNPC<PolterghastLeg>().Direction;
+                float legOffsetAngle = (Lerp(-swipeArc, swipeArc, swingAnimationCompletion) - 0.24f) * legToControl.ModNPC<PolterghastLeg>().Direction;
                 Vector2 legDirection = npc.SafeDirectionTo(target.Center).RotatedBy(legOffsetAngle);
                 Vector2 legDestination = npc.Center + legDirection * (Convert01To010(swingCompletion) * 100f + 350f);
 
@@ -605,7 +605,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             float offsetPerRing = 296f;
             float maxRingOffset = 4000f;
             float chargeSpeed = 36f;
-            float spinAngularVelocity = MathHelper.ToRadians(0.75f);
+            float spinAngularVelocity = ToRadians(0.75f);
 
             if (lifeRatio < Phase2LifeRatio)
             {
@@ -639,7 +639,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                             ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitCenter = target.Center - Vector2.UnitY * 200f;
                             ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitRadius = radius;
                             ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitAngularVelocity = spinAngularVelocity * clockwise.ToDirectionInt();
-                            ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitOffsetAngle = MathHelper.TwoPi * i / ectoplasmPerRing;
+                            ectoplasm.ModProjectile<CirclingEctoplasm>().OrbitOffsetAngle = TwoPi * i / ectoplasmPerRing;
                         });
 
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<CirclingEctoplasm>(), CirclingPhantoplasmShotDamage, 0f);
@@ -655,7 +655,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 float hoverSpeed = chargeSpeed * flySpeedFactor * 1.5f;
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 475f, -175f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 0.55f);
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                 return;
             }
 
@@ -665,7 +665,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (wrappedAttackTimer <= slowdownTime)
             {
                 npc.velocity *= 0.925f;
-                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
+                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + PiOver2, 0.15f);
                 if (wrappedAttackTimer == slowdownTime)
                 {
                     ShortRoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastShortDashSound with { Volume = 2f }, npc.Center);
@@ -674,7 +674,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 }
             }
             else
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Increment the charge counter at the end of charges.
             if (wrappedAttackTimer == slowdownTime + chargeTime - 1f)
@@ -693,9 +693,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int ringReleaseRate = 67;
             int ringCreationDelay = 90;
             int attackTransitionDelay = 120;
-            float overallRingSpeedFactor = MathHelper.Lerp(1f, 1.84f, 1f - lifeRatio);
-            float ringOpeningAngleSpread = MathHelper.ToRadians(56f);
-            int actualSoulsPerRing = (int)(soulsPerRing * (MathHelper.TwoPi - ringOpeningAngleSpread) / MathHelper.TwoPi);
+            float overallRingSpeedFactor = Lerp(1f, 1.84f, 1f - lifeRatio);
+            float ringOpeningAngleSpread = ToRadians(56f);
+            int actualSoulsPerRing = (int)(soulsPerRing * (TwoPi - ringOpeningAngleSpread) / TwoPi);
             ref float ringShootCounter = ref npc.Infernum().ExtraAI[0];
 
             // Disable contact damage.
@@ -761,13 +761,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     }
 
                     bool counterClockwise = Main.rand.NextBool();
-                    float ringOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float ringOffsetAngle = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < soulsPerRing; i++)
                     {
                         // Determine the angle of the current soul. This is done by creating an even spread of N points on a circle across 360 degrees.
                         // Angles that are less than a certain threshold are discarded to create an opening in the ring. Following this a random rotation is
                         // applied to allow the opening to be on any point on the resulting ring.
-                        float soulAngle = MathHelper.TwoPi * i / soulsPerRing;
+                        float soulAngle = TwoPi * i / soulsPerRing;
                         if (soulAngle < ringOpeningAngleSpread)
                             continue;
 
@@ -784,7 +784,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Look at the target.
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             // Disable contact damage and have a much higher DR than usual.
             npc.damage = 0;
@@ -833,7 +833,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer <= descendTime)
             {
                 npc.damage = 0;
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * Math.Sign(verticalOffset) * 39f, 0.08f) * new Vector2(0.967f, 1f);
                 if (npc.velocity.Y < 24f)
                     npc.velocity.Y += Math.Sign(verticalOffset) * 2.5f;
@@ -890,7 +890,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 // Release perpendicular ectoplasm.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % ectoplasmReleaseRate == 0f)
                 {
-                    Vector2 perpendicularDirection = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY);
+                    Vector2 perpendicularDirection = npc.velocity.RotatedBy(PiOver2).SafeNormalize(Vector2.UnitY);
                     for (int i = -1; i <= 1; i += 2)
                     {
                         Vector2 ectoplasmVelocity = perpendicularDirection * i * Main.rand.NextFloat(7.5f, 23f) + Main.rand.NextVector2Circular(1.8f, 1.8f);
@@ -903,7 +903,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 // Rotate and fade back in immediately.
                 npc.Opacity = 1f;
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 return;
             }
 
@@ -921,12 +921,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int shootRate = 56;
             int shootTime = 300;
             int attackTransitionDelay = 90;
-            int soulCount = (int)MathHelper.Lerp(5f, 9f, 1f - lifeRatio);
+            int soulCount = (int)Lerp(5f, 9f, 1f - lifeRatio);
 
             if (soulCount % 2 != 0)
                 soulCount++;
 
-            float shootSpeed = MathHelper.Lerp(13f, 16f, 1f - lifeRatio);
+            float shootSpeed = Lerp(13f, 16f, 1f - lifeRatio);
 
             if (lifeRatio < Phase2LifeRatio)
                 shootRate -= 5;
@@ -953,7 +953,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                         {
                             for (int i = 0; i < soulCount / 2; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(0.01f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
+                                float shootOffsetAngle = Lerp(0.01f, 1.47f, i / (float)(soulCount / 2f - 1f)) * direction;
                                 float soulAngularVelocity = -shootOffsetAngle * 0.00825f;
                                 Vector2 soulShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * shootSpeed;
                                 Utilities.NewProjectileBetter(npc.Center, soulShootVelocity, ModContent.ProjectileType<ArcingSoul>(), SoulDamage, 0f, -1, soulAngularVelocity);
@@ -964,7 +964,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Look at the target.
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             if (attackTimer >= shootDelay + shootTime + attackTransitionDelay)
                 SelectNextAttack(npc);
@@ -979,7 +979,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             // Slow down and look at the target.
             npc.velocity *= 0.97f;
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             // Hover above the player prior to attacking.
             if (attackTimer < slowdownTime - 10f)
@@ -1002,12 +1002,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             bool attacking = attackTimer >= slowdownTime && attackTimer < attackDuration;
             if (Main.netMode != NetmodeID.MultiplayerClient && attacking && attackTimer % shootRate == shootRate - 1f)
             {
-                float offsetAngle = MathF.Sin(MathHelper.TwoPi * (attackTimer - 60f) / 128f) * MathHelper.Pi / 3f + Main.rand.NextFloatDirection() * 0.16f;
+                float offsetAngle = Sin(TwoPi * (attackTimer - 60f) / 128f) * Pi / 3f + Main.rand.NextFloatDirection() * 0.16f;
                 Vector2 baseSpawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 44f;
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 leftVelocity = (MathHelper.TwoPi * i / 3f - offsetAngle).ToRotationVector2() * soulSpeed;
-                    Vector2 rightVelocity = (MathHelper.TwoPi * i / 3f + offsetAngle).ToRotationVector2() * soulSpeed;
+                    Vector2 leftVelocity = (TwoPi * i / 3f - offsetAngle).ToRotationVector2() * soulSpeed;
+                    Vector2 rightVelocity = (TwoPi * i / 3f + offsetAngle).ToRotationVector2() * soulSpeed;
 
                     Utilities.NewProjectileBetter(baseSpawnPosition + leftVelocity * 2f, leftVelocity, ModContent.ProjectileType<NotSpecialSoul>(), SoulDamage, 0f, -1, 1f, 1f);
                     Utilities.NewProjectileBetter(baseSpawnPosition + rightVelocity * 2f, rightVelocity, ModContent.ProjectileType<NotSpecialSoul>(), SoulDamage, 0f, -1, 1f, 1f);
@@ -1031,7 +1031,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Vector2 spawnOffsetDirection = Main.rand.NextVector2Unit();
 
                 Dust ectoplasm = Dust.NewDustPerfect(npc.Center + spawnOffsetDirection * Main.rand.NextFloat(120f) * npc.scale, 264);
-                ectoplasm.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 2.4f, Utils.GetLerpValue(0f, 100f, npc.Distance(ectoplasm.position), true));
+                ectoplasm.velocity = -Vector2.UnitY * Lerp(1f, 2.4f, Utils.GetLerpValue(0f, 100f, npc.Distance(ectoplasm.position), true));
                 ectoplasm.color = Color.Lerp(Color.Cyan, Color.Red, Main.rand.NextFloat(0.6f));
                 ectoplasm.scale = 1.45f;
                 ectoplasm.noLight = true;
@@ -1052,7 +1052,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int slowdownTime = 12;
             int chargeTime = 40;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float chargeSpeed = MathHelper.Lerp(35f, 43f, 1f - lifeRatio);
+            float chargeSpeed = Lerp(35f, 43f, 1f - lifeRatio);
             if (lifeRatio < Phase2LifeRatio)
                 chargeCount = 3;
             if (lifeRatio < Phase3LifeRatio)
@@ -1068,7 +1068,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Aim.
             if (attackTimer < aimTime)
             {
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                 Vector2 destination = target.Center - Vector2.UnitY * 300f;
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 240f;
@@ -1082,13 +1082,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer > aimTime && attackTimer < aimTime + slowdownTime)
             {
                 npc.velocity *= 0.94f;
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
             }
 
             // Charge.
             if (attackTimer == aimTime + slowdownTime)
             {
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                 RoarSlot = SoundEngine.PlaySound(InfernumSoundRegistry.PolterghastDashSound with { Volume = 2f }, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1096,7 +1096,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     for (int i = 0; i < 3; i++)
                     {
-                        Vector2 vortexVelocity = npc.velocity.RotatedBy(MathHelper.Lerp(-0.21f, 0.21f, i / 2f)).SafeNormalize(Vector2.UnitY) * 11f;
+                        Vector2 vortexVelocity = npc.velocity.RotatedBy(Lerp(-0.21f, 0.21f, i / 2f)).SafeNormalize(Vector2.UnitY) * 11f;
                         Utilities.NewProjectileBetter(npc.Center + vortexVelocity * 4f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), 280, 0f);
                     }
                     npc.netUpdate = true;
@@ -1115,7 +1115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
-                    Vector2 vortexVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2.3f;
+                    Vector2 vortexVelocity = npc.velocity.RotatedBy(PiOver2).SafeNormalize(Vector2.UnitY) * 2.3f;
                     Utilities.NewProjectileBetter(npc.Center + vortexVelocity * 20f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), GhostlyVortexDamage, 0f);
                     vortexVelocity *= -1f;
                     Utilities.NewProjectileBetter(npc.Center + vortexVelocity * 20f, vortexVelocity, ModContent.ProjectileType<GhostlyVortex>(), GhostlyVortexDamage, 0f);
@@ -1125,7 +1125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Slow down.
             if (attackTimer >= aimTime + slowdownTime + chargeTime)
             {
-                npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.275f);
+                npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + PiOver2, 0.275f);
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.1f) * 0.9f;
             }
 
@@ -1193,7 +1193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Vector2 originalPosition = npc.Center;
                 for (int i = 0; i < polterghasts.Count(); i++)
                 {
-                    Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / polterghasts.Count()) * 540f;
+                    Vector2 newPosition = originalPosition - Vector2.UnitY.RotatedBy(TwoPi * i / polterghasts.Count()) * 540f;
                     while (target.WithinRange(newPosition, 380f))
                         newPosition.Y += 10f;
 
@@ -1208,12 +1208,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             if (adjustedTimer > splitDelay + hoverTime && adjustedTimer < splitDelay + hoverTime + chargeTime)
             {
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 npc.velocity *= 1.0145f;
             }
             else
             {
-                npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.325f);
+                npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + PiOver2, 0.325f);
                 if (adjustedTimer > splitDelay + hoverTime)
                     npc.velocity *= 0.97f;
             }
@@ -1223,7 +1223,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             {
                 for (int i = 0; i < 19; i++)
                 {
-                    Vector2 soulVelocity = (MathHelper.TwoPi * i / 19f).ToRotationVector2() * 12.5f;
+                    Vector2 soulVelocity = (TwoPi * i / 19f).ToRotationVector2() * 12.5f;
                     Utilities.NewProjectileBetter(npc.Center + soulVelocity * 2f, soulVelocity, ModContent.ProjectileType<NonReturningSoul>(), SoulDamage, 0f);
                 }
                 for (int i = 0; i < polterghasts.Count(); i++)
@@ -1273,7 +1273,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             int soulsPerRing = 24;
             int ringReleaseRate = 60;
             float overallRingSpeedFactor = 1.5f;
-            float ringOpeningAngleSpread = MathHelper.ToRadians(55f);
+            float ringOpeningAngleSpread = ToRadians(55f);
 
             int finalAttackStartTime = attackDelay + vortexSpiralTime + spiritFlameTime;
             int soulBurstCount = 30;
@@ -1313,10 +1313,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             {
                 if (attackTimer % vortexSpiralSpawnRate == 0f && attackTimer < attackDelay + vortexSpiralTime - 70f)
                 {
-                    float spiralAngle = (attackTimer - attackDelay) / vortexSpiralTime * MathHelper.Pi * 4f;
+                    float spiralAngle = (attackTimer - attackDelay) / vortexSpiralTime * Pi * 4f;
                     for (int i = 0; i < vortexSpiralCount; i++)
                     {
-                        Vector2 spiralSpawnOffset = (MathHelper.TwoPi * i / vortexSpiralCount + spiralAngle).ToRotationVector2() * 560f;
+                        Vector2 spiralSpawnOffset = (TwoPi * i / vortexSpiralCount + spiralAngle).ToRotationVector2() * 560f;
                         Vector2 spiralVelocity = -spiralSpawnOffset.SafeNormalize(Vector2.UnitY) * 3f;
                         Utilities.NewProjectileBetter(target.Center + spiralSpawnOffset, spiralVelocity, ModContent.ProjectileType<GhostlyVortex>(), GhostlyVortexDamage, 0f, -1, 13.25f);
                     }
@@ -1333,13 +1333,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % ringReleaseRate == ringReleaseRate - 1f && attackTimer < attackDelay + vortexSpiralTime + spiritFlameTime - 120f)
                 {
                     bool counterClockwise = Main.rand.NextBool();
-                    float ringOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    float ringOffsetAngle = Main.rand.NextFloat(TwoPi);
                     for (int i = 0; i < soulsPerRing; i++)
                     {
                         // Determine the angle of the current soul. This is done by creating an even spread of N points on a circle across 360 degrees.
                         // Angles that are less than a certain threshold are discarded to create an opening in the ring. Following this a random rotation is
                         // applied to allow the opening to be on any point on the resulting ring.
-                        float soulAngle = MathHelper.TwoPi * i / soulsPerRing;
+                        float soulAngle = TwoPi * i / soulsPerRing;
                         if (soulAngle < ringOpeningAngleSpread)
                             continue;
 
@@ -1362,7 +1362,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Release barrages of souls at an accelerating pace that are telegraphed by large lines.
             if (attackTimer >= finalAttackStartTime + soulBurstDelay && soulBurstCounter < soulBurstCount)
             {
-                soulBurstDelay = MathHelper.Clamp(soulBurstDelay - 1f, 15f, 36f);
+                soulBurstDelay = Clamp(soulBurstDelay - 1f, 15f, 36f);
                 attackTimer = finalAttackStartTime;
                 soulBurstCounter++;
 
@@ -1380,7 +1380,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Make the radius fade inward.
             if (attackTimer >= finalAttackStartTime + soulBurstDelay + 120f)
             {
-                radiusDecreaseFactor = MathHelper.Lerp(radiusDecreaseFactor, 0f, 0.12f);
+                radiusDecreaseFactor = Lerp(radiusDecreaseFactor, 0f, 0.12f);
                 vignetteInterpolant = Utils.GetLerpValue(finalAttackStartTime + soulBurstDelay + 240f, finalAttackStartTime + soulBurstDelay + 120f, attackTimer, true);
                 if (attackTimer == finalAttackStartTime + soulBurstDelay + 120f)
                 {
@@ -1395,7 +1395,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             else
             {
                 float closeFactor = Utils.Remap(attackTimer, finalAttackStartTime + soulBurstDelay, finalAttackStartTime + soulBurstDelay + 72f, 0f, 0.995f);
-                radiusDecreaseFactor = MathHelper.Lerp(radiusDecreaseFactor, closeFactor, 0.15f);
+                radiusDecreaseFactor = Lerp(radiusDecreaseFactor, closeFactor, 0.15f);
             }
         }
 
@@ -1476,18 +1476,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Color baseColor = Color.White;
-                float drawOffsetFactor = MathHelper.Lerp(6.5f, 8.5f, MathF.Cos(Main.GlobalTimeWrappedHourly * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
+                float drawOffsetFactor = Lerp(6.5f, 8.5f, Cos(Main.GlobalTimeWrappedHourly * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
                 float fadeFactor = 0.225f;
                 if (enraged)
                 {
-                    drawOffsetFactor = MathHelper.Lerp(7f, 9.75f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4.3f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
+                    drawOffsetFactor = Lerp(7f, 9.75f, Cos(Main.GlobalTimeWrappedHourly * 4.3f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
                     baseColor = Color.Red;
                     fadeFactor = 0.3f;
                 }
 
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 1.9f).ToRotationVector2() * drawOffsetFactor;
+                    Vector2 drawOffset = (TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 1.9f).ToRotationVector2() * drawOffsetFactor;
                     drawInstance(baseDrawPosition + drawOffset, npc.GetAlpha(baseColor) * fadeFactor);
                 }
                 Main.spriteBatch.ResetBlendState();
@@ -1499,8 +1499,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Vector2 drawPosition = npc.Center - Main.screenPosition;
 
             // Draw the circle.
-            float circleRadius = MathHelper.Lerp(3000f, MinGhostCircleRadius, npc.Infernum().ExtraAI[VignetteInterpolantIndex]) * (1f - npc.Infernum().ExtraAI[VignetteRadiusDecreaseFactorIndex]);
-            Vector2 circleScale = new Vector2(MathHelper.Max(Main.screenWidth, Main.screenHeight)) * 5f;
+            float circleRadius = Lerp(3000f, MinGhostCircleRadius, npc.Infernum().ExtraAI[VignetteInterpolantIndex]) * (1f - npc.Infernum().ExtraAI[VignetteRadiusDecreaseFactorIndex]);
+            Vector2 circleScale = new Vector2(MathF.Max(Main.screenWidth, Main.screenHeight)) * 5f;
 
             if (npc.Infernum().ExtraAI[VignetteInterpolantIndex] > 0.1f)
             {
@@ -1508,7 +1508,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
                 InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["uImageSize0"].SetValue(circleScale);
                 InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["uCircleRadius"].SetValue(circleRadius * 1.414f);
-                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathHelper.Min(circleRadius * 0.3f, 50f));
+                InfernumEffectsRegistry.CircleCutout2Shader.Shader.Parameters["ectoplasmCutoffOffsetMax"].SetValue(MathF.Min(circleRadius * 0.3f, 50f));
                 InfernumEffectsRegistry.CircleCutout2Shader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/PolterghastLayer"));
                 InfernumEffectsRegistry.CircleCutout2Shader.Apply();
                 Main.spriteBatch.Draw(blackCircle, drawPosition, null, Color.Black, 0f, blackCircle.Size() * 0.5f, circleScale / blackCircle.Size(), 0, 0f);

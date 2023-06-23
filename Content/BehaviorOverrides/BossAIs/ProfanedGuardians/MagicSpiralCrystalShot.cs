@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public Vector2 InitialVelocity;
         public Vector2 InitialCenter;
-        public float RotationAmount => MathHelper.Lerp(0.034f, 0.001f, Timer / 300f);
+        public float RotationAmount => Lerp(0.034f, 0.001f, Timer / 300f);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
@@ -78,8 +78,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Projectile.timeLeft < 15)
                 Projectile.damage = 0;
 
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Timer++;
         }
 
@@ -95,9 +95,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     continue;
 
                 float completionRatio = i / (float)Projectile.oldPos.Length;
-                float fade = MathF.Pow(completionRatio, 2f);
-                float scale = Projectile.scale * MathHelper.Lerp(1.3f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) *
-                    MathHelper.Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
+                float fade = Pow(completionRatio, 2f);
+                float scale = Projectile.scale * Lerp(1.3f, 0.9f, Utils.GetLerpValue(0f, 0.24f, completionRatio, true)) *
+                    Lerp(0.9f, 0.56f, Utils.GetLerpValue(0.5f, 0.78f, completionRatio, true));
                 Color drawColor = Color.Lerp(StreakBaseColor, new Color(229, 255, 255), fade) * (1f - fade) * Projectile.Opacity;
                 drawColor.A = 0;
 
@@ -120,13 +120,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 previousDrawPoint = InitialCenter;
             Vector2 previousDrawVelocity = InitialVelocity;
 
-            float lineOpacityScalar = MathF.Sin(Timer / 30 * MathHelper.Pi);
+            float lineOpacityScalar = Sin(Timer / 30 * Pi);
 
             // Loop through the total number of draw points.
             for (int i = 0; i < totalDrawPoints; i++)
             {
                 // Get the rotation amount. This is the same as used by the projectiles movement.
-                float rotationAmount = MathHelper.Lerp(0.034f, 0.001f, i / 300f);
+                float rotationAmount = Lerp(0.034f, 0.001f, i / 300f);
                 // Get a velocity, from rotating the last one by the rotation amount. This is how the projectile moves.
                 Vector2 drawVelocity = previousDrawVelocity.RotatedBy(Direction * rotationAmount);
                 // And also scale it.

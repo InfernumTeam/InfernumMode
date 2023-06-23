@@ -40,8 +40,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             // Pick a frame and initial lifetime.
             if (Projectile.localAI[0] == 0f)
             {
-                float lifetimeInterpolant = MathF.Pow(Main.rand.NextFloat(), 0.6f);
-                Lifetime = (int)MathHelper.Lerp(240f, 480f, lifetimeInterpolant);
+                float lifetimeInterpolant = Pow(Main.rand.NextFloat(), 0.6f);
+                Lifetime = (int)Lerp(240f, 480f, lifetimeInterpolant);
                 Projectile.frame = Main.rand.Next(Main.projFrames[Type]);
                 Projectile.localAI[0] = 1f;
             }
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (Collision.WetCollision(Projectile.TopLeft, Projectile.width, Projectile.height))
             {
                 Projectile.velocity.X *= 0.96f;
-                Projectile.velocity.Y = MathHelper.Lerp(Projectile.velocity.Y, -2f, 0.09f);
+                Projectile.velocity.Y = Lerp(Projectile.velocity.Y, -2f, 0.09f);
                 if (Projectile.Opacity >= 0.8f && Lifetime <= LifetimeExtensionInWater)
                 {
                     Lifetime += LifetimeExtensionInWater;
@@ -59,9 +59,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Slowly fall down.
-            float maxSpeed = MathHelper.Lerp(0.7f, 5.4f, Projectile.scale);
-            Projectile.velocity.X = MathHelper.Lerp(Projectile.velocity.X, MathF.Sign(Projectile.velocity.X) * maxSpeed * 1.2f, 0.006f);
-            Projectile.velocity.Y = MathHelper.Lerp(Projectile.velocity.Y + 0.02f, maxSpeed, 0.05f);
+            float maxSpeed = Lerp(0.7f, 5.4f, Projectile.scale);
+            Projectile.velocity.X = Lerp(Projectile.velocity.X, Sign(Projectile.velocity.X) * maxSpeed * 1.2f, 0.006f);
+            Projectile.velocity.Y = Lerp(Projectile.velocity.Y + 0.02f, maxSpeed, 0.05f);
 
             // Rotate.
             Projectile.rotation += Projectile.velocity.Y * 0.01f;
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             float backglowOpacity = Projectile.Opacity * 0.3f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            float backglowScale = MathHelper.Lerp(0.85f, 1.15f, MathF.Cos(Projectile.identity * 7f + Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f) * Projectile.scale * Projectile.Opacity * 0.45f;
+            float backglowScale = Lerp(0.85f, 1.15f, Cos(Projectile.identity * 7f + Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f) * Projectile.scale * Projectile.Opacity * 0.45f;
             Color backglowColor = Color.Lerp(Color.Red, Color.Pink, Projectile.Opacity) * backglowOpacity;
             spriteBatch.Draw(circle, drawPosition, null, backglowColor, 0f, circle.Size() * 0.5f, backglowScale, 0, 0f);
             spriteBatch.Draw(circle, drawPosition, null, Color.Magenta * backglowOpacity * 1.1f, 0f, circle.Size() * 0.5f, backglowScale * 0.75f, 0, 0f);

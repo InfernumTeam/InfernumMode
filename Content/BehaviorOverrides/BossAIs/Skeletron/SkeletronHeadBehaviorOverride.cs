@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         public static void DoDespawnEffects(NPC npc)
         {
             npc.velocity *= 0.7f;
-            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+            npc.Opacity = Clamp(npc.Opacity - 0.1f, 0f, 1f);
             if (npc.Opacity <= 0f)
             {
                 npc.active = false;
@@ -234,7 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             npc.dontTakeDamage = true;
 
             if (animationTimer < 90f)
-                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(0.1f, 4f, Utils.GetLerpValue(0f, 35f, animationTimer, true) * Utils.GetLerpValue(45f, 35f, animationTimer, true));
+                npc.velocity = -Vector2.UnitY * Lerp(0.1f, 4f, Utils.GetLerpValue(0f, 35f, animationTimer, true) * Utils.GetLerpValue(45f, 35f, animationTimer, true));
 
             // Summon hands.
             if (animationTimer == 80f)
@@ -263,7 +263,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 {
                     Dust ectoplasm = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(60f, 60f), 264);
                     ectoplasm.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 12f);
-                    ectoplasm.velocity = Vector2.Lerp(ectoplasm.velocity, (MathHelper.TwoPi * i / 220f).ToRotationVector2() * ectoplasm.velocity.Length(), 0.8f);
+                    ectoplasm.velocity = Vector2.Lerp(ectoplasm.velocity, (TwoPi * i / 220f).ToRotationVector2() * ectoplasm.velocity.Length(), 0.8f);
                     ectoplasm.velocity = Vector2.Lerp(ectoplasm.velocity, -Vector2.UnitY * ectoplasm.velocity.Length(), 0.5f);
                     ectoplasm.fadeIn = Main.rand.NextFloat(1.3f, 1.9f);
                     ectoplasm.scale = Main.rand.NextFloat(1.65f, 1.85f);
@@ -276,7 +276,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 animationChargeTimer = 70f;
                 SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
-                float chargeSpeed = MathHelper.Lerp(6f, 14f, Utils.GetLerpValue(560f, 1230f, npc.Distance(target.Center), true));
+                float chargeSpeed = Lerp(6f, 14f, Utils.GetLerpValue(560f, 1230f, npc.Distance(target.Center), true));
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.netUpdate = true;
             }
@@ -443,7 +443,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
                     for (int i = 0; i < skullCount; i++)
                     {
-                        Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
+                        Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
                         int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), SkullDamage, 0f);
                         if (Main.projectile.IndexInRange(skull))
                             Main.projectile[skull].ai[0] = 0.005f;
@@ -518,7 +518,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 10f;
+                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(TwoPi * i / 3f) * 10f;
                             int skull = Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ProjectileID.Skull, SkullDamage, 0f);
                             if (Main.projectile.IndexInRange(skull))
                             {
@@ -531,7 +531,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 9f;
+                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(TwoPi * i / 8f) * 9f;
                             Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ModContent.ProjectileType<SpinningFireball>(), ShadowflameFireballDamage, 0f);
                         }
                     }
@@ -546,7 +546,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                 npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                 npc.rotation += 0.2f;
-                npc.rotation %= MathHelper.TwoPi;
+                npc.rotation %= TwoPi;
 
                 if (npc.WithinRange(target.Center, 50f))
                     attackTimer += 10f;
@@ -659,7 +659,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
                     for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.1f)
                     {
                         // Don't fire skulls from some areas, to allow the player to have an avoidance area.
-                        if (MathHelper.Distance(openOffsetArea, offset + fuck) < 1.9f)
+                        if (Distance(openOffsetArea, offset + fuck) < 1.9f)
                             continue;
 
                         Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
@@ -710,7 +710,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             if (attackTimer < hoverTime + spinTime)
             {
                 // Screech to a halt and begin spinning in place, while charging energy.
-                spinAcceleration = MathHelper.Lerp(spinAcceleration, MathHelper.Pi / 12f, 0.015f);
+                spinAcceleration = Lerp(spinAcceleration, Pi / 12f, 0.015f);
                 npc.rotation += spinAcceleration;
                 npc.velocity *= 0.9f;
 
@@ -762,7 +762,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
                 Utilities.CreateShockwave(npc.Center, 2, 9, 65f, false);
                 SoundEngine.PlaySound(InfernumSoundRegistry.SkeletronHeadBonkSound with { Volume = 3f });
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
             }
@@ -811,7 +811,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * (i + 0.5f) / 6f).ToRotationVector2() * 4f + Vector2.UnitY * 2f;
+                Vector2 drawOffset = (TwoPi * (i + 0.5f) / 6f).ToRotationVector2() * 4f + Vector2.UnitY * 2f;
                 Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
                 Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade * 0.24f;
                 drawColor.A = 0;

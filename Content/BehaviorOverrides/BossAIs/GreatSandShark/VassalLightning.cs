@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 Projectile.frameCounter = 0;
 
-                float originalSpeed = MathHelper.Min(15f, Projectile.velocity.Length());
+                float originalSpeed = MathF.Min(15f, Projectile.velocity.Length());
                 UnifiedRandom unifiedRandom = new((int)BaseTurnAngleRatio);
                 int turnTries = 0;
                 Vector2 newBaseDirection = -Vector2.UnitY;
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 do
                 {
                     BaseTurnAngleRatio = unifiedRandom.Next() % 100;
-                    potentialBaseDirection = (BaseTurnAngleRatio / 100f * MathHelper.TwoPi).ToRotationVector2();
+                    potentialBaseDirection = (BaseTurnAngleRatio / 100f * TwoPi).ToRotationVector2();
 
                     // Ensure that the new potential direction base is always moving upwards (this is supposed to be somewhat similar to a -UnitY + RotatedBy).
                     potentialBaseDirection.Y = -Math.Abs(potentialBaseDirection.Y);
@@ -128,8 +128,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 if (Projectile.velocity != Vector2.Zero)
                 {
                     AccumulatedXMovementSpeeds += newBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed;
-                    Projectile.velocity = newBaseDirection.RotatedBy(InitialVelocityAngle + MathHelper.PiOver2) * originalSpeed;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                    Projectile.velocity = newBaseDirection.RotatedBy(InitialVelocityAngle + PiOver2) * originalSpeed;
+                    Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
                 }
             }
         }
@@ -138,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathF.Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
+            float colorInterpolant = Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
             Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
             return color;
         }

@@ -55,8 +55,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
             // Slam downward.
             if (Projectile.velocity.Y != 0f)
             {
-                Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 1.5f, 0.01f, 50f);
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+                Projectile.velocity.Y = Clamp(Projectile.velocity.Y + 1.5f, 0.01f, 50f);
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver4;
             }
 
             // Update frames once ground has been reached.
@@ -89,8 +89,8 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 backglowWidth = 0f;
 
             Color backglowColor = Color.Lerp(Color.IndianRed, Color.White, 1f - PinkLightningFormInterpolant);
-            backglowColor = Color.Lerp(backglowColor, Color.Wheat, Utils.GetLerpValue(0.7f, 1f, PinkLightningFormInterpolant, true) * 0.56f) * MathHelper.Lerp(1f, 0.4f, PinkLightningFormInterpolant);
-            backglowColor.A = (byte)MathHelper.Lerp(20f, 255f, 1f - PinkLightningFormInterpolant);
+            backglowColor = Color.Lerp(backglowColor, Color.Wheat, Utils.GetLerpValue(0.7f, 1f, PinkLightningFormInterpolant, true) * 0.56f) * Lerp(1f, 0.4f, PinkLightningFormInterpolant);
+            backglowColor.A = (byte)Lerp(20f, 255f, 1f - PinkLightningFormInterpolant);
 
             Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/Weapons/Rogue/StormMaidensRetributionSpear").Value;
             Rectangle frame = glowmaskTexture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             SpriteEffects direction = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             for (int i = 0; i < 10; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * backglowWidth;
+                Vector2 drawOffset = (TwoPi * i / 10f).ToRotationVector2() * backglowWidth;
                 Main.spriteBatch.Draw(glowmaskTexture, drawPosition + drawOffset, frame, backglowColor, Projectile.rotation, origin, Projectile.scale, direction, 0f);
             }
         }

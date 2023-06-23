@@ -48,14 +48,14 @@ namespace InfernumMode.Core.CrossCompatibility
                     }
 
                     // Jam to the music in accordance with its BMP.
-                    float beatTime = MathHelper.TwoPi * songInfo.BeatsPerMinute / 3600f;
+                    float beatTime = TwoPi * songInfo.BeatsPerMinute / 3600f;
                     if (songInfo.HeadBobState == BPMHeadBobState.Half)
                         beatTime *= 0.5f;
                     if (songInfo.HeadBobState == BPMHeadBobState.Quarter)
                         beatTime *= 0.25f;
 
                     headRotationTime += beatTime;
-                    player.headRotation = MathF.Sin(headRotationTime) * 0.276f;
+                    player.headRotation = Sin(headRotationTime) * 0.276f;
                     player.eyeHelper.BlinkBecausePlayerGotHurt();
                     return headRotationTime;
                 case "CanPlayMusicForNPC":

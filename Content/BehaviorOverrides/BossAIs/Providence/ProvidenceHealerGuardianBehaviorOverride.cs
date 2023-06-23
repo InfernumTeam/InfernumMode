@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Release some small lava particles if there's some rotational velocity. This only happens during the idle spin state.
             if (offsetAngle + previousAngularOffset != previousAngularOffset && attackState == HealerGuardianAttackState.SpinInPlace)
             {
-                Vector2 particleSpawnOffset = Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * MathF.Pow(Main.rand.NextFloat(), 2f);
+                Vector2 particleSpawnOffset = Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * Pow(Main.rand.NextFloat(), 2f);
                 float particleScale = Main.rand.NextFloat(20f, 35f);
                 FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + particleSpawnOffset, particleScale);
 
@@ -140,12 +140,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             BloomLineDrawInfo lineInfo = new()
             {
                 LineRotation = -telegraphDirection,
-                WidthFactor = 0.002f + MathF.Pow(telegraphInterpolant, 4f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                BloomIntensity = MathHelper.Lerp(0.3f, 0.4f, telegraphInterpolant),
+                WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
                 Scale = Vector2.One * telegraphInterpolant * 2500f,
                 MainColor = Color.Lerp(Color.Yellow, Color.HotPink, telegraphInterpolant * 0.5f + 0.5f),
                 DarkerColor = Color.Orange,
-                Opacity = MathF.Sqrt(telegraphInterpolant),
+                Opacity = Sqrt(telegraphInterpolant),
                 BloomOpacity = 0.3f,
                 LightStrength = 5f
             };

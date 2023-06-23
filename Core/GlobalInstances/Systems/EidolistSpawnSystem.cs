@@ -37,7 +37,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             for (int i = 0; i < 4; i++)
             {
-                float eidolistSpawnOffset = MathHelper.Lerp(-100f, 100f, i / 3f);
+                float eidolistSpawnOffset = Lerp(-100f, 100f, i / 3f);
                 Vector2 eidolistSpawnPosition = worldCenter + Vector2.UnitX * eidolistSpawnOffset;
                 NPC.NewNPC(new EntitySource_WorldEvent(), (int)eidolistSpawnPosition.X, (int)eidolistSpawnPosition.Y, eidolistID, 1, 0f, 0f, i);
             }

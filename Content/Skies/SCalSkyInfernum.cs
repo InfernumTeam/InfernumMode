@@ -135,7 +135,7 @@ namespace InfernumMode.Content.Skies
             for (int i = 0; i < Cinders.Count; i++)
             {
                 Cinders[i].Scale = Utils.GetLerpValue(Cinders[i].Lifetime, Cinders[i].Lifetime / 3, Cinders[i].Time, true);
-                Cinders[i].Scale *= MathHelper.Lerp(0.9f, 1.3f, Cinders[i].IdentityIndex % 6f / 6f);
+                Cinders[i].Scale *= Lerp(0.9f, 1.3f, Cinders[i].IdentityIndex % 6f / 6f);
                 Cinders[i].Velocity = Cinders[i].Velocity.SafeNormalize(-Vector2.UnitY) * CinderSpeed;
                 Cinders[i].Time++;
 

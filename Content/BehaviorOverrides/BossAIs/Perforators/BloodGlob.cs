@@ -22,8 +22,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y - 0.25f, -20f, 20f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y - 0.25f, -20f, 20f);
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;

@@ -42,7 +42,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (FadingAway)
             {
                 Projectile.velocity *= 0.9f;
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.04f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity - 0.04f, 0f, 1f);
                 if (Projectile.Opacity <= 0f)
                     Projectile.Kill();
 
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             }
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
 
             // Chase down targets.
             NPC potentialTarget = Projectile.Center.ClosestNPCAt(IllusionersReverie.TargetingDistance);
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             }
             else
             {
-                float angularVelocity = MathHelper.Lerp(-0.011f, 0.011f, Projectile.identity / 13f % 1f);
+                float angularVelocity = Lerp(-0.011f, 0.011f, Projectile.identity / 13f % 1f);
                 Projectile.velocity = Projectile.velocity.RotatedBy(angularVelocity) * 1.032f;
             }
 
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public void EmitShadowParticles()
         {
-            float particleReleaseRate = MathHelper.Lerp(1f, 0.3f, Projectile.Opacity);
+            float particleReleaseRate = Lerp(1f, 0.3f, Projectile.Opacity);
             for (int i = 0; i < 2; i++)
             {
                 if (Main.rand.NextFloat() > particleReleaseRate)

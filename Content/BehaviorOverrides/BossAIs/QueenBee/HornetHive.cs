@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         public override void AI()
         {
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 20, 0, 255);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
             Projectile.velocity.Y += 0.15f;
             if (Projectile.wet)
                 Projectile.Kill();

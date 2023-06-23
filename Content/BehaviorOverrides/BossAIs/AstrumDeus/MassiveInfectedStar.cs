@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             // Fade out once ready.
             if (Projectile.timeLeft < 60f)
             {
-                Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.015f, 0.06f);
+                Projectile.scale = Lerp(Projectile.scale, 0.015f, 0.06f);
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Utils.GetLerpValue(18f, 8f, Projectile.timeLeft, true) * 15f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 }
             }
             else
-                Projectile.scale = MathHelper.Lerp(0.04f, 5.1f, MathHelper.Clamp(Time / GrowTime, 0f, 1f));
+                Projectile.scale = Lerp(0.04f, 5.1f, Clamp(Time / GrowTime, 0f, 1f));
 
             if (Projectile.velocity != Vector2.Zero)
             {
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 24f)
+            for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 24f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();

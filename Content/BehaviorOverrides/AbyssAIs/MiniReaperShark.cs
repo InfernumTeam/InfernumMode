@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override void AI()
         {
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.02f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.02f, 0f, 1f);
 
             // Disappear if there is no reaper shark.
             if (!ReaperShark.active)
@@ -69,15 +69,15 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Spin around the reaper shark.
             if (Projectile.velocity == Vector2.Zero)
             {
-                float spinAcceleration = Utils.GetLerpValue(135f, 60f, Time, true) * MathHelper.Pi / 70f;
+                float spinAcceleration = Utils.GetLerpValue(135f, 60f, Time, true) * Pi / 70f;
                 Projectile.Center = ReaperShark.Center + SpinOffsetAngle.ToRotationVector2() * 240f;
-                SpinOffsetAngle = MathHelper.WrapAngle(SpinOffsetAngle + spinAcceleration);
+                SpinOffsetAngle = WrapAngle(SpinOffsetAngle + spinAcceleration);
 
                 // Look at the target.
                 Projectile.rotation = ReaperShark.AngleTo(Target.Center);
                 Projectile.spriteDirection = (Target.Center.X < Projectile.Center.X).ToDirectionInt();
                 if (Projectile.spriteDirection == 1)
-                    Projectile.rotation += MathHelper.Pi;
+                    Projectile.rotation += Pi;
                 return;
             }
 
@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
             if (Projectile.spriteDirection == 1)
-                Projectile.rotation += MathHelper.Pi;
+                Projectile.rotation += Pi;
 
             Time++;
         }

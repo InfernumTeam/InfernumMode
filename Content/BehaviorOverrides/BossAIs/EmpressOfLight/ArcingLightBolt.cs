@@ -4,6 +4,7 @@ using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -58,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public override void AI()
         {
             if (Projectile.timeLeft > 30)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+                Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             else
             {
                 Projectile.Opacity = Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
@@ -74,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (Main.npc[i].type != NPCID.EmpressButterfly || !Main.npc[i].active)
                     continue;
 
-                distanceToLacewing = MathHelper.Min(distanceToLacewing, Projectile.Distance(Main.npc[i].Center));
+                distanceToLacewing = MathF.Min(distanceToLacewing, Projectile.Distance(Main.npc[i].Center));
                 lacewing = Main.npc[i];
             }
 
@@ -96,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Spin and accelerate over time.
             if (Projectile.timeLeft >= 270 && !moveToEmpress)
-                Projectile.velocity = Projectile.velocity.RotatedBy(Projectile.ai[0] * MathHelper.TwoPi / 420f) * 1.0175f;
+                Projectile.velocity = Projectile.velocity.RotatedBy(Projectile.ai[0] * TwoPi / 420f) * 1.0175f;
 
             if (moveToEmpress)
             {
@@ -131,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     rainbowMagic.velocity = angularOffset.ToRotationVector2();
                     rainbowMagic.scale = 0.8f;
                 }
-                angularOffset += MathHelper.TwoPi / dustCount;
+                angularOffset += TwoPi / dustCount;
                 rainbowMagic.velocity += Projectile.velocity * Main.rand.NextFloat(0.5f);
             }
         }
@@ -141,14 +142,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public Color ColorFunction(float completionRatio)
         {
             Color rainbow = Main.hslToRgb((completionRatio - Main.GlobalTimeWrappedHourly * 1.4f) % 1f, 1f, 0.5f);
-            Color c = Color.Lerp(MyColor with { A = 255 }, rainbow, completionRatio) * (1f - completionRatio) * Projectile.Opacity;
+            Color c = Color.Lerp(MyColor with
+            {
+                A = 255
+            }, rainbow, completionRatio) * (1f - completionRatio) * Projectile.Opacity;
             return c;
         }
 
         public float WidthFunction(float completionRatio)
         {
             float fade = (1f - completionRatio) * Utils.GetLerpValue(-0.03f, 0.1f, completionRatio, true);
-            return MathHelper.SmoothStep(0f, 1f, fade) * Projectile.Opacity * 10f;
+            return SmoothStep(0f, 1f, fade) * Projectile.Opacity * 10f;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -168,14 +172,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Draw the gleam.
             Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
-            Color sparkleColor = Color.Lerp(MyColor, Color.White, 0.4f) with { A = 255 };
+            Color sparkleColor = Color.Lerp(MyColor, Color.White, 0.4f) with
+            {
+                A = 255
+            };
             Vector2 drawCenter = Projectile.Center - Main.screenPosition;
             Vector2 origin = sparkleTexture.Size() * 0.5f;
             Vector2 sparkleScale = new Vector2(0.3f, 1f) * Projectile.Opacity * Projectile.scale * 0.12f;
             Vector2 orthogonalsparkleScale = new Vector2(0.3f, 1.6f) * Projectile.Opacity * Projectile.scale * 0.12f;
-            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
             Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
-            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, MathHelper.PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
             Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
         }
 

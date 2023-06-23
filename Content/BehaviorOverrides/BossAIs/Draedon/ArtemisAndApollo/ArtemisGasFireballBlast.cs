@@ -46,14 +46,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.35f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.35f, 0f, 1f);
 
             Lighting.AddLight(Projectile.Center, 0f, 0.6f * Projectile.Opacity, 0f);
 
             // Handle frames and rotation.
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Create a burst of dust on the first frame.
             if (Projectile.localAI[0] == 0f)
@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     int randomDustType = Main.rand.NextBool() ? 130 : 133;
 
                     Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVelocity.X, dustVelocity.Y, 0, default, 2f);
-                    fire.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
+                    fire.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     fire.noGravity = true;
                     fire.velocity *= 0.5f;
                 }

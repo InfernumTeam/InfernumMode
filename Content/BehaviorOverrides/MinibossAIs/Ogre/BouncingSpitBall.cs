@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.velocity.Y = MathHelper.Clamp(oldVelocity.Y * -1.2f, -28f, 28f);
+            Projectile.velocity.Y = Clamp(oldVelocity.Y * -1.2f, -28f, 28f);
             Projectile.velocity.Y += Projectile.SafeDirectionTo(Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center).Y * 10f;
             Projectile.netUpdate = true;
 

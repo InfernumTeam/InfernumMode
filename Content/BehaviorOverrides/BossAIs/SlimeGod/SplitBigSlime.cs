@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using System;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -63,9 +64,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             if (RedirectCountdown > 0f && !NPC.WithinRange(slimeGod.Center, 50f))
             {
                 float flySpeed = BossRushEvent.BossRushActive ? 38f : 14f;
-                flySpeed = MathHelper.Max(flySpeed, slimeGod.velocity.Length() * 0.7f);
+                flySpeed = MathF.Max(flySpeed, slimeGod.velocity.Length() * 0.7f);
 
-                Vector2 destinationOffset = (MathHelper.TwoPi * NPC.whoAmI / 13f).ToRotationVector2() * 32f;
+                Vector2 destinationOffset = (TwoPi * NPC.whoAmI / 13f).ToRotationVector2() * 32f;
                 NPC.velocity = (NPC.velocity * 34f + NPC.SafeDirectionTo(slimeGod.Center + destinationOffset) * flySpeed) / 35f;
                 if (!NPC.WithinRange(slimeGod.Center, 175f))
                     NPC.Center = Vector2.Lerp(NPC.Center, slimeGod.Center, 0.05f);
@@ -73,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 RedirectCountdown--;
             }
 
-            NPC.rotation = MathHelper.Clamp(NPC.velocity.X * 0.05f, -0.2f, 0.2f);
+            NPC.rotation = Clamp(NPC.velocity.X * 0.05f, -0.2f, 0.2f);
             NPC.spriteDirection = (NPC.velocity.X < 0f).ToDirectionInt();
         }
 
@@ -86,12 +87,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 5; k++)
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, 4, hitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TintableDust, hitDirection, -1f, 0, default, 1f);
 
             if (NPC.life <= 0)
             {
                 for (int k = 0; k < 20; k++)
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 4, hitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TintableDust, hitDirection, -1f, 0, default, 1f);
             }
         }
 

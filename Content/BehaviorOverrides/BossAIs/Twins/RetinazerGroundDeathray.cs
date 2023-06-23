@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Projectile.Kill();
 
             Owner.rotation = 0f;
-            Projectile.velocity = (Owner.rotation + MathHelper.PiOver2).ToRotationVector2();
+            Projectile.velocity = (Owner.rotation + PiOver2).ToRotationVector2();
             Projectile.Center = Owner.Center + Projectile.velocity * 88f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Time == 8f)
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 Vector2 endOfLaser = Projectile.Center + Projectile.velocity * (LaserLength - 32f);
                 for (int i = 0; i < 24; i++)
                 {
-                    Vector2 laserVelocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 6f;
+                    Vector2 laserVelocity = (TwoPi * i / 24f).ToRotationVector2() * 6f;
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
                     {
                         laser.tileCollide = false;
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         public Color LaserColorFunction(float completionRatio)
         {
             float colorInterpolant = CalamityUtils.Convert01To010(Time / Lifetime) * 0.45f + 0.15f;
-            colorInterpolant = MathHelper.Lerp(colorInterpolant, 1f, 1f - 1f / Projectile.localAI[1]);
+            colorInterpolant = Lerp(colorInterpolant, 1f, 1f - 1f / Projectile.localAI[1]);
 
             return Color.Lerp(Color.Red, Color.White, colorInterpolant * 0.5f) * (1f / Projectile.localAI[1]);
         }

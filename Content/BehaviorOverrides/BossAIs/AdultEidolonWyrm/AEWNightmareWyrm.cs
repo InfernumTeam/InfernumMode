@@ -44,10 +44,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 EmitParticles();
 
             // Slither around.
-            Projectile.velocity.X = MathF.Cos(MathHelper.TwoPi * Projectile.timeLeft / 35f) * 6f;
+            Projectile.velocity.X = Cos(TwoPi * Projectile.timeLeft / 35f) * 6f;
 
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public void EmitParticles()

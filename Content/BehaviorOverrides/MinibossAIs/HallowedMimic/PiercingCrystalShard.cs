@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
                 Projectile.velocity = Vector2.Zero;
                 Projectile.Opacity = Utils.GetLerpValue(0f, FadeOutTime, Projectile.timeLeft, true);
             }
-            Projectile.rotation = Main.npc[NPCIndex].AngleTo(Projectile.Center) + MathHelper.PiOver2;
+            Projectile.rotation = Main.npc[NPCIndex].AngleTo(Projectile.Center) + PiOver2;
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
@@ -100,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
                                      SpriteEffects.None,
                                      0f);
                     incrementalBodyLength += crystalOffset;
-                    centerOncrystal += (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * crystalOffset;
+                    centerOncrystal += (Projectile.rotation - PiOver2).ToRotationVector2() * crystalOffset;
                 }
             }
 

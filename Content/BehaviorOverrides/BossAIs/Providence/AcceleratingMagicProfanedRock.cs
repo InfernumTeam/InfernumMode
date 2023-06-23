@@ -179,8 +179,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 BloomLineDrawInfo lineInfo = new()
                 {
                     LineRotation = -Projectile.velocity.ToRotation(),
-                    WidthFactor = 0.003f + MathF.Pow(opacity, 5f) * (MathF.Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                    BloomIntensity = MathHelper.Lerp(0.06f, 0.16f, opacity),
+                    WidthFactor = 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    BloomIntensity = Lerp(0.06f, 0.16f, opacity),
                     Scale = Vector2.One * 1950f,
                     MainColor = Color.Pink,
                     DarkerColor = Color.Orange,
@@ -194,7 +194,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float backglowCount = 12;
             for (int i = 0; i < backglowCount; i++)
             {
-                Vector2 backglowOffset = (MathHelper.TwoPi * i / backglowCount).ToRotationVector2() * 4f;
+                Vector2 backglowOffset = (TwoPi * i / backglowCount).ToRotationVector2() * 4f;
                 Main.EntitySpriteDraw(texture, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0);
             }
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(Color.White) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);

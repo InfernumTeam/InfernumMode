@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             // Ensure that the player receives the boss effects buff.
             NPC.Calamity().KillTime = 1800;
 
-            ElectricShieldOpacity = MathHelper.Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
+            ElectricShieldOpacity = Clamp(ElectricShieldOpacity + (NPC.Calamity().DR > 0.99f).ToDirectionInt() * 0.015f, 0f, 1f);
 
             // Go away if the target is dead or left the Colosseum.
             if ((!Target.active || Target.dead || TargetIsOutsideOfColosseum) && CurrentAttack != BereftVassalAttackType.IdleState)
@@ -293,7 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             CurrentFrame = (int)(NPC.frameCounter / 5f % Main.npcFrameCount[Type]);
 
             // Make the anger interpolant decrease over time.
-            AngerInterpolant = MathHelper.Clamp(AngerInterpolant - 0.05f, 0f, 1f);
+            AngerInterpolant = Clamp(AngerInterpolant - 0.05f, 0f, 1f);
 
             // Do not despawn, you bastard.
             NPC.timeLeft = 7200;
@@ -355,7 +355,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Update the smoke drawer.
             SmokeDrawer.ParticleSpawnRate = AngerInterpolant > 0.4f ? 3 : int.MaxValue;
-            SmokeDrawer.BaseMoveRotation = MathHelper.PiOver2 + Main.rand.NextFloatDirection() * 0.05f;
+            SmokeDrawer.BaseMoveRotation = PiOver2 + Main.rand.NextFloatDirection() * 0.05f;
             SmokeDrawer.Update();
 
             if (!HasBegunSummoningGSS && NPC.life < NPC.lifeMax * Phase2LifeRatio && CurrentAttack != BereftVassalAttackType.RetreatAnimation)
@@ -395,7 +395,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (NPC.WithinRange(Target.Center, 700f) && hasBegunAnimation == 0f)
             {
                 hasBegunAnimation = 1f;
-                SpearRotation = NPC.AngleTo(Target.Center) + MathHelper.PiOver4;
+                SpearRotation = NPC.AngleTo(Target.Center) + PiOver4;
                 NPC.netUpdate = true;
             }
 
@@ -431,14 +431,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelSpinSound, NPC.Center);
 
                 SpearOpacity = Utils.GetLerpValue(0f, 16f, animationTimer, true);
-                SpearRotation += MathHelper.Pi / spearSpinTime * 10f;
+                SpearRotation += Pi / spearSpinTime * 10f;
             }
 
             // Look towards the target before leaping at them.
             else if (animationTimer <= spearSpinTime + spearStrikeTime)
             {
                 // Look at the target and aim the spear at them.
-                SpearRotation = SpearRotation.AngleLerp(NPC.AngleTo(Target.Center) + MathHelper.PiOver4, 0.2f);
+                SpearRotation = SpearRotation.AngleLerp(NPC.AngleTo(Target.Center) + PiOver4, 0.2f);
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
 
                 // Jump into the air.
@@ -525,8 +525,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
                 // If the attack goes on for longer than expected the vassal will interpolant towards the destination faster and faster until it's eventually reached.
                 float flySpeedInterpolant = Utils.GetLerpValue(0f, repositionInterpolationTime, AttackTimer, true);
-                float positionIncrement = MathHelper.Lerp(0.32f, 7f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.26f;
-                float flySpeed = MathHelper.Lerp(2f, maxFlySpeed, flySpeedInterpolant);
+                float positionIncrement = Lerp(0.32f, 7f, flySpeedInterpolant) + (AttackTimer - repositionInterpolationTime) * 0.26f;
+                float flySpeed = Lerp(2f, maxFlySpeed, flySpeedInterpolant);
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY * 275f;
 
                 // Apply manual movement calculations before determining the ideal velocity, to ensure that there is not a one-frame buffer between what the velocity thinks the current position is
@@ -551,7 +551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 }
 
                 // Look at the target.
-                if (MathHelper.Distance(Target.Center.X, NPC.Center.X) > 25f)
+                if (Distance(Target.Center.X, NPC.Center.X) > 25f)
                     NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
 
                 // Disable contact damag when rising upward.
@@ -563,8 +563,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (attackSubstate == 1f)
             {
                 // Spin the spear such that it points downward.
-                SpearRotation = SpearRotation.AngleLerp(MathHelper.Pi - MathHelper.PiOver4, 0.12f);
-                SpearOpacity = MathHelper.Lerp(SpearOpacity, 1f, 0.1f);
+                SpearRotation = SpearRotation.AngleLerp(Pi - PiOver4, 0.12f);
+                SpearOpacity = Lerp(SpearOpacity, 1f, 0.1f);
 
                 // Disable contact damag when hovering in place.
                 NPC.damage = 0;
@@ -612,7 +612,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         Vector2 sandSpawnPosition = NPC.Center + new Vector2(Main.rand.NextFloatDirection() * 6f, Main.rand.NextFloat(12f));
                         for (int i = 0; i < sandBlobCount; i++)
                         {
-                            float sandVelocityOffsetAngle = MathHelper.Lerp(-sandBlobAngularArea, sandBlobAngularArea, i / (float)(sandBlobCount - 1f));
+                            float sandVelocityOffsetAngle = Lerp(-sandBlobAngularArea, sandBlobAngularArea, i / (float)(sandBlobCount - 1f));
 
                             // Add a small amount of variance to the sane velocity, to make it require a bit of dynamic reaction.
                             sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
@@ -631,7 +631,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         {
                             for (int i = 0; i < sandBlobCount2; i++)
                             {
-                                float sandVelocityOffsetAngle = MathHelper.Lerp(-sandBlobAngularArea, sandBlobAngularArea, i / (float)(sandBlobCount2 - 1f));
+                                float sandVelocityOffsetAngle = Lerp(-sandBlobAngularArea, sandBlobAngularArea, i / (float)(sandBlobCount2 - 1f));
 
                                 // Add a small amount of variance to the sane velocity, to make it require a bit of dynamic reaction.
                                 sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.04f;
@@ -665,15 +665,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Pick the spear up and aim it at the target before picking the next attack.
             float spearAimInterpolant = Utils.GetLerpValue(27f, 54f, AttackTimer, true);
-            SpearRotation = (MathHelper.Pi - MathHelper.PiOver4).AngleLerp(NPC.AngleTo(Target.Center) + MathHelper.PiOver4, spearAimInterpolant);
+            SpearRotation = (Pi - PiOver4).AngleLerp(NPC.AngleTo(Target.Center) + PiOver4, spearAimInterpolant);
 
             // Look at the target.
-            if (MathHelper.Distance(Target.Center.X, NPC.Center.X) > 25f && spearAimInterpolant >= 0.3f)
+            if (Distance(Target.Center.X, NPC.Center.X) > 25f && spearAimInterpolant >= 0.3f)
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
 
             // Decide frames.
             frameTimer++;
-            CurrentFrame = MathHelper.Lerp(10f, 15f, frameTimer / 24f);
+            CurrentFrame = Lerp(10f, 15f, frameTimer / 24f);
 
             // Once enough time has passed, transition to the next attack.
             if (AttackTimer >= attackTransitionDelay)
@@ -738,10 +738,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Cast the telegraph line.
             float telegraphInterpolant = Utils.GetLerpValue(0f, chargeAnticipationTime, AttackTimer - attackDelayAfterTeleport, true);
-            LineTelegraphDirection = chargeDirection == 1 ? 0f : MathHelper.Pi;
+            LineTelegraphDirection = chargeDirection == 1 ? 0f : Pi;
             LineTelegraphIntensity = telegraphInterpolant;
             SpearOpacity = 1f;
-            SpearRotation = LineTelegraphDirection + MathHelper.PiOver4;
+            SpearRotation = LineTelegraphDirection + PiOver4;
 
             // Disable gravity and tile collision.
             NPC.noGravity = true;
@@ -758,7 +758,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     {
                         for (int i = 0; i < sandBlobCount; i++)
                         {
-                            float sandVelocityOffsetAngle = MathHelper.Lerp(0.04f, 0.79f, i / (float)(sandBlobCount - 1f)) * chargeDirection;
+                            float sandVelocityOffsetAngle = Lerp(0.04f, 0.79f, i / (float)(sandBlobCount - 1f)) * chargeDirection;
 
                             // Add a small amount of variance to the sane velocity, to make it require a bit of dynamic reaction.
                             sandVelocityOffsetAngle += Main.rand.NextFloatDirection() * 0.11f;
@@ -800,9 +800,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             int waveCount = 7;
             int spearSpinTime = 75;
             int waterSpinTime = WaterTorrentBeam.Lifetime;
-            float waterSpinArc = MathHelper.Pi * 0.28f;
+            float waterSpinArc = Pi * 0.28f;
             float recoilSpeed = 9f;
-            float waveArc = MathHelper.ToRadians(70f);
+            float waveArc = ToRadians(70f);
             float waveSpeed = 4.6f;
 
             if (Enraged)
@@ -854,11 +854,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
                 SpearOpacity = Utils.GetLerpValue(0f, 10f, AttackTimer, true);
-                SpearRotation = MathHelper.WrapAngle(NPC.AngleTo(Target.Center) + MathHelper.Pi * AttackTimer / spearSpinTime * 6f) + MathHelper.PiOver4 - MathHelper.Pi * 0.12f;
+                SpearRotation = WrapAngle(NPC.AngleTo(Target.Center) + Pi * AttackTimer / spearSpinTime * 6f) + PiOver4 - Pi * 0.12f;
             }
 
             // Prepare the line telegraph.
-            LineTelegraphDirection = NPC.AngleTo(Target.Center) - MathHelper.Pi * 0.12f;
+            LineTelegraphDirection = NPC.AngleTo(Target.Center) - Pi * 0.12f;
             LineTelegraphIntensity = Utils.GetLerpValue(0f, spearSpinTime, AttackTimer, true);
 
             // Release the water beam, some waves, and recoil backward somewhat.
@@ -868,18 +868,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     // Apply recoil effects.
-                    NPC.velocity -= (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * recoilSpeed;
+                    NPC.velocity -= (SpearRotation - PiOver4).ToRotationVector2() * recoilSpeed;
                     Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<WaterTorrentBeam>(), WaterBeamDamage, 0f, -1, 0f, NPC.whoAmI);
 
                     // Release an even spread of waves.
                     for (int i = 0; i < waveCount; i++)
                     {
-                        float waveShootOffsetAngle = MathHelper.Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
+                        float waveShootOffsetAngle = Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
                         Vector2 waveVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(waveShootOffsetAngle) * waveSpeed;
                         Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), WaterTorrentDamage, 0f);
                     }
 
-                    aimDirection = (MathHelper.WrapAngle(NPC.AngleTo(Target.Center) - SpearRotation + MathHelper.PiOver4) > 0f).ToDirectionInt();
+                    aimDirection = (WrapAngle(NPC.AngleTo(Target.Center) - SpearRotation + PiOver4) > 0f).ToDirectionInt();
 
                     NPC.netUpdate = true;
                 }
@@ -935,7 +935,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
                 {
-                    fallSpeed = MathHelper.Clamp(fallSpeed + 1.1f, 0f, 12f);
+                    fallSpeed = Clamp(fallSpeed + 1.1f, 0f, 12f);
                     NPC.position.Y += fallSpeed;
                 }
                 AttackTimer = 0f;
@@ -978,17 +978,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 }
 
                 // Aim the spear at the target.
-                float idealSpearRotation = NPC.AngleTo(Target.Center) + MathHelper.PiOver4;
+                float idealSpearRotation = NPC.AngleTo(Target.Center) + PiOver4;
                 SpearRotation = SpearRotation.AngleTowards(idealSpearRotation, 0.2f).AngleLerp(idealSpearRotation, 0.06f);
 
                 // Aim feet-first at the target once all horizontal movement has stopped.
                 if (NPC.velocity.X == 0f)
                 {
-                    float idealRotation = jumpDirection + MathHelper.Pi;
+                    float idealRotation = jumpDirection + Pi;
                     if (NPC.spriteDirection == -1)
-                        idealRotation += MathHelper.Pi;
+                        idealRotation += Pi;
                     NPC.rotation = NPC.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.056f);
-                    SpearRotation = jumpDirection + MathHelper.PiOver4;
+                    SpearRotation = jumpDirection + PiOver4;
                 }
             }
 
@@ -1005,7 +1005,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             // Handle post-charge collision effects.
             if (AttackTimer >= jumpDelay + hoverTime && AttackTimer < jumpDelay + hoverTime + chargeTime)
             {
-                if (MathHelper.Distance(NPC.Center.Y, startingTargetPositionY + Math.Sign(NPC.velocity.Y) * Target.height * 0.5f) < 50f)
+                if (Distance(NPC.Center.Y, startingTargetPositionY + Math.Sign(NPC.velocity.Y) * Target.height * 0.5f) < 50f)
                 {
                     hasPassedTargetYPosition = 1f;
                     NPC.netUpdate = true;
@@ -1040,12 +1040,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         }
 
                         // Create a burst of smaller waves.
-                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float offsetAngle = Main.rand.NextFloat(TwoPi);
                         for (int i = 0; i < waveBurstCount; i++)
                         {
                             for (int j = 0; j < smallWaveCount; j++)
                             {
-                                Vector2 sparkShootVelocity = (MathHelper.TwoPi * (j + (i % 2f == 1f ? 0.5f : 0f)) / smallWaveCount + offsetAngle).ToRotationVector2() * waveShootSpeed;
+                                Vector2 sparkShootVelocity = (TwoPi * (j + (i % 2f == 1f ? 0.5f : 0f)) / smallWaveCount + offsetAngle).ToRotationVector2() * waveShootSpeed;
                                 Utilities.NewProjectileBetter(NPC.Center + sparkShootVelocity * 4f, sparkShootVelocity, ModContent.ProjectileType<TorrentWave>(), WaveDamage, 0f);
                             }
                             waveShootSpeed *= 0.65f;
@@ -1053,7 +1053,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     }
 
                     AttackTimer = jumpDelay + hoverTime + chargeTime;
-                    SpearRotation = MathHelper.Pi - MathHelper.PiOver4;
+                    SpearRotation = Pi - PiOver4;
                     NPC.rotation = 0f;
                     while (Collision.SolidCollision(NPC.TopLeft - Vector2.UnitY * 2f, NPC.width, NPC.height + 4, true))
                         NPC.position -= NPC.velocity.SafeNormalize(Vector2.UnitX * NPC.spriteDirection);
@@ -1103,7 +1103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             int waveCount = 5;
             int waveReleaseRate = 30;
             int attackTransitionDelay = 40;
-            float waveArc = MathHelper.ToRadians(70f);
+            float waveArc = ToRadians(70f);
             float waveSpeed = 4.6f;
 
             if (Enraged)
@@ -1121,7 +1121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
                 {
-                    fallSpeed = MathHelper.Clamp(fallSpeed + 1.1f, 0f, 12f);
+                    fallSpeed = Clamp(fallSpeed + 1.1f, 0f, 12f);
                     NPC.position.Y += fallSpeed;
                 }
                 AttackTimer = 0f;
@@ -1131,20 +1131,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             SpearOpacity = Utils.GetLerpValue(2f, shootDelay - 20f, AttackTimer, true);
             if (AttackTimer < shootDelay)
             {
-                SpearRotation = NPC.AngleTo(Target.Center).AngleLerp(-MathHelper.PiOver4, 0.8f);
+                SpearRotation = NPC.AngleTo(Target.Center).AngleLerp(-PiOver4, 0.8f);
 
                 // Create water particles at the end of the spear.
-                Vector2 spearEnd = NPC.Center + (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * 32f;
+                Vector2 spearEnd = NPC.Center + (SpearRotation - PiOver4).ToRotationVector2() * 32f;
                 if (AttackTimer % 12f == 11f)
                 {
                     Color pulseColor = Main.rand.NextBool() ? Main.rand.NextBool() ? Color.SkyBlue : Color.LightSkyBlue : Main.rand.NextBool() ? Color.LightBlue : Color.DeepSkyBlue;
-                    var pulse = new DirectionalPulseRing(spearEnd, Vector2.Zero, pulseColor, Vector2.One * 1.35f, SpearRotation - MathHelper.PiOver4, 0.05f, 0.42f, 30);
+                    var pulse = new DirectionalPulseRing(spearEnd, Vector2.Zero, pulseColor, Vector2.One * 1.35f, SpearRotation - PiOver4, 0.05f, 0.42f, 30);
                     GeneralParticleHandler.SpawnParticle(pulse);
 
                     int numDust = 18;
                     for (int i = 0; i < numDust; i++)
                     {
-                        Vector2 ringVelocity = (MathHelper.TwoPi * i / numDust).ToRotationVector2().RotatedBy(SpearRotation + MathHelper.PiOver4) * 5f;
+                        Vector2 ringVelocity = (TwoPi * i / numDust).ToRotationVector2().RotatedBy(SpearRotation + PiOver4) * 5f;
                         Dust ringDust = Dust.NewDustPerfect(spearEnd, 211, ringVelocity, 100, default, 1.25f);
                         ringDust.noGravity = true;
                     }
@@ -1173,7 +1173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     // Release an even spread of waves.
                     for (int i = 0; i < waveCount; i++)
                     {
-                        float waveShootOffsetAngle = MathHelper.Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
+                        float waveShootOffsetAngle = Lerp(-waveArc, waveArc, i / (float)(waveCount - 1f));
                         Vector2 waveVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(waveShootOffsetAngle) * waveSpeed;
                         Utilities.NewProjectileBetter(NPC.Center, waveVelocity, ModContent.ProjectileType<TorrentWave>(), WaveDamage, 0f);
                     }
@@ -1187,13 +1187,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float shootInterpolant = Utils.Remap(AttackTimer - shootDelay, 0f, shootTime - 8f, 0.04f, 0.8f);
-                        Vector2 shootPosition = NPC.Center + (SpearRotation - MathHelper.PiOver4).ToRotationVector2() * 12f;
+                        Vector2 shootPosition = NPC.Center + (SpearRotation - PiOver4).ToRotationVector2() * 12f;
                         Vector2 shootDestination = Target.Center + Vector2.UnitX * (Target.Center.X > NPC.Center.X).ToDirectionInt() * 540f;
-                        shootDestination.X = MathHelper.Lerp(shootDestination.X, NPC.Center.X, shootInterpolant);
+                        shootDestination.X = Lerp(shootDestination.X, NPC.Center.X, shootInterpolant);
 
                         float horizontalDistance = Vector2.Distance(shootPosition, shootDestination);
-                        float idealShootSpeed = MathF.Sqrt(horizontalDistance * WaterSpear.Gravity);
-                        float spearShootSpeed = MathHelper.Clamp(idealShootSpeed, 10f, 29f);
+                        float idealShootSpeed = Sqrt(horizontalDistance * WaterSpear.Gravity);
+                        float spearShootSpeed = Clamp(idealShootSpeed, 10f, 29f);
                         Vector2 spearShootVelocity = Utilities.GetProjectilePhysicsFiringVelocity(shootPosition, shootDestination, WaterSpear.Gravity, spearShootSpeed, out _);
                         spearShootVelocity.Y -= 4.5f;
 
@@ -1302,7 +1302,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             // Adjust the telegraph intensity.
             LineTelegraphIntensity = Utils.GetLerpValue(1f, chargeDelay, chargeTimer, true);
             SpearOpacity = LineTelegraphIntensity;
-            SpearRotation = LineTelegraphDirection + MathHelper.PiOver4;
+            SpearRotation = LineTelegraphDirection + PiOver4;
 
             // Disable contact damage before charging.
             if (chargeTimer < chargeDelay || chargeTimer >= chargeDelay + chargeTime)
@@ -1318,7 +1318,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    Vector2 spearShootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 6f)) * 13f;
+                    Vector2 spearShootVelocity = -Vector2.UnitY.RotatedBy(Lerp(-0.5f, 0.5f, i / 6f)) * 13f;
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(spear =>
                     {
@@ -1373,7 +1373,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             float fadeOutRiseSpeed = 0.38f;
             float hoverSpeed = 28f;
             float chargeSpeed = 34f;
-            float movementAngularVelocity = MathHelper.TwoPi / 76f;
+            float movementAngularVelocity = TwoPi / 76f;
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[0];
             ref float hasPerformedRiseAnimation = ref NPC.Infernum().ExtraAI[1];
             ref float hoverOffsetDirection = ref NPC.Infernum().ExtraAI[2];
@@ -1426,7 +1426,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // Make the spear fade in.
                 NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
                 SpearOpacity = AttackTimer / chargeTelegraphTime;
-                SpearRotation = NPC.AngleTo(Target.Center) + MathHelper.PiOver4;
+                SpearRotation = NPC.AngleTo(Target.Center) + PiOver4;
 
                 // Look at the target.
                 NPC.rotation = -NPC.AngleTo(Target.Center) * 0.18f;
@@ -1475,7 +1475,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (AttackTimer >= chargeTelegraphTime + chargeTime)
             {
                 tearProjectileIndex = -1f;
-                NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 1f / chargeFadeoutTime, 0f, 1f);
+                NPC.Opacity = Clamp(NPC.Opacity - 1f / chargeFadeoutTime, 0f, 1f);
                 NPC.damage = 0;
                 NPC.dontTakeDamage = true;
             }
@@ -1488,7 +1488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 NPC.Opacity = 1f;
                 NPC.rotation = 0f;
 
-                hoverOffsetDirection = Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).ToRotation() + MathHelper.Pi;
+                hoverOffsetDirection = Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()).ToRotation() + Pi;
                 Vector2 teleportDestination = Target.Center - hoverOffsetDirection.ToRotationVector2() * hoverOffset;
 
                 chargeCounter++;
@@ -1523,7 +1523,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             ref float fallSpeed = ref NPC.Infernum().ExtraAI[0];
 
             // Make the spear disappear.
-            SpearOpacity = MathHelper.Clamp(SpearOpacity - 0.1f, 0f, 1f);
+            SpearOpacity = Clamp(SpearOpacity - 0.1f, 0f, 1f);
             SpearRotation = 0f;
 
             // Get rid of old telegraphs.
@@ -1543,7 +1543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 if (!Collision.SolidCollision(NPC.TopLeft, NPC.width, NPC.height + 16))
                 {
-                    fallSpeed = MathHelper.Clamp(fallSpeed + 0.7f, 0f, 13.6f);
+                    fallSpeed = Clamp(fallSpeed + 0.7f, 0f, 13.6f);
                     NPC.position.Y += fallSpeed;
                 }
                 AttackTimer = 0f;
@@ -1573,7 +1573,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 // Rapidly decelerate and spin.
                 NPC.velocity.X *= 0.9f;
                 NPC.velocity.Y += 0.7f;
-                NPC.rotation = MathHelper.TwoPi * AttackTimer / jumpHoverTime;
+                NPC.rotation = TwoPi * AttackTimer / jumpHoverTime;
             }
 
             // Calculate frames.
@@ -1720,7 +1720,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 NPC.velocity = Vector2.UnitY * 5f;
 
                 Vector2 baseTeleportPosition = new(Target.Center.X + Target.direction * Main.rand.NextFloat(50f, 150f), 300f);
-                if (MathHelper.Distance(Target.Center.X, NPC.Center.X) < 500f)
+                if (Distance(Target.Center.X, NPC.Center.X) < 500f)
                     baseTeleportPosition.X = NPC.Center.X;
                 if (NPC.collideY)
                     baseTeleportPosition.Y = NPC.Center.Y;
@@ -1833,7 +1833,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 dust.velocity.Y = Main.rand.NextFloat(0.7f, 0.77f) * dust.scale;
                 dust.velocity.X = Main.rand.NextFloat(1f, 40f) * (fromRight ? -1f : 1f);
                 if (Enraged)
-                    dust.velocity.X = MathHelper.Clamp(Math.Abs(dust.velocity.X) * 4f, 4f, 40f) * Math.Sign(dust.velocity.X);
+                    dust.velocity.X = Clamp(Math.Abs(dust.velocity.X) * 4f, 4f, 40f) * Math.Sign(dust.velocity.X);
 
                 dust.velocity *= 1.08f;
                 dust.color = Color.Orange;
@@ -1922,7 +1922,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             CalamityNetcode.SyncWorld();
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => MathHelper.Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);
+        public float PrimitiveWidthFunction(float completionRatio) => Lerp(0.2f, 12f, LineTelegraphIntensity) * Utils.GetLerpValue(1f, 0.72f, LineTelegraphIntensity, true);
 
         public Color PrimitiveTrailColor(float completionRatio)
         {
@@ -2010,8 +2010,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DrawElectricShield(float opacity, Vector2 drawPosition, float colorBrightness, float scaleFactor = 1f)
         {
-            float scale = MathHelper.Lerp(0.15f, 0.18f, MathF.Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * scaleFactor;
-            float noiseScale = MathHelper.Lerp(0.4f, 0.8f, MathF.Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
+            float scale = Lerp(0.15f, 0.18f, Sin(Main.GlobalTimeWrappedHourly * 0.5f) * 0.5f + 0.5f) * scaleFactor;
+            float noiseScale = Lerp(0.4f, 0.8f, Sin(Main.GlobalTimeWrappedHourly * 0.3f) * 0.5f + 0.5f);
 
             Effect shieldEffect = Terraria.Graphics.Effects.Filters.Scene["CalamityMod:RoverDriveShield"].GetShader().Shader;
             shieldEffect.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly * 0.24f);
@@ -2020,7 +2020,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             shieldEffect.Parameters["noiseScale"].SetValue(noiseScale);
 
             // Prepare the forcefield opacity.
-            float baseShieldOpacity = 0.9f + 0.1f * MathF.Sin(Main.GlobalTimeWrappedHourly * 2f);
+            float baseShieldOpacity = 0.9f + 0.1f * Sin(Main.GlobalTimeWrappedHourly * 2f);
             shieldEffect.Parameters["shieldOpacity"].SetValue(baseShieldOpacity * (opacity * 0.9f + 0.1f));
             shieldEffect.Parameters["shieldEdgeBlendStrenght"].SetValue(4f);
 

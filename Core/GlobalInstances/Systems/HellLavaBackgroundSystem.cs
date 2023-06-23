@@ -184,7 +184,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             // Update the state of all backgrounds depending on whether they should be drawing or not.
             foreach (BaseHellLavaBackground background in LoadedBackgrounds)
-                BackgroundIntensities[background] = MathHelper.Clamp(BackgroundIntensities[background] + background.IsActive.ToDirectionInt() * 0.04f, 0f, 1f);
+                BackgroundIntensities[background] = Clamp(BackgroundIntensities[background] + background.IsActive.ToDirectionInt() * 0.04f, 0f, 1f);
         }
     }
 }

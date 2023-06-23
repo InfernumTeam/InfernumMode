@@ -53,7 +53,7 @@ namespace InfernumMode.Common.BaseEntities
             UpdateLaserMotion();
 
             float idealLaserLength = DetermineLaserLength();
-            LaserLength = MathHelper.Lerp(LaserLength, idealLaserLength, 0.9f); // Very quickly approach the ideal laser length.
+            LaserLength = Lerp(LaserLength, idealLaserLength, 0.9f); // Very quickly approach the ideal laser length.
 
             DelegateMethods.v3_1 = LightCastColor.ToVector3();
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
@@ -70,7 +70,7 @@ namespace InfernumMode.Common.BaseEntities
             // You could attempt to make it intelligent by having it move towards the target like the Last Prism, but that's not done here.
 
             float updatedVelocityDirection = Projectile.velocity.ToRotation() + RotationalSpeed;
-            Projectile.rotation = updatedVelocityDirection - MathHelper.PiOver2; // Pretty much all lasers have a vertical sheet.
+            Projectile.rotation = updatedVelocityDirection - PiOver2; // Pretty much all lasers have a vertical sheet.
             Projectile.velocity = updatedVelocityDirection.ToRotationVector2();
         }
 
@@ -79,7 +79,7 @@ namespace InfernumMode.Common.BaseEntities
         /// </summary>
         public virtual void DetermineScale()
         {
-            Projectile.scale = MathF.Sin(Time / Lifetime * MathHelper.Pi) * ScaleExpandRate * MaxScale;
+            Projectile.scale = Sin(Time / Lifetime * Pi) * ScaleExpandRate * MaxScale;
             if (Projectile.scale > MaxScale)
                 Projectile.scale = MaxScale;
         }

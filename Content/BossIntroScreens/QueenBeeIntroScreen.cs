@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BossIntroScreens
     {
         public override TextColorData TextColor => new(_ =>
         {
-            float colorFadeInterpolant = MathF.Sin(AnimationCompletion * MathHelper.Pi * 3f) * 0.5f + 0.5f;
+            float colorFadeInterpolant = Sin(AnimationCompletion * Pi * 3f) * 0.5f + 0.5f;
             return Color.Lerp(Color.Yellow, Color.Orange, colorFadeInterpolant);
         });
 

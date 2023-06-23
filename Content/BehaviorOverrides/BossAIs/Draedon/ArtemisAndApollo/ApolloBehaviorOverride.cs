@@ -169,7 +169,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             npc.Calamity().newAI[1] = 0f;
             if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
                     npc.Center = target.Center - Vector2.UnitY * 2700f;
 
@@ -181,7 +181,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 npc.dontTakeDamage = true;
             }
             else
-                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)
@@ -323,7 +323,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Vector2 hoverDestination = target.Center + Vector2.UnitX * hoverSide * 780f;
 
             // Determine rotation.
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             // Disable contact damage.
             npc.damage = 0;
@@ -332,7 +332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
             // Determine frames.
-            frame = (int)Math.Round(MathHelper.Lerp(startingFrame, endingFrame, phaseTransitionAnimationTime / Phase2TransitionTime));
+            frame = (int)Math.Round(Lerp(startingFrame, endingFrame, phaseTransitionAnimationTime / Phase2TransitionTime));
 
             // Create the pupil gore thing.
             int pupilPopoffTime = (int)(Phase2TransitionTime * Utils.GetLerpValue(startingFrame, endingFrame, 37.5f));
@@ -343,7 +343,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int lensType = ModContent.ProjectileType<BrokenApolloLens>();
-                    Vector2 lensDirection = (npc.rotation - MathHelper.PiOver2).ToRotationVector2();
+                    Vector2 lensDirection = (npc.rotation - PiOver2).ToRotationVector2();
                     if (npc.type == ModContent.NPCType<Artemis>())
                         lensType = ModContent.ProjectileType<BrokenArtemisLens>();
 
@@ -370,7 +370,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             // Use charge-up frames.
             npc.frameCounter++;
-            frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
+            frame = (int)Math.Round(Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
 
             // Clear away projectiles.
             ExoMechManagement.ClearAwayTransitionProjectiles();
@@ -392,7 +392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 collidingWithMech = npc.Hitbox.Intersects(Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())].Hitbox);
 
             if (collidingWithMech && deathAnimationTimer > chargeupTime + reelBackTime)
-                deathAnimationTimer = MathHelper.Max(chargeupTime + reelBackTime + chargeTime - 4f, deathAnimationTimer);
+                deathAnimationTimer = MathF.Max(chargeupTime + reelBackTime + chargeTime - 4f, deathAnimationTimer);
 
             // Hover to the sides of the target and charge energy.
             if (deathAnimationTimer < chargeupTime)
@@ -401,12 +401,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 36f, 84f);
 
                 // Determine rotation.
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                 // Determine the intensity of the charge visuals.
                 chargeInterpolant = Utils.GetLerpValue(chargeupTime - 60f, chargeupTime - 1f, deathAnimationTimer, true);
 
-                float particleCreationChance = MathHelper.Lerp(0.1f, 0.9f, Utils.GetLerpValue(0f, chargeupTime * 0.65f, deathAnimationTimer, true));
+                float particleCreationChance = Lerp(0.1f, 0.9f, Utils.GetLerpValue(0f, chargeupTime * 0.65f, deathAnimationTimer, true));
 
                 for (int i = 0; i < 2; i++)
                 {
@@ -419,12 +419,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (npc.type == ModContent.NPCType<Apollo>())
                     {
                         particleColor = Color.Lerp(Color.Lime, Color.Yellow, Main.rand.NextFloat(0.55f));
-                        cannonEndPosition += (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
+                        cannonEndPosition += (npc.rotation - PiOver2).ToRotationVector2() * 85f;
                     }
                     else
                     {
                         particleColor = Color.Lerp(Color.Orange, Color.Yellow, Main.rand.NextFloat(0.5f));
-                        cannonEndPosition += (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 102f;
+                        cannonEndPosition += (npc.rotation - PiOver2).ToRotationVector2() * 102f;
                     }
 
                     Vector2 particleSpawnPosition = cannonEndPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(75f, 165f);
@@ -445,14 +445,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 36f, 84f);
 
                 // Determine rotation.
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                 chargeInterpolant = 1f;
 
                 // Charge.
                 if (deathAnimationTimer == chargeupTime + reelBackTime)
                 {
-                    Vector2 tailEnd = npc.Center - (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 50f;
+                    Vector2 tailEnd = npc.Center - (npc.rotation - PiOver2).ToRotationVector2() * 50f;
 
                     // Create a sonic boom at the tail end of the mech.
                     for (int i = 0; i < 2; i++)
@@ -460,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     SoundEngine.PlaySound(ScorchedEarth.ShootSound, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
                 }
             }
 
@@ -487,13 +487,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ExoMechAIUtilities.HealInFinalPhase(npc, phaseTransitionAnimationTime);
 
             // Determine rotation.
-            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
             // Move to the appropriate side of the target.
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
             // Determine frames.
-            frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, phaseTransitionAnimationTime / 45f % 1f));
+            frame = (int)Math.Round(Lerp(70f, 79f, phaseTransitionAnimationTime / 45f % 1f));
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f && npc.type == ModContent.NPCType<Apollo>())
@@ -578,18 +578,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     hoverDestination += hoverOffsetDirection * 180f;
 
                     npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.1f);
-                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + MathHelper.PiOver2, 0.25f);
-                    npc.velocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 0.1f;
+                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + PiOver2, 0.25f);
+                    npc.velocity = (npc.rotation - PiOver2).ToRotationVector2() * 0.1f;
 
                     // Decide which direction Apollo should release fireballs in.
-                    apolloFlameSpinDirection = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.velocity.ToRotation()) > 0f).ToDirectionInt();
+                    apolloFlameSpinDirection = (WrapAngle(npc.AngleTo(target.Center) - npc.velocity.ToRotation()) > 0f).ToDirectionInt();
                 }
 
                 // Release a constant fan of fireballs if the telegraph has been completed.
                 else
                 {
-                    npc.velocity = npc.velocity.RotatedBy(apolloFlameSpinDirection * MathHelper.TwoPi / 64f);
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.velocity = npc.velocity.RotatedBy(apolloFlameSpinDirection * TwoPi / 64f);
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                     if (attackTimer % apolloFireballReleaseRate == apolloFireballReleaseRate - 1f)
                     {
@@ -633,7 +633,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 if (attackTimer <= artemisFastRedirectTime && artemisHasPerformedTelegraph == 0f)
                 {
                     npc.Center = Vector2.Lerp(npc.Center, target.Center, 0.044f);
-                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + MathHelper.PiOver2, 0.125f);
+                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + PiOver2, 0.125f);
                 }
 
                 // Drift near the player.
@@ -652,7 +652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center - Vector2.UnitY * 350f) * driftSpeed, 0.02f);
                 if (angularVelocity > 0f)
-                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + MathHelper.PiOver2, angularVelocity);
+                    npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(artemisAimDestination) + PiOver2, angularVelocity);
 
                 // Everything beyond this point happens exclusively if the telegraph has been completed.
                 if (artemisHasPerformedTelegraph == 0f)
@@ -668,7 +668,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(npc.Center, (npc.rotation - MathHelper.PiOver2).ToRotationVector2(), laserID, StrongerNormalShotDamage, 0f, -1, npc.whoAmI);
+                        Utilities.NewProjectileBetter(npc.Center, (npc.rotation - PiOver2).ToRotationVector2(), laserID, StrongerNormalShotDamage, 0f, -1, npc.whoAmI);
                 }
 
                 // Increment the laser timer.
@@ -700,7 +700,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             // Decide frames.
             npc.frameCounter++;
-            frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+            frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
             if (ExoMechManagement.ExoTwinsAreInSecondPhase && frame <= 30f)
                 frame += 60f;
         }
@@ -735,17 +735,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
 
                 float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + ApolloFlamethrower.Lifetime + 15f);
 
                 // Look at the target and hover towards the top left/right of the target.
                 if (wrappedAttackTimer < flamethrowerHoverTime + 15f)
                 {
-                    Vector2 mouthpiecePosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
+                    Vector2 mouthpiecePosition = npc.Center + (npc.rotation - PiOver2).ToRotationVector2() * 85f;
                     Vector2 hoverDestination = target.Center + new Vector2(hoverSide * 1020f, -375f);
 
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination - npc.velocity) * 45f, 1.5f);
 
                     // Begin the delay if the destination is reached.
@@ -783,7 +783,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 }
 
                 if (wrappedAttackTimer >= flamethrowerHoverTime + 15f)
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
             }
 
 
@@ -806,7 +806,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 75f);
 
                     // Decide rotation.
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                 }
                 else
                 {
@@ -820,7 +820,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 29f, 60f);
 
                             // Determine rotation.
-                            npc.rotation = chargeVelocity.ToRotation() + MathHelper.PiOver2;
+                            npc.rotation = chargeVelocity.ToRotation() + PiOver2;
 
                             // Prepare the charge.
                             if (generalAttackTimer > 45f && (npc.WithinRange(hoverDestination, 105f) || generalAttackTimer > 125f))
@@ -835,7 +835,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         // Swoop down slightly and release lasers.
                         case 1:
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
-                            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 475f))
                             {
@@ -843,10 +843,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
-                                    float offsetAngle = Main.rand.NextFloat(MathHelper.Pi / artemisLaserBurstCount);
+                                    float offsetAngle = Main.rand.NextFloat(Pi / artemisLaserBurstCount);
                                     for (int i = 0; i < artemisLaserBurstCount; i++)
                                     {
-                                        Vector2 aimDestination = npc.Center + (MathHelper.TwoPi * i / artemisLaserBurstCount + offsetAngle).ToRotationVector2() * 1500f;
+                                        Vector2 aimDestination = npc.Center + (TwoPi * i / artemisLaserBurstCount + offsetAngle).ToRotationVector2() * 1500f;
                                         Vector2 laserShootVelocity = npc.SafeDirectionTo(aimDestination) * 7.25f;
 
                                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
@@ -872,7 +872,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (attackSubstate >= 1f)
                     frame += 10f;
             }
@@ -894,7 +894,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (npc.type == ModContent.NPCType<Artemis>())
             {
                 npc.dontTakeDamage = true;
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.16f, 0f, 1f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
                 return;
             }
@@ -940,13 +940,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             {
                 // Hover into position.
                 case 0:
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                     // Hover to the top left/right of the target.
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 50f, 92f);
 
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
 
                     // Once sufficiently close, go to the next attack substate.
                     if (npc.WithinRange(hoverDestination, 50f))
@@ -960,14 +960,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 // Wait in place for a short period of time.
                 case 1:
-                    npc.rotation = npc.AngleTo(target.Center + target.velocity * chargePredictiveness) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center + target.velocity * chargePredictiveness) + PiOver2;
 
                     // Decide frames.
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(20f, 29f, (float)npc.frameCounter / 36f % 1f));
 
                     // Calculate the charge flash.
-                    npc.ModNPC<Apollo>().ChargeComboFlash = MathHelper.Clamp(attackTimer / waitTime, 0f, 1f);
+                    npc.ModNPC<Apollo>().ChargeComboFlash = Clamp(attackTimer / waitTime, 0f, 1f);
 
                     // Charge and release sparks.
                     if (attackTimer >= waitTime && attackDelay >= 64f)
@@ -986,13 +986,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                            float offsetAngle = Main.rand.NextFloat(TwoPi);
                             for (int i = 0; i < sparkCount; i++)
                             {
-                                Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
+                                Vector2 sparkShootVelocity = (TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
                                 Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(), StrongerNormalShotDamage, 0f);
 
-                                sparkShootVelocity = (MathHelper.TwoPi * (i + 0.5f) / sparkCount + offsetAngle).ToRotationVector2() * 7f;
+                                sparkShootVelocity = (TwoPi * (i + 0.5f) / sparkCount + offsetAngle).ToRotationVector2() * 7f;
                                 Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 16f, sparkShootVelocity, ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(), StrongerNormalShotDamage, 0f);
                             }
                         }
@@ -1009,7 +1009,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     // Decide frames.
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(20f, 29f, (float)npc.frameCounter / 36f % 1f));
 
                     // Calculate the charge flash.
                     npc.ModNPC<Apollo>().ChargeComboFlash = Utils.GetLerpValue(chargeTime, chargeTime - 10f, attackTimer, true);
@@ -1039,7 +1039,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 npc.dontTakeDamage = true;
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
+                npc.Opacity = Clamp(npc.Opacity - 0.16f, 0f, 1f);
                 npc.ai[1] = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())].ai[1];
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
                 return;
@@ -1047,7 +1047,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             int shootDelay = ArtemisLaserbeamTelegraph.TrueLifetime + 4;
             float spinRadius = 640f;
-            float spinArc = MathHelper.Pi * 1.1f;
+            float spinArc = Pi * 1.1f;
 
             npc.dontTakeDamage = false;
 
@@ -1072,14 +1072,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (attackTimer == 1f)
                     {
                         SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound, npc.Center);
-                        hoverOffsetDirection = Main.rand.Next(8) * MathHelper.TwoPi / 8f;
+                        hoverOffsetDirection = Main.rand.Next(8) * TwoPi / 8f;
                         npc.netUpdate = true;
                     }
 
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
 
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
                     // Begin hovering in place once sufficiently close to the hover position.
@@ -1087,7 +1087,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     {
                         npc.velocity = Vector2.Zero;
                         npc.Center = hoverDestination;
-                        npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                        npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                         spinningPointX = target.Center.X;
                         spinningPointY = target.Center.Y;
                         attackTimer = 0f;
@@ -1099,7 +1099,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Stay in place for a brief moment.
                 case 1:
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
 
                     // Calculate the charge flash.
                     npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(0f, shootDelay * 0.8f, attackTimer, true);
@@ -1115,7 +1115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         {
                             for (int i = 0; i < 2; i++)
                             {
-                                float telegraphAngularOffset = MathHelper.Lerp(-0.62f, 0.62f, i);
+                                float telegraphAngularOffset = Lerp(-0.62f, 0.62f, i);
                                 Utilities.NewProjectileBetter(npc.Center, -hoverOffsetDirection.ToRotationVector2(), ModContent.ProjectileType<ArtemisLaserbeamTelegraph>(), 0, 0f, -1, npc.whoAmI, telegraphAngularOffset);
                             }
                         }
@@ -1124,7 +1124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     // Initialize Artemis' spin direction.
                     if (spinDirection == 0f)
                     {
-                        float angularOffset = MathHelper.WrapAngle(npc.AngleTo(target.Center) - npc.rotation + MathHelper.PiOver2);
+                        float angularOffset = WrapAngle(npc.AngleTo(target.Center) - npc.rotation + PiOver2);
 
                         if (Math.Abs(angularOffset) > 0.01f)
                             spinDirection = Math.Sign(angularOffset);
@@ -1154,15 +1154,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Spin 2 win.
                 case 2:
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(80f, 89f, (float)npc.frameCounter / 32f % 1f));
+                    frame = (int)Math.Round(Lerp(80f, 89f, (float)npc.frameCounter / 32f % 1f));
 
-                    float spinAngle = attackTimer / ArtemisSpinLaser.LaserLifetime * spinArc * -spinDirection + hoverOffsetDirection + MathHelper.PiOver2;
-                    npc.velocity = spinAngle.ToRotationVector2() * MathHelper.Pi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection * 1.8f;
-                    npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
+                    float spinAngle = attackTimer / ArtemisSpinLaser.LaserLifetime * spinArc * -spinDirection + hoverOffsetDirection + PiOver2;
+                    npc.velocity = spinAngle.ToRotationVector2() * Pi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection * 1.8f;
+                    npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + PiOver2;
 
                     for (int i = 0; i < 2; i++)
                     {
-                        ElectricSpark electricSpark = new(npc.Center + Main.rand.NextVector2Circular(5, 5), npc.SafeDirectionTo(new Vector2(spinningPointX, spinningPointY)).RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.9f, 1.1f) * 60f, Color.Orange, Color.Gold, Main.rand.NextFloat(1.3f, 1.5f), 60);
+                        ElectricSpark electricSpark = new(npc.Center + Main.rand.NextVector2Circular(5, 5), npc.SafeDirectionTo(new Vector2(spinningPointX, spinningPointY)).RotatedByRandom(TwoPi) * Main.rand.NextFloat(0.9f, 1.1f) * 60f, Color.Orange, Color.Gold, Main.rand.NextFloat(1.3f, 1.5f), 60);
                         GeneralParticleHandler.SpawnParticle(electricSpark);
                     }
 
@@ -1203,10 +1203,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Hover into position.
                 case 0:
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
 
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 40f, 1.15f);
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                     if (attackTimer >= 90f)
                     {
@@ -1219,7 +1219,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // Begin firing.
                 case 1:
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 30f % 1f));
+                    frame = (int)Math.Round(Lerp(20f, 29f, (float)npc.frameCounter / 30f % 1f));
 
                     // Reset the hover offset periodically.
                     if (attackTimer % 90f == 89f)
@@ -1236,7 +1236,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         float predictivenessFactor = 18.5f;
                         Vector2 aimDestination = target.Center + target.velocity * new Vector2(predictivenessFactor, predictivenessFactor * 2.6f);
                         Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
-                        npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                        npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                         if (ExoMechManagement.CurrentTwinsPhase == 4)
                             laserShootRate += 7;
@@ -1283,7 +1283,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         float predictivenessFactor = 25f;
                         Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
                         Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
-                        npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                        npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                         if (ExoMechManagement.CurrentTwinsPhase == 4)
                             plasmaShootRate += 16;
@@ -1332,7 +1332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int laserbeamAttackTime = laserbeamTelegraphTime + laserbeamSweepTime;
             int attackTransitionDelay = 30;
             float spinRadius = 600f;
-            float spinArc = MathHelper.Pi * 5f;
+            float spinArc = Pi * 5f;
             float plasmaBlastShootSpeed = 12f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
@@ -1350,7 +1350,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
                 apolloShootRate -= 18;
-                spinArc += MathHelper.Pi;
+                spinArc += Pi;
                 plasmaBlastShootSpeed += 1.06f;
             }
             if (enrageTimer >= 1f)
@@ -1418,7 +1418,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (ExoMechManagement.ExoTwinsAreInSecondPhase)
                     frame += 60f;
 
@@ -1430,7 +1430,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     float spinAngle = (attackTimer - laserbeamTelegraphTime) / laserbeamSweepTime * spinArc * -spinDirection;
                     npc.velocity = Vector2.Zero;
                     npc.Center = new Vector2(spinningPointX, spinningPointY) + Vector2.UnitY.RotatedBy(spinAngle) * spinRadius;
-                    npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + PiOver2;
                 }
                 else if (artemisHasRepositioned == 1f)
                 {
@@ -1455,10 +1455,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
                 // Look at the target.
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                 // Handle frames.
-                frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)attackTimer / apolloShootRate % 1f));
+                frame = (int)Math.Round(Lerp(20f, 29f, (float)attackTimer / apolloShootRate % 1f));
                 if (ExoMechManagement.ExoTwinsAreInSecondPhase)
                     frame += 60f;
 
@@ -1472,7 +1472,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center) * plasmaBlastShootSpeed;
                         Utilities.NewProjectileBetter(plasmaShootCenter, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), NormalShotDamage, 0f);
 
-                        apolloAngularHoverOffset += MathHelper.TwoPi / 7f;
+                        apolloAngularHoverOffset += TwoPi / 7f;
                         npc.netUpdate = true;
                     }
                 }
@@ -1529,7 +1529,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 case 0:
                     // Handle frames.
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 45f % 1f));
+                    frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 45f % 1f));
 
                     // Have both twins stay close to each other when hovering.
                     Vector2 hoverDestination = target.Center + new Vector2(400f, -360f);
@@ -1547,7 +1547,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         Utilities.DisplayText("ARTEMIS-01: COMBINED ENERGY RESERVES AT LOW CAPACITY. SYSTEM FAILURE IMMINENT.", ArtemisTextColor);
 
                     // Look at the target.
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                     if (attackTimer >= textSubstateTime && isApollo)
                     {
@@ -1573,13 +1573,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 case 1:
                     // Handle frames.
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 45f % 1f));
+                    frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 45f % 1f));
 
                     // Make the orb grow.
                     if (isApollo)
                     {
-                        float orbGrowInterpolant = MathF.Pow(Utils.GetLerpValue(0f, orbGrowTime, attackTimer, true), 2.3f);
-                        deathOrbRadius = MathHelper.Lerp(1f, orbMaxRadius, orbGrowInterpolant);
+                        float orbGrowInterpolant = Pow(Utils.GetLerpValue(0f, orbGrowTime, attackTimer, true), 2.3f);
+                        deathOrbRadius = Lerp(1f, orbMaxRadius, orbGrowInterpolant);
                     }
 
                     // Send energy towrds the orb.
@@ -1588,7 +1588,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (energyOrbIsValid)
                     {
                         // Look at the orb.
-                        npc.rotation = npc.AngleTo(energyOrb.Center) + MathHelper.PiOver2;
+                        npc.rotation = npc.AngleTo(energyOrb.Center) + PiOver2;
                         Vector2 currentDirection = npc.SafeDirectionTo(energyOrb.Center);
 
                         // Gradually move away from the orb.
@@ -1605,7 +1605,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         }
                         else
                         {
-                            Vector2 fireSpawnPosition = npc.Center + currentDirection.RotatedByRandom(MathHelper.PiOver2) * 100f;
+                            Vector2 fireSpawnPosition = npc.Center + currentDirection.RotatedByRandom(PiOver2) * 100f;
                             Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6);
                             fire.velocity = (energyOrb.Center - fire.position) * 0.1f;
                             fire.scale = 2f;
@@ -1638,11 +1638,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 case 2:
                     // Handle frames.
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 45f % 1f));
+                    frame = (int)Math.Round(Lerp(20f, 29f, (float)npc.frameCounter / 45f % 1f));
 
                     // Arc around for a bit, intending to redirect towards the target.
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.06f);
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                     if (attackTimer >= arcRedirectTime)
                     {
@@ -1658,7 +1658,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 case 3:
                     // Handle frames.
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, (float)npc.frameCounter / 45f % 1f));
+                    frame = (int)Math.Round(Lerp(20f, 29f, (float)npc.frameCounter / 45f % 1f));
 
                     // Do damage.
                     npc.damage = npc.defDamage;
@@ -1694,7 +1694,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                         // Charge at the target.
                         npc.velocity = directionToTarget * chargeSpeed;
-                        npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                        npc.rotation = npc.velocity.ToRotation() + PiOver2;
                         npc.netUpdate = true;
                     }
 
@@ -1702,13 +1702,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (localAttackTimer >= chargeRate - 16f)
                     {
                         npc.velocity *= 0.7f;
-                        npc.rotation = npc.rotation.AngleLerp(directionToTarget.ToRotation() + MathHelper.PiOver2, 0.24f);
+                        npc.rotation = npc.rotation.AngleLerp(directionToTarget.ToRotation() + PiOver2, 0.24f);
 
                         npc.netUpdate = true;
                     }
 
                     else if (localAttackTimer >= 12f)
-                        npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                        npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                     localAttackTimer++;
                     if (localAttackTimer >= chargeRate)
@@ -1833,7 +1833,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             for (int i = 0; i < 32; i++)
             {
                 Color smokeColor = Color.Lerp(Color.Yellow, Color.Cyan, Main.rand.NextFloat());
-                Vector2 smokeVelocity = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * Main.rand.NextFloat(7f, 11.5f) + Main.rand.NextVector2Circular(4f, 4f);
+                Vector2 smokeVelocity = (TwoPi * i / 32f).ToRotationVector2() * Main.rand.NextFloat(7f, 11.5f) + Main.rand.NextVector2Circular(4f, 4f);
                 GeneralParticleHandler.SpawnParticle(new HeavySmokeParticle(npc.Center, smokeVelocity, smokeColor, 56, 2.4f, 1f));
 
                 smokeVelocity *= 2f;
@@ -1858,9 +1858,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             npc.frame = new Rectangle(npc.width * frameX, npc.height * frameY, npc.width, npc.height);
         }
 
-        public static float FlameTrailWidthFunction(NPC npc, float completionRatio) => MathHelper.SmoothStep(21f, 8f, completionRatio) * npc.ModNPC<Apollo>().ChargeComboFlash * npc.Opacity;
+        public static float FlameTrailWidthFunction(NPC npc, float completionRatio) => SmoothStep(21f, 8f, completionRatio) * npc.ModNPC<Apollo>().ChargeComboFlash * npc.Opacity;
 
-        public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio) => MathHelper.SmoothStep(34f, 12f, completionRatio) * npc.ModNPC<Apollo>().ChargeComboFlash * npc.Opacity;
+        public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio) => SmoothStep(34f, 12f, completionRatio) * npc.ModNPC<Apollo>().ChargeComboFlash * npc.Opacity;
 
         public static float RibbonTrailWidthFunction(float completionRatio)
         {
@@ -1893,7 +1893,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             Color startingColor = new(34, 40, 48);
             Color endColor = new(40, 160, 32);
-            return Color.Lerp(startingColor, endColor, MathF.Pow(completionRatio, 1.5f)) * npc.Opacity;
+            return Color.Lerp(startingColor, endColor, Pow(completionRatio, 1.5f)) * npc.Opacity;
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -1960,7 +1960,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 float telegraphOpacity = Utils.GetLerpValue(0f, 16f, attackTimer, true) * Utils.GetLerpValue(ArtemisLaserbeamTelegraph.TrueLifetime, ArtemisLaserbeamTelegraph.TrueLifetime - 8f, attackTimer, true);
                 Color smearColor = Color.Lerp(Color.Gold, Color.Orange, 0.75f);
                 smearColor *= telegraphOpacity;
-                float smearRotation = npc.rotation + (telegraphDirection == 1 ? MathHelper.Pi : 0);
+                float smearRotation = npc.rotation + (telegraphDirection == 1 ? Pi : 0);
 
                 Main.spriteBatch.EnterShaderRegion(BlendState.Additive);
                 Main.EntitySpriteDraw(smear, npc.Center - offset * 0.32f - Main.screenPosition, null, smearColor, smearRotation, smear.Size() * 0.5f, npc.scale * 3f, 0, 0);
@@ -2003,12 +2003,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 for (int i = 0; i < 12; i++)
                 {
                     float ribbonCompletionRatio = i / 12f;
-                    float wrappedAngularOffset = MathHelper.WrapAngle(npc.oldRot[i + 1] - currentSegmentRotation) * 0.3f;
-                    float segmentRotationOffset = MathHelper.Clamp(wrappedAngularOffset, -0.12f, 0.12f);
+                    float wrappedAngularOffset = WrapAngle(npc.oldRot[i + 1] - currentSegmentRotation) * 0.3f;
+                    float segmentRotationOffset = Clamp(wrappedAngularOffset, -0.12f, 0.12f);
 
                     // Add a sinusoidal offset that goes based on time and completion ratio to create a waving-flag-like effect.
                     // This is dampened for the first few points to prevent weird offsets. It is also dampened by high velocity.
-                    float sinusoidalRotationOffset = MathF.Sin(ribbonCompletionRatio * 2.22f + Main.GlobalTimeWrappedHourly * 3.4f) * 1.36f;
+                    float sinusoidalRotationOffset = Sin(ribbonCompletionRatio * 2.22f + Main.GlobalTimeWrappedHourly * 3.4f) * 1.36f;
                     float sinusoidalRotationOffsetFactor = Utils.GetLerpValue(0f, 0.37f, ribbonCompletionRatio, true) * direction * 24f;
                     sinusoidalRotationOffsetFactor *= Utils.GetLerpValue(24f, 16f, npc.velocity.Length(), true);
 
@@ -2021,7 +2021,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 ribbonTrail.Draw(ribbonDrawPositions, -Main.screenPosition, 66);
             }
 
-            int instanceCount = (int)MathHelper.Lerp(1f, 15f, flashInterpolant);
+            int instanceCount = (int)Lerp(1f, 15f, flashInterpolant);
             Color baseInstanceColor = Color.Lerp(lightColor, Color.White, flashInterpolant);
             baseInstanceColor.A = (byte)(int)(255f - flashInterpolant * 255f);
 
@@ -2033,10 +2033,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             if (instanceCount > 1)
             {
                 baseInstanceColor *= 0.04f;
-                float backAfterimageOffset = MathHelper.SmoothStep(0f, 2f, flashInterpolant);
+                float backAfterimageOffset = SmoothStep(0f, 2f, flashInterpolant);
                 for (int i = 0; i < instanceCount; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     drawInstance(drawOffset, baseInstanceColor);
                 }
             }
@@ -2052,7 +2052,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     float backFlameLength = direction == 0f ? 700f : 190f;
                     Vector2 drawStart = npc.Center + baseDrawOffset;
-                    Vector2 drawEnd = drawStart - (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * flashInterpolant * backFlameLength;
+                    Vector2 drawEnd = drawStart - (npc.rotation - PiOver2).ToRotationVector2() * flashInterpolant * backFlameLength;
                     Vector2[] drawPositions = new Vector2[]
                     {
                         drawStart,
@@ -2063,7 +2063,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     {
                         for (int i = 0; i < 4; i++)
                         {
-                            Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 8f;
+                            Vector2 drawOffset = (TwoPi * i / 4f).ToRotationVector2() * 8f;
                             chargeFlameTrailBig.Draw(drawPositions, drawOffset - Main.screenPosition, 70);
                         }
                     }
@@ -2090,7 +2090,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, Color.Yellow * gleamFadeFactor, npc.rotation, pupilOrigin, pupilScale, 0, 0f);
                 pupilScale = new Vector2(0.15f, 0.55f) * gleamFadeFactor;
-                Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, Color.OrangeRed * gleamFadeFactor, npc.rotation + MathHelper.PiOver2, pupilOrigin, pupilScale, 0, 0f);
+                Main.spriteBatch.Draw(pupilStarTexture, pupilPosition, null, Color.OrangeRed * gleamFadeFactor, npc.rotation + PiOver2, pupilOrigin, pupilScale, 0, 0f);
 
                 // Draw the telegraph line.
                 Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;

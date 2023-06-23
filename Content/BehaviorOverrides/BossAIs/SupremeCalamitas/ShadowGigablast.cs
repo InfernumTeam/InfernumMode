@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Type];
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.9f, 0f, 0f);
 
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             SoundEngine.PlaySound(SCalBrimstoneGigablast.ImpactSound, Projectile.Center);
 
-            float spread = MathHelper.PiOver2 * 0.12f;
+            float spread = PiOver2 * 0.12f;
             double startAngle = Math.Atan2(Projectile.velocity.X, Projectile.velocity.Y) - spread / 2;
             double deltaAngle = spread / 30f;
             double offsetAngle;

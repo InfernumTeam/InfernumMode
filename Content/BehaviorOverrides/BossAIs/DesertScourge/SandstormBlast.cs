@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         public override void AI()
         {
             Projectile.tileCollide = Projectile.timeLeft < 240;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.125f, 0f, 1f);
 
             Projectile.velocity *= 1.00502515f;
             if (Collision.SolidCollision(Projectile.position - Vector2.One * 5f, 10, 10))
@@ -43,9 +43,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                     Projectile.Kill();
             }
             else
-                Projectile.velocity.Y = MathF.Sin(Projectile.position.X * MathHelper.TwoPi / 1776f) + 1.5f;
+                Projectile.velocity.Y = Sin(Projectile.position.X * TwoPi / 1776f) + 1.5f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             Color backglow = Main.dayTime ? Color.DarkBlue : Color.White;
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
+                Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 6f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(backglow) with { A = 72 } * 0.85f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);

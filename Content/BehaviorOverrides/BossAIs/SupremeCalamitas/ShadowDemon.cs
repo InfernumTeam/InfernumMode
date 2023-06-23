@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Determine the scale and hitbox size.
             float oldScale = NPC.scale;
-            NPC.scale = MathHelper.Clamp(NPC.scale + SupremeCalamitasBehaviorOverride.ShadowDemonCanAttack.ToDirectionInt() * 0.02f, 0.0001f, 1f);
+            NPC.scale = Clamp(NPC.scale + SupremeCalamitasBehaviorOverride.ShadowDemonCanAttack.ToDirectionInt() * 0.02f, 0.0001f, 1f);
             if (oldScale != NPC.scale)
             {
                 NPC.Center += NPC.Size * 0.5f;
@@ -216,7 +216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             for (int i = 0; i < 3; i++)
                             {
-                                float shootOffsetAngle = MathHelper.Lerp(-0.44f, 0.44f, i / 2f) + Main.rand.NextFloatDirection() * 0.04f;
+                                float shootOffsetAngle = Lerp(-0.44f, 0.44f, i / 2f) + Main.rand.NextFloatDirection() * 0.04f;
                                 Vector2 shadowBlastShootVelocity = (Target.Center - head.Center).SafeNormalize(Vector2.UnitY).RotatedBy(shootOffsetAngle) * blastShootSpeed;
                                 Utilities.NewProjectileBetter(head.Center, shadowBlastShootVelocity, ModContent.ProjectileType<ShadowFlameBlast>(), SupremeCalamitasBehaviorOverride.ShadowBlastDamage, 0f);
                             }
@@ -334,7 +334,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             for (int i = 0; i < Heads.Length; i++)
             {
                 Heads[i].HoverOffset = Main.rand.NextFloat(180f, 300f);
-                Heads[i].HoverOffsetAngle = MathHelper.Lerp(-0.87f, 0.87f, i / (float)(Heads.Length - 1f));
+                Heads[i].HoverOffsetAngle = Lerp(-0.87f, 0.87f, i / (float)(Heads.Length - 1f));
                 Heads[i].HoverOffsetAngle += Main.rand.NextFloatDirection() * 0.17f;
             }
         }
@@ -358,7 +358,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 float idealRotation = (Target.Center - Heads[i].Center).ToRotation();
                 if (AimState == HeadAimState.LookUpward)
-                    idealRotation = -MathHelper.PiOver2 * 0.95f;
+                    idealRotation = -PiOver2 * 0.95f;
                 if (AimState == HeadAimState.LookInDirectionOfMovement)
                     idealRotation = NPC.velocity.ToRotation();
 

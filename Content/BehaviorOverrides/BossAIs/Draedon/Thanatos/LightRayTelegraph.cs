@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public static NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
 
-        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * Projectile.Opacity * 275f;
+        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - PiOver2 + CurrentSpread).ToRotationVector2() * Projectile.Opacity * 275f;
 
         public Color RayColor => CalamityUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);
 
@@ -77,14 +77,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Fade in, grow, and spread out.
             float fadeInInterpolant = Utils.GetLerpValue(0f, Lifetime * 0.45f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 12f, Time, true);
-            float lightOffset = MathHelper.Lerp(20f, MathF.Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
-            float offsetAngleFactor = MathHelper.Lerp(0.7f, 1f, MathF.Cos(Time / 23f) * 0.5f + 0.5f);
-            CurrentSpread = MathHelper.Lerp(CurrentSpread, MaximumSpread, 0.015f);
-            if (MathHelper.Distance(CurrentSpread, MaximumSpread) < 0.03f)
+            float lightOffset = Lerp(20f, Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
+            float offsetAngleFactor = Lerp(0.7f, 1f, Cos(Time / 23f) * 0.5f + 0.5f);
+            CurrentSpread = Lerp(CurrentSpread, MaximumSpread, 0.015f);
+            if (Distance(CurrentSpread, MaximumSpread) < 0.03f)
                 CurrentSpread = MaximumSpread;
 
             Projectile.Opacity = fadeInInterpolant;
-            Projectile.Center = StartingPosition + (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread * offsetAngleFactor).ToRotationVector2() * lightOffset;
+            Projectile.Center = StartingPosition + (Thanatos.rotation - PiOver2 + CurrentSpread * offsetAngleFactor).ToRotationVector2() * lightOffset;
 
             Time++;
             if (Time >= Lifetime)
@@ -111,11 +111,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 Vector2 drawOffset = (StartingPosition - Projectile.Center) * 0.5f;
                 Vector2 scale = new(1.2f, drawOffset.Length() * 2f / texture.Height);
-                float rotation = drawOffset.ToRotation() + MathHelper.PiOver2;
+                float rotation = drawOffset.ToRotation() + PiOver2;
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 drawPosition = baseDrawPosition;
-                    drawPosition += (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * Projectile.Opacity * 1.5f;
+                    drawPosition += (TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * Projectile.Opacity * 1.5f;
                     drawPosition += drawOffset;
 
                     Main.spriteBatch.Draw(texture, drawPosition, frame, fullbrightRayColor, rotation, origin, scale, SpriteEffects.None, 0f);
@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (Main.dedServ)
                 return;
 
-            Vector2 baseExplosionDirection = -Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * 3f;
+            Vector2 baseExplosionDirection = -Vector2.UnitY.RotatedByRandom(Pi) * 3f;
             Vector2 outwardFireSpeedFactor = new(2.1f, 2f);
             Color brightenedRayColor = RayColor;
             brightenedRayColor.A = 255;
@@ -159,7 +159,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
                 explosionDust.position = Projectile.Center;
-                explosionDust.velocity = baseExplosionDirection.RotatedBy(MathHelper.TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
+                explosionDust.velocity = baseExplosionDirection.RotatedBy(TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
                 explosionDust.noGravity = true;
                 explosionDust.scale = 1.1f;
                 explosionDust.fadeIn = Main.rand.NextFloat(1.4f, 2.4f);
@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
                 explosionDust.position = Projectile.Center;
-                explosionDust.velocity = baseExplosionDirection.RotatedBy(MathHelper.TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
+                explosionDust.velocity = baseExplosionDirection.RotatedBy(TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
                 explosionDust.velocity *= Main.rand.NextFloat() * 0.8f;
                 explosionDust.noGravity = true;
                 explosionDust.scale = Main.rand.NextFloat();

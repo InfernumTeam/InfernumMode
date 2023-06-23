@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             Dust eyeDust = Dust.NewDustPerfect(eyePosition, 264);
             eyeDust.color = Color.CornflowerBlue;
-            eyeDust.velocity = -Vector2.UnitY.RotatedBy(MathHelper.Clamp(npc.velocity.X * -0.04f, -1f, 1f)) * 2.6f;
+            eyeDust.velocity = -Vector2.UnitY.RotatedBy(Clamp(npc.velocity.X * -0.04f, -1f, 1f)) * 2.6f;
             eyeDust.velocity = eyeDust.velocity.RotatedByRandom(0.12f);
             eyeDust.velocity += npc.velocity;
             eyeDust.scale = Main.rand.NextFloat(1.4f, 1.48f);
@@ -465,7 +465,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     // And create a bunch of magic at the hitbox when disappearing.
                     if (npc.Opacity < 0.5f)
                     {
-                        int totalDust = (int)MathHelper.Lerp(1f, 4f, Utils.GetLerpValue(0.5f, 0.1f, npc.Opacity, true));
+                        int totalDust = (int)Lerp(1f, 4f, Utils.GetLerpValue(0.5f, 0.1f, npc.Opacity, true));
                         for (int i = 0; i < totalDust; i++)
                         {
                             Dust magic = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.PortalBoltTrail);
@@ -566,7 +566,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         shootSpeed *= Utils.Remap(attackTimer, hoverTime, hoverTime + 75f, 0.35f, 1f);
 
                         Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * shootSpeed;
-                        fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
+                        fireballShootVelocity = fireballShootVelocity.RotatedByRandom(Pi * 0.1f);
                         if (BossRushEvent.BossRushActive)
                             fireballShootVelocity *= 1.5f;
 
@@ -587,14 +587,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 {
                     // Hover above the target.
                     Vector2 destination = target.Center - Vector2.UnitY * 385f;
-                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(11f, npc.Distance(destination) * 0.05f);
+                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathF.Max(11f, npc.Distance(destination) * 0.05f);
 
                     if (!npc.WithinRange(destination, 185f))
                         npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.165f);
                     else
                         npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), 0.045f);
 
-                    if (MathHelper.Distance(destination.X, npc.Center.X) > 24f)
+                    if (Distance(destination.X, npc.Center.X) > 24f)
                         npc.spriteDirection = Math.Sign(destination.X - npc.Center.X);
 
                     // Also make cinders appear around the target to actually give a sense that things are warming up.
@@ -665,7 +665,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     for (int i = 0; i < 40; i++)
                     {
                         Dust fire = Dust.NewDustPerfect(beamShootPosition, ModContent.DustType<FinalFlame>());
-                        fire.velocity = (MathHelper.TwoPi * i / 40f).ToRotationVector2() * 5f;
+                        fire.velocity = (TwoPi * i / 40f).ToRotationVector2() * 5f;
                         fire.scale = 1.5f;
                         fire.noGravity = true;
                     }
@@ -697,14 +697,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer % (hoverTime + summonLightningTime) < hoverTime && attackTimer < lightningBurstTime + 20)
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 375f;
-                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathF.Max(10f, npc.Distance(destination) * 0.05f);
 
                 if (!npc.WithinRange(destination, 185f))
                     npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
                 else
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), 0.045f);
 
-                if (MathHelper.Distance(destination.X, npc.Center.X) > 24f)
+                if (Distance(destination.X, npc.Center.X) > 24f)
                     npc.spriteDirection = Math.Sign(destination.X - npc.Center.X);
 
                 frameType = (int)CultistFrameState.Hover;
@@ -727,7 +727,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 float adjustedTime = attackTimer % (hoverTime + summonLightningTime) - hoverTime;
 
                 // Teleport if necessary.
-                bool tooFarFromPlayer = !npc.WithinRange(target.Center, 520f) || MathHelper.Distance(target.Center.Y, npc.Center.Y) > 335f;
+                bool tooFarFromPlayer = !npc.WithinRange(target.Center, 520f) || Distance(target.Center.Y, npc.Center.Y) > 335f;
                 if (adjustedTime == 5f && tooFarFromPlayer)
                 {
                     Vector2 teleportPosition = target.Center - Vector2.UnitY * 245f;
@@ -784,7 +784,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                                         predictivenessOffset *= 0.9f;
 
                                     Vector2 lightningVelocity = (target.Center - orbSummonPosition + predictivenessOffset).SafeNormalize(Vector2.UnitY) * 8.5f;
-                                    lightningVelocity = lightningVelocity.RotatedBy(MathHelper.TwoPi * k / lightningCircleCount);
+                                    lightningVelocity = lightningVelocity.RotatedBy(TwoPi * k / lightningCircleCount);
                                     if (!phase2)
                                         lightningVelocity *= 1.15f;
                                     if (BossRushEvent.BossRushActive)
@@ -913,7 +913,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                             Dust lightMagic = Dust.NewDustPerfect(handPosition, 264);
                             lightMagic.scale = 0.85f;
                             lightMagic.fadeIn = 0.35f;
-                            lightMagic.velocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 2.7f;
+                            lightMagic.velocity = (TwoPi * i / 16f).ToRotationVector2() * 2.7f;
                             lightMagic.velocity.Y -= 1.8f;
                             lightMagic.color = Color.LightBlue;
                             lightMagic.noLight = true;
@@ -927,7 +927,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
                             Vector2 shootVelocity = Vector2.UnitX.RotatedByRandom(0.51f) * npc.spriteDirection * 10f;
                             if (phase2)
-                                shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * shotCounter / lightBurstCount) * 12f;
+                                shootVelocity = -Vector2.UnitY.RotatedBy(TwoPi * shotCounter / lightBurstCount) * 12f;
                             if (BossRushEvent.BossRushActive)
                                 shootVelocity *= 1.7f;
 
@@ -967,14 +967,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 if (waitingBeforeFiring)
                 {
                     Vector2 destination = target.Center - Vector2.UnitY * 370f;
-                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
+                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathF.Max(10f, npc.Distance(destination) * 0.05f);
 
                     if (!npc.WithinRange(destination, 185f))
                         npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
                     else
                         npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), 0.045f);
 
-                    if (MathHelper.Distance(destination.X, npc.Center.X) > 24f)
+                    if (Distance(destination.X, npc.Center.X) > 24f)
                         npc.spriteDirection = Math.Sign(destination.X - npc.Center.X);
                 }
             }
@@ -1051,7 +1051,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 do
                 {
                     ritualCenter = target.Center + Main.rand.NextVector2CircularEdge(ritualDecisionTries * 0.25f + 360f, ritualDecisionTries * 0.25f + 360f);
-                    ritualCenter.X = MathHelper.Clamp(ritualCenter.X, leftEdgeOfBorder, rightEdgeOfBorder);
+                    ritualCenter.X = Clamp(ritualCenter.X, leftEdgeOfBorder, rightEdgeOfBorder);
 
                     if (!Collision.SolidCollision(ritualCenter - Vector2.One * 180f, 360, 360))
                         break;
@@ -1089,7 +1089,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 for (int i = 0; i < cultists.Count; i++)
                 {
                     NPC cultist = Main.npc[cultists[i]];
-                    cultist.Center = ritualCenter + (MathHelper.TwoPi * i / cultists.Count).ToRotationVector2() * 180f;
+                    cultist.Center = ritualCenter + (TwoPi * i / cultists.Count).ToRotationVector2() * 180f;
                     cultist.spriteDirection = (cultist.Center.X < ritualCenter.X).ToDirectionInt();
                     cultist.velocity = Vector2.Zero;
                     cultist.netUpdate = true;
@@ -1188,7 +1188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     Vector2 iceMassSpawnPosition = npc.Top - Vector2.UnitY * 20f;
                     for (int i = 0; i < 5; i++)
                     {
-                        Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 5f) * 3.2f;
+                        Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(TwoPi * i / 5f) * 3.2f;
                         Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), IceMassDamage, 0f);
                     }
 
@@ -1440,11 +1440,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, PillarsPallete);
                     float illusionOpacity = Utils.GetLerpValue(0f, 32f, transitionTimer, true) *
                         Utils.GetLerpValue(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
-                    illusionColor.A = (byte)MathHelper.Lerp(125f, 0f, 1f - illusionOpacity);
+                    illusionColor.A = (byte)Lerp(125f, 0f, 1f - illusionOpacity);
 
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + MathHelper.TwoPi * 2f / TransitionAnimationTime).ToRotationVector2();
-                    drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * transitionTimer / TransitionAnimationTime);
-                    drawOffset *= MathHelper.Lerp(0f, 200f, Utils.GetLerpValue(TransitionAnimationTime - 10f, 0f, transitionTimer, true));
+                    Vector2 drawOffset = (TwoPi * i / 8f + TwoPi * 2f / TransitionAnimationTime).ToRotationVector2();
+                    drawOffset = drawOffset.RotatedBy(TwoPi * transitionTimer / TransitionAnimationTime);
+                    drawOffset *= Lerp(0f, 200f, Utils.GetLerpValue(TransitionAnimationTime - 10f, 0f, transitionTimer, true));
                     Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
                     SpriteEffects direction = drawOffset.X < 0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
@@ -1466,8 +1466,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 glowColor.A = 0;
 
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
-                drawOffset *= MathHelper.Lerp(4f, 5f, MathF.Sin(Main.GlobalTimeWrappedHourly * 1.4f) * 0.5f + 0.5f) * MathHelper.Lerp(1f, 1.7f, finalPhaseEffectsInterpolant);
+                Vector2 drawOffset = (TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
+                drawOffset *= Lerp(4f, 5f, Sin(Main.GlobalTimeWrappedHourly * 1.4f) * 0.5f + 0.5f) * Lerp(1f, 1.7f, finalPhaseEffectsInterpolant);
                 drawPosition += drawOffset;
                 SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
@@ -1494,7 +1494,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             if (leftBorderOpacity > 0f && !dying)
             {
                 Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * Lerp(400f, 455f, Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, Color.DeepSkyBlue, leftBorderOpacity);
 
                 for (int i = 0; i < 80; i++)
@@ -1509,7 +1509,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             if (rightBorderOpacity > 0f && !dying)
             {
                 Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, MathF.Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * Lerp(400f, 455f, Cos(Main.GlobalTimeWrappedHourly * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, Color.DeepSkyBlue, rightBorderOpacity);
 
                 for (int i = 0; i < 80; i++)
@@ -1572,11 +1572,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public static void DrawForcefield(Vector2 drawPosition, float opacity, Color color, Texture2D noise, bool useOutline = true, float mainScaleFactor = 1f, float fresnelScaleFactor = 1f, float noiseScaleFactor = 1f)
         {
             Texture2D invis = InfernumTextureRegistry.Invisible.Value;
-            float interpolant = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
+            float interpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
             float eased = CalamityUtils.PolyInOutEasing(interpolant, 1);
-            float scale = MathHelper.Lerp(0.95f, 1.05f, eased) * mainScaleFactor;
-            float noiseScale = MathHelper.Lerp(1.55f, 1.45f, eased) * noiseScaleFactor;
-            float fresnelScale = MathHelper.Lerp(0.85f, 1.15f, eased) * fresnelScaleFactor;
+            float scale = Lerp(0.95f, 1.05f, eased) * mainScaleFactor;
+            float noiseScale = Lerp(1.55f, 1.45f, eased) * noiseScaleFactor;
+            float fresnelScale = Lerp(0.85f, 1.15f, eased) * fresnelScaleFactor;
             Vector2 noiseDirection = -Vector2.UnitX;
 
             Effect shield = InfernumEffectsRegistry.CultistShieldShader.Shader;

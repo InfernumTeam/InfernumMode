@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Projectile.Infernum().FadeAwayTimer >= 1)
                 spinRadius *= Utils.GetLerpValue(1f, 30f, Projectile.Infernum().FadeAwayTimer, true);
 
-            SpinOffsetAngle += MathHelper.ToRadians(3f);
+            SpinOffsetAngle += ToRadians(3f);
             Projectile.Center = CeaselessVoid.Center + SpinOffsetAngle.ToRotationVector2() * spinRadius;
 
             // Rotate based on velocity.
@@ -104,7 +104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             for (int i = 0; i < 8; i++)
             {
                 Color streakColor = Color.Lerp(Color.HotPink, Color.LightCyan, Main.rand.NextFloat());
-                Vector2 streakVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * Main.rand.NextFloat(4f, 13f) + Main.rand.NextVector2Circular(2.5f, 2.5f);
+                Vector2 streakVelocity = (TwoPi * i / 8f).ToRotationVector2() * Main.rand.NextFloat(4f, 13f) + Main.rand.NextVector2Circular(2.5f, 2.5f);
                 SparkParticle streak = new(Projectile.Center + streakVelocity * 5f, streakVelocity, false, Main.rand.Next(8, 12), 1.25f, streakColor);
                 GeneralParticleHandler.SpawnParticle(streak);
 

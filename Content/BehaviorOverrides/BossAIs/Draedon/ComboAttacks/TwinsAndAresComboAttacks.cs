@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
             int artemisChargeTime = 64;
             int artemisLaserReleaseRate = 34;
             int artemisLaserBurstCount = 8;
-            float maxLaserTurnSpeed = MathHelper.TwoPi / 276f;
+            float maxLaserTurnSpeed = TwoPi / 276f;
 
             bool twinsInSecondPhase = CurrentTwinsPhase is not 4 and not 1;
             if (twinsInSecondPhase || CurrentAresPhase != 4)
@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 75f);
 
                     // Decide rotation.
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                 }
                 else
                 {
@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 20f, 60f);
 
                             // Determine rotation.
-                            npc.rotation = chargeVelocity.ToRotation() + MathHelper.PiOver2;
+                            npc.rotation = chargeVelocity.ToRotation() + PiOver2;
 
                             // Prepare the charge.
                             if (generalAttackTimer > 45f && npc.WithinRange(hoverDestination, 40f))
@@ -157,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         // Swoop down slightly and release lasers.
                         case 1:
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
-                            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                             if (!deathraysHaveBeenFired)
                             {
@@ -171,10 +171,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
-                                    float offsetAngle = Main.rand.NextFloat(MathHelper.Pi / artemisLaserBurstCount);
+                                    float offsetAngle = Main.rand.NextFloat(Pi / artemisLaserBurstCount);
                                     for (int i = 0; i < artemisLaserBurstCount; i++)
                                     {
-                                        Vector2 aimDestination = npc.Center + (MathHelper.TwoPi * i / artemisLaserBurstCount + offsetAngle).ToRotationVector2() * 1500f;
+                                        Vector2 aimDestination = npc.Center + (TwoPi * i / artemisLaserBurstCount + offsetAngle).ToRotationVector2() * 1500f;
                                         Vector2 laserShootVelocity = npc.SafeDirectionTo(aimDestination) * 7.25f;
 
                                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(laser =>
@@ -200,7 +200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (attackSubstate >= 1f)
                     frame += 10f;
                 if (ExoTwinsAreInSecondPhase)
@@ -226,7 +226,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 75f);
 
                     // Decide rotation.
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) + PiOver2;
                 }
                 else
                 {
@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
 
                             // Decide rotation.
-                            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
                             if (npc.WithinRange(flyDestination, 40f) || generalAttackTimer > 150f)
                             {
@@ -255,7 +255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         case 1:
                             npc.velocity *= 0.95f;
                             npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.8f);
-                            npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.4f);
+                            npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + PiOver2, 0.4f);
 
                             if (!deathraysHaveBeenFired)
                             {
@@ -270,7 +270,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 for (int i = 0; i < 36; i++)
                                 {
                                     Dust laser = Dust.NewDustPerfect(npc.Center, 182);
-                                    laser.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 6f;
+                                    laser.velocity = (TwoPi * i / 36f).ToRotationVector2() * 6f;
                                     laser.scale = 1.1f;
                                     laser.noGravity = true;
                                 }
@@ -296,7 +296,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                             if (generalAttackTimer < 50f)
                             {
-                                float angularTurnSpeed = MathHelper.Pi / 300f;
+                                float angularTurnSpeed = Pi / 300f;
                                 idealVelocity = npc.SafeDirectionTo(target.Center);
                                 Vector2 leftVelocity = npc.velocity.RotatedBy(-angularTurnSpeed);
                                 Vector2 rightVelocity = npc.velocity.RotatedBy(angularTurnSpeed);
@@ -310,8 +310,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 // Once the attack has gone on for half a second rotate the velocity 4 degrees every frame while rising upward.
                                 float adjustedTimer = generalAttackTimer - 50f;
                                 if (adjustedTimer > 30f)
-                                    npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi / 90f);
-                                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 2f, -42f, 42f);
+                                    npc.velocity = npc.velocity.RotatedBy(TwoPi / 90f);
+                                npc.velocity.Y = Clamp(npc.velocity.Y - 2f, -42f, 42f);
 
                                 // Release rockets.
                                 if (adjustedTimer % 15f == 14f && !npc.WithinRange(target.Center, 456f))
@@ -337,7 +337,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                             }
 
                             // Decide rotation.
-                            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                            npc.rotation = npc.velocity.ToRotation() + PiOver2;
                             break;
                     }
                     generalAttackTimer++;
@@ -345,7 +345,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                 // Handle frames.
                 npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                 if (wrappedAttackTimer > redirectTime + chargeupTime + laserTelegraphTime - 90f)
                     frame += 10f;
                 if (ExoTwinsAreInSecondPhase)
@@ -357,8 +357,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     for (int i = 0; i < 2; i++)
                     {
                         Dust plasma = Dust.NewDustPerfect(npc.Center, Main.rand.NextBool() ? 107 : 110);
-                        plasma.position = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
-                        plasma.velocity = Main.rand.NextVector2Circular(4f, 4f) + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 5f;
+                        plasma.position = npc.Center + (npc.rotation - PiOver2).ToRotationVector2() * 85f;
+                        plasma.velocity = Main.rand.NextVector2Circular(4f, 4f) + (npc.rotation - PiOver2).ToRotationVector2() * 5f;
                         plasma.noGravity = true;
                     }
                 }
@@ -418,8 +418,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     {
                         Vector2 laserDustSpawnPosition = npc.Center + Vector2.UnitY * 26f + Main.rand.NextVector2CircularEdge(20f, 20f);
                         Dust laser = Dust.NewDustPerfect(laserDustSpawnPosition, 182);
-                        laser.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 3.5f) * MathHelper.Lerp(0.35f, 1f, chargeupPower);
-                        laser.scale = MathHelper.Lerp(0.8f, 1.5f, chargeupPower) * Main.rand.NextFloat(0.75f, 1f);
+                        laser.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 3.5f) * Lerp(0.35f, 1f, chargeupPower);
+                        laser.scale = Lerp(0.8f, 1.5f, chargeupPower) * Main.rand.NextFloat(0.75f, 1f);
                         laser.noGravity = true;
 
                         float secondaryDustSpeed = -laser.velocity.Length() * (1f + chargeupPower * 1.56f);
@@ -436,10 +436,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         for (int i = 0; i < aresLaserbeamCount; i++)
                         {
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
-                            float squishedRatio = MathF.Pow(CalamityUtils.Convert01To010(b / 7f), 2f);
-                            float smoothenedRatio = MathHelper.SmoothStep(0f, 1f, squishedRatio);
-                            float offsetAngle = MathHelper.PiOver2 + MathHelper.TwoPi * i / aresLaserbeamCount;
-                            float telegraphStartingAngle = MathHelper.Lerp(-0.55f, 0.55f, smoothenedRatio) + offsetAngle;
+                            float squishedRatio = Pow(CalamityUtils.Convert01To010(b / 7f), 2f);
+                            float smoothenedRatio = SmoothStep(0f, 1f, squishedRatio);
+                            float offsetAngle = PiOver2 + TwoPi * i / aresLaserbeamCount;
+                            float telegraphStartingAngle = Lerp(-0.55f, 0.55f, smoothenedRatio) + offsetAngle;
 
                             ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraphBeam =>
                             {
@@ -460,7 +460,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                         int type = ModContent.ProjectileType<AresSpinningRedDeathray>();
                         for (int i = 0; i < aresLaserbeamCount; i++)
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / aresLaserbeamCount), type, PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(TwoPi * i / aresLaserbeamCount), type, PowerfulShotDamage, 0f, -1, 0f, npc.whoAmI);
 
                         npc.netUpdate = true;
                     }
@@ -553,11 +553,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 if (attackTimer < attackDelay + normalTwinsAttackTime)
                 {
                     // Hover near the target and look at them.
-                    float hoverOffsetAngle = MathHelper.TwoPi * normalShotCounter / totalNormalShotCount - MathHelper.PiOver2;
+                    float hoverOffsetAngle = TwoPi * normalShotCounter / totalNormalShotCount - PiOver2;
                     if (npc.type == ModContent.NPCType<Artemis>())
                     {
                         normalShotCounter = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen].Infernum().ExtraAI[0];
-                        hoverOffsetAngle += MathHelper.Pi;
+                        hoverOffsetAngle += Pi;
                     }
 
                     Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(800f, 575f);
@@ -565,7 +565,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                     Vector2 aimDestination = target.Center + target.velocity * 11.5f;
                     Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
-                    npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
+                    npc.rotation = aimDirection.ToRotation() + PiOver2;
 
                     if (attackTimer % normalShotShootRate == normalShotShootRate - 1f && attackTimer >= attackDelay)
                     {
@@ -600,7 +600,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     }
 
                     npc.frameCounter++;
-                    frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
+                    frame = (int)Math.Round(Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
                     if (ExoTwinsAreInSecondPhase)
                         frame += 60f;
                 }

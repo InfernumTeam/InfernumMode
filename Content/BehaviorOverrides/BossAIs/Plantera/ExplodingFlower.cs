@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             for (int i = 0; i < 3; i++)
             {
-                float offsetAngle = MathHelper.Lerp(-0.38f, 0.38f, i / 2f);
+                float offsetAngle = Lerp(-0.38f, 0.38f, i / 2f);
                 Vector2 petalShootVelocity = Projectile.SafeDirectionTo(closestPlayer.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 7.5f;
                 Utilities.NewProjectileBetter(Projectile.Center, petalShootVelocity, ModContent.ProjectileType<Petal>(), PlanteraBehaviorOverride.PetalDamage, 0f);
             }

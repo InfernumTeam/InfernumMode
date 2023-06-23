@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 if (spinSlowdown < 1f)
                 {
                     Vector2 aimAhead = closestPlayer.velocity * AimAheadFactor;
-                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center + aimAhead) - MathHelper.PiOver2, (1f - spinSlowdown) * 0.6f);
+                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(closestPlayer.Center + aimAhead) - PiOver2, (1f - spinSlowdown) * 0.6f);
                 }
             }
 
@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             // Draw backglow effects.
             for (int i = 0; i < 12; i++)
             {
-                Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 4f;
+                Vector2 afterimageOffset = (TwoPi * i / 12f).ToRotationVector2() * 4f;
                 Color afterimageColor = new Color(46, 188, 234, 0f) * 0.4f * Projectile.Opacity;
                 Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + afterimageOffset, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }

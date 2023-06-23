@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override void AI()
         {
             Projectile.velocity *= 0.965f;
-            Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.56f);
+            Projectile.Opacity = Lerp(Projectile.Opacity, 1f, 0.56f);
 
             if (Projectile.timeLeft != 2)
                 return;
@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 float shootSpeed = 2.75f;
-                Vector2 orthogonalVelocity = Projectile.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * shootSpeed;
+                Vector2 orthogonalVelocity = Projectile.velocity.RotatedBy(PiOver2).SafeNormalize(Vector2.UnitY) * shootSpeed;
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, -orthogonalVelocity, ProjectileID.PhantasmalBolt, Projectile.damage, 0f);
             }
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float lerpMult = (1f + 0.22f * MathF.Cos(Main.GlobalTimeWrappedHourly % 30f * MathHelper.TwoPi * 3f + Projectile.identity % 10f)) * 0.8f;
+            float lerpMult = (1f + 0.22f * Cos(Main.GlobalTimeWrappedHourly % 30f * TwoPi * 3f + Projectile.identity % 10f)) * 0.8f;
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
@@ -72,25 +72,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (Projectile.spriteDirection == -1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            Main.spriteBatch.Draw(texture, drawPos, null, colorA, MathHelper.PiOver2, origin, scale, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorA, PiOver2, origin, scale, spriteEffects, 0);
             Main.spriteBatch.Draw(texture, drawPos, null, colorA, 0f, origin, scale, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorB, MathHelper.PiOver2, origin, scale * 0.8f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorB, PiOver2, origin, scale * 0.8f, spriteEffects, 0);
             Main.spriteBatch.Draw(texture, drawPos, null, colorB, 0f, origin, scale * 0.8f, spriteEffects, 0);
 
-            Main.spriteBatch.Draw(texture, drawPos, null, colorA, MathHelper.PiOver2 + Main.GlobalTimeWrappedHourly * 0.35f, origin, scale, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorA, PiOver2 + Main.GlobalTimeWrappedHourly * 0.35f, origin, scale, spriteEffects, 0);
             Main.spriteBatch.Draw(texture, drawPos, null, colorA, Main.GlobalTimeWrappedHourly * 0.35f, origin, scale, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorB, MathHelper.PiOver2 + Main.GlobalTimeWrappedHourly * 0.625f, origin, scale * 0.8f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorB, PiOver2 + Main.GlobalTimeWrappedHourly * 0.625f, origin, scale * 0.8f, spriteEffects, 0);
             Main.spriteBatch.Draw(texture, drawPos, null, colorB, Main.GlobalTimeWrappedHourly * 0.625f, origin, scale * 0.8f, spriteEffects, 0);
 
-            Main.spriteBatch.Draw(texture, drawPos, null, colorA, MathHelper.PiOver4, origin, scale * 0.6f, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorA, MathHelper.PiOver4 * 3f, origin, scale * 0.6f, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorB, MathHelper.PiOver4, origin, scale * 0.4f, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorB, MathHelper.PiOver4 * 3f, origin, scale * 0.4f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorA, PiOver4, origin, scale * 0.6f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorA, PiOver4 * 3f, origin, scale * 0.6f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorB, PiOver4, origin, scale * 0.4f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorB, PiOver4 * 3f, origin, scale * 0.4f, spriteEffects, 0);
 
-            Main.spriteBatch.Draw(texture, drawPos, null, colorA, MathHelper.PiOver4 + Main.GlobalTimeWrappedHourly * 1.1f * 0.75f, origin, scale * 0.6f, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorA, MathHelper.PiOver4 * 3f + Main.GlobalTimeWrappedHourly * 1.1f * 0.75f, origin, scale * 0.6f, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorB, MathHelper.PiOver4 + Main.GlobalTimeWrappedHourly * 1.1f, origin, scale * 0.4f, spriteEffects, 0);
-            Main.spriteBatch.Draw(texture, drawPos, null, colorB, MathHelper.PiOver4 * 3f + Main.GlobalTimeWrappedHourly * 1.1f, origin, scale * 0.4f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorA, PiOver4 + Main.GlobalTimeWrappedHourly * 1.1f * 0.75f, origin, scale * 0.6f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorA, PiOver4 * 3f + Main.GlobalTimeWrappedHourly * 1.1f * 0.75f, origin, scale * 0.6f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorB, PiOver4 + Main.GlobalTimeWrappedHourly * 1.1f, origin, scale * 0.4f, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPos, null, colorB, PiOver4 * 3f + Main.GlobalTimeWrappedHourly * 1.1f, origin, scale * 0.4f, spriteEffects, 0);
 
             return false;
         }

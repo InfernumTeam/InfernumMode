@@ -57,8 +57,8 @@ namespace InfernumMode.Content.Credits
         public void Update()
         {
             Center += Velocity;
-            Center.X = MathHelper.Clamp(Center.X, 0f, Main.screenWidth);
-            Center.Y = MathHelper.Clamp(Center.Y, 0f, Main.screenHeight);
+            Center.X = Clamp(Center.X, 0f, Main.screenWidth);
+            Center.Y = Clamp(Center.Y, 0f, Main.screenHeight);
         }
 
 

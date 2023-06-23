@@ -52,13 +52,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Projectile.ExpandHitboxBy((int)(72 * Projectile.scale));
                 ColorSpectrumHue = Main.rand.NextFloat(0f, 0.9999f);
                 Projectile.netUpdate = true;
-                Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             }
             Time++;
 
             Projectile.velocity *= 0.96f;
 
-            Projectile.rotation = Projectile.rotation.AngleLerp(MathHelper.PiOver2, 0.085f);
+            Projectile.rotation = Projectile.rotation.AngleLerp(PiOver2, 0.085f);
 
             ColorSpectrumHue = (ColorSpectrumHue + 0.333f / Lifetime) % 0.999f; // Go 33% across the color spectrum throughout the sparkle's life instead of using a static sprite.
 
@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Color sparkleColor = CalamityUtils.MulticolorLerp(ColorSpectrumHue, new Color(237, 93, 83), new Color(255, 164, 94), new Color(109, 242, 196)) * Projectile.Opacity * 0.75f;
             sparkleColor.A = 0;
 
-            sparkleColor *= MathHelper.Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
+            sparkleColor *= Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
 
             Color orthogonalsparkleColor = Color.Lerp(sparkleColor, Color.White, 0.5f) * 0.5f;
 
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              sparkleColor,
-                             MathHelper.PiOver2 + Projectile.rotation,
+                             PiOver2 + Projectile.rotation,
                              origin,
                              orthogonalsparkleScale,
                              SpriteEffects.None,
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                              Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY,
                              null,
                              orthogonalsparkleColor,
-                             MathHelper.PiOver2 + Projectile.rotation,
+                             PiOver2 + Projectile.rotation,
                              origin,
                              orthogonalsparkleScale * 0.6f,
                              SpriteEffects.None,

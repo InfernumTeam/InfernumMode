@@ -36,9 +36,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void AI()
         {
-            TelegraphLength = MathHelper.Clamp(TelegraphLength + 160f, 0f, Projectile.ai[0]);
+            TelegraphLength = Clamp(TelegraphLength + 160f, 0f, Projectile.ai[0]);
             Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             if (Time >= Lifetime)
                 Projectile.Kill();

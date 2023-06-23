@@ -21,14 +21,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
-            float baseShakePower = MathHelper.Lerp(1f, 5f, MathF.Sin(MathHelper.Pi * lifetimeCompletionRatio));
+            float baseShakePower = Lerp(1f, 5f, Sin(Pi * lifetimeCompletionRatio));
             return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
         }
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
             Color color = Color.Lerp(Color.HotPink, Color.Cyan, lifetimeCompletionRatio) * Utils.GetLerpValue(1f, 0.75f, lifetimeCompletionRatio, true);
-            return Color.Lerp(color, new Color(1f, 1f, 1f, 0f), MathHelper.Clamp(lifetimeCompletionRatio * 1.35f, 0f, 1f)) * 0.7f;
+            return Color.Lerp(color, new Color(1f, 1f, 1f, 0f), Clamp(lifetimeCompletionRatio * 1.35f, 0f, 1f)) * 0.7f;
         }
 
         public override void PostAI()

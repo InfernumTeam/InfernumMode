@@ -69,9 +69,9 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             for (int i = 0; i < 6; i++)
             {
                 Color acidColor = Main.rand.NextBool() ? Color.Yellow : Color.Lime;
-                CloudParticle acidCloud = new(Projectile.Center, (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), acidColor, Color.DarkGray, 27, Main.rand.NextFloat(1.1f, 1.32f))
+                CloudParticle acidCloud = new(Projectile.Center, (TwoPi * i / 6f).ToRotationVector2() * 2f + Main.rand.NextVector2Circular(0.3f, 0.3f), acidColor, Color.DarkGray, 27, Main.rand.NextFloat(1.1f, 1.32f))
                 {
-                    Rotation = Main.rand.NextFloat(MathHelper.TwoPi)
+                    Rotation = Main.rand.NextFloat(TwoPi)
                 };
                 GeneralParticleHandler.SpawnParticle(acidCloud);
             }

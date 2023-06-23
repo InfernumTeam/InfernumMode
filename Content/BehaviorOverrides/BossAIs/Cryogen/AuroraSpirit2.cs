@@ -38,13 +38,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Projectile.frameCounter++;
             Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.Pi;
+            Projectile.rotation = Projectile.velocity.ToRotation() + Pi;
             Projectile.spriteDirection = (Math.Cos(Projectile.rotation) < 0f).ToDirectionInt();
             if (Projectile.spriteDirection == 1)
-                Projectile.rotation -= MathHelper.Pi;
+                Projectile.rotation -= Pi;
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.02f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.02f, 0f, 1f);
 
             if (Time < 55f)
             {

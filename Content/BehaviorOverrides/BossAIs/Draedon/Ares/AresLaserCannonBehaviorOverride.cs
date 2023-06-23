@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 Vector2 laserShootVelocity = aimDirection * laserShootSpeed;
                 if (totalLasersPerBurst > 1)
-                    laserShootVelocity = laserShootVelocity.RotatedBy(MathHelper.Lerp(-0.52f, 0.52f, i / (float)(totalLasersPerBurst - 1f)));
+                    laserShootVelocity = laserShootVelocity.RotatedBy(Lerp(-0.52f, 0.52f, i / (float)(totalLasersPerBurst - 1f)));
 
                 // Add a small amount of randomness to laser directions.
                 laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);

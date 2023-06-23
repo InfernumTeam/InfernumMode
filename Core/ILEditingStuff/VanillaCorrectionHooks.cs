@@ -389,9 +389,9 @@ namespace InfernumMode.Core.ILEditingStuff
             float dayCompletion = (float)(Main.time / Main.dayLength);
             float verticalOffsetInterpolant;
             if (dayCompletion < 0.5f)
-                verticalOffsetInterpolant = MathF.Pow(1f - dayCompletion * 2f, 2f);
+                verticalOffsetInterpolant = Pow(1f - dayCompletion * 2f, 2f);
             else
-                verticalOffsetInterpolant = MathF.Pow(dayCompletion - 0.5f, 2f) * 4f;
+                verticalOffsetInterpolant = Pow(dayCompletion - 0.5f, 2f) * 4f;
 
             // Calculate the position of the sun.
             Texture2D sunTexture = TextureAssets.Sun.Value;
@@ -435,7 +435,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
 
                     Vector2 origin = backglowTexture.Size() * 0.5f;
-                    Color transColor = Color.Lerp(Color.HotPink, Color.Cyan, MathF.Sin(Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f);
+                    Color transColor = Color.Lerp(Color.HotPink, Color.Cyan, Sin(Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f);
                     Main.spriteBatch.Draw(backglowTexture, sunPosition, null, transColor, 0f, origin, 0.74f, 0, 0f);
                     Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.BackgroundViewMatrix.EffectMatrix);
@@ -978,7 +978,7 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldloc, 6);
             cursor.EmitDelegate<Func<Vector2, Vector2>>(unclampedValue =>
             {
-                unclampedValue.X = MathHelper.Clamp(unclampedValue.X, CustomAbyss.MaxAbyssWidth + 25, Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 25);
+                unclampedValue.X = Clamp(unclampedValue.X, CustomAbyss.MaxAbyssWidth + 25, Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 25);
                 return unclampedValue;
             });
             cursor.Emit(OpCodes.Stloc, 6);
@@ -1027,21 +1027,21 @@ namespace InfernumMode.Core.ILEditingStuff
                 Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 screenCenter += new Vector2(Main.screenWidth, Main.screenHeight) * (Main.GameViewMatrix.Zoom - Vector2.One) * 0.5f;
 
-                float scale = MathHelper.Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + MathF.Sin(BossRushSky.IdleTimer) * 0.01f;
+                float scale = Lerp(0.8f, 0.9f, BossRushSky.IncrementalInterest) + Sin(BossRushSky.IdleTimer) * 0.01f;
                 Vector2 drawPosition = (new Vector2(Main.LocalPlayer.Center.X, 1120f) - screenCenter) * 0.097f + screenCenter - Main.screenPosition - Vector2.UnitY * 100f;
                 Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Skies/XerocEyeAlt").Value;
                 Color baseColorDraw = Color.Lerp(Color.White, Color.Red, BossRushSky.IncrementalInterest);
 
                 Main.spriteBatch.Draw(eyeTexture, drawPosition, null, baseColorDraw, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);
 
-                Color fadedColor = Color.Lerp(baseColorDraw, Color.Red, 0.3f) * MathHelper.Lerp(0.18f, 0.3f, BossRushSky.IncrementalInterest);
+                Color fadedColor = Color.Lerp(baseColorDraw, Color.Red, 0.3f) * Lerp(0.18f, 0.3f, BossRushSky.IncrementalInterest);
                 fadedColor.A = 0;
 
-                float backEyeOutwardness = MathHelper.Lerp(8f, 4f, BossRushSky.IncrementalInterest);
-                int backInstances = (int)MathHelper.Lerp(6f, 24f, BossRushSky.IncrementalInterest);
+                float backEyeOutwardness = Lerp(8f, 4f, BossRushSky.IncrementalInterest);
+                int backInstances = (int)Lerp(6f, 24f, BossRushSky.IncrementalInterest);
                 for (int i = 0; i < backInstances; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * 4f * i / backInstances + Main.GlobalTimeWrappedHourly * 2.1f).ToRotationVector2() * backEyeOutwardness;
+                    Vector2 drawOffset = (TwoPi * 4f * i / backInstances + Main.GlobalTimeWrappedHourly * 2.1f).ToRotationVector2() * backEyeOutwardness;
                     Main.spriteBatch.Draw(eyeTexture, drawPosition + drawOffset, null, fadedColor * 0.3f, 0f, eyeTexture.Size() * 0.5f, scale, 0, 0f);
                 }
 

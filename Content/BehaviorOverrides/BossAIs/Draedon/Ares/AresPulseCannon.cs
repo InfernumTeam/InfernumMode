@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public static float AimPredictiveness =>
             ExoMechManagement.CurrentAresPhase >= 5 ? 32.5f : 27f;
 
-        public Vector2 CoreSpritePosition => NPC.Center + NPC.spriteDirection * NPC.rotation.ToRotationVector2() * 35f + (NPC.rotation + MathHelper.PiOver2).ToRotationVector2() * 5f;
+        public Vector2 CoreSpritePosition => NPC.Center + NPC.spriteDirection * NPC.rotation.ToRotationVector2() * 35f + (NPC.rotation + PiOver2).ToRotationVector2() * 5f;
 
         // This stores the sound slot of the telegraph sound it makes, so it may be properly updated in terms of position.
         public SlotId TelegraphSoundSlot;
@@ -142,7 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 hoverOffset = PerformHoverMovement(NPC, performingCharge);
 
             // Update the telegraph outline intensity timer.
-            NPC.Infernum().ExtraAI[0] = MathHelper.Clamp(NPC.Infernum().ExtraAI[0] + performingCharge.ToDirectionInt(), 0f, 15f);
+            NPC.Infernum().ExtraAI[0] = Clamp(NPC.Infernum().ExtraAI[0] + performingCharge.ToDirectionInt(), 0f, 15f);
 
             // Check to see if Ares is in the middle of a death animation. If he is, participate in the death animation.
             if (performingDeathAnimation)
@@ -234,20 +234,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void FindFrame(int frameHeight)
         {
-            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, NPC.ai[0] / NPC.ai[1]));
+            int currentFrame = (int)Math.Round(Lerp(0f, 35f, NPC.ai[0] / NPC.ai[1]));
 
             if (NPC.ai[0] > NPC.ai[1])
             {
                 NPC.frameCounter++;
                 if (NPC.frameCounter >= 66f)
                     NPC.frameCounter = 0D;
-                currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)NPC.frameCounter / 66f));
+                currentFrame = (int)Math.Round(Lerp(36f, 47f, (float)NPC.frameCounter / 66f));
             }
             else
                 NPC.frameCounter = 0D;
 
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(NPC))
-                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, NPC.ai[0] % 72f / 72f));
+                currentFrame = (int)Math.Round(Lerp(0f, 35f, NPC.ai[0] % 72f / 72f));
 
             NPC.frame = new Rectangle(currentFrame / 12 * 150, currentFrame % 12 * 148, 150, 148);
         }

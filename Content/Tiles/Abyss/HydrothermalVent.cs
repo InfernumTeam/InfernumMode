@@ -40,8 +40,8 @@ namespace InfernumMode.Content.Tiles.Abyss
             if (!Main.gamePaused && t.TileFrameX % 36 == 0 && t.TileFrameY % 36 == 0 && Collision.CanHitLine(spawnPosition, 1, 1, spawnPosition - Vector2.UnitY * 100f, 1, 1))
             {
                 float positionInterpolant = (i + j) * 0.041f % 1f;
-                Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(0.11f) * MathHelper.Lerp(4.8f, 8.1f, positionInterpolant);
-                smokeVelocity.X += MathF.Cos(MathHelper.TwoPi * positionInterpolant) * 1.7f;
+                Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(0.11f) * Lerp(4.8f, 8.1f, positionInterpolant);
+                smokeVelocity.X += Cos(TwoPi * positionInterpolant) * 1.7f;
                 Projectile.NewProjectile(new EntitySource_WorldEvent(), spawnPosition, smokeVelocity, ModContent.ProjectileType<HydrothermalSmoke>(), Main.expertMode ? 56 : 98, 0f);
             }
         }

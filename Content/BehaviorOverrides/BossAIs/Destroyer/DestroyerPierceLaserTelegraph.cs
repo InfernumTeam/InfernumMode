@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         public override void AI()
         {
             // Pulse in and out.
-            Projectile.scale = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / 45f) * 6f;
+            Projectile.scale = Sin(Pi * Projectile.timeLeft / 45f) * 6f;
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;

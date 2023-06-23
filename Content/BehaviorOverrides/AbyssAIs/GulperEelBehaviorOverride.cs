@@ -151,7 +151,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Try to snap at and swallow the player.
-            snapAnticipation = MathHelper.Clamp(snapAnticipation + canSnapAtPlayer.ToDirectionInt(), 0f, 30f);
+            snapAnticipation = Clamp(snapAnticipation + canSnapAtPlayer.ToDirectionInt(), 0f, 30f);
             if (snapAnticipation >= 30f)
             {
                 SoundEngine.PlaySound(SoundID.Item96, npc.Center);
@@ -175,15 +175,15 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Decide the current jaw rotation.
-            jawRotation = MathHelper.Clamp(jawRotation + (canSnapAtPlayer || aboutToScream ? 0.05f : -0.099f), 0f, 1.33f);
+            jawRotation = Clamp(jawRotation + (canSnapAtPlayer || aboutToScream ? 0.05f : -0.099f), 0f, 1.33f);
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
             // Draw behind tiles.
             npc.behindTiles = true;
 
             // Slither around.
-            slitherTimer += MathHelper.Pi / 75f;
+            slitherTimer += Pi / 75f;
 
             return false;
         }
@@ -274,7 +274,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Draw the head.
             float jawRotation = npc.localAI[1];
             SpriteEffects direction = npc.velocity.X > 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Vector2 mouthDrawOffset = new Vector2(40f, (npc.velocity.X > 0f).ToDirectionInt() * 14f).RotatedBy(npc.rotation + (npc.velocity.X > 0f).ToDirectionInt() * jawRotation - MathHelper.PiOver2);
+            Vector2 mouthDrawOffset = new Vector2(40f, (npc.velocity.X > 0f).ToDirectionInt() * 14f).RotatedBy(npc.rotation + (npc.velocity.X > 0f).ToDirectionInt() * jawRotation - PiOver2);
             Main.EntitySpriteDraw(mouthTexture, headDrawPosition + mouthDrawOffset, null, npc.GetAlpha(Color.Gray), npc.rotation + (npc.velocity.X > 0f).ToDirectionInt() * jawRotation, mouthTexture.Size() * new Vector2(0.5f, 0f), npc.scale, direction, 0);
             Main.EntitySpriteDraw(headTexture, headDrawPosition, npc.frame, npc.GetAlpha(Color.Gray), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0);
 

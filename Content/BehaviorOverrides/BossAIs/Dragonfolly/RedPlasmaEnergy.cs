@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.NPCs.Bumblebirb;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -60,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 else if (NPC.velocity.Length() > 9f)
                     NPC.velocity *= 0.965f;
                 NPC.damage = 0;
-                NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 0.05f, 0.2f, 1f);
+                NPC.Opacity = Clamp(NPC.Opacity - 0.05f, 0.2f, 1f);
             }
             else
             {
@@ -91,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                 }
                 else
                     NPC.velocity *= 1.018f;
-                NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.08f, 0.2f, 1f);
+                NPC.Opacity = Clamp(NPC.Opacity + 0.08f, 0.2f, 1f);
             }
 
             // Idly emit red electric dust.
@@ -101,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             redElectricity.scale = Main.rand.NextFloat(0.8f, 1.2f);
             redElectricity.noGravity = true;
 
-            NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Max(0.5f, NPC.velocity.Length());
+            NPC.velocity = NPC.velocity.SafeNormalize(Vector2.UnitY) * MathF.Max(0.5f, NPC.velocity.Length());
             NPC.Opacity *= 1f - Utils.GetLerpValue(550f, 610f, Time, true);
             Time++;
         }
@@ -113,7 +114,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Texture2D energyTexture = TextureAssets.Npc[NPC.type].Value;
             for (int i = 0; i < 12; i++)
             {
-                Vector2 drawPosition = NPC.Center + (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 4.1f).ToRotationVector2() * 4f - Main.screenPosition;
+                Vector2 drawPosition = NPC.Center + (TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 4.1f).ToRotationVector2() * 4f - Main.screenPosition;
                 Main.spriteBatch.Draw(energyTexture, drawPosition, null, drawColor, NPC.rotation, energyTexture.Size() * 0.5f, NPC.scale, SpriteEffects.None, 0f);
             }
             return false;

@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
-        public override void AI() => Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+        public override void AI() => Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
         public override bool PreDraw(ref Color lightColor)
         {

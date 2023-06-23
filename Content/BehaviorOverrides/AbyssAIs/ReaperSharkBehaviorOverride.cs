@@ -144,17 +144,17 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 soundSlotID = SoundEngine.PlaySound(ReaperShark.SearchRoarSound, target.Center).ToFloat();
 
                 // Determine the teleport offset.
-                teleportOffset = MathHelper.Lerp(1436f, 450f, MathF.Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
+                teleportOffset = Lerp(1436f, 450f, Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
 
                 // Teleport near target.
                 float angleOffsetDirection = Main.rand.NextBool().ToDirectionInt();
                 do
-                    teleportOffsetDirection += Main.rand.NextFloat(MathHelper.PiOver2);
-                while ((teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(directionToTarget) < 1.18f ||
-                        (teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2().AngleBetween(target.velocity) < 0.9f);
+                    teleportOffsetDirection += Main.rand.NextFloat(PiOver2);
+                while ((teleportOffsetDirection + angleOffsetDirection * PiOver2).ToRotationVector2().AngleBetween(directionToTarget) < 1.18f ||
+                        (teleportOffsetDirection + angleOffsetDirection * PiOver2).ToRotationVector2().AngleBetween(target.velocity) < 0.9f);
 
                 npc.Center = target.Center + teleportOffsetDirection.ToRotationVector2() * teleportOffset;
-                npc.velocity = (teleportOffsetDirection + angleOffsetDirection * MathHelper.PiOver2).ToRotationVector2() * swimSpeed;
+                npc.velocity = (teleportOffsetDirection + angleOffsetDirection * PiOver2).ToRotationVector2() * swimSpeed;
                 npc.Center -= npc.velocity.SafeNormalize(Vector2.UnitY) * 600f;
 
                 nextTeleportDelay = delayBetweenTeleports;
@@ -193,7 +193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
             npc.rotation = npc.velocity.ToRotation();
 
-            if (attackTimer >= stalkTime && MathHelper.Distance(target.Center.X, npc.Center.X) > 800f)
+            if (attackTimer >= stalkTime && Distance(target.Center.X, npc.Center.X) > 800f)
                 SelectNextAttack(npc);
         }
 
@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         {
             int rushTime = 480;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float rushSpeed = MathHelper.Lerp(28f, 36.5f, 1f - lifeRatio);
+            float rushSpeed = Lerp(28f, 36.5f, 1f - lifeRatio);
             float rushAcceleration = rushSpeed * 0.009f;
 
             // Rush towards the player if sufficiently far away.
@@ -249,11 +249,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * rushSpeed, rushAcceleration);
 
             // Decide direction and rotation.
-            if (MathHelper.Distance(target.Center.X, npc.Center.X) > 50f)
+            if (Distance(target.Center.X, npc.Center.X) > 50f)
                 npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
-            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.02f, -0.3f, 0.3f);
+            npc.rotation = Clamp(npc.velocity.X * 0.02f, -0.3f, 0.3f);
             if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+                npc.rotation += Pi;
 
             if (attackTimer >= rushTime)
                 SelectNextAttack(npc);
@@ -267,7 +267,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             int swimDisappearTime = 60;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float startingChargeSpeed = 13f;
-            float chargeSpeed = MathHelper.Lerp(32f, 40f, 1f - lifeRatio);
+            float chargeSpeed = Lerp(32f, 40f, 1f - lifeRatio);
             float angularTurnSpeed = 0.011f;
             Vector2 directionToTarget = npc.SafeDirectionTo(target.Center);
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
@@ -353,7 +353,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * horizontalHoverSpeed;
 
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.035f);
-                npc.rotation = npc.rotation.AngleTowards(npc.spriteDirection == 1 ? MathHelper.Pi : 0f, 0.25f);
+                npc.rotation = npc.rotation.AngleTowards(npc.spriteDirection == 1 ? Pi : 0f, 0.25f);
 
                 npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
 
@@ -406,14 +406,14 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             int chargeTime = 96;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float chargeSpeed = 26.67f;
-            float sharkShootSpeed = MathHelper.Lerp(8f, 12.5f, 1f - lifeRatio);
+            float sharkShootSpeed = Lerp(8f, 12.5f, 1f - lifeRatio);
 
             // Sound sharks.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
             {
                 for (int i = 0; i < miniSharkCount; i++)
                 {
-                    float offsetAngle = MathHelper.Lerp(-MathHelper.Pi, MathHelper.Pi, i / (float)(miniSharkCount - 1f));
+                    float offsetAngle = Lerp(-Pi, Pi, i / (float)(miniSharkCount - 1f));
                     int shark = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MiniReaperShark>(), 300, 0f);
                     if (Main.projectile.IndexInRange(shark))
                     {
@@ -455,7 +455,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 // Make the sharks charge.
                 foreach (Projectile miniShark in Utilities.AllProjectilesByID(ModContent.ProjectileType<MiniReaperShark>()))
                 {
-                    float chargeOffsetAngle = MathHelper.WrapAngle(npc.AngleTo(target.Center) - miniShark.ModProjectile<MiniReaperShark>().SpinOffsetAngle) * 0.2f;
+                    float chargeOffsetAngle = WrapAngle(npc.AngleTo(target.Center) - miniShark.ModProjectile<MiniReaperShark>().SpinOffsetAngle) * 0.2f;
                     Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(chargeOffsetAngle) * sharkShootSpeed;
                     miniShark.velocity = chargeVelocity;
                     miniShark.netUpdate = true;
@@ -513,12 +513,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             float rotation = npc.rotation;
             if (npc.spriteDirection == 1)
-                rotation += MathHelper.Pi;
+                rotation += Pi;
             Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             for (int i = 0; i < 7; i++)
             {
-                Color eyeColor = Color.White with { A = 0 } * npc.localAI[0] * MathHelper.Lerp(0.6f, 0f, i / 6f);
+                Color eyeColor = Color.White with { A = 0 } * npc.localAI[0] * Lerp(0.6f, 0f, i / 6f);
                 Vector2 eyeOffset = npc.rotation.ToRotationVector2() * i * npc.velocity.Length() * -0.1f;
                 ScreenOverlaysSystem.ThingsToDrawOnTopOfBlur.Add(new(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor, rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0));
             }

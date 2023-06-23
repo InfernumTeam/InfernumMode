@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             NPC.frameCounter++;
 
-            int wingFlapRate = (int)MathHelper.Clamp(10f - NPC.velocity.Length() * 0.37f, 2f, 8f);
+            int wingFlapRate = (int)Clamp(10f - NPC.velocity.Length() * 0.37f, 2f, 8f);
             if (NPC.frameCounter >= wingFlapRate)
             {
                 NPC.frame.Y += 66;

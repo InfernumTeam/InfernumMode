@@ -97,8 +97,8 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             Player.Center = DefaultPlayerPosition;
 
-            float particleCircleSize = MathHelper.Lerp(500f, 200f, Time / SpawnTime);
-            int rockSpawnRate = (int)MathHelper.Lerp(3f, 1f, Time / SpawnTime);
+            float particleCircleSize = Lerp(500f, 200f, Time / SpawnTime);
+            int rockSpawnRate = (int)Lerp(3f, 1f, Time / SpawnTime);
 
             if (Time is >= MoveTime and <= SpawnTime)
             {
@@ -134,7 +134,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                         GeneralParticleHandler.SpawnParticle(laserEnergy);
 
                         // Connect the temple to the guardian positions via dust.
-                        float sineValue = (1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
+                        float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
                         float completion = CalamityUtils.SineInOutEasing(sineValue, 1);
                         Dust dust = Dust.NewDustPerfect(ProviLightPosition, 264);
                         dust.velocity = Vector2.UnitY.RotatedByRandom(0.17000000178813934) * (0f - Main.rand.NextFloat(2.7f, 4.1f));
@@ -162,14 +162,14 @@ namespace InfernumMode.Content.Projectiles.Generic
             if (Time is >= FireballCreateTime and <= SpawnTime)
             {
                 Player.Infernum_TempleCinder().CreateALotOfHolyCinders = true;
-                GuardiansScale = MathHelper.Clamp(GuardiansScale + 0.005f, 0f, 1f);
-                FireballScale = MathHelper.Clamp(FireballScale + 0.01f, 0f, 1f);
+                GuardiansScale = Clamp(GuardiansScale + 0.005f, 0f, 1f);
+                FireballScale = Clamp(FireballScale + 0.01f, 0f, 1f);
             }
 
             if (Player.WithinRange(MainPosition, 20000))
             {
                 Player.Infernum_Camera().ScreenFocusPosition = MainPosition;
-                Player.Infernum_Camera().ScreenFocusInterpolant = CalamityUtils.SineInOutEasing(MathHelper.Clamp(Time / MoveTime, 0f, 1f), 0);
+                Player.Infernum_Camera().ScreenFocusInterpolant = CalamityUtils.SineInOutEasing(Clamp(Time / MoveTime, 0f, 1f), 0);
 
                 // Disable input and UI during the animation.
                 Main.blockInput = true;
@@ -180,7 +180,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             {
                 // Create screen shake effects.
                 Player.Infernum_Camera().CurrentScreenShakePower = 3;
-                GuardsGlowAmount = MathHelper.Clamp(GuardsGlowAmount + 0.025f, 0f, 1f);
+                GuardsGlowAmount = Clamp(GuardsGlowAmount + 0.025f, 0f, 1f);
 
                 if (Time is 250)
                     SoundEngine.PlaySound(new("CalamityMod/Sounds/Custom/ProfanedGuardians/GuardianRockShieldActivate"));
@@ -222,9 +222,9 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             if (Time >= SpawnTime + 30f)
             {
-                GuardiansScale = MathHelper.Clamp(GuardiansScale - 0.1f, 0f, 1f);
-                FireballScale = MathHelper.Clamp(FireballScale - 0.1f, 0f, 1f);
-                GuardsGlowAmount = MathHelper.Clamp(GuardsGlowAmount - 0.1f, 0f, 1f);
+                GuardiansScale = Clamp(GuardiansScale - 0.1f, 0f, 1f);
+                FireballScale = Clamp(FireballScale - 0.1f, 0f, 1f);
+                GuardsGlowAmount = Clamp(GuardsGlowAmount - 0.1f, 0f, 1f);
             }
             Time++;
         }
@@ -261,19 +261,19 @@ namespace InfernumMode.Content.Projectiles.Generic
         private void DrawProviLight()
         {
             Texture2D light = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Polterghast/Light").Value;
-            float opacity = MathHelper.Lerp(0f, 1f, FireballScale);
+            float opacity = Lerp(0f, 1f, FireballScale);
             if (Time <= SpawnTime)
-                opacity = MathHelper.Clamp(opacity, 0.5f, 1f);
+                opacity = Clamp(opacity, 0.5f, 1f);
 
             Vector2 drawPosition = ProviLightPosition - Main.screenPosition;
             Color lightColor = WayfinderSymbol.Colors[1] with { A = 0 };
             Color coloredLight = WayfinderSymbol.Colors[0] with { A = 0 };
 
-            Main.spriteBatch.Draw(light, drawPosition, null, lightColor * opacity, -MathHelper.PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(light, drawPosition, null, coloredLight * opacity, -MathHelper.PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(light, drawPosition, null, lightColor * opacity, -PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(light, drawPosition, null, coloredLight * opacity, -PiOver2, new(265f, 354f), new Vector2(1.3f, 1.25f), SpriteEffects.None, 0f);
 
             Texture2D lightTexture = TextureAssets.Extra[59].Value;
-            Main.spriteBatch.Draw(lightTexture, drawPosition + new Vector2(-40f, 0f), null, Color.Lerp(lightColor, coloredLight, 0.5f) * opacity * 0.85f, -MathHelper.PiOver2, lightTexture.Size() * 0.5f, new Vector2(2.5f, 2.7f), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(lightTexture, drawPosition + new Vector2(-40f, 0f), null, Color.Lerp(lightColor, coloredLight, 0.5f) * opacity * 0.85f, -PiOver2, lightTexture.Size() * 0.5f, new Vector2(2.5f, 2.7f), SpriteEffects.None, 0f);
         }
 
         private void DrawFireballs()
@@ -306,14 +306,14 @@ namespace InfernumMode.Content.Projectiles.Generic
         private void DrawGuardians()
         {
             float smoothed = CalamityUtils.SineInEasing(GuardsGlowAmount, 0);
-            float radius = MathHelper.Lerp(0f, 10f, smoothed);
+            float radius = Lerp(0f, 10f, smoothed);
             if (radius > 0.5f)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2().RotatedBy(Main.GlobalTimeWrappedHourly * 4) * radius;
+                    Vector2 drawOffset = (TwoPi * i / 24f).ToRotationVector2().RotatedBy(Main.GlobalTimeWrappedHourly * 4) * radius;
                     Color backimageColor = Color.Lerp(Color.Brown, WayfinderSymbol.Colors[0], smoothed);
-                    backimageColor.A = (byte)MathHelper.Lerp(0f, 10f, smoothed);
+                    backimageColor.A = (byte)Lerp(0f, 10f, smoothed);
                     for (int j = 0; j < 3; j++)
                     {
                         Vector2 drawPosition = j switch

@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             for (int i = 0; i < 2; i++)
             {
                 float aimAtTargetInterpolant = Utils.Remap(Target.velocity.Length(), 6f, 0.4f, 0.4f, 0.95f);
-                Vector2 spikeVelocity = (MathHelper.TwoPi * i / 2f).ToRotationVector2();
+                Vector2 spikeVelocity = (TwoPi * i / 2f).ToRotationVector2();
                 spikeVelocity = Vector2.Lerp(spikeVelocity, Projectile.SafeDirectionTo(Target.Center), aimAtTargetInterpolant).SafeNormalize(Vector2.UnitY) * 6f;
                 Utilities.NewProjectileBetter(Projectile.Center, spikeVelocity, ModContent.ProjectileType<GoreSpike>(), DreadnautilusBehaviorOverride.GoreSpikeDamage, 0f, Projectile.owner);
             }

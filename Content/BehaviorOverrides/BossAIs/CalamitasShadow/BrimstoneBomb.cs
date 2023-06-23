@@ -29,9 +29,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            Projectile.Opacity = Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3() * 1.2f);
 
             Projectile.frameCounter++;

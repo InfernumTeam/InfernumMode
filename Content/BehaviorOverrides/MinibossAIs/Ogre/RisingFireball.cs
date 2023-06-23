@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
         {
             Lighting.AddLight(Projectile.Center, Color.Blue.ToVector3() * 0.84f);
 
-            Projectile.Opacity = MathF.Sin(MathHelper.Pi * Projectile.timeLeft / 300f) * 10f;
+            Projectile.Opacity = Sin(Pi * Projectile.timeLeft / 300f) * 10f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 
@@ -36,8 +36,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
 
             Projectile.velocity.X *= 0.996f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y - 0.37f, -27f, 17f);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.velocity.Y = Clamp(Projectile.velocity.Y - 0.37f, -27f, 17f);
+            Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
         }
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.75f;

@@ -64,8 +64,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             Projectile otherVortex = Main.projectile[(int)OtherVortexIndex];
             Projectile.scale = Utilities.UltrasmoothStep(Timer / ScaleFadeinTime) * 2f + Utilities.UltrasmoothStep(Timer / ScaleFadeinTime * 3.2f) * 0.34f;
-            Projectile.scale = MathHelper.Lerp(Projectile.scale, 0f, Utils.GetLerpValue(91690f, 91720f, Timer, true));
-            Projectile.Opacity = MathHelper.Clamp(Projectile.scale * 0.87f, 0f, 1f);
+            Projectile.scale = Lerp(Projectile.scale, 0f, Utils.GetLerpValue(91690f, 91720f, Timer, true));
+            Projectile.Opacity = Clamp(Projectile.scale * 0.87f, 0f, 1f);
 
             // Move towards the nearest player and try to stay near the other 
             if (Projectile.velocity.Length() > 0.001f)
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     flameSpeed = 16f;
                 }
 
-                if (!Projectile.WithinRange(otherVortex.Center, MathHelper.Clamp(1100f - Timer * 2f, 100f, 1100f)))
+                if (!Projectile.WithinRange(otherVortex.Center, Clamp(1100f - Timer * 2f, 100f, 1100f)))
                     Projectile.velocity += Projectile.SafeDirectionTo(otherVortex.Center) * generalSpeedFactor * 1.45f;
 
                 if (Projectile.velocity.Length() < generalSpeedFactor * 17f)
@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     if (Math.Abs(vortexOffset.Y) < 0.01f)
                         vortexOffset.Y = 0.01f;
 
-                    float minPushSpeed = MathHelper.Lerp(0.02f, 0.08f, flyTogetherInterpolant);
+                    float minPushSpeed = Lerp(0.02f, 0.08f, flyTogetherInterpolant);
                     Vector2 force = (Vector2.One * (flyTogetherInterpolant * 3f + 1f) * 0.4f / vortexOffset + Projectile.SafeDirectionTo(otherVortex.Center) * minPushSpeed * 0.25f).ClampMagnitude(minPushSpeed, 20f);
                     Projectile.velocity += force * generalSpeedFactor + Projectile.SafeDirectionTo(Target.Center) * generalSpeedFactor * 0.24f;
                 }
@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                         SoundEngine.PlaySound(SoundID.Item92, Projectile.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 crystalVelocity = (crystalSpawnPosition - Projectile.Center).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * flameSpeed;
+                            Vector2 crystalVelocity = (crystalSpawnPosition - Projectile.Center).SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * flameSpeed;
                             Utilities.NewProjectileBetter(crystalSpawnPosition, crystalVelocity, ModContent.ProjectileType<AstralFlame2>(), AstrumDeusHeadBehaviorOverride.AstralFlameDamage, 0f);
                         }
                     }
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
                         for (int i = 0; i < 9; i++)
                         {
-                            Vector2 flameVelocity = (MathHelper.TwoPi * i / 9f).ToRotationVector2() * 10f;
+                            Vector2 flameVelocity = (TwoPi * i / 9f).ToRotationVector2() * 10f;
                             Utilities.NewProjectileBetter(impactPoint, flameVelocity, ModContent.ProjectileType<AstralFlame2>(), AstrumDeusHeadBehaviorOverride.AstralFlameDamage, 0f);
                         }
                     }

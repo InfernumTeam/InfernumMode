@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class StormWeaverDrawSystem : ModSystem
     {
@@ -21,6 +21,13 @@ namespace InfernumMode.Common.Graphics
         {
             Main.OnPreDraw += PrepareTarget;
             WeaverDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+        }
+
+        public override void OnModUnload()
+        {
+            Main.OnPreDraw -= PrepareTarget;
+            if (WeaverDrawTarget is not null && !WeaverDrawTarget.IsDisposed)
+                WeaverDrawTarget.Dispose();
         }
 
         internal static void PrepareTarget(GameTime obj)

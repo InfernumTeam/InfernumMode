@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class FilterCaputureDetourManager : ModSystem
     {

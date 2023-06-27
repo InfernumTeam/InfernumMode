@@ -1,5 +1,5 @@
 ﻿using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Core.GlobalInstances.Players;

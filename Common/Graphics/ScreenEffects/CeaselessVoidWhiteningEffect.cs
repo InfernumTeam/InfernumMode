@@ -9,7 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class CeaselessVoidWhiteningEffect : ModSystem
     {
@@ -31,10 +31,9 @@ namespace InfernumMode.Common.Graphics
             set;
         }
 
-        public override void OnModLoad()
-        {
-            On.Terraria.GameContent.Events.MoonlordDeathDrama.DrawWhite += DrawWhiteningHook;
-        }
+        public override void OnModLoad() => On.Terraria.GameContent.Events.MoonlordDeathDrama.DrawWhite += DrawWhiteningHook;
+
+        public override void OnModUnload() => On.Terraria.GameContent.Events.MoonlordDeathDrama.DrawWhite -= DrawWhiteningHook;
 
         private void DrawWhiteningHook(On.Terraria.GameContent.Events.MoonlordDeathDrama.orig_DrawWhite orig, SpriteBatch spriteBatch)
         {

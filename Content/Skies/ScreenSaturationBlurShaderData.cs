@@ -1,5 +1,5 @@
 ﻿using CalamityMod.NPCs.Providence;
-using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

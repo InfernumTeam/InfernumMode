@@ -11,7 +11,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class CeaselessDimensionDrawSystem : ModSystem
     {
@@ -60,6 +60,14 @@ namespace InfernumMode.Common.Graphics
 
             var drawWalls = typeof(Main).GetMethod("DrawWalls", Utilities.UniversalBindingFlags);
             DrawWalls = Delegate.CreateDelegate(typeof(Action<Main>), drawWalls) as Action<Main>;
+        }
+
+        public override void OnModUnload()
+        {
+            Main.QueueMainThreadAction(() =>
+            {
+                On.Terraria.Main.DoDraw_WallsAndBlacks -= DistortBackground;
+            });
         }
 
         private void DistortBackground(On.Terraria.Main.orig_DoDraw_WallsAndBlacks orig, Main self)

@@ -14,6 +14,7 @@ using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances;

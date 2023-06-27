@@ -21,7 +21,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class ScreenSaturationBlurSystem : ModSystem
     {
@@ -108,6 +108,21 @@ namespace InfernumMode.Common.Graphics
         {
             Main.OnPreDraw -= HandleDrawMainThreadQueue;
             Main.OnPreDraw -= PrepareBlurEffects;
+            On.Terraria.Graphics.Effects.FilterManager.EndCapture -= GetFinalScreenShader;
+
+            Main.QueueMainThreadAction(() =>
+            {
+                IL.Terraria.Main.DoDraw -= LetEffectsDrawOnBudgetLightSettings;
+            });
+
+            if (BloomTarget is not null && !BloomTarget.IsDisposed)
+                BloomTarget.Dispose();
+            if (FinalScreenTarget is not null && !FinalScreenTarget.IsDisposed)
+                FinalScreenTarget.Dispose();
+            if (DownscaledBloomTarget is not null && !DownscaledBloomTarget.IsDisposed)
+                DownscaledBloomTarget.Dispose();
+            if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
+                TemporaryAuxillaryTarget.Dispose();
         }
 
         private void LetEffectsDrawOnBudgetLightSettings(ILContext il)

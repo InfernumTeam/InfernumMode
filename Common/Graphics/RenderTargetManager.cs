@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Common.Graphics.ScreenEffects;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -57,6 +58,8 @@ namespace InfernumMode.Common.Graphics
         public override void OnModUnload()
         {
             DisposeOfTargets();
+            Main.OnPreDraw -= HandleTargetUpdateLoop;
+            On.Terraria.Main.SetDisplayMode -= ResetTargetSizes;
         }
 
         private void HandleTargetUpdateLoop(GameTime obj) => RenderTargetUpdateLoopEvent?.Invoke();

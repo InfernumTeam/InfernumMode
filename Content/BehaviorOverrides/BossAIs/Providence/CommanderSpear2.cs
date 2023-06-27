@@ -1,8 +1,8 @@
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

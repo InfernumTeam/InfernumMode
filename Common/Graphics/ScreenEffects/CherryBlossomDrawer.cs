@@ -9,7 +9,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class CherryBlossomDrawer : ModSystem
     {
@@ -35,6 +35,11 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModUnload()
         {
+            if (CherryBlossomTarget is not null && !CherryBlossomTarget.IsDisposed)
+                CherryBlossomTarget.Dispose();
+
+            CherryBlossomTarget = null;
+
             Main.OnPreDraw -= PrepareCherryBlossomTarget;
             On.Terraria.Main.DrawProjectiles -= DrawCherryBlossoms;
         }

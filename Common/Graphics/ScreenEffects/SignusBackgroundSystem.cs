@@ -7,7 +7,7 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class SignusBackgroundSystem : ModSystem
     {

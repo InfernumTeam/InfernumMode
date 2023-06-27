@@ -109,5 +109,10 @@ namespace InfernumMode.Common.Graphics.Primitives
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length, triangleIndices, 0, triangleIndices.Length / 3);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
         }
+
+        public static void Dispose()
+        {
+            BaseEffect?.Dispose();
+        }
     }
 }

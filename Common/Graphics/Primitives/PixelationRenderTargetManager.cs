@@ -34,6 +34,19 @@ namespace InfernumMode.Common.Graphics.Primitives
         {
             On.Terraria.Main.CheckMonoliths -= DrawToCustomRenderTargets;
             On.Terraria.Main.DoDraw_DrawNPCsOverTiles -= DrawPixelRenderTarget;
+
+            Main.QueueMainThreadAction(() =>
+            {
+                if (pixelRenderTarget != null && !pixelRenderTarget.IsDisposed) 
+                    pixelRenderTarget.Dispose();
+
+                pixelRenderTarget = null;
+
+                if (pixelRenderTargetBeforeNPCs != null && !pixelRenderTargetBeforeNPCs.IsDisposed)
+                    pixelRenderTargetBeforeNPCs.Dispose();
+
+                pixelRenderTargetBeforeNPCs = null;
+            });
         }
 
         public override void PostUpdateEverything() => ResizePixelRenderTarget(false);
@@ -145,6 +158,7 @@ namespace InfernumMode.Common.Graphics.Primitives
                         // If they are not null, or already disposed, dispose them.
                         if (pixelRenderTarget is not null && !pixelRenderTarget.IsDisposed)
                             pixelRenderTarget.Dispose();
+
                         if (pixelRenderTargetBeforeNPCs is not null && !pixelRenderTargetBeforeNPCs.IsDisposed)
                             pixelRenderTargetBeforeNPCs.Dispose();
 

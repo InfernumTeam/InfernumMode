@@ -16,7 +16,7 @@ using CalamityMod.Skies;
 using CalamityMod.Systems;
 using CalamityMod.TileEntities;
 using CalamityMod.World;
-using InfernumMode.Common.Graphics;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;

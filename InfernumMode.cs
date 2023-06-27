@@ -16,6 +16,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Particles.Metaballs.FusableParticleManager;
+using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode
 {
@@ -164,6 +165,8 @@ namespace InfernumMode
             IntroScreenManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();
+            PrimitiveTrailCopy.Dispose();
+            Primitive3DStrip.Dispose();
             Instance = null;
             CalamityMod = null;
         }

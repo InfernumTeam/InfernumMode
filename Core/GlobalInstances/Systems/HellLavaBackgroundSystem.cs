@@ -1,4 +1,4 @@
-﻿using InfernumMode.Common.Graphics;
+﻿using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Backgrounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

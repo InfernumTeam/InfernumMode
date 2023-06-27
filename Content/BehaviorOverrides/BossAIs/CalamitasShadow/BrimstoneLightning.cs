@@ -1,7 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

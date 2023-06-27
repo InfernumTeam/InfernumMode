@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class ScreenEffectSystem : ModSystem
     {
@@ -186,7 +186,14 @@ namespace InfernumMode.Common.Graphics
 
         private static void ResizeRenderTarget(Vector2 obj)
         {
+            if (BlurRenderTarget is not null && !BlurRenderTarget.IsDisposed)
+                BlurRenderTarget.Dispose();
+
             BlurRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+
+            if (FlashRenderTarget is not null && !FlashRenderTarget.IsDisposed)
+                FlashRenderTarget.Dispose();
+
             FlashRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
         }
     }

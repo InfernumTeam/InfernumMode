@@ -11,7 +11,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class CosmicBackgroundSystem : ModSystem
     {
@@ -60,6 +60,20 @@ namespace InfernumMode.Common.Graphics
                 return;
 
             Main.QueueMainThreadAction(PrepareTarget);
+        }
+
+        public override void OnModUnload()
+        {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            Main.QueueMainThreadAction(() =>
+            {
+                if (KalisetFractal is not null && !KalisetFractal.IsDisposed)
+                    KalisetFractal.Dispose();
+
+                KalisetFractal = null;
+            });
         }
 
         internal static void PrepareTarget()

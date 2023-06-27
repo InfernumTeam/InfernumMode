@@ -10,7 +10,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics
+namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class AEWShadowFormDrawSystem : ModSystem
     {
@@ -50,6 +50,29 @@ namespace InfernumMode.Common.Graphics
             AEWDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
             AEWShadowWispTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
             TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+        }
+
+        public override void OnModUnload()
+        {
+            Main.OnPreDraw -= PrepareAEWTargets;
+
+            if (AEWDrawTarget is not null && !AEWDrawTarget.IsDisposed)
+                AEWDrawTarget.Dispose();
+
+            AEWDrawTarget = null;
+
+            if (AEWShadowWispTarget is not null && !AEWShadowWispTarget.IsDisposed)
+                AEWShadowWispTarget.Dispose();
+
+            AEWShadowWispTarget = null;
+
+            if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
+                TemporaryAuxillaryTarget.Dispose();
+
+            TemporaryAuxillaryTarget = null;
+
+            LightAndDarkEffectsCache.Clear();
+            AEWEyesDrawCache.Clear();
         }
 
         internal static void PrepareAEWTargets(GameTime obj)

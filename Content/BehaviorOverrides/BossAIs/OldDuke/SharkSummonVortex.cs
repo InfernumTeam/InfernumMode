@@ -1,7 +1,6 @@
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

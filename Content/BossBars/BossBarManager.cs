@@ -1,9 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.UI;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

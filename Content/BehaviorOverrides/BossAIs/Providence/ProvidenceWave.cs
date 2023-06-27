@@ -1,6 +1,5 @@
 ﻿using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
-using System;
 using System.IO;
 using Terraria;
 

@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using System.Linq;
 using System.Reflection;
 using Terraria;

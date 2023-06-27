@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.AdultEidolonWyrm;
@@ -21,7 +20,6 @@ using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.NormalNPCs;
-using CalamityMod.NPCs.OldDuke;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.Polterghast;

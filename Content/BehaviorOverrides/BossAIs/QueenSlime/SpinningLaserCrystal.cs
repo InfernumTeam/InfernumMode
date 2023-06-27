@@ -1,6 +1,5 @@
 ﻿using InfernumMode.Common.Graphics;
 using Microsoft.Xna.Framework;
-using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;

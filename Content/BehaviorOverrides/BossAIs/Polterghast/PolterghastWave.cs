@@ -1,6 +1,5 @@
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast

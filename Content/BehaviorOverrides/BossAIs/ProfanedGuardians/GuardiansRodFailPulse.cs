@@ -1,7 +1,6 @@
 ﻿using InfernumMode.Common.BaseEntities;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
-using System;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {

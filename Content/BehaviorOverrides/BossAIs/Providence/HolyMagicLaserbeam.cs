@@ -9,7 +9,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;

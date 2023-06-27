@@ -1,6 +1,5 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;

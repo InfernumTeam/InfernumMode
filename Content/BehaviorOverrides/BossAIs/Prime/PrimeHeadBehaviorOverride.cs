@@ -1,14 +1,10 @@
-using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
-using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Particles;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

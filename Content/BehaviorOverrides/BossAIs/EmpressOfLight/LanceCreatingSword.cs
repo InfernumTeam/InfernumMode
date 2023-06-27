@@ -6,7 +6,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.IO;
 using Terraria;
 using Terraria.GameContent;

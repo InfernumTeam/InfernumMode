@@ -12,7 +12,6 @@ using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;

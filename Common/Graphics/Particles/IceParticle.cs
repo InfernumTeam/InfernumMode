@@ -1,7 +1,6 @@
 ﻿using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 
 namespace InfernumMode.Common.Graphics.Particles

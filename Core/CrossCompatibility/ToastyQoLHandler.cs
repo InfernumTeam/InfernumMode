@@ -7,7 +7,6 @@ using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
-using InfernumMode.Core.GlobalInstances.Systems;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;

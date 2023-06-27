@@ -2,7 +2,6 @@ using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;

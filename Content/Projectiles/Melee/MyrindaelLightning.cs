@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using System;

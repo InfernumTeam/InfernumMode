@@ -1,9 +1,7 @@
 using CalamityMod;
-using CalamityMod.Items.Weapons.DraedonsArsenal;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;

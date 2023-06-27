@@ -4,7 +4,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;

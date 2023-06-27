@@ -9,7 +9,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.TrackedMusic;
-using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;

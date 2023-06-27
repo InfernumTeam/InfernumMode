@@ -2,7 +2,6 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
-using InfernumMode.Content.Credits;
 using InfernumMode.Content.MainMenu;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Content.Subworlds;

@@ -1,7 +1,5 @@
 ﻿using CalamityMod.NPCs.ExoMechs;
-using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.Items;
-using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
 using Terraria.ModLoader;

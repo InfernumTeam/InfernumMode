@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Items.Weapons.Melee;

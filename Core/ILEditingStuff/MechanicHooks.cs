@@ -26,7 +26,6 @@ using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
-using InfernumMode.Core.GlobalInstances.GlobalItems;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;

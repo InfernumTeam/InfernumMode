@@ -11,7 +11,6 @@ using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;

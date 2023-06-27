@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode

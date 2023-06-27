@@ -1,8 +1,5 @@
 using CalamityMod.Dusts;
-using InfernumMode.Content.Dusts;
 using InfernumMode.Content.Items;
-using InfernumMode.Content.Items.Pets;
-using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

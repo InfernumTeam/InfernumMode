@@ -1,7 +1,6 @@
 using CalamityMod.NPCs.DesertScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

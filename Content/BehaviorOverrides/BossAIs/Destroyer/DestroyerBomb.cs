@@ -6,7 +6,6 @@ using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Enemy;

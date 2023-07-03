@@ -82,7 +82,6 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             Time++;
         }
 
-
         public float FlameTrailWidthFunction(float completionRatio)
         {
             return SmoothStep(20f, 5f, completionRatio) * Projectile.Opacity;

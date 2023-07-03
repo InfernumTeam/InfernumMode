@@ -94,6 +94,13 @@ namespace InfernumMode.Content.Skies
 
         public static void ChangeBackgroundColors_ScarsOfCalamity()
         {
+            // I dunno something's probably wrong but I don't care. I'm sick of being roped into this project.
+            if (TrackedMusicManager.TrackedSong is null)
+            {
+                BackgroundColor = EpiphanyColor;
+                return;
+            }
+
             // Make the backgrounds change based on who's singing in the Scars of Calamity track.
             var songTime = TrackedMusicManager.SongElapsedTime;
             var solaria = CalamitasTrackedMusic.SolariaSections.Where(m => m.End >= songTime);

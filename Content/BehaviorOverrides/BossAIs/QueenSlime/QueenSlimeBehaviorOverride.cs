@@ -528,7 +528,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
             }
 
-            // Slow downward and make the summoned slimes to things.
+            // Slow downward and make the summoned slimes do things.
             if (attackTimer == slamFlyTime + slamHoverTime)
             {
                 foreach (Projectile spikeSlime in Utilities.AllProjectilesByID(fallingSlimeID, bouncingSlimeID))

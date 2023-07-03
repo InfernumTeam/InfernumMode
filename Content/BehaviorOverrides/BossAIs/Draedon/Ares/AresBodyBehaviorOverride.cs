@@ -302,7 +302,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (blenderSoundTimer >= 1f)
             {
                 if (blenderSoundTimer == 2f)
-                    SoundEngine.PlaySound(AresBody.LaserStartSound with { Volume = blenderVolume }, npc.Center);
+                    SoundEngine.PlaySound(AresBody.LaserStartSound with
+                    {
+                        Volume = blenderVolume
+                    }, npc.Center);
 
                 blenderSoundTimer++;
 
@@ -327,17 +330,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         deathraySound.Resume();
                 }
                 else
-                    deathraySoundSlot = SoundEngine.PlaySound(AresBody.LaserLoopSound with { Volume = blenderVolume }, npc.Center);
+                    deathraySoundSlot = SoundEngine.PlaySound(AresBody.LaserLoopSound with
+                    {
+                        Volume = blenderVolume
+                    }, npc.Center);
             }
 
             // If the blender sound is disabled, turn it off immediately.
             else if (SoundEngine.TryGetActiveSound(deathraySoundSlot, out var deathraySound) && deathraySound.IsPlaying)
             {
                 deathraySound.Stop();
-                SoundEngine.PlaySound(AresBody.LaserEndSound with { Volume = blenderVolume }, npc.Center);
+                SoundEngine.PlaySound(AresBody.LaserEndSound with
+                {
+                    Volume = blenderVolume
+                }, npc.Center);
 
                 if (Utilities.IsAprilFirst())
-                    SoundEngine.PlaySound(TheMicrowave.BeepSound with { Volume = blenderVolume }, npc.Center);
+                    SoundEngine.PlaySound(TheMicrowave.BeepSound with
+                    {
+                        Volume = blenderVolume
+                    }, npc.Center);
             }
 
             // Handle the final phase transition.
@@ -449,7 +461,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Give the illusion of being in 3D space by shrinking.
-            // Other parts of code cause Ares to layer being things like trees to better sell the illusion.
+            // Other parts of code cause Ares to layer behind things like trees to better sell the illusion.
             npc.scale = 1f / (zPosition + 1f);
             npc.ShowNameOnHover = true;
             if (Math.Abs(zPosition) >= 0.4f)
@@ -467,14 +479,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoLaughEffect(NPC npc, Player target)
         {
-            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with { Volume = 3f });
+            SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with
+            {
+                Volume = 3f
+            });
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
 
             ScreenEffectSystem.SetBlurEffect(npc.Center, 1.3f, 45);
         }
 
-        public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset) { }
+        public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset)
+        {
+        }
 
         public static void DoBehavior_DeathAnimation(NPC npc, ref float deathAnimationTimer)
         {
@@ -540,7 +557,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer == implosionRingLifetime)
             {
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, explosionRingScale, explosionTime));
-                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with
+                {
+                    Volume = 1.75f
+                }, npc.Center);
             }
 
             deathAnimationTimer++;
@@ -880,7 +900,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     DoLaughEffect(npc, target);
 
                     // Play the impending death sound.
-                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with { Volume = 2f }, target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with
+                    {
+                        Volume = 2f
+                    }, target.Center);
                 }
             }
             else
@@ -1128,7 +1151,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     // Make Draedon become enraged if you leave the blender.
                     if (draedonIndex != -1 && Main.npc[draedonIndex].active && Main.npc[draedonIndex].Infernum().ExtraAI[1] == 0f && !npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 40f))
                     {
-                        SoundEngine.PlaySound(AresBody.EnragedSound with { Volume = 2f });
+                        SoundEngine.PlaySound(AresBody.EnragedSound with
+                        {
+                            Volume = 2f
+                        });
                         Utilities.DisplayText("You have made a grave miscalculation.", DraedonNPC.TextColorEdgy);
 
                         NPC draedon = Main.npc[draedonIndex];
@@ -1160,7 +1186,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     if (attackTimer == 60f)
                     {
                         GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, 4f, 120));
-                        SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with
+                        {
+                            Volume = 1.75f
+                        }, npc.Center);
                     }
 
                     if (attackTimer >= 84f)
@@ -1627,9 +1656,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             armGlowmaskColor.A = 184;
 
             // Interpolate towards overheat colors.
-            Color baseInterpolateColor = Color.Red with { A = 100 };
+            Color baseInterpolateColor = Color.Red with
+            {
+                A = 100
+            };
             lightColor = Color.Lerp(lightColor, baseInterpolateColor, npc.localAI[3] * 0.48f);
-            armGlowmaskColor = Color.Lerp(armGlowmaskColor, Color.Red with { A = 0 }, npc.localAI[3] * 0.48f);
+            armGlowmaskColor = Color.Lerp(armGlowmaskColor, Color.Red with
+            {
+                A = 0
+            }, npc.localAI[3] * 0.48f);
 
             (int, bool)[] armProperties = new (int, bool)[]
             {

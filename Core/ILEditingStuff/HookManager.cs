@@ -93,12 +93,6 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityPlayer).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
         }
 
-        public static event ILContext.Manipulator CalamityNPCLifeRegen
-        {
-            add => HookEndpointManager.Modify(typeof(CalamityGlobalNPC).GetMethod("UpdateLifeRegen", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(CalamityGlobalNPC).GetMethod("UpdateLifeRegen", Utilities.UniversalBindingFlags), value);
-        }
-
         public static event ILContext.Manipulator CalamityGenNewTemple
         {
             add => HookEndpointManager.Modify(typeof(CustomTemple).GetMethod("GenNewTemple", Utilities.UniversalBindingFlags), value);

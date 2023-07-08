@@ -97,7 +97,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 case 2:
                     iconScale = ExoMechSelectionUI.PrimeIconScale;
                     iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/UI/DraedonSummoning/HeadIcon_Ares").Value;
-                    description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
+                    description = "Ares, a heavyweight, diabolical monstrosity with six Exo superweapons.";
                     hoverSound = ExoMechSelectionUI.AresHoverSound;
                     break;
                 case 3:
@@ -124,7 +124,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 if (ExoMechSelectionUI.HoverSoundMechType != (ExoMech)exoMech)
                 {
                     ExoMechSelectionUI.HoverSoundMechType = (ExoMech)exoMech;
-                    SoundEngine.PlaySound(hoverSound with { Volume = 1.5f });
+                    SoundEngine.PlaySound(hoverSound with
+                    {
+                        Volume = 1.5f
+                    });
                 }
 
                 // Make the selection known if a click is done and the icon isn't already in use.
@@ -160,7 +163,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 for (int i = 0; i < 4; i++)
                 {
                     Vector2 drawOffset = -Vector2.UnitY.RotatedBy(TwoPi * i / 4f) * iconScale * 2f;
-                    Main.spriteBatch.Draw(iconMechTexture, drawPosition + drawOffset, null, Color.Red with { A = 80 }, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(iconMechTexture, drawPosition + drawOffset, null, Color.Red with
+                    {
+                        A = 80
+                    }, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
                 }
             }
 

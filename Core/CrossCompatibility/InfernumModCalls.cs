@@ -62,7 +62,7 @@ namespace InfernumMode.Core.CrossCompatibility
                     return CanPlayMusicForNPC(npcID);
                 case "RegisterAsSoulHeadphones":
                     Item item = (Item)args[1];
-                    item.value = CalamityGlobalItem.RarityHotPinkBuyPrice;
+                    item.value = 0;
                     item.rare = ModContent.RarityType<InfernumSoulDrivenHeadphonesRarity>();
                     item.Infernum_Tooltips().DeveloperItem = true;
                     break;

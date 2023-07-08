@@ -1,7 +1,8 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,6 +24,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Phase2LifeRatioThreshold,
             Phase3LifeRatioThreshold
         };
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += ChangeMapIconConditions;
+        }
+
+        private void ChangeMapIconConditions(NPC npc, ref int index)
+        {
+            if (npc.type == NPCID.Spazmatism)
+            {
+                if (npc.Opacity <= 0f)
+                    index = -1;
+                else if (PersonallyInPhase2(npc))
+                    index = 21;
+                else
+                    index = 20;
+            }
+            if (npc.type == NPCID.Retinazer)
+            {
+                if (npc.Opacity <= 0f)
+                    index = -1;
+                else if (PersonallyInPhase2(npc))
+                    index = 16;
+                else
+                    index = 15;
+            }
+        }
+        #endregion Loading
 
         #region AI
         public override bool PreAI(NPC npc) => DoAI(npc);

@@ -94,7 +94,7 @@ namespace InfernumMode.Content.Skies
 
         public static void ChangeBackgroundColors_ScarsOfCalamity()
         {
-            if (TrackedMusicManager.TrackedSong is null || TrackedMusicManager.TrackedSong.Name != "InfernumModeMusic/Sounds/Music/Calamitas" || Main.musicVolume <= 0f)
+            if (TrackedMusicManager.TrackedSong is null || TrackedMusicManager.TrackedSong.Name != "InfernumModeMusic/Sounds/Music/Calamitas" || Main.musicVolume <= 0.001f)
             {
                 BackgroundColor = EpiphanyColor;
                 MusicBrightness = 1f;

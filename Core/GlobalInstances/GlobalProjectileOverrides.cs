@@ -25,7 +25,7 @@ namespace InfernumMode.Core.GlobalInstances
 {
     public class GlobalProjectileOverrides : GlobalProjectile
     {
-        public bool FrameOneModifiersDone = false;
+        public bool FrameOneModifiersDone;
 
         public bool FadesAwayWhenManuallyKilled;
 

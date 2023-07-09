@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             get;
             set;
-        } = null;
+        }
 
         public Vector2 LaserStart => Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
 

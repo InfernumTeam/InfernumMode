@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 {
     public class MoonLordDeathAnimationHandler : ModProjectile
     {
-        public PrimitiveTrailCopy LightDrawer = null;
+        public PrimitiveTrailCopy LightDrawer;
 
         public ref float Owner => ref Projectile.ai[0];
 

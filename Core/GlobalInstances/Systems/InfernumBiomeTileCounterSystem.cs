@@ -10,7 +10,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             set;
-        } = 0;
+        }
 
         public override void ResetNearbyTileEffects()
         {

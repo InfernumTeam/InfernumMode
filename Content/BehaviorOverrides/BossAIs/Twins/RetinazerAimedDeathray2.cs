@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             get;
             set;
-        } = null;
+        }
 
         public const int LifetimeConst = 54;
 

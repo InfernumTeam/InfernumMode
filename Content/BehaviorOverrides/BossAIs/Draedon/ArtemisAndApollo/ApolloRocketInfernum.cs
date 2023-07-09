@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 {
     public class ApolloRocketInfernum : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy FlameTrailDrawer = null;
+        public PrimitiveTrailCopy FlameTrailDrawer;
 
         public override void SetStaticDefaults()
         {

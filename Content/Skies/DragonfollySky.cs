@@ -25,8 +25,8 @@ namespace InfernumMode.Content.Skies
 
     public class DragonfollySky : CustomSky
     {
-        public bool isActive = false;
-        public float Intensity = 0f;
+        public bool isActive;
+        public float Intensity;
         public int BirdbrainIndex = -1;
 
         public override void Update(GameTime gameTime)

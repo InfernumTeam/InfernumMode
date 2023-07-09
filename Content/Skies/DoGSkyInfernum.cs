@@ -40,8 +40,8 @@ namespace InfernumMode.Content.Skies
             public Color LightningColor;
         }
 
-        public bool isActive = false;
-        public float Intensity = 0f;
+        public bool isActive;
+        public float Intensity;
         public int EdgyWormIndex = -1;
         public List<Lightning> LightningBolts = new();
 

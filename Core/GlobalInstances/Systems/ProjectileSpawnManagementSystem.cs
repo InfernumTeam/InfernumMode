@@ -1,4 +1,4 @@
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
 using Terraria;
@@ -9,7 +9,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class ProjectileSpawnManagementSystem : ModSystem
     {
-        private static Action<Projectile> preSyncAction = null;
+        private static Action<Projectile> preSyncAction;
 
         public static void PrepareProjectileForSpawning(Action<Projectile> a) => preSyncAction = a;
 

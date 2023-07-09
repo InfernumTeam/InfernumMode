@@ -14,9 +14,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class LavaEruptionPillar : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy LavaDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy LavaDrawer { get; private set; }
 
-        public PrimitiveTrailCopy TelegraphDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy TelegraphDrawer { get; private set; }
 
         public int Lifetime => (int)(MaxTime + TelegraphLength);
 

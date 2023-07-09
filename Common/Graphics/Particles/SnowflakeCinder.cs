@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Projectiles
 {
     public class SnowflakeCinder : BaseCinderParticle
     {
-        private Color? DrawColor = null;
+        private Color? DrawColor;
 
         private readonly Color[] PossibleColors =
         {
@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Projectiles
             new(124, 147, 211)
         };
 
-        private float RotationPerFrame = 0;
+        private float RotationPerFrame;
 
         public override int NumberOfFrames => 4;
 

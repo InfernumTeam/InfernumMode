@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public LimbCollection Limbs;
 
-        public PrimitiveTrailCopy LimbDrawer = null;
+        public PrimitiveTrailCopy LimbDrawer;
 
         public bool DrawBeforeNPCs => true;
 

@@ -34,7 +34,7 @@ namespace InfernumMode.Content.Credits
             internal set;
         }
 
-        private static int ActiveGifIndex = 0;
+        private static int ActiveGifIndex;
 
         private static CreditAnimationObject[] CreditGIFs;
 

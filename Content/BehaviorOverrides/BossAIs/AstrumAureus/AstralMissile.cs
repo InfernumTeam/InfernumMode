@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 {
     public class AstralMissile : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy FlameTrailDrawer = null;
+        public PrimitiveTrailCopy FlameTrailDrawer;
 
         public ref float Time => ref Projectile.ai[0];
 

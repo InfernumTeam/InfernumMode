@@ -24,21 +24,21 @@ namespace InfernumMode.Content.Subworlds
 {
     public class LostColosseum : Subworld
     {
-        internal static bool VassalWasBeaten = false;
+        internal static bool VassalWasBeaten;
 
-        internal static bool WasInColosseumLastFrame = false;
+        internal static bool WasInColosseumLastFrame;
 
         public static bool HasBereftVassalAppeared
         {
             get;
             set;
-        } = false;
+        }
 
         public static bool HasBereftVassalBeenDefeated
         {
             get;
             set;
-        } = false;
+        }
 
         public static float SunsetInterpolant
         {

@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class BlahajWish : Achievement
     {
-        public int FishronFightTimer = 0;
+        public int FishronFightTimer;
 
         public const int MaxFightTimerLength = 3600;
 

@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class CondemnationArrowSCal : ModProjectile
     {
-        public PrimitiveTrailCopy TrailDrawer = null;
+        public PrimitiveTrailCopy TrailDrawer;
 
         public ref float Time => ref Projectile.ai[0];
 

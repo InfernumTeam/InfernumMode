@@ -27,8 +27,8 @@ namespace InfernumMode.Content.Skies
 
     public class AresSky : CustomSky
     {
-        private bool isActive = false;
-        private float intensity = 0f;
+        private bool isActive;
+        private float intensity;
 
         public override void Update(GameTime gameTime)
         {

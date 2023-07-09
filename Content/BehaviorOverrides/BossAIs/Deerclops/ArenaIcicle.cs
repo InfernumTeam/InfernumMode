@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 {
     public class ArenaIcicle : ModProjectile
     {
-        public IcicleDrawer Drawer = null;
+        public IcicleDrawer Drawer;
 
         public float Direction => Projectile.ai[0];
 

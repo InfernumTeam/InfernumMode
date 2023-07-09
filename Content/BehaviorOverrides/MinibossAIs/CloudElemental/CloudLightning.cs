@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 {
     public class CloudLightning : BaseLaserbeamProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy LightningDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy LightningDrawer { get; private set; }
 
         public const int TelegraphFadeTime = 15;
 

@@ -1,5 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -70,7 +71,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
                 SoundEngine.PlaySound(SoundID.Item72, Projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(flame =>
+                    {
+                        flame.ModProjectile<DarkMagicFlame>().FromSeekerHex = true;
+                    });
                     Utilities.NewProjectileBetter(Projectile.Center + magicVelocity * 2f, magicVelocity, ModContent.ProjectileType<DarkMagicFlame>(), CalamitasShadowBehaviorOverride.DarkMagicFlameDamage, 0f, ai1: 1f);
+                }
             }
 
             // Fade away if the hex has been lifted.

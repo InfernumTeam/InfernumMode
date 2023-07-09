@@ -41,7 +41,7 @@ namespace InfernumMode.Core.GlobalInstances
         // I'll be fucking damned if this isn't enough.
         public const int TotalExtraAISlots = 100;
 
-        public int? TotalPlayersAtStart = null;
+        public int? TotalPlayersAtStart;
 
         public bool DisableNaturalDespawning;
 
@@ -56,7 +56,7 @@ namespace InfernumMode.Core.GlobalInstances
         // I'll be fucking damned if this isn't enough.
         public float[] ExtraAI = new float[TotalExtraAISlots];
 
-        public Rectangle Arena = default;
+        public Rectangle Arena;
 
         public PrimitiveTrailCopy OptionalPrimitiveDrawer;
 

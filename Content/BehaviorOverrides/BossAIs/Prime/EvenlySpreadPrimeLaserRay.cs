@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         {
             get;
             set;
-        } = null;
+        }
 
         public float InitialDirection = -100f;
         public int OwnerIndex => (int)Projectile.ai[1];

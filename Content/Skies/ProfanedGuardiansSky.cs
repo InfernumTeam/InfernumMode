@@ -56,9 +56,9 @@ namespace InfernumMode.Content.Skies
 
         private readonly List<Symbol> Symbols = new();
 
-        private bool isActive = false;
+        private bool isActive;
 
-        private float intensity = 0f;
+        private float intensity;
 
         private static float MaxIntensity
         {

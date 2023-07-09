@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
         {
             get;
             set;
-        } = null;
+        }
 
         public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => OrangeLaserbeam.LaserLifetime;

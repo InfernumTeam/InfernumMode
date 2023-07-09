@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 {
     public class CorruptThorn : ModProjectile
     {
-        public float CurrentHeight = 0f;
+        public float CurrentHeight;
 
         public ref float MaxPillarHeight => ref Projectile.ai[0];
 

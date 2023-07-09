@@ -42,13 +42,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             get;
             set;
-        } = false;
+        }
 
         public float SetAngleToMoveTo
         {
             get;
             set;
-        } = 0f;
+        }
 
         public Vector2 InitialVelocity
         {

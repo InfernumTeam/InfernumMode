@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public Player Owner => Main.player[Projectile.owner];
 
-        public PrimitiveTrailCopy FlameTrailDrawer = null;
+        public PrimitiveTrailCopy FlameTrailDrawer;
 
         public const int RiseTime = 45;
 

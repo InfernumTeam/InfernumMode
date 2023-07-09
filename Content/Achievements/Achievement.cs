@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Achievements
         public string Description = "Description";
         public int TotalCompletion = 1;
         public int CurrentCompletion;
-        public bool DoneCompletionEffects = false;
+        public bool DoneCompletionEffects;
         public AchievementUpdateCheck UpdateCheck;
         public bool IsDevWish;
         #endregion

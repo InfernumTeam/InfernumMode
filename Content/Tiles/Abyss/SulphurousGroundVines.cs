@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Tiles.Abyss
         {
             get;
             private set;
-        } = null;
+        }
 
         public override void SetStaticDefaults()
         {

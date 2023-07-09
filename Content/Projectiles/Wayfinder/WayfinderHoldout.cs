@@ -35,7 +35,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public UseContext CurrentUseContext => (UseContext)Projectile.ai[1];
 
-        public Vector2 CenterOffset = default;
+        public Vector2 CenterOffset;
 
         public SlotId SoundSlot;
 

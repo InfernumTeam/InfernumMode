@@ -26,7 +26,7 @@ namespace InfernumMode.Core.Balancing
 {
     public static class BalancingChangesManager
     {       
-        internal static List<NPCBalancingChange> NPCSpecificBalancingChanges = null;
+        internal static List<NPCBalancingChange> NPCSpecificBalancingChanges;
 
         public const float AdrenalineChargeTimeFactor = 1.6f;
 

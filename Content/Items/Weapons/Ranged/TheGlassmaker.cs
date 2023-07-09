@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Items.Weapons.Ranged
 {
     public class TheGlassmaker : ModItem
     {
-        internal static bool TransformsSandIntoGlass = false;
+        internal static bool TransformsSandIntoGlass;
 
         public override void SetStaticDefaults()
         {

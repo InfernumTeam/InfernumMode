@@ -76,8 +76,8 @@ namespace InfernumMode.Content.Skies
             }
         }
 
-        public bool isActive = false;
-        public float Intensity = 0f;
+        public bool isActive;
+        public float Intensity;
         public List<Fairy> Fairies = new();
         public List<Light> Lights = new();
 

@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             get;
             set;
-        } = null;
+        }
 
         public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => LifetimeConst;

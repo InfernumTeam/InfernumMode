@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class PrismLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer;
 
         public Projectile Prism
         {

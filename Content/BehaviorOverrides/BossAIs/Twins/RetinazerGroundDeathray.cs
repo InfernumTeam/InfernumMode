@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         {
             get;
             set;
-        } = null;
+        }
 
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
 

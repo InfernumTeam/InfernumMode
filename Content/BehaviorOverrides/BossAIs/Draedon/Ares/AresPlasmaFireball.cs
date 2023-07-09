@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             get;
             set;
-        } = false;
+        }
 
         public override void SetStaticDefaults()
         {

@@ -17,27 +17,27 @@ namespace InfernumMode.Content.Credits
     public static class CreditFinalScene
     {
         #region Textures
-        public static Texture2D ArixTexture { get; private set; } = null;
-        public static Texture2D BlastTexture { get; private set; } = null;
-        public static Texture2D BronzeTexture { get; private set; } = null;
-        public static Texture2D DominicTexture { get; private set; } = null;
-        public static Texture2D IbanTexture { get; private set; } = null;
-        public static Texture2D JaretoTexture { get; private set; } = null;
-        public static Texture2D JoeyTexture { get; private set; } = null;
-        public static Texture2D LglTexture { get; private set; } = null;
-        public static Texture2D MattikTexture { get; private set; } = null;
-        public static Texture2D MyraTexture { get; private set; } = null;
-        public static Texture2D PikyTexture { get; private set; } = null;
-        public static Texture2D ShadeTexture { get; private set; } = null;
-        public static Texture2D SmhTexture { get; private set; } = null;
-        public static Texture2D ToastyTexture { get; private set; } = null;
+        public static Texture2D ArixTexture { get; private set; }
+        public static Texture2D BlastTexture { get; private set; }
+        public static Texture2D BronzeTexture { get; private set; }
+        public static Texture2D DominicTexture { get; private set; }
+        public static Texture2D IbanTexture { get; private set; }
+        public static Texture2D JaretoTexture { get; private set; }
+        public static Texture2D JoeyTexture { get; private set; }
+        public static Texture2D LglTexture { get; private set; }
+        public static Texture2D MattikTexture { get; private set; }
+        public static Texture2D MyraTexture { get; private set; }
+        public static Texture2D PikyTexture { get; private set; }
+        public static Texture2D ShadeTexture { get; private set; }
+        public static Texture2D SmhTexture { get; private set; }
+        public static Texture2D ToastyTexture { get; private set; }
 
-        public static Texture2D MainScene { get; private set; } = null;
+        public static Texture2D MainScene { get; private set; }
 
-        public static ManagedRenderTarget PortraitTarget { get; private set; } = null;
+        public static ManagedRenderTarget PortraitTarget { get; private set; }
         #endregion
 
-        private static List<CreditDeveloper> CreditDevelopers = null;
+        private static List<CreditDeveloper> CreditDevelopers;
 
         internal static Vector2 ImagePosition;
 

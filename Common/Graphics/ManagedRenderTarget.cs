@@ -6,7 +6,7 @@ namespace InfernumMode.Common.Graphics
 {
     public class ManagedRenderTarget : IDisposable
     {
-        private RenderTarget2D target = null;
+        private RenderTarget2D target;
 
         internal bool WaitingForFirstInitialization
         {

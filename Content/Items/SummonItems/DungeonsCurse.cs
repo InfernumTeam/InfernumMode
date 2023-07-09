@@ -10,8 +10,8 @@ namespace InfernumMode.Content.Items.SummonItems
 {
     public class DungeonsCurse : ModItem
     {
-        public int frameCounter = 0;
-        public int frame = 0;
+        public int frameCounter;
+        public int frame;
         public override void SetStaticDefaults()
         {
             SacrificeTotal = 3;

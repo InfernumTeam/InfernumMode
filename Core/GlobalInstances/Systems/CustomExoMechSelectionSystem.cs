@@ -21,13 +21,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             set;
-        } = null;
+        }
 
         public static ExoMech? DestroyerTypeToSummon
         {
             get;
             set;
-        } = null;
+        }
 
         internal static void DrawSelectionUI(ILContext context)
         {

@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             get;
             set;
-        } = false;
+        }
 
         public bool ShouldExplodeDiagonally => Projectile.ai[0] == 0f;
 

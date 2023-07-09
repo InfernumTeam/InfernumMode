@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             get;
             set;
-        } = 0f;
+        }
 
         public Vector2 InitialCenter
         {

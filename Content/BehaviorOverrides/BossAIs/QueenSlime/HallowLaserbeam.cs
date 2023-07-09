@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             get;
             set;
-        } = null;
+        }
 
         public const int LaserLifetime = 21;
 

@@ -33,7 +33,7 @@ namespace InfernumMode.Core.TrackedMusic
         public virtual Dictionary<SongSection, int> SongSections
         {
             get;
-        } = null;
+        }
 
         internal void Load()
         {

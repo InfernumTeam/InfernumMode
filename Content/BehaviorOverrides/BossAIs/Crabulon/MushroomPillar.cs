@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 {
     public class MushroomPillar : ModProjectile
     {
-        public float CurrentHeight = 0f;
+        public float CurrentHeight;
 
         public ref float MaxPillarHeight => ref Projectile.ai[0];
 

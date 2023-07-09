@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class PurityWish : Achievement
     {
-        public int ProviFightTimer = 0;
+        public int ProviFightTimer;
 
         public const int MaxFightTimerLength = 12600;
 

@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             set => Projectile.ai[0] = value;
         }
 
-        public PrimitiveTrailCopy LaserDrawer = null;
+        public PrimitiveTrailCopy LaserDrawer;
 
         public const int LaserLifetime = 60;
         public override float MaxScale => 0.64f;

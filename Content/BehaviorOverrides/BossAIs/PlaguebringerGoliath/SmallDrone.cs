@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     public class SmallDrone : ModNPC
     {
         public int SpinDirection = 1;
-        public float MoveIncrement = 0;
+        public float MoveIncrement;
         public Vector2 InitialTargetPosition;
         public Player Target => Main.player[NPC.target];
         public ref float AttackTimer => ref NPC.ai[0];

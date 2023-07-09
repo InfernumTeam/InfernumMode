@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
     {
         #region Fields + Properties
 
-        public PrimitiveTrailCopy LightDrawer = null;
+        public PrimitiveTrailCopy LightDrawer;
 
         public SlotId SoundID;
 

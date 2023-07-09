@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 {
     public class MyrindaelBonkProjectile : ModProjectile
     {
-        public PrimitiveTrailCopy PierceAfterimageDrawer = null;
+        public PrimitiveTrailCopy PierceAfterimageDrawer;
 
         public Player Owner => Main.player[Projectile.owner];
 

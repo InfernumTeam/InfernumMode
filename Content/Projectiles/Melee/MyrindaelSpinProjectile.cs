@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Projectiles.Melee
     {
         public float InitialDirection;
 
-        public PrimitiveTrailCopy PierceAfterimageDrawer = null;
+        public PrimitiveTrailCopy PierceAfterimageDrawer;
 
         public float SpinCompletion => Utils.GetLerpValue(0f, Myrindael.SpinTime, Time, true);
 

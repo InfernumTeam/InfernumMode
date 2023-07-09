@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             get;
             set;
-        } = null;
+        }
 
         public Color StreakBaseColor => Color.Lerp(Color.DarkBlue, Color.MediumPurple, Projectile.ai[0] * 0.6f + 0.3f);
 

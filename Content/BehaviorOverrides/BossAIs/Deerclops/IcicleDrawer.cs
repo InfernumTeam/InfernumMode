@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             public float EndingWidth;
 
-            public Branch PreviousBranch = null;
+            public Branch PreviousBranch;
 
             public int Generation
             {
@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         protected UnifiedRandom RNG = new(0);
 
-        internal static BasicEffect basicShader = null;
+        internal static BasicEffect basicShader;
 
         public static BasicEffect BasicShader
         {
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             }
         }
 
-        private static Texture2D icicleTexture = null;
+        private static Texture2D icicleTexture;
 
         public static Texture2D IcicleTexture
         {

@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class FlameOverloadBeam : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer;
 
         public NPC Owner => Main.npc[(int)Projectile.ai[0]];
 

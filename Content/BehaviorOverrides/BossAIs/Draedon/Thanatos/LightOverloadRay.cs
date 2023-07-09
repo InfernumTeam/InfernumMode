@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - PiOver2).ToRotationVector2() * Projectile.Opacity * 5f;
 
         // This is only used in drawing to represent increments as a semi-hack. Don't mess with it.
-        public float RayHue = 0f;
+        public float RayHue;
 
         public const int Lifetime = 45;
         public ref float Time => ref Projectile.ai[0];

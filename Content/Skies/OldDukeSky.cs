@@ -27,8 +27,8 @@ namespace InfernumMode.Content.Skies
 
     public class OldDukeSky : CustomSky
     {
-        private bool isActive = false;
-        private float intensity = 0f;
+        private bool isActive;
+        private float intensity;
         private int OldDukeIndex = -1;
 
         public override void Update(GameTime gameTime)

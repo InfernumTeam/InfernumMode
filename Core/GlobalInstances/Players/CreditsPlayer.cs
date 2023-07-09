@@ -5,7 +5,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 {
     public class CreditsPlayer : ModPlayer
     {
-        public bool CreditsHavePlayed = false;
+        public bool CreditsHavePlayed;
 
         public override void LoadData(TagCompound tag)
         {

@@ -37,13 +37,13 @@ namespace InfernumMode.Content.Tiles
         {
             get;
             set;
-        } = null;
+        }
 
         public PrimitiveTrailCopy PortalDrawer
         {
             get;
             set;
-        } = null;
+        }
 
         internal static List<Point> PortalCache = new();
 

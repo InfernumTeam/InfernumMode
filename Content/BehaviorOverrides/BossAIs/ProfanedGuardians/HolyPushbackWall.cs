@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HolyPushbackWall : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy FlameDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy FlameDrawer { get; private set; }
 
         public ref float Timer => ref Projectile.ai[0];
 

@@ -31,7 +31,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             }
         }
 
-        internal Matrix? PerspectiveMatrixOverride = null;
+        internal Matrix? PerspectiveMatrixOverride;
 
         public delegate float VertexWidthFunction(float completionRatio);
 

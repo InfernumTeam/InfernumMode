@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 {
     public class SoulTelegraphLine : ModProjectile
     {
-        public PrimitiveTrailCopy TelegraphDrawer = null;
+        public PrimitiveTrailCopy TelegraphDrawer;
 
         public ref float Time => ref Projectile.ai[0];
 

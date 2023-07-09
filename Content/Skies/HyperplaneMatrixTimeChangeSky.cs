@@ -22,8 +22,8 @@ namespace InfernumMode.Content.Skies
 
     public class HyperplaneMatrixTimeChangeSky : CustomSky
     {
-        public bool isActive = false;
-        public float Intensity = 0f;
+        public bool isActive;
+        public float Intensity;
 
         public override void Update(GameTime gameTime)
         {

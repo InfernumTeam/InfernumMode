@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -21,11 +21,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public string HexType2;
 
-        public PrimitiveTrailCopy TrailDrawer = null;
+        public bool FromSeekerHex;
+
+        public PrimitiveTrailCopy TrailDrawer;
 
         public ref float Time => ref Projectile.ai[0];
 
-        public ref float FromSeekerHex => ref Projectile.ai[1];
+        public ref float AccelerationRequired => ref Projectile.ai[1];
 
         public override void SetStaticDefaults()
         {
@@ -73,17 +75,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Projectile.netUpdate = true;
 
             // Seeker hex combining with either of these two is very unfun.
-            if (FromSeekerHex != 1)
+            if (!FromSeekerHex)
             {
                 float acceleration = 1f;
                 float maxSpeed = 36f;
                 if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Zeal"))
                 {
                     // Start out slower if acceleration is expected.
-                    if (Projectile.ai[1] == 0f)
+                    if (AccelerationRequired == 0f)
                     {
                         Projectile.velocity *= 0.37f;
-                        Projectile.ai[1] = 1f;
+                        AccelerationRequired = 1f;
                         Projectile.netUpdate = true;
                     }
 

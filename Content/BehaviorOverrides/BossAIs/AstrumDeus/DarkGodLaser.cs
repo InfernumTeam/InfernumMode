@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             set => Projectile.ai[0] = value;
         }
 
-        public PrimitiveTrailCopy LaserDrawer = null;
+        public PrimitiveTrailCopy LaserDrawer;
 
         public const int LaserLifetime = 300;
         public override float MaxScale => 1f;

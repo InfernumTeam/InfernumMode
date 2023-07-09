@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             get;
             internal set;
-        } = null;
+        }
 
         public static CeaselessVoidAttackType[] Phase1AttackCycle => new CeaselessVoidAttackType[]
         {

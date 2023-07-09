@@ -19,7 +19,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
     {
         public override bool InstancePerEntity => true;
 
-        public bool DeveloperItem = false;
+        public bool DeveloperItem;
 
         public static Dictionary<int, string> EnrageTooltipReplacements => new()
         {

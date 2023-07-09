@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
 {
     public class RedirectingWeakDarkMagicFlame : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy TrailDrawer = null;
+        public PrimitiveTrailCopy TrailDrawer;
         public ref float Time => ref Projectile.ai[0];
         public bool FromBuffedDarkMage => Projectile.ai[1] == 1f;
         public override void SetStaticDefaults()

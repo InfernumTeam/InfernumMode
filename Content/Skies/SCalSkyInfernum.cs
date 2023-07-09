@@ -52,9 +52,9 @@ namespace InfernumMode.Content.Skies
             }
         }
 
-        private bool isActive = false;
+        private bool isActive;
 
-        private float intensity = 0f;
+        private float intensity;
 
         private int SCalIndex = -1;
 

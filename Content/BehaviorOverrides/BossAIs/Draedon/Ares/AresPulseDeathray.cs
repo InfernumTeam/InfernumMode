@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             get;
             set;
-        } = null;
+        }
 
         public int OwnerIndex
         {

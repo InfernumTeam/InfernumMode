@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public float VerticalSpinDirection;
 
-        public PrimitiveTrailCopy RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer;
 
         public ref float LaserLength => ref Projectile.ai[0];
 

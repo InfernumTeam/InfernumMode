@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 {
     public class LargeCloud : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy CloudDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy CloudDrawer { get; private set; }
 
         public ref float Timer => ref Projectile.ai[0];
 

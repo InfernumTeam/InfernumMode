@@ -27,8 +27,8 @@ namespace InfernumMode.Content.Skies
 
     public class HiveMindSky : CustomSky
     {
-        private bool isActive = false;
-        private float intensity = 0f;
+        private bool isActive;
+        private float intensity;
         private int HiveIndex = -1;
 
         public static readonly Color SkyColor = new(52, 42, 82);

@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HolyFireWall : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy FlameDrawer { get; private set; } = null;
+        public PrimitiveTrailCopy FlameDrawer { get; private set; }
 
         public int Lifetime = BaseLifetime;
 

@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class EnergyTelegraph : ModProjectile
     {
-        public PrimitiveTrailCopy TelegraphDrawer = null;
+        public PrimitiveTrailCopy TelegraphDrawer;
 
         public Vector2[] TelegraphPoints;
 

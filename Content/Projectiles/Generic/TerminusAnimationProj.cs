@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Projectiles.Generic
     {
         public SlotId ChargeSound = SlotId.Invalid;
 
-        public PrimitiveTrailCopy LightDrawer = null;
+        public PrimitiveTrailCopy LightDrawer;
 
         public Player Owner => Main.player[Projectile.owner];
 

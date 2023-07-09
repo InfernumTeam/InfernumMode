@@ -22,8 +22,8 @@ namespace InfernumMode.Content.Skies
 
     public class TwinsSky : CustomSky
     {
-        private bool isActive = false;
-        private float intensity = 0f;
+        private bool isActive;
+        private float intensity;
 
         private static Color previousScreenBackgroundColor;
 

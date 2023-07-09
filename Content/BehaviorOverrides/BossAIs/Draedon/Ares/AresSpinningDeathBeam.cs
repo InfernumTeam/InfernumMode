@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             set => Projectile.ai[1] = value;
         }
 
-        public PrimitiveTrailCopy BeamDrawer = null;
+        public PrimitiveTrailCopy BeamDrawer;
 
         public float InitialSpinDirection = -100f;
 

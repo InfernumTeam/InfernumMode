@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
     public class LightOverloadBeam : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer;
 
         public int TimeSinceSpawned
         {

@@ -10,9 +10,9 @@ namespace InfernumMode.Content.Items.SummonItems
 {
     public class LeviathanDetector : ModItem
     {
-        public int frameCounter = 0;
+        public int frameCounter;
 
-        public int frame = 0;
+        public int frame;
 
         public override void SetStaticDefaults()
         {

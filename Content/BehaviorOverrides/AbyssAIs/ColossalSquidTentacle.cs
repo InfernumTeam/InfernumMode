@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public NPC Owner => Main.npc.IndexInRange((int)NPC.ai[1]) && Main.npc[(int)NPC.ai[1]].active ? Main.npc[(int)NPC.ai[1]] : null;
 
-        public PrimitiveTrailCopy TentacleDrawer = null;
+        public PrimitiveTrailCopy TentacleDrawer;
 
         public Player Target => Main.player[NPC.target];
 

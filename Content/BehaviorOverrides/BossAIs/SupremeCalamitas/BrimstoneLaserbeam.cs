@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class BrimstoneLaserbeam : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer;
 
         public ref float LaserLength => ref Projectile.ai[1];
 

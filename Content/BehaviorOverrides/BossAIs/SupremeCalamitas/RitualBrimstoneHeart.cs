@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class RitualBrimstoneHeart : ModProjectile, IPixelPrimitiveDrawer
     {
-        public PrimitiveTrailCopy RayDrawer = null;
+        public PrimitiveTrailCopy RayDrawer;
 
         public const float LaserLength = 2700f;
 

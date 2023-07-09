@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public float AnimationCompletion => Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
 
-        public bool HasPlayedMainSound = false;
+        public bool HasPlayedMainSound;
 
         public string CachedText = string.Empty;
 
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public virtual Effect ShaderToApplyToLetters => null;
 
-        public virtual SoundStyle? SoundToPlayWithLetterAddition { get; } = null;
+        public virtual SoundStyle? SoundToPlayWithLetterAddition { get; }
 
         public virtual bool CanPlaySound => AnimationTimer >= (int)(AnimationTime * (TextDelayInterpolant + 0.05f));
 

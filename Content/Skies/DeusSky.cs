@@ -45,10 +45,10 @@ namespace InfernumMode.Content.Skies
         }
 
         private float nebulaIntensity = 1f;
-        private int nebulaTimer = 0;
+        private int nebulaTimer;
         private AstralStar[] Stars;
         public bool isActive = true;
-        public float Intensity = 0f;
+        public float Intensity;
         public int DeusIndex = -1;
 
         public override void Update(GameTime gameTime)

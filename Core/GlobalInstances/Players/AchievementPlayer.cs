@@ -130,12 +130,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
         #endregion
 
         #region Helper Fields
-        internal static bool DukeFishronDefeated = false;
-        internal static bool DoGDefeated = false;
-        internal static bool ProviDefeated = false;
-        internal static bool NightProviDefeated = false;
-        internal static bool DraedonDefeated = false;
-        internal static bool ShouldUpdateSavedMechOrder = false;
+        internal static bool DukeFishronDefeated;
+        internal static bool DoGDefeated;
+        internal static bool ProviDefeated;
+        internal static bool NightProviDefeated;
+        internal static bool DraedonDefeated;
+        internal static bool ShouldUpdateSavedMechOrder;
         #endregion
     }
 }

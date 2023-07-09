@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
 
-        public PrimitiveTrail TelegraphDrawer = null;
+        public PrimitiveTrail TelegraphDrawer;
 
         public const int Lifetime = 60;
 

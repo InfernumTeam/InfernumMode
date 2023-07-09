@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             get;
             set;
-        } = null;
+        }
 
         public int OwnerIndex
         {

@@ -46,14 +46,17 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.OnPreDraw -= PrepareShadowTargets;
             On.Terraria.Main.SetDisplayMode -= ResetTargetSizes;
 
-            if (ShadowDrawTarget is not null && !ShadowDrawTarget.IsDisposed)
-                ShadowDrawTarget.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                if (ShadowDrawTarget is not null && !ShadowDrawTarget.IsDisposed)
+                    ShadowDrawTarget.Dispose();
 
-            if (ShadowWispTarget is not null && !ShadowWispTarget.IsDisposed)
-                ShadowWispTarget.Dispose();
+                if (ShadowWispTarget is not null && !ShadowWispTarget.IsDisposed)
+                    ShadowWispTarget.Dispose();
 
-            if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
-                TemporaryAuxillaryTarget.Dispose();
+                if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
+                    TemporaryAuxillaryTarget.Dispose();
+            });
         }
 
         private void ResetTargetSizes(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)

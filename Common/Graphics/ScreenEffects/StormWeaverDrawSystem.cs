@@ -25,9 +25,12 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void OnModUnload()
         {
-            Main.OnPreDraw -= PrepareTarget;
-            if (WeaverDrawTarget is not null && !WeaverDrawTarget.IsDisposed)
-                WeaverDrawTarget.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                Main.OnPreDraw -= PrepareTarget;
+                if (WeaverDrawTarget is not null && !WeaverDrawTarget.IsDisposed)
+                    WeaverDrawTarget.Dispose();
+            });
         }
 
         internal static void PrepareTarget(GameTime obj)

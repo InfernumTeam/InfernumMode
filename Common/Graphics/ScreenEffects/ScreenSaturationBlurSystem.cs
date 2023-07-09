@@ -112,16 +112,15 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.QueueMainThreadAction(() =>
             {
                 IL.Terraria.Main.DoDraw -= LetEffectsDrawOnBudgetLightSettings;
+                if (BloomTarget is not null && !BloomTarget.IsDisposed)
+                    BloomTarget.Dispose();
+                if (FinalScreenTarget is not null && !FinalScreenTarget.IsDisposed)
+                    FinalScreenTarget.Dispose();
+                if (DownscaledBloomTarget is not null && !DownscaledBloomTarget.IsDisposed)
+                    DownscaledBloomTarget.Dispose();
+                if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
+                    TemporaryAuxillaryTarget.Dispose();
             });
-
-            if (BloomTarget is not null && !BloomTarget.IsDisposed)
-                BloomTarget.Dispose();
-            if (FinalScreenTarget is not null && !FinalScreenTarget.IsDisposed)
-                FinalScreenTarget.Dispose();
-            if (DownscaledBloomTarget is not null && !DownscaledBloomTarget.IsDisposed)
-                DownscaledBloomTarget.Dispose();
-            if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
-                TemporaryAuxillaryTarget.Dispose();
         }
 
         private void LetEffectsDrawOnBudgetLightSettings(ILContext il)

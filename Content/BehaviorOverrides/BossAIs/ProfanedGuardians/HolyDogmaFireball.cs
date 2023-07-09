@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 200;
+            Projectile.width = Projectile.height = 400;
             Projectile.hostile = true;
             Projectile.Opacity = 0;
             Projectile.scale = 0;
@@ -219,6 +219,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         // This is manually updated when needed.
         public override bool ShouldUpdatePosition() => CurrentState is StateType.Flinging or StateType.SlowdownMovement or StateType.FinalFiring;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utils.CenteredRectangle(Projectile.Center, new Vector2(300f) * Projectile.scale).Intersects(targetHitbox);
 
         public override bool PreDraw(ref Color lightColor)
         {

@@ -54,22 +54,25 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void OnModUnload()
         {
-            Main.OnPreDraw -= PrepareAEWTargets;
+            Main.QueueMainThreadAction(() =>
+            {
+                Main.OnPreDraw -= PrepareAEWTargets;
 
-            if (AEWDrawTarget is not null && !AEWDrawTarget.IsDisposed)
-                AEWDrawTarget.Dispose();
+                if (AEWDrawTarget is not null && !AEWDrawTarget.IsDisposed)
+                    AEWDrawTarget.Dispose();
 
-            AEWDrawTarget = null;
+                AEWDrawTarget = null;
 
-            if (AEWShadowWispTarget is not null && !AEWShadowWispTarget.IsDisposed)
-                AEWShadowWispTarget.Dispose();
+                if (AEWShadowWispTarget is not null && !AEWShadowWispTarget.IsDisposed)
+                    AEWShadowWispTarget.Dispose();
 
-            AEWShadowWispTarget = null;
+                AEWShadowWispTarget = null;
 
-            if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
-                TemporaryAuxillaryTarget.Dispose();
+                if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
+                    TemporaryAuxillaryTarget.Dispose();
 
-            TemporaryAuxillaryTarget = null;
+                TemporaryAuxillaryTarget = null;
+            });
 
             LightAndDarkEffectsCache.Clear();
             AEWEyesDrawCache.Clear();

@@ -35,13 +35,16 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void OnModUnload()
         {
-            if (CherryBlossomTarget is not null && !CherryBlossomTarget.IsDisposed)
-                CherryBlossomTarget.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                if (CherryBlossomTarget is not null && !CherryBlossomTarget.IsDisposed)
+                    CherryBlossomTarget.Dispose();
 
-            CherryBlossomTarget = null;
+                CherryBlossomTarget = null;
 
-            Main.OnPreDraw -= PrepareCherryBlossomTarget;
-            On.Terraria.Main.DrawProjectiles -= DrawCherryBlossoms;
+                Main.OnPreDraw -= PrepareCherryBlossomTarget;
+                On.Terraria.Main.DrawProjectiles -= DrawCherryBlossoms;
+            });
         }
 
         private void FindCherryBlossomDye(Item armorItem, Item dyeItem)

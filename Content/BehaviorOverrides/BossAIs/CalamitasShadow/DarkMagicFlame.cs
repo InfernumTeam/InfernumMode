@@ -25,6 +25,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public ref float Time => ref Projectile.ai[0];
 
+        public ref float FromSeekerHex => ref Projectile.ai[1];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Magic Flame");
@@ -70,32 +72,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             if (string.IsNullOrEmpty(HexType) && Projectile.velocity.Length() < 42f && GetHexNames(out HexType, out HexType2))
                 Projectile.netUpdate = true;
 
-            float acceleration = 1f;
-            float maxSpeed = 36f;
-            if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Zeal"))
+            // Seeker hex combining with either of these two is very unfun.
+            if (FromSeekerHex != 1)
             {
-                // Start out slower if acceleration is expected.
-                if (Projectile.ai[1] == 0f)
+                float acceleration = 1f;
+                float maxSpeed = 36f;
+                if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Zeal"))
                 {
-                    Projectile.velocity *= 0.37f;
-                    Projectile.ai[1] = 1f;
-                    Projectile.netUpdate = true;
+                    // Start out slower if acceleration is expected.
+                    if (Projectile.ai[1] == 0f)
+                    {
+                        Projectile.velocity *= 0.37f;
+                        Projectile.ai[1] = 1f;
+                        Projectile.netUpdate = true;
+                    }
+
+                    acceleration = 1.037f;
                 }
 
-                acceleration = 1.037f;
-            }
+                // Home in weakly if the shadow's target has the appropriate hex.
+                if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Accentuation"))
+                {
+                    float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
+                    Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
+                    if (Projectile.velocity.Length() > 18.75f)
+                        Projectile.velocity *= 0.98f;
+                }
 
-            // Home in weakly if the shadow's target has the appropriate hex.
-            if (CalamityGlobalNPC.calamitas != -1 && ImbuedWithHex("Accentuation"))
-            {
-                float idealDirection = Projectile.AngleTo(Main.player[Main.npc[CalamityGlobalNPC.calamitas].target].Center);
-                Projectile.velocity = Projectile.velocity.RotateTowards(idealDirection, 0.012f);
-                if (Projectile.velocity.Length() > 18.75f)
-                    Projectile.velocity *= 0.98f;
+                if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)
+                    Projectile.velocity *= acceleration;
             }
-
-            if (acceleration > 1f && Projectile.velocity.Length() < maxSpeed)
-                Projectile.velocity *= acceleration;
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 8f, Time, true);
             Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;

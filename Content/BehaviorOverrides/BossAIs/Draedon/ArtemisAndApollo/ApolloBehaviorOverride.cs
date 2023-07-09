@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
@@ -14,6 +14,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
+using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -58,6 +59,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ExoMechManagement.Phase3LifeRatio,
             ExoMechManagement.Phase4LifeRatio
         };
+
+        #region Loading
+        public override void Load()
+        {
+            GlobalNPCOverrides.BossHeadSlotEvent += ChangeMapIconConditions;
+        }
+
+        private void ChangeMapIconConditions(NPC npc, ref int index)
+        {
+            if (npc.type == ModContent.NPCType<Artemis>())
+            {
+                if (npc.Opacity <= 0f)
+                    index = -1;
+                else if (ExoMechManagement.ExoTwinsAreInSecondPhase)
+                    index = Artemis.phase2IconIndex;
+                else
+                    index = Artemis.phase1IconIndex;
+            }
+            if (npc.type == ModContent.NPCType<Apollo>())
+            {
+                if (npc.Opacity <= 0f)
+                    index = -1;
+                else if (ExoMechManagement.ExoTwinsAreInSecondPhase)
+                    index = Apollo.phase2IconIndex;
+                else
+                    index = Apollo.phase1IconIndex;
+            }
+        }
+        #endregion Loading
 
         #region Netcode Syncs
 
@@ -339,7 +369,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             int chargeupSoundTime = (int)(Phase2TransitionTime * Utils.GetLerpValue(startingFrame, endingFrame, 46.5f));
             if (phaseTransitionAnimationTime == pupilPopoffTime)
             {
-                SoundEngine.PlaySound(Artemis.LensSound with { Volume = 2.5f }, target.Center);
+                SoundEngine.PlaySound(Artemis.LensSound with
+                {
+                    Volume = 2.5f
+                }, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int lensType = ModContent.ProjectileType<BrokenApolloLens>();
@@ -596,7 +629,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         if (Main.netMode != NetmodeID.Server)
                         {
                             SoundStyle plasmaSound = InfernumSoundRegistry.SafeLoadCalamitySound("Sounds/Custom/ExoMechs/ExoPlasmaShoot", PlasmaCaster.FireSound);
-                            SoundEngine.PlaySound(plasmaSound with { Volume = 1.5f }, npc.Center);
+                            SoundEngine.PlaySound(plasmaSound with
+                            {
+                                Volume = 1.5f
+                            }, npc.Center);
                         }
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -664,7 +700,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (Main.netMode != NetmodeID.Server)
                     {
                         SoundStyle laserSound = InfernumSoundRegistry.SafeLoadCalamitySound("Sounds/Custom/ExoMechs/ExoLaserShoot", CommonCalamitySounds.LaserCannonSound);
-                        SoundEngine.PlaySound(laserSound with { Volume = 1.4f }, npc.Center);
+                        SoundEngine.PlaySound(laserSound with
+                        {
+                            Volume = 1.4f
+                        }, npc.Center);
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -775,7 +814,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     ExoMechsSky.CreateLightningBolt(25);
 
-                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 1.5f }, target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with
+                    {
+                        Volume = 1.5f
+                    }, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ApolloFlamethrower>(), StrongerNormalShotDamage, 0f, -1, 0f, npc.whoAmI);
 
@@ -1105,7 +1147,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     npc.ModNPC<Artemis>().ChargeFlash = Utils.GetLerpValue(0f, shootDelay * 0.8f, attackTimer, true);
 
                     if (attackTimer == 1f)
-                        SoundEngine.PlaySound(InfernumSoundRegistry.ArtemisSpinLaserbeamSound with { Volume = 1.4f }, new(spinningPointX, spinningPointY));
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ArtemisSpinLaserbeamSound with
+                        {
+                            Volume = 1.4f
+                        }, new(spinningPointX, spinningPointY));
 
                     // Create a beam telegraph.
                     if (attackTimer == 4f)
@@ -1690,7 +1735,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     {
                         // Play a charge sound.
                         SoundStyle chargeSound = InfernumSoundRegistry.SafeLoadCalamitySound("Sounds/Custom/ExoMechs/ArtemisApolloDash", CommonCalamitySounds.ELRFireSound);
-                        SoundEngine.PlaySound(chargeSound with { Volume = 1.5f }, npc.Center);
+                        SoundEngine.PlaySound(chargeSound with
+                        {
+                            Volume = 1.5f
+                        }, npc.Center);
 
                         // Charge at the target.
                         npc.velocity = directionToTarget * chargeSpeed;
@@ -1817,7 +1865,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public static void PerformDeathAnimationExplosion(NPC npc)
         {
-            SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with { Volume = 1.75f }, npc.Center);
+            SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound with
+            {
+                Volume = 1.75f
+            }, npc.Center);
 
             GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, CalamityUtils.ExoPalette, 3f, 90));
             for (int i = 0; i < 40; i++)

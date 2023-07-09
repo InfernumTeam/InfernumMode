@@ -29,10 +29,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 noiseColor = tex2D(uImage1, framedCoords * 0.15 + float2(0.12, 0.32));
     
     // If the noise is over the erasure threshold, completely erase this pixel.
-    if (noiseColor.r > 0.42)
-        color = 0;
-
-    return color;
+    return color * step(noiseColor.r, 0.42);
 }
 
 technique Technique1

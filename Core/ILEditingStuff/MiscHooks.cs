@@ -45,33 +45,6 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload() => CalamityWorldPostUpdate -= PermitODRain;
     }
 
-    public class NerfShellfishStaffDebuffHook : IHookEdit
-    {
-        internal static void NerfShellfishStaff(ILContext il)
-        {
-            ILCursor cursor = new(il);
-
-            for (int j = 0; j < 2; j++)
-            {
-                if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(250)))
-                    return;
-            }
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldc_I4, 150);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(50)))
-                return;
-
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldc_I4, 30);
-        }
-
-        public void Load() => CalamityNPCLifeRegen += NerfShellfishStaff;
-
-        public void Unload() => CalamityNPCLifeRegen -= NerfShellfishStaff;
-    }
-
     public class AchievementMenuUIHookEdit : IHookEdit
     {
         private static bool justHovered;

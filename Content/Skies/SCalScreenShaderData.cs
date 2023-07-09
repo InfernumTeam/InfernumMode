@@ -94,6 +94,13 @@ namespace InfernumMode.Content.Skies
 
         public static void ChangeBackgroundColors_ScarsOfCalamity()
         {
+            if (TrackedMusicManager.TrackedSong is null || TrackedMusicManager.TrackedSong.Name != "InfernumModeMusic/Sounds/Music/Calamitas" || Main.musicVolume <= 0f)
+            {
+                BackgroundColor = EpiphanyColor;
+                MusicBrightness = 1f;
+                return;
+            }
+
             // Make the backgrounds change based on who's singing in the Scars of Calamity track.
             var songTime = TrackedMusicManager.SongElapsedTime;
             var solaria = CalamitasTrackedMusic.SolariaSections.Where(m => m.End >= songTime);
@@ -104,6 +111,8 @@ namespace InfernumMode.Content.Skies
             // Make the brightnmess gradually increase as the song goes on.
             float idealBrightness = Lerp(1f, 1.5f, (float)(songTime.TotalSeconds / TrackedMusicManager.TrackedSong.Duration.TotalSeconds));
             MusicBrightness = Lerp(MusicBrightness, idealBrightness, 0.09f);
+            if (!float.IsNormal(MusicBrightness))
+                MusicBrightness = 1f;
 
             // If Solaria is singing, use a red background color.
             // If Mai is singing, use a blue background color.

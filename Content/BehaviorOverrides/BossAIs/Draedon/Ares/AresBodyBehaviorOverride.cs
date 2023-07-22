@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.InverseKinematics;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Melee;
@@ -1232,14 +1232,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 2)
                 {
                     WeightedRandom<AresBodyAttackType> rng = new(Main.rand);
-                    rng.Add(AresBodyAttackType.DirectionChangingSpinBursts, 2.2);
-                    rng.Add(AresBodyAttackType.LaserSpinBursts, 2.2);
+
+                    if (previousSuperAttack != (int)AresBodyAttackType.DirectionChangingSpinBursts && previousSuperAttack != (int)AresBodyAttackType.LaserSpinBursts)
+                    {
+                        rng.Add(AresBodyAttackType.DirectionChangingSpinBursts, 2.2);
+                        rng.Add(AresBodyAttackType.LaserSpinBursts, 2.2);
+                    }
+
                     if (ExoMechManagement.CurrentAresPhase >= 5)
                         rng.Add(AresBodyAttackType.ThreeDimensionalSuperslashes, 2.55);
-                    else if (ExoMechManagement.CurrentAresPhase >= 3)
-                        rng.Add(AresBodyAttackType.DownwardCrossSlices, 1.5);
                     else
-                        rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.8);
+                    {
+                        rng.Add(AresBodyAttackType.DownwardCrossSlices, 1.6);
+                        rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.6);
+                    }
 
                     do
                         npc.ai[0] = (int)rng.Get();

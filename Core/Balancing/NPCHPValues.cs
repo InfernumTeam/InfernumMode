@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AdultEidolonWyrm;
@@ -132,7 +132,7 @@ namespace InfernumMode.Core.Balancing
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 1618950 : 968420,
             [ModContent.NPCType<AdultEidolonWyrmHead>()] = 1260750,
             [ModContent.NPCType<ThanatosHead>()] = 2400000,
-            [ModContent.NPCType<AresBody>()] = 2250000,
+            [ModContent.NPCType<AresBody>()] = 2560000,
             [ModContent.NPCType<Artemis>()] = 2400000,
             [ModContent.NPCType<Apollo>()] = 2400000,
             [ModContent.NPCType<SupremeCataclysm>()] = 537200,

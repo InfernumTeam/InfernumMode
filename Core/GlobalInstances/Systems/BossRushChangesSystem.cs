@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.AquaticScourge;
@@ -7,6 +7,7 @@ using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.CalClone;
+using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DesertScourge;
@@ -79,10 +80,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad()
         {
-            //// Cache the calamity boss order.
+            // Cache the calamity boss order.
             //CalamityBosses = Bosses;
 
-            //// Cache our own boss order.
+            // Cache our own boss order.
             Bosses = new List<Boss>()
             {
                 new Boss(NPCID.KingSlime, permittedNPCs: new int[] { ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewel>() }),
@@ -247,6 +248,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
 
+                new Boss(ModContent.NPCType<CeaselessVoid>(), spawnContext: type =>
+                {
+                    Player player = Main.player[ClosestPlayerToWorldCenter];
+                    int ceaselessVoid = NPC.NewNPC(new EntitySource_WorldEvent(), (int)player.Center.X, (int)(player.position.Y + 300f), type, 1);
+                    CalamityUtils.BossAwakenMessage(ceaselessVoid);
+                }, permittedNPCs: new int[] { ModContent.NPCType<DarkEnergy>() }),
+
                 new Boss(ModContent.NPCType<CalamitasClone>(), TimeChangeContext.Night, specialSpawnCountdown: 420, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<Cataclysm>(), ModContent.NPCType<Catastrophe>(),
                          ModContent.NPCType<SoulSeeker>() }),
                 
@@ -324,6 +332,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText", XerocTextColor);
                     CreateTierAnimation(4);
                 },
+                [ModContent.NPCType<CeaselessVoid>()] = npc =>
+                {
+                    BringPlayersBackToSpawn();
+                },
                 [ModContent.NPCType<CalamitasClone>()] = npc =>
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierFourEndText", XerocTextColor);
@@ -387,18 +399,33 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             Vector2? teleportPosition = null;
 
             // Teleport the player to the garden for the guardians fight in boss rush.
-            if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS() && !player.ZoneUnderworldHeight)
+            if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS())
             {
-                if (CurrentlyFoughtBoss == NPCID.WallofFlesh)
+                if (CurrentlyFoughtBoss == NPCID.WallofFlesh && !player.ZoneUnderworldHeight)
                     teleportPosition = CalamityPlayer.GetUnderworldPosition(player);
-                if (CurrentlyFoughtBoss == ModContent.NPCType<ProfanedGuardianCommander>())
+                if (CurrentlyFoughtBoss == ModContent.NPCType<ProfanedGuardianCommander>() && !player.Infernum_Biome().ZoneProfaned)
                     teleportPosition = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * 3.2f - 16f, 800f);
-                if (CurrentlyFoughtBoss == ModContent.NPCType<Providence>())
+                if (CurrentlyFoughtBoss == ModContent.NPCType<CeaselessVoid>() && !player.ZoneDungeon)
+                    teleportPosition = WorldSaveSystem.ForbiddenArchiveCenter.ToWorldCoordinates() + Vector2.UnitY * 1032f;
+                if (CurrentlyFoughtBoss == ModContent.NPCType<Providence>() && !player.Infernum_Biome().ZoneProfaned)
                     teleportPosition = WorldSaveSystem.ProvidenceArena.TopRight() * 16f + new Vector2(WorldSaveSystem.ProvidenceArena.Width * -3.2f - 16f, 800f);
             }
 
             if (BossRushStage < Bosses.Count && CurrentlyFoughtBoss == NPCID.SkeletronHead && player.ZoneUnderworldHeight)
                 player.Spawn(PlayerSpawnContext.RecallFromItem);
+
+            // Check to make sure the teleport position is valid.
+            bool fightingProfanedBoss = CurrentlyFoughtBoss == ModContent.NPCType<ProfanedGuardianCommander>() || CurrentlyFoughtBoss == ModContent.NPCType<Providence>();
+            if (fightingProfanedBoss && WorldSaveSystem.ProvidenceArena.TopLeft() == Vector2.Zero)
+            {
+                BossRushStage++;
+                return;
+            }
+            if (CurrentlyFoughtBoss == ModContent.NPCType<CeaselessVoid>() && WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero)
+            {
+                BossRushStage++;
+                return;
+            }
 
             // Teleport the player.
             if (teleportPosition.HasValue)

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -244,7 +244,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = Vector2.Lerp(npc.Center, Main.LocalPlayer.Center, lookAtTargetInterpolant);
             }
 
-            if (!phase3 && Chains is not null && npc.ai[3] == 0f)
+            if (!phase3 && Chains is not null && npc.ai[3] == 0f && !BossRushEvent.BossRushActive)
                 npc.Center = Chains[0][0].position;
 
             switch ((CeaselessVoidAttackType)(int)attackType)
@@ -481,8 +481,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             if (BossRushEvent.BossRushActive)
             {
-                npc.life = 0;
-                npc.active = false;
+                SelectNewAttack(npc);
+                npc.ai[0] = (int)CeaselessVoidAttackType.DarkEnergySwirl;
+                npc.Center = WorldSaveSystem.ForbiddenArchiveCenter.ToWorldCoordinates() + Vector2.UnitY * 1332f;
             }
         }
 

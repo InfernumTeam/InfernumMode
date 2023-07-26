@@ -1321,13 +1321,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (aresBody.Opacity <= 0f)
                 return true;
 
-            // Rotate arm usability is as follows (This only applies after phase 2):
+            // Rotated arm usability is as follows (This only applies after phase 2):
             // Pulse Cannon, Laser Cannon, and Tesla Cannon,
             // Laser Cannon, Tesla Cannon, and Plasma Flamethrower,
             // Tesla Cannon, Plasma Flamethrower, and Pulse Cannon
             // Katanas are completely exempt from this.
 
-            // Rotate arm usability is as follows (This only applies before phase 2):
+            // Rotated arm usability is as follows (This only applies before phase 2):
             // Pulse Cannon, Laser Cannon,
             // Laser Cannon, Tesla Cannon,
             // Tesla Cannon, Plasma Flamethrower,

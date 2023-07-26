@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -217,14 +217,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             bool dontResetDR = false;
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
             {
-                npc.dontTakeDamage = true;
-                if (Main.npc[(int)complementMechIndex].type == ModContent.NPCType<Apollo>())
-                {
-                    dontResetDR = true;
-                    npc.dontTakeDamage = false;
-                    npc.Calamity().DR = 0.9999999f;
-                    npc.Calamity().unbreakableDR = true;
-                }
+                dontResetDR = true;
+                npc.dontTakeDamage = false;
+                npc.Calamity().DR = 0.9999999f;
+                npc.Calamity().unbreakableDR = true;
             }
 
             // Become invincible and disappear if necessary.

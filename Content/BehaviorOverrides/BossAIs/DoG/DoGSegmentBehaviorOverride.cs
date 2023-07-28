@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
@@ -85,16 +85,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Inherit the phase 2 state from the head.
             npc.Infernum().ExtraAI[InPhase2FlagIndex] = head.Infernum().ExtraAI[InPhase2FlagIndex];
 
-            float worldCheckFluff = 10001f;
+            float worldCheckFluff = 6001f;
             bool headOutOfWorld = head.Center.X < -worldCheckFluff || head.Center.X > Main.maxTilesX * 16f + worldCheckFluff ||
                 head.Center.Y < -worldCheckFluff || head.Center.Y > Main.maxTilesY * 16f + worldCheckFluff;
             bool isTail = npc.type == ModContent.NPCType<DevourerofGodsTail>();
             Player target = Main.player[head.target];
 
             // Handle transitions once the tail enters the transition portal.
-            if (!InPhase2 && GeneralPortalIndex >= 0f)
+            if (!InPhase2 && (GeneralPortalIndex >= 0f || headOutOfWorld))
             {
-                if (npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox) || headOutOfWorld)
+                if (headOutOfWorld || npc.Hitbox.Intersects(Main.projectile[GeneralPortalIndex].Hitbox))
                 {
                     npc.alpha += 140;
                     if (npc.alpha >= 255)

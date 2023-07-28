@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Balancing;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;

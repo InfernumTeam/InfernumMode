@@ -101,12 +101,14 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
             });
             Main.OnPreDraw += PrepareBlurEffects;
+            Filters.Scene.OnPostDraw += WhatTheFuck;
         }
 
         public override void OnModUnload()
         {
             Main.OnPreDraw -= HandleDrawMainThreadQueue;
             Main.OnPreDraw -= PrepareBlurEffects;
+            Filters.Scene.OnPostDraw -= WhatTheFuck;
             On.Terraria.Graphics.Effects.FilterManager.EndCapture -= GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
@@ -163,32 +165,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
             orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget.Target, screenTarget2, clearColor);
-
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
-            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
-
-            if (Main.GameUpdateCount % 10 == 0)
-                LargeLumenylCrystal.DefineCrystalDrawers();
-
-            IcicleDrawer.ApplyShader();
-            foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)
-            {
-                IcicleDrawer crystal = LargeLumenylCrystal.CrystalCache[p];
-                crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
-            }
-
-            // Regularly reset the crystal cache.
-            if (Main.GameUpdateCount % 120 == 119)
-                LargeLumenylCrystal.CrystalCache.Clear();
-
-            DrawAdditiveCache();
-            DrawEntityTargets();
-            DrawAboveWaterProjectiles();
-            Main.spriteBatch.End();
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
-                Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 
         internal static void DrawAdditiveCache()
@@ -272,6 +248,35 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
                 BloomTarget.Target.CopyContentsFrom(TemporaryAuxillaryTarget.Target);
             }
+        }
+
+        private void WhatTheFuck()
+        {
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
+            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
+
+            if (Main.GameUpdateCount % 10 == 0)
+                LargeLumenylCrystal.DefineCrystalDrawers();
+
+            IcicleDrawer.ApplyShader();
+            foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)
+            {
+                IcicleDrawer crystal = LargeLumenylCrystal.CrystalCache[p];
+                crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
+            }
+
+            // Regularly reset the crystal cache.
+            if (Main.GameUpdateCount % 120 == 119)
+                LargeLumenylCrystal.CrystalCache.Clear();
+
+            DrawAdditiveCache();
+            DrawEntityTargets();
+            DrawAboveWaterProjectiles();
+            Main.spriteBatch.End();
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
+                Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 
         public override void PostUpdateEverything()

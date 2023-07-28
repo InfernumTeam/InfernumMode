@@ -1102,7 +1102,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                                 portal.Size *= scaleFactor;
                                 portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
                             });
-                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 64f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+
+                            Vector2 portalSpawnPosition = Vector2.Clamp(npc.Center + npc.velocity * 64f, Vector2.One * 320f, new Vector2(Main.maxTilesX, Main.maxTilesY) * 16f - Vector2.One * 320f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                             npc.netUpdate = true;
                         }
                         return;

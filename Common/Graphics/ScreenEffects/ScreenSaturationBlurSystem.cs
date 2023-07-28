@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.AdultEidolonWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
@@ -16,6 +16,7 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
+using Terraria.Graphics.Light;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
@@ -27,6 +28,12 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         internal static Queue<Action> DrawActionQueue = new();
 
         public static bool ShouldEffectBeActive
+        {
+            get;
+            set;
+        }
+
+        public static LightMode? LightModeBeforeLookingAtMap
         {
             get;
             set;
@@ -138,8 +145,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             {
                 bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs;
                 bool shadowProjectilesExist = ShadowIllusionDrawSystem.ShadowProjectilesExist;
-                bool secondaryCondition = fightingAEW || shadowProjectilesExist;
-                return secondaryCondition && !Main.mapFullscreen;
+                bool secondaryCondition = fightingAEW || shadowProjectilesExist || !Lighting.NotRetro;
+                return secondaryCondition && !Main.mapFullscreen && !Main.gameMenu;
             });
             c.Emit(OpCodes.Or);
             c.Emit(OpCodes.Stloc, localIndex);
@@ -284,6 +291,18 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void PostUpdateEverything()
         {
+            // idk
+            if (!Lighting.NotRetro && Main.mapFullscreen && LightModeBeforeLookingAtMap is null)
+            {
+                LightModeBeforeLookingAtMap = Lighting.Mode;
+                Lighting.Mode = LightMode.Color;
+            }
+            if (!Main.mapFullscreen && LightModeBeforeLookingAtMap is not null)
+            {
+                Lighting.Mode = LightModeBeforeLookingAtMap.Value;
+                LightModeBeforeLookingAtMap = null;
+            }
+
             // Don't mess with shaders server-side.
             if (Main.netMode == NetmodeID.Server)
                 return;

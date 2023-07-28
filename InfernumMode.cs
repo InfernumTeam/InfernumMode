@@ -1,4 +1,4 @@
-global using static System.MathF;
+﻿global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 using CalamityMod.Cooldowns;
 using InfernumMode.Assets.Effects;
@@ -165,8 +165,12 @@ namespace InfernumMode
             IntroScreenManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();
-            PrimitiveTrailCopy.Dispose();
-            Primitive3DStrip.Dispose();
+
+            Main.QueueMainThreadAction(() =>
+            {
+                PrimitiveTrailCopy.Dispose();
+                Primitive3DStrip.Dispose();
+            });
             Instance = null;
             CalamityMod = null;
         }

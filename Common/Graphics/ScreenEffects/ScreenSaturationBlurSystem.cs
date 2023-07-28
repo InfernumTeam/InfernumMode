@@ -176,10 +176,13 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void DrawEntityTargets()
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            AEWShadowFormDrawSystem.DrawTarget();
-            ShadowIllusionDrawSystem.DrawTarget();
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || ShadowIllusionDrawSystem.ShadowProjectilesExist)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                AEWShadowFormDrawSystem.DrawTarget();
+                ShadowIllusionDrawSystem.DrawTarget();
+            }
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);

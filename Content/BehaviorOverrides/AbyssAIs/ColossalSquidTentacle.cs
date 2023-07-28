@@ -1,4 +1,5 @@
-using CalamityMod;
+﻿using CalamityMod;
+using CalamityMod.NPCs.Abyss;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -82,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 return;
             }
 
-            if (Owner is null)
+            if (Owner is null || Owner.type != ModContent.NPCType<ColossalSquid>())
             {
                 NPC.active = false;
                 NPC.netUpdate = true;

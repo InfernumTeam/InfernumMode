@@ -83,7 +83,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
         // If on a non-Windows operating system, don't use this system. Fundamental parts are not guaranteed to work outside of it.
         // Also it doesn't run on servers, obviously.
-        public static bool IsSupported => Main.netMode != NetmodeID.SinglePlayer && Environment.OSVersion.Platform == PlatformID.Win32NT && InfernumConfig.Instance is not null && InfernumConfig.Instance.CreditsRecordings;
+        public static bool IsSupported => Main.netMode == NetmodeID.SinglePlayer && Environment.OSVersion.Platform == PlatformID.Win32NT && InfernumConfig.Instance is not null && InfernumConfig.Instance.CreditsRecordings;
 
         // Certain characters are prohibited when naming folders. Consequently, it is important that a cleaned version of the name string be used if any such characters appear.
         public static string CleanedCharacterName => Main.LocalPlayer.name.Replace("\\", string.Empty).Replace("/", string.Empty).Replace(":", string.Empty).Replace("*", string.Empty)

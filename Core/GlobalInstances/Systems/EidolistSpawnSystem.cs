@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.NormalNPCs;
+﻿using CalamityMod.NPCs.NormalNPCs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -32,7 +32,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Don't spawn eidolists if a player is nearby.
             Vector2 worldCenter = center.ToWorldCoordinates();
             Player closestPlayer = Main.player[Player.FindClosest(worldCenter, 1, 1)];
-            if (closestPlayer.WithinRange(worldCenter, 2400f))
+            if (closestPlayer.WithinRange(worldCenter, 2400f) || !closestPlayer.WithinRange(worldCenter, 9000f))
                 return;
 
             for (int i = 0; i < 4; i++)

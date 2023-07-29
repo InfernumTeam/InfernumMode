@@ -150,7 +150,10 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         internal static void PrepareNextFrameTarget()
         {
             if (!ShadowProjectilesExist)
+            {
+                Main.instance.GraphicsDevice.SetRenderTarget(null);
                 return;
+            }
 
             // Update the shadowy wisp effect every frame.
             Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);

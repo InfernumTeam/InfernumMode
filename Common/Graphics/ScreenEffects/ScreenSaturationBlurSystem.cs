@@ -33,12 +33,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             set;
         }
 
-        public static LightMode? LightModeBeforeLookingAtMap
-        {
-            get;
-            set;
-        }
-
         public static float Intensity
         {
             get;
@@ -145,7 +139,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             {
                 bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs;
                 bool shadowProjectilesExist = ShadowIllusionDrawSystem.ShadowProjectilesExist;
-                bool secondaryCondition = fightingAEW || shadowProjectilesExist || !Lighting.NotRetro;
+                bool secondaryCondition = fightingAEW || shadowProjectilesExist;
                 return secondaryCondition && !Main.mapFullscreen && !Main.gameMenu;
             });
             c.Emit(OpCodes.Or);
@@ -193,7 +187,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            StormWeaverDrawSystem.DrawTarget();
 
             for (int i = 0; i < AEWShadowFormDrawSystem.AEWEyesDrawCache.Count; i++)
             {
@@ -291,18 +284,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void PostUpdateEverything()
         {
-            // idk
-            if (!Lighting.NotRetro && Main.mapFullscreen && LightModeBeforeLookingAtMap is null)
-            {
-                LightModeBeforeLookingAtMap = Lighting.Mode;
-                Lighting.Mode = LightMode.Color;
-            }
-            if (!Main.mapFullscreen && LightModeBeforeLookingAtMap is not null)
-            {
-                Lighting.Mode = LightModeBeforeLookingAtMap.Value;
-                LightModeBeforeLookingAtMap = null;
-            }
-
             // Don't mess with shaders server-side.
             if (Main.netMode == NetmodeID.Server)
                 return;

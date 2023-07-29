@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.StormWeaver;
+﻿using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver;
@@ -21,6 +21,14 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Main.OnPreDraw += PrepareTarget;
             WeaverDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            On.Terraria.Main.DrawNPCs += DrawWeaver;
+        }
+
+        private void DrawWeaver(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+        {
+            orig(self, behindTiles);
+            if (!behindTiles)
+                DrawTarget();
         }
 
         public override void OnModUnload()

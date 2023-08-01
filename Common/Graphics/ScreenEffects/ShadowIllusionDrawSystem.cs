@@ -112,6 +112,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             }
 
             // Draw regular projectiles.
+            ShadowProjectilesExist = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].ModProjectile is null)
@@ -124,10 +125,10 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                     continue;
 
                 Main.instance.DrawProj(i);
+                ShadowProjectilesExist = true;
             }
 
             // Draw additive effects.
-            ShadowProjectilesExist = false;
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -148,6 +149,12 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void PrepareNextFrameTarget()
         {
+            if (!ShadowProjectilesExist)
+            {
+                Main.instance.GraphicsDevice.SetRenderTarget(null);
+                return;
+            }
+
             // Update the shadowy wisp effect every frame.
             Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);

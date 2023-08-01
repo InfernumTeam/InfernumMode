@@ -155,7 +155,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 npc.velocity.X *= 0.8f;
                 npc.noTileCollide = npc.Bottom.Y < target.Bottom.Y;
                 npc.velocity.Y = Clamp(npc.velocity.Y + gravity, -12f, 21f);
-                if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 32) && !npc.noTileCollide)
+                if (Utilities.ActualSolidCollisionTop(npc.TopLeft, npc.width, npc.height + 36) && !npc.noTileCollide)
                 {
                     // Do collision effects after slamming.
                     if (hasSlammed == 0f)
@@ -218,7 +218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             float jumpDelay = 20f;
             float coreChargeSpeed = 24.5f;
 
-            bool touchingGround = Utilities.ActualSolidCollisionTop(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 16);
+            bool touchingGround = Utilities.ActualSolidCollisionTop(npc.BottomLeft - Vector2.UnitY * 8f, npc.width, 36);
             ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
             ref float noTileCollisionCountdown = ref npc.Infernum().ExtraAI[1];
             ref float stuckTimer = ref npc.Infernum().ExtraAI[2];
@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             core.velocity = core.SafeDirectionTo(coreHoverDestination) * 32f;
 
             // Slow down and prepare to jump if on the ground.
-            if (npc.velocity.Y == 0f && touchingGround || stuckTimer >= 600f)
+            if ((npc.velocity.Y == 0f && touchingGround) || stuckTimer >= 600f)
             {
                 npc.velocity.X *= 0.5f;
                 attackTimer++;
@@ -310,7 +310,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             }
             else
             {
-                npc.noTileCollide = !Utilities.ActualSolidCollisionTop(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
+                npc.noTileCollide = !Utilities.ActualSolidCollisionTop(npc.position, npc.width, npc.height + 32) && npc.Bottom.Y < target.Center.Y;
                 npc.noGravity = true;
                 npc.velocity.Y = Clamp(npc.velocity.Y + 0.5f, -24f, 28f);
                 attackTimer = 0f;

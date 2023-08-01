@@ -1244,14 +1244,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 2)
                 {
                     WeightedRandom<AresBodyAttackType> rng = new(Main.rand);
-                    rng.Add(AresBodyAttackType.DirectionChangingSpinBursts, 2.2);
-                    rng.Add(AresBodyAttackType.LaserSpinBursts, 2.2);
+
+                    if (previousSuperAttack != (int)AresBodyAttackType.DirectionChangingSpinBursts && previousSuperAttack != (int)AresBodyAttackType.LaserSpinBursts)
+                    {
+                        rng.Add(AresBodyAttackType.DirectionChangingSpinBursts, 2.2);
+                        rng.Add(AresBodyAttackType.LaserSpinBursts, 2.2);
+                    }
+
                     if (ExoMechManagement.CurrentAresPhase >= 5)
                         rng.Add(AresBodyAttackType.ThreeDimensionalSuperslashes, 2.55);
-                    else if (ExoMechManagement.CurrentAresPhase >= 3)
-                        rng.Add(AresBodyAttackType.DownwardCrossSlices, 1.5);
                     else
-                        rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.8);
+                    {
+                        rng.Add(AresBodyAttackType.DownwardCrossSlices, 1.6);
+                        rng.Add(AresBodyAttackType.EnergyBladeSlices, 1.6);
+                    }
 
                     do
                         npc.ai[0] = (int)rng.Get();
@@ -1327,13 +1333,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (aresBody.Opacity <= 0f)
                 return true;
 
-            // Rotate arm usability is as follows (This only applies after phase 2):
+            // Rotated arm usability is as follows (This only applies after phase 2):
             // Pulse Cannon, Laser Cannon, and Tesla Cannon,
             // Laser Cannon, Tesla Cannon, and Plasma Flamethrower,
             // Tesla Cannon, Plasma Flamethrower, and Pulse Cannon
             // Katanas are completely exempt from this.
 
-            // Rotate arm usability is as follows (This only applies before phase 2):
+            // Rotated arm usability is as follows (This only applies before phase 2):
             // Pulse Cannon, Laser Cannon,
             // Laser Cannon, Tesla Cannon,
             // Tesla Cannon, Plasma Flamethrower,

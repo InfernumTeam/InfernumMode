@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             [NPCID.BigMimicHallow] = MinibossesCompleted[3],
             [NPCID.DD2OgreT2] = MinibossesCompleted[5],
             [NPCID.DD2Betsy] = MinibossesCompleted[0],
-            [ModContent.NPCType<NuclearTerror>()] = MinibossesCompleted[8],
+            [ModContent.NPCType<NuclearTerror>()] = MinibossesCompleted[9],
         };
         #endregion
 

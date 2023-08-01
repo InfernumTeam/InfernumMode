@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Typeless;
@@ -199,6 +199,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 }
                 return false;
             }
+
+            // Stay in the world.
+            npc.Center = Vector2.Clamp(npc.Center, Vector2.One * 300f, new Vector2(Main.maxTilesX, Main.maxTilesY) * 16f - Vector2.One * 300f);
 
             // Percent life remaining
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -988,6 +991,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 }
 
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
+                if (portalSpawnPosition.Y <= 200f)
+                    portalSpawnPosition.Y = 200f;
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
                 {
@@ -1097,7 +1102,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                                 portal.Size *= scaleFactor;
                                 portal.ModProjectile<DoGChargeGate>().IsGeneralPortalIndex = true;
                             });
-                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + npc.velocity * 64f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+
+                            Vector2 portalSpawnPosition = Vector2.Clamp(npc.Center + npc.velocity * 64f, Vector2.One * 320f, new Vector2(Main.maxTilesX, Main.maxTilesY) * 16f - Vector2.One * 320f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                             npc.netUpdate = true;
                         }
                         return;

@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using ReLogic.Content;
@@ -98,7 +98,7 @@ namespace InfernumMode.Core.TrackedMusic
                 CustomTrackDiskPositions[musicSlotIndex] = musicPath;
 
                 // Write the music to a permanent file if it hasn't been placed there yet.
-                if (!File.Exists(musicPath))
+                if (!File.Exists(musicPath) || !File.ReadAllText(musicPath).Trim().Any())
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(musicPath));
                     using FileStream saveStream = File.Create(musicPath);

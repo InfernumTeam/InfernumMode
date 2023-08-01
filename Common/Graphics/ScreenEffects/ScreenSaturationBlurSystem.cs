@@ -16,6 +16,7 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
+using Terraria.Graphics.Light;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
@@ -101,12 +102,16 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 IL_Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
             });
             Main.OnPreDraw += PrepareBlurEffects;
+            Filters.Scene.OnPostDraw += WhatTheFuck;
         }
 
         public override void OnModUnload()
         {
             Main.OnPreDraw -= HandleDrawMainThreadQueue;
             Main.OnPreDraw -= PrepareBlurEffects;
+            Filters.Scene.OnPostDraw -= WhatTheFuck;
+            On_FilterManager.EndCapture -= GetFinalScreenShader;
+            Filters.Scene.OnPostDraw -= WhatTheFuck;
             On_FilterManager.EndCapture -= GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
@@ -137,7 +142,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && InfernumMode.CanUseCustomAIs;
                 bool shadowProjectilesExist = ShadowIllusionDrawSystem.ShadowProjectilesExist;
                 bool secondaryCondition = fightingAEW || shadowProjectilesExist;
-                return secondaryCondition && !Main.mapFullscreen;
+                return secondaryCondition && !Main.mapFullscreen && !Main.gameMenu;
             });
             c.Emit(OpCodes.Or);
             c.Emit(OpCodes.Stloc, localIndex);
@@ -163,32 +168,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.instance.GraphicsDevice.SetRenderTarget(null);
 
             orig(self, finalTexture, Intensity > 0f ? screenTarget1 : FinalScreenTarget.Target, screenTarget2, clearColor);
-
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-
-            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
-            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
-
-            if (Main.GameUpdateCount % 10 == 0)
-                LargeLumenylCrystal.DefineCrystalDrawers();
-
-            IcicleDrawer.ApplyShader();
-            foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)
-            {
-                IcicleDrawer crystal = LargeLumenylCrystal.CrystalCache[p];
-                crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
-            }
-
-            // Regularly reset the crystal cache.
-            if (Main.GameUpdateCount % 120 == 119)
-                LargeLumenylCrystal.CrystalCache.Clear();
-
-            DrawAdditiveCache();
-            DrawEntityTargets();
-            DrawAboveWaterProjectiles();
-            Main.spriteBatch.End();
-            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && Lighting.NotRetro)
-                Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 
         internal static void DrawAdditiveCache()
@@ -200,14 +179,16 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void DrawEntityTargets()
         {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            AEWShadowFormDrawSystem.DrawTarget();
-            ShadowIllusionDrawSystem.DrawTarget();
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || ShadowIllusionDrawSystem.ShadowProjectilesExist)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                AEWShadowFormDrawSystem.DrawTarget();
+                ShadowIllusionDrawSystem.DrawTarget();
+            }
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            StormWeaverDrawSystem.DrawTarget();
 
             for (int i = 0; i < AEWShadowFormDrawSystem.AEWEyesDrawCache.Count; i++)
             {
@@ -272,6 +253,35 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
                 BloomTarget.Target.CopyContentsFrom(TemporaryAuxillaryTarget.Target);
             }
+        }
+
+        private void WhatTheFuck()
+        {
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
+            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
+
+            if (Main.GameUpdateCount % 10 == 0)
+                LargeLumenylCrystal.DefineCrystalDrawers();
+
+            IcicleDrawer.ApplyShader();
+            foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)
+            {
+                IcicleDrawer crystal = LargeLumenylCrystal.CrystalCache[p];
+                crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
+            }
+
+            // Regularly reset the crystal cache.
+            if (Main.GameUpdateCount % 120 == 119)
+                LargeLumenylCrystal.CrystalCache.Clear();
+
+            DrawAdditiveCache();
+            DrawEntityTargets();
+            DrawAboveWaterProjectiles();
+            Main.spriteBatch.End();
+            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
+                Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 
         public override void PostUpdateEverything()

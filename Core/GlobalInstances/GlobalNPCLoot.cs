@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.PrimordialWyrm;
@@ -233,6 +233,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npcLoot.Add(ModContent.ItemType<EvokingSearune>());
                 npcLoot.Add(ModContent.ItemType<IllusionersReverie>());
                 npcLoot.Add(ModContent.ItemType<EyeOfMadness>());
+                npcLoot.Add(ModContent.ItemType<AEWRelic>());
             }
 
             bool isExoMech = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<AresBody>();

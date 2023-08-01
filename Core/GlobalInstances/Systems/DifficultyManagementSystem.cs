@@ -32,8 +32,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (WorldSaveSystem.InfernumMode && !CalamityWorld.death)
                 CalamityWorld.death = true;
 
-            // Disable Infernum interactions with FTW/Master because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
-            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld;
+            // Disable Infernum interactions with FTW/Master/GFB because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
+            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || Main.zenithWorld;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive && DisableDifficultyModes)
             {
                 Utilities.DisplayText("Infernum is not allowed in Master Mode or For the Worthy.", Color.Red);

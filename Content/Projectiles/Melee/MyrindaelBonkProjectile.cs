@@ -31,7 +31,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Myrindael");
+            // DisplayName.SetDefault("Myrindael");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 60;
         }
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Owner.Calamity().LungingDown = false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             // Create lightning from the sky.
             SoundEngine.PlaySound(InfernumSoundRegistry.MyrindaelHitSound, Projectile.Center);

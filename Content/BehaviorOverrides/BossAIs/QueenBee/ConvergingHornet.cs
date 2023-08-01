@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hornet");
+            // DisplayName.SetDefault("Hornet");
             Main.projFrames[Projectile.type] = 3;
         }
 

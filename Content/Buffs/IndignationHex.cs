@@ -7,8 +7,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hex of Indignation");
-            Description.SetDefault("You are haunted by a soul seeker");
+            // DisplayName.SetDefault("Hex of Indignation");
+            // Description.SetDefault("You are haunted by a soul seeker");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

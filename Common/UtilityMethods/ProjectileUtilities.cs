@@ -1,4 +1,4 @@
-using InfernumMode.Core.GlobalInstances;
+﻿using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -93,7 +93,7 @@ namespace InfernumMode
             if (Main.expertMode)
                 damage = (int)(damage * 0.5);
             int index = Projectile.NewProjectile(new EntitySource_WorldEvent(), spawnX, spawnY, velocityX, velocityY, type, damage, knockback, owner, ai0, ai1);
-            if (index is >= 0 and < Main.maxProjectiles)
+            if (index >= 0 && index < Main.maxProjectiles)
                 Main.projectile[index].netUpdate = true;
 
             return index;
@@ -153,7 +153,7 @@ namespace InfernumMode
             // If in singleplayer, simply return the projectile at the designated index, as singleplayer will never have mismatching indices.
             if (Main.netMode == NetmodeID.SinglePlayer)
             {
-                return identity is <= (-1) or >= Main.maxProjectiles ? null : Main.projectile[identity];
+                return identity <= (-1) || identity >= Main.maxProjectiles ? null : Main.projectile[identity];
             }
 
             for (int i = 0; i < Main.maxProjectiles; i++)

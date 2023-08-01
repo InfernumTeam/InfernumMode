@@ -14,10 +14,10 @@ namespace InfernumMode.Content.Items.Pets
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Nightmare Catcher");
-            Tooltip.SetDefault("Summons the Sheep Lord to follow you around\n" +
-                "It Appears From the Darkness, As I Softly Slink Into The Dream");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Nightmare Catcher");
+            /* Tooltip.SetDefault("Summons the Sheep Lord to follow you around\n" +
+                "It Appears From the Darkness, As I Softly Slink Into The Dream"); */
         }
         public override void SetDefaults()
         {

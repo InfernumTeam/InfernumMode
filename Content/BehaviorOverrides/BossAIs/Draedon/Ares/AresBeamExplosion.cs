@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exoburst Explosion");
+            // DisplayName.SetDefault("Exoburst Explosion");
             Main.projFrames[Projectile.type] = 7;
         }
 

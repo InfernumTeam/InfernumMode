@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Eidolon Wyrm");
+            // DisplayName.SetDefault("Eidolon Wyrm");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = SegmentCount + 1;
         }

@@ -8,22 +8,22 @@ namespace InfernumMode.Core.GlobalInstances.Players
     {
         public const int MinBossRushDamage = 500;
 
-        public override void ModifyHitByProjectile(Projectile proj, ref int damage, ref bool crit)
+        public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
-            if (damage <= 0)
+            if (modifiers.FinalDamage.Base <= 0f)
                 return;
 
-            if (damage <= MinBossRushDamage && InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
-                damage = MinBossRushDamage + Main.rand.Next(35);
+            if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+                modifiers.FinalDamage.Base = Clamp(modifiers.FinalDamage.Base, MinBossRushDamage + Main.rand.Next(35), float.MaxValue);
         }
 
-        public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
+        public override void ModifyHitByNPC(NPC npc, ref Player.HurtModifiers modifiers)
         {
-            if (damage <= 0)
+            if (modifiers.FinalDamage.Base <= 0f)
                 return;
 
-            if (damage <= MinBossRushDamage && InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
-                damage = MinBossRushDamage + Main.rand.Next(35);
+            if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+                modifiers.FinalDamage.Base = Clamp(modifiers.FinalDamage.Base, MinBossRushDamage + Main.rand.Next(35), float.MaxValue);
         }
     }
 }

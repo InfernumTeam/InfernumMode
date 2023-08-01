@@ -1,5 +1,5 @@
 ﻿using CalamityMod.Items.Tools;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             get
             {
-                int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
+                int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<PrimordialWyrmHead>());
                 if (aewIndex == -1)
                     return null;
 

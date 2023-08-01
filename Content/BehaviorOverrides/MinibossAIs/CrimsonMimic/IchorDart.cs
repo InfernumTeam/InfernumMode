@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Dart");
+            // DisplayName.SetDefault("Ichor Dart");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 3;
         }

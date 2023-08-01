@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.CragsC
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Calamitas");
+            // DisplayName.SetDefault("Calamitas");
             Main.projFrames[Type] = 7;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

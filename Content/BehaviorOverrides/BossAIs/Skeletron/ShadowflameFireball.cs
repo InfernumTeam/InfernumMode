@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 {
     public class ShadowflameFireball : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shadowflame Bomb");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Shadowflame Bomb");
 
         public override void SetDefaults()
         {

@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadow Spark");
+            // DisplayName.SetDefault("Shadow Spark");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

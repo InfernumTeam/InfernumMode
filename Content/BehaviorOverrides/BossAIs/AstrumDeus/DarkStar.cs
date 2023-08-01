@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             return origin + starOffset.RotatedBy(spinAngle);
         }
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Star");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Star");
 
         public override void SetDefaults()
         {

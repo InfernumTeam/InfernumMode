@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Divine Light Orb");
+            // DisplayName.SetDefault("Divine Light Orb");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 

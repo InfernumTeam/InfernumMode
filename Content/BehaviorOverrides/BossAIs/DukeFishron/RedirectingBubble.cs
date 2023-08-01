@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Rogue;
 using Terraria;
@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Bubble");
+            // DisplayName.SetDefault("Bubble");
             Main.npcFrameCount[NPC.type] = 2;
         }
 
@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             NPC.noTileCollide = true;
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => NPC.life = 1300;
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */ => NPC.life = 1300;
 
         public override void AI()
         {
@@ -80,10 +80,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             NPC.frame.Y = frameHeight * (NPC.whoAmI % 2);
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.type == ModContent.ProjectileType<Corrocloud1>() || projectile.type == ModContent.ProjectileType<Corrocloud2>() || projectile.type == ModContent.ProjectileType<Corrocloud3>())
-                damage = (int)(damage * 0.225);
+                modifiers.FinalDamage.Base *= 0.225f;
         }
 
         public override bool CheckActive() => false;

@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 {
     public class WeaverSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Spark");
 
         public override void SetDefaults()
         {

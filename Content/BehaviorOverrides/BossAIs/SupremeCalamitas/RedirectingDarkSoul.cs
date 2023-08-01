@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Soul");
+            // DisplayName.SetDefault("Dark Soul");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Depth Feeder");
+            // DisplayName.SetDefault("Depth Feeder");
             Main.npcFrameCount[NPC.type] = 6;
             NPCID.Sets.CountsAsCritter[NPC.type] = true;
             NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.knockBackResist = 0.9f;
             NPC.chaseable = false;
             SpawnModBiomes = new int[3] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type, ModContent.GetInstance<AbyssLayer3Biome>().Type };
-            NPC.RemoveWaterSlowness();
+            NPC.waterMovementSpeed = 0f;
             NPC.Infernum().IsAbyssPrey = true;
         }
 

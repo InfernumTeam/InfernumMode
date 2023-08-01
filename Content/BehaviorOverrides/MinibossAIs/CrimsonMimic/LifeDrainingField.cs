@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
 
         public const int Lifetime = 240;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Life-Draining Field");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Life-Draining Field");
 
         public override void SetDefaults()
         {

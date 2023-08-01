@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exo Energy Slash");
+            // DisplayName.SetDefault("Exo Energy Slash");
         }
 
         public override void SetDefaults()

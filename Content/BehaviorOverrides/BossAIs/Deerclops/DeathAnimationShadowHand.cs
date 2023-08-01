@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public ref float ThumbRotation => ref Projectile.localAI[0];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Hand");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Hand");
 
         public override void SetDefaults()
         {

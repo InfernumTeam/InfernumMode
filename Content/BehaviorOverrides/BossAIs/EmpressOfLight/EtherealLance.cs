@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ethereal Lance");
+            // DisplayName.SetDefault("Ethereal Lance");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 10;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;

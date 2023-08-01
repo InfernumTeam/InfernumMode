@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser Deathray");
+            // DisplayName.SetDefault("Laser Deathray");
             Main.projFrames[Projectile.type] = 5;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }

@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("High Explosive Plasma Rocket");
+            // DisplayName.SetDefault("High Explosive Plasma Rocket");
             Main.projFrames[Projectile.type] = 5;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;

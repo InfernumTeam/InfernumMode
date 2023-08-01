@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
@@ -15,8 +15,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod.SlimeGodComboAttackManager;
-using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanSlimeGod;
-using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
+using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanPaladin;
+using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianPaladin;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 {

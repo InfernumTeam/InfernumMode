@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
     public class IceBomb2 : ModProjectile
     {
         public ref float Time => ref Projectile.localAI[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Bomb");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Bomb");
 
         public override void SetDefaults()
         {

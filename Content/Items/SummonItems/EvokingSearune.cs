@@ -1,5 +1,5 @@
 using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -11,11 +11,11 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Evoking Searune");
-            Tooltip.SetDefault("Summons the Adult Eidolon Wyrm in the deepest layer of the Abyss\n" +
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Evoking Searune");
+            /* Tooltip.SetDefault("Summons the Adult Eidolon Wyrm in the deepest layer of the Abyss\n" +
                 "A primordial artifact said to have been formed by the First God, it is capable of summoning a guarding apparition\n" +
-                "Not consumable");
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 17; // Celestial Sigil
         }
 
@@ -30,14 +30,14 @@ namespace InfernumMode.Content.Items.SummonItems
             Item.consumable = false;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && player.Calamity().ZoneAbyssLayer4;
+        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && player.Calamity().ZoneAbyssLayer4;
 
         public override bool? UseItem(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 spawnPosition = player.Center - Vector2.UnitY * 600f;
-                NPC.NewNPC(player.GetSource_ItemUse(Item), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<AdultEidolonWyrmHead>());
+                NPC.NewNPC(player.GetSource_ItemUse(Item), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<PrimordialWyrmHead>());
             }
             return true;
         }

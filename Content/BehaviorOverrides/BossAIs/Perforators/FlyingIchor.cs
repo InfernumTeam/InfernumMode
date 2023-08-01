@@ -7,7 +7,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 {
     public class FlyingIchor : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
 
         public override void SetDefaults()
         {

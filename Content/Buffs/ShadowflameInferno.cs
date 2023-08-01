@@ -7,8 +7,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadowflame Inferno");
-            Description.SetDefault("Rapidly losing life");
+            // DisplayName.SetDefault("Shadowflame Inferno");
+            // Description.SetDefault("Rapidly losing life");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

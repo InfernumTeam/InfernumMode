@@ -1,0 +1,1487 @@
+Mods: {
+	InfernumMode: {
+		Cooldowns: {
+			SealocketForcefieldCooldown: Forcefield Cooldown
+			InfiniteFlightCooldown: Infinite Flight
+		}
+
+		DifficultyUI: {
+			Name: Infernum
+			ShortDescription:
+				'''
+				[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]
+				[c/B32E81:This mode does not work with Master or the For the Worthy seed.]
+				'''
+			ExpandedDescription:
+				'''
+				 [c/B32E81:Many major foes will be different, having more challenging AI.]
+				 [c/B32E81:Adrenaline takes considerably longer to charge.]
+				 [c/FF0055:Adaptability is imperative.]
+				'''
+			InfernumText: Good luck.
+			InfernumText2: Very well, then.
+		}
+
+		Lore.VassalLore:
+			'''
+			An unusal pair of solitary camaraderie.
+			Once a warrior of noble renown, it would seem that Argus was one of the few survivors to emerge from the ruins of Ilmeris.
+			Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
+			Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.
+			'''
+
+		UI: {
+			NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
+			AchievementsHeader: Death Wishes
+			WishesHeader: Dev Wishes
+		}
+
+		Projectiles: {
+			AbyssalIce.DisplayName: Abyssal Ice
+			BoxJellyZap.DisplayName: Jelly Zap
+			DevilfishExplosion.DisplayName: Devilburst
+			EidolistElectricOrb.DisplayName: Electric Orb
+			EidolistElectricOrb2.DisplayName: Electric Orb
+			EidolistIce.DisplayName: Abyssal Ice
+			EidolistIceBomb.DisplayName: Abyssal Ice
+			EidolistLightning.DisplayName: Lightning Bolt
+			EidolistRitual.DisplayName: Ritual
+			ElectricPulse.DisplayName: Electric Pulse
+			InkBlob.DisplayName: Ink Blob
+			InkBolt.DisplayName: Ink
+			MiniReaperShark.DisplayName: Reaper Shark
+			ReaperSharkIceBreath.DisplayName: Ice Breath
+			SimpleAbyssalSoul.DisplayName: Abyssal Spirit
+			AbyssalSoul.DisplayName: Abyssal Spirit
+			AbyssalSoulTelegraph.DisplayName: Abyssal Telegraph
+			AEWIllusionTelegraphLine.DisplayName: Telegraph
+			AEWNightmareWyrm.DisplayName: Eidolon Wyrm
+			AEWSplitForm.DisplayName: Adult Eidolon Wyrm
+			AEWTelegraphLine.DisplayName: Telegraph
+			CircleCenterTelegraph.DisplayName: Telegraph
+			ConvergingLumenylCrystal.DisplayName: Divine Lumenyl
+			DivineLightBolt.DisplayName: Divine Light Bolt
+			DivineLightLaserbeam.DisplayName: Divine Light Deathray
+			DivineLightOrb.DisplayName: Divine Light Orb
+			HorizontalRayTerminus.DisplayName: Horizontal Ray Terminus
+			LightCleaveTelegraph.DisplayName: Telegraph
+			PsychicBlast.DisplayName: Psychic Blast
+			TerminusDeathray.DisplayName: Primordial Light
+			AcceleratingArcingAcid.DisplayName: Acid
+			AcidBubble.DisplayName: Acid Bubble
+			AquaticScourgeBodySpike.DisplayName: Irradiated Spike
+			AquaticScourgeGore.DisplayName: Gore
+			FallingAcid.DisplayName: Acid
+			LeechFeeder.DisplayName: Feeder
+			RadiationPulse.DisplayName: Radiation Pulse
+			SulphuricGas.DisplayName: Sulphuric Acid Gas
+			SulphuricGasDebuff.DisplayName: Sulphuric Acid Gas
+			SulphuricTornado.DisplayName: Sulphuric Typhoon
+			SulphurousRockRubble.DisplayName: Sulphuric Rubble
+			WaterClearingBubble.DisplayName: Acid Bubble
+			AstralBlueComet.DisplayName: Astral Comet
+			AstralLaserInfernum.DisplayName: Astral Laser Volley
+			AstralMissile.DisplayName: Astral Missile
+			BlueLaserbeam.DisplayName: Astral Deathray
+			MissileTelegraphLine.DisplayName: Telegraph
+			OrangeLaserbeam.DisplayName: Astral Deathray
+			AstralBlackHole.DisplayName: Astral Black Hole
+			AstralConstellation.DisplayName: Star
+			AstralCrystal.DisplayName: Astral Crystal
+			AstralFlame2.DisplayName: Astral Flame
+			AstralPlasmaFireball.DisplayName: Astral Plasma Flame
+			AstralPlasmaSpark.DisplayName: Astral Plasma Spark
+			AstralRubble.DisplayName: Astral Rubble
+			AstralSparkle.DisplayName: Astral Sparkle
+			AstralTelegraphLine.DisplayName: Telegraph
+			AstralVortex.DisplayName: Consumed Vortex
+			DarkGodLaser.DisplayName: Antimatter Deathray
+			DarkStar.DisplayName: Dark Star
+			InfectionGlob.DisplayName: Infection Glob
+			MassiveInfectedStar.DisplayName: Consumed Star
+			BloodGeyser2.DisplayName: Ichor Geyser
+			IchorSpit.DisplayName: Ichor
+			PsionicLightningBolt.DisplayName: Psionic Lightning Bolt
+			PsionicOrb.DisplayName: Psychic Energy
+			Brimrose.DisplayName: Brimrose
+			BrimstoneDeathray.DisplayName: Brimstone Deathray
+			BrimstoneFireball.DisplayName: Brimstone Flame
+			BrimstonePetal.DisplayName: Brimstone Petal
+			BrimstonePetal2.DisplayName: Brimstone Petal
+			BrimstoneRose.DisplayName: Brimstone Rose
+			BrimstoneSkull.DisplayName: Brimstone Skull
+			BrimstoneTelegraphRay.DisplayName: Brimstone Deathray
+			HomingBrimstoneSkull.DisplayName: Brimstone Hellblast
+			RedFlameTelegraph.DisplayName: Fuck you nobody is going to ever see this name
+			AccentuationHexProj.DisplayName: Calamitous Hex
+			ArcingBrimstoneDart.DisplayName: Brimstone Dart
+			BrimstoneBomb.DisplayName: Brimstone Bomb
+			BrimstoneBoomExplosion.DisplayName: Explosion
+			BrimstoneLightning.DisplayName: Brimstone Lightning Bolt
+			BrimstoneMeteor.DisplayName: Brimstone Meteor
+			BrimstoneSlash.DisplayName: Brimstone Slash
+			CatharsisHexProj.DisplayName: Calamitous Hex
+			CatharsisSoul.DisplayName: Burning Soul of Catharsis
+			CharredWand.DisplayName: Charred Wand
+			ConvergingShadowSpark.DisplayName: Shadow Spark
+			DarkMagicFlame.DisplayName: Dark Magic Flame
+			EntropyBeam.DisplayName: Entropic Beam
+			HauntingSoulSeeker.DisplayName: Soul Seeker
+			HomingBrimstoneBurst.DisplayName: Brimstone Flame
+			IndignationHexProj.DisplayName: Calamitous Hex
+			LargeDarkFireOrb.DisplayName: Dark Fire Orb
+			LingeringBrimstoneFlames.DisplayName: Brimstone Fire Cloud
+			RisingBrimstoneFireball.DisplayName: Brimstone Bomb
+			ShadowBlob.DisplayName: Shadow Blob
+			SoulSeekerResurrectionBeam.DisplayName: Necromantic Beam
+			ThinBrimstoneSlash.DisplayName: Brimstone Slash
+			WeaknessHexProj.DisplayName: Calamitous Hex
+			ZealHexProj.DisplayName: Calamitous Hex
+			AcceleratingDarkEnergy.DisplayName: Dark Energy
+			CeaselessEnergyPulse.DisplayName: Ceaseless Energy Pulse
+			CeaselessVoidLineTelegraph.DisplayName: Line Telegraph
+			CeaselessVoidShell.DisplayName: Metal Shell
+			CeaselessVortex.DisplayName: Ceaseless Vortex
+			CeaselessVortexTear.DisplayName: Ceaseless Tear
+			ConvergingDungeonRubble.DisplayName: Energized Rubble
+			EnergyTelegraph.DisplayName: Dark Energy Shard
+			GammaBurstLineTelegraph.DisplayName: Line Telegraph
+			OtherworldlyBolt.DisplayName: Otherwordly Bolt
+			RealitySlice.DisplayName: Reality Tear
+			SpinningDarkEnergy.DisplayName: Dark Energy
+			TelegraphedOtherwordlyBolt.DisplayName: Otherwordly Bolt
+			HomingSpore.DisplayName: Spore
+			MushroomPillar.DisplayName: Mushroom Column
+			SporeCloud.DisplayName: Spore Gas
+			AimedIcicleSpike.DisplayName: Icicle Spike
+			AuroraSpirit.DisplayName: Aurora Spirit
+			AuroraSpirit2.DisplayName: Aurora Spirit
+			IceBomb2.DisplayName: Ice Bomb
+			IcePillar.DisplayName: Ice Pillar
+			IceRain2.DisplayName: Ice Rain
+			IcicleSpike.DisplayName: Icicle Spike
+			AncientDoom.DisplayName: Doomer
+			CultistFireBeamTelegraph.DisplayName: Telegraph
+			CultistRitual.DisplayName: Ritual
+			DarkBolt.DisplayName: Dark Bolt
+			DarkBoltLarge.DisplayName: Dark Bolt
+			DarkPulse.DisplayName: Dark Pulse
+			DeathExplosion.DisplayName: Explosion
+			DoomBeam.DisplayName: Death Beam
+			FireballLineTelegraph.DisplayName: Telegraph
+			FireBeam.DisplayName: Flame Beam
+			IceMass.DisplayName: Ice Mass
+			IceShard.DisplayName: Ice Shard
+			LightBeam.DisplayName: Beam
+			LightBurst.DisplayName: Light Burst
+			TeleportTelegraph.DisplayName: Telegraph
+			AcceleratingShadowHand.DisplayName: Shadow Hand
+			ArenaIcicle.DisplayName: Long Icicle
+			DeathAnimationShadowHand.DisplayName: Shadow Hand
+			DeerclopsEyeLaserbeam.DisplayName: Firebeam
+			DeerclopsP2Wave.DisplayName: Explosion
+			GroundIcicleSpike.DisplayName: Ice Spike
+			ShadowHandArena.DisplayName: Shadow Hand
+			SpinningShadowHand.DisplayName: Shadow Hand
+			SandBlastInfernum.DisplayName: Sand Blast
+			Sandnado.DisplayName: Sand Tornado
+			SandstormBlast.DisplayName: Sand Blast
+			DestroyerBomb.DisplayName: Explosion
+			DestroyerPierceLaser.DisplayName: Flame Laser
+			DestroyerPierceLaserTelegraph.DisplayName: Telegraph
+			EnergyBlast2.DisplayName: Energy Blast
+			EnergySpark.DisplayName: Red Spark
+			EnergySpark2.DisplayName: Red Spark
+			AcceleratingDoGBurst.DisplayName: Death Fire
+			DoGChargeGate.DisplayName: Portal
+			DoGDeathInfernum.DisplayName: Death Beam
+			DoGPhase2IntroPortalGate.DisplayName: Portal
+			DoGSpawnBoom.DisplayName: Explosion
+			RealityBreakPortalLaserWall.DisplayName: Portal
+			RoDFailPulse.DisplayName: Explosion
+			AresBeamExplosion.DisplayName: Exoburst Explosion
+			AresBeamTelegraph.DisplayName: Gamma Disintegration Beam Telegraph
+			AresCannonLaser.DisplayName: Exo Flame Laser
+			AresDeathBeamTelegraph.DisplayName: Exo Overload Telegraph
+			AresEnergyDeathray.DisplayName: Exo Energy Burst
+			AresEnergyDeathrayTelegraph.DisplayName: Exo Energy Burst Telegraph
+			AresEnergySlash.DisplayName: Exo Energy Slash
+			AresLaserDeathray.DisplayName: Laser Deathray
+			AresLaughBoom.DisplayName: Explosion
+			AresPlasmaFireball.DisplayName: Volatile Plasma Blast
+			AresPrecisionBlast.DisplayName: Precision Blast
+			AresPulseBlast.DisplayName: Exopulse Energy Burst
+			AresPulseDeathray.DisplayName: Pulse Deathray
+			AresSpinningDeathBeam.DisplayName: Exo Overload Beam
+			AresSpinningRedDeathray.DisplayName: Exothermal Disintegration Deathray
+			AresTeslaGasField.DisplayName: Electric Cloud
+			AresTeslaOrb.DisplayName: Tesla Sphere
+			AresTeslaSpark.DisplayName: Tesla Spark
+			ExoburstSpark.DisplayName: Exoburst Spark
+			HotMetal.DisplayName: Superheated Metal
+			PlasmaGas.DisplayName: Plasma
+			SmallPlasmaSpark.DisplayName: Plasma Spark
+			ApolloAcceleratingPlasmaSpark.DisplayName: Plasma Spark
+			ApolloFallingPlasmaSpark.DisplayName: Plasma Spark
+			ApolloFlamethrower.DisplayName: Exoplasma Flamethrower
+			ApolloPlasmaFireball.DisplayName: Volatile Plasma Blast
+			ApolloRocketInfernum.DisplayName: High Explosive Plasma Rocket
+			ArtemisBasicShotLaser.DisplayName: Exo Flame Laser
+			ArtemisGasFireballBlast.DisplayName: Volatile Fireball Blast
+			ArtemisGatlingLaser.DisplayName: Exo Flame Laser
+			ArtemisLaser.DisplayName: Exo Flame Laser
+			ArtemisLaserbeamTelegraph.DisplayName: Laserbeam Telegraph
+			ArtemisSpinLaser.DisplayName: Ohio Beam
+			ArtemisSweepLaserbeam.DisplayName: Ohio Beam
+			ExoplasmaBomb.DisplayName: Exoplasma Bomb
+			ExoplasmaExplosion.DisplayName: Exoplasma Explosion
+			PlasmaChargeTelegraph.DisplayName: Charge Telegraph
+			SuperheatedExofireGas.DisplayName: Superheated Fire
+			ThermonuclearDeathOrb.DisplayName: Thermonuclear Death Orb
+			DetatchedThanatosLaser.DisplayName: Exo Flame Laser
+			ExolaserBomb.DisplayName: Exolaser Bomb
+			ExolaserSpark.DisplayName: Exolaser Spark
+			LightOverloadRay.DisplayName: Prismatic Overload Beam
+			LightRayTelegraph.DisplayName: Prismatic Light
+			OverloadBoom.DisplayName: Explosion
+			RefractionRotor.DisplayName: Refraction Rotor
+			ThanatosAresComboLaser.DisplayName: Exo Flame Laser
+			BigFollyFeather.DisplayName: Feather
+			BirbThunderAuraFlare.DisplayName: Draconic Aura Flare
+			ExplodingEnergyOrb.DisplayName: Plasma Orb
+			FollyFeather.DisplayName: Feather
+			LightningCloud.DisplayName: Lightning
+			LightningCloud2.DisplayName: Lightning
+			LightningSuperchargeTelegraph.DisplayName: Charge Telegraph
+			RedLightningRedirectingFeather.DisplayName: Lightning Feather
+			RedLightningSnipeFeather.DisplayName: Lightning Feather
+			RedSpark.DisplayName: Lightning Feather
+			VolatileLightning.DisplayName: Lightning Cloud
+			BloodBolt.DisplayName: Blood Bolt
+			BloodShot2.DisplayName: Blood
+			GoreSpike.DisplayName: Spike
+			GoreSpitBall.DisplayName: Gore Spit Ball
+			SanguineBat.DisplayName: Sanguine Bat
+			ChargeTyphoon.DisplayName: Typhoon
+			SharkSummoner.DisplayName: Summon Thing
+			SmallWave.DisplayName: Wave
+			TidalWave.DisplayName: Tidal Wave
+			Tornado.DisplayName: Tornado
+			TyphoonBlade.DisplayName: Typhoon Blade
+			AcceleratingPrismaticBolt.DisplayName: Prismatic Bolt
+			ArcingLightBolt.DisplayName: Light Bolt
+			EmpressAurora.DisplayName: Aurora
+			EmpressExplosion.DisplayName: Explosion
+			EmpressPrism.DisplayName: Prism
+			EmpressSparkle.DisplayName: Majestic Sparkle
+			EmpressSword.DisplayName: Empress Blade
+			EtherealLance.DisplayName: Ethereal Lance
+			LanceCreatingSword.DisplayName: Empress Blade
+			LightOverloadBeam.DisplayName: Prismatic Overload Ray
+			PrismaticBolt.DisplayName: Prismatic Bolt
+			PrismLaserbeam.DisplayName: Prismatic Ray
+			ShimmeringLightWave.DisplayName: Explosion
+			SpinningPrismLaserbeam.DisplayName: Prismatic Ray
+			StarBolt.DisplayName: Star Bolt
+			StolenCelestialObject.DisplayName: Big Stolen Celestial Object
+			CorruptThorn.DisplayName: Corrupt Thorn
+			CursedBullet.DisplayName: Cursed Shot
+			CursedFlameBomb.DisplayName: Cursed Flame Bomb
+			ShadowOrb.DisplayName: Shadow Orb
+			BloodShot.DisplayName: Blood
+			EoCTooth.DisplayName: Tooth
+			EoCTooth2.DisplayName: Tooth
+			SittingBlood.DisplayName: Tooth Ball
+			FistBullet.DisplayName: Fist Bullet
+			FistBulletTelegraph.DisplayName: Telegraph
+			GolemEyeLaserRay.DisplayName: Heat Ray
+			GolemLaser.DisplayName: Heat Laser
+			GroundFireCrystal.DisplayName: Fire Crystal
+			SpikeTrap.DisplayName: Spike Trap
+			StationarySpikeTrap.DisplayName: Spike Trap
+			ThermalDeathray.DisplayName: Thermal Deathray
+			BereftVassalBigBoom.DisplayName: Explosion
+			BereftVassalSpear.DisplayName: Myrindael
+			BereftVassalTeleportBoom.DisplayName: Explosion
+			DustDevil.DisplayName: Dust Devil
+			GreatSandBlast.DisplayName: Sand Blast
+			GroundSlamWave.DisplayName: Wave
+			PressureSandnado.DisplayName: Sand Tornado
+			SandBlob.DisplayName: Sand Blob
+			SparkTelegraphLine.DisplayName: Telegraph
+			TorrentWave.DisplayName: Wave
+			VassalLightning.DisplayName: Myrndael Lightning Bolt
+			VassalSpark.DisplayName: Spark
+			WaterSlice.DisplayName: Water Tear
+			WaterSpear.DisplayName: Water Spear
+			WaterTorrentBeam.DisplayName: Water Torrent
+			BlobProjectile.DisplayName: Hive Blob
+			EaterOfSouls.DisplayName: Eater of Souls
+			HiveMindWave.DisplayName: Explosion
+			ShadeFire.DisplayName: Fire
+			DeathSlash.DisplayName: Ninja Slice
+			JewelBeam.DisplayName: Beam
+			Shuriken.DisplayName: Shuriken
+			AnahitaWaterIllusion.DisplayName: Anahita Illusion
+			AquaticAberrationProj.DisplayName: Aquatic Aberration
+			AtlantisSpear.DisplayName: Atlantis Spear
+			AtlantisSpear2.DisplayName: Atlantis Spear
+			HeavenlyLullaby.DisplayName: Heavenly Lullaby
+			LeviathanMeteor.DisplayName: Leviathan Meteor
+			LeviathanSpawner.DisplayName: Water
+			LeviathanSpawnWave.DisplayName: Wave
+			LeviathanVomit.DisplayName: Leviathan Vomit
+			RedirectingWaterBolt.DisplayName: Water Spear
+			WaterBolt.DisplayName: Water Spear
+			LunarAsteroid.DisplayName: Lunar Flame
+			LunarFireball.DisplayName: Lunar Flame
+			LunarFlare.DisplayName: Phantasmal Flare
+			LunarFlareTelegraph.DisplayName: Telegraph
+			MoonLordDeathAnimationHandler.DisplayName: Death Animation
+			MoonLordDeathBloodBlob.DisplayName: Ichor Blob
+			MoonLordExplosion.DisplayName: Explosion
+			MoonLordExplosionCinder.DisplayName: Cinder
+			MoonLordWave.DisplayName: Explosion
+			NonHomingPhantasmalEye.DisplayName: Phantasmal Eye
+			PhantasmalDeathray.DisplayName: Phantasmal Deathray
+			PhantasmalOrb.DisplayName: Phantasmal Orb
+			PressurePhantasmalDeathray.DisplayName: Phantasmal Deathray
+			StardustConstellation.DisplayName: Star
+			TrueEyeChargeTelegraph.DisplayName: Charge Telegraph
+			VoidBlackHole.DisplayName: Void
+			HomingAcid.DisplayName: Acid
+			OldDukeTooth.DisplayName: Rotten Tooth
+			SharkSummonVortex.DisplayName: Sulphurous Vortex
+			SulphuricBlob.DisplayName: Sulphuric Blob
+			BloodGlob.DisplayName: Blood Glob
+			Crimera.DisplayName: Crimera
+			FallingIchor.DisplayName: Ichor
+			FallingIchorBlast.DisplayName: Ichor Blob
+			FlyingIchor.DisplayName: Ichor
+			IchorBlast.DisplayName: Ichor Blast
+			IchorBolt.DisplayName: Ichor Spit
+			PerforatorWave.DisplayName: Explosion
+			ToothBall.DisplayName: Tooth Ball
+			BombingTelegraph.DisplayName: Telegraph
+			HostilePlagueSeeker.DisplayName: Plague Seeker
+			LargePlagueExplosion.DisplayName: Explosion
+			PlagueCloud.DisplayName: Plague Cloud
+			PlagueDeathray.DisplayName: Plague Ray
+			PlagueMissile.DisplayName: Missile
+			PlagueMissile2.DisplayName: Missile
+			PlagueNuclearExplosion.DisplayName: Explosion
+			PlagueVomit.DisplayName: Plague Vomit
+			PlagueWave.DisplayName: Explosion
+			RedirectingPlagueMissile.DisplayName: Missile
+			BouncingPetal.DisplayName: Petal
+			ExplodingFlower.DisplayName: Flower
+			NettlevineArenaSeparator.DisplayName: Nettlevine
+			Petal.DisplayName: Petal
+			SporeFlower.DisplayName: Flower
+			SporeGas.DisplayName: Spore Gas
+			ArcingSoul.DisplayName: Soul
+			CirclingEctoplasm.DisplayName: Ectoplasm Wisp
+			EctoplasmShot.DisplayName: Ectoplasm Blast
+			GhostlyVortex.DisplayName: Phantoplasm Vortex
+			Light.DisplayName: Light
+			NonReturningSoul.DisplayName: Soul
+			NotSpecialSoul.DisplayName: Soul
+			PolterghastWave.DisplayName: Explosion
+			SoulTelegraphLine.DisplayName: Telegraph
+			SpinningSoul.DisplayName: Soul
+			WavySoul.DisplayName: Soul
+			EvenlySpreadPrimeLaserRay.DisplayName: Deathray
+			LightningStrike.DisplayName: Lightning
+			MetallicSpike.DisplayName: Metal Spike
+			PrimeMissile.DisplayName: Missile
+			PrimeShield.DisplayName: Shield
+			PrimeSmallLaser.DisplayName: Laser
+			SawSpark.DisplayName: Saw Spark
+			SmallElectricGasGloud.DisplayName: Electric Cloud
+			TeslaBomb.DisplayName: Tesla Bomb
+			CommanderSpear.DisplayName: Holy Spear
+			CommanderSpearThrown.DisplayName: Profaned Spear
+			DefenderShield.DisplayName: Rock Shield
+			GuardiansRodFailPulse.DisplayName: Explosion
+			HolyAimedDeathray.DisplayName: Flame Beam
+			HolyAimedDeathrayTelegraph.DisplayName: Telegraph
+			HolyDogmaFireball.DisplayName: Large Fireball
+			HolyFireRift.DisplayName: Fire Rift
+			HolyFireWall.DisplayName: Fire Wall
+			HolyPushbackWall.DisplayName: Fire Wall
+			HolySineSpear.DisplayName: Profaned Spear
+			HolySpinningFireBeam.DisplayName: Holy Fire Beam
+			LavaEruptionPillar.DisplayName: Lava Geyser
+			LingeringHolyFire.DisplayName: Holy Fire
+			MagicCrystalShot.DisplayName: Crystalline Light
+			MagicSpiralCrystalShot.DisplayName: Crystalline Light
+			ProfanedCirclingRock.DisplayName: Profaned Rock
+			ProfanedCrack.DisplayName: Profaned Cracks
+			ProfanedField.DisplayName: Profaned Defender Field
+			ProfanedRock.DisplayName: Profaned Rock
+			ProfanedSpearInfernum.DisplayName: Profaned Spear
+			TelegraphedProfanedSpearInfernum.DisplayName: Profaned Spear
+			AcceleratingCrystalShard.DisplayName: Holy Crystal Shard
+			AcceleratingMagicProfanedRock.DisplayName: Profaned Rock
+			CleansingFireball.DisplayName: Cleansing Fireball
+			CommanderSpear2.DisplayName: Holy Spear
+			CrystalTelegraphLine.DisplayName: Telegraph
+			DyingSun.DisplayName: Dying Sun
+			FallingCrystalShard.DisplayName: Holy Crystal Shard
+			HolyBasicFireball.DisplayName: Holy Fireball
+			HolyBomb.DisplayName: Holy Bomb
+			HolyCinder.DisplayName: Holy Cinder
+			HolyCross.DisplayName: Holy Symbol
+			HolyCrystalSpike.DisplayName: Crystal Spike
+			HolyMagicLaserbeam.DisplayName: Holy Disintegration Deathray
+			HolyRitual.DisplayName: Holy Ritual
+			HolySpear.DisplayName: Holy Spear
+			HolySpearFirePillar.DisplayName: Lava Geyser
+			HolySunExplosion.DisplayName: Holy Explosion
+			ProfanedLava.DisplayName: Searing Lava of Atonement
+			ProfanedLavaBlob.DisplayName: Lava Blob
+			ProvBoomDeath.DisplayName: Explosion
+			ProvidenceArenaBorder.DisplayName: Border
+			ProvidenceWave.DisplayName: Explosion
+			ProvSummonFlameExplosion.DisplayName: Hyperthermal Explosion
+			StrongProfanedCrack.DisplayName: Profaned Cracks
+			BeeWave.DisplayName: Explosion
+			ConvergingHornet.DisplayName: Hornet
+			HoneyBlast.DisplayName: Honey Blast
+			HornetHive.DisplayName: Hive
+			TinyBee.DisplayName: Bee
+			BouncingSlimeProj.DisplayName: Bouncy Slime
+			FallingCrystal.DisplayName: Hallow Crystal
+			FallingGel.DisplayName: Falling Gel
+			FallingSpikeSlimeProj.DisplayName: Crystal Slime
+			HallowBlade.DisplayName: Hallow Blade
+			HallowBladeLaserbeam.DisplayName: Hallow Blade Deathray
+			HallowCrystalSpike.DisplayName: Crystal Spike
+			HallowLaserbeam.DisplayName: Hallow Deathray
+			QueenJewelBeam.DisplayName: Beam
+			QueenSlimeCrown.DisplayName: Queen Slime's Crown
+			QueenSlimeCrystalSpike.DisplayName: Crystal Spike
+			QueenSlimeLightWave.DisplayName: Explosion
+			QueenSlimeSplitFormProj.DisplayName: Heavenly Slime
+			SpinningLaserCrystal.DisplayName: Hallow Crystal
+			DarkFlamePillar.DisplayName: Dark Flame Pillar
+			DarkFlamePillarTelegraph.DisplayName: Telegraph
+			DarkMagicCinder.DisplayName: Dark Magic Cinder
+			DarkMagicFireball.DisplayName: Dark Magic Fireball
+			GroundBloodSpike.DisplayName: Blood Spike
+			GroundBloodSpikeCreator.DisplayName: Blood Spike Creator
+			RitualFlame.DisplayName: Blue Flame
+			SlammingRockPillar.DisplayName: Rock Pillar
+			StompShockwave.DisplayName: Shockwave
+			UnholyBloodGlob.DisplayName: Ungodly Blood
+			CosmicExplosion.DisplayName: Cosmic Explosion
+			CosmicKunai.DisplayName: Cosmic Kunai
+			CosmicMine.DisplayName: Cosmic Mine
+			DarkCosmicBomb.DisplayName: Cosmic Bomb
+			EldritchScythe.DisplayName: Scythe
+			ShadowDashTelegraph.DisplayName: Telegraph
+			ShadowSlash.DisplayName: Shadow Slash
+			AcceleratingSkull.DisplayName: Skull
+			NonHomingSkull.DisplayName: Skull
+			ShadowflameFireball.DisplayName: Shadowflame Bomb
+			SpinningFireball.DisplayName: Shadowflame Fireball
+			DeceleratingCrimulanGlob.DisplayName: Unstable Crimulan Glob
+			DeceleratingEbonianGlob.DisplayName: Unstable Ebonian Glob
+			GroundSlimeGlob.DisplayName: Unstable Slime Glob
+			HomingWeaverSpark.DisplayName: Spark
+			WeaverSpark.DisplayName: Spark
+			WindGust.DisplayName: Wind Gust
+			AcceleratingDarkMagicFlame.DisplayName: Dark Magic Flame
+			BrimstoneDemonSummonExplosion.DisplayName: Brimstone Explosion
+			BrimstoneFlameOrb.DisplayName: Brimstone Flame Orb
+			BrimstoneFlamePillar.DisplayName: Brimstone Flame Pillar
+			BrimstoneFlamePillarTelegraph.DisplayName: Telegraph
+			BrimstoneJewelProj.DisplayName: Brimstone Jewel
+			BrimstoneLaserbeam.DisplayName: Brimstone Deathray
+			CatastropheSlash.DisplayName: Resonance Slash
+			CondemnationArrowSCal.DisplayName: Dark Arrow
+			CondemnationProj.DisplayName: Condemnation
+			CalamitasCutsceneProj.DisplayName: Calamitas
+			DemonicBomb.DisplayName: Demonic Bomb
+			DemonicExplosion.DisplayName: Demonic Explosion
+			DemonicTelegraphLine.DisplayName: Telegraph
+			FlameOverloadBeam.DisplayName: Brimstone Flame Overload Ray
+			HeresyProjSCal.DisplayName: Heresy
+			InfernumBrimstoneGigablast.DisplayName: Brimstone Gigablast
+			LostSoulProj.DisplayName: Burning Soul
+			RedirectingDarkSoul.DisplayName: Dark Soul
+			RedirectingHellfireSCal.DisplayName: Brimstone Hellfire
+			RedirectingLostSoulProj.DisplayName: Burning Soul
+			RitualBrimstoneHeart.DisplayName: Brimstone Heart
+			SepulcherBone.DisplayName: Occult Bone
+			SepulcherSoulBomb.DisplayName: Wrathful Spirits
+			ShadowBolt.DisplayName: Shadow Bolt
+			ShadowFlameBlast.DisplayName: Shadow Blast
+			ShadowGigablast.DisplayName: Shadow Gigablast
+			ShadowSpark.DisplayName: Shadow Spark
+			SuicideBomberDemonExplosion.DisplayName: Explosion
+			SuicideBomberDemonHostile.DisplayName: Demon
+			SuicideBomberRitual.DisplayName: Ritual
+			SupremeCalamitasBrotherPortal.DisplayName: Dark Portal
+			SCalSymbol.DisplayName: Alchemical Symbol
+			VigilanceProj.DisplayName: Vigilance
+			CursedCinder.DisplayName: Cursed Cinder
+			CursedFireballBomb.DisplayName: Cursed Fireball Bomb
+			CursedFlameBurst.DisplayName: Cursed Flame
+			CursedFlameBurstTelegraph.DisplayName: Telegraph
+			HomingCursedFlameBurst.DisplayName: Cursed Flame
+			LaserGroundShock.DisplayName: Ground Shock
+			LightningTelegraph.DisplayName: Telegraph Ray
+			RedLightning.DisplayName: Lightning
+			RetinazerAimedDeathray.DisplayName: Deathray
+			RetinazerAimedDeathray2.DisplayName: Deathray
+			RetinazerGroundDeathray.DisplayName: Deathray
+			RetinazerLaser.DisplayName: Death Laser
+			SpazmatismFlamethrower.DisplayName: Cursed Flamethrower
+			TwinsEnergyExplosion.DisplayName: Boom
+			TwinsLensFlare.DisplayName: Lens Flare
+			TwinsShield.DisplayName: Shield
+			TwinsSpriteExplosion.DisplayName: Twins Sprite Explosion
+			CursedSoul.DisplayName: Soul
+			FireBeamTelegraph.DisplayName: Telegraph
+			FireBeamWoF.DisplayName: Flame Beam
+			TileTentacle.DisplayName: Tentacle
+			DraconicBlossomPetal.DisplayName: Draconic Blossom Petal
+			DraconicInfernado.DisplayName: Draconic Infernado
+			DragonFireball.DisplayName: Fireball
+			HomingFireball.DisplayName: Homing Fireball
+			InfernadoSpawner.DisplayName: Big Flare
+			LingeringDragonFlames.DisplayName: Dragonfire
+			MajesticSparkleBig.DisplayName: Majestic Sparkle
+			RedirectingYharonMeteor.DisplayName: Dragon Fireball
+			VortexOfFlame.DisplayName: Vortex of Flame
+			VortexTelegraphBeam.DisplayName: Flame Beam Telegraph
+			YharonBoom.DisplayName: Boom
+			YharonFlameExplosion.DisplayName: Hyperthermal Explosion
+			YharonFlamethrower.DisplayName: Draconic Flame Breath
+			YharonHeatFlashFireball.DisplayName: Fire
+			YharonMajesticSparkle.DisplayName: Majestic Sparkle
+			DraconicBurst.DisplayName: Draconic Burst
+			ExplodingWyvern.DisplayName: Wyvern
+			MeteorCinder.DisplayName: Cinder
+			MoltenMeteor.DisplayName: Meteor
+			CloudLightning.DisplayName: Cloud Lightning
+			LargeCloud.DisplayName: Large Cloud
+			LargeHail.DisplayName: Large Hail
+			SmallHail.DisplayName: Small Hail
+			ChainGuillotine.DisplayName: Chain Guillotine
+			CursedDart.DisplayName: Cursed Flame Dart
+			CursedFlamePillar.DisplayName: Cursed Flame Pillar
+			FetidBaghnakhs.DisplayName: Fetid Baghnakhs
+			IchorDart.DisplayName: Ichor Dart
+			LifeDrainingField.DisplayName: Life-Draining Field
+			DarkMagicCircle.DisplayName: Dark Magic
+			RedirectingWeakDarkMagicFlame.DisplayName: Dark Flame
+			PearlSwirl.DisplayName: Pearl Swirl
+			CrystalShard.DisplayName: Crystal Shard
+			FlyingKnife.DisplayName: Flying Knife
+			HolyStar.DisplayName: Holy Star
+			PiercingCrystalShard.DisplayName: Crystal Shard
+			ConvergingGammaEnergy.DisplayName: Gamma Cinder
+			GammaRain.DisplayName: Gamma Rain
+			GammaSuperDeathray.DisplayName: Gamma Deathray
+			BouncingSpitBall.DisplayName: Spit Ball
+			RisingFireball.DisplayName: Fireball
+			SandFlameBall.DisplayName: Sand Ball
+			Sandnado2.DisplayName: Sand Tornado
+			WanderersShellWater.DisplayName: Water Torrent
+			BrimstoneCrescentStaffProj.DisplayName: Brimstone Crescent Staff
+			BrimstoneForcefieldExplosion.DisplayName: Brimstone Explosion
+			CherryBlossomPetal.DisplayName: Cherry Blossom Petal
+			DisenchantedTabletProj.DisplayName: Disenchanted Tablet
+			GuardiansSummonerProjectile.DisplayName: Guardians Summoner Projectile
+			HydrothermalSmoke.DisplayName: Steam
+			PortalLensFlare.DisplayName: Lens Flare
+			ProvidenceSummonerProjectile.DisplayName: Providence Summoner Projectile
+			ScreenShakeProj.DisplayName: Screen Shake
+			TerminusAnimationProj.DisplayName: Terminus Animation Proj
+			WaterglassTokenProjectile.DisplayName: Waterglass Token
+			HyperplaneMatrixProjectile.DisplayName: Hyperplane Matrix
+			AridBattlecryProjectile.DisplayName: Arid Battlecry
+			EyeOfMadnessProj.DisplayName: Eye of Madness
+			IllusionersReverieProj.DisplayName: Illusioner's Reverie
+			KevinProjectile.DisplayName: Kevin
+			LingeringSandSkull.DisplayName: Sand Skull
+			MiniSandShark.DisplayName: Mini Sand Shark
+			ShadowIllusion.DisplayName: Lens Flare
+			ShadowTendril.DisplayName: Shadow Tendril
+			EggGoldProjectile.DisplayName: Golden Egg
+			EggProjectile.DisplayName: Egg
+			MyrindaelBonkProjectile.DisplayName: Myrindael
+			MyrindaelLightning.DisplayName: Myrndael Lightning Bolt
+			MyrindaelSpark.DisplayName: Myrindael Spark
+			MyrindaelSpinProjectile.DisplayName: Myrindael
+			AsterPetProj.DisplayName: Aster
+			BlahajProj.DisplayName: Blahaj
+			BronzePetProj.DisplayName: Yharn
+			HatGirl.DisplayName: Hat Girl
+			SheepGod.DisplayName: Sheep God
+			GlassmakerFire.DisplayName: Glass Flames
+			GlassmakerHoldout.DisplayName: Glassmaker
+			GlassPiece.DisplayName: Glass Piece
+			DreamtasticEnergyBolt.DisplayName: Dreamer's Energy Bolt
+			DreamtasticProj.DisplayName: Dreamtastic
+			StormMaidensLightning.DisplayName: Storm Maiden Lightning Bolt
+			StormMaidensRetributionProj.DisplayName: Storm Maiden's Retribution
+			StormMaidensRetributionWorldProj.DisplayName: Storm Maiden's Retribution
+			WanderersShellProj.DisplayName: Wanderer's Shell
+			WayfinderGate.DisplayName: Wayfinder Gate
+			WayfinderHoldout.DisplayName: Wayfinder
+			WayfinderItemProjectile.DisplayName: Wayfinder
+			WayfinderSymbol.DisplayName: Wayfinder Gate Symbol
+		}
+
+		NPCs: {
+			ColossalSquidTentacle.DisplayName: Tentacle
+			DepthFeeder.DisplayName: Depth Feeder
+			Herring.DisplayName: Herring
+			LionfishEnemy.DisplayName: Lionfish
+			DeusSpawn.DisplayName: Deus Spawn
+			BrainIllusion.DisplayName: Brain of Cthulhu
+			BrainIllusion2.DisplayName: Brain of Cthulhu
+			SoulSeeker2.DisplayName: Soul Seeker
+			LightSnuffingHand.DisplayName: Light Snuffing Shadow Hand
+			AresEnergyKatana.DisplayName: XF-09 Ares Energy Katana
+			AresPulseCannon.DisplayName: XF-09 Ares Pulse Cannon
+			RedPlasmaEnergy.DisplayName: Plasma Orb
+			RedirectingBubble.DisplayName: Bubble
+			ExplodingServant.DisplayName: Servant of Cthulhu
+			GolemFistLeft.DisplayName: Golem Fist
+			GolemFistRight.DisplayName: Golem Fist
+			BereftVassal.DisplayName: Argus, the Bereft Vassal
+			Ninja.DisplayName: Ninja
+			BuilderDroneBig.DisplayName: Big Builder Drone
+			BuilderDroneSmall.DisplayName: Small Builder Drone
+			ExplosivePlagueCharger.DisplayName: Explosive Plague Charger
+			PlagueNuke.DisplayName: Plague Nuke
+			SmallDrone.DisplayName: Small Drone
+			PlanteraPinkTentacle.DisplayName: Plantera's Tentacle
+			PolterghastLeg.DisplayName: Ghostly Leg
+			EtherealHand.DisplayName: Ethereal Hand
+			HealerShieldCrystal.DisplayName: Holy Shield
+			SplitBigSlime.DisplayName: Unstable Slime Spawn
+			SplitBigSlimeAnimation.DisplayName: Unstable Slime Spawn
+			ShadowDemon.DisplayName: Shadow Hydra
+			GolemArenaPlatform.DisplayName: Golem Arena Platform
+		}
+
+		Biomes: {
+			LostColosseumBiome: {
+				DisplayName: Lost Colosseum
+				TownNPCDialogueName: the Lost Colosseum Biome
+			}
+
+			ProfanedTempleBiome: {
+				DisplayName: Profaned Temple
+				TownNPCDialogueName: the Profaned Temple Biome
+			}
+		}
+
+		Buffs: {
+			AccentuationHex: {
+				DisplayName: Hex of Accentuation
+				Description: Your opponent's magic attracts to you
+			}
+
+			AsterPetBuff: {
+				DisplayName: Aster
+				Description: He
+			}
+
+			BlahajBuff: {
+				DisplayName: Blahaj
+				Description: Comforting friend
+			}
+
+			BrimstoneBarrier: {
+				DisplayName: Brimstone Barrier
+				Description: Your magic withers your weaponry at the cost of a strong magical barrier
+			}
+
+			BrimstoneExhaustion: {
+				DisplayName: Brimstone Exhaustion
+				Description: You cannot resummon the Brimstone Crescent Staff's forcefield
+			}
+
+			BronzePetBuff: {
+				DisplayName: Calamity Bumblebirb Circa 2018
+				Description: Did you know that you can pet the birb in Terraria?
+			}
+
+			CatharsisHex: {
+				DisplayName: Hex of Catharsis
+				Description: Natural life regeneration is disabled and angry spirits are released from within you
+			}
+
+			DarkFlames: {
+				DisplayName: Dark Flames
+				Description: Your body is consumed by a forsaken inferno. Your defense is lowered
+			}
+
+			HatGirlBuff: {
+				DisplayName: Hat Girl
+				Description: Arson
+			}
+
+			IndignationHex: {
+				DisplayName: Hex of Indignation
+				Description: You are haunted by a soul seeker
+			}
+
+			Madness: {
+				DisplayName: Madness
+				Description: Going insane...
+			}
+
+			ShadowflameInferno: {
+				DisplayName: Shadowflame Inferno
+				Description: Rapidly losing life
+			}
+
+			SheepGodBuff: {
+				DisplayName: Sheep God
+				Description: Does the sheep count the sheep?
+			}
+
+			Sleepy: {
+				DisplayName: Sleepy
+				Description: You are fast asleep!
+			}
+
+			WeaknessHex: {
+				DisplayName: Hex of Weakness
+				Description: Your defense and damage reduction is significantly weakened
+			}
+
+			ZealHex: {
+				DisplayName: Hex of Zeal
+				Description: Your opponent's magic accelerates wildly
+			}
+		}
+
+		Items: {
+			CherishedSealocket: {
+				DisplayName: Cherished Sealocket
+				Tooltip:
+					'''
+					Grants a water forcefield that dissipates after 2 hits
+					When the forcefield is up, hard-hitting hits do 60% less damage overall, and you recieve a 12% damage boost
+					The forcefield reappears after 90 seconds
+					'''
+			}
+
+			FlowerOfTheOcean: {
+				DisplayName: Flower of the Ocean
+				Tooltip: Grants vastly increased visibility while underwater
+			}
+
+			Purity: {
+				DisplayName: Purity
+				Tooltip:
+					'''
+					30% increased damage and attack speed
+					Grants immunity to Nightwither
+					[c/ff5d5d:You are unlucky]
+					[c/59aae7:It sounds like two brothers, chasing glass frogs in the sun]
+					'''
+			}
+
+			SakuraBloom: {
+				DisplayName: Sakura Bloom
+				Tooltip:
+					'''
+					A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyy
+					Temporary
+					'''
+			}
+
+			BereftVassalBossBag: {
+				DisplayName: Treasure Bag (Bereft Vassal)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			BrimstoneCrescentStaff: {
+				DisplayName: Brimstone Crescent Staff
+				Tooltip:
+					'''
+					Using the staff toggles a powerful forcefield that provides a universal 66% DR
+					Hits that are applied to you while the forcefield is up release a violent explosion that hurts nearby enemies
+					When the forcefield is activated, and for 15 seconds afterwards, your damage output is reduced by 67%
+					The forcefield breaks after 3 hits. After it breaks, you cannot recreate it until 15 seconds have passed
+					'''
+			}
+
+			DemonicChaliceOfInfernum: {
+				DisplayName: Demonic Chalice of Infernum
+				Tooltip: ""
+			}
+
+			ProfanedCrystalDye.DisplayName: Profaned Crystal Dye
+
+			ElysianRose: {
+				DisplayName: Elysian Rose
+				Tooltip: It yearns for the deepest depths of the abyss...
+			}
+
+			HyperplaneMatrix: {
+				DisplayName: Hyperplane Matrix
+				Tooltip:
+					'''
+					An incalculably complex apparatus containing infinite power
+					Using it opens a panel that can grants a variety of reality-warping abilities
+					Upon a distant celestial body, a being named Draedon is born
+					Made to construct and to evolve
+					One purpose, one cycle
+					High, the machine works
+					Low, it rests
+					All ordered
+					All same
+					'''
+			}
+
+			KnowledgeBereftVassal: {
+				DisplayName: The Bereft Vassal and Great Sand Shark
+				Tooltip:
+					'''
+					[c/e3af40:Whispers from on high dance in your ears...]
+					[c/bebebe:Press "Left Shift" to listen closer]
+					'''
+			}
+
+			LunarCoin: {
+				DisplayName: Lunar Coin
+				Tooltip: ""
+			}
+
+			Blahaj: {
+				DisplayName: Blahaj
+				Tooltip: Summons a pet ikea plushie
+			}
+
+			BlastedTophat: {
+				DisplayName: Blasted Tophat
+				Tooltip: Summons a small hat girl that gives you advice about bosses that you fight
+			}
+
+			DisenchantedTablet: {
+				DisplayName: Disenchanted Tablet
+				Tooltip:
+					'''
+					Contains a complex network of intricately woven memories, locked away
+					Can be enchanted at a tablet altar, located somewhere on the surface
+					'''
+			}
+
+			NightmareCatcher: {
+				DisplayName: Nightmare Catcher
+				Tooltip:
+					'''
+					Summons the Sheep Lord to follow you around
+					It Appears From the Darkness, As I Softly Slink Into The Dream
+					'''
+			}
+
+			RisingWarriorsSoulstone: {
+				DisplayName: Rising Warrior's Soulstone
+				Tooltip:
+					'''
+					Summons a wolf starchild that... 'helps' you?
+					The tablet resonates with a strong legacy
+					'''
+			}
+
+			SuspiciouslyRoundFeather: {
+				DisplayName: Suspiciously Round Feather
+				Tooltip: Summons an old friend
+			}
+
+			AquaticScourgeSkull: {
+				DisplayName: Aquatic Scourge Skull
+				Tooltip: ""
+			}
+
+			BereftVassalTrophy: {
+				DisplayName: Bereft Vassal Trophy
+				Tooltip: ""
+			}
+
+			CosmicMonolithItem: {
+				DisplayName: Cosmic Monolith
+				Tooltip: ""
+			}
+
+			CreditPainting: {
+				DisplayName: Credit where Credit is Due
+				Tooltip: ""
+			}
+
+			GrandStatueItem: {
+				DisplayName: Grand Statue
+				Tooltip: ""
+			}
+
+			ProfanedFountainItem: {
+				DisplayName: Profaned Lava Fountain
+				Tooltip: ""
+			}
+
+			ProvidenceSpawnerItem: {
+				DisplayName: Providence Shrine Debug Item
+				Tooltip: Summons Providence when right clicked with a Profaned Core
+			}
+
+			TabletPedestal: {
+				DisplayName: Tablet Pedestal
+				Tooltip: Can be used to enchant a particular disenchanted tablet
+			}
+
+			AEWRelic: {
+				DisplayName: Infernal Adult Eidolon Wyrm Relic
+				Tooltip: GetsChanged
+			}
+
+			AquaticScourgeRelic: {
+				DisplayName: Infernal Aquatic Scourge Relic
+				Tooltip: GetsChanged
+			}
+
+			AstrumAureusRelic: {
+				DisplayName: Infernal Astrum Aureus Relic
+				Tooltip: GetsChanged
+			}
+
+			AstrumDeusRelic: {
+				DisplayName: Infernal Astrum Deus Relic
+				Tooltip: GetsChanged
+			}
+
+			BereftVassalRelic: {
+				DisplayName: Infernal Bereft Vassal Relic
+				Tooltip: GetsChanged
+			}
+
+			BetsyRelic: {
+				DisplayName: Infernal Betsy Relic
+				Tooltip: GetsChanged
+			}
+
+			BrainOfCthulhuRelic: {
+				DisplayName: Infernal Brain of Cthulhu Relic
+				Tooltip: GetsChanged
+			}
+
+			BrimstoneElementalRelic: {
+				DisplayName: Infernal Brimstone Elemental Relic
+				Tooltip: GetsChanged
+			}
+
+			CeaselessVoidRelic: {
+				DisplayName: Infernal Ceaseless Void Relic
+				Tooltip: GetsChanged
+			}
+
+			CrabulonRelic: {
+				DisplayName: Infernal Crabulon Relic
+				Tooltip: GetsChanged
+			}
+
+			CryogenRelic: {
+				DisplayName: Infernal Cryogen Relic
+				Tooltip: GetsChanged
+			}
+
+			DarkMageRelic: {
+				DisplayName: Infernal Dark Mage Relic
+				Tooltip: GetsChanged
+			}
+
+			DeerclopsRelic: {
+				DisplayName: Infernal Deerclops Relic
+				Tooltip: GetsChanged
+			}
+
+			DesertScourgeRelic: {
+				DisplayName: Infernal Desert Scourge Relic
+				Tooltip: GetsChanged
+			}
+
+			DestroyerRelic: {
+				DisplayName: Infernal Destroyer Relic
+				Tooltip: GetsChanged
+			}
+
+			DevourerOfGodsRelic: {
+				DisplayName: Infernal Devourer of Gods Relic
+				Tooltip: GetsChanged
+			}
+
+			DraedonRelic: {
+				DisplayName: Infernal Draedon Relic
+				Tooltip: GetsChanged
+			}
+
+			DragonfollyRelic: {
+				DisplayName: Infernal Dragonfolly Relic
+				Tooltip: GetsChanged
+			}
+
+			DreadnautilusRelic: {
+				DisplayName: Infernal Dreadnautilus Relic
+				Tooltip: GetsChanged
+			}
+
+			DukeFishronRelic: {
+				DisplayName: Infernal Duke Fishron Relic
+				Tooltip: GetsChanged
+			}
+
+			EaterOfWorldsRelic: {
+				DisplayName: Infernal Eater of Worlds Relic
+				Tooltip: GetsChanged
+			}
+
+			EmpressOfLightRelic: {
+				DisplayName: Infernal Empress of Light Relic
+				Tooltip: GetsChanged
+			}
+
+			EyeOfCthulhuRelic: {
+				DisplayName: Infernal Eye of Cthulhu Relic
+				Tooltip: GetsChanged
+			}
+
+			ForgottenShadowOfCalamitasRelic: {
+				DisplayName: Infernal Forgotten Shadow of Calamitas Relic
+				Tooltip: GetsChanged
+			}
+
+			GiantClamRelic: {
+				DisplayName: Infernal Giant Clam Relic
+				Tooltip: GetsChanged
+			}
+
+			GolemRelic: {
+				DisplayName: Infernal Golem Relic
+				Tooltip: GetsChanged
+			}
+
+			HiveMindRelic: {
+				DisplayName: Infernal Hive Mind Relic
+				Tooltip: GetsChanged
+			}
+
+			KingSlimeRelic: {
+				DisplayName: Infernal King Slime Relic
+				Tooltip: GetsChanged
+			}
+
+			LeviathanRelic: {
+				DisplayName: Infernal Leviathan Relic
+				Tooltip: GetsChanged
+			}
+
+			LunaticCultistRelic: {
+				DisplayName: Infernal Lunatic Cultist Relic
+				Tooltip: GetsChanged
+			}
+
+			MoonLordRelic: {
+				DisplayName: Infernal Moon Lord Relic
+				Tooltip: GetsChanged
+			}
+
+			OgreRelic: {
+				DisplayName: Infernal Ogre Relic
+				Tooltip: GetsChanged
+			}
+
+			OldDukeRelic: {
+				DisplayName: Infernal Old Duke Relic
+				Tooltip: GetsChanged
+			}
+
+			PerforatorsRelic: {
+				DisplayName: Infernal Perforator Hive Relic
+				Tooltip: GetsChanged
+			}
+
+			PlaguebringerGoliathRelic: {
+				DisplayName: Infernal Plaguebringer Goliath Relic
+				Tooltip: GetsChanged
+			}
+
+			PlanteraRelic: {
+				DisplayName: Infernal Plantera Relic
+				Tooltip: GetsChanged
+			}
+
+			PolterghastRelic: {
+				DisplayName: Infernal Polterghast Relic
+				Tooltip: GetsChanged
+			}
+
+			ProfanedGuardiansRelic: {
+				DisplayName: Infernal Profaned Guardians Relic
+				Tooltip: GetsChanged
+			}
+
+			ProvidenceRelic: {
+				DisplayName: Infernal Providence Relic
+				Tooltip: GetsChanged
+			}
+
+			QueenBeeRelic: {
+				DisplayName: Infernal Queen Bee Relic
+				Tooltip: GetsChanged
+			}
+
+			QueenSlimeRelic: {
+				DisplayName: Infernal Queen Slime Relic
+				Tooltip: GetsChanged
+			}
+
+			RavagerRelic: {
+				DisplayName: Infernal Ravager Relic
+				Tooltip: GetsChanged
+			}
+
+			SignusRelic: {
+				DisplayName: Infernal Signus Relic
+				Tooltip: GetsChanged
+			}
+
+			SkeletronPrimeRelic: {
+				DisplayName: Infernal Skeletron Prime Relic
+				Tooltip: GetsChanged
+			}
+
+			SkeletronRelic: {
+				DisplayName: Infernal Skeletron Relic
+				Tooltip: GetsChanged
+			}
+
+			SlimeGodRelic: {
+				DisplayName: Infernal Slime God Relic
+				Tooltip: GetsChanged
+			}
+
+			StormWeaverRelic: {
+				DisplayName: Infernal Storm Weaver Relic
+				Tooltip: GetsChanged
+			}
+
+			SupremeCalamitasRelic: {
+				DisplayName: Infernal Supreme Calamitas Relic
+				Tooltip: GetsChanged
+			}
+
+			TwinsRelic: {
+				DisplayName: Infernal Twins Relic
+				Tooltip: GetsChanged
+			}
+
+			WallOfFleshRelic: {
+				DisplayName: Infernal Wall of Flesh Relic
+				Tooltip: GetsChanged
+			}
+
+			YharonRelic: {
+				DisplayName: Infernal Yharon Relic
+				Tooltip: GetsChanged
+			}
+
+			SakuraBud: {
+				DisplayName: Sakura Bud
+				Tooltip:
+					'''
+					A delicate, fragile sakura bud, just about to bloom
+					You feel a guiding spirit trying to lead you the bloom’s home
+					Maybe you should follow its call?
+					'''
+			}
+
+			BloodwormPlatter: {
+				DisplayName: Bloodworm Platter
+				Tooltip:
+					'''
+					Summons the Old Duke
+					Can only be used in the Sulphurous Sea
+					Not consumable
+					'''
+			}
+
+			DungeonsCurse: {
+				DisplayName: Dungeon's Curse
+				Tooltip:
+					'''
+					Summons Skeletron
+					Skeletron enrages during daytime
+					It becomes nighttime if this item is used during daytime
+					Not consumable
+					'''
+			}
+
+			EvokingSearune: {
+				DisplayName: Evoking Searune
+				Tooltip:
+					'''
+					Summons the Adult Eidolon Wyrm in the deepest layer of the Abyss
+					A primordial artifact said to have been formed by the First God, it is capable of summoning a guarding apparition
+					Not consumable
+					'''
+			}
+
+			FleshChunk: {
+				DisplayName: Flesh Chunk
+				Tooltip:
+					'''
+					Summons the Wall of Flesh
+					Can only be used in the underworld
+					Not consumable
+					'''
+			}
+
+			LeviathanDetector: {
+				DisplayName: Leviathan Detector
+				Tooltip:
+					'''
+					Summons Anahita
+					Not consumable
+					'''
+			}
+
+			RadiantCrystal: {
+				DisplayName: Radiant Crystal
+				Tooltip:
+					'''
+					Summons the Empress of Light
+					Does not need to be used in the Hallow
+					The Empress enrages during daytime
+					Not consumable
+					'''
+			}
+
+			RedBait: {
+				DisplayName: Red Bait
+				Tooltip:
+					'''
+					Summons the Dreadnautilus
+					Can only be used at night
+					Not consumable
+					'''
+			}
+
+			SparklingTunaCan: {
+				DisplayName: Sparkling Mollusk Can
+				Tooltip:
+					'''
+					Summons the Giant Clam
+					Can only be used in the sunken sea
+					Not consumable
+					'''
+			}
+
+			TrufflePlatter: {
+				DisplayName: Truffle Worm Platter
+				Tooltip:
+					'''
+					Summons Duke Fishron
+					Can only be used at the Ocean
+					Not consumable
+					'''
+			}
+
+			WaterglassToken: {
+				DisplayName: Waterglass Token
+				Tooltip:
+					'''
+					Teleports you to the Lost Colosseum and back
+					This item cannot be used when being held by the mouse and must be in the hotbar
+					'''
+			}
+
+			Wayfinder: {
+				DisplayName: The Wayfinder
+				Tooltip:
+					'''
+					Creates a magical gate that allows you to fast travel to it
+					Does not work when a boss is alive
+					ModifedInModifyTooltips
+					'''
+			}
+
+			AridBattlecry: {
+				DisplayName: Arid Battlecry
+				Tooltip: Summons sharks below the cursor that fly towards enemies
+			}
+
+			EyeOfMadness: {
+				DisplayName: Eye of Madness
+				Tooltip:
+					'''
+					Releases barrages of shadow tendrils that ensnare enemies within their range
+					A sacred artifact once used by the Eidolists. Somehow, it contains within it knowledge of aeons past
+					Unfortunately, the full extent of its contents are beyond your understanding, but it would seem that you have an affinity for its
+					arcane powers, even if usage of them costs a little bit of your sanity
+					'''
+			}
+
+			IllusionersReverie: {
+				DisplayName: Illusioner's Reverie
+				Tooltip:
+					'''
+					Casts shadow illusions of yourself that hunt down nearby enemies before dispersing into clouds of dark magic
+					You shouldn't see this
+					Its existence compels one to wonder what knowledge has been lost to the mysterious, watery depths
+					'''
+			}
+
+			Kevin: {
+				DisplayName: kevin
+				Tooltip:
+					'''
+					A part of a greater whole, incomprehensible to the layperson
+					It stands for 'Kinetic Electroplasma Voltage Infuser'
+					'''
+			}
+
+			CallUponTheEggs: {
+				DisplayName: Call Upon The Eggs
+				Tooltip: "[c/f0ad56:This weapon is to be wielded by only those who shall take upon the task of watching over the weak ones]"
+			}
+
+			Myrindael: {
+				DisplayName: Myrindael
+				Tooltip:
+					'''
+					Holding left click spins the spear before throwing it. After being thrown, enemy hits release lightning and sparks towards enemies
+					Right clicks perform a powerful lunge that releases lightning from the sky on enemy hits
+					[c/6fc8ff:To fight, to destroy, is to take away from the world]
+					[c/6fc8ff:And yet, when the world itself clashes against you, what else can you do?]
+					'''
+			}
+
+			TheGlassmaker: {
+				DisplayName: The Glassmaker
+				Tooltip:
+					'''
+					90% chance to not consume gel
+					Sometimes releases hot glass shards that home in on nearby targets
+					'''
+			}
+
+			Dreamtastic: {
+				DisplayName: Dreamtastic
+				Tooltip:
+					'''
+					Summons two dorks that fire energy bolts at enemies
+					The book also releases energy bolts of its own
+					Contains a finite number of pages, documenting the stories of the two Dreamtastic Stars and their bountiful adventures
+					You are a dork
+					'''
+			}
+
+			StormMaidensRetribution: {
+				DisplayName: Storm Maiden's Retribution
+				Tooltip:
+					'''
+					Fires a spear that releases torrents of red lightning once fired
+					Stealth strikes release three spears upon firing that home in on enemies and release lightning from above when colliding with something
+					A divine spear wielded by a storm goddess, tempered by her vast abilities
+					The weapon itself seems to echo with perpetual misery, regret, and mourning
+					'''
+			}
+
+			WanderersShell: {
+				DisplayName: Wanderer's Shell
+				Tooltip:
+					'''
+					Throws a spread of sea shells that home in on enemies before bouncing off of them and lingering on the ground
+					Stealth strikes cause all lingering shells to explode into water geysers that target nearby enemies
+					The open edge is too sharp to put near your ear
+					'''
+			}
+
+			Dyes: {
+				ProfanedCrystalDye: {
+					DisplayName: Profaned Crystal Dye
+					Tooltip: ""
+				}
+			}
+
+			Lore.KnowledgeBereftVassal.DisplayName: Knowledge Bereft Vassal
+
+			Weapons: {
+				Rogue: {
+					Dreamtastic: {
+						DisplayName: Dreamtastic
+						Tooltip: ""
+					}
+
+					StormMaidensRetribution: {
+						DisplayName: Storm Maidens Retribution
+						Tooltip: ""
+					}
+
+					WanderersShell: {
+						DisplayName: Wanderers Shell
+						Tooltip: ""
+					}
+				}
+			}
+		}
+
+		Tiles: {
+			HydrothermalVent.MapEntry: Geyser
+			GolemArena.MapEntry: Arena
+			MoonlordArena.MapEntry: Arena
+			SeaShell.MapEntry: Sea Shell
+		}
+
+		Keybinds: {
+			"Wayfinder Create Key.DisplayName": Wayfinder  Create  Key
+			"Wayfinder Destroy Key.DisplayName": Wayfinder  Destroy  Key
+		}
+
+		Configs: {
+			InfernumConfig: {
+				DisplayName: Config
+
+				BossIntroductionAnimationsAreAllowed: {
+					Label: Boss Introduction Animations
+					Tooltip: Enables boss introduction animations. They only activate when Infernum Mode is active.
+				}
+
+				DisplayTipsInChat: {
+					Label: Blasted Tophat Tips in Chat
+					Tooltip: Determines whether the pet from the Blasted Tophat should display its tips in chat or not.
+				}
+
+				ReducedGraphicsConfig: {
+					Label: Reduced Graphical Settings
+					Tooltip: Enables reduced graphics mode. Use this if lag is an issue.
+				}
+
+				SaturationBloomIntensity: {
+					Label: Saturation Bloom Intensity
+					Tooltip: How intense color saturation bloom effects should be. Such effects are disabled when this value is zero. Be warned that high values may be overwhelming.
+				}
+
+				FlashbangOverlays: {
+					Label: Screen Overlays
+					Tooltip: Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.
+				}
+
+				CreditsRecordings: {
+					Label: Boss Footage Credits Recording
+					Tooltip: Enables boss footage recordings for the playback during the credits.
+				}
+			}
+		}
+	}
+}

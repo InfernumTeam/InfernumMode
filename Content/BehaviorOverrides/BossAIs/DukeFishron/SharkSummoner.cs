@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Summon Thing");
+            // DisplayName.SetDefault("Summon Thing");
         }
 
         public override void SetDefaults()

@@ -8,8 +8,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sleepy");
-            Description.SetDefault("You are fast asleep!");
+            // DisplayName.SetDefault("Sleepy");
+            // Description.SetDefault("You are fast asleep!");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

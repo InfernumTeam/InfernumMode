@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "You found the Terminus!";
 
-        public override bool ShouldBeActive() => !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>());
+        public override bool ShouldBeActive() => !NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;
 

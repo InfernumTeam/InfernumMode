@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -107,7 +107,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 case MoonLordAttackState.DeathEffects:
                     npc.life = 0;
-                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        npc.StrikeInstantKill();
                     npc.checkDead();
                     break;
                 case MoonLordAttackState.PhantasmalSpin:

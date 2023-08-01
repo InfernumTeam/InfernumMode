@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Psychic Blast");
+            // DisplayName.SetDefault("Psychic Blast");
             Main.projFrames[Type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

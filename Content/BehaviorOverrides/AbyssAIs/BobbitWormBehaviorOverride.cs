@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.Particles;
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 groundBottomX = npc.Bottom.X;
                 groundBottomY = npc.Bottom.Y;
                 npc.localAI[0] = 1f;
-                npc.RemoveWaterSlowness();
+                npc.waterMovementSpeed = 0f;
                 npc.netUpdate = true;
             }
 
@@ -214,7 +214,16 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 {
                     Volume = 0f
                 };
-                Main.npc[npc.TranslatedTargetIndex].StrikeNPCNoInteraction(Main.rand.Next(200, 225), 0f, 0);
+
+                NPC.HitInfo hitInfo = new()
+                {
+                    Damage = Main.rand.Next(200, 225),
+                    Crit = true,
+                    Knockback = 0f,
+                    HitDirection = 0
+                };
+
+                Main.npc[npc.TranslatedTargetIndex].StrikeNPC(hitInfo);
                 Main.npc[npc.TranslatedTargetIndex].Center = npc.Center - Vector2.UnitY * 16f;
             }
 

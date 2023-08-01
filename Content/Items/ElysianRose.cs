@@ -14,9 +14,9 @@ namespace InfernumMode.Content.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Elysian Rose");
-            Tooltip.SetDefault("It yearns for the deepest depths of the abyss...");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("Elysian Rose");
+            // Tooltip.SetDefault("It yearns for the deepest depths of the abyss...");
+            Item.ResearchUnlockCount = 1;
         }
         public override void SetDefaults()
         {

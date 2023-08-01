@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
@@ -392,11 +392,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-        private bool DisableNaturalYharonDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        private bool DisableNaturalYharonDeath(NPC npc, ref NPC.HitModifiers modifiers)
         {
             if (npc.type == ModContent.NPCType<YharonBoss>())
             {
-                if (npc.life - realDamage <= 0)
+                if (npc.life - modifiers.FinalDamage.Base <= 0)
                     npc.NPCLoot();
                 return false;
             }

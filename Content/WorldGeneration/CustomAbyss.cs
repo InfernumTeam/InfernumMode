@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Ores;
@@ -1265,7 +1265,7 @@ namespace InfernumMode.Content.WorldGeneration
 
         public static void PlaceObjectWithGoddamnForce(int x, int y, ushort tileID, int variant)
         {
-            if (!TileObject.CanPlace(x, y, tileID, variant, 0, out _, true, true))
+            if (!TileObject.CanPlace(x, y, tileID, variant, 0, out _, true))
                 return;
 
             int width = 1;

@@ -9,8 +9,8 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bereft Vassal Trophy");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("Bereft Vassal Trophy");
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

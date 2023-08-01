@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Blob");
+            // DisplayName.SetDefault("Ichor Blob");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             Main.projFrames[Projectile.type] = 6;

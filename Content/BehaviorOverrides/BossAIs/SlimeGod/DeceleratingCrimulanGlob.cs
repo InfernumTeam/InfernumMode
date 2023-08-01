@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Unstable Crimulan Glob");
+            // DisplayName.SetDefault("Unstable Crimulan Glob");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

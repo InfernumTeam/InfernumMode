@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public const float LaserLength = 4000f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Phantasmal Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Phantasmal Deathray");
 
         public override void SetDefaults()
         {

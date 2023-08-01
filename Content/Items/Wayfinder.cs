@@ -26,11 +26,11 @@ namespace InfernumMode.Content.Items
         public override string Texture => GetTexture();
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("The Wayfinder");
-            Tooltip.SetDefault("Creates a magical gate that allows you to fast travel to it\nDoes not work when a boss is alive\nModifedInModifyTooltips");
+            // DisplayName.SetDefault("The Wayfinder");
+            // Tooltip.SetDefault("Creates a magical gate that allows you to fast travel to it\nDoes not work when a boss is alive\nModifedInModifyTooltips");
             ItemID.Sets.AnimatesAsSoul[Type] = true;
             Main.RegisterItemAnimation(Type, new DrawAnimationVertical(6, 8));
-            SacrificeTotal = 1;
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

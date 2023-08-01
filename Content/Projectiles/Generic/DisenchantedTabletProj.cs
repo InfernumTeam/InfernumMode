@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public static int Lifetime => 210;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Disenchanted Tablet");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Disenchanted Tablet");
 
         public override void SetDefaults()
         {

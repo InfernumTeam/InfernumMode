@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Wall");
+            // DisplayName.SetDefault("Fire Wall");
         }
 
         public override void SetDefaults()

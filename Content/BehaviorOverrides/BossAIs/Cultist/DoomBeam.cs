@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Death Beam");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Death Beam");
 
         public override void SetDefaults()
         {

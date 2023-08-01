@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Rotten Tooth");
+            // DisplayName.SetDefault("Rotten Tooth");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

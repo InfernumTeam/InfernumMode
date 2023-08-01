@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wayfinder");
+            // DisplayName.SetDefault("Wayfinder");
             Main.projFrames[Type] = 8;
         }
 

@@ -165,7 +165,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Argus, the Bereft Vassal");
+            // DisplayName.SetDefault("Argus, the Bereft Vassal");
             Main.npcFrameCount[Type] = 4;
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 10;
@@ -1859,7 +1859,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<BereftVassalTeleportBoom>(), 0, 0f);
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.soundDelay <= 0)
             {

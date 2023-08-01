@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Myrindael");
+            // DisplayName.SetDefault("Myrindael");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 50;
         }
@@ -134,7 +134,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Owner.itemAnimation = 2;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (Time < Myrindael.SpinTime)
                 return;

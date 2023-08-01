@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
 
         public override void SetDefaults()
         {

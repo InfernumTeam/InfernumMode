@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/LargeStar";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Lens Flare");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Lens Flare");
 
         public override void SetDefaults()
         {

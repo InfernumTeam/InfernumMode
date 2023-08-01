@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Energy Shard");
+            // DisplayName.SetDefault("Dark Energy Shard");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 9;
         }

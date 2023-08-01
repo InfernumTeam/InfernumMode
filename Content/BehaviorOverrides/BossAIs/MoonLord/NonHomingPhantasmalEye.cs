@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override void SetStaticDefaults()
         {
             // HOLY SHIT IS THAT A FARGO REFERENCE OH MY GOD I AM GOING TO CANCEL DOMINIC VON KARMA FOR THIS
-            DisplayName.SetDefault("Phantasmal Eye");
+            // DisplayName.SetDefault("Phantasmal Eye");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }

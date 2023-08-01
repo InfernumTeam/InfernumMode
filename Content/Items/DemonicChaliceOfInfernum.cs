@@ -10,9 +10,9 @@ namespace InfernumMode.Content.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Demonic Chalice of Infernum");
+            // DisplayName.SetDefault("Demonic Chalice of Infernum");
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 8));
-            SacrificeTotal = 1;
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

@@ -1,6 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.Abyss;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -65,10 +65,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.GivenName = string.Empty;
 
             // Disable water slowness.
-            npc.RemoveWaterSlowness();
+            npc.waterMovementSpeed = 0f;
 
             // Try to get away if the AEW is coming or present.
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()))
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -36f, 0.08f);
                 npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();

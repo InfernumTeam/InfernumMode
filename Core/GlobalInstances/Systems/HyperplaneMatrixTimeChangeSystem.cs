@@ -1,4 +1,4 @@
-using InfernumMode.Core.Netcode;
+﻿using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -48,7 +48,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 return;
 
             // Make time move very, very fast.
-            if (!Main.fastForwardTime)
+            if (!Main.IsFastForwardingTime())
             {
                 PacketManager.SendPacket<TimeChangeSystemPacket>();
                 Main.sundialCooldown = 0;
@@ -62,7 +62,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 SoughtTime = null;
                 PacketManager.SendPacket<TimeChangeSystemPacket>();
                 Main.UpdateTimeRate();
-                Main.fastForwardTime = false;
+                Main.fastForwardTimeToDawn = false;
             }
         }
 
@@ -70,7 +70,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             SoughtTime = time;
             SeekingDayTime = day;
-            Main.fastForwardTime = false;
+            if (day)
+                Main.fastForwardTimeToDawn = false;
+            else
+                Main.fastForwardTimeToDusk = false;
         }
     }
 }

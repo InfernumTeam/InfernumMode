@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public ref float Timer => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tesla Bomb");
+            // DisplayName.SetDefault("Tesla Bomb");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

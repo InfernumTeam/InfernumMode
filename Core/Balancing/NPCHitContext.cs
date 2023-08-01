@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -7,11 +7,17 @@ namespace InfernumMode.Core.Balancing
     public struct NPCHitContext
     {
         public int Pierce;
+
         public int Damage;
+
         public int? ProjectileIndex;
+
         public int? ProjectileType;
+
         public bool IsStealthStrike;
+
         public ClassType? Class;
+
         public DamageSourceType DamageSource;
 
         public static NPCHitContext ConstructFromProjectile(Projectile proj)

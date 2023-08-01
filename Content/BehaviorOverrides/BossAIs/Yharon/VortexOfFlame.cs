@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Vortex of Flame");
+            // DisplayName.SetDefault("Vortex of Flame");
         }
 
         public override void SetDefaults()

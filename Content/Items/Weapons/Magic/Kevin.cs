@@ -17,10 +17,10 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("kevin");
-            Tooltip.SetDefault("A part of a greater whole, incomprehensible to the layperson\n" +
-                "It stands for 'Kinetic Electroplasma Voltage Infuser'");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("kevin");
+            /* Tooltip.SetDefault("A part of a greater whole, incomprehensible to the layperson\n" +
+                "It stands for 'Kinetic Electroplasma Voltage Infuser'"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public ref float Time => ref Projectile.ai[0];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Arid Battlecry");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Arid Battlecry");
 
         public override void SetDefaults()
         {

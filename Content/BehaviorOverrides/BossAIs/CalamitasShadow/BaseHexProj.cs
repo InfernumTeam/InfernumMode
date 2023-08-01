@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Calamitous Hex");
+            // DisplayName.SetDefault("Calamitous Hex");
             Main.projFrames[Type] = 20;
         }
 

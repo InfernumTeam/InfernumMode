@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Explosion");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Explosion");
 
         public override void SetDefaults()
         {

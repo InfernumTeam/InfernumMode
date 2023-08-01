@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Prismatic Light");
+            // DisplayName.SetDefault("Prismatic Light");
         }
 
         public override void SetDefaults()

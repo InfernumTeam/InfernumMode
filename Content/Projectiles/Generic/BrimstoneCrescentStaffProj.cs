@@ -39,7 +39,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override string Texture => "InfernumMode/Content/Items/BrimstoneCrescentStaff";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Crescent Staff");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Crescent Staff");
 
         public override void SetDefaults()
         {

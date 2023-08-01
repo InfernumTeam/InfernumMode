@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
     {
         public override string Texture => "CalamityMod/Skies/XerocLight";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()
         {

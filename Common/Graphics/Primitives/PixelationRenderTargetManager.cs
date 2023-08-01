@@ -25,15 +25,15 @@ namespace InfernumMode.Common.Graphics.Primitives
         #region Overrides
         public override void Load()
         {
-            On.Terraria.Main.CheckMonoliths += DrawToCustomRenderTargets;
-            On.Terraria.Main.DoDraw_DrawNPCsOverTiles += DrawPixelRenderTarget;
+            On_Main.CheckMonoliths += DrawToCustomRenderTargets;
+            On_Main.DoDraw_DrawNPCsOverTiles += DrawPixelRenderTarget;
             ResizePixelRenderTarget(true);
         }
 
         public override void Unload()
         {
-            On.Terraria.Main.CheckMonoliths -= DrawToCustomRenderTargets;
-            On.Terraria.Main.DoDraw_DrawNPCsOverTiles -= DrawPixelRenderTarget;
+            On_Main.CheckMonoliths -= DrawToCustomRenderTargets;
+            On_Main.DoDraw_DrawNPCsOverTiles -= DrawPixelRenderTarget;
 
             Main.QueueMainThreadAction(() =>
             {
@@ -65,14 +65,14 @@ namespace InfernumMode.Common.Graphics.Primitives
             Main.spriteBatch.End();
         }
 
-        private void DrawPixelRenderTarget(On.Terraria.Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
+        private void DrawPixelRenderTarget(On_Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
         {
             DrawScaledTarget(pixelRenderTargetBeforeNPCs);
             orig(self);
             DrawScaledTarget(pixelRenderTarget);
         }
 
-        private void DrawToCustomRenderTargets(On.Terraria.Main.orig_CheckMonoliths orig)
+        private void DrawToCustomRenderTargets(On_Main.orig_CheckMonoliths orig)
         {
             // Clear the render targets from the previous frame.
             pixelPrimDrawersList.Clear();

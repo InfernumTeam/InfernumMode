@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Hellfire");
+            // DisplayName.SetDefault("Brimstone Hellfire");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

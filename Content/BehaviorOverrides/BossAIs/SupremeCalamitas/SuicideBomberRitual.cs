@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public const int Lifetime = 84;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
         {

@@ -15,12 +15,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad()
         {
-            IL.Terraria.Projectile.NewProjectile_IEntitySource_float_float_float_float_int_int_float_int_float_float += PreSyncProjectileStuff;
+            Terraria.IL_Projectile.NewProjectile_IEntitySource_float_float_float_float_int_int_float_int_float_float_float += PreSyncProjectileStuff;
         }
 
         public override void Unload()
         {
-            IL.Terraria.Projectile.NewProjectile_IEntitySource_float_float_float_float_int_int_float_int_float_float -= PreSyncProjectileStuff;
+            Terraria.IL_Projectile.NewProjectile_IEntitySource_float_float_float_float_int_int_float_int_float_float_float -= PreSyncProjectileStuff;
         }
 
         private void PreSyncProjectileStuff(ILContext il)

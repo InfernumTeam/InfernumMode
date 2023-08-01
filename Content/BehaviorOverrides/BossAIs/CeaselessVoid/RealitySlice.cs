@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Reality Tear");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Reality Tear");
 
         public override void SetDefaults()
         {

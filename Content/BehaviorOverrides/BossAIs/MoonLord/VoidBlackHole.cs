@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public Player Target => Main.player[Projectile.owner];
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/WhiteHole";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Void");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Void");
 
         public override void SetDefaults()
         {

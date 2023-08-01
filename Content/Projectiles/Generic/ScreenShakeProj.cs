@@ -29,7 +29,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Screen Shake");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Screen Shake");
 
         public override void SetDefaults()
         {

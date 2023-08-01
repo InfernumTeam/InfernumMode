@@ -80,7 +80,7 @@ namespace InfernumMode.Core.CrossCompatibility
                 ModContent.ItemType<DemonicChaliceOfInfernum>()
             }, false);
 
-            ToastyQoLMod.Call("AddNewBossLockInformation", () => DownedBossSystem._downedAdultEidolonWyrm, "Adult Eidolon Wyrm", new List<int>()
+            ToastyQoLMod.Call("AddNewBossLockInformation", () => DownedBossSystem.downedPrimordialWyrm, "Adult Eidolon Wyrm", new List<int>()
             {
                 ModContent.ItemType<EyeOfMadness>(),
                 ModContent.ItemType<IllusionersReverie>(),

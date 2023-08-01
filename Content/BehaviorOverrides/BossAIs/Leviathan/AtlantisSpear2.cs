@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Atlantis Spear");
+            // DisplayName.SetDefault("Atlantis Spear");
         }
 
         public override void SetDefaults()

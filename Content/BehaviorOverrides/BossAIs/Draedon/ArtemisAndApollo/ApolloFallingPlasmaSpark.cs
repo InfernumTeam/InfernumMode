@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Plasma Spark");
+            // DisplayName.SetDefault("Plasma Spark");
             Main.projFrames[Projectile.type] = 4;
         }
 

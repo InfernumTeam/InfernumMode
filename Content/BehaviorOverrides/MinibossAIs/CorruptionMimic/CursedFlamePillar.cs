@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Flame Pillar");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Flame Pillar");
 
         public override void SetDefaults()
         {

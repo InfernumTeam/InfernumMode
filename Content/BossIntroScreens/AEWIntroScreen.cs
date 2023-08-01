@@ -1,5 +1,5 @@
 using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override string TextToDisplay => "Primeval Warden\nThe Eidolon Wyrm";
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;
     }

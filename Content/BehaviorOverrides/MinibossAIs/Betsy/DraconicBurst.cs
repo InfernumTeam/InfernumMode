@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
     public class DraconicBurst : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Burst");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Burst");
 
         public override void SetDefaults()
         {

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         public ref float TotalBounces => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Honey Blast");
+            // DisplayName.SetDefault("Honey Blast");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }

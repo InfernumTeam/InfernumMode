@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Flame Pillar");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Flame Pillar");
 
         public override void SetDefaults()
         {

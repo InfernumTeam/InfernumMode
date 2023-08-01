@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 
         public override void SetDefaults()
         {

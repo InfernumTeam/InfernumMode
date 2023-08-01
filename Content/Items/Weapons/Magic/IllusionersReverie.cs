@@ -24,11 +24,11 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             string tooltip = "Casts shadow illusions of yourself that hunt down nearby enemies before dispersing into clouds of dark magic\n" +
                 "You shouldn't see this\n" +
                 "Its existence compels one to wonder what knowledge has been lost to the mysterious, watery depths";
-            DisplayName.SetDefault("Illusioner's Reverie");
-            Tooltip.SetDefault(tooltip);
+            // DisplayName.SetDefault("Illusioner's Reverie");
+            // Tooltip.SetDefault(tooltip);
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 12));
             ItemID.Sets.AnimatesAsSoul[Type] = true;
-            SacrificeTotal = 1;
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

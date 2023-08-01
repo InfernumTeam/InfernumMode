@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Star");
+            // DisplayName.SetDefault("Holy Star");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 3;
         }

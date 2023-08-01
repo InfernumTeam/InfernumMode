@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         public override float MaxLaserLength => 2400f;
         public override float MaxScale => 1f;
         public override string Texture => "InfernumMode/Assets/ExtraTextures/Lasers/GolemHeadBeamBegin";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Heat Ray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Heat Ray");
 
         public override void SetDefaults()
         {

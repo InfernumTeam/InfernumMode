@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fireball");
+            // DisplayName.SetDefault("Fireball");
             Main.projFrames[Projectile.type] = 4;
         }
 

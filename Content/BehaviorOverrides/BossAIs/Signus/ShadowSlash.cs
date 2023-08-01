@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadow Slash");
+            // DisplayName.SetDefault("Shadow Slash");
         }
 
         public override void SetDefaults()

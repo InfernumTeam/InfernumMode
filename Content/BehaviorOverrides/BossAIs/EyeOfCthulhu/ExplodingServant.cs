@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Servant of Cthulhu");
+            // DisplayName.SetDefault("Servant of Cthulhu");
             Main.npcFrameCount[NPC.type] = 2;
         }
 
@@ -93,18 +93,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             NPC.frame.Y = frame * frameHeight;
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
-            for (int k = 0; k < 3; k++)
-            {
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
-            }
+            for (int i = 0; i < 3; i++)
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, 1f);
+
             if (Main.netMode != NetmodeID.Server && NPC.life <= 0)
             {
-                for (int k = 0; k < 7; k++)
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
-                }
+                for (int i = 0; i < 7; i++)
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hit.HitDirection, -1f, 0, default, 1f);
+
                 Gore.NewGore(NPC.GetSource_FromAI(), NPC.position, NPC.velocity, 6);
                 Gore.NewGore(NPC.GetSource_FromAI(), NPC.position, NPC.velocity, 7);
             }

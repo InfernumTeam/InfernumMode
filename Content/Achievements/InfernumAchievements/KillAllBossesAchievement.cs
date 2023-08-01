@@ -1,5 +1,5 @@
 ﻿using CalamityMod.Events;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -87,7 +87,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             ModContent.NPCType<OldDuke>(),
             ModContent.NPCType<DevourerofGodsHead>(),
             ModContent.NPCType<Yharon>(),
-            ModContent.NPCType<AdultEidolonWyrmHead>(),
+            ModContent.NPCType<PrimordialWyrmHead>(),
             ModContent.NPCType<Draedon>(),
             ModContent.NPCType<SupremeCalamitas>(),
         };

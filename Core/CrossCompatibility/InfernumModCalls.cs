@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -139,7 +139,7 @@ namespace InfernumMode.Core.CrossCompatibility
                     return false;
                 return Main.npc[npcIndex].Infernum().ExtraAI[10] >= MoonLordCoreBehaviorOverride.IntroSoundLength;
             }
-            if (npcID == ModContent.NPCType<AdultEidolonWyrmHead>())
+            if (npcID == ModContent.NPCType<PrimordialWyrmHead>())
                 return NPC.AnyNPCs(npcID);
             if (npcID == ModContent.NPCType<Draedon>())
                 return NPC.AnyNPCs(npcID) || InfernumMode.DraedonThemeTimer > 0;

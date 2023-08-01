@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault(string.Empty);
+            // DisplayName.SetDefault(string.Empty);
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.TrailCacheLength[NPC.type] = 7;
         }

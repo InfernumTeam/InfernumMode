@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wayfinder Gate");
+            // DisplayName.SetDefault("Wayfinder Gate");
         }
 
         public override void SetDefaults()

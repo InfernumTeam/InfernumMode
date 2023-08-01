@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Astral Crystal");
+            // DisplayName.SetDefault("Astral Crystal");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

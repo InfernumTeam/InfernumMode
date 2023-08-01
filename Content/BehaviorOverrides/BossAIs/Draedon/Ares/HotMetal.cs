@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Superheated Metal");
+            // DisplayName.SetDefault("Superheated Metal");
             Main.projFrames[Type] = 3;
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 10;

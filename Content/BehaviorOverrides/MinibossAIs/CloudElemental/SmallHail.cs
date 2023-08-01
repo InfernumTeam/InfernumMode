@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
     {
         public ref float Timer => ref Projectile.ai[1];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Small Hail");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Small Hail");
 
         public override void SetDefaults()
         {

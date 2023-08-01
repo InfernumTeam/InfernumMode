@@ -7,7 +7,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 {
     public class SporeFlower : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Flower");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Flower");
 
         public override void SetDefaults()
         {

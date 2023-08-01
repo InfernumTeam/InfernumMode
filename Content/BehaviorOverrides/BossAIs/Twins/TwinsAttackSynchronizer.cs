@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -1120,7 +1120,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 CurrentAttackState = TwinsAttackState.LazilyObserve;
                 UniversalAttackTimer = 0;
                 npc.life = 0;
-                npc.StrikeNPCNoInteraction(9999, 0f, 1, true);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    npc.StrikeInstantKill();
+
                 npc.active = false;
 
                 if (!otherTwinExists)

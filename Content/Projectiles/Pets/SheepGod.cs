@@ -35,7 +35,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sheep God");
+            // DisplayName.SetDefault("Sheep God");
             Main.projFrames[Projectile.type] = 1;
             Main.projPet[Projectile.type] = true;
         }

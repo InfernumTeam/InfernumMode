@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public const int ChargeupTime = 142;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Jewel");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Jewel");
 
         public override void SetDefaults()
         {

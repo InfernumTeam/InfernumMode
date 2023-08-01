@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.DripplerFlail}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Gore Spit Ball");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Gore Spit Ball");
 
         public override void SetDefaults()
         {

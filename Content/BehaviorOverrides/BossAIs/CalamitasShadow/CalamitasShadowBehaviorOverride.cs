@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
@@ -1769,7 +1769,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 }
 
                 npc.life = 0;
-                npc.StrikeNPCNoInteraction(9999, 0f, 0);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    npc.StrikeInstantKill();
+
                 npc.NPCLoot();
                 npc.active = false;
             }

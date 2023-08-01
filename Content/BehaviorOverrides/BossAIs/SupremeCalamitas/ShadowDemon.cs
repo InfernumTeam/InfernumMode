@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Shadow Hydra");
+            // DisplayName.SetDefault("Shadow Hydra");
         }
 
         public override void SetDefaults()
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => NPC.life = 20000;
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)/* tModPorter Note: bossLifeScale -> balance (bossAdjustment is different, see the docs for details) */ => NPC.life = 20000;
 
         public override void AI()
         {

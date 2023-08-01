@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Small Drone");
+            // DisplayName.SetDefault("Small Drone");
             Main.npcFrameCount[NPC.type] = 5;
         }
 

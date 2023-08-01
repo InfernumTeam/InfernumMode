@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Fireball Bomb");
+            // DisplayName.SetDefault("Cursed Fireball Bomb");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

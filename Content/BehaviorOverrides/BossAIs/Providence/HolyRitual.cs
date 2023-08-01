@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Ritual");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Ritual");
 
         public override void SetDefaults()
         {

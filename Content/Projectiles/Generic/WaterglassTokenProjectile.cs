@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override string Texture => "InfernumMode/Content/Items/WaterglassToken";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Waterglass Token");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Waterglass Token");
 
         public override void SetDefaults()
         {

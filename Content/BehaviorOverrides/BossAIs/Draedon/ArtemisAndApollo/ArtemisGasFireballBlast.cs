@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Volatile Fireball Blast");
+            // DisplayName.SetDefault("Volatile Fireball Blast");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

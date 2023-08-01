@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public const float TelegraphWidth = 4000f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exo Overload Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Exo Overload Telegraph");
 
         public override void SetDefaults()
         {

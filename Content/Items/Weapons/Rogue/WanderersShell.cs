@@ -17,11 +17,11 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wanderer's Shell");
-            Tooltip.SetDefault("Throws a spread of sea shells that home in on enemies before bouncing off of them and lingering on the ground\n" +
+            // DisplayName.SetDefault("Wanderer's Shell");
+            /* Tooltip.SetDefault("Throws a spread of sea shells that home in on enemies before bouncing off of them and lingering on the ground\n" +
                 "Stealth strikes cause all lingering shells to explode into water geysers that target nearby enemies\n" +
-                "The open edge is too sharp to put near your ear");
-            SacrificeTotal = 1;
+                "The open edge is too sharp to put near your ear"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

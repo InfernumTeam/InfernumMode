@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dust Devil");
+            // DisplayName.SetDefault("Dust Devil");
             Main.projFrames[Type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

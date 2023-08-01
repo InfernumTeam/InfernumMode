@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public ref float Time => ref Projectile.ai[0];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Light");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Light");
 
         public override void SetDefaults()
         {

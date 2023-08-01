@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public ref float Lifetime => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cinder");
+            // DisplayName.SetDefault("Cinder");
             Main.projFrames[Projectile.type] = 3;
         }
 

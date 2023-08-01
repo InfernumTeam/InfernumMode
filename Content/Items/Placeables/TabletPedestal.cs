@@ -9,9 +9,9 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Tablet Pedestal");
-            Tooltip.SetDefault("Can be used to enchant a particular disenchanted tablet");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Tablet Pedestal");
+            // Tooltip.SetDefault("Can be used to enchant a particular disenchanted tablet");
         }
 
         public override void SetDefaults()

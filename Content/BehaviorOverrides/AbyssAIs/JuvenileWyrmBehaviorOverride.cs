@@ -1,6 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.Abyss;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.Content.Projectiles.Generic;
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
 
             // Try to get away if the AEW is coming or present.
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()))
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -30f, 0.03f);
                 npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             else if (attackTimer < stalkTime)
             {
                 // Play a roar sound.
-                soundSlotID = SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center).ToFloat();
+                soundSlotID = SoundEngine.PlaySound(PrimordialWyrmHead.ChargeSound, target.Center).ToFloat();
 
                 // Determine the teleport offset.
                 teleportOffset = Lerp(1436f, 450f, Pow(Utils.GetLerpValue(0f, stalkTime - 180f, attackTimer, true), 1.81f));
@@ -206,7 +206,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Roar on the first frame as a warning.
             if (attackTimer == 1f)
             {
-                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+                SoundEngine.PlaySound(PrimordialWyrmHead.ChargeSound, target.Center);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.7f);
             }
 
@@ -284,7 +284,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Roar on the first frame as a warning.
             if (attackTimer == 1f)
             {
-                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+                SoundEngine.PlaySound(PrimordialWyrmHead.ChargeSound, target.Center);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.7f);
             }
 

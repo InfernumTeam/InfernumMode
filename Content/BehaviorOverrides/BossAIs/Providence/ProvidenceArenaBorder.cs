@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Border");
+            // DisplayName.SetDefault("Border");
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 99999999;
         }
 

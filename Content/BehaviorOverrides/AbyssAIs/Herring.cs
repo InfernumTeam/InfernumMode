@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Herring");
+            // DisplayName.SetDefault("Herring");
             Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.CountsAsCritter[NPC.type] = true;
             NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.knockBackResist = 0.5f;
             NPC.chaseable = false;
             SpawnModBiomes = new int[] { ModContent.GetInstance<AbyssLayer1Biome>().Type };
-            NPC.RemoveWaterSlowness();
+            NPC.waterMovementSpeed = 0f;
             NPC.Infernum().IsAbyssPrey = true;
         }
 

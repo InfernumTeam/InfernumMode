@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Necromantic Beam");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Necromantic Beam");
 
         public override void SetDefaults()
         {

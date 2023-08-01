@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shuriken");
+            // DisplayName.SetDefault("Shuriken");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }

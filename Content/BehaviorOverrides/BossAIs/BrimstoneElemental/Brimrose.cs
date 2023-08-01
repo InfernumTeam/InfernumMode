@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public ref float Time => ref Projectile.ai[0];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimrose");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimrose");
 
         public override void SetDefaults()
         {

@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Icicle Spike");
+            // DisplayName.SetDefault("Icicle Spike");
         }
 
         public override void SetDefaults()

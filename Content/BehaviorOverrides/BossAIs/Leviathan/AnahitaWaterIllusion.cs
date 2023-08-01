@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Anahita Illusion");
+            // DisplayName.SetDefault("Anahita Illusion");
             Main.projFrames[Type] = 6;
         }
 

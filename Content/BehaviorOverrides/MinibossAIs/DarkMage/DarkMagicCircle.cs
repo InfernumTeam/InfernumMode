@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
         public const int TotalMagicPiecesInCircle = 6;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Magic");
+            // DisplayName.SetDefault("Dark Magic");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }

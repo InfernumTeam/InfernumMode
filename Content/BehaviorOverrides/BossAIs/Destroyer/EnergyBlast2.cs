@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Energy Blast");
+            // DisplayName.SetDefault("Energy Blast");
             Main.projFrames[Projectile.type] = 6;
         }
 

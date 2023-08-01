@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     public class PlagueVomit : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Vomit");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Vomit");
 
         public override void SetDefaults()
         {

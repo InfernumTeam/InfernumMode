@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spark");
+            // DisplayName.SetDefault("Spark");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 8;
         }

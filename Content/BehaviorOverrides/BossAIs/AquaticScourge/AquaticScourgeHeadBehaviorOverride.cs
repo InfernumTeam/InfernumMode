@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AcidRain;
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalASDeath;
         }
 
-        private void UpdateAcidHissSound(NPC npc, int hitDirection, double damage)
+        private void UpdateAcidHissSound(NPC npc, ref NPC.HitInfo hit)
         {
             // Ensure that the Aquatic Scourge stops the hissing sound if it's unexpectedly killed.
             bool aquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        private bool DisableNaturalASDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        private bool DisableNaturalASDeath(NPC npc, ref NPC.HitModifiers modifiers)
         {
             bool isAquaticScourge = npc.type == ModContent.NPCType<AquaticScourgeHead>() || npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeBodyAlt>() || npc.type == ModContent.NPCType<AquaticScourgeTail>();
             if (isAquaticScourge)
@@ -79,11 +79,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 NPC head = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
 
                 // Disable damage and start the death animation if the hit would kill the scourge.
-                if (head.life - realDamage <= 1)
+                if (head.life - modifiers.FinalDamage.Base <= 1)
                 {
                     head.life = 0;
                     head.checkDead();
-                    damage = 0;
+                    modifiers.FinalDamage.Base *= 0;
                     npc.dontTakeDamage = true;
                     return false;
                 }
@@ -949,8 +949,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (attackTimer == slowdownTime)
             {
-                if (selfHurtHPRatio > 0f)
-                    npc.StrikeNPCNoInteraction((int)(npc.lifeMax * selfHurtHPRatio), 0f, 0);
+                if (selfHurtHPRatio > 0f && Main.netMode != NetmodeID.MultiplayerClient)
+                    npc.StrikeInstantKill();
 
                 SoundEngine.PlaySound(Mauler.RoarSound with { Pitch = 0.2f }, target.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeGoreSound, target.Center);

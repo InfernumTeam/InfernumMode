@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Flying Knife");
+            // DisplayName.SetDefault("Flying Knife");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 4;
         }

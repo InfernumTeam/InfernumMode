@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class ExoburstSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exoburst Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Exoburst Spark");
 
         public override void SetDefaults()
         {

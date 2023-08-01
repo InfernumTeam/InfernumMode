@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.AdultEidolonWyrm;
+﻿using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
     public class AEWBody1BehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmBody>();
+        public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmBody>();
 
         public static void SegmentAI(NPC npc)
         {
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
     public class AEWBody2BehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmBodyAlt>();
+        public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmBodyAlt>();
 
         public override bool PreAI(NPC npc)
         {
@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
     public class AEWTailBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmTail>();
+        public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmTail>();
 
         public override bool PreAI(NPC npc)
         {

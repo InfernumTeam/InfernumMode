@@ -1,5 +1,6 @@
 ﻿using CalamityMod.Cooldowns;
 using Microsoft.Xna.Framework;
+using Terraria.Localization;
 
 namespace InfernumMode.Content.Cooldowns
 {
@@ -9,7 +10,7 @@ namespace InfernumMode.Content.Cooldowns
 
         public override bool ShouldDisplay => true;
 
-        public override string DisplayName => "Infinite Flight";
+        public override LocalizedText DisplayName => Language.GetText("Mods.InfernumMode.Cooldowns.InfiniteFlightCooldown");
 
         public override string Texture => "InfernumMode/Content/Cooldowns/InfiniteFlight";
 

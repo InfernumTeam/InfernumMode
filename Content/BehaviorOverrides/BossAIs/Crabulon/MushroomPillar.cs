@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
         public const float StartingHeight = 22f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Mushroom Column");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Mushroom Column");
 
         public override void SetDefaults()
         {

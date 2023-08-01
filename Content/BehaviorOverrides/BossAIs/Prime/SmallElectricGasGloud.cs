@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas1";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Electric Cloud");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Electric Cloud");
 
         public override void SetDefaults()
         {

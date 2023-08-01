@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sulphuric Blob");
+            // DisplayName.SetDefault("Sulphuric Blob");
             Main.projFrames[Projectile.type] = 4;
         }
 

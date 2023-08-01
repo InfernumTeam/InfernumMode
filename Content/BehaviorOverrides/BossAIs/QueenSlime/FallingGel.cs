@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Falling Gel");
+            // DisplayName.SetDefault("Falling Gel");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

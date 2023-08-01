@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override float MaxLaserLength => 3200f;
         public override float MaxScale => 1f;
         public override string Texture => "InfernumMode/Assets/ExtraTextures/Lasers/PhantasmalBeamBegin";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Phantasmal Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Phantasmal Deathray");
 
         public override void SetDefaults()
         {

@@ -30,7 +30,7 @@ namespace InfernumMode.Core.TileData
 
         public override void OnModLoad()
         {
-            IL.Terraria.GameContent.Drawing.TileDrawing.DrawTrees += DrawBlossom;
+            IL_TileDrawing.DrawTrees += DrawBlossom;
         }
 
         private void DrawBlossom(ILContext il)

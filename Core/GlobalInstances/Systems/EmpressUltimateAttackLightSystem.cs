@@ -20,7 +20,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad()
         {
-            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight += ActLikeTheresNoMoon;
+            On_TileLightScanner.GetTileLight += ActLikeTheresNoMoon;
         }
 
         public override void ModifySunLightColor(ref Color tileColor, ref Color backgroundColor)
@@ -36,7 +36,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
         }
 
-        private void ActLikeTheresNoMoon(On.Terraria.Graphics.Light.TileLightScanner.orig_GetTileLight orig, TileLightScanner self, int x, int y, out Vector3 outputColor)
+        private void ActLikeTheresNoMoon(On_TileLightScanner.orig_GetTileLight orig, TileLightScanner self, int x, int y, out Vector3 outputColor)
         {
             orig(self, x, y, out outputColor);
             if (CelestialObjectNotInSkyForNextFrame)

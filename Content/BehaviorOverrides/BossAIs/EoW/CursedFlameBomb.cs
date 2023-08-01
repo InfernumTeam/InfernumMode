@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Flame Bomb");
+            // DisplayName.SetDefault("Cursed Flame Bomb");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
         }

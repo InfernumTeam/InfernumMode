@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shield");
+            // DisplayName.SetDefault("Shield");
         }
 
         public override void SetDefaults()

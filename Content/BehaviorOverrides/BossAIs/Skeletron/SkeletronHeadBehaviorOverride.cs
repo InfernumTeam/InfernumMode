@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
@@ -56,13 +56,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             GlobalNPCOverrides.StrikeNPCEvent += DisableNaturalSkeletronDeath;
         }
 
-        private bool DisableNaturalSkeletronDeath(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        private bool DisableNaturalSkeletronDeath(NPC npc, ref NPC.HitModifiers modifiers)
         {
-            if (npc.type == NPCID.SkeletronHead && npc.life - realDamage <= 1)
+            if (npc.type == NPCID.SkeletronHead && npc.life - modifiers.FinalDamage.Base <= 1)
             {
                 npc.life = 0;
                 npc.checkDead();
-                damage = 0;
+                modifiers.FinalDamage *= 0;
                 npc.dontTakeDamage = true;
                 return false;
             }

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     SpawnSegments(npc);
 
-                npc.RemoveWaterSlowness();
+                npc.waterMovementSpeed = 0f;
                 npc.localAI[0] = 1f;
                 npc.netUpdate = true;
             }

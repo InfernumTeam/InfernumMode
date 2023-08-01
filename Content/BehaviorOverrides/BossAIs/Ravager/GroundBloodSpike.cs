@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blood Spike");
+            // DisplayName.SetDefault("Blood Spike");
             Main.projFrames[Projectile.type] = 6;
         }
 

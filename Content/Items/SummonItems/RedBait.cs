@@ -11,11 +11,11 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Red Bait");
-            Tooltip.SetDefault("Summons the Dreadnautilus\n" +
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Red Bait");
+            /* Tooltip.SetDefault("Summons the Dreadnautilus\n" +
                 "Can only be used at night\n" +
-                "Not consumable");
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 6; // Queen Slime
         }
 

@@ -15,7 +15,7 @@ namespace InfernumMode.Common.Graphics
 
         public static event RenderTargetUpdateDelegate RenderTargetUpdateLoopEvent;
 
-        internal static void ResetTargetSizes(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
+        internal static void ResetTargetSizes(On_Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
             foreach (ManagedRenderTarget target in ManagedTargets)
             {
@@ -52,14 +52,14 @@ namespace InfernumMode.Common.Graphics
         {
             ManagedTargets = new();
             Main.OnPreDraw += HandleTargetUpdateLoop;
-            On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
+            On_Main.SetDisplayMode += ResetTargetSizes;
         }
 
         public override void OnModUnload()
         {
             DisposeOfTargets();
             Main.OnPreDraw -= HandleTargetUpdateLoop;
-            On.Terraria.Main.SetDisplayMode -= ResetTargetSizes;
+            On_Main.SetDisplayMode -= ResetTargetSizes;
         }
 
         private void HandleTargetUpdateLoop(GameTime obj) => RenderTargetUpdateLoopEvent?.Invoke();

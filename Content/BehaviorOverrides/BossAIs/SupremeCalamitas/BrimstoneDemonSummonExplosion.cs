@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Explosion");
+            // DisplayName.SetDefault("Brimstone Explosion");
             Main.projFrames[Projectile.type] = 7;
         }
 

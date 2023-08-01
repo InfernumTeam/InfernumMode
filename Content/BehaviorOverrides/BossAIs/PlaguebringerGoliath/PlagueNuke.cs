@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Plague Nuke");
+            // DisplayName.SetDefault("Plague Nuke");
             Main.npcFrameCount[NPC.type] = 12;
         }
 

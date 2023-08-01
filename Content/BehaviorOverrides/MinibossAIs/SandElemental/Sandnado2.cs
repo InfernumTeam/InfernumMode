@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sand Tornado");
+            // DisplayName.SetDefault("Sand Tornado");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

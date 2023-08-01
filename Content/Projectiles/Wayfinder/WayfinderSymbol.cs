@@ -29,7 +29,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public const int Lifetime = 240;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Wayfinder Gate Symbol");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Wayfinder Gate Symbol");
 
         public override void SetDefaults()
         {

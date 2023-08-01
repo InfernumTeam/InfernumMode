@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire");
+            // DisplayName.SetDefault("Fire");
         }
 
         public override void SetDefaults()

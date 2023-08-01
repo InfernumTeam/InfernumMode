@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
     {
         public ref float Time => ref Projectile.ai[0];
         public bool CanHomeIn => Projectile.ai[1] == 1f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Blood");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Blood");
 
         public override void SetDefaults()
         {

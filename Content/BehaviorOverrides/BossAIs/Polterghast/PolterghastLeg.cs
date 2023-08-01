@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Ghostly Leg");
+            // DisplayName.SetDefault("Ghostly Leg");
             NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
         }
 

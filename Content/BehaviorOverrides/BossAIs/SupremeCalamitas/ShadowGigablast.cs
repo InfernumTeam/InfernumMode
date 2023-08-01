@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadow Gigablast");
+            // DisplayName.SetDefault("Shadow Gigablast");
             Main.projFrames[Projectile.type] = 6;
         }
 

@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public ref float ActionCountdown => ref Projectile.ai[0];
         public ref float ExplosionTelegraphFade => ref Projectile.ai[1];
         public static readonly Vector2 TelegraphRingScale = new(0.8f, 1.333f);
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Light Burst");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Light Burst");
 
         public override void SetDefaults()
         {

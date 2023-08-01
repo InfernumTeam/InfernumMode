@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public override string Texture => "CalamityMod/Skies/XerocLight";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperthermal Explosion");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperthermal Explosion");
 
         public override void SetDefaults()
         {

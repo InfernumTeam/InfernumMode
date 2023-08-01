@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     {
         public ref float Time => ref Projectile.ai[0];
         public Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Missile");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Missile");
 
         public override void SetDefaults()
         {

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Eater of Souls");
+            // DisplayName.SetDefault("Eater of Souls");
             Main.projFrames[Type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;

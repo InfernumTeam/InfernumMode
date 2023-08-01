@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];
         public const float LaserLength = 2400f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 
         public override void SetDefaults()
         {

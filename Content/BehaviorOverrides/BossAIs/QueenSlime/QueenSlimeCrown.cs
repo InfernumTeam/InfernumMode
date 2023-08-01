@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Queen Slime's Crown");
+            // DisplayName.SetDefault("Queen Slime's Crown");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
         }

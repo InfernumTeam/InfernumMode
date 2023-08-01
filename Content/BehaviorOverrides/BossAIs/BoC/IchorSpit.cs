@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
     {
         public ref float Time => ref Projectile.ai[0];
         public bool CanHomeIn => Projectile.ai[1] == 1f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
 
         public override void SetDefaults()
         {

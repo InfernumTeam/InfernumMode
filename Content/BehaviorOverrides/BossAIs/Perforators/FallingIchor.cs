@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
     public class FallingIchor : ModProjectile
     {
         internal const float Gravity = 0.25f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
 
         public override void SetDefaults()
         {

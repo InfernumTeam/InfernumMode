@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Cinder");
+            // DisplayName.SetDefault("Holy Cinder");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

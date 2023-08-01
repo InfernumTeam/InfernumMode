@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Blast");
+            // DisplayName.SetDefault("Ichor Blast");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
         }

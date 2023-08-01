@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadow Tendril");
+            // DisplayName.SetDefault("Shadow Tendril");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = Lifetime;
         }

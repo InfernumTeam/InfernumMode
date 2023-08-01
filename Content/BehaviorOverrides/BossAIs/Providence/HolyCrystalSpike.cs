@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Spike");
+            // DisplayName.SetDefault("Crystal Spike");
         }
 
         public override void SetDefaults()

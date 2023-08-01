@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Content.Cooldowns;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -81,21 +81,29 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Lighting.AddLight(Player.Center, Color.Cyan.ToVector3() * 0.24f);
         }
 
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
-            if (MechanicalEffectsApply && !Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out _) && damage >= 120)
+            modifiers.ModifyHurtInfo += Modifiers_ModifyHurtInfo;
+
+            if (MechanicalEffectsApply && !Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out _) && ShouldReduceDamage)
             {
-                // Apply DR and disable typical hit graphical/sound effects.
-                damage = (int)(damage * (1f - ForcefieldDRMultiplier));
-                genGore = false;
+                // Apply DR and disable typical hit sound effects.
+                modifiers.FinalDamage *= (1f - ForcefieldDRMultiplier);
 
                 RemainingHits--;
-
                 // Play a custom water wobble effect.
                 SoundEngine.PlaySound(SoundID.Item130, Player.Center);
             }
+        }
 
-            return true;
+        private bool ShouldReduceDamage;
+
+        private void Modifiers_ModifyHurtInfo(ref Player.HurtInfo info)
+        {
+            if (info.Damage >= 120)
+                ShouldReduceDamage = true;
+            else
+                ShouldReduceDamage = false;
         }
 
         // Reset the hit counter if the player died and is about to respawn.

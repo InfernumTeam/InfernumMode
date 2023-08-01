@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public ref float Time => ref Projectile.ai[1];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
 
         public override void SetDefaults()
         {

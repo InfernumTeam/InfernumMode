@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Bolt");
+            // DisplayName.SetDefault("Dark Bolt");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

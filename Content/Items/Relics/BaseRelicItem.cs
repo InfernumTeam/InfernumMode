@@ -19,9 +19,9 @@ namespace InfernumMode.Content.Items.Relics
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault(DisplayNameToUse);
-            Tooltip.SetDefault("GetsChanged");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault(DisplayNameToUse);
+            // Tooltip.SetDefault("GetsChanged");
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)

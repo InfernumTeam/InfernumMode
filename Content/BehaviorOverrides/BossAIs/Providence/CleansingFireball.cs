@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cleansing Fireball");
+            // DisplayName.SetDefault("Cleansing Fireball");
             Main.projFrames[Type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

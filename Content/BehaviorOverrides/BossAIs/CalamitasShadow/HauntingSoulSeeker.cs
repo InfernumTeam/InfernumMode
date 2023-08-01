@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul Seeker");
+            // DisplayName.SetDefault("Soul Seeker");
             Main.projFrames[Projectile.type] = 5;
         }
 

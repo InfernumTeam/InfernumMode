@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Divine Light Bolt");
+            // DisplayName.SetDefault("Divine Light Bolt");
             Main.projFrames[Type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

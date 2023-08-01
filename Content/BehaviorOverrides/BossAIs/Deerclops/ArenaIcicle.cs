@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Long Icicle");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Long Icicle");
 
         public override void SetDefaults()
         {

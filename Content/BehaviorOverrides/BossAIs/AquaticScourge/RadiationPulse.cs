@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Radiation Pulse");
+            // DisplayName.SetDefault("Radiation Pulse");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 

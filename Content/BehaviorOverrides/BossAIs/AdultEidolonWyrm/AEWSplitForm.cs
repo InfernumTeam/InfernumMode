@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Adult Eidolon Wyrm");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Adult Eidolon Wyrm");
 
         public override void SetDefaults()
         {
@@ -162,12 +162,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             static Texture2D decideSegmentTexture(int index)
             {
                 // By default, segments are heads.
-                Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/AdultEidolonWyrmHead").Value;
+                Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/PrimordialWyrmHead").Value;
 
                 // After the head is drawn, use body segments.
                 if (index >= 1)
                 {
-                    string bodyTexturePath = "CalamityMod/NPCs/AdultEidolonWyrm/AdultEidolonWyrmBody";
+                    string bodyTexturePath = "CalamityMod/NPCs/AdultEidolonWyrm/PrimordialWyrmBody";
                     if (index % 2 == 1)
                         bodyTexturePath += "Alt";
 
@@ -176,7 +176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 // The last segment should be a tail.
                 if (index == SegmentCount)
-                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/AdultEidolonWyrmTail").Value;
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/PrimordialWyrmTail").Value;
 
                 return texture;
             }

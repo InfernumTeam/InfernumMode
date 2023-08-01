@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Energy");
+            // DisplayName.SetDefault("Dark Energy");
             Main.projFrames[Type] = 8;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

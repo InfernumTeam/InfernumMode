@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pearl Swirl");
+            // DisplayName.SetDefault("Pearl Swirl");
             Main.projFrames[Projectile.type] = 4;
         }
 

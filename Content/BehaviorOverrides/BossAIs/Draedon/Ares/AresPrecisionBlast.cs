@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Precision Blast");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Precision Blast");
 
         public override void SetDefaults()
         {

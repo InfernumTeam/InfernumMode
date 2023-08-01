@@ -10,9 +10,9 @@ namespace InfernumMode.Content.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Flower of the Ocean");
-            Tooltip.SetDefault($"Grants vastly increased visibility while underwater");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Flower of the Ocean");
+            // Tooltip.SetDefault($"Grants vastly increased visibility while underwater");
         }
 
         public override void SetDefaults()

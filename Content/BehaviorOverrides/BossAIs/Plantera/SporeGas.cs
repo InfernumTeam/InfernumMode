@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public ref float Time => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spore Gas");
+            // DisplayName.SetDefault("Spore Gas");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

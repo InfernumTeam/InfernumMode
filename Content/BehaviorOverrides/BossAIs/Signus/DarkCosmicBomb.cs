@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cosmic Bomb");
+            // DisplayName.SetDefault("Cosmic Bomb");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

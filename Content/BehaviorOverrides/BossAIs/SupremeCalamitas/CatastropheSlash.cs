@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Resonance Slash");
+            // DisplayName.SetDefault("Resonance Slash");
             Main.projFrames[Projectile.type] = 4;
         }
 

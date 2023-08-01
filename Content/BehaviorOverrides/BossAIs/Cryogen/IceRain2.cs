@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Rain");
+            // DisplayName.SetDefault("Ice Rain");
         }
 
         public override void SetDefaults()

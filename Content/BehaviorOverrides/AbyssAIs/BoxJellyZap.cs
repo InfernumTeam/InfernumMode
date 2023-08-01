@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jelly Zap");
+            // DisplayName.SetDefault("Jelly Zap");
             Main.projFrames[Type] = 4;
         }
         public override void SetDefaults()

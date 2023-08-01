@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Flame");
+            // DisplayName.SetDefault("Cursed Flame");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 34;
         }

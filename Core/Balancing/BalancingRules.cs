@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using System.Linq;
 using Terraria;
 
@@ -11,7 +11,7 @@ namespace InfernumMode.Core.Balancing
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext) => hitContext.Pierce is > 1 or (-1);
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+        public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
     public class ProjectileResistBalancingRule : IBalancingRule
@@ -34,13 +34,15 @@ namespace InfernumMode.Core.Balancing
             return true;
         }
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+        public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
     public class ClassResistBalancingRule : IBalancingRule
     {
         public float DamageMultiplier;
+
         public ClassType ApplicableClass;
+
         public ClassResistBalancingRule(float damageMultiplier, ClassType classType)
         {
             DamageMultiplier = damageMultiplier;
@@ -52,7 +54,7 @@ namespace InfernumMode.Core.Balancing
             return hitContext.Class == ApplicableClass;
         }
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+        public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
     public class StealthStrikeBalancingRule : IBalancingRule
@@ -75,7 +77,7 @@ namespace InfernumMode.Core.Balancing
             return hitContext.IsStealthStrike;
         }
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+        public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
     public class TrueMeleeBalancingRule : IBalancingRule
@@ -94,7 +96,7 @@ namespace InfernumMode.Core.Balancing
             return hitContext.DamageSource == DamageSourceType.TrueMeleeSwing;
         }
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+        public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
     public class NPCSpecificRequirementBalancingRule : IBalancingRule
@@ -110,6 +112,6 @@ namespace InfernumMode.Core.Balancing
 
         // This "balancing" rule doesn't actually perform any changes. It simply serves as a means of enforcing NPC-specific requirements.
         // As such, this method is empty.
-        public void ApplyBalancingChange(NPC npc, ref int damage) { }
+        public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) { }
     }
 }

@@ -19,7 +19,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Golden Egg");
+            // DisplayName.SetDefault("Golden Egg");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 4;
             Main.projFrames[Type] = 4;
@@ -49,9 +49,9 @@ namespace InfernumMode.Content.Projectiles.Melee
             Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(PossibleDebuffs[Main.rand.Next(0, PossibleDebuffs.Count)], crit ? 3 : 2);
+            target.AddBuff(PossibleDebuffs[Main.rand.Next(0, PossibleDebuffs.Count)], hit.Crit ? 3 : 2);
         }
 
         public override bool PreDraw(ref Color lightColor)

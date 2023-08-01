@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Smoke";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Dragonfire");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Dragonfire");
 
         public override void SetDefaults()
         {

@@ -20,8 +20,8 @@ namespace InfernumMode.Content.Items
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hyperplane Matrix");
-            Tooltip.SetDefault("An incalculably complex apparatus containing infinite power\n" +
+            // DisplayName.SetDefault("Hyperplane Matrix");
+            /* Tooltip.SetDefault("An incalculably complex apparatus containing infinite power\n" +
                 "Using it opens a panel that can grants a variety of reality-warping abilities\n" +
                 "Upon a distant celestial body, a being named Draedon is born\n" +
                 "Made to construct and to evolve\n" +
@@ -29,8 +29,8 @@ namespace InfernumMode.Content.Items
                 "High, the machine works\n" +
                 "Low, it rests\n" +
                 "All ordered\n" +
-                "All same");
-            SacrificeTotal = 1;
+                "All same"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
         public ref float Time => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Shard");
+            // DisplayName.SetDefault("Crystal Shard");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }

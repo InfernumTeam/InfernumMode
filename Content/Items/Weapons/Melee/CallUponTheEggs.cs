@@ -17,9 +17,9 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Call Upon The Eggs");
-            Tooltip.SetDefault(FlavorText);
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("Call Upon The Eggs");
+            // Tooltip.SetDefault(FlavorText);
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

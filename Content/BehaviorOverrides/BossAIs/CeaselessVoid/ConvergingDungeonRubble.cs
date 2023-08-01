@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Energized Rubble");
+            // DisplayName.SetDefault("Energized Rubble");
             Main.projFrames[Type] = 3;
         }
 

@@ -1,7 +1,7 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             DeathAnimation
         }
 
-        public override int NPCOverrideType => ModContent.NPCType<AdultEidolonWyrmHead>();
+        public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmHead>();
 
         #region AI
         public override float[] PhaseLifeRatioThresholds => new float[]
@@ -220,7 +220,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
                 int segmentCount = target.chaosState ? EnragedFormSegmentCount : SegmentCount;
-                CreateSegments(npc, segmentCount, ModContent.NPCType<AdultEidolonWyrmBody>(), ModContent.NPCType<AdultEidolonWyrmBodyAlt>(), ModContent.NPCType<AdultEidolonWyrmTail>());
+                CreateSegments(npc, segmentCount, ModContent.NPCType<PrimordialWyrmBody>(), ModContent.NPCType<PrimordialWyrmBodyAlt>(), ModContent.NPCType<PrimordialWyrmTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
@@ -268,7 +268,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (eyeColorShiftInterpolant >= 1f)
                 {
                     SoundEngine.PlaySound(SoundID.Item163, target.Center);
-                    SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+                    SoundEngine.PlaySound(PrimordialWyrmHead.ChargeSound, target.Center);
                 }
             }
 
@@ -801,14 +801,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
-                    if (!n.active || (n.type != ModContent.NPCType<AdultEidolonWyrmBody>() && n.type != ModContent.NPCType<AdultEidolonWyrmBodyAlt>() && n.type != ModContent.NPCType<AdultEidolonWyrmTail>()))
+                    if (!n.active || (n.type != ModContent.NPCType<PrimordialWyrmBody>() && n.type != ModContent.NPCType<PrimordialWyrmBodyAlt>() && n.type != ModContent.NPCType<PrimordialWyrmTail>()))
                         continue;
 
                     n.Center = npc.Center;
                     n.netUpdate = true;
                 }
 
-                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+                SoundEngine.PlaySound(PrimordialWyrmHead.ChargeSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1265,7 +1265,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Roar on the first frame as a warning.
             if (attackTimer == 1f)
             {
-                SoundEngine.PlaySound(AdultEidolonWyrmHead.RoarSound, target.Center);
+                SoundEngine.PlaySound(PrimordialWyrmHead.ChargeSound, target.Center);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 10f, 0.7f);
             }
 
@@ -1341,7 +1341,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.checkDead();
                 Main.BestiaryTracker.Kills.RegisterKill(npc);
                 AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.NPCKill, npc.whoAmI);
-                DownedBossSystem.downedAdultEidolonWyrm = true;
+                DownedBossSystem.downedPrimordialWyrm = true;
             }
 
             // Disable damage.
@@ -1392,7 +1392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Transform into the Terminus if not already defeated.
             // If already defeated simply disspear and give loot.
-            if (!DownedBossSystem.downedAdultEidolonWyrm)
+            if (!DownedBossSystem.downedPrimordialWyrm)
                 terminusDrawInterpolant = Utils.GetLerpValue(fadeEndTime, fadeEndTime + 95f, attackTimer, true);
             else
             {
@@ -1538,11 +1538,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public static void DrawSegment(NPC npc, Color lightColor)
         {
             string segmentString = "Head";
-            if (npc.type == ModContent.NPCType<AdultEidolonWyrmBody>())
+            if (npc.type == ModContent.NPCType<PrimordialWyrmBody>())
                 segmentString = "Body";
-            if (npc.type == ModContent.NPCType<AdultEidolonWyrmBodyAlt>())
+            if (npc.type == ModContent.NPCType<PrimordialWyrmBodyAlt>())
                 segmentString = "BodyAlt";
-            if (npc.type == ModContent.NPCType<AdultEidolonWyrmTail>())
+            if (npc.type == ModContent.NPCType<PrimordialWyrmTail>())
                 segmentString = "Tail";
 
             if (segmentString == "Head")
@@ -1652,7 +1652,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static void TryToDrawAbyssalBlackHole()
         {
-            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
+            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<PrimordialWyrmHead>());
             if (!Main.npc.IndexInRange(aewIndex))
                 return;
 

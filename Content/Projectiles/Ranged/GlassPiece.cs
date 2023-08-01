@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Glass Piece");
+            // DisplayName.SetDefault("Glass Piece");
             Main.projFrames[Type] = 4;
         }
 

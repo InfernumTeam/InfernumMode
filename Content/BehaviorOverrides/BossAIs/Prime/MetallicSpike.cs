@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 {
     public class MetallicSpike : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Metal Spike");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Metal Spike");
 
         public override void SetDefaults()
         {

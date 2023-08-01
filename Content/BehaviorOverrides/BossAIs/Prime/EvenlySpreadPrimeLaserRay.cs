@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         public override string Texture => "InfernumMode/Assets/ExtraTextures/Lasers/PrimeBeamBegin";
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
 
         public override void SetDefaults()
         {

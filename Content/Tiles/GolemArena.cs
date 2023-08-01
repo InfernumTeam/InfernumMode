@@ -1,6 +1,7 @@
 using CalamityMod;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Tiles
@@ -12,8 +13,8 @@ namespace InfernumMode.Content.Tiles
             Main.tileSolid[Type] = true;
             Main.tileMergeDirt[Type] = true;
             Main.tileBlockLight[Type] = true;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Arena");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Arena");
             AddMapEntry(new(95, 31, 0), name);
             CalamityUtils.SetMerge(Type, TileID.LihzahrdBrick);
         }

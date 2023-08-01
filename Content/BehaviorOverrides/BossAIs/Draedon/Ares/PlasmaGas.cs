@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas1";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma");
 
         public override void SetDefaults()
         {

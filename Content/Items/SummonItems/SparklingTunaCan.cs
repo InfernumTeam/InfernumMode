@@ -12,11 +12,11 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Sparkling Mollusk Can");
-            Tooltip.SetDefault("Summons the Giant Clam\n" +
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Sparkling Mollusk Can");
+            /* Tooltip.SetDefault("Summons the Giant Clam\n" +
                 "Can only be used in the sunken sea\n" +
-                "Not consumable");
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 2; // King Slime
         }
 

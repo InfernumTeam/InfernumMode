@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lava Geyser");
+            // DisplayName.SetDefault("Lava Geyser");
         }
 
         public override void SetDefaults()

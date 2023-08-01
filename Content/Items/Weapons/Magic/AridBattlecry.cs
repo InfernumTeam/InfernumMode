@@ -13,9 +13,9 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Arid Battlecry");
-            Tooltip.SetDefault("Summons sharks below the cursor that fly towards enemies");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("Arid Battlecry");
+            // Tooltip.SetDefault("Summons sharks below the cursor that fly towards enemies");
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

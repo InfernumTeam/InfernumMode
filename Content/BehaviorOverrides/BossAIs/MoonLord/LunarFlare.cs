@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Phantasmal Flare");
+            // DisplayName.SetDefault("Phantasmal Flare");
         }
 
         public override void SetDefaults()

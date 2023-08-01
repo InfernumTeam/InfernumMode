@@ -8,7 +8,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WorldgenSystem : ModSystem
     {
-        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
+        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
         {
             int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
             if (finalCleanupIndex != -1)

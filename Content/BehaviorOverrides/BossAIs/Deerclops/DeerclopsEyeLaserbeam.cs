@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/AresLaserBeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override string Texture => "CalamityMod/Projectiles/Boss/AresLaserBeamStart";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Firebeam");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Firebeam");
 
         public override void SetDefaults()
         {
@@ -152,7 +152,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
 
         }

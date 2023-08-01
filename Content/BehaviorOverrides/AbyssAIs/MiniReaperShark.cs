@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Reaper Shark");
+            // DisplayName.SetDefault("Reaper Shark");
             Main.projFrames[Type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

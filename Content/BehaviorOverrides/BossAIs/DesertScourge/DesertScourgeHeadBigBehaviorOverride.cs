@@ -57,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
         private void DisableMapIconDuringSpawnAnimation(NPC npc, ref int index)
         {
-            if (npc.type == ModContent.NPCType<DesertScourgeHead>() && npc.Infernum().ExtraAI[DesertScourgeHeadBigBehaviorOverride.HideMapIconIndex] >= 1f)
+            if (npc.type == ModContent.NPCType<DesertScourgeHead>() && npc.Infernum().ExtraAI[HideMapIconIndex] >= 1f)
                 index = -1;
         }
         #endregion Loading

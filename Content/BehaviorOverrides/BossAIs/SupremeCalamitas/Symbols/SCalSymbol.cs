@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Alchemical Symbol");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Alchemical Symbol");
 
         public override void SetDefaults()
         {

@@ -14,10 +14,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad()
         {
-            On.Terraria.GameContent.Drawing.TileDrawing.Update += StoreWindGrid;
+            On_TileDrawing.Update += StoreWindGrid;
         }
 
-        internal static void StoreWindGrid(On.Terraria.GameContent.Drawing.TileDrawing.orig_Update orig, TileDrawing self)
+        internal static void StoreWindGrid(On_TileDrawing.orig_Update orig, TileDrawing self)
         {
             orig(self);
 

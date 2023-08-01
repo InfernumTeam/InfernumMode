@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Unstable Slime Glob");
+            // DisplayName.SetDefault("Unstable Slime Glob");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             Main.projFrames[Projectile.type] = 6;

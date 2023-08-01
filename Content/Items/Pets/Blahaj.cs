@@ -11,9 +11,9 @@ namespace InfernumMode.Content.Items.Pets
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Blahaj");
-            Tooltip.SetDefault("Summons a pet ikea plushie");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Blahaj");
+            // Tooltip.SetDefault("Summons a pet ikea plushie");
         }
         public override void SetDefaults()
         {

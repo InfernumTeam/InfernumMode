@@ -30,11 +30,11 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             set;
         }
 
-        public override void OnModLoad() => On.Terraria.GameContent.Events.MoonlordDeathDrama.DrawWhite += DrawWhiteningHook;
+        public override void OnModLoad() => Terraria.GameContent.Events.On_MoonlordDeathDrama.DrawWhite += DrawWhiteningHook;
 
-        public override void OnModUnload() => On.Terraria.GameContent.Events.MoonlordDeathDrama.DrawWhite -= DrawWhiteningHook;
+        public override void OnModUnload() => Terraria.GameContent.Events.On_MoonlordDeathDrama.DrawWhite -= DrawWhiteningHook;
 
-        private void DrawWhiteningHook(On.Terraria.GameContent.Events.MoonlordDeathDrama.orig_DrawWhite orig, SpriteBatch spriteBatch)
+        private void DrawWhiteningHook(Terraria.GameContent.Events.On_MoonlordDeathDrama.orig_DrawWhite orig, SpriteBatch spriteBatch)
         {
             DrawWhitening();
             orig(spriteBatch);

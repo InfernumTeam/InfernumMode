@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
     public class TeleportTelegraph : ModProjectile
     {
         public bool CanCreateDust => Projectile.ai[0] == 0f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()
         {
@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
 
         }

@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Psionic Lightning Bolt");
+            // DisplayName.SetDefault("Psionic Lightning Bolt");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 150;
         }

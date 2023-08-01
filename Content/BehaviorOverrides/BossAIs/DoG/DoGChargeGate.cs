@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()
         {

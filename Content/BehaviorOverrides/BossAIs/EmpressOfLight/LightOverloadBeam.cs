@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Prismatic Overload Ray");
+            // DisplayName.SetDefault("Prismatic Overload Ray");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 

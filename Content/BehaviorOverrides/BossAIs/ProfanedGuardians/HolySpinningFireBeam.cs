@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Fire Beam");
+            // DisplayName.SetDefault("Holy Fire Beam");
         }
 
         public override void SetDefaults()

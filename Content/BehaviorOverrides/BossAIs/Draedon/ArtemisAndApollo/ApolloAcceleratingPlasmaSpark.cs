@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 {
     public class ApolloAcceleratingPlasmaSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma Spark");
 
         public override void SetDefaults()
         {

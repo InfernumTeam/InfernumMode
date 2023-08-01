@@ -1,4 +1,4 @@
-using CalamityMod.Systems;
+﻿using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using static CalamityMod.Systems.DifficultyModeSystem;
 
@@ -43,32 +44,22 @@ namespace InfernumMode.Content.UI
             }
         }
 
-        public override string ExpandedDescription
-        {
-            get
-            {
-                return "[c/B32E81:Many major foes will be different, having more challenging AI.] \n" +
-                        "[c/B32E81:Adrenaline takes considerably longer to charge.] \n" +
-                        "[c/FF0055:Adaptability is imperative.]";
-            }
-        }
+        public override LocalizedText ExpandedDescription => Language.GetText("Mods.InfernumMode.DifficultyUI.ExpandedDescription");
 
         public InfernumDifficulty()
         {
             DifficultyScale = 99999999f;
-            Name = "Infernum";
-            ShortDescription = "[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]\n" +
-                "[c/B32E81:This mode does not work with Master or the For the Worthy seed.]";
+            Name = Language.GetText("Mods.InfernumMode.DifficultyUI.Name");
+            ShortDescription = Language.GetText("Mods.InfernumMode.DifficultyUI.ShortDescription");
 
             ActivationTextKey = "Mods.InfernumMode.InfernumText";
             DeactivationTextKey = "Mods.InfernumMode.InfernumText2";
 
             ActivationSound = InfernumSoundRegistry.ModeToggleLaugh;
-
             ChatTextColor = Color.DarkRed;
 
             MostAlternateDifficulties = 1;
-            Difficulties = new DifficultyMode[] { new NoDifficulty(), new RevengeanceDifficulty(), new DeathDifficulty(), new WhereMalice(), this };
+            Difficulties = new DifficultyMode[] { new NoDifficulty(), new RevengeanceDifficulty(), new DeathDifficulty(), this };
             Difficulties = Difficulties.OrderBy(d => d.DifficultyScale).ToArray();
 
             DifficultyTiers = new List<DifficultyMode[]>();
@@ -100,7 +91,7 @@ namespace InfernumMode.Content.UI
 
             for (int i = 0; i < tierList.Length; i++)
             {
-                if (tierList[i].Name == "Death")
+                if (tierList[i].Name.Value == "Death")
                     return i;
             }
 

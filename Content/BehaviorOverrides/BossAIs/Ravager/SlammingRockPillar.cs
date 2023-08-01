@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public ref float Time => ref Projectile.ai[0];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Rock Pillar");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Rock Pillar");
 
         public override void SetDefaults()
         {

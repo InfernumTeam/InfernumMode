@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exoplasma Bomb");
+            // DisplayName.SetDefault("Exoplasma Bomb");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

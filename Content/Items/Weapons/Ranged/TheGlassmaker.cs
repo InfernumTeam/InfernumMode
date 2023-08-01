@@ -14,10 +14,10 @@ namespace InfernumMode.Content.Items.Weapons.Ranged
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("The Glassmaker");
-            Tooltip.SetDefault("90% chance to not consume gel\n" +
-                "Sometimes releases hot glass shards that home in on nearby targets");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("The Glassmaker");
+            /* Tooltip.SetDefault("90% chance to not consume gel\n" +
+                "Sometimes releases hot glass shards that home in on nearby targets"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

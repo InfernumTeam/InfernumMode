@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal Spike");
+            // DisplayName.SetDefault("Crystal Spike");
         }
 
         public override void SetDefaults()

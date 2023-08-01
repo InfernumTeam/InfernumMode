@@ -1,5 +1,5 @@
-using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+﻿using CalamityMod;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Tiles
 
         public const int Height = 2;
 
-        public static bool TerminusIsNotAttached => NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()) || DownedBossSystem.downedAdultEidolonWyrm || !InfernumMode.CanUseCustomAIs;
+        public static bool TerminusIsNotAttached => NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<TerminusAnimationProj>()) || DownedBossSystem.downedPrimordialWyrm || !InfernumMode.CanUseCustomAIs;
 
         public override void SetStaticDefaults()
         {

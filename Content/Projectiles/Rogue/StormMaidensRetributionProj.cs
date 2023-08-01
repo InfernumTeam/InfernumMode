@@ -47,7 +47,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Storm Maiden's Retribution");
+            // DisplayName.SetDefault("Storm Maiden's Retribution");
             Main.projFrames[Type] = 8;
         }
 
@@ -275,7 +275,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!StealthStrikeEffects)
                 return;

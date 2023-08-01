@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ceaseless Tear");
+            // DisplayName.SetDefault("Ceaseless Tear");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = Lifetime;
         }

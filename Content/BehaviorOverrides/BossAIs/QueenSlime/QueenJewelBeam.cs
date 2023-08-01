@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Beam");
+            // DisplayName.SetDefault("Beam");
             Main.projFrames[Type] = 4;
         }
 

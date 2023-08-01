@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Plasma Orb");
+            // DisplayName.SetDefault("Plasma Orb");
         }
 
         public override void SetDefaults()

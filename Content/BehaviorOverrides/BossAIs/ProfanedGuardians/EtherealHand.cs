@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Ethereal Hand");
+            // DisplayName.SetDefault("Ethereal Hand");
             NPCID.Sets.TrailingMode[NPC.type] = 2;
             NPCID.Sets.TrailCacheLength[NPC.type] = 15;
         }

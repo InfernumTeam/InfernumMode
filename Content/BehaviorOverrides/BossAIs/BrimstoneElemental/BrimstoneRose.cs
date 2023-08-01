@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public bool SpawnedWhileAngry => Projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Rose");
+            // DisplayName.SetDefault("Brimstone Rose");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

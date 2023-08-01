@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Fire Orb");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Fire Orb");
 
         public override void SetDefaults()
         {

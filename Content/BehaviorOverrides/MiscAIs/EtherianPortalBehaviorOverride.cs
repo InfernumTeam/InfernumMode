@@ -1,4 +1,4 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
@@ -31,12 +31,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MiscAIs
                     enemySpawnTimer++;
 
                 bool minibossShouldSpawn = OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID);
-                if ((enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate || minibossShouldSpawn) && DD2Event.TimeLeftBetweenWaves <= 0f)
+                if ((enemySpawnTimer >= DD2Event.LaneSpawnRate || minibossShouldSpawn) && DD2Event.TimeLeftBetweenWaves <= 0f)
                 {
-                    if (enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate * 3 || minibossShouldSpawn)
+                    if (enemySpawnTimer >= DD2Event.LaneSpawnRate * 3 || minibossShouldSpawn)
                         enemySpawnTimer = 0f;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && (int)enemySpawnTimer % CalamityGlobalAI.DD2EventEnemySpawnRate == 0)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && (int)enemySpawnTimer % DD2Event.LaneSpawnRate == 0)
                     {
                         if (!minibossShouldSpawn)
                             DD2Event.SpawnMonsterFromGate(npc.Bottom);

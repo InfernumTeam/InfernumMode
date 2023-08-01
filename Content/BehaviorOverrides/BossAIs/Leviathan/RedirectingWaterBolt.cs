@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Water Spear");
+            // DisplayName.SetDefault("Water Spear");
             Main.projFrames[Type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

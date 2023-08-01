@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         // To allow easy, static access from different locations.
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Deathray");
+            // DisplayName.SetDefault("Deathray");
         }
 
         public override void SetDefaults()

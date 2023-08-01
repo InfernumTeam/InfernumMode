@@ -102,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Empress Blade");
+            // DisplayName.SetDefault("Empress Blade");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 24;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;

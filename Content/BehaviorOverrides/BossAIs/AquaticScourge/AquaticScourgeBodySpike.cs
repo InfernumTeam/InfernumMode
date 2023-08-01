@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Irradiated Spike");
+            // DisplayName.SetDefault("Irradiated Spike");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.CanDistortWater[Type] = false;

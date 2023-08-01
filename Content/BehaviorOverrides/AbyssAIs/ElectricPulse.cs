@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Electric Pulse");
+            // DisplayName.SetDefault("Electric Pulse");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 

@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exo Energy Burst Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Exo Energy Burst Telegraph");
 
         public override void SetDefaults()
         {

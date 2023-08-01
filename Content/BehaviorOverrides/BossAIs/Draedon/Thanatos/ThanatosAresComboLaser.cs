@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exo Flame Laser");
+            // DisplayName.SetDefault("Exo Flame Laser");
             Main.projFrames[Projectile.type] = 4;
         }
 

@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region Overrides
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Fire Rift");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Fire Rift");
 
         public override void SetDefaults()
         {

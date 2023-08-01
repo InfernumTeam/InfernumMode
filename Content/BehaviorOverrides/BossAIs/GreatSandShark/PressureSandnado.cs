@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sand Tornado");
+            // DisplayName.SetDefault("Sand Tornado");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

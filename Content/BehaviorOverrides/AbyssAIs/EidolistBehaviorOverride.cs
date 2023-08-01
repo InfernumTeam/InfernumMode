@@ -1,5 +1,5 @@
 using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             ref float isHostile = ref npc.Infernum().ExtraAI[5];
 
             // Reset things.
-            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>());
             npc.chaseable = isHostile == 1f;
 
             // Disable natural despawning.

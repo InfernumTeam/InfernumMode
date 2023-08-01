@@ -51,7 +51,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Main.QueueMainThreadAction(() =>
             {
-                On.Terraria.Main.DoDraw_WallsAndBlacks += DistortBackground;
+                On_Main.DoDraw_WallsAndBlacks += DistortBackground;
             });
 
             // Wrap the draw black and draw walls functions in delegates so that they can be tossed around and called at will.
@@ -66,11 +66,11 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Main.QueueMainThreadAction(() =>
             {
-                On.Terraria.Main.DoDraw_WallsAndBlacks -= DistortBackground;
+                On_Main.DoDraw_WallsAndBlacks -= DistortBackground;
             });
         }
 
-        private void DistortBackground(On.Terraria.Main.orig_DoDraw_WallsAndBlacks orig, Main self)
+        private void DistortBackground(On_Main.orig_DoDraw_WallsAndBlacks orig, Main self)
         {
             if (!ShouldDrawWithDimensionEffects)
             {

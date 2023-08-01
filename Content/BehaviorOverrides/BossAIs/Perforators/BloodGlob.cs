@@ -7,7 +7,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 {
     public class BloodGlob : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Glob");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Blood Glob");
 
         public override void SetDefaults()
         {

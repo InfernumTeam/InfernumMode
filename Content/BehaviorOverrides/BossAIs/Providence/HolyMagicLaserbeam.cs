@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Disintegration Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Disintegration Deathray");
 
         public override void SetDefaults()
         {

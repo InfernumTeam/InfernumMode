@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sulphuric Rubble");
+            // DisplayName.SetDefault("Sulphuric Rubble");
             Main.projFrames[Type] = 3;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

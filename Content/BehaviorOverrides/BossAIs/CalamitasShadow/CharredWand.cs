@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Charred Wand");
+            // DisplayName.SetDefault("Charred Wand");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 9;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }

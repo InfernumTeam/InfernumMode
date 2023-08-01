@@ -7,8 +7,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Madness");
-            Description.SetDefault("Going insane...");
+            // DisplayName.SetDefault("Madness");
+            // Description.SetDefault("Going insane...");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

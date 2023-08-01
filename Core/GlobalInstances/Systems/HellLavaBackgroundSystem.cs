@@ -32,11 +32,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 BackgroundIntensities[background] = 0f;
             }
 
-            On.Terraria.Main.DrawUnderworldBackgroudLayer += DrawSpecialLava;
+            On_Main.DrawUnderworldBackgroudLayer += DrawSpecialLava;
         }
 
         // I wish I could better explain what this shit is about. Background code is evil.
-        private void DrawSpecialLava(On.Terraria.Main.orig_DrawUnderworldBackgroudLayer orig, bool flat, Vector2 screenOffset, float pushUp, int layerTextureIndex)
+        private void DrawSpecialLava(On_Main.orig_DrawUnderworldBackgroudLayer orig, bool flat, Vector2 screenOffset, float pushUp, int layerTextureIndex)
         {
             int underworldBackgroundIndex = Main.underworldBG[layerTextureIndex];
             Asset<Texture2D> asset = TextureAssets.Underworld[underworldBackgroundIndex];

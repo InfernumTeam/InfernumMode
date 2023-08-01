@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/LaserCircle";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Star");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Star");
 
         public override void SetDefaults()
         {

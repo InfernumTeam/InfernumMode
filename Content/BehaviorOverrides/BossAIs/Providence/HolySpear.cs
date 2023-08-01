@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/CommanderSpear2";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
 
         public override void SetDefaults()
         {

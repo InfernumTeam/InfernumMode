@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Explosive Plague Charger");
+            // DisplayName.SetDefault("Explosive Plague Charger");
             Main.npcFrameCount[NPC.type] = 5;
         }
 

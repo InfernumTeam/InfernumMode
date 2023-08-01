@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Plague Seeker");
+            // DisplayName.SetDefault("Plague Seeker");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 12;
         }

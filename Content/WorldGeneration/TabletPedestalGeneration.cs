@@ -17,7 +17,7 @@ namespace InfernumMode.Content.WorldGeneration
 
             for (int tries = 0; tries < 2500; tries++)
             {
-                Point placementPosition = Utilities.GetGroundPositionFrom(new Point(WorldGen.genRand.Next(480, 960), (int)WorldGen.worldSurfaceLow - 20));
+                Point placementPosition = Utilities.GetGroundPositionFrom(new Point(WorldGen.genRand.Next(480, 960), (int)GenVars.worldSurfaceLow - 20));
                 if (WorldGen.genRand.NextBool())
                     placementPosition.X = Main.maxTilesX - placementPosition.X;
 

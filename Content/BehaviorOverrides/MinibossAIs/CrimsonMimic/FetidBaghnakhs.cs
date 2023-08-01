@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fetid Baghnakhs");
+            // DisplayName.SetDefault("Fetid Baghnakhs");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 3;
         }

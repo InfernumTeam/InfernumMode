@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heavenly Slime");
+            // DisplayName.SetDefault("Heavenly Slime");
             Main.projFrames[Type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;

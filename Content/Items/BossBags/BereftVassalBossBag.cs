@@ -19,9 +19,9 @@ namespace InfernumMode.Content.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Treasure Bag (Bereft Vassal)");
-            Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
-            SacrificeTotal = 3;
+            // DisplayName.SetDefault("Treasure Bag (Bereft Vassal)");
+            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
+            Item.ResearchUnlockCount = 3;
             ItemID.Sets.BossBag[Item.type] = true;
         }
 

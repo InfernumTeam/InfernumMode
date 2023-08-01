@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 {
     public class CursedCinder : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Cinder");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Cinder");
 
         public override void SetDefaults()
         {

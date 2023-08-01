@@ -9,8 +9,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blahaj");
-            Description.SetDefault("Comforting friend");
+            // DisplayName.SetDefault("Blahaj");
+            // Description.SetDefault("Comforting friend");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

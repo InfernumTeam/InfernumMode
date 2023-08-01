@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Cosmic Explosion");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Cosmic Explosion");
 
         public override void SetDefaults()
         {

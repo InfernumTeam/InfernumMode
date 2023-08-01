@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Petal");
+            // DisplayName.SetDefault("Petal");
             Main.projFrames[Type] = 2;
         }
 

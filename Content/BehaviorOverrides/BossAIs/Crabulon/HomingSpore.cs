@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         public float HomePower => Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spore");
+            // DisplayName.SetDefault("Spore");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
         }

@@ -292,7 +292,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         core.velocity = core.SafeDirectionTo(target.Center) * coreChargeSpeed;
-                        int globID = npc.type == ModContent.NPCType<CrimulanSlimeGod>() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
+                        int globID = npc.type == ModContent.NPCType<CrimulanPaladin>() ? ModContent.ProjectileType<DeceleratingCrimulanGlob>() : ModContent.ProjectileType<DeceleratingEbonianGlob>();
                         for (int i = 0; i < 7; i++)
                         {
                             float shootOffsetAngle = Lerp(-0.63f, 0.63f, i / 7f);

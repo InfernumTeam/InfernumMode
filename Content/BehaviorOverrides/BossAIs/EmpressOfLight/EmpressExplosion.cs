@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public Player Target => Main.player[Projectile.owner];
         public override string Texture => "CalamityMod/Skies/XerocLight";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()
         {

@@ -1,6 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Biomes;
@@ -126,7 +126,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 BiomeTileCounterSystem.Layer4Tiles = 250;
 
             // Make the map turn black if in the final layer of the abyss.
-            bool obscureMap = Player.Calamity().ZoneAbyssLayer4 && !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>());
+            bool obscureMap = Player.Calamity().ZoneAbyssLayer4 && !NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>());
             MapObscurityInterpolant = Clamp(MapObscurityInterpolant + obscureMap.ToDirectionInt() * 0.008f, 0f, 1f);
 
             // Disable Acid Rain in the Lost Colosseum.

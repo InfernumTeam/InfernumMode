@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Astral Comet");
+            // DisplayName.SetDefault("Astral Comet");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

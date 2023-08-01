@@ -20,11 +20,11 @@ namespace InfernumMode.Content.Items
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sakura Bud");
-            Tooltip.SetDefault("A delicate, fragile sakura bud, just about to bloom\n" +
+            // DisplayName.SetDefault("Sakura Bud");
+            /* Tooltip.SetDefault("A delicate, fragile sakura bud, just about to bloom\n" +
                 "You feel a guiding spirit trying to lead you the bloom’s home\n" +
-                "Maybe you should follow its call?");
-            SacrificeTotal = 1;
+                "Maybe you should follow its call?"); */
+            Item.ResearchUnlockCount = 1;
         }
         public override void SetDefaults()
         {

@@ -1,4 +1,4 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Abyssal Ice");
+            // DisplayName.SetDefault("Abyssal Ice");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

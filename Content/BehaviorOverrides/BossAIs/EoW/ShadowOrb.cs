@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
     {
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.ShadowOrb}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Orb");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Orb");
 
         public override void SetDefaults()
         {

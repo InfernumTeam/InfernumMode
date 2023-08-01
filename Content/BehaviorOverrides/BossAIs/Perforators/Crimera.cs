@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crimera");
+            // DisplayName.SetDefault("Crimera");
             Main.projFrames[Type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;

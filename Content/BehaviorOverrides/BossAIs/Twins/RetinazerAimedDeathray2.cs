@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Deathray");
+            // DisplayName.SetDefault("Deathray");
         }
 
         public override void SetDefaults()

@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Storm Maiden's Retribution");
+            // DisplayName.SetDefault("Storm Maiden's Retribution");
             Main.projFrames[Type] = 8;
         }
 

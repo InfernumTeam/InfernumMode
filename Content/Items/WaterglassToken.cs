@@ -10,10 +10,10 @@ namespace InfernumMode.Content.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Waterglass Token");
-            Tooltip.SetDefault("Teleports you to the Lost Colosseum and back\n" +
-                "This item cannot be used when being held by the mouse and must be in the hotbar");
-            SacrificeTotal = 1;
+            // DisplayName.SetDefault("Waterglass Token");
+            /* Tooltip.SetDefault("Teleports you to the Lost Colosseum and back\n" +
+                "This item cannot be used when being held by the mouse and must be in the hotbar"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

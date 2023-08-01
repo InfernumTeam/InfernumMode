@@ -30,7 +30,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             CherryBlossomTarget ??= new(true, RenderTargetManager.CreateScreenSizedTarget);
             DyeFindingSystem.FindDyeEvent += FindCherryBlossomDye;
             Main.OnPreDraw += PrepareCherryBlossomTarget;
-            On.Terraria.Main.DrawProjectiles += DrawCherryBlossoms;
+            On_Main.DrawProjectiles += DrawCherryBlossoms;
         }
 
         public override void OnModUnload()
@@ -43,7 +43,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 CherryBlossomTarget = null;
 
                 Main.OnPreDraw -= PrepareCherryBlossomTarget;
-                On.Terraria.Main.DrawProjectiles -= DrawCherryBlossoms;
+                On_Main.DrawProjectiles -= DrawCherryBlossoms;
             });
         }
 
@@ -98,7 +98,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.instance.GraphicsDevice.SetRenderTarget(null);
         }
 
-        private void DrawCherryBlossoms(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
+        private void DrawCherryBlossoms(On_Main.orig_DrawProjectiles orig, Main self)
         {
             orig(self);
 

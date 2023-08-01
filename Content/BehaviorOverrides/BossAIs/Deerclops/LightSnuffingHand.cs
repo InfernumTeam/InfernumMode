@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Light Snuffing Shadow Hand");
+            // DisplayName.SetDefault("Light Snuffing Shadow Hand");
             Main.npcFrameCount[NPC.type] = 5;
         }
 

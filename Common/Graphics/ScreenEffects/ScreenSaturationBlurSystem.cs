@@ -1,5 +1,5 @@
-using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+﻿using CalamityMod;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
@@ -94,11 +94,11 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
 
             Main.OnPreDraw += HandleDrawMainThreadQueue;
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture += GetFinalScreenShader;
+            On_FilterManager.EndCapture += GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
             {
-                IL.Terraria.Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
+                IL_Main.DoDraw += LetEffectsDrawOnBudgetLightSettings;
             });
             Main.OnPreDraw += PrepareBlurEffects;
         }
@@ -107,11 +107,11 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Main.OnPreDraw -= HandleDrawMainThreadQueue;
             Main.OnPreDraw -= PrepareBlurEffects;
-            On.Terraria.Graphics.Effects.FilterManager.EndCapture -= GetFinalScreenShader;
+            On_FilterManager.EndCapture -= GetFinalScreenShader;
 
             Main.QueueMainThreadAction(() =>
             {
-                IL.Terraria.Main.DoDraw -= LetEffectsDrawOnBudgetLightSettings;
+                IL_Main.DoDraw -= LetEffectsDrawOnBudgetLightSettings;
                 if (BloomTarget is not null && !BloomTarget.IsDisposed)
                     BloomTarget.Dispose();
                 if (FinalScreenTarget is not null && !FinalScreenTarget.IsDisposed)
@@ -134,7 +134,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             c.Emit(OpCodes.Ldloc, localIndex);
             c.EmitDelegate(() =>
             {
-                bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && InfernumMode.CanUseCustomAIs;
+                bool fightingAEW = NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && InfernumMode.CanUseCustomAIs;
                 bool shadowProjectilesExist = ShadowIllusionDrawSystem.ShadowProjectilesExist;
                 bool secondaryCondition = fightingAEW || shadowProjectilesExist;
                 return secondaryCondition && !Main.mapFullscreen;
@@ -149,7 +149,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 a();
         }
 
-        internal static void GetFinalScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
+        internal static void GetFinalScreenShader(On_FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
         {
             // Copy the contents of the screen target in the final screen target.
             FinalScreenTarget.Target.SwapToRenderTarget();
@@ -187,7 +187,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             DrawEntityTargets();
             DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && Lighting.NotRetro)
                 Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 

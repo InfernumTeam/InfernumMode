@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Prismatic Bolt");
+            // DisplayName.SetDefault("Prismatic Bolt");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 30;
         }

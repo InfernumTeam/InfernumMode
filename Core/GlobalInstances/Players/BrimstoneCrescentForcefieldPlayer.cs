@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
@@ -38,13 +38,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Player.AddBuff(ModContent.BuffType<BrimstoneBarrier>(), CalamityUtils.SecondsToFrames(DebuffTime));
         }
 
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)/* tModPorter Override ImmuneTo, FreeDodge or ConsumableDodge instead to prevent taking damage */
         {
             if (ForcefieldIsActive)
             {
                 // Apply DR and disable typical hit graphical/sound effects.
-                damage = (int)(damage * (1f - ForcefieldDRMultiplier));
-                genGore = false;
+                modifiers.FinalDamage *= (1f - ForcefieldDRMultiplier);
 
                 // Play a custom fire hit effect.
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, Player.Center);
@@ -64,8 +63,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
             }
             else
                 ForcefieldHits = 0;
-
-            return true;
         }
 
         // Disable the forcefield for when the player respawns.

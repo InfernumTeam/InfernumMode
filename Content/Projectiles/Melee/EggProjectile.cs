@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Projectiles.Melee
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Egg");
+            // DisplayName.SetDefault("Egg");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 4;
             Main.projFrames[Type] = 4;

@@ -57,11 +57,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
             }
         }
 
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
             if (EggShieldActive)
                 CurrentEggShieldHits++;
-            return true;
         }
     }
 }

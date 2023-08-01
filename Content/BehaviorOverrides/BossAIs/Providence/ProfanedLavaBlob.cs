@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lava Blob");
+            // DisplayName.SetDefault("Lava Blob");
         }
 
         public override void SetDefaults()

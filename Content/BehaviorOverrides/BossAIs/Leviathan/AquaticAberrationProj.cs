@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Aquatic Aberration");
+            // DisplayName.SetDefault("Aquatic Aberration");
             Main.projFrames[Type] = 7;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

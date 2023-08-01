@@ -1,7 +1,7 @@
 using CalamityMod;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.SummonItems;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -228,7 +228,7 @@ namespace InfernumMode.Core.GlobalInstances
                 }));
             }
 
-            if (npc.type == ModContent.NPCType<AdultEidolonWyrmHead>())
+            if (npc.type == ModContent.NPCType<PrimordialWyrmHead>())
             {
                 npcLoot.Add(ModContent.ItemType<EvokingSearune>());
                 npcLoot.Add(ModContent.ItemType<IllusionersReverie>());

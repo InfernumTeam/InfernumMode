@@ -115,13 +115,13 @@ namespace InfernumMode.Core.TrackedMusic
                 CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke(new object[] { musicPath, path });
             }
 
-            On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
-            On.Terraria.Audio.LegacyAudioSystem.UpdateCommonTrackTowardStopping += PermitVolumeFadeoutForCustomTracks;
-            On.Terraria.Audio.LegacyAudioSystem.PauseAll += PauseMainTrack;
-            On.Terraria.Audio.LegacyAudioSystem.ResumeAll += ResumeMainTrack;
+            Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
+            Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrackTowardStopping += PermitVolumeFadeoutForCustomTracks;
+            Terraria.Audio.On_LegacyAudioSystem.PauseAll += PauseMainTrack;
+            Terraria.Audio.On_LegacyAudioSystem.ResumeAll += ResumeMainTrack;
         }
 
-        private static void PauseMainTrack(On.Terraria.Audio.LegacyAudioSystem.orig_PauseAll orig, Terraria.Audio.LegacyAudioSystem self)
+        private static void PauseMainTrack(Terraria.Audio.On_LegacyAudioSystem.orig_PauseAll orig, Terraria.Audio.LegacyAudioSystem self)
         {
             orig(self);
 
@@ -129,7 +129,7 @@ namespace InfernumMode.Core.TrackedMusic
                 MediaPlayer.Pause();
         }
 
-        private static void ResumeMainTrack(On.Terraria.Audio.LegacyAudioSystem.orig_ResumeAll orig, Terraria.Audio.LegacyAudioSystem self)
+        private static void ResumeMainTrack(Terraria.Audio.On_LegacyAudioSystem.orig_ResumeAll orig, Terraria.Audio.LegacyAudioSystem self)
         {
             orig(self);
 
@@ -137,7 +137,7 @@ namespace InfernumMode.Core.TrackedMusic
                 MediaPlayer.Resume();
         }
 
-        private static void DisableSoundsForCustomTracks(On.Terraria.Audio.LegacyAudioSystem.orig_UpdateCommonTrack orig, Terraria.Audio.LegacyAudioSystem self, bool active, int i, float totalVolume, ref float tempFade)
+        private static void DisableSoundsForCustomTracks(Terraria.Audio.On_LegacyAudioSystem.orig_UpdateCommonTrack orig, Terraria.Audio.LegacyAudioSystem self, bool active, int i, float totalVolume, ref float tempFade)
         {
             if (TracksThatDontUseTerrariasSystem.Contains(i))
             {
@@ -166,7 +166,7 @@ namespace InfernumMode.Core.TrackedMusic
             orig(self, active, i, totalVolume, ref tempFade);
         }
 
-        private static void PermitVolumeFadeoutForCustomTracks(On.Terraria.Audio.LegacyAudioSystem.orig_UpdateCommonTrackTowardStopping orig, Terraria.Audio.LegacyAudioSystem self, int i, float totalVolume, ref float tempFade, bool isMainTrackAudible)
+        private static void PermitVolumeFadeoutForCustomTracks(Terraria.Audio.On_LegacyAudioSystem.orig_UpdateCommonTrackTowardStopping orig, Terraria.Audio.LegacyAudioSystem self, int i, float totalVolume, ref float tempFade, bool isMainTrackAudible)
         {
             if (Main.gameMenu && MediaPlayer.State == MediaState.Playing)
             {

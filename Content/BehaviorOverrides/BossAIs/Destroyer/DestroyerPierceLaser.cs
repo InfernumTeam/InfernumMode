@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Flame Laser");
+            // DisplayName.SetDefault("Flame Laser");
             Main.projFrames[Projectile.type] = 4;
         }
 

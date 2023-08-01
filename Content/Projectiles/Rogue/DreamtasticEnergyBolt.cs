@@ -34,7 +34,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dreamer's Energy Bolt");
+            // DisplayName.SetDefault("Dreamer's Energy Bolt");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 36;
         }
@@ -114,7 +114,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             return Color.Lerp(Color.Fuchsia, Color.Cyan, colorInterpolant) * Utils.GetLerpValue(1.2f, 5f, Projectile.velocity.Length(), true);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!HasHitTarget)
             {

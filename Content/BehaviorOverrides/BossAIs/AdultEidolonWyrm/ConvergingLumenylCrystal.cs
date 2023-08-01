@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Divine Lumenyl");
+            // DisplayName.SetDefault("Divine Lumenyl");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

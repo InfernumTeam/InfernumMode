@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Fireball");
+            // DisplayName.SetDefault("Holy Fireball");
         }
 
         public override void SetDefaults()
@@ -150,10 +150,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
             // If the player is dodging, don't apply debuffs.
-            if (damage <= 0 || target.creativeGodMode)
+            if (modifiers.FinalDamage.Base <= 0 || target.creativeGodMode)
                 return;
 
             ProvUtils.ApplyHitEffects(target, Variant, 180, 0);

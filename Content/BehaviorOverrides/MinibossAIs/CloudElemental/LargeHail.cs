@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Large Hail");
+            // DisplayName.SetDefault("Large Hail");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;

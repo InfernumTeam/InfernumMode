@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Thermal Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Thermal Deathray");
 
         public override void SetDefaults()
         {

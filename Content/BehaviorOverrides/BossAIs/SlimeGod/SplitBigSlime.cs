@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Unstable Slime Spawn");
+            // DisplayName.SetDefault("Unstable Slime Spawn");
             Main.npcFrameCount[NPC.type] = 4;
         }
 
@@ -78,14 +78,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             NPC.spriteDirection = (NPC.velocity.X < 0f).ToDirectionInt();
         }
 
-        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.penetrate is > 1 or (-1))
-                damage = (int)(damage * 0.1);
+                modifiers.FinalDamage *= 0.1f;
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
+            int hitDirection = hit.HitDirection;
             for (int k = 0; k < 5; k++)
                 Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.TintableDust, hitDirection, -1f, 0, default, 1f);
 

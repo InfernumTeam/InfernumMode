@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 {
     public class MiniSandShark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Mini Sand Shark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Mini Sand Shark");
 
         public override void SetDefaults()
         {
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             // Create two lingering sand skulls.
             if (Main.myPlayer != Projectile.owner)

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Phantoplasm Vortex");
+            // DisplayName.SetDefault("Phantoplasm Vortex");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }

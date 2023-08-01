@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
     public class RealityBreakPortalLaserWall : ModProjectile, IAdditiveDrawer
     {
         public ref float Time => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()
         {

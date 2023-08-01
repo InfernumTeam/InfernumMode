@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Boom");
+            // DisplayName.SetDefault("Boom");
         }
 
         public override void SetDefaults()

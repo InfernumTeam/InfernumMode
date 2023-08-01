@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Deus Spawn");
+            // DisplayName.SetDefault("Deus Spawn");
             Main.npcFrameCount[NPC.type] = 4;
         }
 

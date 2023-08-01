@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas1";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Superheated Fire");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Superheated Fire");
 
         public override void SetDefaults()
         {

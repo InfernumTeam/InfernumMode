@@ -18,11 +18,11 @@ namespace InfernumMode.Content.Items.Accessories
 
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Cherished Sealocket");
-            Tooltip.SetDefault($"Grants a water forcefield that dissipates after {MaxHighDRHits} hits\n" +
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Cherished Sealocket");
+            /* Tooltip.SetDefault($"Grants a water forcefield that dissipates after {MaxHighDRHits} hits\n" +
                 $"When the forcefield is up, hard-hitting hits do {(int)(ForcefieldDRMultiplier * 100f)}% less damage overall, and you recieve a {(int)(DamageBoostWhenForcefieldIsUp * 100f)}% damage boost\n" +
-                $"The forcefield reappears after {ForcefieldRechargeSeconds} seconds");
+                $"The forcefield reappears after {ForcefieldRechargeSeconds} seconds"); */
         }
 
         public override void SetDefaults()

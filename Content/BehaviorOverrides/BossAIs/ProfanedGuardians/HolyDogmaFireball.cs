@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Large Fireball");
+            // DisplayName.SetDefault("Large Fireball");
         }
 
         public override void SetDefaults()

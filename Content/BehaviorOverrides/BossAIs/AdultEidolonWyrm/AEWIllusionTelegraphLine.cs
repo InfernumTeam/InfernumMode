@@ -1,5 +1,5 @@
-using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+﻿using CalamityMod;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()
         {
@@ -69,10 +69,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void Kill(int timeLeft)
         {
-            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
-            int aewBodyID = ModContent.NPCType<AdultEidolonWyrmBody>();
-            int aewBody2ID = ModContent.NPCType<AdultEidolonWyrmBodyAlt>();
-            int aewTailID = ModContent.NPCType<AdultEidolonWyrmTail>();
+            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<PrimordialWyrmHead>());
+            int aewBodyID = ModContent.NPCType<PrimordialWyrmBody>();
+            int aewBody2ID = ModContent.NPCType<PrimordialWyrmBodyAlt>();
+            int aewTailID = ModContent.NPCType<PrimordialWyrmTail>();
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Vector2 wyrmSpawnPosition = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * 1000f;
             if (CreatesRealAEW && aewIndex != -1)

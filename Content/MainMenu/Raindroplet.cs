@@ -37,7 +37,7 @@ namespace InfernumMode.Content.MainMenu
             Position = position;
             Velocity = velocity;
             DrawColor = Color.White;
-            Texture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VanillaReplacements/RainAstral").Value;
+            Texture = ModContent.Request<Texture2D>("CalamityMod/Waters/AstralRain").Value;
             Depth = Main.rand.NextFloat(1.3f, 3f);
             Variant = Main.rand.Next(0, MaxFrames);
             BaseFrame = new(FrameWidth * Variant, 0, 2, FrameHeight);

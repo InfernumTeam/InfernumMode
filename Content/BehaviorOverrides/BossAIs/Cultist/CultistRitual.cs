@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public static Color RitualColor => Color.White;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
         {

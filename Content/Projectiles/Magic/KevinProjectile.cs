@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Kevin");
+            // DisplayName.SetDefault("Kevin");
             Main.projFrames[Type] = 8;
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 3;
@@ -237,7 +237,7 @@ namespace InfernumMode.Content.Projectiles.Magic
         public override bool? CanHitNPC(NPC target) => target.whoAmI == TargetIndex ? null : false;
 
         // Apply hit effects to the affected NPC.
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             for (int i = 0; i < 8; i++)
             {

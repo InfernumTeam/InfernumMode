@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Abyssal Spirit");
+            // DisplayName.SetDefault("Abyssal Spirit");
             Main.projFrames[Type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

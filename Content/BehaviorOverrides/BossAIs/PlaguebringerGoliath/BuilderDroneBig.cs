@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Big Builder Drone");
+            // DisplayName.SetDefault("Big Builder Drone");
             Main.npcFrameCount[NPC.type] = 5;
         }
 

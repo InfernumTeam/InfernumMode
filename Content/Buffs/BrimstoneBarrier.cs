@@ -9,8 +9,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Barrier");
-            Description.SetDefault("Your magic withers your weaponry at the cost of a strong magical barrier");
+            // DisplayName.SetDefault("Brimstone Barrier");
+            // Description.SetDefault("Your magic withers your weaponry at the cost of a strong magical barrier");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

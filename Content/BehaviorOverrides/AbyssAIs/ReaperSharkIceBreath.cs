@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Breath");
+            // DisplayName.SetDefault("Ice Breath");
         }
 
         public override void SetDefaults()

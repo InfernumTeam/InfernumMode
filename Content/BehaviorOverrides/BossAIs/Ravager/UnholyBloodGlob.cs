@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ungodly Blood");
+            // DisplayName.SetDefault("Ungodly Blood");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             Main.projFrames[Projectile.type] = 6;

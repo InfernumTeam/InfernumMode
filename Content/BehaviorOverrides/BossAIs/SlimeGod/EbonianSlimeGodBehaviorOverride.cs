@@ -1,18 +1,17 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
+using EbonianPaladin = CalamityMod.NPCs.SlimeGod.EbonianPaladin;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 {
-    public class EbonianSlimeGodBehaviorOverride : NPCBehaviorOverride
+    public class EbonianPaladinBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<EbonianSlimeGod>();
+        public override int NPCOverrideType => ModContent.NPCType<EbonianPaladin>();
 
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
@@ -20,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         };
 
         #region Enumerations
-        public enum EbonianSlimeGodAttackType
+        public enum EbonianPaladinAttackType
         {
             LongLeaps,
             SplitSwarm,
@@ -74,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             // Summon the second slime.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.Infernum().ExtraAI[5] == 0f && npc.life < npc.lifeMax * SlimeGodComboAttackManager.SummonSecondSlimeLifeRatio)
             {
-                int secondSlime = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X, (int)target.Center.Y - 750, ModContent.NPCType<CrimulanSlimeGod>(), npc.whoAmI, 0f, 0f, SlimeGodComboAttackManager.DelayBeforeSoloEnrageAttacksBegin);
+                int secondSlime = NPC.NewNPC(npc.GetSource_FromAI(), (int)target.Center.X, (int)target.Center.Y - 750, ModContent.NPCType<CrimulanPaladin>(), npc.whoAmI, 0f, 0f, SlimeGodComboAttackManager.DelayBeforeSoloEnrageAttacksBegin);
                 if (Main.npc.IndexInRange(secondSlime))
                 {
                     Main.npc[secondSlime].Infernum().ExtraAI[5] = 1f;

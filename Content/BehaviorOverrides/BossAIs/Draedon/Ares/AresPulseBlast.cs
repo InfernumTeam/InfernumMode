@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exopulse Energy Burst");
+            // DisplayName.SetDefault("Exopulse Energy Burst");
         }
 
         public override void SetDefaults()
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.Size.Length() / 2.6f, targetHitbox);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
 
         }

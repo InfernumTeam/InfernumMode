@@ -1894,7 +1894,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             npc.life = 0;
             npc.HitEffect();
-            npc.StrikeNPC(10, 0f, 1);
+            NPC.HitInfo hit = new()
+            {
+                Damage = 10,
+                Knockback = 0f,
+                HitDirection = 1
+            };
+            npc.StrikeNPC(hit);
             npc.checkDead();
             npc.active = false;
         }

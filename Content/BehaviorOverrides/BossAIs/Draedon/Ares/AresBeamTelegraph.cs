@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public const float BeamPosOffset = 16f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Gamma Disintegration Beam Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Gamma Disintegration Beam Telegraph");
 
         public override void SetDefaults()
         {

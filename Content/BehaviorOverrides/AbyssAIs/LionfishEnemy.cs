@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.BiomeManagers;
 using CalamityMod.Items.Weapons.Rogue;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lionfish");
+            // DisplayName.SetDefault("Lionfish");
             Main.npcFrameCount[NPC.type] = 3;
             NPCID.Sets.UsesNewTargetting[Type] = true;
         }
@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.DeathSound = SoundID.NPCDeath1;
             SpawnModBiomes = new int[] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type };
             NPC.Infernum().IsAbyssPredator = true;
-            NPC.RemoveWaterSlowness();
+            NPC.waterMovementSpeed = 0f;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (Main.netMode == NetmodeID.Server)
                 return;
@@ -121,12 +121,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>($"Lionfish{i}").Type, NPC.scale);
         }
 
-        public override void OnHitPlayer(Player player, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            if (damage <= 0)
+            if (hurtInfo.Damage <= 0)
                 return;
 
-            player.AddBuff(BuffID.Venom, 180, true);
+            target.AddBuff(BuffID.Venom, 180, true);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)

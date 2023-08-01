@@ -3,6 +3,7 @@ using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -18,8 +19,8 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileObjectData.newTile.Height = 3;
             TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16 };
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Geyser");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Geyser");
             AddMapEntry(new Color(150, 100, 50), name);
 
             base.SetStaticDefaults();

@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public ref float LavaHeight => ref Projectile.ai[1];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Searing Lava of Atonement");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Searing Lava of Atonement");
 
         public override void SetDefaults()
         {

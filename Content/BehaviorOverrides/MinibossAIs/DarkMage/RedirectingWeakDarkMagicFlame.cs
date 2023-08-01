@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
         public bool FromBuffedDarkMage => Projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Flame");
+            // DisplayName.SetDefault("Dark Flame");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 12;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;

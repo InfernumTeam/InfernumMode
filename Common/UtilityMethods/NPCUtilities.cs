@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
@@ -93,7 +93,7 @@ namespace InfernumMode
             if (id < NPCID.Count)
                 return NPC.GetFullnameByID(id);
 
-            return NPCLoader.GetNPC(id).DisplayName.GetDefault();
+            return NPCLoader.GetNPC(id).DisplayName.Value;
         }
 
         public static int GetNPCIDFromName(string name)

@@ -1,4 +1,4 @@
-using CalamityMod.Items.Weapons.Ranged;
+﻿using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
 using System;
@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             GlobalNPCOverrides.HitEffectsEvent += UpdateSawSound;
         }
 
-        private void UpdateSawSound(NPC npc, int hitDirection, double damage)
+        private void UpdateSawSound(NPC npc, ref NPC.HitInfo hit)
         {
             // Ensure that Prime's saw ends the saw sound if it's unexpectedly killed.
             if (npc.type == NPCID.PrimeSaw && npc.life <= 0)

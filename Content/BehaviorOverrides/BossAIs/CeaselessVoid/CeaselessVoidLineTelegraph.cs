@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Line Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Line Telegraph");
 
         public override void SetDefaults()
         {

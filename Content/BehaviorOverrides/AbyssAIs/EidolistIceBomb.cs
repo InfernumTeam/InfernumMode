@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     {
         public ref float Time => ref Projectile.ai[0];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Abyssal Ice");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Abyssal Ice");
 
         public override void SetDefaults()
         {

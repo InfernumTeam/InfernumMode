@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
     {
         public override string Texture => "CalamityMod/Projectiles/Melee/ExobeamSlash";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Slash");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Slash");
 
         public override void SetDefaults()
         {

@@ -14,12 +14,12 @@ namespace InfernumMode.Content.Items.SummonItems
         public int frame;
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Dungeon's Curse");
-            Tooltip.SetDefault("Summons Skeletron\n" +
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Dungeon's Curse");
+            /* Tooltip.SetDefault("Summons Skeletron\n" +
                 "Skeletron enrages during daytime\n" +
                 "It becomes nighttime if this item is used during daytime\n" +
-                "Not consumable");
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 5; // Abeemination / Deer Thing
         }
 

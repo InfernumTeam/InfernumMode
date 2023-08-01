@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gore");
+            // DisplayName.SetDefault("Gore");
             Main.projFrames[Type] = 3;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

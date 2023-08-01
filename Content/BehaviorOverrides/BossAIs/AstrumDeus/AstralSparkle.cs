@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Sparkle");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Sparkle");
 
         public override void SetDefaults()
         {

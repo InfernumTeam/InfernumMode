@@ -12,11 +12,11 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Bloodworm Platter");
-            Tooltip.SetDefault("Summons the Old Duke\n" +
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Bloodworm Platter");
+            /* Tooltip.SetDefault("Summons the Old Duke\n" +
                 "Can only be used in the Sulphurous Sea\n" +
-                "Not consumable");
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 17; // Celestial Sigil
         }
 

@@ -1,7 +1,7 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Abyss;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.BrimstoneElemental;
@@ -35,8 +35,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CrabulonBoss = CalamityMod.NPCs.Crabulon.Crabulon;
-using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanSlimeGod;
-using EbonianSGBig = CalamityMod.NPCs.SlimeGod.EbonianSlimeGod;
+using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.CrimulanPaladin;
+using EbonianSGBig = CalamityMod.NPCs.SlimeGod.CrimulanPaladin;
 using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
@@ -130,7 +130,7 @@ namespace InfernumMode.Core.Balancing
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 936000,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2960000 : 1776500,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 1618950 : 968420,
-            [ModContent.NPCType<AdultEidolonWyrmHead>()] = 1260750,
+            [ModContent.NPCType<PrimordialWyrmHead>()] = 1260750,
             [ModContent.NPCType<ThanatosHead>()] = 2400000,
             [ModContent.NPCType<AresBody>()] = 2250000,
             [ModContent.NPCType<Artemis>()] = 2400000,

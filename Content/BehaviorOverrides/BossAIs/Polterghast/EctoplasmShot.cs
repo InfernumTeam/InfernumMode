@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ectoplasm Blast");
+            // DisplayName.SetDefault("Ectoplasm Blast");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }

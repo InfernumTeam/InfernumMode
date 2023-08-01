@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Saw Spark");
+            // DisplayName.SetDefault("Saw Spark");
             Main.projFrames[Type] = 3;
         }
 

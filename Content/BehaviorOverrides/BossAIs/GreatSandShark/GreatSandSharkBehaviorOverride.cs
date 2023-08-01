@@ -1,4 +1,4 @@
-using InfernumMode.Assets.Sounds;
+﻿using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             GlobalNPCOverrides.HitEffectsEvent += UseCustomHitSound;
         }
 
-        private void UseCustomHitSound(NPC npc, int hitDirection, double damage)
+        private void UseCustomHitSound(NPC npc, ref NPC.HitInfo hit)
         {
             // Play GSS' custom hit sound.
             if (npc.type == ModContent.NPCType<GreatSandSharkNPC>() && npc.soundDelay <= 0)

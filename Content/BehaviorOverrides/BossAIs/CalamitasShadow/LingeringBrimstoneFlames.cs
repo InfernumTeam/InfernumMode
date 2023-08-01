@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Smoke";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Fire Cloud");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Fire Cloud");
 
         public override void SetDefaults()
         {

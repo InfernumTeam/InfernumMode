@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Biomes
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Profaned Temple");
+            // DisplayName.SetDefault("Profaned Temple");
         }
 
         public override bool IsBiomeActive(Player player)

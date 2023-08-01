@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public float Time => 200f - Projectile.timeLeft;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul");
+            // DisplayName.SetDefault("Soul");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

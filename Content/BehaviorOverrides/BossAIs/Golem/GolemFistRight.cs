@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Golem Fist");
+            // DisplayName.SetDefault("Golem Fist");
         }
 
         public override void SetDefaults()

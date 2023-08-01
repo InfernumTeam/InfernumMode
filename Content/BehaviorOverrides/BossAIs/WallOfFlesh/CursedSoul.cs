@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul");
+            // DisplayName.SetDefault("Soul");
             Main.projFrames[Projectile.type] = 4;
         }
 

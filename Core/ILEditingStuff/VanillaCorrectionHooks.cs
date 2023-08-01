@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Balancing;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
@@ -43,6 +43,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 using static CalamityMod.Events.BossRushEvent;
 using static InfernumMode.Core.ILEditingStuff.HookManager;
 using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesManager;
@@ -132,7 +133,7 @@ namespace InfernumMode.Core.ILEditingStuff
             [576] = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type,
         };
 
-        internal static int AlterGores(On.Terraria.Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        internal static int AlterGores(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             // Do not spawn gores on the server.
             if (Main.netMode == NetmodeID.Server || Main.gamePaused)
@@ -158,9 +159,9 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(source, Position, Velocity, Type, Scale);
         }
 
-        public void Load() => On.Terraria.Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += AlterGores;
+        public void Load() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += AlterGores;
 
-        public void Unload() => On.Terraria.Gore.NewGore_IEntitySource_Vector2_Vector2_int_float -= AlterGores;
+        public void Unload() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float -= AlterGores;
     }
 
     public class MoveDraedonHellLabHook : IHookEdit
@@ -300,7 +301,7 @@ namespace InfernumMode.Core.ILEditingStuff
             set;
         }
 
-        internal void ForceDrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
+        internal void ForceDrawBlack(On_Main.orig_DrawBlack orig, Main self, bool force)
         {
             orig(self, force || LostColosseum.WasInColosseumLastFrame || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
         }
@@ -325,7 +326,7 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Stloc, 3);
         }
 
-        private void GetRidOfPeskyBlackSpaceFade(On.Terraria.Main.orig_UpdateAtmosphereTransparencyToSkyColor orig)
+        private void GetRidOfPeskyBlackSpaceFade(On_Main.orig_UpdateAtmosphereTransparencyToSkyColor orig)
         {
             Color oldSkyColor = Main.ColorOfTheSkies;
             orig();
@@ -363,7 +364,7 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Stloc, assetIndex);
         }
 
-        private void DrawStrongerSunInColosseum(On.Terraria.Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
+        private void DrawStrongerSunInColosseum(On_Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
         {
             // Don't draw the moon if it's in use, or being drawn seperately.
             if (!Main.dayTime)
@@ -473,11 +474,11 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             Main.QueueMainThreadAction(() =>
             {
-                On.Terraria.Main.DrawBlack += ForceDrawBlack;
-                IL.Terraria.Main.DrawBlack += ChangeDrawBlackLimit;
-                On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
-                IL.Terraria.Main.DoDraw += ChangeBackgroundColorSpecifically;
-                On.Terraria.Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
+                On_Main.DrawBlack += ForceDrawBlack;
+                IL_Main.DrawBlack += ChangeDrawBlackLimit;
+                On_Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
+                IL_Main.DoDraw += ChangeBackgroundColorSpecifically;
+                On_Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
             });
         }
 
@@ -485,11 +486,11 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             Main.QueueMainThreadAction(() =>
             {
-                On.Terraria.Main.DrawBlack -= ForceDrawBlack;
-                IL.Terraria.Main.DrawBlack -= ChangeDrawBlackLimit;
-                On.Terraria.Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
-                IL.Terraria.Main.DoDraw -= ChangeBackgroundColorSpecifically;
-                On.Terraria.Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+                On_Main.DrawBlack -= ForceDrawBlack;
+                IL_Main.DrawBlack -= ChangeDrawBlackLimit;
+                On_Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
+                IL_Main.DoDraw -= ChangeBackgroundColorSpecifically;
+                On_Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
             });
         }
     }
@@ -626,9 +627,9 @@ namespace InfernumMode.Core.ILEditingStuff
             c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionMaster");
         }
 
-        public void Load() => IL.Terraria.GameContent.UI.States.UIWorldCreation.AddWorldDifficultyOptions += SwapDescriptionKeys;
+        public void Load() => Terraria.GameContent.UI.States.IL_UIWorldCreation.AddWorldDifficultyOptions += SwapDescriptionKeys;
 
-        public void Unload() => IL.Terraria.GameContent.UI.States.UIWorldCreation.AddWorldDifficultyOptions -= SwapDescriptionKeys;
+        public void Unload() => Terraria.GameContent.UI.States.IL_UIWorldCreation.AddWorldDifficultyOptions -= SwapDescriptionKeys;
     }
 
     public class ReducePlayerDashDelay : IHookEdit
@@ -656,7 +657,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class AureusPlatformWalkingHook : IHookEdit
     {
-        internal static bool LetAureusWalkOnPlatforms(On.Terraria.NPC.orig_Collision_DecideFallThroughPlatforms orig, NPC npc)
+        internal static bool LetAureusWalkOnPlatforms(On_NPC.orig_Collision_DecideFallThroughPlatforms orig, NPC npc)
         {
             if (npc.type == ModContent.NPCType<AstrumAureus>())
             {
@@ -667,9 +668,9 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(npc);
         }
 
-        public void Load() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
+        public void Load() => On_NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
 
-        public void Unload() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
+        public void Unload() => On_NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
     }
 
     public class FishronSkyDistanceLeniancyHook : IHookEdit
@@ -682,9 +683,9 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldc_R4, 6000f);
         }
 
-        public void Load() => IL.Terraria.GameContent.Events.ScreenDarkness.Update += AdjustFishronScreenDistanceRequirement;
+        public void Load() => Terraria.GameContent.Events.IL_ScreenDarkness.Update += AdjustFishronScreenDistanceRequirement;
 
-        public void Unload() => IL.Terraria.GameContent.Events.ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
+        public void Unload() => Terraria.GameContent.Events.IL_ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
     }
 
     public class EyeOfCthulhuSpawnHPMinChangeHook : IHookEdit
@@ -697,9 +698,9 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldc_I4, 400);
         }
 
-        public void Load() => IL.Terraria.Main.UpdateTime_StartNight += ChangeEoCHPRequirements;
+        public void Load() => IL_Main.UpdateTime_StartNight += ChangeEoCHPRequirements;
 
-        public void Unload() => IL.Terraria.Main.UpdateTime_StartNight -= ChangeEoCHPRequirements;
+        public void Unload() => IL_Main.UpdateTime_StartNight -= ChangeEoCHPRequirements;
     }
 
     public class KingSlimeSpawnHPMinChangeHook : IHookEdit
@@ -713,7 +714,7 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.EmitDelegate<Action>(() => spawningKingSlimeNaturally = true);
         }
 
-        private void OptionallyDisableKSSpawn(On.Terraria.NPC.orig_SpawnOnPlayer orig, int plr, int Type)
+        private void OptionallyDisableKSSpawn(On_NPC.orig_SpawnOnPlayer orig, int plr, int Type)
         {
             if (spawningKingSlimeNaturally)
             {
@@ -726,20 +727,20 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Load()
         {
-            IL.Terraria.NPC.SpawnNPC += ChangeKSHPRequirements;
-            On.Terraria.NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
+            IL_NPC.SpawnNPC += ChangeKSHPRequirements;
+            On_NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
         }
 
         public void Unload()
         {
-            IL.Terraria.NPC.SpawnNPC -= ChangeKSHPRequirements;
-            On.Terraria.NPC.SpawnOnPlayer -= OptionallyDisableKSSpawn;
+            IL_NPC.SpawnNPC -= ChangeKSHPRequirements;
+            On_NPC.SpawnOnPlayer -= OptionallyDisableKSSpawn;
         }
     }
 
     public class UseCustomShineParticlesForInfernumParticlesHook : IHookEdit
     {
-        internal static void EmitFireParticles(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawTiles_EmitParticles orig, TileDrawing self, int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
+        internal static void EmitFireParticles(On_TileDrawing.orig_DrawTiles_EmitParticles orig, TileDrawing self, int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
         {
             ModTile mt = TileLoader.GetTile(tileCache.TileType);
             if ((tileLight.R > 20 || tileLight.B > 20 || tileLight.G > 20) && Main.rand.NextBool(12) && mt is not null and BaseInfernumBossRelic)
@@ -757,9 +758,9 @@ namespace InfernumMode.Core.ILEditingStuff
                 orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
         }
 
-        public void Load() => On.Terraria.GameContent.Drawing.TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;
+        public void Load() => On_TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;
 
-        public void Unload() => On.Terraria.GameContent.Drawing.TileDrawing.DrawTiles_EmitParticles -= EmitFireParticles;
+        public void Unload() => On_TileDrawing.DrawTiles_EmitParticles -= EmitFireParticles;
     }
 
     public class ReplaceAbyssWorldgen : IHookEdit
@@ -787,7 +788,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.SpawnOnPlayer(player.whoAmI, scourgeID);
                 else
-                    NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, scourgeID);
+                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, scourgeID);
 
                 // Summon nuisances if not in Infernum mode.
                 if (CalamityWorld.revenge && !InfernumMode.CanUseCustomAIs)
@@ -795,12 +796,12 @@ namespace InfernumMode.Core.ILEditingStuff
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
                     else
-                        NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
+                        NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
                     else
-                        NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
+                        NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertNuisanceHead>());
                 }
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
@@ -955,9 +956,9 @@ namespace InfernumMode.Core.ILEditingStuff
             });
         }
 
-        public void Load() => IL.Terraria.Main.DrawMap += CreateMapGlitchEffect;
+        public void Load() => IL_Main.DrawMap += CreateMapGlitchEffect;
 
-        public void Unload() => IL.Terraria.Main.DrawMap -= CreateMapGlitchEffect;
+        public void Unload() => IL_Main.DrawMap -= CreateMapGlitchEffect;
     }
 
     public class PreventAbyssDungeonInteractionsHook : IHookEdit
@@ -984,9 +985,9 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Stloc, 6);
         }
 
-        public void Load() => IL.Terraria.WorldGen.DungeonHalls += FixAbyssDungeonInteractions;
+        public void Load() => IL_WorldGen.DungeonHalls += FixAbyssDungeonInteractions;
 
-        public void Unload() => IL.Terraria.WorldGen.DungeonHalls -= FixAbyssDungeonInteractions;
+        public void Unload() => IL_WorldGen.DungeonHalls -= FixAbyssDungeonInteractions;
     }
 
     public class ChangeBRSkyColorHook : IHookEdit
@@ -1056,7 +1057,7 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         public void Load()
         {
-            On.Terraria.Graphics.Effects.FilterManager.CanCapture += NoScreenShader;
+            Terraria.Graphics.Effects.On_FilterManager.CanCapture += NoScreenShader;
             SCalSkyDraw += ChangeSCalSkyRequirements;
             CalCloneSkyDraw += ChangeCalCloneSkyRequirements;
             YharonSkyDraw += ChangeYharonSkyRequirements;
@@ -1064,7 +1065,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Unload()
         {
-            On.Terraria.Graphics.Effects.FilterManager.CanCapture -= NoScreenShader;
+            Terraria.Graphics.Effects.On_FilterManager.CanCapture -= NoScreenShader;
             SCalSkyDraw -= ChangeSCalSkyRequirements;
             CalCloneSkyDraw -= ChangeCalCloneSkyRequirements;
         }
@@ -1085,7 +1086,7 @@ namespace InfernumMode.Core.ILEditingStuff
             orig(instance, player, isActive);
         }
 
-        private bool NoScreenShader(On.Terraria.Graphics.Effects.FilterManager.orig_CanCapture orig, Terraria.Graphics.Effects.FilterManager self)
+        private bool NoScreenShader(Terraria.Graphics.Effects.On_FilterManager.orig_CanCapture orig, Terraria.Graphics.Effects.FilterManager self)
         {
             if (CosmicBackgroundSystem.EffectIsActive)
                 return false;
@@ -1173,23 +1174,23 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Load()
         {
-            On.Terraria.WorldGen.RandomizeMoonState += PrepareDungeonSide;
-            On.Terraria.Utilities.UnifiedRandom.Next_int += HijackRNG;
+            On_WorldGen.RandomizeMoonState += PrepareDungeonSide;
+            On_UnifiedRandom.Next_int += HijackRNG;
         }
 
         public void Unload()
         {
-            On.Terraria.WorldGen.RandomizeMoonState -= PrepareDungeonSide;
-            On.Terraria.Utilities.UnifiedRandom.Next_int -= HijackRNG;
+            On_WorldGen.RandomizeMoonState -= PrepareDungeonSide;
+            On_UnifiedRandom.Next_int -= HijackRNG;
         }
 
-        private void PrepareDungeonSide(On.Terraria.WorldGen.orig_RandomizeMoonState orig)
+        private void PrepareDungeonSide(On_WorldGen.orig_RandomizeMoonState orig, UnifiedRandom random, bool garenteeNewStyle)
         {
-            orig();
+            orig(random, garenteeNewStyle);
             ReturnZeroInRandomness = true;
         }
 
-        private int HijackRNG(On.Terraria.Utilities.UnifiedRandom.orig_Next_int orig, Terraria.Utilities.UnifiedRandom self, int maxValue)
+        private int HijackRNG(On_UnifiedRandom.orig_Next_int orig, UnifiedRandom self, int maxValue)
         {
             if (ReturnZeroInRandomness)
             {
@@ -1244,27 +1245,27 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class DrawNightStarsHook : IHookEdit
     {
-        public void Load() => On.Terraria.Main.DrawStarsInBackground += DrawStarsHook;
+        public void Load() => On_Main.DrawStarsInBackground += DrawStarsHook;
 
-        public void Unload() => On.Terraria.Main.DrawStarsInBackground -= DrawStarsHook;
+        public void Unload() => On_Main.DrawStarsInBackground -= DrawStarsHook;
 
-        private void DrawStarsHook(On.Terraria.Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea)
+        private void DrawStarsHook(On_Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea, bool artificial)
         {
             // Do not draw if the flower ocean visuals are active.
             if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive)
                 return;
 
-            orig(self, sceneArea);
+            orig(self, sceneArea, artificial);
         }
     }
 
     public class DisableWaterDrawingDuringAEWHook : IHookEdit
     {
-        public void Load() => On.Terraria.Main.DrawWaters += DisableWaterDrawing;
+        public void Load() => On_Main.DrawWaters += DisableWaterDrawing;
 
-        public void Unload() => On.Terraria.Main.DrawWaters -= DisableWaterDrawing;
+        public void Unload() => On_Main.DrawWaters -= DisableWaterDrawing;
 
-        private void DisableWaterDrawing(On.Terraria.Main.orig_DrawWaters orig, Main self, bool isBackground)
+        private void DisableWaterDrawing(On_Main.orig_DrawWaters orig, Main self, bool isBackground)
         {
             if (InfernumMode.CanUseCustomAIs && Main.LocalPlayer.Calamity().ZoneAbyssLayer4)
                 return;
@@ -1275,11 +1276,11 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class ChangeCalCloneNameHook : IHookEdit
     {
-        public void Load() => On.Terraria.NPC.DoDeathEvents_DropBossPotionsAndHearts += ChangeName;
+        public void Load() => On_NPC.DoDeathEvents_DropBossPotionsAndHearts += ChangeName;
 
-        public void Unload() => On.Terraria.NPC.DoDeathEvents_DropBossPotionsAndHearts -= ChangeName;
+        public void Unload() => On_NPC.DoDeathEvents_DropBossPotionsAndHearts -= ChangeName;
 
-        private void ChangeName(On.Terraria.NPC.orig_DoDeathEvents_DropBossPotionsAndHearts orig, NPC npc, ref string typeName)
+        private void ChangeName(On_NPC.orig_DoDeathEvents_DropBossPotionsAndHearts orig, NPC npc, ref string typeName)
         {
             orig(npc, ref typeName);
             if (npc.type == ModContent.NPCType<CalamitasClone>() && InfernumMode.CanUseCustomAIs)

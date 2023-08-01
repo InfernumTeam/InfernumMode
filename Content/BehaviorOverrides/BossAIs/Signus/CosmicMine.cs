@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cosmic Mine");
+            // DisplayName.SetDefault("Cosmic Mine");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

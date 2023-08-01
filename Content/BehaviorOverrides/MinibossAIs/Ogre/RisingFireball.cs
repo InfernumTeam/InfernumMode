@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 {
     public class RisingFireball : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Fireball");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Fireball");
 
         public override void SetDefaults()
         {

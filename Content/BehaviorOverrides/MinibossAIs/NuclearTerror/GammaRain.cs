@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gamma Rain");
+            // DisplayName.SetDefault("Gamma Rain");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

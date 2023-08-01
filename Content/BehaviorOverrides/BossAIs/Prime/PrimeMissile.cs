@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Missile");
+            // DisplayName.SetDefault("Missile");
             Main.projFrames[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

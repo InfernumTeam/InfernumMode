@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Astral Plasma Flame");
+            // DisplayName.SetDefault("Astral Plasma Flame");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

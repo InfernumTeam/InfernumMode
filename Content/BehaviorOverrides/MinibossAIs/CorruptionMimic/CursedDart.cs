@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Flame Dart");
+            // DisplayName.SetDefault("Cursed Flame Dart");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 3;
         }

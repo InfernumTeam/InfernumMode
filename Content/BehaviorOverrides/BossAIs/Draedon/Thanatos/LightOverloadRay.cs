@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Prismatic Overload Beam");
+            // DisplayName.SetDefault("Prismatic Overload Beam");
         }
 
         public override void SetDefaults()

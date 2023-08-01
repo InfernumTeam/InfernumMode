@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sanguine Bat");
+            // DisplayName.SetDefault("Sanguine Bat");
             Main.projFrames[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;

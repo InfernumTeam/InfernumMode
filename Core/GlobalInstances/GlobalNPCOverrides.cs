@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
@@ -197,7 +197,6 @@ namespace InfernumMode.Core.GlobalInstances
                     // Disable the effects of certain unpredictable freeze debuffs.
                     // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
                     // That said, I don't know a single person who uses Time Bolt so it's probably irrelevant either way lol.
-                    npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
                     npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
                     npc.buffImmune[ModContent.BuffType<GalvanicCorrosion>()] = true;
                     npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
@@ -246,28 +245,28 @@ namespace InfernumMode.Core.GlobalInstances
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
         }
 
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
             // Make Cryogen release ice particles when hit.
             if (npc.type == ModContent.NPCType<CryogenNPC>() && OverridingListManager.Registered(npc.type))
-                CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, crit);
+                CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, hit.Crit);
         }
 
-        public override void HitEffect(NPC npc, int hitDirection, double damage)
+        public override void HitEffect(NPC npc, NPC.HitInfo hit)
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            HitEffectsEvent?.Invoke(npc, hitDirection, damage);
+            HitEffectsEvent?.Invoke(npc, ref hit);
         }
 
-        public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
         {
             if (!InfernumMode.CanUseCustomAIs)
-                return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
+                return;
 
             // Loop through the StrikeNPC event subscribers and dynamically update the damage and such for every loop iteration.
             // If any of the subscribers instruct this method to return false and disable damage, that applies universally.
@@ -275,20 +274,15 @@ namespace InfernumMode.Core.GlobalInstances
             // last subscriber called, effectively ignoring whatever all the other subscribers say should happen.
             bool result = true;
             foreach (Delegate d in StrikeNPCEvent.GetInvocationList())
-            {
-                int realDamage = (int)Math.Ceiling(crit ? damage * 2D : damage);
-                result &= ((StrikeNPCDelegate)d).Invoke(npc, ref damage, realDamage, defense, ref knockback, hitDirection, ref crit);
-            }
-
-            return result;
+                result &= ((StrikeNPCDelegate)d).Invoke(npc, ref modifiers);
         }
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
+            BalancingChangesManager.ApplyFromProjectile(npc, ref modifiers, projectile);
         }
 
         public override bool CheckDead(NPC npc)

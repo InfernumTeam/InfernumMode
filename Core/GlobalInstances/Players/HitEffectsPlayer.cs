@@ -1,4 +1,4 @@
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using Microsoft.Xna.Framework;
@@ -21,9 +21,9 @@ namespace InfernumMode.Core.GlobalInstances.Players
             HitSoundCountdown--;
         }
 
-        public override void OnHitByNPC(NPC npc, int damage, bool crit)
+        public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo)
         {
-            if (npc.type != ModContent.NPCType<AresEnergyKatana>() || damage <= 0)
+            if (npc.type != ModContent.NPCType<AresEnergyKatana>() || hurtInfo.Damage <= 0)
                 return;
 
             // Play hit souds if the countdown has passed.

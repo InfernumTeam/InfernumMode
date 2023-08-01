@@ -9,9 +9,9 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Providence Shrine Debug Item");
-            Tooltip.SetDefault("Summons Providence when right clicked with a Profaned Core");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Providence Shrine Debug Item");
+            // Tooltip.SetDefault("Summons Providence when right clicked with a Profaned Core");
         }
 
         public override void SetDefaults()

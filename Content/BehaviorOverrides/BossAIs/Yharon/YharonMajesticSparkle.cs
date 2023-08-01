@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Majestic Sparkle");
+            // DisplayName.SetDefault("Majestic Sparkle");
         }
 
         public override void SetDefaults()

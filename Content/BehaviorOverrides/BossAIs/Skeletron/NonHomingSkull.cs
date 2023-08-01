@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Skull");
+            // DisplayName.SetDefault("Skull");
             Main.projFrames[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

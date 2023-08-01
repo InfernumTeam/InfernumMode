@@ -10,8 +10,8 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Grand Statue");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Grand Statue");
         }
 
         public override void SetDefaults()

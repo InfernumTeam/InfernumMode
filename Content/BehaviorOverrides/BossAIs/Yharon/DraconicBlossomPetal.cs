@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Draconic Blossom Petal");
+            // DisplayName.SetDefault("Draconic Blossom Petal");
             Main.projFrames[Type] = 3;
         }
 

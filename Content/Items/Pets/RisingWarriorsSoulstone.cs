@@ -60,10 +60,10 @@ namespace InfernumMode.Content.Items.Pets
 
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Rising Warrior's Soulstone");
-            Tooltip.SetDefault("Summons a wolf starchild that... 'helps' you?\n" +
-                "The tablet resonates with a strong legacy");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Rising Warrior's Soulstone");
+            /* Tooltip.SetDefault("Summons a wolf starchild that... 'helps' you?\n" +
+                "The tablet resonates with a strong legacy"); */
         }
 
         public override void SetDefaults()

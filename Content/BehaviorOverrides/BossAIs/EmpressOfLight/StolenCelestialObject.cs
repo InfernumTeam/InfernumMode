@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Big Stolen Celestial Object");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Big Stolen Celestial Object");
 
         public override void SetDefaults()
         {

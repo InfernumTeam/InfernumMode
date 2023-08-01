@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         public static float LaserPulse => Sin(Main.GlobalTimeWrappedHourly * 36f);
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 
         public override void SetDefaults()
         {

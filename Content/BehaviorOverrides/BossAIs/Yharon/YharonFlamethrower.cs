@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public const float FireMaxLength = 1450f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Flame Breath");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Flame Breath");
 
         public override void SetDefaults()
         {

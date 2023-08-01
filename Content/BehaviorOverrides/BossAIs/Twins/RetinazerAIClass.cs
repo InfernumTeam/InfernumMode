@@ -165,13 +165,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             npc.frameCounter++;
             npc.frame.Y = (int)npc.frameCounter % 21 / 7 * frameHeight;
 
-            if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
+            if (PersonallyInPhase2(npc))
                 npc.frame.Y += frameHeight * 3;
         }
         #endregion Frames and Drawcode
 
         #region Death Effects
-        public override bool CheckDead(NPC npc) => TwinsAttackSynchronizer.HandleDeathEffects(npc);
+        public override bool CheckDead(NPC npc) => HandleDeathEffects(npc);
         #endregion Death Effects
     }
 }

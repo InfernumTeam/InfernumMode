@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sulphuric Typhoon");
+            // DisplayName.SetDefault("Sulphuric Typhoon");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;

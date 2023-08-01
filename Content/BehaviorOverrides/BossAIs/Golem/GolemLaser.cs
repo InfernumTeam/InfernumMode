@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heat Laser");
+            // DisplayName.SetDefault("Heat Laser");
             Main.projFrames[Type] = 1;
         }
 

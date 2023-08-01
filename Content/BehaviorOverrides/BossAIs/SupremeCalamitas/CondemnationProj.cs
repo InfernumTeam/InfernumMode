@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public Vector2 TipPosition => Projectile.Center + Projectile.rotation.ToRotationVector2() * Projectile.width * 0.5f;
 
         public override string Texture => "CalamityMod/Items/Weapons/Ranged/Condemnation";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Condemnation");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Condemnation");
 
         public override void SetDefaults()
         {

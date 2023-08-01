@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public int MainEidolistIndex => (int)Projectile.ai[1];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
         {

@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exolaser Spark");
+            // DisplayName.SetDefault("Exolaser Spark");
             Main.projFrames[Projectile.type] = 8;
 
         }

@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ice Spike");
+            // DisplayName.SetDefault("Ice Spike");
             Main.projFrames[Projectile.type] = 5;
         }
 

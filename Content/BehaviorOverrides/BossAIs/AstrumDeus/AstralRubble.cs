@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Astral Rubble");
+            // DisplayName.SetDefault("Astral Rubble");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }

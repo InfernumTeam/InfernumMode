@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         public const int Lifetime = 210;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Aurora");
+            // DisplayName.SetDefault("Aurora");
         }
 
         public override void SetDefaults()

@@ -124,7 +124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public static void DoAttacks(NPC npc, Player target, ref float attackTimer)
         {
-            bool red = npc.type == ModContent.NPCType<CrimulanSlimeGod>();
+            bool red = npc.type == ModContent.NPCType<CrimulanPaladin>();
             bool alone = FightState == SlimeGodFightState.AloneSingleLargeSlimeEnraged;
 
             // Wait a bit before attacking in the alone and enraged phase.
@@ -162,7 +162,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             if (FightState != SlimeGodFightState.BothLargeSlimes)
                 return;
 
-            bool red = npc.type == ModContent.NPCType<CrimulanSlimeGod>();
+            bool red = npc.type == ModContent.NPCType<CrimulanPaladin>();
             switch ((int)npc.ai[0])
             {
                 case (int)SlimeGodComboAttackType.MutualStomps:
@@ -196,7 +196,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
             Vector2 getHoverDestination(NPC n)
             {
-                float offsetDirection = (n.type == ModContent.NPCType<CrimulanSlimeGod>()).ToDirectionInt() * n.Infernum().ExtraAI[1];
+                float offsetDirection = (n.type == ModContent.NPCType<CrimulanPaladin>()).ToDirectionInt() * n.Infernum().ExtraAI[1];
                 Vector2 destination = target.Center + new Vector2(offsetDirection * 540f, -440f);
                 if (n.WithinRange(target.Center, 360f) && Distance(target.Center.Y, n.Center.Y) < 200f)
                     destination.X -= offsetDirection * 700f;

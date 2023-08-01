@@ -52,7 +52,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public override string Texture => "InfernumMode/Content/Items/Weapons/Rogue/Dreamtastic";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Dreamtastic");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Dreamtastic");
 
         public override void SetDefaults()
         {

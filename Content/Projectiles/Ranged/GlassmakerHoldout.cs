@@ -21,7 +21,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
 
         public override string Texture => "InfernumMode/Content/Items/Weapons/Ranged/TheGlassmaker";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Glassmaker");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Glassmaker");
 
         public override void SetDefaults()
         {

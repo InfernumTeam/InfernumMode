@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Phantasmal Orb");
+            // DisplayName.SetDefault("Phantasmal Orb");
         }
 
         public override void SetDefaults()
@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
 
         }

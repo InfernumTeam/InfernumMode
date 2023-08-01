@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override string Texture => "CalamityMod/Items/Weapons/Summon/Vigilance";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Vigilance");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Vigilance");
 
         public override void SetDefaults()
         {

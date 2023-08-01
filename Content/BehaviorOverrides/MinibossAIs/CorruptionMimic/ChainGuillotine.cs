@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
         // This does not account for extra updates.
         public const int ReturnTime = 45;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Chain Guillotine");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Chain Guillotine");
 
         public override void SetDefaults()
         {

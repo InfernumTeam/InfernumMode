@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Main.projFrames[Type] = 6;
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 8;
-            DisplayName.SetDefault("Wind Gust");
+            // DisplayName.SetDefault("Wind Gust");
         }
 
         public override void SetDefaults()

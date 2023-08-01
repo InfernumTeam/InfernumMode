@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ichor Blob");
+            // DisplayName.SetDefault("Ichor Blob");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
         }

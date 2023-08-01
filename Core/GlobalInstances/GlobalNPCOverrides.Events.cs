@@ -1,4 +1,4 @@
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances
@@ -10,7 +10,7 @@ namespace InfernumMode.Core.GlobalInstances
 
         public static event BossHeadSlotDelegate BossHeadSlotEvent;
 
-        public delegate void HitEffectsDelegate(NPC npc, int hitDirection, double damage);
+        public delegate void HitEffectsDelegate(NPC npc, ref NPC.HitInfo hit);
 
         public static event HitEffectsDelegate HitEffectsEvent;
 
@@ -18,7 +18,7 @@ namespace InfernumMode.Core.GlobalInstances
 
         public static event OnKillDelegate OnKillEvent;
 
-        public delegate bool StrikeNPCDelegate(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit);
+        public delegate bool StrikeNPCDelegate(NPC npc, ref NPC.HitModifiers modifiers);
 
         public static event StrikeNPCDelegate StrikeNPCEvent;
     }

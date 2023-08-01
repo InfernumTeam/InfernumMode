@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Psychic Energy");
+            // DisplayName.SetDefault("Psychic Energy");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 34;
         }

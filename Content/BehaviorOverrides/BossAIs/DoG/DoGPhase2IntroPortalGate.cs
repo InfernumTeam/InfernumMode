@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Portal");
+            // DisplayName.SetDefault("Portal");
         }
 
         public override void SetDefaults()

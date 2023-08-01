@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 namespace InfernumMode.Content.Tiles
 {
@@ -11,8 +12,8 @@ namespace InfernumMode.Content.Tiles
             Main.tileSolid[Type] = true;
             Main.tileMergeDirt[Type] = true;
             Main.tileBlockLight[Type] = true;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Arena");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Arena");
             AddMapEntry(new Color(40, 70, 70), name);
         }
 

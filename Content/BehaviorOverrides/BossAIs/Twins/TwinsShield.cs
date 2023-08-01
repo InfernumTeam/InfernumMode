@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shield");
+            // DisplayName.SetDefault("Shield");
         }
 
         public override void SetDefaults()

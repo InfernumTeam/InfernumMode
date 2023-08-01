@@ -26,10 +26,10 @@ namespace InfernumMode.Content.Items.Dyes
 
         public override void Load()
         {
-            On.Terraria.Graphics.Shaders.ArmorShaderData.Apply += UseNormalMap;
+            On_ArmorShaderData.Apply += UseNormalMap;
         }
 
-        private void UseNormalMap(On.Terraria.Graphics.Shaders.ArmorShaderData.orig_Apply orig, ArmorShaderData self, Entity entity, Terraria.DataStructures.DrawData? drawData)
+        private void UseNormalMap(On_ArmorShaderData.orig_Apply orig, ArmorShaderData self, Entity entity, Terraria.DataStructures.DrawData? drawData)
         {
             if (self == GameShaders.Armor.GetShaderFromItemId(Type))
             {
@@ -42,8 +42,8 @@ namespace InfernumMode.Content.Items.Dyes
 
         public override void SafeSetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Profaned Crystal Dye");
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Profaned Crystal Dye");
         }
 
         public override void SafeSetDefaults()

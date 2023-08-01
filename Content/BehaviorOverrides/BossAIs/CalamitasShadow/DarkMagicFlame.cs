@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Magic Flame");
+            // DisplayName.SetDefault("Dark Magic Flame");
             Main.projFrames[Projectile.type] = 6;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 9;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;

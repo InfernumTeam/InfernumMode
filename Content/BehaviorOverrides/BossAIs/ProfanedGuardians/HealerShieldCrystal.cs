@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Shield");
+            // DisplayName.SetDefault("Holy Shield");
             this.HideFromBestiary();
         }
 

@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override float MaxLaserLength => 3100f;
         public override float MaxScale => 1f;
         public Vector2 OwnerEyePosition => Main.npc[OwnerIndex].Center + new Vector2(Main.npc[OwnerIndex].spriteDirection * 26f, -64f).RotatedBy(Main.npc[OwnerIndex].rotation);
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Deathray");
 
         public override void SetDefaults()
         {

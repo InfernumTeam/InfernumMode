@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ceaseless Vortex");
+            // DisplayName.SetDefault("Ceaseless Vortex");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

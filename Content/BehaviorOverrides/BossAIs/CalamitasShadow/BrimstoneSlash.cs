@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Slash");
+            // DisplayName.SetDefault("Brimstone Slash");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

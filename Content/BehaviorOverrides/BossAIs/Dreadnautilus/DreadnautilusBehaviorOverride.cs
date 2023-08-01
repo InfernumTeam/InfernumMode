@@ -864,7 +864,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                         GeneralParticleHandler.SpawnParticle(blood);
                     }
 
-                    npc.StrikeNPC(damage, 0f, 0);
+                    NPC.HitInfo hit = new()
+                    {
+                        Damage = damage,
+                        Knockback = 0f,
+                        HitDirection = 0
+                    };
+                    npc.StrikeNPC(hit);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.life > 0)
                     {

@@ -9,8 +9,8 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Aquatic Scourge Skull");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Aquatic Scourge Skull");
         }
 
         public override void SetDefaults()

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Core.GlobalInstances;
@@ -38,13 +38,13 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         public override void OnModLoad()
         {
             Main.OnPreDraw += PrepareShadowTargets;
-            On.Terraria.Main.SetDisplayMode += ResetTargetSizes;
+            On_Main.SetDisplayMode += ResetTargetSizes;
         }
 
         public override void OnModUnload()
         {
             Main.OnPreDraw -= PrepareShadowTargets;
-            On.Terraria.Main.SetDisplayMode -= ResetTargetSizes;
+            On_Main.SetDisplayMode -= ResetTargetSizes;
 
             Main.QueueMainThreadAction(() =>
             {
@@ -59,7 +59,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             });
         }
 
-        private void ResetTargetSizes(On.Terraria.Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
+        private void ResetTargetSizes(On_Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
         {
             if (ShadowDrawTarget is not null && width == ShadowDrawTarget.Width && height == ShadowDrawTarget.Height)
                 return;
@@ -105,7 +105,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 while (enumerator.MoveNext())
                 {
                     var globalProjectile = enumerator.Current;
-                    if (globalProjectile.Instance is GlobalProjectileOverrides)
+                    if (globalProjectile.Instance(projectile) is GlobalProjectileOverrides)
                         return true;
                 }
                 return false;

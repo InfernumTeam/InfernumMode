@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.InsanityShadowHostile}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Hand");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Hand");
 
         public override void SetDefaults()
         {

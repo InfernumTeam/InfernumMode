@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public float PointAtTargetInterpolant => Utils.GetLerpValue(1720f, 2500f, Projectile.Distance(Target.Center), true);
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Refraction Rotor");
+            // DisplayName.SetDefault("Refraction Rotor");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }

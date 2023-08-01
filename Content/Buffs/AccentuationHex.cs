@@ -7,8 +7,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hex of Accentuation");
-            Description.SetDefault("Your opponent's magic attracts to you");
+            // DisplayName.SetDefault("Hex of Accentuation");
+            // Description.SetDefault("Your opponent's magic attracts to you");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

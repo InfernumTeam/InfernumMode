@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Flame Pillar");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Flame Pillar");
 
         public override void SetDefaults()
         {

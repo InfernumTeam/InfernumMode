@@ -7,8 +7,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hex of Zeal");
-            Description.SetDefault("Your opponent's magic accelerates wildly");
+            // DisplayName.SetDefault("Hex of Zeal");
+            // Description.SetDefault("Your opponent's magic accelerates wildly");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

@@ -12,12 +12,12 @@ namespace InfernumMode.Content.Items.Accessories
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Purity");
-            Tooltip.SetDefault("30% increased damage and attack speed\n" +
+            // DisplayName.SetDefault("Purity");
+            /* Tooltip.SetDefault("30% increased damage and attack speed\n" +
                 "Grants immunity to Nightwither\n" +
                 "[c/ff5d5d:You are unlucky]\n" +
-                "[c/59aae7:It sounds like two brothers, chasing glass frogs in the sun]");
-            SacrificeTotal = 1;
+                "[c/59aae7:It sounds like two brothers, chasing glass frogs in the sun]"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

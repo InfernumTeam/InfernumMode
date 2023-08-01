@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 {
     public class EnergySpark2 : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Red Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Red Spark");
 
         public override void SetDefaults()
         {

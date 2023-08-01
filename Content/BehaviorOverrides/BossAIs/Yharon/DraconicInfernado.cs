@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Draconic Infernado");
+            // DisplayName.SetDefault("Draconic Infernado");
         }
 
         public override void SetDefaults()

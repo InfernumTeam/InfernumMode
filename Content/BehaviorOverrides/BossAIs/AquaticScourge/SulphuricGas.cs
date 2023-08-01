@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas1";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Sulphuric Acid Gas");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Sulphuric Acid Gas");
 
         public override void SetDefaults()
         {

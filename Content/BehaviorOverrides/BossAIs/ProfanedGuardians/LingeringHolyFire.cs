@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Fire");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Fire");
 
         public override void SetDefaults()
         {

@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Magic Cinder");
+            // DisplayName.SetDefault("Dark Magic Cinder");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

@@ -10,8 +10,8 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Profaned Lava Fountain");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Profaned Lava Fountain");
         }
 
         public override void SetDefaults()

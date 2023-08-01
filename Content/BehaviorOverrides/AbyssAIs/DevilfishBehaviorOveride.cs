@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.Sounds;
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             {
                 npc.localAI[0] = 1f;
                 npc.localAI[1] = Main.rand.Next(2);
-                npc.RemoveWaterSlowness();
+                npc.waterMovementSpeed = 0f;
                 npc.netUpdate = true;
             }
 
@@ -185,7 +185,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                         }
 
                         npc.life = 0;
-                        npc.StrikeNPCNoInteraction(9999, 0f, 0);
+
+                        // It recommends to not do this on multiplayer clients.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            npc.StrikeInstantKill();
+
                         npc.NPCLoot();
                     }
                     if (kamikazeMode && npc.velocity.Length() < 21f)

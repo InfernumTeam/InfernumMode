@@ -69,7 +69,7 @@ namespace InfernumMode.Content.Items
             Recipe.Create(ModContent.ItemType<TorrentialTear>()).
                 AddIngredient<CausticTear>().
                 AddIngredient<AbyssGravel>(10).
-                AddCondition(Recipe.Condition.NearWater).
+                AddCondition(Condition.NearWater).
                 Register();
 
             Recipe.Create(ModContent.ItemType<Archerfish>()).

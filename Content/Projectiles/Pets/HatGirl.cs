@@ -52,7 +52,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hat Girl");
+            // DisplayName.SetDefault("Hat Girl");
             Main.projFrames[Type] = 11;
             Main.projPet[Type] = true;
         }

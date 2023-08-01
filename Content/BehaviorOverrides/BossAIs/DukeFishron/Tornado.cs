@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         public ref float TornadoHeight => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tornado");
+            // DisplayName.SetDefault("Tornado");
         }
 
         public override void SetDefaults()

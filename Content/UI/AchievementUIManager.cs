@@ -82,7 +82,7 @@ namespace InfernumMode.Content.UI
             uITextPanel2.Top.Set(-45f, 0f);
             uITextPanel2.OnMouseOver += FadedMouseOver;
             uITextPanel2.OnMouseOut += FadedMouseOut;
-            uITextPanel2.OnClick += GoBackClick;
+            uITextPanel2.OnLeftClick += GoBackClick;
             uITextPanel2.BackgroundColor = new Color(174, 71, 71);
             uIElement.Append(uITextPanel2);
 
@@ -107,7 +107,7 @@ namespace InfernumMode.Content.UI
             next.Top.Set(-45f, 0f);
             next.OnMouseOver += FadedMouseOver;
             next.OnMouseOut += FadedMouseOut;
-            next.OnClick += AchivementClick;
+            next.OnLeftClick += AchivementClick;
             next.BackgroundColor = new Color(174, 71, 71);
             uIElement.Append(next);
 
@@ -238,7 +238,7 @@ namespace InfernumMode.Content.UI
             uITextPanel2.Top.Set(-45f, 0f);
             uITextPanel2.OnMouseOver += FadedMouseOver;
             uITextPanel2.OnMouseOut += FadedMouseOut;
-            uITextPanel2.OnClick += GoBackClick;
+            uITextPanel2.OnLeftClick += GoBackClick;
             uITextPanel2.BackgroundColor = new Color(174, 71, 71);
             uIElement.Append(uITextPanel2);
 
@@ -263,7 +263,7 @@ namespace InfernumMode.Content.UI
             next.Top.Set(-45f, 0f);
             next.OnMouseOver += FadedMouseOver;
             next.OnMouseOut += FadedMouseOut;
-            next.OnClick += WishesClick;
+            next.OnLeftClick += WishesClick;
             next.BackgroundColor = new Color(174, 71, 71);
             uIElement.Append(next);
 

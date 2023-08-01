@@ -14,7 +14,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         public Player ClosestPlayer => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Acid");
+            // DisplayName.SetDefault("Acid");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

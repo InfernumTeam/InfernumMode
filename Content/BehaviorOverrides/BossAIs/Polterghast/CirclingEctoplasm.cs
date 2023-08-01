@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ectoplasm Wisp");
+            // DisplayName.SetDefault("Ectoplasm Wisp");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }

@@ -12,8 +12,8 @@ namespace InfernumMode.Content.Items.Placeables
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Cosmic Monolith");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Cosmic Monolith");
         }
 
         public override void SetDefaults()

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 {
     public class StompShockwave : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shockwave");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Shockwave");
 
         public override void SetDefaults()
         {

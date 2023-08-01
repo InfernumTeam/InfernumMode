@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heresy");
+            // DisplayName.SetDefault("Heresy");
             Main.projFrames[Projectile.type] = 8;
         }
 

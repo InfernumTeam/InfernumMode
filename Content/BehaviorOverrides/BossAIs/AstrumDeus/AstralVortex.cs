@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Consumed Vortex");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Consumed Vortex");
 
         public override void SetDefaults()
         {

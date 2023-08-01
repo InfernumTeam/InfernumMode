@@ -1,13 +1,13 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.DataStructures;
 using CalamityMod.Events;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.AdultEidolonWyrm;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
@@ -72,7 +72,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class RenameGreatSandSharkHook : IHookEdit
     {
-        internal string RenameGSS(On.Terraria.Lang.orig_GetNPCNameValue orig, int netID)
+        internal string RenameGSS(On_Lang.orig_GetNPCNameValue orig, int netID)
         {
             if (netID == ModContent.NPCType<GreatSandShark>() && InfernumMode.CanUseCustomAIs)
                 return GreatSandSharkBehaviorOverride.NewName;
@@ -80,9 +80,9 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(netID);
         }
 
-        public void Load() => On.Terraria.Lang.GetNPCNameValue += RenameGSS;
+        public void Load() => On_Lang.GetNPCNameValue += RenameGSS;
 
-        public void Unload() => On.Terraria.Lang.GetNPCNameValue -= RenameGSS;
+        public void Unload() => On_Lang.GetNPCNameValue -= RenameGSS;
     }
 
     public class MakeHooksInteractWithPlatforms : IHookEdit
@@ -235,8 +235,8 @@ namespace InfernumMode.Core.ILEditingStuff
             c.EmitDelegate<PlatformCoordsDelegate>(AdjustHitPlatformCoords);
         }
 
-        public void Load() => IL.Terraria.Projectile.AI_007_GrapplingHooks += AdjustPlatformCollisionChecks;
-        public void Unload() => IL.Terraria.Projectile.AI_007_GrapplingHooks -= AdjustPlatformCollisionChecks;
+        public void Load() => IL_Projectile.AI_007_GrapplingHooks += AdjustPlatformCollisionChecks;
+        public void Unload() => IL_Projectile.AI_007_GrapplingHooks -= AdjustPlatformCollisionChecks;
     }
 
     public class DisableMoonLordBuildingHook : IHookEdit
@@ -255,14 +255,14 @@ namespace InfernumMode.Core.ILEditingStuff
             });
         }
 
-        public void Load() => IL.Terraria.Player.ItemCheck += DisableMoonLordBuilding;
+        public void Load() => IL_Player.ItemCheck += DisableMoonLordBuilding;
 
-        public void Unload() => IL.Terraria.Player.ItemCheck -= DisableMoonLordBuilding;
+        public void Unload() => IL_Player.ItemCheck -= DisableMoonLordBuilding;
     }
 
     public class ChangeHowMinibossesSpawnInDD2EventHook : IHookEdit
     {
-        internal static int GiveDD2MinibossesPointPriority(On.Terraria.GameContent.Events.DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
+        internal static int GiveDD2MinibossesPointPriority(On_DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
             if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && InfernumMode.CanUseCustomAIs)
                 return slainMonsterID == minibossID ? 99999 : 0;
@@ -270,26 +270,26 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(slainMonsterID);
         }
 
-        public void Load() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
+        public void Load() => On_DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
 
-        public void Unload() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
+        public void Unload() => On_DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
     }
 
     public class AllowSandstormInColosseumHook : IHookEdit
     {
-        internal static bool LetSandParticlesAppear(On.Terraria.GameContent.Events.Sandstorm.orig_ShouldSandstormDustPersist orig)
+        internal static bool LetSandParticlesAppear(On_Sandstorm.orig_ShouldSandstormDustPersist orig)
         {
             return orig() || SubworldSystem.IsActive<LostColosseum>() && Sandstorm.Happening;
         }
 
-        public void Load() => On.Terraria.GameContent.Events.Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
+        public void Load() => On_Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
 
-        public void Unload() => On.Terraria.GameContent.Events.Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
+        public void Unload() => On_Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
     }
 
     public class DrawVoidBackgroundDuringMLFightHook : IHookEdit
     {
-        public static void PrepareShaderForBG(On.Terraria.Main.orig_DrawSurfaceBG orig, Main self)
+        public static void PrepareShaderForBG(On_Main.orig_DrawSurfaceBG orig, Main self)
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
             bool useMoonLordShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
@@ -329,9 +329,9 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
 
-        public void Load() => On.Terraria.Main.DrawSurfaceBG += PrepareShaderForBG;
+        public void Load() => On_Main.DrawSurfaceBG += PrepareShaderForBG;
 
-        public void Unload() => On.Terraria.Main.DrawSurfaceBG -= PrepareShaderForBG;
+        public void Unload() => On_Main.DrawSurfaceBG -= PrepareShaderForBG;
     }
 
     public class DrawCherishedSealocketHook : IHookEdit
@@ -348,7 +348,7 @@ namespace InfernumMode.Core.ILEditingStuff
             internal set;
         }
 
-        private void DrawForcefields(On.Terraria.Main.orig_DrawInfernoRings orig, Main self)
+        private void DrawForcefields(On_Main.orig_DrawInfernoRings orig, Main self)
         {
             Main.LocalPlayer.Infernum_CalShadowHex().DrawAllHexes();
 
@@ -377,7 +377,7 @@ namespace InfernumMode.Core.ILEditingStuff
             orig(self);
         }
 
-        private void PrepareSealocketTarget(On.Terraria.Main.orig_CheckMonoliths orig)
+        private void PrepareSealocketTarget(On_Main.orig_CheckMonoliths orig)
         {
             orig();
             InitializeTargetIfNecessary();
@@ -440,15 +440,15 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Load()
         {
-            On.Terraria.Main.CheckMonoliths += PrepareSealocketTarget;
-            On.Terraria.Main.DrawInfernoRings += DrawForcefields;
+            On_Main.CheckMonoliths += PrepareSealocketTarget;
+            On_Main.DrawInfernoRings += DrawForcefields;
             DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
         }
 
         public void Unload()
         {
-            On.Terraria.Main.CheckMonoliths -= PrepareSealocketTarget;
-            On.Terraria.Main.DrawInfernoRings -= DrawForcefields;
+            On_Main.CheckMonoliths -= PrepareSealocketTarget;
+            On_Main.DrawInfernoRings -= DrawForcefields;
         }
     }
 
@@ -464,7 +464,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 if (!InfernumMode.CanUseCustomAIs)
                     return true;
 
-                bool specialNPC = NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>());
+                bool specialNPC = NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>());
                 if (!specialNPC)
                     return true;
 
@@ -473,9 +473,9 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.And);
         }
 
-        public void Load() => IL.Terraria.Player.Update += DisableWaterEffects;
+        public void Load() => IL_Player.Update += DisableWaterEffects;
 
-        public void Unload() => IL.Terraria.Player.Update -= DisableWaterEffects;
+        public void Unload() => IL_Player.Update -= DisableWaterEffects;
     }
 
     public class MakeSulphSeaWaterEasierToSeeInHook : IHookEdit
@@ -506,7 +506,7 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
 
-        private void MakeSulphSeaWaterBrighter(On.Terraria.Graphics.Light.TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
+        private void MakeSulphSeaWaterBrighter(Terraria.Graphics.Light.On_TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
         {
             orig(self, x, y, out outputColor);
 
@@ -537,13 +537,13 @@ namespace InfernumMode.Core.ILEditingStuff
                 SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
 
             SelectSulphuricWaterColor += MakeWaterEasierToSeeIn;
-            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
+            Terraria.Graphics.Light.On_TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
         }
 
         public void Unload()
         {
             SelectSulphuricWaterColor -= MakeWaterEasierToSeeIn;
-            On.Terraria.Graphics.Light.TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
+            Terraria.Graphics.Light.On_TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
         }
     }
 
@@ -589,7 +589,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             CalamityUtils.SpawnBossBetter(player.Center, ModContent.NPCType<CeaselessVoid>(), new ExactPositionBossSpawnContext(), (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl, 0f, 0f, 1f);
                         else
-                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<CeaselessVoid>());
+                            NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<CeaselessVoid>());
                     }
                 }
                 else if (player.ZoneUnderworldHeight)
@@ -614,7 +614,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Signus>());
                         else
-                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<Signus>());
+                            NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<Signus>());
                     }
                 }
                 else if (player.ZoneSkyHeight)
@@ -638,7 +638,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<StormWeaverHead>());
                         else
-                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<StormWeaverHead>());
+                            NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<StormWeaverHead>());
                     }
                 }
             });
@@ -721,7 +721,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
                         else
-                            NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
+                            NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
                     }
                 }
                 else if (Main.myPlayer == player.whoAmI && !Main.projectile.Any(p => p.active && p.type == ModContent.ProjectileType<GuardiansSummonerProjectile>()))
@@ -758,7 +758,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class MakeAquaticScourgeSpitOutDropsHook : IHookEdit
     {
-        private void ThrowItemsOut(On.Terraria.GameContent.ItemDropRules.CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
+        private void ThrowItemsOut(Terraria.GameContent.ItemDropRules.On_CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
         {
             orig(npc, itemIndex);
             if (npc.type == ModContent.NPCType<AquaticScourgeHead>() && InfernumMode.CanUseCustomAIs)
@@ -772,12 +772,12 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Load()
         {
-            On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
+            Terraria.GameContent.ItemDropRules.On_CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
         }
 
         public void Unload()
         {
-            On.Terraria.GameContent.ItemDropRules.CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
+            Terraria.GameContent.ItemDropRules.On_CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
         }
     }
 }

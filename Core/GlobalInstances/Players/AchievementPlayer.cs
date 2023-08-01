@@ -106,7 +106,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void Initialize() => InitializeIfNecessary();
 
-        public override void OnEnterWorld(Player player) => AchievementsNotificationTracker.Clear();
+        public override void OnEnterWorld() => AchievementsNotificationTracker.Clear();
 
         public override void PostUpdate()
         {

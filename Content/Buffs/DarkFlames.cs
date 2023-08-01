@@ -7,8 +7,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Flames");
-            Description.SetDefault("Your body is consumed by a forsaken inferno. Your defense is lowered");
+            // DisplayName.SetDefault("Dark Flames");
+            // Description.SetDefault("Your body is consumed by a forsaken inferno. Your defense is lowered");
             Main.debuff[Type] = true;
             Main.pvpBuff[Type] = true;
             Main.buffNoSave[Type] = true;

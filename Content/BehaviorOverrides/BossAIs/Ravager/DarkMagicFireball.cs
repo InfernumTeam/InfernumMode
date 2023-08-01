@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Magic Fireball");
+            // DisplayName.SetDefault("Dark Magic Fireball");
             Main.projFrames[Projectile.type] = 5;
         }
 

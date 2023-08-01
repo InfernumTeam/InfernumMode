@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Thermonuclear Death Orb");
+            // DisplayName.SetDefault("Thermonuclear Death Orb");
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 

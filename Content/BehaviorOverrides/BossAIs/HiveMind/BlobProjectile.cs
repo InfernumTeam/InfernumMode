@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hive Blob");
+            // DisplayName.SetDefault("Hive Blob");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;

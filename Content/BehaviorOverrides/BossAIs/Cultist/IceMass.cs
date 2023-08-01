@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.CultistBossIceMist}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Mass");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Mass");
 
         public override void SetDefaults()
         {

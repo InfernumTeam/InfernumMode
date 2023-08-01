@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spore Gas");
+            // DisplayName.SetDefault("Spore Gas");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
     public class BloodGeyser2 : ModProjectile
     {
         internal const float Gravity = 0.25f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor Geyser");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor Geyser");
 
         public override void SetDefaults()
         {

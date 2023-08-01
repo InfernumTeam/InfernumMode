@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Typhoon Blade");
+            // DisplayName.SetDefault("Typhoon Blade");
             Main.projFrames[Projectile.type] = 3;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;

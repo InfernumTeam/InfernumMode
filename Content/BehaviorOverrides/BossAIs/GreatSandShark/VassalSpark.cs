@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 {
     public class VassalSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Spark");
 
         public override void SetDefaults()
         {

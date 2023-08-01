@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/AresLaserBeamEnd", AssetRequestMode.ImmediateLoad).Value;
         public override string Texture => "CalamityMod/Projectiles/Boss/AresLaserBeamStart";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Antimatter Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Antimatter Deathray");
 
         public override void SetDefaults()
         {

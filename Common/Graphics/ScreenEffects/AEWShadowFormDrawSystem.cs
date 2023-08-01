@@ -1,5 +1,5 @@
-using CalamityMod;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+﻿using CalamityMod;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
@@ -80,7 +80,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void PrepareAEWTargets(GameTime obj)
         {
-            if (Main.gameMenu || !NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || AEWDrawTarget.Target.IsDisposed)
+            if (Main.gameMenu || !NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || AEWDrawTarget.Target.IsDisposed)
                 return;
 
             Main.instance.GraphicsDevice.SetRenderTarget(AEWDrawTarget.Target);
@@ -127,7 +127,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public static void DrawTarget()
         {
-            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
+            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<PrimordialWyrmHead>());
             if (aewIndex == -1)
                 return;
 

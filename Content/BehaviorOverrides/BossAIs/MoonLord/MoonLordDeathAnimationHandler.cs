@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Death Animation");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Death Animation");
 
         public override void SetDefaults()
         {

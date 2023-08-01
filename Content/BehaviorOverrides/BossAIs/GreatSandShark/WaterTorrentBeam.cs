@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Water Torrent");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Water Torrent");
 
         public override void SetDefaults()
         {

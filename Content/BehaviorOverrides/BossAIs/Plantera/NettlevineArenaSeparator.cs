@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.NettleBurstEnd}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Nettlevine");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Nettlevine");
 
         public override void SetDefaults()
         {

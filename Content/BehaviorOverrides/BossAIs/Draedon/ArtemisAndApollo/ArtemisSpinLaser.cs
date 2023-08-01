@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         // You are going to Ohio
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ohio Beam");
+            // DisplayName.SetDefault("Ohio Beam");
             Main.projFrames[Projectile.type] = 5;
         }
 

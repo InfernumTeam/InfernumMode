@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -51,15 +51,15 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public void Load()
         {
-            On.Terraria.UI.AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
+            On_AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
         }
 
         public void Unload()
         {
-            On.Terraria.UI.AchievementAdvisor.DrawOneAchievement -= AchievementAdvisor_DrawOneAchievement;
+            On_AchievementAdvisor.DrawOneAchievement -= AchievementAdvisor_DrawOneAchievement;
         }
 
-        private void AchievementAdvisor_DrawOneAchievement(On.Terraria.UI.AchievementAdvisor.orig_DrawOneAchievement orig, AchievementAdvisor self, SpriteBatch spriteBatch, Vector2 position, bool large)
+        private void AchievementAdvisor_DrawOneAchievement(On_AchievementAdvisor.orig_DrawOneAchievement orig, AchievementAdvisor self, SpriteBatch spriteBatch, Vector2 position, bool large)
         {
             // Vanilla scaling code.
             float scale = 0.35f;
@@ -182,14 +182,10 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class SoundVolumeFalloffHookEdit : IHookEdit
     {
-        public void Load()
-        {
-            On.Terraria.Audio.ActiveSound.Update += ActiveSound_Update;
-        }
-        public void Unload()
-        {
-            On.Terraria.Audio.ActiveSound.Update -= ActiveSound_Update;
-        }
+        public void Load() => On_ActiveSound.Update += ActiveSound_Update;
+        
+        public void Unload() => On_ActiveSound.Update -= ActiveSound_Update;
+
         private static List<string> SoundStylesToEdit => new()
         {
             "InfernumMode/Assets/Sounds/Custom/WayfinderGateLoop",
@@ -197,7 +193,7 @@ namespace InfernumMode.Core.ILEditingStuff
         };
 
         // Ideally this would be an IL but I dont have a copy of the correct source version to look at the IL.
-        private void ActiveSound_Update(On.Terraria.Audio.ActiveSound.orig_Update orig, ActiveSound self)
+        private void ActiveSound_Update(On_ActiveSound.orig_Update orig, ActiveSound self)
         {
             if (!Program.IsMainThread)
                 typeof(ActiveSound).GetMethod("RunOnMainThreadAndWait", BindingFlags.Static | BindingFlags.NonPublic).Invoke(self, new object[] { (Action)self.Update });

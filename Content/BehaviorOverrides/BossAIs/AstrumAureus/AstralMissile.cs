@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Astral Missile");
+            // DisplayName.SetDefault("Astral Missile");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

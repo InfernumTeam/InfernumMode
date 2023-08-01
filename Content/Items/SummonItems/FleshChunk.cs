@@ -9,11 +9,11 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Flesh Chunk");
-            Tooltip.SetDefault("Summons the Wall of Flesh\n" +
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Flesh Chunk");
+            /* Tooltip.SetDefault("Summons the Wall of Flesh\n" +
                 "Can only be used in the underworld\n" +
-                "Not consumable");
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 5; // Abeemination / Deer Thing
         }
 

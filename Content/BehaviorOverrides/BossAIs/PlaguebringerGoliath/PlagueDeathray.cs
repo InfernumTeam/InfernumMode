@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override Texture2D LaserEndTexture => TextureAssets.Extra[22].Value;
         public override float MaxLaserLength => 20f;
         public override float MaxScale => 0.2f;
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Ray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Ray");
 
         public override void SetDefaults()
         {

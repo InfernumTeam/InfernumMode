@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Laser");
+            // DisplayName.SetDefault("Laser");
             Main.projFrames[Type] = 4;
         }
 

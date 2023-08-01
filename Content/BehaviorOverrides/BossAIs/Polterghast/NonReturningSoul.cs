@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public bool CompleteFadein => Projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Soul");
+            // DisplayName.SetDefault("Soul");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;

@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blood Bolt");
+            // DisplayName.SetDefault("Blood Bolt");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 7;
         }

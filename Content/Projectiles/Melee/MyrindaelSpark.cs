@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 {
     public class MyrindaelSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Myrindael Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Myrindael Spark");
 
         public override void SetDefaults()
         {

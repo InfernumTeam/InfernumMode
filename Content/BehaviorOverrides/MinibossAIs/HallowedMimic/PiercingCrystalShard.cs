@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
 
         public const int FadeOutTime = 54;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Crystal Shard");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Crystal Shard");
 
         public override void SetDefaults()
         {

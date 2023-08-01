@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
     public class MeteorCinder : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Cinder");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Cinder");
 
         public override void SetDefaults()
         {

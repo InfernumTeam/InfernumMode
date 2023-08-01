@@ -204,7 +204,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             // This has a several frame buffer to ensure that all clients are informed of this change throughout the duration of the Nuclear Terror's lifetime, as it is not
             // synced by default.
             if (attackTimer <= 10f)
-                npc.RemoveWaterSlowness();
+                npc.waterMovementSpeed = 0f;
 
             // Determine opacity in accordance to the emergence timer.
             npc.Opacity = Sqrt(Utils.GetLerpValue(0f, emergeTime, attackTimer - waterEmergeDelay, true));
@@ -808,7 +808,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
                 npc.life = 0;
                 npc.HitEffect();
-                npc.StrikeNPCNoInteraction(9999, 0f, 0);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    npc.StrikeInstantKill();
+
                 npc.NPCLoot();
                 npc.active = false;
             }
@@ -869,7 +872,10 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
                 n.life = 0;
                 n.HitEffect();
-                n.StrikeNPCNoInteraction(9999, 0f, 0);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    n.StrikeInstantKill();
+
                 n.active = false;
             }
 

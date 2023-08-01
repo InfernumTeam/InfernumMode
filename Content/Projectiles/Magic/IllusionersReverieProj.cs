@@ -21,7 +21,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Illusioner's Reverie");
+            // DisplayName.SetDefault("Illusioner's Reverie");
             Main.projFrames[Projectile.type] = 8;
         }
 

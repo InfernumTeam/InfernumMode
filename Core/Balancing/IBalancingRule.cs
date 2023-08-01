@@ -1,4 +1,4 @@
-using Terraria;
+﻿using Terraria;
 
 namespace InfernumMode.Core.Balancing
 {
@@ -6,6 +6,6 @@ namespace InfernumMode.Core.Balancing
     {
         bool AppliesTo(NPC npc, NPCHitContext hitContext);
 
-        void ApplyBalancingChange(NPC npc, ref int damage);
+        void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers);
     }
 }

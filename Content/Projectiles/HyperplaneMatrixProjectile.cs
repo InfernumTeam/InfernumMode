@@ -191,7 +191,7 @@ namespace InfernumMode.Content.Projectiles
 
         public const float MaxHologramHeight = 304f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperplane Matrix");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperplane Matrix");
 
         public override void SetDefaults()
         {
@@ -471,7 +471,9 @@ namespace InfernumMode.Content.Projectiles
 
                 n.Calamity().DR = 0f;
                 n.Calamity().unbreakableDR = false;
-                n.StrikeNPCNoInteraction(n.lifeMax * 10, 0f, 0, true);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    n.StrikeInstantKill();
                 n.boss = false;
 
                 // If for some reason the NPC is not immediately dead, kill it manually. This mitigates death animations entirely.

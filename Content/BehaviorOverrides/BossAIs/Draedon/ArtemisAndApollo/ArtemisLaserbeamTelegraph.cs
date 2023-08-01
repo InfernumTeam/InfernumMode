@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public const float BeamPosOffset = 16f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Laserbeam Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Laserbeam Telegraph");
 
         public override void SetDefaults()
         {

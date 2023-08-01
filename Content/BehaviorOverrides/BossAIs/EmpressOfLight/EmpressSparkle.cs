@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Majestic Sparkle");
+            // DisplayName.SetDefault("Majestic Sparkle");
         }
 
         public override void SetDefaults()

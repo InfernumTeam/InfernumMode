@@ -179,7 +179,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             Main.QueueMainThreadAction(() =>
             {
                 DrawCacheProjsOverSignusBlackening = new List<int>();
-                IL.Terraria.Main.DoDraw += DrawBlackout;
+                IL_Main.DoDraw += DrawBlackout;
             });
         }
 
@@ -188,7 +188,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             Main.QueueMainThreadAction(() =>
             {
                 DrawCacheProjsOverSignusBlackening = null;
-                IL.Terraria.Main.DoDraw -= DrawBlackout;
+                IL_Main.DoDraw -= DrawBlackout;
             });
         }
     }

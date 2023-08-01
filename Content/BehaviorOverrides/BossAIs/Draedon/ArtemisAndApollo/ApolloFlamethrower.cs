@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public const float Lifetime = FadeinTime + FadeoutTime;
         public const float FireMaxLength = 1950f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exoplasma Flamethrower");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Exoplasma Flamethrower");
 
         public override void SetDefaults()
         {

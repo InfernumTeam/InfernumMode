@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Leviathan Meteor");
+            // DisplayName.SetDefault("Leviathan Meteor");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

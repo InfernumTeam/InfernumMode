@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ink Blob");
+            // DisplayName.SetDefault("Ink Blob");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

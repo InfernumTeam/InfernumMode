@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("Plantera's Tentacle");
+            // DisplayName.SetDefault("Plantera's Tentacle");
             Main.npcFrameCount[NPC.type] = 4;
 
             // Ensure that the tentacle always draws, even when far offscreen.
@@ -136,15 +136,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             return true;
         }
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hit.HitDirection, -1f, 0, default, 1f);
 
             if (NPC.life <= 0)
             {
                 for (int k = 0; k < 15; k++)
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hit.HitDirection, -1f, 0, default, 1f);
             }
         }
     }

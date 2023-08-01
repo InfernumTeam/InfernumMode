@@ -1,4 +1,4 @@
-using InfernumMode.Core.GlobalInstances.Systems;
+﻿using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 

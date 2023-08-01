@@ -1,5 +1,6 @@
-using CalamityMod.NPCs.CeaselessVoid;
+﻿using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.SlimeGod;
+using Terraria;
 using Terraria.ModLoader;
 using static CalamityMod.UI.BossHealthBarManager;
 using static Terraria.ModLoader.ModContent;
@@ -10,8 +11,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     {
         public static void PerformBarChanges()
         {
-            OneToMany.Remove(NPCType<EbonianSlimeGod>());
-            OneToMany.Remove(NPCType<CrimulanSlimeGod>());
+            OneToMany.Remove(NPCType<EbonianPaladin>());
+            OneToMany.Remove(NPCType<CrimulanPaladin>());
 
             OneToMany.Remove(NPCType<CeaselessVoid>());
             OneToMany.Remove(NPCType<DarkEnergy>());
@@ -22,9 +23,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public static void UndoBarChanges()
         {
-            int[] slimeGods = new int[] { NPCType<EbonianSlimeGod>(), NPCType<SplitEbonianSlimeGod>(), NPCType<CrimulanSlimeGod>(), NPCType<SplitCrimulanSlimeGod>() };
-            OneToMany[NPCType<EbonianSlimeGod>()] = slimeGods;
-            OneToMany[NPCType<CrimulanSlimeGod>()] = slimeGods;
+            int[] slimeGods = new int[] { NPCType<EbonianPaladin>(), NPCType<SplitEbonianPaladin>(), NPCType<CrimulanPaladin>(), NPCType<SplitCrimulanPaladin>() };
+            OneToMany[NPCType<EbonianPaladin>()] = slimeGods;
+            OneToMany[NPCType<CrimulanPaladin>()] = slimeGods;
 
             int[] ceaselessVoid = new int[] { NPCType<CeaselessVoid>(), NPCType<DarkEnergy>() };
             OneToMany[NPCType<CeaselessVoid>()] = ceaselessVoid;
@@ -33,7 +34,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (BossExclusionList.Contains(NPCType<SlimeGodCore>()))
                 BossExclusionList.Add(NPCType<SlimeGodCore>());
 
-            EntityExtensionHandler[NPCType<CeaselessVoid>()] = new BossEntityExtension("Dark Energy", NPCType<DarkEnergy>());
+            EntityExtensionHandler[NPCType<CeaselessVoid>()] = new BossEntityExtension(GetModNPC(NPCType<DarkEnergy>()).DisplayName, NPCType<DarkEnergy>());
         }
     }
 }

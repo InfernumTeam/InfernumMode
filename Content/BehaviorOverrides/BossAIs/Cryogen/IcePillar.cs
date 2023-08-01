@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
         public const float StartingHeight = 30f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Pillar");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Pillar");
 
         public override void SetDefaults()
         {

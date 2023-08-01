@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.NormalNPCs;
@@ -350,7 +350,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
                 CreateSparks(target.Center);
                 ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 8);
-                target.StrikeNPCNoInteraction(Main.rand.Next(40000, 60000), 0f, 0, true);
+                NPC.HitInfo hit = new()
+                {
+                    Damage = Main.rand.Next(40000, 60000),
+                    Crit = true,
+                    Knockback = 0f,
+                    HitDirection = 0,
+                };
+                target.StrikeNPC(hit);
 
                 CreateImpactParticlesForTarget(npc, target);
             }

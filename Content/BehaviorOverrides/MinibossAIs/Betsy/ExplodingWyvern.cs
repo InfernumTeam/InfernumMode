@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wyvern");
+            // DisplayName.SetDefault("Wyvern");
             Main.projFrames[Projectile.type] = 10;
         }
 

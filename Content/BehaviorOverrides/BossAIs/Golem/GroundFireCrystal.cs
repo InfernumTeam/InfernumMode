@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 {
     public class GroundFireCrystal : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Fire Crystal");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Fire Crystal");
 
         public override void SetDefaults()
         {

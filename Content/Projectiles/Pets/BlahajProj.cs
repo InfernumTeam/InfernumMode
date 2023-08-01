@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Blahaj");
+            // DisplayName.SetDefault("Blahaj");
             Main.projPet[Projectile.type] = true;
             Main.projFrames[Type] = 4;
         }

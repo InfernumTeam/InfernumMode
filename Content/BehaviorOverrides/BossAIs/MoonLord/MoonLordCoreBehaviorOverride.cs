@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
@@ -157,10 +157,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
-        private bool HandleMLBodyPhaseTriggers(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        private bool HandleMLBodyPhaseTriggers(NPC npc, ref NPC.HitModifiers modifiers)
         {
             if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead)
-                HandleBodyPartDeathTriggers(npc, realDamage);
+                HandleBodyPartDeathTriggers(npc, modifiers.FinalDamage.Base);
             return true;
         }
 
@@ -358,7 +358,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 return;
 
             npc.life = 0;
-            npc.StrikeNPCNoInteraction(9999, 0f, 0);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                npc.StrikeInstantKill();
             npc.checkDead();
         }
 

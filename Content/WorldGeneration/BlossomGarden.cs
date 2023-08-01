@@ -48,7 +48,7 @@ namespace InfernumMode.Content.WorldGeneration
                 }
             });
 
-            WorldGen.structures.AddProtectedStructure(protectionArea, 16);
+            GenVars.structures.AddProtectedStructure(protectionArea, 16);
         }
     }
 }

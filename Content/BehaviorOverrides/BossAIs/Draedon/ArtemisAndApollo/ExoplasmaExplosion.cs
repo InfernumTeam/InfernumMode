@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exoplasma Explosion");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Exoplasma Explosion");
 
         public override void SetDefaults()
         {

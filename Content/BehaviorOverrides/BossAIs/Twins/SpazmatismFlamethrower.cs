@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cursed Flamethrower");
+            // DisplayName.SetDefault("Cursed Flamethrower");
         }
 
         public override void SetDefaults()

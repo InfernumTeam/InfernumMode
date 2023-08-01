@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Biomes
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lost Colosseum");
+            // DisplayName.SetDefault("Lost Colosseum");
         }
 
         public override bool IsBiomeActive(Player player) => SubworldSystem.IsActive<LostColosseum>();

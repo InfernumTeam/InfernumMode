@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ground Shock");
+            // DisplayName.SetDefault("Ground Shock");
         }
 
         public override void SetDefaults()

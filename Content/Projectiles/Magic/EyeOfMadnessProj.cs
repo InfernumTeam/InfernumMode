@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public ref float AttackTimer => ref Projectile.ai[1];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Eye of Madness");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Eye of Madness");
 
         public override void SetDefaults()
         {

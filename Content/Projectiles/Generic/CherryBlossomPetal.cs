@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cherry Blossom Petal");
+            // DisplayName.SetDefault("Cherry Blossom Petal");
             Main.projFrames[Type] = 3;
         }
 

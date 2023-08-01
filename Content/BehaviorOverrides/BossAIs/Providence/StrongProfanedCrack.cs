@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Profaned Cracks");
+            // DisplayName.SetDefault("Profaned Cracks");
         }
 
         public override void SetDefaults()

@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tooth");
+            // DisplayName.SetDefault("Tooth");
         }
 
         public override void SetDefaults()

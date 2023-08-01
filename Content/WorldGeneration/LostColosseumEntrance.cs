@@ -16,7 +16,7 @@ namespace InfernumMode.Content.WorldGeneration
     {
         public static void Generate(GenerationProgress _, GameConfiguration _2)
         {
-            Point placementPosition = WorldGen.UndergroundDesertLocation.Center;
+            Point placementPosition = GenVars.UndergroundDesertLocation.Center;
             placementPosition.Y -= 75;
 
             // Use the sunken sea lab as a reference if not in the middle of worldgen, since the underground desert location rectangle is discarded after initial world-gen, meaning

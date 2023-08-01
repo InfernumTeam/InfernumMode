@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Gamma Deathray");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Gamma Deathray");
 
         public override void SetDefaults()
         {

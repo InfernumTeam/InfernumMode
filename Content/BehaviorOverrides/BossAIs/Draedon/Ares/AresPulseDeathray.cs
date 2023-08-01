@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pulse Deathray");
+            // DisplayName.SetDefault("Pulse Deathray");
             Main.projFrames[Projectile.type] = 5;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }

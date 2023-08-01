@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresTeslaSpark : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Tesla Spark");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Tesla Spark");
 
         public override void SetDefaults()
         {

@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Dart");
+            // DisplayName.SetDefault("Brimstone Dart");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;

@@ -25,7 +25,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Ninja Slice");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Ninja Slice");
 
         public override void SetDefaults()
         {

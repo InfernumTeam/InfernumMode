@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Holy Crystal Shard");
+            // DisplayName.SetDefault("Holy Crystal Shard");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }

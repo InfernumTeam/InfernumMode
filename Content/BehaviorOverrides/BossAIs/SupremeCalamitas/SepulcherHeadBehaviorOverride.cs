@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -77,7 +77,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float hasSummonedSegments = ref npc.Infernum().ExtraAI[5];
 
             // Don't get stopped by weird freezing debuffs.
-            npc.buffImmune[ModContent.BuffType<ExoFreeze>()] = true;
             npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
             npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
             npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;

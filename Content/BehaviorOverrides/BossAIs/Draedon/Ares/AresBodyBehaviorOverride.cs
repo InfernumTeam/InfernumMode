@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.InverseKinematics;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Melee;
@@ -573,7 +573,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 npc.life = 0;
                 npc.HitEffect();
-                npc.StrikeNPC(10, 0f, 1);
+                NPC.HitInfo hit = new()
+                {
+                    Damage = 10,
+                    Knockback = 0f,
+                    HitDirection = 1
+                };
+                npc.StrikeNPC(hit);
                 npc.checkDead();
             }
         }
@@ -1196,7 +1202,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     {
                         npc.life = 0;
                         npc.HitEffect();
-                        npc.StrikeNPC(10, 0f, 1);
+                        NPC.HitInfo hit = new()
+                        {
+                            Damage = 10,
+                            Knockback = 0f,
+                            HitDirection = 1
+                        };
+                        npc.StrikeNPC(hit);
                         npc.checkDead();
                     }
 

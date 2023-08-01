@@ -16,10 +16,10 @@ namespace InfernumMode.Content.Items.SummonItems
 
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 3;
-            DisplayName.SetDefault("Leviathan Detector");
-            Tooltip.SetDefault("Summons Anahita\n" +
-                "Not consumable");
+            Item.ResearchUnlockCount = 3;
+            // DisplayName.SetDefault("Leviathan Detector");
+            /* Tooltip.SetDefault("Summons Anahita\n" +
+                "Not consumable"); */
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
         }
 

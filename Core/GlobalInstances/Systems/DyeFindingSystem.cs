@@ -11,10 +11,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad()
         {
-            On.Terraria.Player.UpdateItemDye += FindDyes;
+            On_Player.UpdateItemDye += FindDyes;
         }
 
-        private void FindDyes(On.Terraria.Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)
+        private void FindDyes(On_Player.orig_UpdateItemDye orig, Player self, bool isNotInVanitySlot, bool isSetToHidden, Item armorItem, Item dyeItem)
         {
             orig(self, isNotInVanitySlot, isSetToHidden, armorItem, dyeItem);
             FindDyeEvent?.Invoke(armorItem, dyeItem);

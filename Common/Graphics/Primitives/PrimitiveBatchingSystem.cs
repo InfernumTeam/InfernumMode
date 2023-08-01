@@ -32,10 +32,10 @@ namespace InfernumMode.Common.Graphics.Primitives
         public override void OnModLoad()
         {
             Batches = new();
-            On.Terraria.Main.DrawProjectiles += DrawBatches;
+            On_Main.DrawProjectiles += DrawBatches;
         }
 
-        private void DrawBatches(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
+        private void DrawBatches(On_Main.orig_DrawProjectiles orig, Main self)
         {
             orig(self);
 

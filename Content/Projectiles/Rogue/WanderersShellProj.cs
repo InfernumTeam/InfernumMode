@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public override string Texture => "InfernumMode/Content/Items/Weapons/Rogue/WanderersShell";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Wanderer's Shell");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Wanderer's Shell");
 
         public override void SetDefaults()
         {
@@ -59,7 +59,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
         // Prevent death by tile collision.
         public override bool OnTileCollide(Vector2 oldVelocity) => false;
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             // Bounce off of targets.
             if (!HasBounced)

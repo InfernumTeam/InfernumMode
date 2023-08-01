@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Wrathful Spirits");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Wrathful Spirits");
 
         public override void SetDefaults()
         {

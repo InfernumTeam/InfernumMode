@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cosmic Kunai");
+            // DisplayName.SetDefault("Cosmic Kunai");
         }
 
         public override void SetDefaults()

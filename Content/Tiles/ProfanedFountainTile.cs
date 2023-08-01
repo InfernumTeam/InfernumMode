@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Tiles
     {
         public override void SetStaticDefaults()
         {
-            this.SetUpFountain();
+            this.SetUpFountain(Color.Yellow);
             AddMapEntry(Color.Yellow, Language.GetText("MapObject.WaterFountain"));
             AnimationFrameHeight = 72;
         }

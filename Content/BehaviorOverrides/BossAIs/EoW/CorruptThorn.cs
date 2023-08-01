@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.VilethornTip}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Corrupt Thorn");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Corrupt Thorn");
 
         public override void SetDefaults()
         {

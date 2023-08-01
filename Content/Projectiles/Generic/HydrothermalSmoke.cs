@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Steam");
+            // DisplayName.SetDefault("Steam");
 
             // This prevents the smoke from creating a water distortion wherever it lands, thus making the vents look weird.
             ProjectileID.Sets.NoLiquidDistortion[Type] = true;
@@ -47,9 +47,9 @@ namespace InfernumMode.Content.Projectiles.Generic
                 Projectile.timeLeft -= 8;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (damage <= 0)
+            if (info.Damage <= 0)
                 return;
 
             target.AddBuff(BuffID.OnFire, 60);

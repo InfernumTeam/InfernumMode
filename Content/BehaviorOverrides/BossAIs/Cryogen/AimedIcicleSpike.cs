@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         public ref float AimAheadFactor => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Icicle Spike");
+            // DisplayName.SetDefault("Icicle Spike");
         }
 
         public override void SetDefaults()

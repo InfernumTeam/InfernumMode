@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     public class PlagueCloud : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Cloud");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Cloud");
 
         public override void SetDefaults()
         {

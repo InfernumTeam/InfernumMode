@@ -1,6 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -67,7 +67,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             // Summon the wyrm after enough time has passed. After it is spawned it will attempt to snatch the Terminus.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time == AEWSpawnDelay)
-                CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 1000f, ModContent.NPCType<AdultEidolonWyrmHead>());
+                CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 1000f, ModContent.NPCType<PrimordialWyrmHead>());
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             // Make the light rays dissipate if the AEW is close. This is done to ensure that the light rays don't suddenly vanish the
             // instant the Terminus is snatched, which would look a bit weird.
             float aewProximityOpacityFade = 1f;
-            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<AdultEidolonWyrmHead>());
+            int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<PrimordialWyrmHead>());
             if (aewIndex >= 0 && Main.npc[aewIndex].active)
                 aewProximityOpacityFade = Utils.GetLerpValue(200f, 780f, Projectile.Distance(Main.npc[aewIndex].Center), true);
 

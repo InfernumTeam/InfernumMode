@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Electric Orb");
+            // DisplayName.SetDefault("Electric Orb");
             Main.projFrames[Type] = 6;
         }
 

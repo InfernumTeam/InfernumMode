@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
@@ -29,14 +29,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
 
-        public override void Load()
-        {
-            On.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += PrepareWater;
-        }
+        public override void Load() => Terraria.GameContent.Liquid.On_LiquidRenderer.DrawNormalLiquids += PrepareWater;
 
-        public static void PrepareWater(On.Terraria.GameContent.Liquid.LiquidRenderer.orig_InternalDraw orig, Terraria.GameContent.Liquid.LiquidRenderer self, SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha, bool isBackgroundDraw)
+        public override void Unload() => Terraria.GameContent.Liquid.On_LiquidRenderer.DrawNormalLiquids -= PrepareWater;
+
+        public static void PrepareWater(Terraria.GameContent.Liquid.On_LiquidRenderer.orig_DrawNormalLiquids orig, Terraria.GameContent.Liquid.LiquidRenderer self, SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha, bool isBackgroundDraw)
         {
             ClaimAllBubbles();
             orig(self, spriteBatch, drawOffset, waterStyle, globalAlpha, isBackgroundDraw);

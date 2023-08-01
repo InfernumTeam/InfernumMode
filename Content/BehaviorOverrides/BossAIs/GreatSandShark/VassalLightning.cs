@@ -33,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Myrndael Lightning Bolt");
+            // DisplayName.SetDefault("Myrndael Lightning Bolt");
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 10000;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 50;

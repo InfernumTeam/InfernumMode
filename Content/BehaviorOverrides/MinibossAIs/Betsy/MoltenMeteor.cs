@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Meteor");
+            // DisplayName.SetDefault("Meteor");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }

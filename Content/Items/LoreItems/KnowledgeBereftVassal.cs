@@ -3,22 +3,19 @@ using CalamityMod.Items.Materials;
 using InfernumMode.Content.Items.Placeables;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.LoreItems
 {
     public class KnowledgeBereftVassal : LoreItem
     {
-        public override string Lore =>
-@"An unusal pair of solitary camaraderie.
-Once a warrior of noble renown, it would seem that Argus was one of the few survivors to emerge from the ruins of Ilmeris.
-Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
-Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.";
+        public override LocalizedText Tooltip => Language.GetText("Mods.InfernumMode.Lore.VassalLore");
 
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
-            DisplayName.SetDefault("The Bereft Vassal and Great Sand Shark");
+            // DisplayName.SetDefault("The Bereft Vassal and Great Sand Shark");
         }
 
         public override void SetDefaults()

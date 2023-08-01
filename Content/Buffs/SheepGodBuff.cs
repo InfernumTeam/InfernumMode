@@ -9,8 +9,8 @@ namespace InfernumMode.Content.Buffs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sheep God");
-            Description.SetDefault("Does the sheep count the sheep?");
+            // DisplayName.SetDefault("Sheep God");
+            // Description.SetDefault("Does the sheep count the sheep?");
             Main.buffNoTimeDisplay[Type] = true;
             Main.vanityPet[Type] = true;
         }

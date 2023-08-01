@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         public ref float Time => ref Projectile.ai[0];
         public ref float LaserLength => ref Projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam Telegraph");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam Telegraph");
 
         public override void SetDefaults()
         {

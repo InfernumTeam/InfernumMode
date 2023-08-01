@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sand Ball");
+            // DisplayName.SetDefault("Sand Ball");
             Main.projFrames[Projectile.type] = 4;
         }
 

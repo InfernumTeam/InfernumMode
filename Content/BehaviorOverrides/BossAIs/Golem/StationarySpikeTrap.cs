@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public ref float SpikeDirection => ref Projectile.ai[1];
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Spike Trap");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Spike Trap");
 
         public override void SetDefaults()
         {

@@ -21,12 +21,12 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dreamtastic");
-            Tooltip.SetDefault("Summons two dorks that fire energy bolts at enemies\n" +
+            // DisplayName.SetDefault("Dreamtastic");
+            /* Tooltip.SetDefault("Summons two dorks that fire energy bolts at enemies\n" +
                 "The book also releases energy bolts of its own\n" +
                 "Contains a finite number of pages, documenting the stories of the two Dreamtastic Stars and their bountiful adventures\n" +
-                "You are a dork");
-            SacrificeTotal = 1;
+                "You are a dork"); */
+            Item.ResearchUnlockCount = 1;
         }
 
         public override void SetDefaults()

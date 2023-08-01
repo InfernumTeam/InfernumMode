@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -73,15 +73,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             GlobalNPCOverrides.StrikeNPCEvent += AddDamageMultiplier;
         }
 
-        private bool AddDamageMultiplier(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        private bool AddDamageMultiplier(NPC npc, ref NPC.HitModifiers modifiers)
         {
             // Make Thanatos' head take a flat multiplier in terms of final damage, as a means of allowing direct hits to be effective.
             if (npc.type == ModContent.NPCType<ThanatosHead>())
             {
-                damage = (int)(damage * FlatDamageBoostFactor);
+                modifiers.FinalDamage.Base *= FlatDamageBoostFactor;
                 if (npc.Calamity().DR > 0.999f)
                 {
-                    damage = 0D;
+                    modifiers.FinalDamage.Base *= 0f;
                     return false;
                 }
             }
@@ -92,11 +92,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 NPC head = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
 
                 // Disable damage and start the death animation if the hit would kill Thanatos.
-                if (head.life - realDamage <= 1)
+                if (head.life - modifiers.FinalDamage.Base <= 1)
                 {
                     head.life = 0;
                     head.checkDead();
-                    damage = 0;
+                    modifiers.FinalDamage.Base *= 0f;
                     npc.dontTakeDamage = true;
                     return false;
                 }
@@ -445,7 +445,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 npc.life = 0;
                 npc.HitEffect();
-                npc.StrikeNPC(10, 0f, 1);
+                NPC.HitInfo hit = new()
+                {
+                    Damage = 10,
+                    Knockback = 0f,
+                    HitDirection = 0
+                };
+                npc.StrikeNPC(hit);
                 npc.checkDead();
             }
 

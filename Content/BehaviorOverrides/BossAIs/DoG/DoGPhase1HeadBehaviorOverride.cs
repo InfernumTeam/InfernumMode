@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
@@ -188,21 +188,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        private bool UpdateLifeTriggers(NPC npc, ref double damage, int realDamage, int defense, ref float knockback, int hitDirection, ref bool crit)
+        private bool UpdateLifeTriggers(NPC npc, ref NPC.HitModifiers modifiers)
         {
             // Make DoG enter the second phase once ready.
             bool isDoG = npc.type == ModContent.NPCType<DoGHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
-            return !isDoG || HandleDoGLifeBasedHitTriggers(npc, realDamage, ref damage);
+            return !isDoG || HandleDoGLifeBasedHitTriggers(npc, modifiers.FinalDamage.Base, ref modifiers);
         }
 
-        public static bool HandleDoGLifeBasedHitTriggers(NPC npc, double realDamage, ref double damage)
+        public static bool HandleDoGLifeBasedHitTriggers(NPC npc, double realDamage, ref NPC.HitModifiers modifiers)
         {
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
 
             // Disable damage and enter phase 2 if the hit would bring DoG down to a sufficiently low quantity of HP.
             if (life - realDamage <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
             {
-                damage = 0;
+                modifiers.FinalDamage.Base *= 0;
                 npc.dontTakeDamage = true;
                 CurrentPhase2TransitionState = Phase2TransitionState.NeedsToSummonPortal;
                 return false;
@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Disable damage and start the death animation if the hit would kill DoG.
             if (life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
             {
-                damage = 0;
+                modifiers.FinalDamage.Base *= 0;
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[DeathAnimationTimerIndex] == 0f)
                 {

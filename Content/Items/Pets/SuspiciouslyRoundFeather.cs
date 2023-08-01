@@ -13,9 +13,9 @@ namespace InfernumMode.Content.Items.Pets
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Suspiciously Round Feather");
-            Tooltip.SetDefault("Summons an old friend");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Suspiciously Round Feather");
+            // Tooltip.SetDefault("Summons an old friend");
         }
         public override void SetDefaults()
         {
@@ -44,7 +44,6 @@ namespace InfernumMode.Content.Items.Pets
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DesertFeather>(), 2);
             recipe.AddIngredient(ItemID.Feather, 2);
             recipe.AddIngredient(ItemID.ChickenNugget);
             recipe.AddTile(TileID.DemonAltar);

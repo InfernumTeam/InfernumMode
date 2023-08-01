@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Exolaser Bomb");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Exolaser Bomb");
 
         public override void SetDefaults()
         {

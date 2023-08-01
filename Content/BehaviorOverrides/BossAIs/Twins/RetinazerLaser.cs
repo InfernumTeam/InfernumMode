@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Death Laser");
+            // DisplayName.SetDefault("Death Laser");
             Main.projFrames[Type] = 4;
         }
 

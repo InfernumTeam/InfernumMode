@@ -1,4 +1,4 @@
-using InfernumMode.Core.OverridingSystem;
+﻿using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -223,7 +223,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (Main.npc.IndexInRange(Main.wofNPCIndex))
-                    Main.npc[Main.wofNPCIndex].StrikeNPC(DetachDamage, 0f, 0);
+                {
+                    NPC.HitInfo hit = new()
+                    {
+                        Damage = DetachDamage,
+                        Knockback = 0f,
+                        HitDirection = 0
+                    };
+                    Main.npc[Main.wofNPCIndex].StrikeNPC(hit);
+                }
             }
 
             npc.life = 1;

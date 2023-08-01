@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
     public class GoreSpike : ModProjectile
     {
         public Player Target => Main.player[Projectile.owner];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Spike");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Spike");
 
         public override void SetDefaults()
         {

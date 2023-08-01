@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Charge Telegraph");
+            // DisplayName.SetDefault("Charge Telegraph");
         }
 
         public override void SetDefaults()

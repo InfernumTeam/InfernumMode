@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sand Skull");
+            // DisplayName.SetDefault("Sand Skull");
             Main.projFrames[Projectile.type] = 10;
         }
 

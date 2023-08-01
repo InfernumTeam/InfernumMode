@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bee");
+            // DisplayName.SetDefault("Bee");
             Main.projFrames[Projectile.type] = 3;
         }
 

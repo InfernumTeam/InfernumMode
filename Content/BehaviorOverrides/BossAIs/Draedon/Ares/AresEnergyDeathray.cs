@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Exo Energy Burst");
+            // DisplayName.SetDefault("Exo Energy Burst");
             Main.projFrames[Projectile.type] = 5;
         }
 

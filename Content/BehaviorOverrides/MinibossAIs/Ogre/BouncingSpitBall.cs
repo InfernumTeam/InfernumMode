@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 {
     public class BouncingSpitBall : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Spit Ball");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Spit Ball");
 
         public override void SetDefaults()
         {

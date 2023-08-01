@@ -1,4 +1,4 @@
-using CalamityMod.Dusts;
+﻿using CalamityMod.Dusts;
 using InfernumMode.Content.Items;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -70,7 +70,7 @@ namespace InfernumMode.Content.Tiles
             Vector2 drawPosition = new Vector2(i + 0.5f, j + 0.25f) * 16f + drawOffset - Main.screenPosition;
             Vector2 worldPosition = new Vector2(i + 1f, j).ToWorldCoordinates();
 
-            WindGridSystem.Windgrid.GetWindTime(i, j, WindPushLifetime, out int windTimeLeft, out int direction);
+            WindGridSystem.Windgrid.GetWindTime(i, j, WindPushLifetime, out int windTimeLeft, out int directionX, out int directionY);
 
             if (windTimeLeft >= 1)
             {
@@ -81,7 +81,8 @@ namespace InfernumMode.Content.Tiles
             }
 
             float windInterpolant = windTimeLeft / (float)WindPushLifetime;
-            float windRotation = Utils.GetLerpValue(0f, 0.5f, windInterpolant, true) * Utils.GetLerpValue(1f, 0.5f, windInterpolant, true) * direction * 0.34f;
+            float windRotation = Utils.GetLerpValue(0f, 0.5f, windInterpolant, true) * Utils.GetLerpValue(1f, 0.5f, windInterpolant, true) * new Vector2(directionX, directionY).ToRotation()
+                * 0.34f;
             Color drawColor = Lighting.GetColor(i, j) * 3f;
 
             spriteBatch.Draw(rose, drawPosition, null, drawColor, windRotation, rose.Size() * Vector2.UnitY, 1f, SpriteEffects.None, 0f);

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Feather");
+            // DisplayName.SetDefault("Feather");
             Main.projFrames[Projectile.type] = 1;
         }
 

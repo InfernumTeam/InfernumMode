@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
     {
         public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.BeeHive}";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Hive");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Hive");
 
         public override void SetDefaults()
         {

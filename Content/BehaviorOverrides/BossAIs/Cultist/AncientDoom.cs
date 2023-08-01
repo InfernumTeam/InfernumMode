@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Doomer");
+            // DisplayName.SetDefault("Doomer");
             Main.projFrames[Projectile.type] = 5;
         }
 

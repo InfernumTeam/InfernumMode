@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Blob");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Shadow Blob");
 
         public override void SetDefaults()
         {

@@ -12,9 +12,9 @@ namespace InfernumMode.Content.Items.Pets
     {
         public override void SetStaticDefaults()
         {
-            SacrificeTotal = 1;
-            DisplayName.SetDefault("Blasted Tophat");
-            Tooltip.SetDefault("Summons a small hat girl that gives you advice about bosses that you fight");
+            Item.ResearchUnlockCount = 1;
+            // DisplayName.SetDefault("Blasted Tophat");
+            // Tooltip.SetDefault("Summons a small hat girl that gives you advice about bosses that you fight");
         }
         public override void SetDefaults()
         {

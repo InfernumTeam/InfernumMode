@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Homing Fireball");
+            // DisplayName.SetDefault("Homing Fireball");
         }
         public override void SetDefaults()
         {

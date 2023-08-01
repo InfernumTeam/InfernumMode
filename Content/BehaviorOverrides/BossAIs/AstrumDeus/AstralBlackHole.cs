@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/WhiteHole";
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Black Hole");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Black Hole");
 
         public override void SetDefaults()
         {

@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tooth Ball");
+            // DisplayName.SetDefault("Tooth Ball");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
         }

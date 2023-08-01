@@ -139,7 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            DisplayName.SetDefault("XF-09 Ares Energy Katana");
+            // DisplayName.SetDefault("XF-09 Ares Energy Katana");
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 50;
         }
@@ -512,9 +512,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
 
-        public override bool? CanHitNPC(NPC target) => false;
+        public override bool CanHitNPC(NPC target)/* tModPorter Suggestion: Return true instead of null */ => false;
 
-        public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(NPC.HitInfo hit)
         {
             if (NPC.soundDelay == 1)
             {

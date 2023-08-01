@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Brimstone Gigablast");
+            // DisplayName.SetDefault("Brimstone Gigablast");
             Main.projFrames[Projectile.type] = 6;
         }
 

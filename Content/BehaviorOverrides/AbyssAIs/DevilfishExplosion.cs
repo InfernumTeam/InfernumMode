@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
     public class DevilfishExplosion : ModProjectile, IAdditiveDrawer
     {
         public ref float LightPower => ref Projectile.ai[0];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Devilburst");
+        // public override void SetStaticDefaults() => DisplayName.SetDefault("Devilburst");
 
         public override void SetDefaults()
         {

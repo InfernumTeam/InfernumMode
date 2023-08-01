@@ -15,7 +15,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gamma Cinder");
+            // DisplayName.SetDefault("Gamma Cinder");
         }
 
         public override void SetDefaults()

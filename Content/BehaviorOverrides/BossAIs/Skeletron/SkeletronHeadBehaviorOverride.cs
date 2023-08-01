@@ -856,20 +856,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                return "Contrary to what you may think, running into the shadowflame walls will not work, take it slow!";
-            };
+            yield return n => "Mods.InfernumMode.PetDialog.SkeletronTip1";
             yield return n =>
             {
                 if (n.life < n.lifeMax * Phase2LifeRatio)
-                    return "Don't panic when Skeletron does his barrages of hand fireballs! Just jump and stay calm!";
+                    return "Mods.InfernumMode.PetDialog.SkeletronTip2";
                 return string.Empty;
             };
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Geeettttttt DUNKED ON!!!";
+                    return "Mods.InfernumMode.PetDialog.SkeletronJokeTip1";
                 return string.Empty;
             };
         }

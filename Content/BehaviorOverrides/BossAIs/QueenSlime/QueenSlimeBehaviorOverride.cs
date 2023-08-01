@@ -751,7 +751,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
 
                 // Give a tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Those crystals are equally spaced... seems like you can dodge them the same way consistently!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.QueenSlimeCrystalTip");
             }
 
             // Create the spinning lasers.
@@ -1235,10 +1235,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                return "Don't flail about, and figure out what she's doing. Do still try and stay on the move, though!";
-            };
+            yield return n => "Mods.InfernumMode.PetDialog.QueenSlimeTip1";
         }
         #endregion Tips
     }

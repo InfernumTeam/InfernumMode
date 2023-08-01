@@ -1,4 +1,5 @@
-﻿using CalamityMod.World;
+﻿using CalamityMod;
+using CalamityMod.World;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
@@ -36,7 +37,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || Main.zenithWorld;
             if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive && DisableDifficultyModes)
             {
-                Utilities.DisplayText("Infernum is not allowed in Master Mode or For the Worthy.", Color.Red);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.InfernumDisallowedInWeirdDifficulties", Color.Red);
                 if (Main.netMode == NetmodeID.Server)
                     PacketManager.SendPacket<InfernumModeActivityPacket>();
                 WorldSaveSystem.InfernumMode = false;
@@ -50,7 +51,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Create some warning text about Eternity Mode if the player enables Infernum with it enabled.
             if (Main.netMode != NetmodeID.MultiplayerClient && WorldSaveSystem.InfernumMode && InfernumMode.EmodeIsActive && !WorldSaveSystem.DisplayedEmodeWarningText)
             {
-                Utilities.DisplayText("Eternity mode's boss AI changes are overridden by Infernum if there are conflicts.", Color.Red);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.EternityModeWarning", Color.Red);
                 WorldSaveSystem.DisplayedEmodeWarningText = true;
             }
         }

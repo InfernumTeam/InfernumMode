@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -42,7 +43,7 @@ namespace InfernumMode.Content.Tiles
             if (Main.LocalPlayer.WithinRange(new(i * 16f, j * 16f), 450f) && !IsBreakable)
             {
                 Utilities.CreateShockwave(new Vector2(i * 16f + 8f, j * 16f + 8f), 2, 8, 75f, false);
-                Utilities.DisplayText("The eggs reject your attempt at claiming the blade!", new(240, 174, 86));
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.EggSwordShrineBreakFailure", new(240, 174, 86));
             }
         }
     }

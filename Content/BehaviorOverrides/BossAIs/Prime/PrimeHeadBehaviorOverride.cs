@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -659,7 +659,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             if (attackTimer == slowdownTime)
             {
                 SoundEngine.PlaySound(Karasawa.FireSound, target.Center);
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Those blue tesla mines are going to explode into gas; take cover!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PrimeTeslaTip");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < bombCount; i++)

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.Ranged;
@@ -349,7 +349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             {
                 phase3TransitionTimer++;
                 if (phase3TransitionTimer == 45f && TipsManager.ShouldUseJokeText)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "You're gonna have a bad time...");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.GolemJokeTip1");
             }
 
             // Reset things.
@@ -1675,7 +1675,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                     }
                 }
             }
-        LeaveLoop:
+LeaveLoop:
 
             List<GolemAttackState> possibleAttacks = new()
             {
@@ -1917,7 +1917,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Golem's eye color will change depending on it's attack. Keep your own eyes peeled!";
+            yield return n => "Mods.InfernumMode.PetDialog.GolemTip1";
         }
     }
 }

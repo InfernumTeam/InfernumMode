@@ -1425,7 +1425,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.DisplayText("Lava is rising from below!", IsEnraged ? Color.SkyBlue : Color.Orange);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ProvidenceLavaRise", IsEnraged ? Color.SkyBlue : Color.Orange);
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProfanedLava>(), 350, 0f);
                 }
 
@@ -1623,7 +1623,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Give a tip.
             if (shootTimer == 1f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Those fireballs seem to only explode if they hit lava, you should probably bait them away!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProvidenceExplosionTip");
 
             shootTimer++;
         }
@@ -1821,7 +1821,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Play a rumble sound and give a tip.
             if (npc.Infernum().ExtraAI[2] == 0f)
             {
-                HatGirl.SayThingWhileOwnerIsAlive(target, "It looks like Providence is preparing something!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProvidenceFinalPhaseTip");
                 SoundEngine.PlaySound(InfernumSoundRegistry.LeviathanRumbleSound);
                 npc.Infernum().ExtraAI[2] = 1f;
             }
@@ -2258,7 +2258,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float laserShootTimer = ref npc.Infernum().ExtraAI[1];
             ref float vfxDelayCountdown = ref npc.Infernum().ExtraAI[2];
             ref float recordingStarted = ref npc.Infernum().ExtraAI[3];
-            ref float hasSaidTip = ref npc.Infernum().ExtraAI[4];
 
             int bombShootRate = (int)Lerp(startingBombShootRate, endingBombShootRate, attackCompletion);
             int laserShootRate = (int)Lerp(startingLaserShootRate, endingLaserShootRate, attackCompletion);
@@ -2278,18 +2277,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 recordingStarted = 1f;
                 CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Provi);
-                npc.netUpdate = true;
-            }
-
-            // Give a tip.
-            if (hasSaidTip == 0f)
-            {
-                string tip = "The lava is rising, get to higher ground!";
-                if (TipsManager.ShouldUseJokeText)
-                    tip = "Who opened the faucets again?!";
-
-                HatGirl.SayThingWhileOwnerIsAlive(target, tip);
-                hasSaidTip = 1f;
                 npc.netUpdate = true;
             }
 
@@ -2787,14 +2774,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             yield return n =>
             {
-                return "Don't worry about hooking to the walls or anything like that. Providence provides you with unlimited flight time!";
-            };
-            yield return n =>
-            {
                 if (Main.dayTime && Main.time >= Main.dayLength - 3600D)
-                    return "Make sure it doesn't become dusk if you fight her again!";
+                    return "Mods.InfernumMode.PetDialog.ProvidenceDuskWarningTip";
                 if (!Main.dayTime && Main.time >= Main.nightLength - 3600D)
-                    return "Make sure it doesn't become dawn if you fight her again!";
+                    return "Mods.InfernumMode.PetDialog.ProvidenceDawnWarningTip";
                 return string.Empty;
             };
         }

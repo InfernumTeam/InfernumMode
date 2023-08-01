@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
 using InfernumMode.Assets.Effects;
@@ -18,6 +18,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -133,7 +134,7 @@ namespace InfernumMode.Content.Tiles
                 // Don't allow the player to use the portal if Infernum is not active.
                 if (!InfernumMode.CanUseCustomAIs)
                 {
-                    CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, "Infernum must be enabled to enter the Colosseum!");
+                    CombatText.NewText(Main.LocalPlayer.Hitbox, Color.Orange, Language.GetTextValue("Mods.InfernumMode.Status.InfernumNeededToEnterColosseum"));
                     return;
                 }
 

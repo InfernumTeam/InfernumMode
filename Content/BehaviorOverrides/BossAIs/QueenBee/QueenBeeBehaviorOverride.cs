@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -659,24 +659,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                return "Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!";
-            };
-            yield return n =>
-            {
-                return "Getting rid of those extra hornets should be your top priority!";
-            };
+            yield return n => "Mods.InfernumMode.PetDialog.QueenBeeTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.QueenBeeTip2";
+
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "I can't Bee-lieve that, totally uncalled for!";
+                    return "Mods.InfernumMode.PetDialog.QueenBeeJokeTip1";
                 return string.Empty;
             };
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Oof, that mustve Stung...";
+                    return "Mods.InfernumMode.PetDialog.QueenBeeJokeTip2";
                 return string.Empty;
             };
         }

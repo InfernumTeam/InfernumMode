@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             {
                 npc.Infernum().ExtraAI[10] = 1f;
                 finalPhaseInvinciblityTime = 90f;
-                HatGirl.SayThingWhileOwnerIsAlive(target, "It's still going?!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.HiveMindFinalPhaseTip");
                 npc.netUpdate = true;
             }
 
@@ -979,19 +979,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "This is the time you would want to learn the opponents moves, use their tells to get the upper hand!";
-            yield return n => "Try to push his Rain Charge away by running towards the Hive Mind, this can help keep your arena clean!";
-            yield return n => "The Hive Mind begins its next attack early if you attack it; wait until it's on cooldown before you shoot!";
+            yield return n => "Mods.InfernumMode.PetDialog.HiveMindTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.HiveMindTip2";
+            yield return n => "Mods.InfernumMode.PetDialog.HiveMindTip3";
+
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "That didn't work, but dont worry! Hive got a plan!";
+                    return "Mods.InfernumMode.PetDialog.HiveMindJokeTip1";
                 return string.Empty;
             };
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "I would make a snarky comment right now, but I probably should Mind my own business...";
+                    return "Mods.InfernumMode.PetDialog.HiveMindJokeTip2";
                 return string.Empty;
             };
         }

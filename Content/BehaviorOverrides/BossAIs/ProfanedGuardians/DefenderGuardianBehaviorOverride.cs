@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndCharge);
                         commander.Infernum().ExtraAI[CommanderAttackCyclePositionIndex] = 1f;
 
-                        HatGirl.SayThingWhileOwnerIsAlive(target, "Ohhh, he's really mad now! Stay on your toes!");
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedDefenderTip1");
                         npc.life = 0;
                         npc.NPCLoot();
                         npc.active = false;

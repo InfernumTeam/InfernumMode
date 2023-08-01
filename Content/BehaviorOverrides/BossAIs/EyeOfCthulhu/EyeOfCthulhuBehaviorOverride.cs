@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
@@ -852,12 +852,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Watch out for those teeth bombs! The teeth spew away from the bomb's landing, try staying close!";
-            yield return n => "Investing in a hook or high mobility could prove great to dodge the Eye of Cthulhu's charges!";
+            yield return n => "Mods.InfernumMode.PetDialog.EoCTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.EoCTip2";
+
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Eye can't believe you died to that.";
+                    return "Mods.InfernumMode.PetDialog.EoCJokeTip1";
                 return string.Empty;
             };
         }

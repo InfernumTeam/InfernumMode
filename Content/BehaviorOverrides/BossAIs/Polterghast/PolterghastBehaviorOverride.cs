@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
@@ -1303,7 +1303,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             // Give a tip.
             if (attackTimer == 1f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Polterghast's spirits have been released! But they don't seem very happy with us...");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PolterghastDesperationPhaseTip");
 
             if (attackTimer < attackDelay)
                 return;
@@ -1564,8 +1564,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!";
-            yield return n => "If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!";
+            yield return n => "Mods.InfernumMode.PetDialog.PolterghastTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.PolterghastTip2";
         }
         #endregion Tips
     }

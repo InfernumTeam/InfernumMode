@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.ExoMechs.Apollo;
+﻿using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
@@ -78,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 (initialMech.type == ModContent.NPCType<Apollo>() && complementMech.type == ModContent.NPCType<ThanatosHead>());
 
             // Have the hat girl give comments if a combo attack is happening.
-            HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Seems like they are combining efforts, beware!");
+            HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Mods.InfernumMode.PetDialog.ExoMechComboTip");
 
             if (aresAndTwins)
             {

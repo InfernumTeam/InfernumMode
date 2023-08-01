@@ -231,12 +231,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 if (CalamityWorld.TalkedToDraedon)
                 {
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonResummonText", TextColorEdgy);
-                    HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "If a certain starting combo isnt working too well, maybe experiment with another one?");
+                    HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "Mods.InfernumMode.PetDialog.DraedonChooseTip2");
                 }
                 else
                 {
-                    Utilities.DisplayText("Now choose.", TextColorEdgy);
-                    HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "Better choose well!");
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText5", TextColorEdgy);
+                    HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "Mods.InfernumMode.PetDialog.DraedonChooseTip1");
                 }
 
                 // Mark Draedon as talked to.
@@ -306,14 +306,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 case 3:
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        Utilities.DisplayText("Your efforts are very intriguing.", TextColor);
+                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonEffortMock1", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
                         SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
-                        Utilities.DisplayText("Go on. Continue feeding information to my machines.", TextColorEdgy);
+                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonEffortMock2", TextColorEdgy);
                     }
 
                     break;
@@ -585,23 +585,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
             if (defeatTimer == DelayBeforeDefeatStandup + 50f)
             {
-                Utilities.DisplayText("Intriguing. Truly, intriguing.", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat1", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay + 50f)
             {
                 if (earnedHyperplaneMatrix)
-                    Utilities.DisplayText("You have been an excellent test subject.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat2HyperplaneMatrix", TextColor);
                 else
-                    Utilities.DisplayText("My magnum opera, truly and utterly defeated.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat2", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 2f + 50f)
             {
                 if (earnedHyperplaneMatrix)
-                    Utilities.DisplayText("The data I have acquired from your combat has been invaluable.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat3HyperplaneMatrix", TextColor);
                 else
-                    Utilities.DisplayText("This outcome was not what I had expected.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat3", TextColor);
             }
 
             // After this point Draedon becomes vulnerable.
@@ -610,9 +610,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 50f)
             {
                 if (earnedHyperplaneMatrix)
-                    Utilities.DisplayText("...Perhaps, I may be able to grant you a reward for your time.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat4HyperplaneMatrix", TextColor);
                 else
-                    Utilities.DisplayText("...Excuse my introspection. I must gather my thoughts after that display.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat4", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 165f)
@@ -620,37 +620,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 if (earnedHyperplaneMatrix)
                     AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.NPCKill, npc.whoAmI);
                 else
-                    Utilities.DisplayText("It is perhaps not irrational to infer that you are beyond my reasoning.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat5", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 4f + 165f)
             {
                 if (earnedHyperplaneMatrix)
-                    Utilities.DisplayText("My most useful creation. I'm sure you will find some use for it.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat6HyperplaneMatrix", TextColor);
                 else
-                    Utilities.DisplayText("Now.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat6", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 5f + 165f)
             {
                 if (earnedHyperplaneMatrix)
                 {
-                    Utilities.DisplayText("Use it wisely.", TextColorEdgy);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat7HyperplaneMatrix", TextColorEdgy);
                     defeatTimer = DelayBeforeDefeatStandup + TalkDelay * 6f + 166f;
                     npc.netUpdate = true;
                 }
                 else
-                    Utilities.DisplayText("You would wish to reach the Tyrant. I cannot assist you in that.", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat7", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 6f + 165f)
-                Utilities.DisplayText("It is not a matter of spite, for I would wish nothing more than to observe such a conflict.", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat8", TextColor);
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 7f + 165f)
-                Utilities.DisplayText("But now, I must return to my machinery. You may use the Codebreaker if you wish to face my creations once again.", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat9", TextColor);
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 8f + 165f)
-                Utilities.DisplayText("In the meantime, I bid you farewell, and good luck in your future endeavors.", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat10", TextColor);
         }
 
         public override void FindFrame(NPC npc, int frameHeight)

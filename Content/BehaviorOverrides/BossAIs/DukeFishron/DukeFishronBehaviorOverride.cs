@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -791,7 +791,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
             if (attackTimer == 1f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Keep track of where the long charge stops! You might get swept up by a tidal wave!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DukeFishronTidalWaveTip");
 
             if (attackTimer < redirectTime)
             {
@@ -897,7 +897,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             // Summon tornadoes.
             if (attackTimer == hoverTime - 45f)
             {
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Try your best to weave through the razorblades and brace youself!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DukeFishronRazorbladeTip");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     List<int> horizontalSpawnPositions = new()

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
@@ -129,7 +129,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 DoPhase3Transition(npc, target, phase3TransitionTimer);
                 phase3TransitionTimer--;
                 if (phase3TransitionTimer <= 0f)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Plantera isn't keeping anything back, watch out!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PlanteraFinalPhaseTip");
                 return false;
             }
 
@@ -390,7 +390,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             }
 
             if (attackTimer == gasReleaseRate)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Manage those clouds carefully. You'll need to weave through them to find the gap in her tentacles!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PlanteraPlanteraTip");
 
             // Periodically release gas.
             if (attackTimer % gasReleaseRate == gasReleaseRate - 1f)

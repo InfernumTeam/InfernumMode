@@ -511,7 +511,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Give a tip.
             if (attackTimer == 10f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Stay calm and circle! Don't lose focus!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVEnergyBurstTip3");
 
             // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
             target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
@@ -612,7 +612,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer == 1f)
             {
                 // Give a tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Those blobs seem to spin in a spiral! Spin with them!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVEnergyBurstTip2");
 
                 SoundEngine.PlaySound(SoundID.Item103, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -929,7 +929,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Give a tip before the torrent is fired.
             if (attackTimer == vortexSpawnDelay + 30f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Those portals are preparing something! Get near the void, quickly!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVPortalTip");
 
             // Periodically release vortices that strike at the target.
             float attackCompletion = Utils.GetLerpValue(vortexSpawnDelay, vortexSpawnDelay + vortexSpawnCount * vortexSpawnRate, attackTimer, true);
@@ -1069,7 +1069,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Give a tip before the torrent is fired.
             if (attackTimer == chargeUpTime + 1f)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "That thing is releasing so much energy! Try to get to the edge and move up and down to weave through it!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVEnergyBurstTip");
 
             // Release a spiral of dark energy.
             if (attackTimer >= chargeUpTime && attackTimer < chargeUpTime + spiralShootTime)
@@ -1250,7 +1250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 // Give a tip.
                 ClearEntities();
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Those chains wont seem to hold it much longer, brace yourself!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVEnergyChainsTip");
                 SoundEngine.PlaySound(CeaselessVoidBoss.BuildupSound);
             }
 
@@ -1988,8 +1988,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Try not to move too much at the start of the battle. Finding a good spot and staying near it helps a lot!";
-            yield return n => "Most of the Void's attacks require fast maneuvering to evade. Be sure to pay attention to any projectiles on-screen!";
+            yield return n => "Mods.InfernumMode.PetDialog.CVTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.CVTip2";
         }
         #endregion Tips
     }

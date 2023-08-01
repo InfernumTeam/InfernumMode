@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -330,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
                 circleCenterX = target.Center.X;
                 circleCenterY = target.Center.Y;
                 circleRadius = 0f;
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Stay near the center of your arena if you can. Those thorns are really good at cornering you!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.BrimstoneElementalRoseCircleTip");
                 npc.netUpdate = true;
             }
 
@@ -694,7 +694,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                     if (wrappedTime == 1f)
                     {
-                        HatGirl.SayThingWhileOwnerIsAlive(target, "The beam predicts your position, try baiting it into shooting away from you!");
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.BrimstoneElementalLaserTip");
                         SoundEngine.PlaySound(SoundID.Item72, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {

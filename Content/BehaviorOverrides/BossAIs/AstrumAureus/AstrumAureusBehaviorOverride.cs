@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
@@ -1111,7 +1111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Stay somewhat close, otherwise you may be caught off guard!";
+            yield return n => "Mods.InfernumMode.PetDialog.AstrumAureusTip1";
         }
         #endregion Tips
     }

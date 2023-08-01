@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Content.Credits;
@@ -385,7 +385,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Be sure to run the opposite direction!";
+                    return "Mods.InfernumMode.PetDialog.WoFTip1";
                 return string.Empty;
             };
         }

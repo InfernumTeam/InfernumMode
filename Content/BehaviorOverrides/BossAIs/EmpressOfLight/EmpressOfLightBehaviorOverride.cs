@@ -2203,7 +2203,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "You know, I was already quite partial to rainbows, but this things attacks have killer looks- oh. Poor choice of words, then.";
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.EoLJokeTip1";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

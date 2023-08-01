@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items;
 using CalamityMod.Items.SummonItems;
@@ -14,6 +14,7 @@ using SubworldLibrary;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.GlobalItems
@@ -29,19 +30,13 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 {
                     Projectile.NewProjectile(player.GetSource_ItemUse(item), teleportPosition, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
-                    string[] possibleEdgyShitToSay = new string[]
-                    {
-                        "YOU CANNOT EVADE ME SO EASILY!",
-                        "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
-                        "NOT SO FAST!"
-                    };
-                    Utilities.DisplayText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
-                    HatGirl.SayThingWhileOwnerIsAlive(player, "It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!");
+                    CalamityUtils.DisplayLocalizedText($"Mods.InfernumMode.Status.DoGTeleportDenial{Main.rand.Next(1, 4)}", Color.Cyan);
+                    HatGirl.SayThingWhileOwnerIsAlive(player, "Mods.InfernumMode.PetDialog.DoGRoDTip");
                 }
                 else
                 {
                     Projectile.NewProjectile(player.GetSource_ItemUse(item), teleportPosition, Vector2.Zero, ModContent.ProjectileType<GuardiansRodFailPulse>(), 0, 0f, player.whoAmI);
-                    HatGirl.SayThingWhileOwnerIsAlive(player, "The profaned magic seems to be blocking your Rod of Discord!");
+                    HatGirl.SayThingWhileOwnerIsAlive(player, "Mods.InfernumMode.PetDialog.ProfanedRoDTip");
                 }
             }
             return false;
@@ -84,7 +79,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             if (spawnTeleportingItem && inAbyss)
             {
                 if (player.itemAnimation >= item.useAnimation - 2)
-                    CombatText.NewText(player.Hitbox, Color.Navy, "The pressure is too strong to escape!", true);
+                    CombatText.NewText(player.Hitbox, Color.Navy, Language.GetTextValue("Mods.InfernumMode.Status.AbyssTeleportAwayDenial"), true);
                 player.itemTime = item.useTime / 2 - 1;
             }
 

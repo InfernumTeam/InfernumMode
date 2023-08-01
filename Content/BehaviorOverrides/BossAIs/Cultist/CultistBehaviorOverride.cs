@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Create a lost colosseum entrance after the cultist is killed if it doesn't exist yet, for backwards world compatibility reasons.
             if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance && !WeakReferenceSupport.InAnySubworld())
             {
-                Utilities.DisplayText("Mysterious ruins have materialized in the heart of the desert!", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PostCultistColosseumCreation", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
                 LostColosseumEntrance.Generate(new(), new(new()));
                 WorldSaveSystem.HasGeneratedColosseumEntrance = true;
             }
@@ -712,7 +712,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             // Give a tip.
             if (attackTimer == lightningBurstTime / 2)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Lightning is going to aim ahead of you! Try to bait it!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CultistLightningTip");
 
             if (attackTimer < lightningBurstTime)
             {
@@ -1181,7 +1181,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 SoundEngine.PlaySound(SoundID.Item120, target.position);
 
                 // Give a tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Try to get between those lines, before the ice barrages explode!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CultistIceBurstTip");
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1619,7 +1619,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "That guy was quite a lunatic, You might want extra mobility!";
+            yield return n => "Mods.InfernumMode.PetDialog.CultistTip1";
         }
         #endregion Tips
     }

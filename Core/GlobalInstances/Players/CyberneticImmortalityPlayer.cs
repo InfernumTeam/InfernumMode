@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.ExoMechs;
+﻿using CalamityMod;
+using CalamityMod.NPCs.ExoMechs;
 using InfernumMode.Assets.Sounds;
 using Terraria;
 using Terraria.Audio;
@@ -25,7 +26,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public void ToggleImmortality()
         {
             CyberneticImmortalityIsActive = !CyberneticImmortalityIsActive;
-            Utilities.DisplayText($"Cybernetic immortality has been {(CyberneticImmortalityIsActive ? "enabled" : "disabled")}.", Draedon.TextColor);
+            CalamityUtils.DisplayLocalizedText($"Mods.InfernumMode.Status.CyberneticImmortality{(CyberneticImmortalityIsActive ? "Enabled" : "Disabled")}", Draedon.TextColor);
         }
 
         public override bool FreeDodge(Player.HurtInfo info)

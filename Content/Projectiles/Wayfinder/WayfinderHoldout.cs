@@ -14,6 +14,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
@@ -230,7 +231,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                     CreateFlameExplosion(Owner.Center, 10, 20, 40, 0.6f, 60);
                 }
                 else
-                    CombatText.NewText(Owner.Hitbox, Color.Gold, "Gate not set!", true);
+                    CombatText.NewText(Owner.Hitbox, Color.Gold, Language.GetTextValue($"Mods.InfernumMode.Status.WayfinderGateNotSet"), true);
             }
             // This has to be delayed due to the projectile position not being updated on the same frame as the owner position.
             if (Time == TeleportationTime + 1 && IsGateSet)
@@ -400,7 +401,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                     }
                 }
                 else
-                    CombatText.NewText(Owner.Hitbox, Color.Gold, "Gate not set!", true);
+                    CombatText.NewText(Owner.Hitbox, Color.Gold, Language.GetTextValue($"Mods.InfernumMode.Status.WayfinderGateNotSet"), true);
             }
 
             if (Time >= DestroyMaxTime)

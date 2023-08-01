@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Pets
@@ -75,11 +76,12 @@ namespace InfernumMode.Content.Projectiles.Pets
             return true;
         }
 
-        public static void SayThingWhileOwnerIsAlive(Player owner, string text)
+        public static void SayThingWhileOwnerIsAlive(Player owner, string key)
         {
             if (owner.dead || !owner.active || owner.ownedProjectileCounts[ModContent.ProjectileType<HatGirl>()] <= 0)
                 return;
 
+            string text = Language.GetTextValue(key);
             if (TipsManager.SaidText.Contains(text))
                 return;
 

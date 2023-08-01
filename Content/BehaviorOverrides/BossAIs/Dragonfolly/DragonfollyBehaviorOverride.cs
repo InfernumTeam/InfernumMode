@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.Projectiles.Boss;
@@ -839,7 +839,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime + 10f)
                         Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
 
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Static bolts seem to be flying towards you! Be wary of them, and don't get trapped by the lightning telegraphs!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DragonfollyBoltTip");
                 }
                 else
                 {
@@ -1266,8 +1266,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "The fight against the Dragonfolly is very chaotic and fast paced. Good mobility and reaction time help a lot!";
-            yield return n => "Those large red lightning pillars can be negated by flying below them!";
+            yield return n => "Mods.InfernumMode.PetDialog.DragonfollyTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.DragonfollyTip2";
         }
         #endregion Tips
     }

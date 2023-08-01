@@ -1,10 +1,11 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Enums;
 using InfernumMode.Content.Cooldowns;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 
 namespace InfernumMode
 {
@@ -35,7 +36,7 @@ namespace InfernumMode
 
             if (!player.HasCooldown(InfiniteFlight.ID))
             {
-                CombatText.NewText(player.Hitbox, textColor, "Infinite flight granted!", true);
+                CombatText.NewText(player.Hitbox, textColor, Language.GetTextValue("Mods.InfernumMode.Status.InfiniteFlight"), true);
                 SoundEngine.PlaySound(SoundID.Item35 with { Volume = 4f, Pitch = 0.3f }, player.Center);
             }
 

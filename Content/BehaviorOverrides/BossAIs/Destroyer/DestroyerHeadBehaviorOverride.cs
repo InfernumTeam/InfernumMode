@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.Sounds;
@@ -727,7 +727,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 patternToUse = Phase4AttackPattern;
             DestroyerAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
             if (nextAttackType == DestroyerAttackType.LaserSpin)
-                HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!");
+                HatGirl.SayThingWhileOwnerIsAlive(Main.player[npc.target], "Mods.InfernumMode.PetDialog.DestroyerTip1");
 
             // Go to the next AI state.
             npc.ai[1] = (int)nextAttackType;

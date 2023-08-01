@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
@@ -7,6 +7,7 @@ using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Pets
@@ -70,7 +71,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                 if (!SaidBossText)
                 {
                     if (Projectile.localAI[0] != 0f)
-                        SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.BossSpawnText));
+                        SaySnarkyComment(Language.GetTextValue($"Mods.InfernumMode.PetDialog.AsterBossSpawn{Main.rand.Next(1, 11)}"));
                     SaidBossText = true;
                 }
             }
@@ -80,7 +81,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             // Bark and say some snarky text on the first frame.
             if (Projectile.localAI[0] == 0f)
             {
-                SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.SummonText));
+                SaySnarkyComment(Language.GetTextValue($"Mods.InfernumMode.PetDialog.AsterSummon{Main.rand.Next(1, 8)}"));
                 IdleTextCountdown = 3600f;
                 Projectile.localAI[0] = 1f;
             }
@@ -150,7 +151,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                 if (IdleTextCountdown <= 0f)
                 {
                     IdleTextCountdown = Main.rand.Next(1800, 2400);
-                    SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.PassiveTextOnSurface));
+                    SaySnarkyComment(Language.GetTextValue($"Mods.InfernumMode.PetDialog.AsterPassive{Main.rand.Next(1, 8)}"));
                 }
             }
 
@@ -252,7 +253,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                     GeneralParticleHandler.SpawnParticle(heart);
                 }
 
-                SaySnarkyComment(Main.rand.Next(RisingWarriorsSoulstone.PetText));
+                SaySnarkyComment(Language.GetTextValue($"Mods.InfernumMode.PetDialog.AsterPet{Main.rand.Next(1, 5)}"));
             }
 
             // Use petting frames.

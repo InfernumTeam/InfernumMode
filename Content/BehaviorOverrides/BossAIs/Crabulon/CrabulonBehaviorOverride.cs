@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Projectiles.Boss;
@@ -780,13 +780,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => $"Crabulon will only launch spores every {Utilities.AddOrdinalSuffix(MushroomStompBarrageInterval)} jump, better keep count!";
-            yield return n => "Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!";
+            yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip2";
 
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "There isnt Mushroom for the three of us, and I can tell who won the roullete.";
+                    return "Mods.InfernumMode.PetDialog.CrabulonJokeTip1";
                 return string.Empty;
             };
         }

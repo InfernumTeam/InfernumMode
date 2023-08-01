@@ -1,4 +1,4 @@
-using CalamityMod.Buffs.StatDebuffs;
+﻿using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
                 CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.KingSlime);
-                HatGirl.SayThingWhileOwnerIsAlive(target, "The ninja shoots more shurikens the farther you are, so don't go too far!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.KingSlimeNinjaTip");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
@@ -673,12 +673,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Try to learn King Slime's jump cycle! It could help you plan your next move better.";
-            yield return n => "With a jump that high, I wonder if you could duck beneath him?";
+            yield return n => "Mods.InfernumMode.PetDialog.KingSlimeTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.KingSlimeTip2";
+
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Quite a sticky situation you had to deal with...";
+                    return "Mods.InfernumMode.PetDialog.KingSlimeJokeTip1";
                 return string.Empty;
             };
         }

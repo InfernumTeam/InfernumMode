@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
@@ -949,10 +949,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                return "Some of Ravager's attacks reward you for staying close. Try not to run away!";
-            };
+            yield return n => "Mods.InfernumMode.PetDialog.RavagerTip1";
         }
         #endregion Tips
     }

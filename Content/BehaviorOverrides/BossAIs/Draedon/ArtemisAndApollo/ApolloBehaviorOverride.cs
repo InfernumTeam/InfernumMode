@@ -1589,7 +1589,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     // Give some warning text before attacking.
                     // What? What do you MEAN Artemis isn't actually saying this line?? I FEEL CHEATED!!!
                     if (isApollo && attackTimer == textSubstateTime / 2)
-                        Utilities.DisplayText("ARTEMIS-01: COMBINED ENERGY RESERVES AT LOW CAPACITY. SYSTEM FAILURE IMMINENT.", ArtemisTextColor);
+                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationTwins1", ArtemisTextColor);
 
                     // Look at the target.
                     npc.rotation = npc.AngleTo(target.Center) + PiOver2;
@@ -1597,7 +1597,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (attackTimer >= textSubstateTime && isApollo)
                     {
                         if (isApollo)
-                            Utilities.DisplayText("APOLLO-03: PREPARING 'THERMONUCLEAR BLITZ' MUTUAL DESTRUCTION PROTOCOL.", ApolloTextColor);
+                            CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationTwins2", ApolloTextColor);
 
                         attackSubstate = 1f;
                         attackTimer = 0f;
@@ -2175,7 +2175,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "The Exo-Twins are magnificently in-sync, try finding a rhythm to outsmart them?";
+            yield return n => "Mods.InfernumMode.PetDialog.ExoTwinsTip1";
         }
         #endregion Tips
     }

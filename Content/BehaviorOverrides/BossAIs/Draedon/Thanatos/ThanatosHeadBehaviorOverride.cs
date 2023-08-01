@@ -877,10 +877,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 
             if (attackTimer == chargeDelay / 2 && firstTimeAttacking)
-                Utilities.DisplayText("THANATOS-05: EXO TURRETS BURNING AT UNSTABLE ENERGY LEVELS. SELF DESTRUCTION IMMINENT.", ThanatosTextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationThanatos1", ThanatosTextColor);
 
             if (attackTimer == chargeDelay - 16f && firstTimeAttacking)
-                Utilities.DisplayText("THANATOS-05: PREPARING 'MAXIMUM OVERDRIVE CHARGE' MUTUTAL DESTRUCTION PROTOCOL.", ThanatosTextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationThanatos2", ThanatosTextColor);
 
             // Play a danger sound before the attack begins.
             if (attackTimer == chargeDelay - (firstTimeAttacking ? 90f : 12f))
@@ -968,7 +968,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (!target.HasShieldBash())
                 speedMultiplier *= 0.67f;
             else
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Don't fret, face fear in the eyes and dash directly into Thanatos' face-plates!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ThanatosChargeTip");
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float flyAcceleration = Lerp(0.045f, 0.037f, lifeRatio);

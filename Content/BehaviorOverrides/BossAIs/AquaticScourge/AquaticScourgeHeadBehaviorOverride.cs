@@ -386,7 +386,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Give a tip to encourage the player to go to the bubble.
             if (attackTimer == waterBubbleTime)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "That bleach bubble looks like a good place to recover from the acidic water!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.AquaticScourgeBubbleTip");
 
             // Emit bubbles around the player.
             if (Main.netMode != NetmodeID.Server)
@@ -787,7 +787,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     // Create rubble that aims backwards and some bubbles from below.
                     if (Main.rand.NextBool(25))
                     {
-                        HatGirl.SayThingWhileOwnerIsAlive(target, "Bonk!");
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.AquaticScourgeBonkJokeTip");
                         SoundEngine.PlaySound(InfernumSoundRegistry.SkeletronHeadBonkSound, target.Center);
                     }
                     else
@@ -1115,7 +1115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (acidVerticalLine == 0f)
             {
                 acidVerticalLine = MathF.Min(target.Bottom.Y + 2000f, CustomAbyss.AbyssTop * 16f + 900f);
-                Utilities.DisplayText("A deluge of acid is quickly rising from below!", Color.GreenYellow);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.AquaticScourgeFinalPhaseAcid", Color.GreenYellow);
 
                 SoundEngine.PlaySound(Mauler.RoarSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
@@ -1124,7 +1124,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 45);
 
                 // Give a tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "The water is almost boiling, I'd surface unless you want to become fried human!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.AquaticScourgeAcidTip");
 
                 npc.netUpdate = true;
             }
@@ -1312,7 +1312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (attackTimer <= 1f)
             {
                 // Give a tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Looks like that's not all this serpent could do, we gotta skeddadle!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.AquaticScourgeTyphoonTip");
 
                 SoundEngine.PlaySound(CalamityMod.NPCs.Leviathan.Leviathan.EmergeSound);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1808,8 +1808,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "The Serpent's frantic swimming seems to cause the water to be easier to traverse through, you could probably swim with your bare hands!";
-            yield return n => "If you feel you need more space, try clearing out the sulphurous sand around!";
+            yield return n => "Mods.InfernumMode.PetDialog.AquaticScourgeTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.AquaticScourgeTip2";
         }
         #endregion Tips
     }

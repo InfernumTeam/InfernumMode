@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
@@ -1015,8 +1015,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Move as little as possible while it's above you. That should calm down its spastic jittering!";
-            yield return n => "Watch for the gaps in the icicles around Cryogen, they're a great indicator of where a safe spot is!";
+            yield return n => "Mods.InfernumMode.PetDialog.CryogenTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.CryogenTip2";
         }
         #endregion Tips
     }

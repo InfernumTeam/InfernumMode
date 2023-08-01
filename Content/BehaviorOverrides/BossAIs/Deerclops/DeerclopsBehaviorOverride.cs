@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.Particles;
@@ -1293,12 +1293,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!";
-            yield return n => "The Deerclops will follow a set pattern, learn it to gain the upper hand!";
+            yield return n => "Mods.InfernumMode.PetDialog.DeerclopsTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.DeerclopsTip2";
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Deer god...";
+                    return "Mods.InfernumMode.PetDialog.DeerclopsJokeTip1";
                 return string.Empty;
             };
         }

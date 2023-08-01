@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
@@ -225,7 +225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 deathrayLifetime = idealDeathrayLifetime;
                 angularOffset = Main.rand.NextFloat(TwoPi);
 
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Brace yourself! A barrage of slow bolts are going to be released!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.MoonLordLaserTip");
             }
 
             float wrappedAttackTimer = attackTimer % (deathrayTelegraphTime + deathrayLifetime);

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
@@ -555,12 +555,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Many layered platforms can help greatly to avoid the exploding Cursed Flames!";
-            yield return n => "A dash and a hook can greatly help with reacting to the Eaters bursts of speed!";
+            yield return n => "Mods.InfernumMode.PetDialog.EoWTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.EoWTip2";
+
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "I guess it eats more than just worlds.";
+                    return "Mods.InfernumMode.PetDialog.EoWJokeTip1";
                 return string.Empty;
             };
         }

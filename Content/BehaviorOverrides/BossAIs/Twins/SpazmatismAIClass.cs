@@ -208,10 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n =>
-            {
-                return "Having trouble dodging during the spin? Three can play at that game, Spin!";
-            };
+            yield return n => "Mods.InfernumMode.PetDialog.TwinsTip1";
         }
         #endregion Tips
 

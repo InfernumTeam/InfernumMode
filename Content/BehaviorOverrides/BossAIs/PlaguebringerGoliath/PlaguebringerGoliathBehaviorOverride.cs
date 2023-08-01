@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using InfernumMode.Assets.Sounds;
@@ -641,7 +641,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (attackTimer == 75f)
                 {
                     summonDrones(4, moveIncrement, 1, 0.5f);
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Those drones are building a jail around you, destroying one will give you an opening!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PBGDroneJailTip");
                 }
                 if (attackTimer == SmallDrone.TimeOffsetPerIncrement + 75f)
                     summonDrones(4, moveIncrement, 1, 0f);
@@ -886,9 +886,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Release a swarm of drones and a nuke.
             if (attackTimer == 1f)
             {
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Destroy those builder drones before the whole jungle goes kablooey!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PBGDroneBuildTip");
 
-                Utilities.DisplayText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PBGNuclearCoreGeneration", Color.Lime);
                 SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

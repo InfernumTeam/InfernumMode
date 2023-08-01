@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
@@ -398,14 +398,6 @@ namespace InfernumMode
                 Vector2 startPos = drawCentered ? proj.Center : proj.position;
                 Main.spriteBatch.Draw(texture, startPos - Main.screenPosition + new Vector2(0f, proj.gfxOffY), rectangle, proj.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
             }
-        }
-
-        public static void DisplayText(string text, Color? color = null)
-        {
-            if (Main.netMode == NetmodeID.SinglePlayer)
-                Main.NewText(text, color ?? Color.White);
-            else if (Main.netMode == NetmodeID.Server)
-                ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
         }
 
         public static void GetCircleVertices(int sideCount, float radius, Vector2 center, out List<short> triangleIndices, out List<PrimitiveTrailCopy.VertexPosition2DColor> vertices)

@@ -230,7 +230,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 otherMechIsInPhase2 = PersonallyInPhase2(Main.npc[NPC.FindFirstNPC(NPCID.Retinazer)]);
             if (isRetinazer && NPC.AnyNPCs(NPCID.Spazmatism))
                 otherMechIsInPhase2 = PersonallyInPhase2(Main.npc[NPC.FindFirstNPC(NPCID.Spazmatism)]);
-            
+
             ref float phase2Timer = ref npc.Infernum().ExtraAI[0];
             ref float phase2TransitionSpin = ref npc.Infernum().ExtraAI[1];
             ref float healCountdown = ref npc.Infernum().ExtraAI[2];
@@ -327,7 +327,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, -1, npc.whoAmI);
 
-                Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
+                string localizationKey = "Mods.InfernumMode.Status.TwinsForcefieldSummonSpazmatism";
+                Color textColor = Color.LimeGreen;
+                if (npc.type == NPCID.Retinazer)
+                {
+                    localizationKey = "Mods.InfernumMode.Status.TwinsForcefieldSummonRetinazer";
+                    textColor = Color.IndianRed;
+                }
+
+                CalamityUtils.DisplayLocalizedText(localizationKey, textColor);
                 hasStartedHealFlag = 1f;
             }
 
@@ -338,8 +346,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     npc.life = (int)Lerp(npc.lifeMax * 0.05f, npc.lifeMax * 0.3f, 1f - healCountdown / TwinsShield.HealTime);
                     if (healCountdown == TwinsShield.HealTime - 5)
                     {
-                        Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: ERROR DETECTING SECONDARY UNIT. BURNING EXCESS FUEL RESERVES.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
-                        HatGirl.SayThingWhileOwnerIsAlive(Target, "Watch out, that last twin is gonna hit you with everything it's got! Don't let up!");
+                        string localizationKey = "Mods.InfernumMode.Status.TwinsFinalPhaseSpazmatism";
+                        Color textColor = Color.LimeGreen;
+                        if (npc.type == NPCID.Retinazer)
+                        {
+                            localizationKey = "Mods.InfernumMode.Status.TwinsFinalPhaseRetinazer";
+                            textColor = Color.IndianRed;
+                        }
+                        CalamityUtils.DisplayLocalizedText(localizationKey, textColor);
+
+                        HatGirl.SayThingWhileOwnerIsAlive(Target, "Mods.InfernumMode.PetDialog.TwinsFinalPhaseTip");
                     }
                     healCountdown--;
 

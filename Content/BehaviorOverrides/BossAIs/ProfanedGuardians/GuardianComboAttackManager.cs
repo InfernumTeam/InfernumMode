@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
 
                 if (attackTimer == initialDelay)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "They've holed themselves up on the right, but if you get there you can probably breach their defenses!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedFlappyBirdTip");
 
                 if (attackTimer >= initialDelay && !Main.projectile.Any((Projectile p) => (p.type == ModContent.ProjectileType<HolyAimedDeathrayTelegraph>() || p.type == ModContent.ProjectileType<HolyAimedDeathray>()) && p.active))
                 {
@@ -880,7 +880,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 else if (universalAttackTimer >= whiteGlowTime + ashesTime)
                 {
                     // Die once the animation is complete.
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "It's getting physical now! Don't let one distract you from the other!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedHealerDeathTip");
                     npc.life = 0;
                     npc.active = false;
                     DoPhaseTransitionEffects(commander, 2);
@@ -1635,7 +1635,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         xPosToMoveTo = Clamp(npc.Center.X, minXPos, maxXPos);
 
                         if (target.HasShieldBash())
-                            HatGirl.SayThingWhileOwnerIsAlive(target, "Try ramming into the defender!");
+                            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedDefenderTip");
 
                         // Don't deal damage while moving.
                         npc.damage = 0;

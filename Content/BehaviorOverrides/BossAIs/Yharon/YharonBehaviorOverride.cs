@@ -379,7 +379,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (DownedBossSystem.downedYharon || npc.type != ModContent.NPCType<YharonBoss>())
                 return;
 
-            Utilities.DisplayText("A primordial light shimmers at the nadir of the abyssal depths...", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
+            CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PostYharonWyrmHint", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
         }
 
         private void DisableMapIconDuringDesperation(NPC npc, ref int index)
@@ -454,7 +454,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             // Go to phase 2 if close to death.
             if (npc.Infernum().ExtraAI[HasEnteredPhase2Index] == 0f && lifeRatio < Phase2LifeRatio)
             {
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Better stay near the edges of the arena during those carpet bomb flames, That should keep them out of the way!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonCarpetBombTip");
 
                 // Set Yharon's private phase 2 flag that base Calamity uses.
                 // This is necessary to ensure that the special phase 2 name is used.
@@ -997,7 +997,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             {
                 chargeDelay = (int)(chargeDelay * 0.8f);
                 if (attackTimer == 1f)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "This speed is crazy! Make sure you know when it starts; you might get jumpscared!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonSpeedTip");
             }
             else if (attackTimer == 1f)
                 SoundEngine.PlaySound(YharonBoss.ShortRoarSound with { Pitch = -0.56f, Volume = 1.6f }, target.Center);
@@ -1447,7 +1447,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
                 target.Infernum_Camera().CurrentScreenShakePower = 16f;
 
-                Utilities.DisplayText("The air is scorching your skin...", Color.Orange);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.YharonSecondPhase", Color.Orange);
                 SelectNextAttack(npc, ref attackType);
 
                 SoundEngine.PlaySound(YharonBoss.RoarSound with { Volume = 3f });
@@ -1536,7 +1536,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Give a tip.
                 if (attackTimer == heatFlashIdleDelay - 3f)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Don't let the flashbang faze you! Keep your eyes peeled for where the embers are!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonFlashbangTip");
 
                 return;
             }
@@ -1722,10 +1722,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             if (attackDelay < 45f)
             {
-                // Give a tip.
-                if (attackDelay == 40f)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Yharon's burning some serious energy now! Stay focused!");
-
                 npc.damage = 0;
                 attackTimer = 0f;
                 if (attackDelay == 1f)
@@ -1749,10 +1745,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 if (finalAttackCompletionState != 1f)
                 {
                     npc.life = (int)(npc.lifeMax * 0.025);
-                    if (Main.netMode == NetmodeID.SinglePlayer)
-                        Utilities.DisplayText("The heat is surging...", Color.Orange);
-                    else if (Main.netMode == NetmodeID.Server)
-                        ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral("The heat is surging..."), Color.Orange);
+
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.YharonFinalPhase", Color.Orange);
                     finalAttackCompletionState = 1f;
                 }
 
@@ -2297,7 +2291,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             yield return n =>
             {
                 if (n.life < n.lifeMax * Subphase8LifeRatio)
-                    return "AND IF I SHOULD DIE BEFORE YOU CONTINUEE, YOU SHALL HAV-... Wait, you died? Come on, I was on a roll here!";
+                    return "Mods.InfernumMode.PetDialog.YharonJokeTip1";
                 return string.Empty;
             };
         }

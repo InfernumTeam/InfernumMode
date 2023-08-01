@@ -540,11 +540,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?";
+            yield return n => "Mods.InfernumMode.PetDialog.SlimeGodTip1";
             yield return n =>
             {
                 if (FightState == SlimeGodFightState.CorePhase)
-                    return "Dont let all the projectiles intimidate you, be very cautious with your movement!";
+                    return "Mods.InfernumMode.PetDialog.SlimeGodTip2";
                 return string.Empty;
             };
         }

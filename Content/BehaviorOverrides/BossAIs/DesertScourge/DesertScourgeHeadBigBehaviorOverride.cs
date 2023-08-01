@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Particles;
@@ -708,13 +708,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "The Scourge usually roars when it's about to whip up a sandstorm, get to high grounds!";
-            yield return n => "A Hook may prove useful to quickly get out of the Scourge's mandibles!";
+            yield return n => "Mods.InfernumMode.PetDialog.DSTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.DSTip2";
 
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "You better have dessert for me after this...";
+                    return "Mods.InfernumMode.PetDialog.DSJokeTip1";
                 return string.Empty;
             };
         }

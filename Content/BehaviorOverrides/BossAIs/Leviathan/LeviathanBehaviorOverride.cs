@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
             bool enraged = LeviathanComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
             if (enraged)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Home stretch! try focusing on yourself more than the boss!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.LeviathanFinalPhaseTip");
 
             Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 380f, -45f);
 

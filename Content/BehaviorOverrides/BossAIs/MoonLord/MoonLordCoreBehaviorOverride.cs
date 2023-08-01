@@ -151,7 +151,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Create a profaned temple after the moon lord is killed if it doesn't exist yet, for backwards world compatibility reasons.
             if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine && !WeakReferenceSupport.InAnySubworld())
             {
-                Utilities.DisplayText("A profaned shrine has erupted from the ashes at the underworld's edge!", Color.Orange);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PostMLTempleCreation", Color.Orange);
                 ProfanedGarden.Generate(new(), new(new()));
                 WorldSaveSystem.HasGeneratedProfanedShrine = true;
             }
@@ -440,7 +440,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Create the black hole.
             if (attackTimer == 1f)
             {
-                HatGirl.SayThingWhileOwnerIsAlive(target, "The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.MoonLordBlackHoleTip");
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), BlackHoleDamage, 0f, -1, 0f, npc.whoAmI);
@@ -633,13 +633,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             yield return n =>
             {
                 if (NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2)
-                    return "Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!";
+                    return "Mods.InfernumMode.PetDialog.MoonLordTip1";
                 return string.Empty;
             };
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Squib emoji";
+                    return "Mods.InfernumMode.PetDialog.MoonLordJokeTip1";
                 return string.Empty;
             };
         }

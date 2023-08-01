@@ -1338,7 +1338,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             }
 
             if (attackTimer == rumbleTime - 5f)
-                Utilities.DisplayText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowBrothersSummon", TextColor);
 
             // Have the shadow teleport away and summon the brothers.
             if (attackTimer == rumbleTime)
@@ -1425,7 +1425,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 if (attackTimer <= 0f)
                 {
                     SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
-                    Utilities.DisplayText("I'm just getting started!", TextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowFinalPhase", TextColor);
                 }
 
                 int[] projectilesToDelete = new int[]
@@ -1676,7 +1676,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             if (attackTimer == textDelay)
             {
-                Utilities.DisplayText("I'm not done yet! Brace yourself for my strongest hex!", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowFinalHexWarning", TextColor);
                 SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayChargeSound);
             }
 
@@ -1732,7 +1732,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             if (attackTimer == textDelay + chargeUpTime + 32f)
             {
-                Utilities.DisplayText("Oh.", TextColor);
+                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowFinalHexSurprise", TextColor);
                 drawCharredForm = 1f;
                 npc.netUpdate = true;
             }

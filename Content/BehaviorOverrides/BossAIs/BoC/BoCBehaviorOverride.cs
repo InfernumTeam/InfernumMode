@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -640,8 +640,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "The Brain of Cthulhu uses a lot of prediction and deception in its attacks, so play extra smart!";
-            yield return n => "The Brain is going to try to decieve you with various mind games, keep your eyes on the real one!";
+            yield return n => "Mods.InfernumMode.PetDialog.BoCTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.BoCTip2";
         }
         #endregion Tips
     }

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             bool shouldGoAway = FightState == LeviAnahitaFightState.LeviathanAlone;
             bool enraged = FightState == LeviAnahitaFightState.AloneEnraged;
             if (enraged)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Home stretch! Do the same as you did before!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.AnahitaFinalPhaseTip");
 
             frameState = 0f;
             horizontalAfterimageInterpolant = 0f;
@@ -752,11 +752,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "You can weave through the clefs if you manipulate her movement well!";
+            yield return n => "Mods.InfernumMode.PetDialog.AnahitaTip1";
             yield return n =>
             {
                 if (NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
-                    return "The meteors all split in the same way; use this to your advantage!";
+                    return "Mods.InfernumMode.PetDialog.LeviathanTip1";
                 return string.Empty;
             };
         }

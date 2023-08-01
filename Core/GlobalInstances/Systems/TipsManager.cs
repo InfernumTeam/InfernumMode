@@ -1,8 +1,9 @@
-using InfernumMode.Core.OverridingSystem;
+﻿using InfernumMode.Core.OverridingSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -55,7 +56,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (!possibleThingsToSay.Any())
                 return string.Empty;
 
-            return possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count));
+            string key = possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count));
+            if (string.IsNullOrEmpty(key))
+                return string.Empty;
+
+            return Language.GetTextValue(key);
         }
 
         public override void SaveWorldData(TagCompound tag)

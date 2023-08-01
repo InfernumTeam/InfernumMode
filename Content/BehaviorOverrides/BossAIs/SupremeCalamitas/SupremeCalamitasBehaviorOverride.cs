@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.Items.Mounts;
@@ -550,7 +550,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Give a tip.
             if (attackTimer == shootDelay)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "So many skulls, but it appears they aren't focused directly at you! Try going inbetween!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.SCalSkullTip");
 
             if (attackTimer >= shootDelay)
             {
@@ -822,7 +822,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Give a tip.
             if (attackTimer == chargeDelay)
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Calamitas' is laying exploding brimstone magic with every charge, try to direct them away from a safe location!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.SCalFireChargeTip");
 
             // Charge rapid-fire.
             if (attackTimer >= chargeDelay)
@@ -1191,7 +1191,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackTimer == hoverTime + orbCastDelay)
             {
                 // Give a tip.
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.SCalFireSpinTip");
 
                 SoundEngine.PlaySound(SoundID.Item163, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1990,7 +1990,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Give a tip.
                 if (attackTimer == 1f)
-                    HatGirl.SayThingWhileOwnerIsAlive(target, "Even when all hell breaks loose, stay focused on your dodging!");
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.SCalDesperationTip");
 
                 if (attackTimer < flamePillarBarrageDuration - 60f)
                 {
@@ -2316,7 +2316,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Congratulate the player.
                 if (attackTimer == sitTime - 120f)
-                    Utilities.DisplayText("... Congratulations.", Color.Orange);
+                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.SCalCongratulations", Color.Orange);
 
                 if (attackTimer >= sitTime)
                 {
@@ -2636,7 +2636,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Do you want my Witch's hat? Matching her atire could be fun...";
+                    return "Mods.InfernumMode.PetDialog.SCalJokeTip1";
                 return string.Empty;
             };
         }

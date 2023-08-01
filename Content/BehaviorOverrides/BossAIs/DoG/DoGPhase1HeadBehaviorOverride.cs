@@ -544,9 +544,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             yield return n =>
             {
                 if (!Main.LocalPlayer.HasDash())
-                    return "A dashing accessory would be reeaaaally helpful here...";
+                    return "Mods.InfernumMode.PetDialog.DoGDashTip";
                 else if (!Main.LocalPlayer.HasShieldBash())
-                    return "Being able to face it head on with a ram sounds like a good idea, don't you think?";
+                    return "Mods.InfernumMode.PetDialog.DoGBashTip";
                 return string.Empty;
             };
         }

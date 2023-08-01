@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -133,7 +133,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                     // Rise upward and create an explosion sound.
                     if (finalPhaseTransitionTimer == 45f)
                     {
-                        HatGirl.SayThingWhileOwnerIsAlive(target, "It's still going?!");
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PerforatorsFinalPhaseTip");
                         SoundEngine.PlaySound(SoundID.Roar, npc.Center);
                         SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact with { Volume = 2.2f, Pitch = -0.4f }, npc.Center);
 
@@ -1123,7 +1123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (attackTimer == wormSummonTime)
             {
                 MakeWormEruptFromHive(npc, -Vector2.UnitY, 1f, ModContent.NPCType<PerforatorHeadMedium>());
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Staying calm and still will help dodge the slow projectiles!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PerforatorsProjectilesTip");
             }
 
             // Go to the next attack if the small perforator is dead.
@@ -1583,7 +1583,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "The Hive spews out a ton of lingering ichor, so space management is key!";
+            yield return n => "Mods.InfernumMode.PetDialog.PerforatorsTip1";
         }
         #endregion Tips
     }

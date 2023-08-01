@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
@@ -1135,25 +1135,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
-            yield return n => "Be sure to remember if any sharkrons or tooth balls appear, so that their remains don't surprise you later!";
-            yield return n => "Movement speed is gonna matter a lot against that fish!";
+            yield return n => "Mods.InfernumMode.PetDialog.OldDukeTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.OldDukeTip2";
 
             yield return n =>
             {
                 if (n.life < n.lifeMax * Phase4LifeRatio)
-                    return "Try to keep a counter in the last phase. The Old Duke will teleport, charge seven times, and then repeat.";
+                    return "Mods.InfernumMode.PetDialog.OldDukeFinalPhaseTip";
                 return string.Empty;
             };
             yield return n =>
             {
                 if (!Main.LocalPlayer.HasDash())
-                    return "Are you really sure you don't want to use a dash for that fish?";
+                    return "Mods.InfernumMode.PetDialog.OldDukeDashTip1";
                 return string.Empty;
             };
             yield return n =>
             {
                 if (!Main.LocalPlayer.HasDash())
-                    return "A dashing accessory would be reeaaally helpful here...";
+                    return "Mods.InfernumMode.PetDialog.OldDukeDashTip2";
                 return string.Empty;
             };
         }

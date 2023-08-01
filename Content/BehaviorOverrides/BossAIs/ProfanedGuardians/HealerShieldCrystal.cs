@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Die
                 NPC.active = false;
-                HatGirl.SayThingWhileOwnerIsAlive(target, "They're a really good team! You'll want to manage everything at once, taking it slow is your best shot!");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedFlappyBirdEndTip");
 
                 Vector2 wallBottom = NPC.Center + new Vector2(21f, 989f);
                 Vector2 wallTop = NPC.Center + new Vector2(21f, -989f);

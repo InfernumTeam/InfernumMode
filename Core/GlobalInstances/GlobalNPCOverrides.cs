@@ -112,12 +112,13 @@ namespace InfernumMode.Core.GlobalInstances
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 
-            ShouldUseSaturationBlur = false;
-            IsAbyssPredator = false;
-            IsAbyssPrey = false;
-            HasResetHP = false;
-            OptionalPrimitiveDrawer = null;
-            Optional3DStripDrawer = null;
+            var infernum = npc.Infernum();
+            infernum.ShouldUseSaturationBlur = false;
+            infernum.IsAbyssPredator = false;
+            infernum.IsAbyssPrey = false;
+            infernum.HasResetHP = false;
+            infernum.OptionalPrimitiveDrawer = null;
+            infernum.Optional3DStripDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
             {
@@ -134,10 +135,10 @@ namespace InfernumMode.Core.GlobalInstances
         public override bool PreAI(NPC npc)
         {
             // Reset the saturation blur state.
-            ShouldUseSaturationBlur = false;
+            npc.Infernum().ShouldUseSaturationBlur = false;
 
             // Initialize the amount of players the NPC had when it spawned.
-            if (!TotalPlayersAtStart.HasValue)
+            if (!npc.Infernum().TotalPlayersAtStart.HasValue)
             {
                 int activePlayerCount = 0;
                 for (int i = 0; i < Main.maxPlayers; i++)
@@ -145,14 +146,14 @@ namespace InfernumMode.Core.GlobalInstances
                     if (Main.player[i].active)
                         activePlayerCount++;
                 }
-                TotalPlayersAtStart = activePlayerCount;
+                npc.Infernum().TotalPlayersAtStart = activePlayerCount;
                 npc.netUpdate = true;
             }
 
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
-                if (!HasResetHP && NPCHPValues.HPValues.TryGetValue(npc.type, out int maxHP) && maxHP >= 0)
+                if (!npc.Infernum().HasResetHP && NPCHPValues.HPValues.TryGetValue(npc.type, out int maxHP) && maxHP >= 0)
                 {
                     NPCHPValues.AdjustMaxHP(npc, ref maxHP);
 
@@ -162,10 +163,10 @@ namespace InfernumMode.Core.GlobalInstances
                         if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
                             BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
 
+                        npc.Infernum().HasResetHP = true;
                         npc.netUpdate = true;
                     }
                 }
-                HasResetHP = true;
 
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCPreAIDelegate value))
                 {
@@ -191,7 +192,7 @@ namespace InfernumMode.Core.GlobalInstances
                     npc.netOffset = Vector2.Zero;
 
                     bool result = value.Invoke(npc);
-                    if (ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
+                    if (npc.Infernum().ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
                         ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
 
                     // Disable the effects of certain unpredictable freeze debuffs.
@@ -295,7 +296,7 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool CheckActive(NPC npc)
         {
-            if (DisableNaturalDespawning)
+            if (npc.Infernum().DisableNaturalDespawning)
                 return false;
 
             if (!InfernumMode.CanUseCustomAIs)

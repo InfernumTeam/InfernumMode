@@ -69,12 +69,6 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => Why();
         }
 
-        public static event ILContext.Manipulator ModifyTextUtility
-        {
-            add => MonoModHooks.Modify(typeof(CalamityUtils).GetMethod("DisplayLocalizedText", Utilities.UniversalBindingFlags), value);
-            remove => Why();
-        }
-
         public static event ILContext.Manipulator ModeIndicatorUIDraw
         {
             add => MonoModHooks.Modify(typeof(ModeIndicatorUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);

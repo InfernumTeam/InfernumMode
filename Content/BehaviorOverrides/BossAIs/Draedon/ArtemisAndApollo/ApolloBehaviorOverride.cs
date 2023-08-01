@@ -1533,7 +1533,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     // Have Draedon comment on the player's attempts to escape.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
                 }
 
                 if (attackTimer >= laserbeamAttackTime + attackTransitionDelay)

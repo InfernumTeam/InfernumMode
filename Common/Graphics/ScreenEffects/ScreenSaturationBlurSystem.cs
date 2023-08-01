@@ -16,7 +16,6 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
-using Terraria.Graphics.Light;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;

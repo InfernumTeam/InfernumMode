@@ -782,7 +782,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Have Draedon comment on the player's attempts to escape.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
 
                 enraged = 1f;
                 npc.netUpdate = true;

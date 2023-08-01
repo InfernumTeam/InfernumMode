@@ -231,7 +231,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     int drawcodeGoddess = NPC.NewNPC(new EntitySource_WorldEvent(), (int)Main.player[ClosestPlayerToWorldCenter].Center.X, (int)(Main.player[ClosestPlayerToWorldCenter].Center.Y - 400f), type, 1);
                     Main.npc[drawcodeGoddess].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(drawcodeGoddess);
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText2", XerocTextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Events.BossRushTierThreeEndText2", XerocTextColor);
                 }, toChangeTimeTo: TimeChangeContext.Night),
 
                 new Boss(NPCID.Spazmatism, TimeChangeContext.Night, type =>
@@ -261,7 +261,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 // Tier 5.
                 new Boss(ModContent.NPCType<DevourerofGodsHead>(), TimeChangeContext.Day, type =>
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierFourEndText2", XerocTextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Events.BossRushTierFourEndText2", XerocTextColor);
                     Player player = Main.player[ClosestPlayerToWorldCenter];
                     for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
                     {
@@ -318,18 +318,18 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 },
                 [ModContent.NPCType<ProfanedGuardianCommander>()] = npc =>
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierOneEndText", XerocTextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Events.BossRushTierOneEndText", XerocTextColor);
                     CreateTierAnimation(2);
                     BringPlayersBackToSpawn();
                 },
                 [ModContent.NPCType<SlimeGodCore>()] = npc =>
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierTwoEndText", XerocTextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Events.BossRushTierTwoEndText", XerocTextColor);
                     CreateTierAnimation(3);
                 },
                 [NPCID.Golem] = npc =>
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText", XerocTextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Events.BossRushTierThreeEndText", XerocTextColor);
                     CreateTierAnimation(4);
                 },
                 [ModContent.NPCType<CeaselessVoid>()] = npc =>
@@ -338,7 +338,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 },
                 [ModContent.NPCType<CalamitasClone>()] = npc =>
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierFourEndText", XerocTextColor);
+                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Events.BossRushTierFourEndText", XerocTextColor);
                     CreateTierAnimation(5);
                 },
                 [ModContent.NPCType<Providence>()] = npc =>

@@ -179,7 +179,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void DrawEntityTargets()
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) || ShadowIllusionDrawSystem.ShadowProjectilesExist)
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || ShadowIllusionDrawSystem.ShadowProjectilesExist)
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
@@ -280,7 +280,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             DrawEntityTargets();
             DrawAboveWaterProjectiles();
             Main.spriteBatch.End();
-            if (NPC.AnyNPCs(ModContent.NPCType<AdultEidolonWyrmHead>()) && Lighting.NotRetro)
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && Lighting.NotRetro)
                 Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
         }
 

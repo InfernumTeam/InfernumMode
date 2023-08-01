@@ -21,10 +21,10 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Main.OnPreDraw += PrepareTarget;
             WeaverDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            On.Terraria.Main.DrawNPCs += DrawWeaver;
+            On_Main.DrawNPCs += DrawWeaver;
         }
 
-        private void DrawWeaver(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+        private void DrawWeaver(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             orig(self, behindTiles);
             if (!behindTiles)

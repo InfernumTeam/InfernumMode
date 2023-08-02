@@ -16,10 +16,10 @@ namespace InfernumMode.Content.Items.Weapons.Magic
         public override void SetStaticDefaults()
         {
             // This thing canonically has the Mrrp Lore Rework contained within it! Unfortunately, the player is too stupid to unlock it.
-            string tooltip = "Releases barrages of shadow tendrils that ensnare enemies within their range\n" +
-                "A sacred artifact once used by the Eidolists. Somehow, it contains within it knowledge of aeons past\n" +
-                "Unfortunately, the full extent of its contents are beyond your understanding, but it would seem that you have an affinity for its\n" +
-                "arcane powers, even if usage of them costs a little bit of your sanity";
+            //string tooltip = "Releases barrages of shadow tendrils that ensnare enemies within their range\n" +
+            //    "A sacred artifact once used by the Eidolists. Somehow, it contains within it knowledge of aeons past\n" +
+            //    "Unfortunately, the full extent of its contents are beyond your understanding, but it would seem that you have an affinity for its\n" +
+            //    "arcane powers, even if usage of them costs a little bit of your sanity";
             // DisplayName.SetDefault("Eye of Madness");
             // Tooltip.SetDefault(tooltip);
             Item.ResearchUnlockCount = 1;

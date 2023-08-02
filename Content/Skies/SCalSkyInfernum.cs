@@ -54,7 +54,7 @@ namespace InfernumMode.Content.Skies
 
         private bool isActive;
 
-        private float intensity;
+        private readonly float intensity;
 
         private int SCalIndex = -1;
 

@@ -38,7 +38,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 info.SoundDisabled = true;
             }
 
-            return !CyberneticImmortalityIsActive;
+            return CyberneticImmortalityIsActive;
         }
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)

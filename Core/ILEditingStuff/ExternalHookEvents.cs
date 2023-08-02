@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -30,6 +30,8 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             foreach (IHookEdit hook in Hooks)
                 hook.Unload();
+            foreach (var fuck in hooks)
+                fuck?.Undo();
         }
     }
 }

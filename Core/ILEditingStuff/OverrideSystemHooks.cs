@@ -25,25 +25,24 @@ namespace InfernumMode.Core.ILEditingStuff
                 GlobalHookList<GlobalNPC> list = (GlobalHookList<GlobalNPC>)typeof(NPCLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
 
                 bool result = true;
-                foreach (GlobalNPC g in list.Enumerate())
+                foreach (GlobalNPC global in list.Enumerate(npc))
                 {
-                    Type t = g.GetType().BaseType;
-                    bool overridableNPC = g is null or CalamityGlobalNPC;
+                    Type type = global.GetType().BaseType;
+                    bool overridableNPC = global is null or CalamityGlobalNPC;
+
                     if (InfernumMode.EmodeIsActive)
                     {
                         Type emodeGlobalNPCType = InfernumMode.FargowiltasSouls.Code.GetType("FargowiltasSouls.EternityMode.EModeNPCBehaviour");
-                        overridableNPC |= g.GetType().IsSubclassOf(emodeGlobalNPCType);
+                        overridableNPC |= global.GetType().IsSubclassOf(emodeGlobalNPCType);
                     }
 
                     if (overridableNPC && OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
                         continue;
 
-                    result &= g.PreAI(npc);
+                    result &= global.PreAI(npc);
                 }
                 if (result && npc.ModNPC != null)
-                {
                     return npc.ModNPC.PreAI();
-                }
                 return result;
             }));
             cursor.Emit(OpCodes.Ret);
@@ -60,9 +59,7 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.EmitDelegate(new Action<NPC, bool>((npc, createModNPC) =>
             {
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
-                {
                     npc.Infernum().SetDefaults(npc);
-                }
             }));
             cursor.Emit(OpCodes.Ret);
         }
@@ -81,11 +78,12 @@ namespace InfernumMode.Core.ILEditingStuff
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                     return npc.Infernum().PreDraw(npc, spriteBatch, screenPosition, drawColor);
 
-                foreach (GlobalNPC g in list.Enumerate())
+                foreach (GlobalNPC global in list.Enumerate(npc))
                 {
-                    if (!g.Instance(npc).PreDraw(npc, spriteBatch, screenPosition, drawColor))
+                    if (!global.Instance(npc).PreDraw(npc, spriteBatch, screenPosition, drawColor))
                         return false;
                 }
+
                 return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, screenPosition, drawColor);
             }));
             cursor.Emit(OpCodes.Ret);
@@ -103,19 +101,20 @@ namespace InfernumMode.Core.ILEditingStuff
 
                 int type = npc.type;
                 if (npc.ModNPC != null && npc.ModNPC.AnimationType > 0)
-                {
                     npc.type = npc.ModNPC.AnimationType;
-                }
+
                 if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                 {
                     npc.Infernum().FindFrame(npc, frameHeight);
                     return;
                 }
+
                 npc.VanillaFindFrame(frameHeight, npc.isLikeATownNPC, npc.ModNPC?.AnimationType is > 0 ? npc.ModNPC.AnimationType : npc.type);
                 npc.type = type;
                 npc.ModNPC?.FindFrame(frameHeight);
-                foreach (GlobalNPC g in list.Enumerate())
-                    g.Instance(npc).FindFrame(npc, frameHeight);
+
+                foreach (GlobalNPC global in list.Enumerate(npc))
+                    global.Instance(npc).FindFrame(npc, frameHeight);
             }));
             cursor.Emit(OpCodes.Ret);
         }
@@ -131,18 +130,17 @@ namespace InfernumMode.Core.ILEditingStuff
 
                 bool result = true;
                 if (npc.ModNPC != null)
-                {
                     result = npc.ModNPC.CheckDead();
-                }
-                foreach (GlobalNPC g in list.Enumerate())
+
+                foreach (GlobalNPC global in list.Enumerate(npc))
                 {
-                    if (g is GlobalNPCOverrides g2)
+                    if (global is GlobalNPCOverrides globalOverrides)
                     {
-                        bool result2 = g2.CheckDead(npc);
+                        bool result2 = globalOverrides.CheckDead(npc);
                         if (!result2)
                             return false;
                     }
-                    result &= g.Instance(npc).CheckDead(npc);
+                    result &= global.Instance(npc).CheckDead(npc);
                 }
                 return result;
             }));
@@ -158,13 +156,13 @@ namespace InfernumMode.Core.ILEditingStuff
                 GlobalHookList<GlobalProjectile> list = (GlobalHookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
 
                 bool result = true;
-                foreach (GlobalProjectile g in list.Enumerate())
+                foreach (GlobalProjectile global in list.Enumerate(projectile))
                 {
-                    bool overridableProjectile = g is null || g is CalamityGlobalProjectile || g.GetType().FullName.Contains("EModeGlobalProjectile");
+                    bool overridableProjectile = global is null || global is CalamityGlobalProjectile || global.GetType().FullName.Contains("EModeGlobalProjectile");
                     if (overridableProjectile && OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
                         continue;
 
-                    result &= g.PreAI(projectile);
+                    result &= global.PreAI(projectile);
                 }
                 if (result && projectile.ModProjectile != null)
                     return projectile.ModProjectile.PreAI();
@@ -180,19 +178,18 @@ namespace InfernumMode.Core.ILEditingStuff
             GlobalHookList<GlobalProjectile> list = (GlobalHookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
 
             bool result = true;
-            foreach (GlobalProjectile g in list.Enumerate())
+            foreach (GlobalProjectile global in list.Enumerate(projectile))
             {
                 // The InfernumMode.CanUseCustomAIs check is necessary to ensure that Calamity's global shroomed effect isn't disabled when the mod is enabled for Infernum itself isn't in the world.
-                bool overridableProjectile = g is null || g is CalamityGlobalProjectile || g.GetType().FullName.Contains("EModeGlobalProjectile");
+                bool overridableProjectile = global is null || global is CalamityGlobalProjectile || global.GetType().FullName.Contains("EModeGlobalProjectile");
                 if (overridableProjectile && InfernumMode.CanUseCustomAIs)
                     continue;
 
-                result &= g.PreDraw(projectile, ref lightColor);
+                result &= global.PreDraw(projectile, ref lightColor);
             }
             if (result && projectile.ModProjectile != null)
-            {
                 return projectile.ModProjectile.PreDraw(ref lightColor);
-            }
+
             return result;
         }
 

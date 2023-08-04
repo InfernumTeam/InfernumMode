@@ -1,5 +1,5 @@
 author = Dominic Karma
-version = 1.9.22
+version = 1.9.23
 displayName = Calamity Mod Infernum Mode
 modReferences=CalamityMod, SubworldLibrary
 hideCode=false

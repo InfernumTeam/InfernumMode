@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -60,7 +60,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // Begin dying if the player is really close to the hand, preferring to attack them instead of hovering near deerclops.
             float flySpeed = 8.5f;
             Player target = Main.player[Player.FindClosest(NPC.Center, 1, 1)];
-            bool chasePlayer = NPC.WithinRange(target.Center, 300f) && Main.npc[deerclopsIndex].WithinRange(target.Center, 480f);
+            bool chasePlayer = NPC.WithinRange(target.Center, 500f) && Main.npc[deerclopsIndex].WithinRange(target.Center, 680f);
+
             if (BossRushEvent.BossRushActive)
                 flySpeed *= 1.75f;
 
@@ -87,10 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             Timer++;
         }
 
-        public override void DrawBehind(int index)
-        {
-            Main.instance.DrawCacheNPCsOverPlayers.Add(index);
-        }
+        public override void DrawBehind(int index) => Main.instance.DrawCacheNPCsOverPlayers.Add(index);
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
@@ -100,12 +98,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             float rotation = NPC.rotation;
             Color backglowColor = Color.DarkViolet * NPC.Opacity * 0.5f;
+
             for (int j = 0; j < 4; j++)
             {
                 Vector2 offsetDirection = rotation.ToRotationVector2();
                 double spin = Main.GlobalTimeWrappedHourly * TwoPi / 24f + TwoPi * j / 4f;
                 Main.EntitySpriteDraw(tex, drawPosition + offsetDirection.RotatedBy(spin) * 6f, null, backglowColor, rotation, origin, NPC.scale, 0, 0);
             }
+
             Main.spriteBatch.Draw(tex, drawPosition, null, NPC.GetAlpha(Color.Black), rotation, origin, NPC.scale, 0, 0f);
             return false;
         }

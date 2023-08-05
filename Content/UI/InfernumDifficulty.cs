@@ -52,8 +52,8 @@ namespace InfernumMode.Content.UI
             Name = Language.GetText("Mods.InfernumMode.DifficultyUI.Name");
             ShortDescription = Language.GetText("Mods.InfernumMode.DifficultyUI.ShortDescription");
 
-            ActivationTextKey = "Mods.InfernumMode.InfernumText";
-            DeactivationTextKey = "Mods.InfernumMode.InfernumText2";
+            ActivationTextKey = "Mods.InfernumMode.DifficultyUI.InfernumText";
+            DeactivationTextKey = "Mods.InfernumMode.DifficultyUI.InfernumText2";
 
             ActivationSound = InfernumSoundRegistry.ModeToggleLaugh;
             ChatTextColor = Color.DarkRed;

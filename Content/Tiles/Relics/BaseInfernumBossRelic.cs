@@ -23,16 +23,16 @@ namespace InfernumMode.Content.Tiles.Relics
         public Asset<Texture2D> RelicBaseTexture;
         public Asset<Texture2D> RelicBaseGlowTexture;
 
-        // Every relic has its own extra floating part, should be 50x50. Optional: Expand this sheet if you want to add more, stacked vertically
-        // If you do not go the optional way, and you extend from this class, you can override this to point to a different texture
         public abstract string RelicTextureName { get; }
+
         public virtual string RelicGlowTextureName => RelicTextureName + "Glow";
 
         public abstract int DropItemID { get; }
 
-        // All relics use the same pedestal texture, this one is copied from vanilla
         public override string Texture => "InfernumMode/Content/Tiles/Relics/Pedestal";
+
         public static string DrawTexture => "InfernumMode/Content/Tiles/Relics/Pedestal";
+
         public static string RelicBaseGlowTextureName => "InfernumMode/Content/Tiles/Relics/PedestalGlow";
 
         public override void Load()
@@ -86,15 +86,9 @@ namespace InfernumMode.Content.Tiles.Relics
             AddMapEntry(new Color(41, 32, 48), Language.GetText("MapObject.Relic"));
         }
 
-        public override bool CreateDust(int i, int j, ref int type)
-        {
-            return false;
-        }
+        public override bool CreateDust(int i, int j, ref int type) => false;
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, DropItemID);
-        }
+        public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, DropItemID);
 
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
         {
@@ -120,17 +114,13 @@ namespace InfernumMode.Content.Tiles.Relics
             // This is lighting-mode specific, always include this if you draw tiles manually
             Vector2 offScreen = new(Main.offScreenRange);
             if (Main.drawToScreen)
-            {
                 offScreen = Vector2.Zero;
-            }
 
             // Take the tile, check if it actually exists
             Point p = new(i, j);
             Tile tile = Main.tile[p.X, p.Y];
             if (tile == null || !tile.HasTile)
-            {
                 return;
-            }
 
             // Get the initial draw parameters
             Texture2D texture = RelicTexture.Value;

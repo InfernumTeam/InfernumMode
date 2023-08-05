@@ -1434,6 +1434,11 @@ Mods: {
 					}
 				}
 			}
+
+			NuclearTerrorRelic: {
+				DisplayName: Nuclear Terror Relic
+				Tooltip: ""
+			}
 		}
 
 		Tiles: {

@@ -1,6 +1,5 @@
 ﻿using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.SlimeGod;
-using Terraria;
 using Terraria.ModLoader;
 using static CalamityMod.UI.BossHealthBarManager;
 using static Terraria.ModLoader.ModContent;

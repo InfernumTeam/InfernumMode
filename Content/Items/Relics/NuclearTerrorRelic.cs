@@ -1,5 +1,4 @@
 ﻿using InfernumMode.Content.Tiles.Relics;
-using System;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Relics

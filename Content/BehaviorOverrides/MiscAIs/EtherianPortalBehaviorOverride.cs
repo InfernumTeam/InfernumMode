@@ -1,5 +1,4 @@
-﻿using CalamityMod.NPCs;
-using InfernumMode.Common.UtilityMethods;
+﻿using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.Audio;

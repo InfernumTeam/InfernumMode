@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.AquaticScourge;
+﻿using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.NPCs.DevourerofGods;

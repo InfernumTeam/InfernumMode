@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using CalamityMod.Skies;

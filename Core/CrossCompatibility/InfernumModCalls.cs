@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.Items;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.SunkenSea;

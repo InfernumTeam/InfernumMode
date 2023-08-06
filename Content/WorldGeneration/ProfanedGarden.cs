@@ -1,4 +1,4 @@
-using CalamityMod.Schematics;
+﻿using CalamityMod.Schematics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using System;
@@ -34,6 +34,11 @@ namespace InfernumMode.Content.WorldGeneration
             }
 
             WorldSaveSystem.HasGeneratedProfanedShrine = true;
+            WorldSaveSystem.HasProvidenceDoorShattered = false;
+            WorldSaveSystem.WayfinderGateLocation = Vector2.Zero;
+
+            // Start this really far out so it doesn't try and shove the player left of it.
+            WorldSaveSystem.ProvidenceDoorXPosition = int.MaxValue;
         }
     }
 }

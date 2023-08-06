@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Content.Items;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
@@ -23,7 +23,7 @@ namespace InfernumMode.Core.TileData
 
             public bool HasBlossom
             {
-                get => (PackedData & 1) == 1;
+                readonly get => (PackedData & 1) == 1;
                 set => PackedData = (byte)(value ? 0b1 : 0b0);
             }
         }

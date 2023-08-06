@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Systems;
@@ -158,6 +158,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
             {
                 bool passedDoor = false;
                 float doorX = WorldSaveSystem.ProvidenceDoorXPosition;
+
+
                 while (Player.Right.X >= doorX || passedDoor && Collision.SolidCollision(Player.TopLeft, Player.width, Player.height))
                 {
                     Player.velocity.X = 0f;

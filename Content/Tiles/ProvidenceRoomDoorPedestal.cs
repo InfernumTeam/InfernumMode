@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.Assets.Sounds;
@@ -63,10 +63,10 @@ namespace InfernumMode.Content.Tiles
             if (Main.gamePaused)
                 return;
 
-            // Calculate the door position in the world if it has yet to be initialized.
+            // Calculate the door position in the world.
             Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
             Vector2 bottom = new Vector2(i, j).ToWorldCoordinates(8f, 0f);
-            if (WorldSaveSystem.ProvidenceDoorXPosition == 0 && tile.TileFrameX == 18 && tile.TileFrameY == 0)
+            if ((WorldSaveSystem.ProvidenceDoorXPosition == 0 || WorldSaveSystem.ProvidenceDoorXPosition != bottom.X) && tile.TileFrameX == 18 && tile.TileFrameY == 0)
             {
                 WorldSaveSystem.ProvidenceDoorXPosition = (int)bottom.X;
                 CalamityNetcode.SyncWorld();

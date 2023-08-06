@@ -905,6 +905,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             // Disable significant contact damage.
             npc.Calamity().DR = 0.999999f;
 
+            // Go invincible if too close to the next phase ratio.
+            if (((float)npc.life / npc.lifeMax) <= Phase3LifeRatio + 0.1f)
+                npc.dontTakeDamage = true;
+
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)
             {
@@ -1239,6 +1243,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             // Disable significant contact damage.
             npc.Calamity().DR = 0.999999f;
+
+            // Go invincible if too close to dying.
+            if (((float)npc.life / npc.lifeMax) <= + 0.1f)
+                npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)

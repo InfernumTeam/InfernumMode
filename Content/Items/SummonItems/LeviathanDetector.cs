@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.Leviathan;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.Items.SummonItems
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SummonItems/LeviathanDetector_Animated").Value;
             Rectangle f = Item.GetCurrentFrame(ref frame, ref frameCounter, 5, 8);
-            Main.spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * new Vector2(0.0f, 0.125f), scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * 0.5f, scale, SpriteEffects.None, 0);
             return false;
         }
 

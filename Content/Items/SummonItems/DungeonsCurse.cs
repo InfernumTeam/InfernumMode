@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Materials;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.Items.SummonItems
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SummonItems/DungeonsCurse_Animated").Value;
             Rectangle f = Item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5);
-            Main.spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * new Vector2(0.16f, 0.25f), scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * 0.5f, scale, SpriteEffects.None, 0);
             return false;
         }
 

@@ -64,7 +64,13 @@ namespace InfernumMode.Content.Skies
             else
             {
                 if (InfernumMode.MusicModIsActive)
-                    ChangeBackgroundColors_ScarsOfCalamity();
+                {
+                    object calOverride = InfernumMode.InfernumMusicMod.Call("OverrideCalTheme");
+                    if (calOverride != null && !(bool)calOverride)
+                        ChangeBackgroundColors_StainedBrutalCalamity(lifeRatio, ref brightness);
+                    else
+                        ChangeBackgroundColors_ScarsOfCalamity();
+                }
                 else
                     ChangeBackgroundColors_StainedBrutalCalamity(lifeRatio, ref brightness);
             }

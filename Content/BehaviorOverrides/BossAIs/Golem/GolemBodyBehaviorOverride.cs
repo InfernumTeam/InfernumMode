@@ -47,9 +47,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.Golem;
 
-        public const int ArenaWidth = 115;
+        public const int ArenaWidth = 107;
 
-        public const int ArenaHeight = 105;
+        public const int ArenaHeight = 104;
 
         public const int AttacksNotToPool = 4; // The last X states in GolemAttackState should not be selected as attacks during the fight
 

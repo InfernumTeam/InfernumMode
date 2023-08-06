@@ -949,8 +949,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (attackTimer == slowdownTime)
             {
-                if (selfHurtHPRatio > 0f && Main.netMode != NetmodeID.MultiplayerClient)
-                    npc.StrikeInstantKill();
+                if (selfHurtHPRatio > 0f)
+                    npc.SimpleStrikeNPC((int)(npc.lifeMax * selfHurtHPRatio), 0, noPlayerInteraction: true);
 
                 SoundEngine.PlaySound(Mauler.RoarSound with { Pitch = 0.2f }, target.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeGoreSound, target.Center);

@@ -45,8 +45,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void ResetEffects()
         {
-            if (!MechanicalEffectsApply)
-                RemainingHits = MaxHighDRHits;
+            //if (!MechanicalEffectsApply)
+            //    RemainingHits = MaxHighDRHits;
 
             MechanicalEffectsApply = false;
             ForcefieldCanDraw = false;
@@ -99,10 +99,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         private void Modifiers_ModifyHurtInfo(ref Player.HurtInfo info)
         {
-            if (info.Damage >= 120)
+            //if (info.Damage >= 120)
                 ShouldReduceDamage = true;
-            else
-                ShouldReduceDamage = false;
+            //else
+            //    ShouldReduceDamage = false;
         }
 
         // Reset the hit counter if the player died and is about to respawn.

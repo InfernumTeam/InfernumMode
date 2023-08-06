@@ -270,6 +270,7 @@ namespace InfernumMode.Content.BossBars
 
                 int phaseCount = phaseInfo.PhaseCount;
                 List<float> phaseThresholds = phaseInfo.PhaseThresholds;
+
                 if (NPCType == ModContent.NPCType<Yharon>())
                 {
                     // This is already hardcoded so i dont care.
@@ -284,10 +285,12 @@ namespace InfernumMode.Content.BossBars
                 {
                     float currentRatioToCheck = phaseThresholds[i];
                     int index = i;
+
                     if (baseRatio <= currentRatioToCheck)
                     {
                         if (i != phaseCount - 1)
                             continue;
+
                         currentRatioToCheck = 0f;
                         index++;
                     }
@@ -300,6 +303,7 @@ namespace InfernumMode.Content.BossBars
                     }
                     break;
                 }
+
                 if (AssociatedNPC.Calamity().ShouldCloseHPBar)
                     currentPhase = GetTotalPhaseIndicators() + 1;
 

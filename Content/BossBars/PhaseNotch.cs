@@ -7,8 +7,6 @@ using static InfernumMode.Content.BossBars.BossBarManager;
 
 namespace InfernumMode.Content.BossBars
 {
-
-
     public class PhaseNotch
     {
         public class PhaseNotchSparkle

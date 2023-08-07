@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.UI;
 using InfernumMode.Core.OverridingSystem;
@@ -120,13 +121,17 @@ namespace InfernumMode.Content.BossBars
 
         public override void Update(IBigProgressBar currentBar, ref BigProgressBarInfo info)
         {
-            // Yoinked from Calamity's.
-            for (int j = 0; j < 200; j++)
+            for (int j = 0; j < Main.maxNPCs; j++)
             {
                 if (Main.npc[j].active && !BossHealthBarManager.BossExclusionList.Contains(Main.npc[j].type))
                 {
-                    bool isEoWSegment = Main.npc[j].type is 14 or 15;
-                    if ((Main.npc[j].IsABoss() && !isEoWSegment) || BossHealthBarManager.MinibossHPBarList.Contains(Main.npc[j].type) || Main.npc[j].Calamity().CanHaveBossHealthBar)
+                    bool isEoWSegment = Main.npc[j].type is NPCID.EaterofWorldsBody or 15;
+
+                    bool canHaveHpBar = false;
+                    if (Main.npc[j].TryGetGlobalNPC<CalamityGlobalNPC>(out var result))
+                        canHaveHpBar = result.CanHaveBossHealthBar;
+
+                    if ((Main.npc[j].IsABoss() && !isEoWSegment) || BossHealthBarManager.MinibossHPBarList.Contains(Main.npc[j].type) || canHaveHpBar)
                         AddBar(j);
                 }
             }

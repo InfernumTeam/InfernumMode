@@ -55,9 +55,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 set;
             }
 
-            public int StartingTime => Section.StartInFrames;
+            public readonly int StartingTime => Section.StartInFrames;
 
-            public int EndingTime => Section.EndInFrames;
+            public readonly int EndingTime => Section.EndInFrames;
 
             public ProvidenceAttackSection(SongSection section, ProvidenceAttackType attackType)
             {
@@ -2477,7 +2477,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     ModContent.ProjectileType<HolyRitual>(),
                     ModContent.ProjectileType<HolySpear>(),
                     ModContent.ProjectileType<HolySpearFirePillar>(),
-                    ModContent.ProjectileType<ProfanedLavaBlob>());
+                    ModContent.ProjectileType<ProfanedLavaBlob>(),
+                    ModContent.ProjectileType<HolySunExplosion>());
             }
         }
         #endregion

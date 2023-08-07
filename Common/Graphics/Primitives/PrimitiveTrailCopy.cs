@@ -15,7 +15,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             public Vector2 Position;
             public Color Color;
             public Vector2 TextureCoordinates;
-            public VertexDeclaration VertexDeclaration => _vertexDeclaration;
+            public readonly VertexDeclaration VertexDeclaration => _vertexDeclaration;
 
             private static readonly VertexDeclaration _vertexDeclaration = new(new VertexElement[]
             {

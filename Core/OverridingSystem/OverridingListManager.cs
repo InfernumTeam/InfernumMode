@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace InfernumMode.Core.OverridingSystem
     public class OverridingListManager : ILoadable
     {
 #pragma warning disable IDE0051 // Remove unused private members
-        private const string message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
+        private const string Message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
 #pragma warning restore IDE0051 // Remove unused private members
 
         internal static Dictionary<int, NPCPreAIDelegate> InfernumNPCPreAIOverrideList = new();

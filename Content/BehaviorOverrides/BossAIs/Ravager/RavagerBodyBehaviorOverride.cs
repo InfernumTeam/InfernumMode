@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
             public float LifeRatio;
 
-            public bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
+            public readonly bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
 
             public static bool ShouldBeBuffed => false;
 

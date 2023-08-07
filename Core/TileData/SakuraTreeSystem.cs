@@ -158,12 +158,18 @@ namespace InfernumMode.Core.TileData
             fixed (BlossomData* dataPtr = blossomWorldDataRef)
             {
                 byte* bytePtr = (byte*)dataPtr;
-                var blossomDataWrapper = new Span<byte>(bytePtr, blossomWorldDataRef.Length);
-                var savedDataWrapper = new Span<byte>(blossomData);
+                Span<byte> blossomDataWrapper = new(bytePtr, blossomWorldDataRef.Length);
+                Span<byte> savedDataWrapper = new(blossomData);
 
-                // TODO: Sometimes this is false and it causes crashes for people, I don't fully understand this code so this is a bandaid fix for now.
+
                 if (savedDataWrapper.Length == blossomDataWrapper.Length)
                     savedDataWrapper.CopyTo(blossomDataWrapper);
+                else
+                {
+                    // Resize it if it isnt the correct length.
+                    blossomDataWrapper = new(bytePtr, blossomData.Length);
+                    savedDataWrapper.CopyTo(blossomDataWrapper);
+                }
             }
         }
     }

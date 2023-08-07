@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -13,22 +13,16 @@ namespace InfernumMode.Core.OverridingSystem
     {
         internal static void LoadAll()
         {
-            void getMethodBasedOnContext(Type type, ProjectileBehaviorOverride instance, ProjectileOverrideContext context)
+            static void getMethodBasedOnContext(Type type, ProjectileBehaviorOverride instance, ProjectileOverrideContext context)
             {
                 string methodName = string.Empty;
 
-                switch (context)
+                methodName = context switch
                 {
-                    case ProjectileOverrideContext.ProjectileAI:
-                        methodName = "PreAI";
-                        break;
-                    case ProjectileOverrideContext.ProjectilePreDraw:
-                        methodName = "PreDraw";
-                        break;
-                    default:
-                        throw new ArgumentException("The given override context is invalid.");
-                }
-
+                    ProjectileOverrideContext.ProjectileAI => "PreAI",
+                    ProjectileOverrideContext.ProjectilePreDraw => "PreDraw",
+                    _ => throw new ArgumentException("The given override context is invalid."),
+                };
                 MethodInfo method = type.GetMethod(methodName, Utilities.UniversalBindingFlags);
                 List<Type> paramTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToList();
                 paramTypes.Add(method.ReturnType);

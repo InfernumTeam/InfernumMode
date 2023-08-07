@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakeFactor;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
+        public override bool? CanDamage() => false;
 
         public void SpecialDraw(SpriteBatch spriteBatch)
         {

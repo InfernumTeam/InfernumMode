@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BossIntroScreens
             ColorSelectionFunction = colorSelectionFunction;
         }
 
-        public Color Calculate(float completionRatio) => ColorSelectionFunction(completionRatio);
+        public readonly Color Calculate(float completionRatio) => ColorSelectionFunction(completionRatio);
 
         public static implicit operator TextColorData(Color c) => new(c);
     }

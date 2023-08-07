@@ -1,9 +1,10 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
 namespace InfernumMode.Core
 {
+    #pragma warning disable CS0618 // Type or member is obsolete
     [Label("Config")]
     [BackgroundColor(96, 30, 53, 216)]
     public class InfernumConfig : ModConfig
@@ -48,8 +49,11 @@ namespace InfernumMode.Core
         [BackgroundColor(224, 127, 180, 192)]
         [DefaultValue(false)]
         [Tooltip("Enables boss footage recordings for the playback during the credits.")]
+
         public bool CreditsRecordings { get; set; }
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
     }
+    #pragma warning restore CS0618 // Type or member is obsolete
+
 }

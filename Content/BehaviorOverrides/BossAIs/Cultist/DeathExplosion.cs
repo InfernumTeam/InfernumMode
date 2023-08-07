@@ -13,23 +13,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            switch ((int)Projectile.localAI[1])
+            return (int)Projectile.localAI[1] switch
             {
                 // Vortex.
-                case 0:
-                    return Color.Teal;
+                0 => Color.Teal,
                 // Stardust.
-                case 1:
-                    return Color.DeepSkyBlue;
+                1 => Color.DeepSkyBlue,
                 // Nebula.
-                case 2:
-                    return Color.Violet;
+                2 => Color.Violet,
                 // Solar.
-                case 3:
-                    return Color.Orange;
-            }
-
-            return Color.White;
+                3 => Color.Orange,
+                _ => Color.White,
+            };
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)Projectile.localAI[1]);

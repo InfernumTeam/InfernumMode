@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BossBars
             {
                 if (Main.npc[j].active && !BossHealthBarManager.BossExclusionList.Contains(Main.npc[j].type))
                 {
-                    bool isEoWSegment = Main.npc[j].type is NPCID.EaterofWorldsBody or 15;
+                    bool isEoWSegment = Main.npc[j].type is NPCID.EaterofWorldsBody or NPCID.EaterofWorldsTail;
 
                     bool canHaveHpBar = false;
                     if (Main.npc[j].TryGetGlobalNPC<CalamityGlobalNPC>(out var result))

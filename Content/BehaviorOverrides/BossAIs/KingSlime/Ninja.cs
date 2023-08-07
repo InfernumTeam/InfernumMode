@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.SlimeGod;
 using InfernumMode.Assets.Sounds;
@@ -156,6 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                         // Spin when going upward.
                         if (NPC.velocity.Y < 0f)
                             NPC.rotation += NPC.spriteDirection * 0.3f;
+
                         // And aim footfirst when going downward.
                         // Unless it's April 1st. In which case he becomes a goddamn bouncy ball lmao
                         else if (!Utilities.IsAprilFirst())
@@ -528,14 +529,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline").Value;
-            Vector2 outlineDrawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY * 6f;
+            Vector2 drawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY * 6f;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             if (KatanaUseTimer > 0f)
             {
                 Texture2D katanaTexture = TextureAssets.Item[ItemID.Katana].Value;
-                Vector2 drawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
+                Vector2 katanaDrawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
                 drawPosition -= NPC.rotation.ToRotationVector2() * NPC.spriteDirection * 22f;
                 float rotation = PiOver4 + NPC.rotation;
                 SpriteEffects katanaDirection = direction | SpriteEffects.FlipHorizontally;
@@ -546,10 +546,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 }
                 else
                     rotation += PiOver2;
-                Main.spriteBatch.Draw(katanaTexture, drawPosition, null, NPC.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, katanaDirection, 0f);
+                Main.spriteBatch.Draw(katanaTexture, katanaDrawPosition, null, NPC.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, katanaDirection, 0f);
             }
-            Main.spriteBatch.Draw(outlineTexture, outlineDrawPosition, NPC.frame, Color.White * NPC.Opacity * 0.6f, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale * 1.05f, direction, 0f);
-            Main.spriteBatch.Draw(texture, outlineDrawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0f);
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 offset = (Tau * i / 12f).ToRotationVector2() * 3f;
+                Color color = Color.White with { A = 0 };
+                Main.spriteBatch.Draw(texture, drawPosition + offset, NPC.frame, color * NPC.Opacity, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0f);
+            }
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0f);
             return false;
         }
 

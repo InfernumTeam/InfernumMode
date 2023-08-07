@@ -67,7 +67,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             }
 
             // Aim very, very quickly at targets.
-            // This takes a small amount of time to happen, to allow the blade to go in its intended direction before immediately racing
+            // This takes a small amount of time to happen, to allow the bolt to go in its intended direction before immediately racing
             // towards the nearest target.
             else if (Time >= Dreamtastic.BeamNoHomeTime)
             {
@@ -140,7 +140,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
             // Draw the trail.
             trailShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/BasicTrail"));
-            trailShader.SetShaderTexture2(InfernumTextureRegistry.FireNoise);
+            trailShader.SetShaderTexture2(InfernumTextureRegistry.SmokyNoise);
             trailShader.UseColor(mainColor);
             trailShader.UseSecondaryColor(Color.Purple);
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 45);

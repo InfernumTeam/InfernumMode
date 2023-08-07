@@ -71,8 +71,9 @@ namespace InfernumMode.Content.Projectiles.Rogue
         public override void AI()
         {
             int holdoutCount = Main.projectile.Where(p => p.active && p.owner == Owner.whoAmI && p.type == Type).ToArray().Length;
+
             // Die if no longer holding the click button or otherwise cannot use the item.
-            if (!Owner.channel || Owner.dead || !Owner.active || Owner.noItems || Owner.CCed)
+            if (!Owner.channel || Owner.dead || !Owner.active || Owner.noItems || Owner.CCed || holdoutCount > 1)
             {
                 Projectile.Kill();
                 return;
@@ -113,7 +114,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
         public void DoBehavior_SummonDorks()
         {
             int energyChargeUpTime = 90;
-            int animationTime = 210;
+            int animationTime = 150;
 
             // Charge up energy.
             float chargeUpInterpolant = Utils.GetLerpValue(0f, animationTime * 0.7f, Time, true);
@@ -221,7 +222,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
         public void DrawSummoningCircle()
         {
-            float scale = SummoningCircleScale * Projectile.scale * 2f;
+            float scale = SummoningCircleScale * Projectile.scale * 1.4f;
             Vector2 drawPosition = Owner.Center + Vector2.UnitY * Owner.gfxOffY - Main.screenPosition;
             Texture2D magicCircleTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/RancorMagicCircle").Value;
             Texture2D magicCircleTextureBlurred = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/RancorMagicCircleGlowmask").Value;

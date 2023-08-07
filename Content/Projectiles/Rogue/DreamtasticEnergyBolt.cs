@@ -75,7 +75,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 if (potentialTarget is not null)
                 {
                     Vector2 idealVelocity = Projectile.SafeDirectionTo(potentialTarget.Center) * (Projectile.velocity.Length() + 3.3f);
-                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, idealVelocity, 0.07f).MoveTowards(idealVelocity, 0.5f);
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, idealVelocity, 0.07f).MoveTowards(idealVelocity, 0.4f);
                 }
                 else
                     Projectile.velocity *= 0.99f;

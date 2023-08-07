@@ -160,7 +160,10 @@ namespace InfernumMode.Core.TileData
                 byte* bytePtr = (byte*)dataPtr;
                 var blossomDataWrapper = new Span<byte>(bytePtr, blossomWorldDataRef.Length);
                 var savedDataWrapper = new Span<byte>(blossomData);
-                savedDataWrapper.CopyTo(blossomDataWrapper);
+
+                // TODO: Sometimes this is false and it causes crashes for people, I don't fully understand this code so this is a bandaid fix for now.
+                if (savedDataWrapper.Length == blossomDataWrapper.Length)
+                    savedDataWrapper.CopyTo(blossomDataWrapper);
             }
         }
     }

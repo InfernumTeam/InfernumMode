@@ -77,9 +77,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             // If the ninja isnt moving, quickly clear the oldest Vector in the list.
             // This makes the projectile come back into the ninja. They both then disappear afterwards, done in the ninjas code.
             if (ninjaNPC.velocity == Vector2.Zero)
-            {
                 TrailCache.RemoveAt(0);
-            }
+
             // Fade in.
             float disappearInterpolant = Utils.GetLerpValue(0f, 24f, Projectile.timeLeft / Projectile.MaxUpdates, true);
             float scaleGrowInterpolant = Pow(Utils.GetLerpValue(0f, 64f, Time, true), 1.72f);
@@ -95,7 +94,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             {
                 if (Utils.CenteredRectangle(TrailCache[i], Vector2.One * WidthFunction(i / (float)(TrailCache.Count - 1f) * 0.7f)).Intersects(targetHitbox))
                     return true;
-
             }
             return false;
         }

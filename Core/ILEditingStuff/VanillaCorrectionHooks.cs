@@ -1198,7 +1198,8 @@ namespace InfernumMode.Core.ILEditingStuff
                 return 0;
             }
 
-            return orig(self, maxValue);
+            // In MP, this is sometimes less than 0?? Not sure why, but make sure that doesn't happen.
+            return orig(self, (int)Abs(maxValue));
         }
     }
 

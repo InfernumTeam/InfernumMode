@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.Enums;
 using Terraria.ModLoader;
-using Terraria.ObjectData;
 
 namespace InfernumMode.Content.Tiles.Misc
 {

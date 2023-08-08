@@ -54,7 +54,9 @@ namespace InfernumMode.Content.Skies
 
         private bool isActive;
 
+#pragma warning disable CS0649 // Field 'SCalSkyInfernum.intensity' is never assigned to, and will always have its default value 0
         private readonly float intensity;
+#pragma warning restore CS0649 // Field 'SCalSkyInfernum.intensity' is never assigned to, and will always have its default value 0
 
         private int SCalIndex = -1;
 

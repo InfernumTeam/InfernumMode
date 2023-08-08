@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.Center = SpinningCenter + SpinOffsetAngle.ToRotationVector2() * 300f;
 
             // Look at the player.
-            float aimInterpolant = Utils.GetLerpValue(38f, 6f, Time, true);
+            float aimInterpolant = Utils.GetLerpValue(40f, 6f, Time, true);
             float idealAngle = Projectile.AngleTo(Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center);
             AimDirection = AimDirection.AngleLerp(idealAngle, aimInterpolant);
 

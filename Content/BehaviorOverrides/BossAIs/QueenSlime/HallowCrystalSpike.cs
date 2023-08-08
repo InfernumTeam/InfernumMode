@@ -1,4 +1,4 @@
-using InfernumMode.Assets.Sounds;
+﻿using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
@@ -135,11 +135,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Vector2 drawPosition = end;
             Vector2 scale = Vector2.One * Projectile.width / crystalSegment.Width;
 
+            float glowOpacity = Utils.GetLerpValue(30f, 50f, Time, true);
+
             for (int i = 0; i < 1000; i++)
             {
                 drawPosition += (start - end).SafeNormalize(Vector2.UnitY) * crystalSegment.Height * scale * 0.8f;
                 if (drawPosition.WithinRange(start, 35f))
                     break;
+
+                if (glowOpacity > 0f)
+                {
+                    for (int j = 0; j < 12; j++)
+                    {
+                        Vector2 offset = (Tau * j / 12f).ToRotationVector2() * (4f * glowOpacity);
+                        spriteBatch.Draw(crystalSegment, drawPosition + offset, null, Color.White with { A = 0 } * Projectile.Opacity * glowOpacity, Projectile.rotation,
+                            crystalSegment.Size() * new Vector2(0.5f, 1f), scale, 0, 0f);
+                    }
+                }
 
                 spriteBatch.Draw(crystalSegment, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, crystalSegment.Size() * new Vector2(0.5f, 1f), scale, 0, 0f);
             }

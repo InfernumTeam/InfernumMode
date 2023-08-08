@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public static int LargeCrystalSpikeDamage => 185;
 
-        public static int AimedLaserbeamDamage => 200;
+        public static int AimedLaserbeamDamage => 160;
 
         public static int GiantHallowLaserbeamDamage => 225;
 
@@ -336,8 +336,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public static void DoBehavior_BasicHops(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState)
         {
             int jumpTime = 42;
-            int slamDelay = 30;
-            int slamHoverTime = 35;
+            int slamDelay = 90;
+            int slamHoverTime = 75;
             int crystalID = ModContent.ProjectileType<FallingCrystal>();
             float horizontalJumpSpeed = Distance(target.Center.X, npc.Center.X) * 0.012f + 16f;
             float baseVerticalJumpSpeed = 23f;
@@ -415,7 +415,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
 
             // Begin the slam.
-            if (jumpState == 1f && attackTimer >= slamDelay + 60f && Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24))
+            if (jumpState == 1f && attackTimer >= slamDelay && Utilities.ActualSolidCollisionTop(npc.BottomLeft, npc.width, 24))
             {
                 jumpState = 2f;
                 attackTimer = 0f;
@@ -428,7 +428,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
                 Vector2 idealVelocity = (hoverDestination - npc.Center) * Utils.Remap(attackTimer, 0f, slamHoverTime, 0.002f, 0.18f);
-                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.35f);
             }
 
             // Slam downward.
@@ -469,7 +469,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
             }
 
-            if (jumpState == 3f && attackTimer >= 108f && didSlamGroundHitEffects == 1f)
+            if (jumpState == 3f && attackTimer >= 78f && didSlamGroundHitEffects == 1f)
                 SelectNextAttack(npc);
         }
 
@@ -477,6 +477,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             int jumpCount = 2;
             int slamHoverTime = 14;
+            int slamAfterDelay = 140;
             int slamFlyTime = WingUpdateCycleTime * 2 - slamHoverTime;
             int fallingSlimeID = ModContent.ProjectileType<FallingSpikeSlimeProj>();
             int bouncingSlimeID = ModContent.ProjectileType<BouncingSlimeProj>();
@@ -557,7 +558,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 npc.noTileCollide = false;
             }
 
-            if (attackTimer >= slamFlyTime + slamHoverTime + 180f)
+            if (attackTimer >= slamFlyTime + slamHoverTime + slamAfterDelay)
             {
                 slimeSpawnAttackType = 0f;
                 attackTimer = 0f;
@@ -716,7 +717,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 mazeSummonDelay += 15;
                 spinningCrystalReleaseRate -= 6;
-                spinningCrystalCount += 3;
+                spinningCrystalCount += 2;
             }
 
             // Disable contact damage universally. It is not relevant for this attack.
@@ -726,10 +727,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             npc.Calamity().DR = 0.8f;
 
             // Decide wing stuff.
-            wingMotionState = (int)WingMotionState.RiseUpward;
+            wingMotionState = (int)WingMotionState.Flap;
 
-            if (wingAnimationTimer >= WingUpdateCycleTime - 1f)
-                wingAnimationTimer = WingUpdateCycleTime - 1f;
+            //if (wingAnimationTimer >= WingUpdateCycleTime - 1f)
+            //    wingAnimationTimer = WingUpdateCycleTime - 1f;
+
+            // Hover above the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 375f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 24f;
+            float distanceFromDestination = npc.Distance(hoverDestination);
+
+            // Slow down before firing.
+            if (distanceFromDestination < 80f)
+                idealVelocity *= 0.65f;
+            if (distanceFromDestination < 40f)
+                idealVelocity = npc.velocity;
+            npc.SimpleFlyMovement(idealVelocity, 0.85f);
 
             // Interact with tiles.
             npc.noGravity = false;
@@ -746,7 +759,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         if (crystalSpawnPosition.WithinRange(target.Center, 300f) || Collision.SolidCollision(crystalSpawnPosition, 1, 1))
                             continue;
 
-                        Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<FallingCrystal>(), 0, 0f);
+                        Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<FallingCrystal>(), SolidCrystalDamage, 0f);
                     }
                 }
 
@@ -783,7 +796,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         {
             int jitterTime = 90;
             int splitCount = 7;
-            int postSplitEffectsTime = 72;
+            int postSplitEffectsTime = 52;
             int explodeCount = 3;
             ref float convergencePointX = ref npc.Infernum().ExtraAI[0];
             ref float convergencePointY = ref npc.Infernum().ExtraAI[1];

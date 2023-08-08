@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 Projectile.spriteDirection = -Math.Sign(Projectile.velocity.X);
 
             // Move towards the convergence point.
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(ConvergencePoint) * 19f, 0.07f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(ConvergencePoint) * 19f, 0.14f);
             if (Projectile.WithinRange(ConvergencePoint, 36f))
                 Projectile.Kill();
 

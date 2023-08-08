@@ -1,4 +1,4 @@
-using InfernumMode.Content.Tiles;
+﻿using InfernumMode.Content.Tiles.Misc;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,12 +7,6 @@ namespace InfernumMode.Content.Items.Placeables
 {
     public class AquaticScourgeSkull : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Aquatic Scourge Skull");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 102;

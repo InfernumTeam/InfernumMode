@@ -1,9 +1,12 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Subworlds;
-using InfernumMode.Content.Tiles;
 using InfernumMode.Content.Tiles.Abyss;
+using InfernumMode.Content.Tiles.Colosseum;
+using InfernumMode.Content.Tiles.Misc;
+using InfernumMode.Content.Tiles.Profaned;
+using InfernumMode.Content.Tiles.Wishes;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.TileData;

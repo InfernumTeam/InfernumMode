@@ -1,5 +1,5 @@
 using CalamityMod.Items.Placeables.FurnitureProfaned;
-using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Profaned;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

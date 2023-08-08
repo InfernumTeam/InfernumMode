@@ -1,6 +1,6 @@
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Misc;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

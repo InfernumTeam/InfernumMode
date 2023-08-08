@@ -176,7 +176,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             int energyReleaseRate = Owner.ActiveItem().useTime;
             if (Time % energyReleaseRate == energyReleaseRate - 1f)
             {
-                SoundEngine.PlaySound(ArtAttack.UseSound with { Pitch = 0.67f }, Projectile.Center);
+                SoundEngine.PlaySound(ArtAttack.UseSound with { Pitch = 0.67f, Volume = 0.8f }, Projectile.Center);
 
                 // Release one big bolt from the book.
                 if (Main.myPlayer == Projectile.owner)

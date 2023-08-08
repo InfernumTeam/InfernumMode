@@ -2,7 +2,7 @@
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Buffs;
-using InfernumMode.Content.Items;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System;
@@ -37,7 +37,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public ref float OutwardExtension => ref Projectile.localAI[1];
 
-        public override string Texture => "InfernumMode/Content/Items/BrimstoneCrescentStaff";
+        public override string Texture => "InfernumMode/Content/Items/Misc/BrimstoneCrescentStaff";
 
         // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Crescent Staff");
 

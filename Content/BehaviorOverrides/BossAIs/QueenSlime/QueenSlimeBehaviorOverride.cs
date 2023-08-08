@@ -188,7 +188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     DoBehavior_FourThousandBlades(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
                     break;
                 case QueenSlimeAttackType.CrystalMaze:
-                    DoBehavior_CrystalMaze(npc, target, phase2, ref attackTimer, ref wingMotionState, ref wingAnimationTimer);
+                    DoBehavior_CrystalMaze(npc, target, phase2, ref attackTimer, ref wingMotionState);
                     break;
                 case QueenSlimeAttackType.SlimeCongregations:
                     DoBehavior_SlimeCongregations(npc, target, ref attackTimer, ref wingMotionState, ref vibranceInterpolant);
@@ -706,7 +706,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_CrystalMaze(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState, ref float wingAnimationTimer)
+        public static void DoBehavior_CrystalMaze(NPC npc, Player target, bool phase2, ref float attackTimer, ref float wingMotionState)
         {
             int mazeSummonDelay = 30;
             int spinningCrystalReleaseRate = 90;

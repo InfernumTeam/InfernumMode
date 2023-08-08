@@ -1,5 +1,5 @@
 ﻿using InfernumMode.Content.Items.Weapons.Melee;
-using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Wishes;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;

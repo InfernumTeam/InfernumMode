@@ -5,7 +5,7 @@ using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Typeless;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
-using InfernumMode.Content.Items;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

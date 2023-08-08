@@ -1,7 +1,7 @@
 using CalamityMod.Items.Materials;
 using CalamityMod.Rarities;
 using CalamityMod.Tiles.Furniture.CraftingStations;
-using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Misc;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

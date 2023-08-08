@@ -16,7 +16,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public const int Lifetime = 150;
 
-        public override string Texture => "InfernumMode/Content/Items/WaterglassToken";
+        public override string Texture => "InfernumMode/Content/Items/Misc/WaterglassToken";
 
         // public override void SetStaticDefaults() => DisplayName.SetDefault("Waterglass Token");
 

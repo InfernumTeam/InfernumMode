@@ -2,6 +2,7 @@
 using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Items.Accessories;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;

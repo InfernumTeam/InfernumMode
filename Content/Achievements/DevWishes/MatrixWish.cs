@@ -1,5 +1,5 @@
 ﻿using CalamityMod.NPCs.ExoMechs;
-using InfernumMode.Content.Items;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
 using Terraria.ModLoader;

@@ -9,7 +9,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles.Pets;
-using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

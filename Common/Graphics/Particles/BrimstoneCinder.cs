@@ -1,6 +1,6 @@
 ﻿using InfernumMode.Common.BaseEntities;
 
-namespace InfernumMode.Content.Projectiles
+namespace InfernumMode.Common.Graphics.Particles
 {
     public class BrimstoneCinder : BaseCinderParticle
     {

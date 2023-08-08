@@ -1,8 +1,9 @@
 ﻿using CalamityMod;
-using InfernumMode.Content.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.Dyes;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Items.Pets;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;

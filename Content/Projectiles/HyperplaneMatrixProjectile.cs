@@ -8,7 +8,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
-using InfernumMode.Content.Items;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

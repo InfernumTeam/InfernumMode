@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Items;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.Ores;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Terraria;
 using Terraria.ID;

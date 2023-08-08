@@ -135,7 +135,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
         internal static bool ProviDefeated;
         internal static bool NightProviDefeated;
         internal static bool DraedonDefeated;
-        internal static bool ShouldUpdateSavedMechOrder;
         #endregion
     }
 }

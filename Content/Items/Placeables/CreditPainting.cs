@@ -1,4 +1,4 @@
-﻿using InfernumMode.Content.Tiles;
+﻿using InfernumMode.Content.Tiles.Wishes;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

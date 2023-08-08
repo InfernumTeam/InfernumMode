@@ -1,5 +1,5 @@
-using CalamityMod.Items.Materials;
-using InfernumMode.Content.Tiles;
+﻿using CalamityMod.Items.Materials;
+using InfernumMode.Content.Tiles.Colosseum;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

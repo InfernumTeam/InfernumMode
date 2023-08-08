@@ -17,6 +17,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
+using WayfinderItem = InfernumMode.Content.Items.Misc.Wayfinder;
 
 namespace InfernumMode.Content.Projectiles.Wayfinder
 {
@@ -57,7 +58,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         #endregion
 
         #region Overrides
-        public override string Texture => Items.Wayfinder.GetTexture();
+        public override string Texture => WayfinderItem.GetTexture();
 
         public override void SetStaticDefaults()
         {
@@ -468,7 +469,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             }
         }
 
-        public void DrawShaderOverlay(Texture2D texture, Texture2D glowTexture, Rectangle sourceRectangle, Color lightColor, float opacity, Vector2 origin, SpriteEffects spriteEffects)
+        public void DrawShaderOverlay(Texture2D texture, Rectangle sourceRectangle, Color lightColor, float opacity, Vector2 origin, SpriteEffects spriteEffects)
         {
             Main.spriteBatch.EnterShaderRegion();
 
@@ -523,19 +524,19 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             {
                 float interpolant = (Time - SpinMaxTime) / (TeleportationTime - SpinMaxTime);
                 float opacity = Lerp(0, 0.2f, interpolant);
-                DrawShaderOverlay(texture, glowTexture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
+                DrawShaderOverlay(texture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
             }
             else if (CurrentUseContext == UseContext.Create && Time is > UpwardsMovementTime)
             {
                 float interpolant = (Time - UpwardsMovementTime) / (CreationTime - UpwardsMovementTime);
                 float opacity = Lerp(0, 0.2f, interpolant);
-                DrawShaderOverlay(texture, glowTexture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
+                DrawShaderOverlay(texture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
             }
             else if (CurrentUseContext == UseContext.Destroy && Time is < DestroyMaxTime && IsGateSet)
             {
                 float interpolant = Time / DestroyMaxTime;
                 float opacity = Lerp(-0.4f, 0.4f, interpolant);
-                DrawShaderOverlay(texture, glowTexture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
+                DrawShaderOverlay(texture, sourceRectangle, lightColor, opacity, origin, spriteEffects);
             }
             return false;
         }

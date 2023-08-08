@@ -1,7 +1,7 @@
 using CalamityMod.Tiles.FurnitureProfaned;
 using CalamityMod.Tiles.LivingFire;
 using CalamityMod.Walls;
-using InfernumMode.Content.Tiles;
+using InfernumMode.Content.Tiles.Profaned;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;

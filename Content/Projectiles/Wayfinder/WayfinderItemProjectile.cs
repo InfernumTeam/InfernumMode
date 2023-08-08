@@ -10,7 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using WayfinderItem = InfernumMode.Content.Items.Wayfinder;
+using WayfinderItem = InfernumMode.Content.Items.Misc.Wayfinder;
 
 namespace InfernumMode.Content.Projectiles.Wayfinder
 {
@@ -39,7 +39,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         #endregion
 
         #region Overrides
-        public override string Texture => "InfernumMode/Content/Items/Wayfinder";
+        public override string Texture => "InfernumMode/Content/Items/Misc/Wayfinder";
 
         public override void SetStaticDefaults()
         {

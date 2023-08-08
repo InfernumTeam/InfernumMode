@@ -1,6 +1,6 @@
 ﻿using CalamityMod.NPCs.CalClone;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
-using InfernumMode.Content.Items;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
 using Terraria.ModLoader;

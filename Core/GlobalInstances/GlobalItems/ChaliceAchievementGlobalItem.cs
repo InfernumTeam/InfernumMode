@@ -1,5 +1,5 @@
 using InfernumMode.Content.Achievements;
-using InfernumMode.Content.Items;
+using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
 using Terraria.ModLoader;

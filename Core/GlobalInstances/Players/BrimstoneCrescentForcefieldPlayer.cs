@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Content.Items.BrimstoneCrescentStaff;
+using static InfernumMode.Content.Items.Misc.BrimstoneCrescentStaff;
 
 namespace InfernumMode.Core.GlobalInstances.Players
 {

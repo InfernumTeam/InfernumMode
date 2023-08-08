@@ -1,7 +1,7 @@
-using CalamityMod.CalPlayer;
+﻿using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
-using InfernumMode.Content.Projectiles;
+using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

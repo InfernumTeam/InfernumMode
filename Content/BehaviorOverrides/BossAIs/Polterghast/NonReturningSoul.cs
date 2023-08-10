@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                     Vector2 dustOffset = Vector2.UnitY.RotatedBy(TwoPi * i / 16f) * new Vector2(4f, 1f);
                     dustOffset = dustOffset.RotatedBy(Projectile.velocity.ToRotation());
 
-                    Dust ectoplasm = Dust.NewDustDirect(Projectile.Center, 0, 0, 175, 0f, 0f);
+                    Dust ectoplasm = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.SpectreStaff, 0f, 0f);
                     ectoplasm.position = Projectile.Center + dustOffset;
                     ectoplasm.velocity = dustOffset.SafeNormalize(Vector2.Zero) * 1.5f;
                     ectoplasm.color = Color.Lerp(Color.Purple, Color.White, 0.5f);

@@ -1,4 +1,4 @@
-using InfernumMode.Assets.ExtraTextures;
+﻿using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -14,8 +14,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static int Lifetime => 180;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Ritual");
 
         public override void SetDefaults()
         {

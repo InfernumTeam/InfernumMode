@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
                 if (Main.rand.NextFloat() > Projectile.Opacity)
                     continue;
 
-                Dust ichor = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 170);
+                Dust ichor = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.Ichor);
                 ichor.velocity = Main.rand.NextVector2Circular(1.2f, 1.2f);
                 ichor.noGravity = true;
             }

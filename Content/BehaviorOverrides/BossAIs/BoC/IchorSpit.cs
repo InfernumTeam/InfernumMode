@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             }
 
             // Release ichor dust idly.
-            Dust ichor = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 170, Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 100, default, 1.5f);
+            Dust ichor = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ichor, Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 100, default, 1.5f);
             ichor.velocity = Projectile.velocity;
             ichor.scale *= 0.6f;
             ichor.noGravity = true;
@@ -67,11 +67,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
             for (int i = 0; i < 6; i++)
             {
-                Dust ichor = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 170, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 2.5f);
+                Dust ichor = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ichor, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 2.5f);
                 ichor.noGravity = true;
                 ichor.velocity *= 2f;
 
-                ichor = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 170, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
+                ichor = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Ichor, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
                 ichor.velocity *= 2f;
             }
         }

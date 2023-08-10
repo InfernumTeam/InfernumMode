@@ -183,7 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
             for (int i = 0; i < 40; i++)
             {
-                Dust explosion = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 267);
+                Dust explosion = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.RainbowMk2);
                 explosion.velocity = Main.rand.NextVector2Circular(4f, 4f);
                 explosion.color = Color.Red;
                 explosion.scale = 1.35f;

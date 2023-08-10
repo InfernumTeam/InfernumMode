@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                 if (Main.rand.NextFloat() > dustCreationChance)
                     continue;
 
-                Dust fire = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 75);
+                Dust fire = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.CursedTorch);
                 fire.velocity = Main.rand.NextVector2Circular(1.2f, 1.2f);
                 fire.noGravity = true;
             }

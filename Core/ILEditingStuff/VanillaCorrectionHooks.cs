@@ -1199,7 +1199,10 @@ namespace InfernumMode.Core.ILEditingStuff
             }
 
             // In MP, this is sometimes less than 0?? Not sure why, but make sure that doesn't happen.
-            return orig(self, (int)Abs(maxValue));
+            if (maxValue < 0)
+                maxValue *= -1;
+
+            return orig(self, maxValue);
         }
     }
 

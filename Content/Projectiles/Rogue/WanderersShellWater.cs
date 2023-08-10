@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
@@ -10,7 +10,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Items.Weapons.Rogue
+namespace InfernumMode.Content.Projectiles.Rogue
 {
     public class WanderersShellWater : ModProjectile
     {

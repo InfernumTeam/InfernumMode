@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     Vector2 fireSpawnOffset = Vector2.UnitX * Projectile.width * -0.5f;
                     fireSpawnOffset += -Vector2.UnitY.RotatedBy(TwoPi * i / 12f) * new Vector2(8f, 16f);
                     fireSpawnOffset = fireSpawnOffset.RotatedBy((double)(Projectile.rotation - 1.57079637f));
-                    Dust fire = Dust.NewDustDirect(Projectile.Center, 0, 0, 6, 0f, 0f, 160, default, 1f);
+                    Dust fire = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.Torch, 0f, 0f, 160, default, 1f);
                     fire.scale = 1.1f;
                     fire.noGravity = true;
                     fire.position = Projectile.Center + fireSpawnOffset;
@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (Main.rand.NextBool(4))
             {
                 Vector2 offsetDirection = -Vector2.UnitX.RotatedByRandom(Pi / 12f).RotatedBy(Projectile.velocity.ToRotation());
-                Dust smoke = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 31, 0f, 0f, 100, default, 1f);
+                Dust smoke = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 100, default, 1f);
                 smoke.velocity *= 0.1f;
                 smoke.position = Projectile.Center + offsetDirection * Projectile.width / 2f;
                 smoke.fadeIn = 0.9f;
@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (Main.rand.NextBool(32))
             {
                 Vector2 offsetDirection = -Vector2.UnitX.RotatedByRandom(Pi / 8f).RotatedBy(Projectile.velocity.ToRotation());
-                Dust smoke = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 31, 0f, 0f, 155, default, 0.8f);
+                Dust smoke = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 155, default, 0.8f);
                 smoke.velocity *= 0.3f;
                 smoke.position = Projectile.Center + offsetDirection * Projectile.width / 2f;
                 if (Main.rand.NextBool(2))
@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 for (int i = 0; i < 2; i++)
                 {
                     Vector2 offsetDirection = -Vector2.UnitX.RotatedByRandom(PiOver4).RotatedBy((double)Projectile.velocity.ToRotation());
-                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 6, 0f, 0f, 0, default, 1.2f);
+                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0f, 0f, 0, default, 1.2f);
                     fire.velocity *= 0.3f;
                     fire.noGravity = true;
                     fire.position = Projectile.Center + offsetDirection * Projectile.width / 2f;

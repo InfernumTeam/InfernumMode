@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (!Main.rand.NextBool(2))
                         continue;
 
-                    Dust fire = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, 10, 6);
+                    Dust fire = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, 10, DustID.Torch);
                     fire.scale = Main.rand.NextFloat(1f, 1.8f);
                     fire.velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(2f, 10f);
                     fire.noGravity = true;

@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             Lighting.AddLight(Projectile.Center, 0.5f, 0f, 1f);
 
             // Release blood dust idly.
-            Dust blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 5, Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 100, default, 1.5f);
+            Dust blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 100, default, 1.5f);
             blood.velocity = Projectile.velocity;
             blood.noGravity = true;
 
@@ -68,11 +68,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);
             for (int i = 0; i < 6; i++)
             {
-                Dust blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 5, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 2.5f);
+                Dust blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 2.5f);
                 blood.noGravity = true;
                 blood.velocity *= 2f;
 
-                blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 5, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
+                blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, -Projectile.velocity.X * 0.2f, -Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
                 blood.velocity *= 2f;
             }
         }

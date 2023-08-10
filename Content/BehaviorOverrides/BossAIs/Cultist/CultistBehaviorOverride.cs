@@ -1104,7 +1104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             npc.dontTakeDamage = attackTimer <= ritualCreationDelay + cultistImmunityTime;
 
             // Cancel the ritual if hit before it's complete.
-            if (npc.justHit && attackTimer < waitDelay)
+            if (npc.justHit && attackTimer < waitDelay && !npc.dontTakeDamage)
             {
                 attackTimer = waitDelay + 1f;
                 npc.netUpdate = true;

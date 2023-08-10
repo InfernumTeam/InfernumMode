@@ -254,7 +254,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             // Define enragement status.
             npc.Calamity().CurrentlyEnraged = IsEnraged;
-            if (wasNotEnraged != npc.Calamity().CurrentlyEnraged.ToInt() && IsEnraged)
+            if (wasNotEnraged != npc.Calamity().CurrentlyEnraged.ToInt() && IsEnraged && (MoonLordAttackState)attackState != MoonLordAttackState.DeathEffects)
             {
                 var sounds = new SoundStyle[]
                 {
@@ -306,6 +306,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     if ((currentAttack == MoonLordAttackState.PhantasmalFlareBursts ||
                         currentAttack == MoonLordAttackState.PhantasmalSphereHandWaves) && CurrentActiveArms <= 0)
                     {
+                        Utilities.DeleteAllProjectiles(true, ProjectileID.PhantasmalSphere);
                         SelectNextAttack(npc);
                     }
 

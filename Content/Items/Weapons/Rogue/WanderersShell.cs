@@ -10,25 +10,17 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.UI.Chat;
 
 namespace InfernumMode.Content.Items.Weapons.Rogue
 {
     public class WanderersShell : RogueWeapon
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Wanderer's Shell");
-            /* Tooltip.SetDefault("Throws a spread of sea shells that home in on enemies before bouncing off of them and lingering on the ground\n" +
-                "Stealth strikes cause all lingering shells to explode into water geysers that target nearby enemies\n" +
-                "The open edge is too sharp to put near your ear"); */
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.width = 38;
             Item.height = 36;
-            Item.damage = 103;
+            Item.damage = 130;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.useAnimation = 21;

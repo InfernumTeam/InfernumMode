@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
             if (Main.rand.NextBool(16))
             {
-                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 200, default, 1f);
+                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Pixie, 0f, 0f, 200, default, 1f);
                 fire.scale *= 0.7f;
                 fire.velocity += Projectile.velocity * 0.25f;
             }
@@ -89,14 +89,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.ExpandHitboxBy(144);
             for (int d = 0; d < 2; d++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 100, default, 1.5f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Pixie, 0f, 0f, 100, default, 1.5f);
             }
             for (int d = 0; d < 20; d++)
             {
-                int idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 0, default, 2.5f);
+                int idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Pixie, 0f, 0f, 0, default, 2.5f);
                 Main.dust[idx].noGravity = true;
                 Main.dust[idx].velocity *= 3f;
-                idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 100, default, 1.5f);
+                idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Pixie, 0f, 0f, 100, default, 1.5f);
                 Main.dust[idx].velocity *= 2f;
                 Main.dust[idx].noGravity = true;
             }

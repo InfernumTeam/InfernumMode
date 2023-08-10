@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 {
@@ -241,7 +242,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     if (Main.rand.NextBool(4))
                     {
                         Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * Pi / 16f) * npc.width * 0.5f;
-                        Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 100, default, 1f);
+                        Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Smoke, 0f, 0f, 100, default, 1f);
                         smoke.position = npc.Center + spawnOffset;
                         smoke.velocity *= 0.1f;
                         smoke.fadeIn = 0.9f;
@@ -249,7 +250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     if (Main.rand.NextBool(32))
                     {
                         Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * Pi / 8f) * npc.width * 0.5f;
-                        Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 155, default, 0.8f);
+                        Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, DustID.Smoke, 0f, 0f, 155, default, 0.8f);
                         smoke.velocity *= 0.3f;
                         smoke.position = npc.Center + spawnOffset;
                         if (Main.rand.NextBool(2))

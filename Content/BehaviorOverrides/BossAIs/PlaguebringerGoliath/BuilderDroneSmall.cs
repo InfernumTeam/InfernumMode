@@ -128,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             for (int i = 0; i < 15; i++)
             {
-                Dust plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 89, 0f, 0f, 100, default, 1.4f);
+                Dust plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, 0f, 0f, 100, default, 1.4f);
                 if (Main.rand.NextBool(2))
                 {
                     plague.scale = 0.5f;
@@ -140,11 +140,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             for (int i = 0; i < 30; i++)
             {
-                Dust plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 89, 0f, 0f, 100, default, 1.85f);
+                Dust plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, 0f, 0f, 100, default, 1.85f);
                 plague.noGravity = true;
                 plague.velocity *= 5f;
 
-                plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 89, 0f, 0f, 100, default, 2f);
+                plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GemEmerald, 0f, 0f, 100, default, 2f);
                 plague.velocity *= 2f;
                 plague.noGravity = true;
             }

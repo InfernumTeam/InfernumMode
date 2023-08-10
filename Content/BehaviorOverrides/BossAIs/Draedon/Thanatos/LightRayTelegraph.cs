@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             for (float i = 0f; i < dustCount; i++)
             {
-                Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
+                Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.RainbowMk2, 0f, 0f, 0, brightenedRayColor, 1f);
                 explosionDust.position = Projectile.Center;
                 explosionDust.velocity = baseExplosionDirection.RotatedBy(TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
                 explosionDust.noGravity = true;
@@ -170,7 +170,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             for (float i = 0f; i < dustCount; i++)
             {
-                Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
+                Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, DustID.RainbowMk2, 0f, 0f, 0, brightenedRayColor, 1f);
                 explosionDust.position = Projectile.Center;
                 explosionDust.velocity = baseExplosionDirection.RotatedBy(TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
                 explosionDust.velocity *= Main.rand.NextFloat() * 0.8f;

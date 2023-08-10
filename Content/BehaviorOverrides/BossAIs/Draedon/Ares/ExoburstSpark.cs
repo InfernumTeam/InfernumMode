@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Emit dust.
             for (int i = 0; i < 2; i++)
             {
-                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 267);
+                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.RainbowMk2);
                 fire.scale *= 0.8f;
                 fire.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.84f);
                 fire.velocity = fire.velocity * 0.4f + Main.rand.NextVector2Circular(0.4f, 0.4f);

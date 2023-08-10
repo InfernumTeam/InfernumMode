@@ -82,7 +82,7 @@ namespace InfernumMode.Common.UtilityMethods
                     {
                         for (int j = 0; j < 10; j++)
                         {
-                            Dust magic = Dust.NewDustDirect(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, 27);
+                            Dust magic = Dust.NewDustDirect(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, DustID.Shadowflame);
                             magic.velocity.Y -= 3f;
                             magic.velocity *= Main.rand.NextFloat(1f, 1.25f);
                             magic.alpha = 128;

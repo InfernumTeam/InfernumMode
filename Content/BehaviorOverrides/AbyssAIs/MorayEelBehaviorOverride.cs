@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Also emit some particle effects as an indicator.
             if (InHidingSpot(npc))
             {
-                Dust sparkle = Dust.NewDustDirect(spotToHideIn - Vector2.One * 8f, 16, 16, 261);
+                Dust sparkle = Dust.NewDustDirect(spotToHideIn - Vector2.One * 8f, 16, 16, DustID.AncientLight);
                 sparkle.color = Color.Lerp(Color.ForestGreen, Color.Gray, Main.rand.NextFloat(0.6f));
                 sparkle.velocity = Main.rand.NextVector2Circular(4f, 4f);
                 sparkle.noGravity = true;

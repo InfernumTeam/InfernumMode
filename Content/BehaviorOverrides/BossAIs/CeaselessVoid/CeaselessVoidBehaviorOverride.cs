@@ -1455,11 +1455,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_ConvergingEnergyBarrages(NPC npc, Player target, ref float attackTimer)
         {
-            int hoverTime = 20;
+            int hoverTime = 30;
             int barrageBurstCount = 4;
             int barrageTelegraphTime = 25;
             int barrageShootRate = 20;
-            int barrageCount = 16;
+            int barrageCount = 17;
             int attackTransitionDelay = 25;
             float maxShootOffsetAngle = 1.49f;
             float initialBarrageSpeed = 20.5f;
@@ -1471,7 +1471,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 hoverTime += 64;
 
             // Hover before firing.
-            if (attackTimer < hoverTime)
+            if (attackTimer < hoverTime + barrageShootRate - barrageTelegraphTime)
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(hoverOffsetAngle) * 640f;
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.025f);

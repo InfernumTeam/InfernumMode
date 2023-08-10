@@ -139,12 +139,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hit.HitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Grass, hit.HitDirection, -1f, 0, default, 1f);
 
             if (NPC.life <= 0)
             {
                 for (int k = 0; k < 15; k++)
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 2, hit.HitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Grass, hit.HitDirection, -1f, 0, default, 1f);
             }
         }
     }

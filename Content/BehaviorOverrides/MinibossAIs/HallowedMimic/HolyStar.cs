@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
 
             // Release stardust.
             if (Main.rand.NextBool(10))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 58, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f, 150, default, 1.2f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Enchanted_Pink, Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f, 150, default, 1.2f);
             if (Main.rand.NextBool(20))
                 Gore.NewGore(Projectile.GetSource_FromAI(), Projectile.position, Projectile.velocity * 0.2f, Main.rand.Next(16, 18), 1f);
         }

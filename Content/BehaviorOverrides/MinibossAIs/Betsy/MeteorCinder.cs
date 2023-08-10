@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 6, 0f, 0f, 100, default, 0.75f);
+                    Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0f, 0f, 100, default, 0.75f);
                     fire.noGravity = true;
                     fire.velocity = Vector2.Zero;
                     fire.scale *= 1.9f;

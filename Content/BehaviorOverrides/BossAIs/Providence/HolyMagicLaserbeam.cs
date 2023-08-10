@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.Assets.Effects;
@@ -73,8 +73,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override float MaxScale => 1f;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Disintegration Deathray");
 
         public override void SetDefaults()
         {

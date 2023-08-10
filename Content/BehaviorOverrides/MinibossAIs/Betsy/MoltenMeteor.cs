@@ -47,21 +47,21 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             if (Projectile.velocity.Length() > 5f)
             {
                 Vector2 position = Projectile.Center + Vector2.Normalize(Projectile.velocity) * 10f;
-                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 244, 0f, 0f, 0, new Color(255, 127, 0), 1f);
+                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.CopperCoin, 0f, 0f, 0, new Color(255, 127, 0), 1f);
                 fire.position = position;
                 fire.velocity = Projectile.velocity.RotatedBy(PiOver2) * 0.33f + Projectile.velocity / 4f;
                 fire.position += Projectile.velocity.RotatedBy(PiOver2) + Main.rand.NextVector2Circular(8f, 8f);
                 fire.fadeIn = 0.5f;
                 fire.noGravity = true;
 
-                fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 244, 0f, 0f, 0, new Color(255, 127, 0), 1f);
+                fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.CopperCoin, 0f, 0f, 0, new Color(255, 127, 0), 1f);
                 fire.position = position;
                 fire.velocity = Projectile.velocity.RotatedBy(-PiOver2) * 0.33f + Projectile.velocity / 4f;
                 fire.position += Projectile.velocity.RotatedBy(-PiOver2) + Main.rand.NextVector2Circular(8f, 8f);
                 fire.fadeIn = 0.5f;
                 fire.noGravity = true;
 
-                fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 244, 0f, 0f, 0, new Color(255, Main.DiscoG, 0), 1f);
+                fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.CopperCoin, 0f, 0f, 0, new Color(255, Main.DiscoG, 0), 1f);
                 fire.velocity *= 0.5f;
                 fire.scale *= 1.3f;
                 fire.fadeIn = 1f;

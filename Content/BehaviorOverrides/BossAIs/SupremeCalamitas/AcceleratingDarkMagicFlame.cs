@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             for (int i = 0; i < 5; i++)
             {
-                Dust fire = Dust.NewDustDirect(Projectile.Center - Vector2.One * 12f, 6, 6, 267);
+                Dust fire = Dust.NewDustDirect(Projectile.Center - Vector2.One * 12f, 6, 6, DustID.RainbowMk2);
                 fire.color = Color.Lerp(Color.Fuchsia, Color.Orange, Main.rand.NextFloat());
                 fire.scale = Main.rand.NextFloat(1f, 1.3f);
                 fire.noGravity = true;

@@ -1,4 +1,4 @@
-using CalamityMod.Dusts;
+﻿using CalamityMod.Dusts;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +11,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     public class HolyCross : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
+
+        public const int PhaseThroughTilesTime = 150;
 
         public override void SetStaticDefaults()
         {
@@ -39,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
 
             // Dissipate into ashes if inside of a wall.
-            if (Collision.SolidCollision(Projectile.TopLeft, Projectile.width, Projectile.height) && Time >= 90f)
+            if (Time >= PhaseThroughTilesTime && Collision.SolidCollision(Projectile.TopLeft, Projectile.width, Projectile.height))
             {
                 // Release ashes.
                 int ashCount = (int)Lerp(8f, 2f, Projectile.Opacity);

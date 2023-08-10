@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Dust ice = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 33, 0f, 0f, 100, default, 2f);
+                    Dust ice = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Water, 0f, 0f, 100, default, 2f);
                     ice.velocity *= 3f;
                     if (Main.rand.NextBool())
                     {
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public override void Kill(int timeLeft)
         {
             for (int k = 0; k < 5; k++)
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 33, Projectile.oldVelocity.X * 0.5f, Projectile.oldVelocity.Y * 0.5f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.Water, Projectile.oldVelocity.X * 0.5f, Projectile.oldVelocity.Y * 0.5f);
         }
     }
 }

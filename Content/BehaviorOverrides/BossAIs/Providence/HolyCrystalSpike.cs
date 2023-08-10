@@ -1,4 +1,4 @@
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -29,11 +29,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static float MaxLength => 3200f;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Crystal Spike");
-        }
 
         public override void SetDefaults()
         {

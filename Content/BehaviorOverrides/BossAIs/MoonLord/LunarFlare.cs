@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 Projectile.Kill();
                 return;
             }
-            Dust electrivity = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 229, 0f, 0f, 0, default, 1f);
+            Dust electrivity = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Vortex, 0f, 0f, 0, default, 1f);
             electrivity.position = Projectile.Center;
             electrivity.velocity = Vector2.Zero;
             electrivity.noGravity = true;

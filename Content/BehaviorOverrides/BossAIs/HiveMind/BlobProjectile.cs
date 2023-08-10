@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
         {
             for (int k = 0; k < 10; k++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 14, Main.rand.NextFloat(-1f, 1f), -1f, 0, default, 1f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Demonite, Main.rand.NextFloat(-1f, 1f), -1f, 0, default, 1f);
             }
         }
 

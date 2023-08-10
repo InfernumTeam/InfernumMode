@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
                 if (Main.rand.NextFloat() > dustCreationChance)
                     continue;
 
-                Dust blood = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 267);
+                Dust blood = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.RainbowMk2);
                 blood.color = Color.Lerp(Color.Red, Color.Orange, Main.rand.NextFloat(0.1f, 0.45f));
                 blood.velocity = Main.rand.NextVector2Circular(0.7f, 0.7f);
                 blood.scale = 1.1f;

@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             if (Main.rand.NextBool(2))
             {
                 Vector2 offsetDirection = Main.rand.NextVector2Unit();
-                Dust phantoplasm = Dust.NewDustDirect(Projectile.Center - offsetDirection * 30f, 0, 0, 60, 0f, 0f, 0, default, 1f);
+                Dust phantoplasm = Dust.NewDustDirect(Projectile.Center - offsetDirection * 30f, 0, 0, DustID.RedTorch, 0f, 0f, 0, default, 1f);
                 phantoplasm.noGravity = true;
                 phantoplasm.position = Projectile.Center - offsetDirection * Main.rand.Next(10, 21);
                 phantoplasm.velocity = offsetDirection.RotatedBy(PiOver2) * 6f;
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             else
             {
                 Vector2 offsetDirection = Main.rand.NextVector2Unit();
-                Dust phantoplasm = Dust.NewDustDirect(Projectile.Center - offsetDirection * 30f, 0, 0, 60, 0f, 0f, 0, default, 1f);
+                Dust phantoplasm = Dust.NewDustDirect(Projectile.Center - offsetDirection * 30f, 0, 0, DustID.RedTorch, 0f, 0f, 0, default, 1f);
                 phantoplasm.noGravity = true;
                 phantoplasm.position = Projectile.Center - offsetDirection * Main.rand.Next(20, 31);
                 phantoplasm.velocity = offsetDirection.RotatedBy(-PiOver2) * 5f;

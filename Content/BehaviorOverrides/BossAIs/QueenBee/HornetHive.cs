@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
             SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.Center);
             for (int i = 0; i < 30; i++)
             {
-                Dust honey = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 147, 0f, 0f, 0, default, 1f);
+                Dust honey = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.t_Honey, 0f, 0f, 0, default, 1f);
                 if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
 

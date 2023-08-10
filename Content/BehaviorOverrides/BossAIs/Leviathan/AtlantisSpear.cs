@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             }
             for (int k = 0; k < 3; k++)
             {
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.oldVelocity.X * 0.005f, Projectile.oldVelocity.Y * 0.005f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.UnusedWhiteBluePurple, Projectile.oldVelocity.X * 0.005f, Projectile.oldVelocity.Y * 0.005f);
             }
         }
     }

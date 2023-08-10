@@ -100,14 +100,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 dustVelocity = (Projectile.rotation - PiOver2).ToRotationVector2() * Projectile.velocity.Length();
                     for (int i = 0; i < 10; i++)
                     {
-                        Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 200, default, scale);
+                        Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.GreenBlood, 0f, 0f, 200, default, scale);
                         greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                         greenBlood.noGravity = true;
                         greenBlood.velocity.Y -= 2f;
                         greenBlood.velocity *= 3f;
                         greenBlood.velocity += dustVelocity * Main.rand.NextFloat();
 
-                        greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 100, default, scale2);
+                        greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.GreenBlood, 0f, 0f, 100, default, scale2);
                         greenBlood.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                         greenBlood.velocity.Y -= 2f;
                         greenBlood.velocity *= 2f;
@@ -117,7 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     }
                     for (int i = 0; i < 5; i++)
                     {
-                        Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 273, 0f, 0f, 0, default, scale3);
+                        Dust greenBlood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.GreenBlood, 0f, 0f, 0, default, scale3);
                         greenBlood.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                         greenBlood.noGravity = true;
                         greenBlood.velocity.Y -= 2f;

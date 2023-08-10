@@ -37,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             // Fade in.
             Projectile.Opacity = Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
-            Dust sand = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 85, 0f, 0f, 100, default, 0.8f);
+            Dust sand = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.UnusedBrown, 0f, 0f, 100, default, 0.8f);
             sand.noGravity = true;
             sand.velocity *= 0f;
         }

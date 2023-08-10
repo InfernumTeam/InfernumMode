@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        Dust water = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 206, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f, 200, default, 1f);
+                        Dust water = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.UnusedWhiteBluePurple, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f, 200, default, 1f);
                         water.noGravity = true;
                         water.velocity *= 0.5f;
                     }
@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             }
             if (Main.rand.NextBool(4))
             {
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.UnusedWhiteBluePurple, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f);
             }
         }
 
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         {
             for (int k = 0; k < 3; k++)
             {
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.oldVelocity.X * 0.005f, Projectile.oldVelocity.Y * 0.005f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, DustID.UnusedWhiteBluePurple, Projectile.oldVelocity.X * 0.005f, Projectile.oldVelocity.Y * 0.005f);
             }
         }
     }

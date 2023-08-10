@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         {
             SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
             for (int i = 0; i < 6; i++)
-                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 5);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Blood);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

@@ -99,8 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
-            if (BeamDrawer is null)
-                BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
+            BeamDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
 
             GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(1.4f);
             GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(InfernumTextureRegistry.VoronoiShapes);

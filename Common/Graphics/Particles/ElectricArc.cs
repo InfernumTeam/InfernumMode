@@ -1,8 +1,9 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Particles
 {
@@ -39,7 +40,7 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = GeneralParticleHandler.GetTexture(Type);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 scale = Vector2.One * Scale * 11f / texture.Size() * 0.5f;
             Vector2 origin = texture.Size() * 0.5f;
 

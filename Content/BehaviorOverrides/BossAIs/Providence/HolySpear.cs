@@ -1,4 +1,4 @@
-using CalamityMod.Particles.Metaballs;
+﻿using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.ScreenEffects;
@@ -80,8 +80,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static int DeathDelay => 90;
 
         public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/CommanderSpear2";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Holy Spear");
 
         public override void SetDefaults()
         {

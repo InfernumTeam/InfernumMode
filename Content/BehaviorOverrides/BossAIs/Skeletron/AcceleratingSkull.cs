@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
             for (int i = 0; i < 2; i++)
             {
-                Dust magic = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 264);
+                Dust magic = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.PortalBoltTrail);
                 magic.velocity = -Projectile.velocity.RotatedByRandom(0.53f) * 0.15f;
                 magic.scale = Main.rand.NextFloat(0.45f, 0.7f);
                 magic.fadeIn = 0.6f;

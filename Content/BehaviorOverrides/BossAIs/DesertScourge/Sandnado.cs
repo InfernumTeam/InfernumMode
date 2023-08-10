@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 dustSpawnOffsetFactor.X *= -1f;
                 Vector2 dustSpawnPosition = center + dustSpawnArea * dustSpawnOffsetFactor * 0.5f + new Vector2(6f, 10f);
 
-                Dust sand = Dust.NewDustDirect(dustSpawnPosition, 0, 0, 274, 0f, 0f, 0, default, 1f);
+                Dust sand = Dust.NewDustDirect(dustSpawnPosition, 0, 0, DustID.ApprenticeStorm, 0f, 0f, 0, default, 1f);
                 sand.position = dustSpawnPosition;
                 sand.fadeIn = 1.3f;
                 sand.scale = 0.87f;
@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             Vector2 dustSpawnTopLeft = Projectile.Bottom + new Vector2(-25f, -25f);
             for (int k = 0; k < 4; k++)
             {
-                Dust sand = Dust.NewDustDirect(dustSpawnTopLeft, 50, 25, 32, Projectile.velocity.X, -2f, 100, default, 1f);
+                Dust sand = Dust.NewDustDirect(dustSpawnTopLeft, 50, 25, DustID.Sand, Projectile.velocity.X, -2f, 100, default, 1f);
                 sand.fadeIn = 1.1f;
                 sand.noGravity = true;
             }

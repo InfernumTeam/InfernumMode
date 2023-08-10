@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -92,8 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (TelegraphDrawer is null)
-                TelegraphDrawer = new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
+            TelegraphDrawer ??= new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
 
             GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.41f);

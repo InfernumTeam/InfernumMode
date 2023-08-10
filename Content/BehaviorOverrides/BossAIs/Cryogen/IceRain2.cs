@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             SoundEngine.PlaySound(SoundID.Item27, Projectile.Center);
             for (int i = 0; i < 3; i++)
             {
-                Dust snow = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 76, 0f, 0f, 0, default, 1f);
+                Dust snow = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Snow, 0f, 0f, 0, default, 1f);
                 snow.noGravity = true;
                 snow.noLight = true;
                 snow.scale = 0.7f;

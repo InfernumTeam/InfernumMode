@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 using static CalamityMod.UI.BossHealthBarManager;
@@ -82,7 +83,7 @@ namespace InfernumMode.Content.BossBars
                 if (!OneToMany.ContainsKey(NPCType))
                     return life;
 
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                     if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type))
                         life += Main.npc[i].life;
 
@@ -106,7 +107,7 @@ namespace InfernumMode.Content.BossBars
                 if (!OneToMany.ContainsKey(NPCType))
                     return maxLife;
 
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                     if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type))
                         maxLife += Main.npc[i].lifeMax;
 
@@ -124,7 +125,7 @@ namespace InfernumMode.Content.BossBars
                     return true;
                 if (!OneToMany.ContainsKey(NPCType))
                     return false;
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                     if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && Main.npc[i].Calamity().CurrentlyEnraged)
                         return true;
                 return false;
@@ -147,7 +148,7 @@ namespace InfernumMode.Content.BossBars
                 {
                     return false;
                 }
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && (Main.npc[i].Calamity().CurrentlyIncreasingDefenseOrDR || Main.npc[i].Calamity().DR > 0.98f))
                     {
@@ -174,7 +175,7 @@ namespace InfernumMode.Content.BossBars
                 {
                     return false;
                 }
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && Main.npc[i].dontTakeDamage)
                     {
@@ -238,6 +239,8 @@ namespace InfernumMode.Content.BossBars
                 BossIcon = TextureAssets.NpcHeadBoss[headIndex].Value;
             if (AssociatedNPC.type == ModContent.NPCType<Draedon>())
                 BossIcon = ModContent.Request<Texture2D>("CalamityMod/Items/Armor/Vanity/DraedonMask").Value;
+            else if (AssociatedNPC.type == NPCID.MoonLordCore)
+                BossIcon = TextureAssets.NpcHeadBoss[8].Value;
 
             // Ensure there is the correct amount of indicators.
             int indicatorAmount = GetTotalPhaseIndicators();
@@ -372,7 +375,7 @@ namespace InfernumMode.Content.BossBars
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
 
             // Draw the invincibility overlay.
-            if (InvincibilityTimer > 0 || IncreasingDefenseOrDRTimer > 0)
+            if ((InvincibilityTimer > 0 || IncreasingDefenseOrDRTimer > 0) && AssociatedNPC.type != NPCID.MoonLordCore)
             {
                 float invincibilityTimerInterpolant = InvincibilityTimer / 20f;
                 float drTimerInterpolant = IncreasingDefenseOrDRTimer / 20f;

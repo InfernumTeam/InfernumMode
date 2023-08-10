@@ -117,7 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Dust darkMatter = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 109, 0f, -3f, 0, default, 1.4f);
+                    Dust darkMatter = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.Asphalt, 0f, -3f, 0, default, 1.4f);
                     darkMatter.noGravity = true;
                     darkMatter.velocity = Vector2.Lerp(darkMatter.velocity, idealParticleVelocity, 0.55f);
                     darkMatter.fadeIn = Main.rand.NextFloat(0.3f, 0.8f);
@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Dust light = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, 267, 0f, -3f, 0, default, 1.3f);
+                    Dust light = Dust.NewDustDirect(Projectile.TopLeft, Projectile.width, Projectile.height, DustID.RainbowMk2, 0f, -3f, 0, default, 1.3f);
                     light.noGravity = true;
                     light.velocity = Vector2.Lerp(light.velocity, idealParticleVelocity, 0.55f);
                     light.fadeIn = Main.rand.NextFloat(0.4f, 0.85f);

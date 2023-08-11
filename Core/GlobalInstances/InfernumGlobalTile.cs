@@ -9,13 +9,16 @@ using InfernumMode.Content.Tiles.Profaned;
 using InfernumMode.Content.Tiles.Wishes;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Core.TileData;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using InfernumMode.Content.Items.Misc;
+using InfernumMode.Content.Achievements.DevWishes;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -30,6 +33,23 @@ namespace InfernumMode.Core.GlobalInstances
         public override void Load()
         {
             LumenylCrystalID = ModContent.TileType<LumenylCrystals>();
+            On_WorldGen.ShakeTree += ShakeTree;
+        }
+
+        private void ShakeTree(On_WorldGen.orig_ShakeTree orig, int i, int j)
+        {
+            orig(i, j);
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            if (Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements.Any(achievement => achievement is SakuraWish && achievement.DoneCompletionEffects))
+                return;
+
+            Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+            if (tile.HasTile && tile.TileType == TileID.VanityTreeSakura)
+            {
+                AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.Sakura);
+            }
         }
 
         public static bool ShouldNotBreakDueToAboveTile(int x, int y)
@@ -83,8 +103,8 @@ namespace InfernumMode.Core.GlobalInstances
             if (Main.netMode != NetmodeID.Server)
                 AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.TileBreak, type);
 
-            if (type == TileID.VanityTreeSakura && SakuraTreeSystem.HasSakura(new(i, j)))
-                AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.Sakura);
+            //if (type == TileID.VanityTreeSakura) //&& SakuraTreeSystem.HasSakura(new(i, j)))
+            //    AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.Sakura);
         }
 
         public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
@@ -102,10 +122,14 @@ namespace InfernumMode.Core.GlobalInstances
                 WorldGen.KillTile(i, j);
         }
 
-        public override void RandomUpdate(int i, int j, int type)
-        {
-            if (type == TileID.VanityTreeSakura && Main.rand.NextBool(500))
-                Main.tile[i, j].Get<SakuraTreeSystem.BlossomData>().HasBlossom = true;
-        }
+        // Don't even try, this does not work anymore and i have not the faintest how to fix it.
+        //public override void RandomUpdate(int i, int j, int type)
+        //{
+        //    if (type == TileID.VanityTreeSakura && Main.rand.NextBool(500))
+        //    {
+        //        Main.tile[i, j].Get<SakuraTreeSystem.BlossomData>().HasBlossom = true;
+        //        Main.NewText("Spawned Blossom");
+        //    }
+        //}
     }
 }

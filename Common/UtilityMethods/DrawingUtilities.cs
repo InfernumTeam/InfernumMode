@@ -622,5 +622,13 @@ namespace InfernumMode
                 new Vector3(1f, Main.BackgroundViewMatrix.Effects.HasFlag(SpriteEffects.FlipVertically) ? (-1f) : 1f, 1f);
             return transformationMatrix;
         }
+
+        /// <summary>
+        /// Returns the appropriate value for "resolution" in pixelshaders, to make the pixel size match Terraria's.
+        /// </summary>
+        /// <param name="areaSize">The size of the area the shader is being applied on.</param>
+        /// <param name="scale">The scale at which the pixels are being drawn at, eg: NPC.scale.</param>
+        /// <returns></returns>
+        public static Vector2 CreatePixelationResolution(Vector2 areaSize, Vector2? scale = null) => areaSize / (2 * (scale ?? Vector2.One));
     }
 }

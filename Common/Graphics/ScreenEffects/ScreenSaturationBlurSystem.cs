@@ -89,7 +89,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             FinalScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
             DownscaledBloomTarget = new(true, new((width, height) =>
             {
-                return new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor), true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                return new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor));
             }));
             TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
 

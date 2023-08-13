@@ -72,9 +72,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 TemporaryAuxillaryTarget?.Dispose();
 
                 // Recreate targets.
-                ShadowDrawTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                ShadowWispTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
-                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                ShadowDrawTarget = new(Main.instance.GraphicsDevice, width, height);//, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                ShadowWispTarget = new(Main.instance.GraphicsDevice, width, height);//, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
+                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height);//, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
             });
 
             orig(width, height, fullscreen);

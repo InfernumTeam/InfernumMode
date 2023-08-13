@@ -96,13 +96,29 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Color drawColor = Color.Lerp(Color.White, Color.Cyan with { A = 100 }, electricityFormInterpolant);
             if (electricityFormInterpolant > 0f)
             {
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 15; i++)
                 {
-                    Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * electricityFormInterpolant * 8f;
-                    Main.spriteBatch.Draw(WeaverDrawTarget.Target, WeaverDrawTarget.Target.Size() * 0.5f + drawOffset, null, Color.Lerp(drawColor, Color.Wheat, 0.5f) with { A = 0 } * 0.7f, 0f, WeaverDrawTarget.Target.Size() * 0.5f, 1f, 0, 0f);
+                    Vector2 drawOffset = (TwoPi * i / 15f).ToRotationVector2() * electricityFormInterpolant * 6f;
+                    Main.spriteBatch.Draw(WeaverDrawTarget.Target, WeaverDrawTarget.Target.Size() * 0.5f + drawOffset, null, Color.Lerp(drawColor, Color.White, 0.5f) with { A = 0 } * 1f, 0f, WeaverDrawTarget.Target.Size() * 0.5f, 1f, 0, 0f);
                 }
+                Main.spriteBatch.EnterShaderRegion();
+                Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.WavyNeuronsNoise.Value;
+
+                NPC weaver = Main.npc[weaverIndex];
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["direction"]?.SetValue(weaver.velocity.SafeNormalize(Vector2.UnitY));
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["time"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["speed"]?.SetValue(2.2f);
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["color"]?.SetValue(Color.LightSkyBlue.ToVector3());
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["brightColor"]?.SetValue(Color.White.ToVector3());
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["intensity"]?.SetValue(electricityFormInterpolant);
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(WeaverDrawTarget.Target.Size()));
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.CurrentTechnique.Passes[0].Apply();
             }
+
             Main.spriteBatch.Draw(WeaverDrawTarget.Target, Vector2.Zero, drawColor);
+
+            if (electricityFormInterpolant > 0f)
+                Main.spriteBatch.ExitShaderRegion();
 
             // Draw the fog if necessary.
             float fogInterpolant = Main.npc[weaverIndex].Infernum().ExtraAI[StormWeaverHeadBehaviorOverride.FogInterpolantIndex];

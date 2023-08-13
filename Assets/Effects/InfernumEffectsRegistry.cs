@@ -82,6 +82,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter FireballShader => Filters.Scene["Infernum:FireballShader"];
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
         public static Filter JumpFloodShader => Filters.Scene["InfernumMode:JumpFlood"];
+        public static Filter LightningOverlayShader => Filters.Scene["InfernumMode:LightningOverlay"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
@@ -268,6 +269,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Lightning Overlay shader.
+            Ref<Effect> lightningOverlayShader = new(assets.Request<Effect>("Assets/Effects/Overlays/LightningOverlayShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:LightningOverlay"] = new Filter(new(lightningOverlayShader, "LightningOverlayPass"), EffectPriority.VeryHigh);
+
             // Bossbar shader.
             Ref<Effect> bossBarShader = new(assets.Request<Effect>("Assets/Effects/Overlays/BossBarShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:BossBar"] = new Filter(new(bossBarShader, "FilterPass"), EffectPriority.VeryHigh);

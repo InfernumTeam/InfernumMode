@@ -552,6 +552,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         substate++;
                     }
                     break;
+
                 case 1:
                     npc.velocity = npc.SafeDirectionTo(target.Center) * initialChargeSpeed;
                     SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
@@ -561,6 +562,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     attackTimer = 0;
                     substate++;
                     break;
+
                 case 2:
                     if (npc.WithinRange(new(centerX, centerY), initialChargeStopDistance) || attackTimer > 90f)
                     {
@@ -572,10 +574,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                         }
                     }
                     break;
+
                 case 3:
                     npc.velocity = npc.SafeDirectionTo(target.Center) * secondaryChargeSpeed;
                     SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
                     SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, target.Center);
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 5; i++)
@@ -595,6 +599,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                             Utilities.NewProjectileBetter(tail.Center, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), SparkDamage, 0f);
                         }
                     }
+
                     attackTimer = 0;
                     substate++;
                     break;
@@ -715,6 +720,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     if (chargeCounter >= chargeCount)
                     {
                         fogInterpolant = 0f;
+                        electricityFormInterpolant = 0f;
                         SelectNewAttack(npc);
                     }
                     attackTimer = 0f;

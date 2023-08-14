@@ -1,7 +1,7 @@
 ﻿using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.Metaballs.CalMetaballs;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

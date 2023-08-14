@@ -1,10 +1,10 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using CalamityMod.Particles.Metaballs;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.Metaballs.CalMetaballs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

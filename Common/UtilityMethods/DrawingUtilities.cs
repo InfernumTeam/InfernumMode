@@ -630,5 +630,9 @@ namespace InfernumMode
         /// <param name="scale">The scale at which the pixels are being drawn at, eg: NPC.scale.</param>
         /// <returns></returns>
         public static Vector2 CreatePixelationResolution(Vector2 areaSize, Vector2? scale = null) => areaSize / (2 * (scale ?? Vector2.One));
+
+        public static void SetTexture1(this Texture2D texture) => Main.instance.GraphicsDevice.Textures[1] = texture;
+
+        public static void SetTexture2(this Texture2D texture) => Main.instance.GraphicsDevice.Textures[2] = texture;
     }
 }

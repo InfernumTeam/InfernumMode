@@ -3,7 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.Metaballs.CalMetaballs;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

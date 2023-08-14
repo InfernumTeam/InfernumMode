@@ -1,6 +1,6 @@
 ﻿using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Metaballs;
+using InfernumMode.Common.Graphics.Metaballs.CalMetaballs;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

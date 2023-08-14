@@ -13,7 +13,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics.Metaballs
+namespace InfernumMode.Common.Graphics.Metaballs.CalMetaballs
 {
     public class ProfanedLavaParticleSet : BaseFusableParticleSet
     {

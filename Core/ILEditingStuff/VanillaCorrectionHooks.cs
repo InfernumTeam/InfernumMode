@@ -1296,7 +1296,7 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         public void Load() => EternityHexAI += ChangeDamageValues;
 
-        public void Unload() => EternityHexAI += ChangeDamageValues;
+        public void Unload() => EternityHexAI -= ChangeDamageValues;
 
         private void ChangeDamageValues(ILContext il)
         {

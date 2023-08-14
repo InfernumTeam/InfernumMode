@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.UI.DraedonSummoning;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
@@ -198,6 +198,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnModLoad() => ExoMechSelectionUIDraw += DrawSelectionUI;
 
-        public override void Unload() => ExoMechSelectionUIDraw += DrawSelectionUI;
+        public override void Unload() => ExoMechSelectionUIDraw -= DrawSelectionUI;
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 
 namespace InfernumMode.Content.BossIntroScreens
 {
@@ -18,16 +19,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay
-        {
-            get
-            {
-                if (IntroScreenManager.ShouldDisplayJokeIntroText)
-                    return "NUMBER ! SALSMAN\n[Circa 1997]";
-
-                return "The Ancient Idol\nGolem";
-            }
-        }
+        public override LocalizedText TextToDisplay => GetLocalizedText(IntroScreenManager.ShouldDisplayJokeIntroText ? "JokeTextToDisplay" : "TextToDisplay");
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.Golem);
 

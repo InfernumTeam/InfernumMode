@@ -17,8 +17,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Hive Matriarch\nQueen Bee";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.QueenBee);
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/AbilitySounds/PlagueReaperAbility");

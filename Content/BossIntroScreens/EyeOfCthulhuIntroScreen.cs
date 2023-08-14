@@ -18,8 +18,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Demonic Seer\nThe Eye of Cthulhu";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.EyeofCthulhu);
 
         public override SoundStyle? SoundToPlayWithTextCreation => SoundID.ForceRoar;

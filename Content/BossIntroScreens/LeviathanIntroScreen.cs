@@ -20,8 +20,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Timeworn Beast\nThe Leviathan";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Leviathan>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/LeviathanRoarCharge");

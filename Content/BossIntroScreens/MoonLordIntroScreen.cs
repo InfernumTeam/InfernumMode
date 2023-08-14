@@ -20,8 +20,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override Color ScreenCoverColor => Color.Black;
 
-        public override string TextToDisplay => "Eldritch Remains\nThe Moon Lord";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.MoonLordCore);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

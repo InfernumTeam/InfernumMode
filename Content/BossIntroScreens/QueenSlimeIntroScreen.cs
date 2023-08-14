@@ -17,8 +17,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Hallowed Mass\nThe Queen Slime";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.QueenSlimeBoss);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

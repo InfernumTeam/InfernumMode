@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.UI;
 using InfernumMode.Core;
@@ -7,9 +7,11 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Globalization;
 using System.Linq;
+using InfernumMode.Common.UtilityMethods;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
 
@@ -70,7 +72,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public virtual bool CanPlaySound => AnimationTimer >= (int)(AnimationTime * (TextDelayInterpolant + 0.05f));
 
-        public abstract string TextToDisplay { get; }
+        public virtual LocalizedText TextToDisplay => GetLocalizedText("TextToDisplay");
 
         public abstract bool ShouldBeActive();
 
@@ -131,6 +133,15 @@ namespace InfernumMode.Content.BossIntroScreens
                 sb.ExitShaderRegion();
         }
 
+        protected LocalizedText GetLocalizedText(string key)
+        {
+            string suffix = $"IntroScreen.{GetType().Name}";
+            string localizationKey = $"{suffix}.{key}";
+            
+            return Utilities.GetLocalization(localizationKey);
+        }
+        
+        
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
             float extraOffset = character.ToLower(CultureInfo.InvariantCulture) == "i" ? 9f : 0f;
@@ -232,7 +243,7 @@ namespace InfernumMode.Content.BossIntroScreens
             }
 
             if (string.IsNullOrEmpty(CachedText))
-                CachedText = TextToDisplay;
+                CachedText = TextToDisplay.ToString();
 
             if (AnimationTimer < AnimationTime)
                 AnimationTimer++;

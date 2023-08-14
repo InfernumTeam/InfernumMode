@@ -271,7 +271,7 @@ namespace InfernumMode.Assets.Effects
         public static void LoadScreenShaders(AssetRepository assets)
         {
             // Base Metaball Edge shader
-            Ref<Effect> baseMetaballEdgeShader = new(assets.Request<Effect>("Assets/Effects/Overlays/BaseMetaballEdgeShader", AssetRequestMode.ImmediateLoad).Value);
+            Ref<Effect> baseMetaballEdgeShader = new(assets.Request<Effect>("Assets/Effects/Metaballs/BaseMetaballEdgeShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:BaseMetaballEdgeShader"] = new Filter(new(baseMetaballEdgeShader, "EdgePass"), EffectPriority.VeryHigh);
 
             // Lightning Overlay shader.

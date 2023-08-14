@@ -29,7 +29,11 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public static partial class HookManager
     {
-        internal static List<ILHook> hooks;
+        internal static List<ILHook> hooks
+        {
+            get;
+            set;
+        } = new();
 
         public static event ILContext.Manipulator ModifyPreAINPC
         {

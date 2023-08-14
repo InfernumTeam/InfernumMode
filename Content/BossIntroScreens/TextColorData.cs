@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System;
 
 namespace InfernumMode.Content.BossIntroScreens
@@ -6,6 +6,7 @@ namespace InfernumMode.Content.BossIntroScreens
     public struct TextColorData
     {
         public Func<float, Color> ColorSelectionFunction;
+
         public TextColorData(Color color)
         {
             ColorSelectionFunction = _ => color;

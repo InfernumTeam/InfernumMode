@@ -18,8 +18,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override Color ScreenCoverColor => Color.Black;
 
-        public override string TextToDisplay => "The Conceited\nDevourer of Gods";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => DevourerofGodsHead.AttackSound;

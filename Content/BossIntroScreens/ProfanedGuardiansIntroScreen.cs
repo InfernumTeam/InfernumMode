@@ -16,8 +16,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override int AnimationTime => 180;
 
-        public override string TextToDisplay => "Disciples of Purity\nThe Profaned Guardians";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/Providence/ProvidenceSpawn");

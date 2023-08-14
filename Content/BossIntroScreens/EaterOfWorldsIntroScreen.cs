@@ -18,8 +18,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Terror of the Corruption\nThe Eater of Worlds";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.EaterofWorldsHead);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

@@ -17,8 +17,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "The Unstable Prison\nCryogen";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Cryogen>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

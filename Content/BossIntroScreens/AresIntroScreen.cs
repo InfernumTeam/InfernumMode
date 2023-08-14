@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BossIntroScreens
@@ -17,16 +18,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool TextShouldBeCentered => true;
 
-        public override string TextToDisplay
-        {
-            get
-            {
-                if (IntroScreenManager.ShouldDisplayJokeIntroText)
-                    return "Prediction Game Master\nAres";
-
-                return "The Ultimate War Machine\nAres";
-            }
-        }
+        public override LocalizedText TextToDisplay => GetLocalizedText(IntroScreenManager.ShouldDisplayJokeIntroText ? "JokeTextToDisplay" : "TextToDisplay");
 
         public override Effect ShaderToApplyToLetters => InfernumEffectsRegistry.MechsIntroLetterShader.Shader;
 
@@ -49,8 +41,8 @@ namespace InfernumMode.Content.BossIntroScreens
             float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
-            int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');
-            int currentIndex = (int)(completionRatio * TextToDisplay.Length);
+            int startOfLargeTextIndex = TextToDisplay.Value.IndexOf('\n');
+            int currentIndex = (int)(completionRatio * TextToDisplay.Value.Length);
             if (currentIndex >= startOfLargeTextIndex)
                 completionRatio = 1f;
 

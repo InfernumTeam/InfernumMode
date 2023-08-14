@@ -3,6 +3,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BossIntroScreens
@@ -21,15 +22,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay
-        {
-            get
-            {
-                if (ProvidenceBehaviorOverride.IsEnraged)
-                    return "The Blaze of Purity\nProvidence";
-                return "The Blaze of Absolution\nProvidence";
-            }
-        }
+        public override LocalizedText TextToDisplay => GetLocalizedText(ProvidenceBehaviorOverride.IsEnraged ? "EnragedTextToDisplay" : "TextToDisplay");
 
         public override float TextScale => MajorBossTextScale;
 

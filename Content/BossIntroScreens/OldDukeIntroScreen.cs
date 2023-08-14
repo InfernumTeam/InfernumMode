@@ -2,6 +2,7 @@ using CalamityMod.NPCs.OldDuke;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BossIntroScreens
@@ -20,16 +21,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay
-        {
-            get
-            {
-                if (IntroScreenManager.ShouldDisplayJokeIntroText)
-                    return "Speed Demon\nThe Old Duke";
-
-                return "Sulphuric Terror\nThe Old Duke";
-            }
-        }
+        public override LocalizedText TextToDisplay => GetLocalizedText(IntroScreenManager.ShouldDisplayJokeIntroText ? "JokeTextToDisplay" : "TextToDisplay");
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<OldDuke>());
 

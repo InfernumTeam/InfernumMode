@@ -14,7 +14,7 @@ namespace InfernumMode.Content.Tiles.Profaned
     {
         public override void SetStaticDefaults()
         {
-            this.SetUpFountain(Color.Yellow);
+            this.SetUpFountain(ModContent.ItemType<ProfanedFountainItem>(), Color.Yellow);
             AddMapEntry(Color.Yellow, Language.GetText("MapObject.WaterFountain"));
             AnimationFrameHeight = 72;
         }

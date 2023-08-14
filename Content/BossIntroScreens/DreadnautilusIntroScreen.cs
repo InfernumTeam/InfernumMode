@@ -19,8 +19,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Nightmare of the Blood Moon\nDreadnautilus";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.BloodNautilus);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

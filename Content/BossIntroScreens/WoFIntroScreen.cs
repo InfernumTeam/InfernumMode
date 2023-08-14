@@ -20,8 +20,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override int AnimationTime => 240;
 
-        public override string TextToDisplay => "Hungering Conglomeration\nThe Wall of Flesh";
-
         public override float TextScale => MajorBossTextScale;
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.WallofFlesh);
@@ -37,8 +35,8 @@ namespace InfernumMode.Content.BossIntroScreens
             float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
-            int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');
-            int currentIndex = (int)(completionRatio * TextToDisplay.Length);
+            int startOfLargeTextIndex = TextToDisplay.Value.IndexOf('\n');
+            int currentIndex = (int)(completionRatio * TextToDisplay.Value.Length);
             if (currentIndex >= startOfLargeTextIndex)
                 completionRatio = 1f;
 

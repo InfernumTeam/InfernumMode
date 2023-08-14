@@ -19,8 +19,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "The Never-Ending\nCeaseless Void";
-
         public override bool ShouldBeActive() => CalamityGlobalNPC.voidBoss != -1 && Main.npc[CalamityGlobalNPC.voidBoss].ai[0] != 0f;
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

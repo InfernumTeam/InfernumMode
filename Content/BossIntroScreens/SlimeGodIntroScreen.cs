@@ -30,8 +30,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Primordial Formation\nThe Slime God";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SlimeGodCore>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("CalamityMod/Sounds/Custom/SlimeGodPossession");

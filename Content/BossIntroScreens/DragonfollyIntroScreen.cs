@@ -20,8 +20,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "False Offspring\nThe Dragonfolly";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Bumblefuck>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

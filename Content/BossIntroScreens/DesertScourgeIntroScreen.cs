@@ -19,8 +19,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Dried Glutton\nThe Desert Scourge";
-
         public override bool ShouldBeActive()
         {
             int desertScourgeIndex = NPC.FindFirstNPC(ModContent.NPCType<DesertScourgeHead>());

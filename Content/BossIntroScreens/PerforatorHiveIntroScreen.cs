@@ -18,8 +18,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Bloodied Parasites\nThe Perforators";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<PerforatorHive>());
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

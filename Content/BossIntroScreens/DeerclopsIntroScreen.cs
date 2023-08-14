@@ -17,8 +17,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Winter Beast\nThe Deerclops";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.Deerclops);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

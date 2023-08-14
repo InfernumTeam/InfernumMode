@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Particles
 {
@@ -49,7 +50,7 @@ namespace InfernumMode.Common.Graphics.Particles
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = GeneralParticleHandler.GetTexture(Type);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             spriteBatch.Draw(texture, Position - Main.screenPosition, Frame, Color * opacity, Rotation, Frame.Size() / 2f, Scale, 0, 0f);
         }
     }

@@ -30,6 +30,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             foreach (IHookEdit hook in Hooks)
                 hook.Unload();
+
             foreach (var fuck in hooks)
                 fuck?.Undo();
         }

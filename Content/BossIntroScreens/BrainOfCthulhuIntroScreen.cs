@@ -17,8 +17,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public override bool ShouldCoverScreen => false;
 
-        public override string TextToDisplay => "Eldritch Mind\nThe Brain of Cthulhu";
-
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.BrainofCthulhu);
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

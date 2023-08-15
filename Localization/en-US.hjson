@@ -241,9 +241,14 @@ Mods: {
 				'''
 			PerforatorHiveIntroScreen.TextToDisplay:
 				'''
-				The Overgrowth
-				Plantera
+				Bloodied Parasites
+				The Perforators
 				'''
+            PlanteraIntroScreen.TextToDisplay:
+                '''
+                The Overgrowth
+				Plantera
+                '''
 			PolterghastIntroScreen.TextToDisplay:
 				'''
 				Wrathful Coalescence

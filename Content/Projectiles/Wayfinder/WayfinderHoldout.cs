@@ -307,7 +307,11 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                         new CustomTileConditions.IsSolidOrSolidTop(),
                         new CustomTileConditions.ActiveAndNotActuated()
                     }), out Point playerBottom);
-                    WorldSaveSystem.WayfinderGateLocation = playerBottom.ToWorldCoordinates(8, 0);
+
+                    if (playerBottom != GenSearch.NOT_FOUND)
+                        WorldSaveSystem.WayfinderGateLocation = playerBottom.ToWorldCoordinates(8, 0);
+                    else
+                        return;
                 }
                 else
                 {

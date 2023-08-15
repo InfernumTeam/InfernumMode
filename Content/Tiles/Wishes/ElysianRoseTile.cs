@@ -65,7 +65,7 @@ namespace InfernumMode.Content.Tiles.Wishes
         {
             j++;
 
-            Texture2D rose = ModContent.Request<Texture2D>("InfernumMode/Content/Items/ElysianRose").Value;
+            Texture2D rose = ModContent.Request<Texture2D>("InfernumMode/Content/Items/Misc/ElysianRose").Value;
             Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
             Vector2 drawPosition = new Vector2(i + 0.5f, j + 0.25f) * 16f + drawOffset - Main.screenPosition;
             Vector2 worldPosition = new Vector2(i + 1f, j).ToWorldCoordinates();

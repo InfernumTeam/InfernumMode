@@ -22,14 +22,6 @@ Mods: {
 			InfernumText2: Very well, then.
 		}
 
-		Lore.VassalLore:
-			'''
-			An unusal pair of solitary camaraderie.
-			Once a warrior of noble renown, it would seem that Argus was one of the few survivors to emerge from the ruins of Ilmeris.
-			Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
-			Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.
-			'''
-
 		UI: {
 			NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
 			AchievementsHeader: Death Wishes
@@ -244,11 +236,11 @@ Mods: {
 				Bloodied Parasites
 				The Perforators
 				'''
-            PlanteraIntroScreen.TextToDisplay:
-                '''
-                The Overgrowth
+			PlanteraIntroScreen.TextToDisplay:
+				'''
+				The Overgrowth
 				Plantera
-                '''
+				'''
 			PolterghastIntroScreen.TextToDisplay:
 				'''
 				Wrathful Coalescence
@@ -1078,6 +1070,19 @@ Mods: {
 		}
 
 		Items: {
+			Lore: {
+				KnowledgeBereftVassal: {
+					Lore:
+						'''
+						An unusal pair of solitary camaraderie.
+						Once a warrior of noble renown, it would seem that Argus was one of the few survivors to emerge from the ruins of Ilmeris.
+						Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
+						Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.
+						'''
+					DisplayName: Knowledge Bereft Vassal
+				}
+			}
+
 			CherishedSealocket: {
 				DisplayName: Cherished Sealocket
 				Tooltip:
@@ -1694,8 +1699,6 @@ Mods: {
 					Tooltip: ""
 				}
 			}
-
-			Lore.KnowledgeBereftVassal.DisplayName: Knowledge Bereft Vassal
 
 			NuclearTerrorRelic: {
 				DisplayName: Nuclear Terror Relic

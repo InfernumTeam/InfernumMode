@@ -10,14 +10,6 @@ namespace InfernumMode.Content.Items.LoreItems
 {
     public class KnowledgeBereftVassal : LoreItem
     {
-        public override LocalizedText Tooltip => Language.GetText("Mods.InfernumMode.Lore.VassalLore");
-
-        public override void SetStaticDefaults()
-        {
-            base.SetStaticDefaults();
-            // DisplayName.SetDefault("The Bereft Vassal and Great Sand Shark");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 20;

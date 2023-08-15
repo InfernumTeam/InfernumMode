@@ -26,6 +26,8 @@ namespace InfernumMode
 
         internal static Mod CalamityMod;
 
+        internal static Mod CalamityModMusic;
+
         internal static Mod InfernumMusicMod;
 
         internal static Mod FargosMutantMod;
@@ -84,7 +86,7 @@ namespace InfernumMode
             ModLoader.TryGetMod("FargowiltasSouls", out FargowiltasSouls);
             ModLoader.TryGetMod("PhaseIndicator", out PhaseIndicator);
             MusicModIsActive = ModLoader.TryGetMod("InfernumModeMusic", out InfernumMusicMod);
-            CalMusicModIsActive = ModLoader.TryGetMod("CalamityModMusic", out _);
+            CalMusicModIsActive = ModLoader.TryGetMod("CalamityModMusic", out CalamityModMusic);
 
             BalancingChangesManager.Load();
             Main.RunOnMainThread(HookManager.Load);

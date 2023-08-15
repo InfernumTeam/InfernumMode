@@ -84,10 +84,11 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public static void PrepareTargets(SpriteBatch spriteBatch)
         {
+            RenderTargetBinding[] bindings = Main.instance.GraphicsDevice.GetRenderTargets();
             foreach (BaseMetaballCollection collection in MetaballCollections)
                 collection.DrawToTarget(spriteBatch);
 
-            Main.instance.GraphicsDevice.SetRenderTarget(null);
+            Main.instance.GraphicsDevice.SetRenderTargets(bindings);
         }
 
         public static void DrawTargets(SpriteBatch spriteBatch)

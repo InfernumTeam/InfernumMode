@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             return Clamp(Projectile.width * Projectile.scale * 1.7f, 0f, Projectile.width * 1.7f);
         }
 
-        public Color ColorFunction(float completionRatio)
+        public static Color ColorFunction(float completionRatio)
         {
             float colorInterpolant = Sin(Main.GlobalTimeWrappedHourly * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
             // new(221, 1, 3), new(255, 40, 30)

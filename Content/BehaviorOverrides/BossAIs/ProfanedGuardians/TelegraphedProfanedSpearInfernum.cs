@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public Vector2 OriginalVelocity;
 
-        public int TelegraphDuration => 30;
+        public static int TelegraphDuration => 30;
 
         public override string Texture => "InfernumMode/Content/BehaviorOverrides/BossAIs/ProfanedGuardians/ProfanedSpearInfernum";
 

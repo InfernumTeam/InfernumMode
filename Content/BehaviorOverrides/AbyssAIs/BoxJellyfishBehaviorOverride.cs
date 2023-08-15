@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             return false;
         }
 
-        public void DoBehavior_SwimAimlessly(NPC npc, ref float attackTimer)
+        public static void DoBehavior_SwimAimlessly(NPC npc, ref float attackTimer)
         {
             int directionChangeDelay = 120;
             int playerSearchDistance = 200;
@@ -134,7 +134,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 target.Type = NPCTargetType.None;
         }
 
-        public void DoBehavior_Attack(NPC npc, ref float attackTimer, NPCAimedTarget target, ref float zapCooldown)
+        public static void DoBehavior_Attack(NPC npc, ref float attackTimer, NPCAimedTarget target, ref float zapCooldown)
         {
             int directionChangeDelay = 120;
             ref float moveTime = ref npc.Infernum().ExtraAI[RandomMoveTimeIndex];

@@ -47,9 +47,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float WaveOffset;
 
-        public float TelegraphLength => 20f;
+        public static float TelegraphLength => 20f;
 
-        public float FlyStraightLength => 15f;
+        public static float FlyStraightLength => 15f;
 
         public float SineOffset => Sin((Timer - WaveOffset) / 9f - WaveOffset);
 

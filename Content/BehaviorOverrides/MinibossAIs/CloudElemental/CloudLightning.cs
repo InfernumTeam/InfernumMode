@@ -101,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             return Lerp(baseWidth, baseWidth * 0.5f, completionRatio);
         }
 
-        public Color ColorFunction(float completionRatio)
+        public static Color ColorFunction(float completionRatio)
         {
             return Color.Cyan;
         }

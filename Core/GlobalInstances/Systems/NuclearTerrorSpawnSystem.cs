@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AcidRain;
@@ -48,7 +48,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             Main.npc[nuclearTerror].netUpdate = true;
         }
 
-        public void CheckIfTerrorSpawnIsNecessary()
+        public static void CheckIfTerrorSpawnIsNecessary()
         {
             if (1f - AcidRainEvent.AcidRainCompletionRatio >= 0.5f && TotalNuclearTerrorsKilledInEvent <= 0)
                 WaitingForNuclearTerrorSpawn = true;

@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public static int Lifetime => 660;
 
-        public int SpearReleaseRate => 15;
+        public static int SpearReleaseRate => 15;
 
         public override string Texture => InfernumTextureRegistry.InvisPath;
 

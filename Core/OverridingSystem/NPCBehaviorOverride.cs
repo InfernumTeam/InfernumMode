@@ -1,4 +1,4 @@
-using InfernumMode.Core.GlobalInstances.Systems;
+﻿using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -55,7 +55,7 @@ namespace InfernumMode.Core.OverridingSystem
             }
         }
 
-        internal static void LoadPhaseIndicaors()
+        internal static void LoadPhaseIndicators()
         {
             foreach (int npcID in BehaviorOverrides.Keys)
             {

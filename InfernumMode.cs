@@ -151,7 +151,7 @@ namespace InfernumMode
 
         public override void PostSetupContent()
         {
-            NPCBehaviorOverride.LoadPhaseIndicaors();
+            NPCBehaviorOverride.LoadPhaseIndicators();
             Utilities.UpdateMapIconList();
         }
 

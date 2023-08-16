@@ -70,26 +70,21 @@ namespace InfernumMode.Assets.Effects
         #region Screen Shaders
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
         public static Filter BaseMetaballEdgeShader => Filters.Scene["InfernumMode:BaseMetaballEdgeShader"];
-        public static Filter BasicLightingShader => Filters.Scene["InfernumMode:BasicLighting"];
         public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
-        public static Filter BloomShader => Filters.Scene["InfernumMode:Bloom"];
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
-        public static Filter DisplacementMap => Filters.Scene["InfernumMode:DisplacementMap"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
         public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
         public static Filter FireballShader => Filters.Scene["Infernum:FireballShader"];
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
-        public static Filter JumpFloodShader => Filters.Scene["InfernumMode:JumpFlood"];
         public static Filter LightningOverlayShader => Filters.Scene["InfernumMode:LightningOverlay"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
         public static Filter RaindropShader => Filters.Scene["InfernumMode:Raindrops"];
-        public static Filter RaymarchingShader => Filters.Scene["InfernumMode:Raymarching"];
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
         public static Filter ScreenBorderShader => Filters.Scene["InfernumMode:ScreenBorder"];

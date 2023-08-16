@@ -53,8 +53,8 @@ namespace InfernumMode.Content.Credits
             DominicTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Dom", AssetRequestMode.ImmediateLoad).Value;
             IbanTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Iban", AssetRequestMode.ImmediateLoad).Value;
             JaretoTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Jareto", AssetRequestMode.ImmediateLoad).Value;
-            JoeyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/joey", AssetRequestMode.ImmediateLoad).Value;
-            LglTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/lgl", AssetRequestMode.ImmediateLoad).Value;
+            JoeyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/JoeyTexture", AssetRequestMode.ImmediateLoad).Value;
+            LglTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/LglTexture", AssetRequestMode.ImmediateLoad).Value;
             MattikTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Mattik", AssetRequestMode.ImmediateLoad).Value;
             MyraTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Myra", AssetRequestMode.ImmediateLoad).Value;
             PikyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Piky", AssetRequestMode.ImmediateLoad).Value;

@@ -285,29 +285,9 @@ namespace InfernumMode.Assets.Effects
             Ref<Effect> creditShader = new(assets.Request<Effect>("Assets/Effects/Overlays/CreditShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Credits"] = new Filter(new(creditShader, "CreditPass"), EffectPriority.VeryHigh);
 
-            // Raymarching shader.
-            Ref<Effect> raymarchingShader = new(assets.Request<Effect>("Assets/Effects/Overlays/RaymarchingShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:Raymarching"] = new Filter(new(raymarchingShader, "RaymarchPass"), EffectPriority.VeryHigh);
-
-            // Displacement map shader.
-            Ref<Effect> displacementMap = new(assets.Request<Effect>("Assets/Effects/Overlays/DisplacementMapShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:DisplacementMap"] = new Filter(new(displacementMap, "DisplacementPass"), EffectPriority.VeryHigh);
-
-            // Jump flood shader.
-            Ref<Effect> jumpFlood = new(assets.Request<Effect>("Assets/Effects/Overlays/JumpFloodShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:JumpFlood"] = new Filter(new(jumpFlood, "JumpFloodPass"), EffectPriority.VeryHigh);
-
             // Bloom shader.
             Ref<Effect> bloomShader = new(assets.Request<Effect>("Assets/Effects/Overlays/GaussianBlur", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:Bloom"] = new Filter(new(bloomShader, "BloomPass"), EffectPriority.VeryHigh);
-
-            // Basic fake shadows shader.
-            Ref<Effect> shadowShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ShadowShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:ShadowShader"] = new Filter(new(shadowShader, "GetShadowPass"), EffectPriority.VeryHigh);
-
-            // Basic lighting shader.
-            Ref<Effect> lightingShader = new(assets.Request<Effect>("Assets/Effects/Overlays/LightingShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:BasicLighting"] = new Filter(new(lightingShader, "LightingPass"), EffectPriority.VeryHigh);
 
             // Flower of the ocean sky.
             Filters.Scene["InfernumMode:FlowerOfTheOcean"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);

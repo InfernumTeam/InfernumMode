@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
@@ -17,6 +17,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
     public class AquaticScourgeBodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeBody>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 32;
+            npc.height = 32;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 20;
+            npc.alpha = 255;
+            npc.DR_NERD(0.1f);
+            npc.chaseable = false;
+        }
 
         public override bool PreAI(NPC npc)
         {

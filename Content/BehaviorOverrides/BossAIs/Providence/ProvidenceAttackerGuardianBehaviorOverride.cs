@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
@@ -22,6 +22,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override int NPCOverrideType => ModContent.NPCType<ProvSpawnOffense>();
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 228;
+            npc.height = 186;
+            npc.scale = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.3f);
+        }
 
         public override bool PreAI(NPC npc)
         {

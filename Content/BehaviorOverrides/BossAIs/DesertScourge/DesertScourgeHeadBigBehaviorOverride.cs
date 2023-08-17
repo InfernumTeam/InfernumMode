@@ -63,6 +63,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         #endregion Loading
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 32;
+            npc.height = 80;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 4;
+            npc.alpha = 255;
+
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Reset the contact damage.

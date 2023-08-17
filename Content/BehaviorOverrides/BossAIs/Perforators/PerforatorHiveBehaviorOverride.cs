@@ -75,6 +75,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         };
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 110;
+            npc.height = 100;
+            npc.scale = 1f;
+            npc.defense = 4;
+        }
 
         public override bool PreAI(NPC npc)
         {

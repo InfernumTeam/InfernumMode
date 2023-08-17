@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using CalamityMod.NPCs.Crabulon;
 using InfernumMode.Core.OverridingSystem;
 using System;
@@ -9,6 +10,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
     public class CrabShroomBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CrabShroom>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 14;
+            npc.height = 14;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+        }
 
         public override bool PreAI(NPC npc)
         {

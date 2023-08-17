@@ -257,6 +257,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         };
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 44;
+            npc.height = 44;
+            npc.scale = 1f;
+            npc.defense = 100;
+            npc.DR_NERD(0.25f);
+        }
 
         public static Vector2 CalculateHandPosition()
         {

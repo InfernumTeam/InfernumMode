@@ -38,6 +38,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         internal PrimitiveTrailCopy DashTelegraphDrawer;
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 228;
+            npc.height = 166;
+            npc.scale = 1f;
+            npc.defense = 50;
+            npc.DR_NERD(0.4f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)

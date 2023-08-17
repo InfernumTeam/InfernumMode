@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
@@ -60,6 +60,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override SoundStyle FireTelegraphSound => AresLaserCannon.TelSound;
 
         public override Color TelegraphBackglowColor => Color.Red;
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 154;
+            npc.height = 90;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 100;
+            npc.DR_NERD(0.35f);
+        }
 
         public override void ResetAttackCycleEffects(NPC npc) => npc.ai[LaserCounterIndex] = 0f;
 

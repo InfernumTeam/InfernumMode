@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -10,6 +10,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
     public class StormWeaverBodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverBody>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 40;
+            npc.height = 40;
+            npc.scale = 1f;
+            npc.defense = 150;
+        }
 
         public static void SegmentAI(NPC npc)
         {
@@ -74,6 +83,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
     public class StormWeaverTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverTail>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 48;
+            npc.height = 80;
+            npc.scale = 1f;
+            npc.defense = 150;
+        }
 
         public override bool PreAI(NPC npc)
         {

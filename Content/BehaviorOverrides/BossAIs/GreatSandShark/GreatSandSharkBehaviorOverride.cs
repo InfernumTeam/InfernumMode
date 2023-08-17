@@ -1,4 +1,5 @@
-﻿using InfernumMode.Assets.Sounds;
+﻿using CalamityMod;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -30,6 +31,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 SoundEngine.PlaySound(InfernumSoundRegistry.GreatSandSharkHitSound with { Volume = 2f }, npc.Center);
                 npc.soundDelay = 11;
             }
+        }
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 300;
+            npc.height = 120;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.25f);
         }
 
         public override bool PreAI(NPC npc)

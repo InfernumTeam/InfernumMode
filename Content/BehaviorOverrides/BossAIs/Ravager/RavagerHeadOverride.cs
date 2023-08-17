@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.Core.OverridingSystem;
@@ -10,6 +11,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
     public class RavagerHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<RavagerHead>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 80;
+            npc.height = 80;
+            npc.scale = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.15f);
+            npc.alpha = 255;
+        }
 
         public override bool PreAI(NPC npc)
         {

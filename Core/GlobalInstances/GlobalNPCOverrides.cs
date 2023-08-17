@@ -69,7 +69,6 @@ namespace InfernumMode.Core.GlobalInstances
         internal static int ProfanedCrystal = -1;
 
         internal static int Yharon = -1;
-
         #endregion
 
         #region Reset Effects

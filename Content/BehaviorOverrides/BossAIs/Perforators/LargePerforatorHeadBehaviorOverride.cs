@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
@@ -13,6 +14,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
     public class LargePerforatorHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHeadLarge>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 70;
+            npc.height = 84;
+            npc.scale = 1f;
+            npc.Opacity = 0;
+            npc.defense = 4;
+        }
 
         public override bool PreAI(NPC npc)
         {

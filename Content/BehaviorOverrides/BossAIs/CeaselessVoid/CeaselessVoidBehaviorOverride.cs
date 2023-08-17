@@ -136,10 +136,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/CeaselessVoid");
             else
                 npc.ModNPC.Music = MusicID.Boss3;
+
             npc.lifeMax /= 2;
             npc.aiStyle = -1;
             npc.ModNPC.AIType = -1;
             npc.knockBackResist = 0f;
+            
             for (int k = 0; k < npc.buffImmune.Length; k++)
                 npc.buffImmune[k] = true;
 

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Typeless;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -40,6 +40,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override int NPCOverrideType => ModContent.NPCType<SupremeCataclysm>();
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 120;
+            npc.height = 120;
+            npc.scale = 1f;
+            npc.defense = 80;
+            npc.DR_NERD(0.25f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             DoAI(npc);

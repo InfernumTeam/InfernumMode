@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Assets.Effects;
@@ -25,6 +25,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         internal PrimitiveTrailCopy ShieldEnergyDrawer;
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 228;
+            npc.height = 164;
+            npc.scale = 1f;
+            npc.defense = 30;
+            npc.DR_NERD(0.2f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.doughnutBoss) || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)

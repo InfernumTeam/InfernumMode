@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles.Metaballs;
@@ -19,6 +19,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override int NPCOverrideType => ModContent.NPCType<ProvSpawnHealer>();
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 228;
+            npc.height = 166;
+            npc.scale = 1f;
+            npc.defense = 30;
+            npc.DR_NERD(0.2f);
+        }
 
         public override bool PreAI(NPC npc)
         {

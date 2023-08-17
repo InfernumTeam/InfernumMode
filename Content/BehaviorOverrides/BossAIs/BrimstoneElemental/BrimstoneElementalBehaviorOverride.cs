@@ -82,6 +82,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Phase2LifeRatio
         };
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 100;
+            npc.height = 150;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 15;
+            npc.DR_NERD(0.15f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.

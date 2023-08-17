@@ -129,6 +129,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Phase3LifeRatio
         };
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 130;
+            npc.height = 100;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.1f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             DetermineTarget(npc, out bool despawning);

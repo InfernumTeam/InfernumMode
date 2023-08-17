@@ -58,6 +58,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 index = -1;
         }
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 100;
+            npc.height = 100;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 20;
+            npc.DR_NERD(0.2f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Stay within the world you stupid fucking fish I swear to god.

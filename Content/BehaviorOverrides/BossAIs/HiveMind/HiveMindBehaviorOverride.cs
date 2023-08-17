@@ -82,6 +82,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             FinalPhaseLifeRatio
         };
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 178;
+            npc.height = 122;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 8;
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.

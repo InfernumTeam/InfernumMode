@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Bumblebirb;
@@ -16,6 +17,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
         public override int NPCOverrideType => ModContent.NPCType<Bumblefuck2>();
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 120;
+            npc.height = 80;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 20;
+        }
 
         public override bool PreAI(NPC npc)
         {

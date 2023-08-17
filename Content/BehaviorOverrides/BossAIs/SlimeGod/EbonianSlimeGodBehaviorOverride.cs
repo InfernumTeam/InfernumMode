@@ -28,6 +28,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         #endregion
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 150;
+            npc.height = 92;
+            npc.scale = SlimeGodComboAttackManager.BigSlimeBaseScale;
+            npc.defense = 12;
+            npc.Opacity = 0.8f;
+        }
 
         public override bool PreAI(NPC npc)
         {

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.Content.Dusts;
@@ -16,6 +16,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
     public class RavagerFreeHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<RavagerHead2>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 80;
+            npc.height = 80;
+            npc.scale = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.15f);
+        }
 
         public override bool PreAI(NPC npc)
         {

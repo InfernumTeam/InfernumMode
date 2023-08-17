@@ -62,6 +62,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public static bool AnyLargeSlimes => NPC.AnyNPCs(ModContent.NPCType<CrimulanSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGBig>());
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 44;
+            npc.height = 44;
+            npc.scale = CoreBaseScale;
+            npc.defense = 6;
+            npc.Opacity = 0.8f;
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.

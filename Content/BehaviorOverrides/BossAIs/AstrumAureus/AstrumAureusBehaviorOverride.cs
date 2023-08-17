@@ -93,6 +93,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
         public const float EnragedDamageFactor = 1.5f;
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 374;
+            npc.height = 374;
+            npc.scale = 1f;
+            npc.Opacity = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.5f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.

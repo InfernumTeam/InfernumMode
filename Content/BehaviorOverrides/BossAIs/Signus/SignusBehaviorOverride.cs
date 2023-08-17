@@ -53,7 +53,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
         #endregion Loading
 
         #region AI
-
         public static int KunaiDamage => 275;
 
         public static int ScytheDamage => 275;
@@ -71,6 +70,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Phase2LifeRatio,
             Phase3LifeRatio
         };
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 150;
+            npc.height = 130;
+            npc.scale = 1f;
+            npc.defense = 60;
+        }
 
         public override bool PreAI(NPC npc)
         {

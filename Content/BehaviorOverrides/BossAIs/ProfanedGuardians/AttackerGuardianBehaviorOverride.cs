@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Assets.Effects;
@@ -21,6 +21,7 @@ using Terraria.ModLoader;
 using static InfernumMode.Common.Graphics.Primitives.PrimitiveTrailCopy;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians.GuardianComboAttackManager;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride
@@ -35,6 +36,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianCommander>();
 
         #region AI and Behaviors
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 228;
+            npc.height = 186;
+            npc.scale = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.3f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             CalamityGlobalNPC.doughnutBoss = npc.whoAmI;
@@ -75,7 +86,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.dontTakeDamage = false;
             if (TotalRemaininGuardians == 3f || (TotalRemaininGuardians == 2f && lifeRatio < 0.75f))
                 npc.dontTakeDamage = true;
-
             else if (TotalRemaininGuardians == 2f)
             {
                 npc.Calamity().DR = 0.9999f;

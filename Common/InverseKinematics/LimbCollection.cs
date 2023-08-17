@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Linq;
 
 namespace InfernumMode.Common.InverseKinematics
@@ -6,9 +6,13 @@ namespace InfernumMode.Common.InverseKinematics
     public class LimbCollection
     {
         public Limb[] Limbs;
+
         public IInverseKinematicsUpdateRule UpdateRule;
+
         public Vector2 ConnectPoint => Limbs.First().ConnectPoint;
+
         public Vector2 EndPoint => Limbs.Last().EndPoint;
+
         public double TotalLength => Limbs.Sum(l => l.Length);
 
         public LimbCollection(IInverseKinematicsUpdateRule updateRule, int limbCount, float limbLength)

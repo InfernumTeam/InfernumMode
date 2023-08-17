@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Sounds;
@@ -21,6 +21,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class ThanatosBody1BehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosBody1>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 88;
+            npc.height = 88;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 100;
+            npc.DR_NERD(0.9999f);
+        }
 
         public override bool PreAI(NPC npc)
         {
@@ -235,6 +246,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosBody2>();
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 88;
+            npc.height = 88;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 100;
+            npc.DR_NERD(0.9999f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             ThanatosBody1BehaviorOverride.DoSegmentAI(npc);
@@ -272,6 +294,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class ThanatosTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<ThanatosTail>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 110;
+            npc.height = 120;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 120;
+            npc.DR_NERD(0.9999f);
+        }
 
         public override bool PreAI(NPC npc)
         {

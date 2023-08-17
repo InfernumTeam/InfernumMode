@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using InfernumMode.Assets.ExtraTextures;
@@ -33,6 +33,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         #endregion Netcode Syncs
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 204;
+            npc.height = 226;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 100;
+            npc.DR_NERD(0.25f);
+        }
 
         // Most attacks are present in Apollo's AI, since Apollo is supposed to be a "manager" for the twins, handling
         // things like NPC summoning and such, while Artemis primarily inherits attributes from Apollo.

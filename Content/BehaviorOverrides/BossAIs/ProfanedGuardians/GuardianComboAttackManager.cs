@@ -217,6 +217,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 ref float drawShieldConnections = ref npc.ai[2];
                 ref float spawnedCrystal = ref npc.Infernum().ExtraAI[0];
                 ref float connectionsWidthScale = ref npc.Infernum().ExtraAI[HealerConnectionsWidthScaleIndex];
+
                 // Take no damage.
                 npc.dontTakeDamage = true;
 
@@ -226,6 +227,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     spawnedCrystal = 1;
                     NPC.NewNPCDirect(npc.GetSource_FromAI(), CrystalPosition, ModContent.NPCType<HealerShieldCrystal>(), target: target.whoAmI);
                 }
+
                 if (Main.npc.IndexInRange(GlobalNPCOverrides.ProfanedCrystal))
                 {
                     if (Main.npc[GlobalNPCOverrides.ProfanedCrystal].active)
@@ -366,6 +368,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float maxCrystalsFired = 4f;
 
                 Vector2 hoverPosition = CrystalPosition + new Vector2(150f, 0f);
+
                 // Sit still behind the commander
                 if (npc.Distance(hoverPosition) > 5f && movedToPosition == 0f)
                     npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(hoverPosition) * MathF.Min(npc.Distance(hoverPosition), 25)) / 8f;

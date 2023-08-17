@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -14,11 +14,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
         public const int Lifetime = 65;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Fire");
-        }
 
         public override void SetDefaults()
         {

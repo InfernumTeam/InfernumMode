@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace InfernumMode.Common.InverseKinematics
@@ -6,7 +6,9 @@ namespace InfernumMode.Common.InverseKinematics
     public class ModifiedCyclicCoordinateDescentUpdateRule : IInverseKinematicsUpdateRule
     {
         public float AngularOffsetAcceleration;
+
         public float AngularDeviationLenience;
+
         public ModifiedCyclicCoordinateDescentUpdateRule(float angularOffsetAcceleration, float angularDeviationLenience)
         {
             AngularOffsetAcceleration = angularOffsetAcceleration;
@@ -19,6 +21,7 @@ namespace InfernumMode.Common.InverseKinematics
             float slowdownInterpolant = Utils.GetLerpValue(4f, 35f, distanceFromEnd, true);
 
             Vector2 originalEndPoint = limbs.EndPoint;
+
             for (int i = limbs.Limbs.Length - 1; i >= 0; i--)
             {
                 // Move based on angular offsets. Movement is dampened the closer a limb is to being the first limb.
@@ -30,6 +33,7 @@ namespace InfernumMode.Common.InverseKinematics
                 // Determine direction by choosing the angle which approaches the destination faster.
                 float leftAngularOffset = currentToEndOffset.AngleBetween(currentToDestinationOffset - perpendicularDirection);
                 float rightAngularOffset = currentToEndOffset.AngleBetween(currentToDestinationOffset + perpendicularDirection);
+
                 if (leftAngularOffset > rightAngularOffset)
                     angularOffset *= -1f;
 

@@ -143,6 +143,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Phase3LifeRatio
         };
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 90;
+            npc.height = 120;
+            npc.scale = 1f;
+            npc.defense = 90;
+            npc.DR_NERD(0.2f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Set the whoAmI index.

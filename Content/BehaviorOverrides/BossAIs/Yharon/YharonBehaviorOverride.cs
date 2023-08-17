@@ -403,6 +403,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         #endregion Loading
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 200;
+            npc.height = 200;
+            npc.scale = 1f;
+            npc.defense = 90;
+            npc.DR_NERD(0.22f);
+        }
 
         public override bool PreAI(NPC npc)
         {

@@ -34,6 +34,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override int? NPCIDToDeferToForTips => ModContent.NPCType<Anahita>();
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 900;
+            npc.height = 450;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 40;
+            npc.DR_NERD(0.35f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Stay within the world you stupid fucking fish I swear to god.

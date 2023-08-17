@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.Content.Dusts;
@@ -11,6 +11,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.ID;
+using CalamityMod;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 {
@@ -26,6 +27,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         }
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerClawLeft>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 80;
+            npc.height = 40;
+            npc.scale = 1f;
+            npc.defense = 40;
+            npc.DR_NERD(0.15f);
+            npc.alpha = 255;
+        }
 
         public override bool PreAI(NPC npc) => DoClawAI(npc, true);
 

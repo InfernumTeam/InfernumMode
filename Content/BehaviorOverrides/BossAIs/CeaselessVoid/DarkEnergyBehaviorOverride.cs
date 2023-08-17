@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using InfernumMode.Core.OverridingSystem;
@@ -12,6 +13,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
     public class DarkEnergyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DarkEnergy>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 64;
+            npc.height = 64;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 50;
+        }
 
         public override bool PreAI(NPC npc)
         {

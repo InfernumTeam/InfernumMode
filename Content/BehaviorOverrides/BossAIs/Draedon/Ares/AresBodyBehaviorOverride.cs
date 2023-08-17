@@ -120,6 +120,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         #endregion Netcode Syncs
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 220;
+            npc.height = 252;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 100;
+            npc.DR_NERD(0.35f);
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Define the life ratio.

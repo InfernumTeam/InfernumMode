@@ -1,3 +1,4 @@
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -12,6 +13,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
     public class PolterghastCloneBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterPhantom>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 90;
+            npc.height = 120;
+            npc.scale = 0.7f;
+            npc.defense = 45;
+            npc.DR_NERD(0.1f);
+            npc.Opacity = 1f;
+        }
 
         public override bool PreAI(NPC npc)
         {

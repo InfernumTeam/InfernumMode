@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.PrimordialWyrm;
+﻿using CalamityMod;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -14,6 +15,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     public class AEWBody1BehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmBody>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 60;
+            npc.height = 88;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 0;
+            npc.dontTakeDamage = true;
+            npc.chaseable = false;
+        }
 
         public static void SegmentAI(NPC npc)
         {
@@ -87,6 +100,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmBodyAlt>();
 
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 60;
+            npc.height = 88;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 0;
+            npc.dontTakeDamage = true;
+            npc.chaseable = false;
+        }
+
         public override bool PreAI(NPC npc)
         {
             AEWBody1BehaviorOverride.SegmentAI(npc);
@@ -103,6 +128,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     public class AEWTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmTail>();
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 86;
+            npc.height = 120;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 0;
+            npc.dontTakeDamage = true;
+            npc.chaseable = false;
+        }
 
         public override bool PreAI(NPC npc)
         {

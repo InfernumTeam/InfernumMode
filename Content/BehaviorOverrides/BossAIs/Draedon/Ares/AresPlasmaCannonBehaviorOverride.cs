@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
@@ -78,6 +78,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override SoundStyle FireTelegraphSound => AresPlasmaFlamethrower.TelSound;
 
         public override Color TelegraphBackglowColor => Color.Lime;
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 152;
+            npc.height = 90;
+            npc.scale = 1f;
+            npc.Opacity = 0f;
+            npc.defense = 100;
+            npc.DR_NERD(0.35f);
+        }
 
         public override void CreateDustTelegraphs(NPC npc, Vector2 endOfCannon)
         {

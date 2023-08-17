@@ -69,6 +69,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         #endregion Enumerations
 
         #region AI
+        public override void SetDefaults(NPC npc)
+        {
+            // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
+            npc.width = 198;
+            npc.height = 198;
+            npc.scale = 1f;
+            npc.defense = 50;
+            npc.DR_NERD(0.3f);
+        }
 
         public override bool PreAI(NPC npc)
         {

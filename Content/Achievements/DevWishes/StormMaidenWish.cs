@@ -8,11 +8,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class StormMaidenWish : Achievement
     {
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "Lamentation";
-            Description = "Their tears blend with the raindrops, mourning over all that couldn't be\n" +
-                $"[c/777777:Defeat the Exo Mechs and Calamitas and find the spear near your spawn point during the rain]";
             TotalCompletion = 1;
             PositionInMainList = 17;
             UpdateCheck = AchievementUpdateCheck.ProjectileKill;

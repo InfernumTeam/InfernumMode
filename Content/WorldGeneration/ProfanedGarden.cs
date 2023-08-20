@@ -37,7 +37,7 @@ namespace InfernumMode.Content.WorldGeneration
             WorldSaveSystem.HasProvidenceDoorShattered = false;
             WorldSaveSystem.WayfinderGateLocation = Vector2.Zero;
 
-            // Start this really far out so it doesn't try and shove the player left of it.
+            // Start this really far out so it doesn't try and shove the player left of it. Bit hacky, but oh well.
             WorldSaveSystem.ProvidenceDoorXPosition = int.MaxValue;
         }
     }

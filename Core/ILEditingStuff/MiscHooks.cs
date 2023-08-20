@@ -74,7 +74,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
 
             // Add mouse text.
-            Main.hoverItemName = "Open Death Wishes";
+            Main.hoverItemName = Utilities.GetLocalization("UI.WishesHoverTextButton").Value;
 
             // Handle clicking the icon.
             if (!PlayerInput.IgnoreMouseInterface)

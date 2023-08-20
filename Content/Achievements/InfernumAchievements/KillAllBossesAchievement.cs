@@ -105,8 +105,6 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Overrides
         public override void Initialize()
         {
-            Name = "Infer-it-all!";
-            Description = "Rip and tear, until it is done\n[c/777777:Beat every Infernum Boss]";
             TotalCompletion = BossList.Count;
             PositionInMainList = 8;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

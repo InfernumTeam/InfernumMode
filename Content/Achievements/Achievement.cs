@@ -1,6 +1,7 @@
 ﻿using InfernumMode.Assets.Sounds;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Localization;
 using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Achievements
@@ -9,9 +10,7 @@ namespace InfernumMode.Content.Achievements
     {
         #region Fields
         internal int PositionInMainList;
-
-        public string Name = "Name";
-        public string Description = "Description";
+        
         public int TotalCompletion = 1;
         public int CurrentCompletion;
         public bool DoneCompletionEffects;
@@ -20,6 +19,9 @@ namespace InfernumMode.Content.Achievements
         #endregion
 
         #region Properties
+        public LocalizedText DisplayName => GetLocalizedText(nameof(DisplayName));
+        public virtual LocalizedText Description => GetLocalizedText(nameof(Description));
+        public virtual string LocalizationCategory => "Achievements";
         public float CompletionRatio => CurrentCompletion / (float)TotalCompletion;
         public bool IsCompleted => CurrentCompletion >= TotalCompletion;
         #endregion
@@ -31,7 +33,7 @@ namespace InfernumMode.Content.Achievements
         public virtual void OnCompletion(Player player)
         {
             AchievementsNotificationTracker.AddAchievementAsCompleted(this);
-            Main.NewText($"Achievement Completed! [c/ff884d:{Name}]");
+            Main.NewText(Utilities.GetLocalization("Status.AchievementCompletionText").WithFormatArgs(DisplayName.ToString()));
             SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
         }
 
@@ -89,9 +91,17 @@ namespace InfernumMode.Content.Achievements
         protected void WishCompletionEffects(Player player, int assosiatedItemType)
         {
             AchievementsNotificationTracker.AddAchievementAsCompleted(this);
-            Main.NewText($"Dev Wish Completed! [c/ff884d:{Name}]");
+            Main.NewText(Utilities.GetLocalization("Status.DevWishCompletionText").WithFormatArgs(DisplayName.Value));
             SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
             player.QuickSpawnItem(Entity.GetSource_None(), assosiatedItemType, 1);
+        }
+        
+        protected LocalizedText GetLocalizedText(string key)
+        {
+            string suffix = $"{LocalizationCategory}.{GetType().Name}";
+            string localizationKey = $"{suffix}.{key}";
+            
+            return Utilities.GetLocalization(localizationKey);
         }
         #endregion
     }

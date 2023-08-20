@@ -13,11 +13,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public const int MaxFightTimerLength = 3600;
 
+        public override string LocalizationCategory => "Achievements.Wishes";
+
         public override void Initialize()
         {
-            Name = "Benevolent Force";
-            Description = "Warm hugs\n" +
-                "[c/777777:Defeat Infernum Duke Fishron in under 1 minute]";
             TotalCompletion = 1;
             PositionInMainList = 15;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

@@ -13,11 +13,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public const int MaxFightTimerLength = 12600;
 
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "The Tanning Starseed";
-            Description = "It feels like solar winds, and solar chimes\n" +
-                "[c/777777:Defeat Infernum Night Providence in under 3.5 minutes]";
             TotalCompletion = 1;
             PositionInMainList = 16;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

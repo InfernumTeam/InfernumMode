@@ -15,10 +15,11 @@ namespace InfernumMode.Content.Achievements.DevWishes
         private const int DeathsNeeded = 3;
         #endregion
         #region Overrides
+        
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "Amazingly Asinine Assistant";
-            Description = "You're improving with every failure! Keep going!\n[c/777777:Have 3 deaths in a row to a boss]";
             TotalCompletion = 1;
             PositionInMainList = 10;
             UpdateCheck = AchievementUpdateCheck.PlayerDeath;

@@ -11,8 +11,6 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Overrides
         public override void Initialize()
         {
-            Name = "Forgotten Sands";
-            Description = "Best the Bereft Vassal in combat, in the far reaches of the desert's dunes\n[c/777777:Defeat the Bereft Vassal]";
             TotalCompletion = 1;
             PositionInMainList = 2;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

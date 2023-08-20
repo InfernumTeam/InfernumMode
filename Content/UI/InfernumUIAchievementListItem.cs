@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.Collections.Generic;
+using CalamityMod;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -94,7 +95,7 @@ namespace InfernumMode.Content.UI
             float panelWidth = innerDimensions.Width - dimensions.Width + 1f - largeOffset * 2;
             Vector2 baseScale = new(0.85f);
             Vector2 baseScale2 = new(0.92f);
-            string descriptionText = FontAssets.ItemStack.Value.CreateWrappedText(_achievement.Description, (panelWidth - 20f) * (1f / baseScale2.X), Language.ActiveCulture.CultureInfo);
+            string descriptionText = FontAssets.ItemStack.Value.CreateWrappedText(_achievement.Description.Value, (panelWidth - 20f) * (1f / baseScale2.X), Language.ActiveCulture.CultureInfo);
 
             Color nameTextColor = _locked ? Color.Silver : new Color(250, 190, 73);
             nameTextColor = Color.Lerp(nameTextColor, Color.White, IsMouseHovering ? 0.5f : 0f);
@@ -109,7 +110,7 @@ namespace InfernumMode.Content.UI
             DrawPanelTop(spriteBatch, panelDrawPosition, panelWidth, panelColor);
             panelDrawPosition.Y += 3f;
             panelDrawPosition.X += 9f;
-            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, _achievement.Name, panelDrawPosition, nameTextColor, 0f, Vector2.Zero, baseScale, panelWidth);
+            ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.ItemStack.Value, _achievement.DisplayName.Value, panelDrawPosition, nameTextColor, 0f, Vector2.Zero, baseScale, panelWidth);
 
             // Draw the bottom of the panel.
             panelDrawPosition.X -= 17f;
@@ -154,20 +155,28 @@ namespace InfernumMode.Content.UI
                     if (_achievement.GetType() == typeof(KillAllBossesAchievement))
                     {
                         KillAllBossesAchievement kABA = (KillAllBossesAchievement)achievements[_achievement.PositionInMainList];
-                        name = kABA.GetFirstUncompletedBoss() switch
+                        name = kABA.GetFirstUncompletedBoss();
+                        Dictionary<string, string> bossNameMap = new()
                         {
-                            "Spazmatism" => "The Twins",
-                            "Moon Lord Core" => "Moon Lord",
-                            "Guardian Commander" => "Profaned Guardians",
-                            _ => kABA.GetFirstUncompletedBoss()
+                            { Language.GetTextValue("NPCName.Spazmatism"), Language.GetTextValue("Enemies.TheTwins") },
+                            { Language.GetTextValue("NPCName.MoonLordCore"), Language.GetTextValue("Enemies.MoonLord") },
+                            {
+                                CalamityUtils.GetTextValue("NPCs.ProfanedGuardianCommander.DisplayName"),
+                                CalamityUtils.GetTextValue("NPCs.ProfanedGuardianCommander.BossChecklistIntegration.EntryName")
+                            }
                         };
+                        
+                        if (bossNameMap.TryGetValue(name, out string value))
+                        {
+                            name = value;
+                        }
                     }
                     else if (_achievement.GetType() == typeof(KillAllMinibossesAchievement))
                     {
                         KillAllMinibossesAchievement kAMA = (KillAllMinibossesAchievement)achievements[_achievement.PositionInMainList];
                         name = kAMA.GetFirstUncompletedMiniBoss();
                     }
-                    string textToDraw = "Next: " + name;
+                    string textToDraw = $"{Utilities.GetLocalization($"UI.AchievementsLabelText")}: " + name;
                     ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, FontAssets.ItemStack.Value, textToDraw, drawPosition - new Vector2(FontAssets.ItemStack.Value.MeasureString(textToDraw).X * 0.85f, 0), new Color(255, 241, 51), 0f, Vector2.Zero, textScale);
                 }
             }

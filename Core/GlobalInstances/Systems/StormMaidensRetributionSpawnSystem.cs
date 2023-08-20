@@ -3,6 +3,7 @@ using InfernumMode.Content.Projectiles.Rogue;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using InfernumMode.Content.Achievements.DevWishes;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -34,7 +35,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             Vector2 spawnCenter = new Vector2(Main.spawnTileX, Main.spawnTileY) * 16f;
             Player closestPlayer = Main.player[Player.FindClosest(spawnCenter, 1, 1)];
-            if (closestPlayer.GetModPlayer<AchievementPlayer>().AchievementInstances.First(a => a.Name == "Lamentation").DoneCompletionEffects)
+            if (closestPlayer.GetModPlayer<AchievementPlayer>().AchievementInstances.First(a => a.DisplayName.Value == Utilities.GetLocalization($"Achievements.Wishes.{nameof(StormMaidenWish)}.DisplayName").Value).DoneCompletionEffects)
                 return;
 
             // Spawn the spear from above if a player is close enough to spawn.

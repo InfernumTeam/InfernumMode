@@ -10,11 +10,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class TabletWish : Achievement
     {
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "Unsullied";
-            Description = "Not all beasts are monsters\n" +
-                $"[c/777777:Defeat the Aquatic Scourge without ever letting the acid meter exceed 50% during the battle]";
             TotalCompletion = 1;
             PositionInMainList = 12;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

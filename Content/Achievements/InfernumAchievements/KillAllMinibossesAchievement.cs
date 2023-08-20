@@ -54,8 +54,6 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Overrides
         public override void Initialize()
         {
-            Name = "Mini-Meany!";
-            Description = "Defeat the various minor threats across the world!\n[c/777777:Beat every Infernum Miniboss]";
             TotalCompletion = 10;
             PositionInMainList = 7;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

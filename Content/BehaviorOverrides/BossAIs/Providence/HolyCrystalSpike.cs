@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public void CullDraw(SpriteBatch spriteBatch)
         {
-            Texture2D crystalSegment = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/ProvidenceRoomDoor").Value;
+            Texture2D crystalSegment = ModContent.Request<Texture2D>("InfernumMode/Content/Tiles/Profaned/ProvidenceRoomDoor").Value;
             Vector2 start = Projectile.Center - Main.screenPosition;
             Vector2 end = start + Projectile.velocity * CurrentLength;
             Vector2 drawPosition = end;

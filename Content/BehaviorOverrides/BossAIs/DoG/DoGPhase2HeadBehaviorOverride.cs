@@ -169,8 +169,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (!Utilities.AnyProjectiles(ModContent.ProjectileType<DoGPhase2IntroPortalGate>()))
                 {
                     npc.Center = target.Center - Vector2.UnitY * 600f;
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
+                    npc.netUpdate = true;
                 }
 
                 npc.Opacity = 0f;
@@ -181,6 +183,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 // This is a trick to make the background fade from violet/cyan to black as the animation goes on.
                 // This probably is fucked in multiplayer but whatever lmao.
                 npc.Center = target.Center - Vector2.UnitY * Lerp(6000f, 3000f, phase2IntroductionAnimationTimer / DoGPhase2IntroPortalGate.Phase2AnimationTime);
+                npc.netUpdate = true;
                 phase2IntroductionAnimationTimer++;
                 passiveAttackDelay = 0f;
                 phaseCycleTimer = 0f;
@@ -201,7 +204,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             }
 
             // Stay in the world.
+            Vector2 previousCenter = npc.Center;
             npc.Center = Vector2.Clamp(npc.Center, Vector2.One * 300f, new Vector2(Main.maxTilesX, Main.maxTilesY) * 16f - Vector2.One * 300f);
+
+            // Sending net updates every single frame is a bad idea, so only send if the position actually changed from the above.
+            if (previousCenter != npc.Center)
+                npc.netUpdate = true;
 
             // Percent life remaining
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -1210,6 +1218,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         perpendicularPortalAttackTimer = 0f;
                         damageImmunityCountdown = 90f;
                         SurprisePortalAttackState = PerpendicularPortalAttackState.AttackEndDelay;
+                        npc.netUpdate = true;
                     }
 
                     segmentFadeType = (int)BodySegmentFadeType.ApproachAheadSegmentOpacity;
@@ -1318,6 +1327,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     {
                         npc.Center = target.Center + target.SafeDirectionTo(npc.Center) * 2490f;
                         npc.velocity *= 0.7f;
+                        npc.netUpdate = true;
                     }
 
                     switch (specialAttackType)

@@ -22,8 +22,6 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Overrides
         public override void Initialize()
         {
-            Name = "Malicious Machinery";
-            Description = "Decommission the Maniacal Mechanical trio in one fell swoop!\n[c/777777:Beat Infernum Mecha-Mayhem]";
             TotalCompletion = 1;
             PositionInMainList = 1;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

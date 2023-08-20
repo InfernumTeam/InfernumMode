@@ -62,7 +62,7 @@ namespace InfernumMode.Content.Achievements
         {
             CreationObject = achievement;
             IngameDisplayTimeLeft = 300;
-            Title = achievement.Name;
+            Title = achievement.DisplayName.Value;
             AchievementIconFrame = new Rectangle(0, achievement.PositionInMainList * 66, 64, 64);
             AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
             AchievementBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad);

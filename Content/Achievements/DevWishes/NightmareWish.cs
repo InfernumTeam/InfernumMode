@@ -1,6 +1,7 @@
 ﻿using InfernumMode.Content.Items.Pets;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -8,11 +9,12 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class NightmareWish : Achievement
     {
+        public override string LocalizationCategory => "Achievements.Wishes";
+
+        public override LocalizedText Description => GetLocalizedText(nameof(Description)).WithFormatArgs(NightmareCatcherPlayer.AchievementSleepTime);
+
         public override void Initialize()
         {
-            Name = "It Awakens";
-            Description = "It demands a sacrifice. You seem like a good choice\n" +
-                $"[c/777777:Sleep in the brimstone crags for {NightmareCatcherPlayer.AchievementSleepTime} seconds]";
             TotalCompletion = 1;
             PositionInMainList = 11;
             UpdateCheck = AchievementUpdateCheck.NightmareCatcher;

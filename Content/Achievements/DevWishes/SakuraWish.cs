@@ -7,11 +7,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class SakuraWish : Achievement
     {
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "Innocent Breeze";
-            Description = "One hundred whimsical spirits, dancing playfully\n" +
-                "[c/777777:Find a Sakura Bud]";
             TotalCompletion = 1;
             PositionInMainList = 9;
             UpdateCheck = AchievementUpdateCheck.Sakura;

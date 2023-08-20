@@ -22,8 +22,6 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Overrides
         public override void Initialize()
         {
-            Name = "Lab Rat";
-            Description = "Become Draedon's favorite test subject\n[c/777777:Beat all Infernum Exo Mech combinations]";
             TotalCompletion = Utilities.NumberOfCombinations(ExoMechManagement.ExoMechIDs.Count, 2);
             PositionInMainList = 5;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

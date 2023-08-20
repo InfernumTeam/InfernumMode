@@ -10,11 +10,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class CrescentWish : Achievement
     {
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "Post-apocalyptic";
-            Description = "The witch's sins could never be fully atoned\n" +
-                $"[c/777777:Defeat the {CalamitasShadowBehaviorOverride.CustomName} in the underworld]";
             TotalCompletion = 1;
             PositionInMainList = 13;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

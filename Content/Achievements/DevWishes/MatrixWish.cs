@@ -9,11 +9,10 @@ namespace InfernumMode.Content.Achievements.DevWishes
 {
     public class MatrixWish : Achievement
     {
+        public override string LocalizationCategory => "Achievements.Wishes";
+        
         public override void Initialize()
         {
-            Name = "The Scientific Method";
-            Description = "To experiment is to fail. To fail is to learn. To learn is to advance\n" +
-                "[c/777777:Defeat every single boss and Exo Mech combination]";
             TotalCompletion = 1;
             PositionInMainList = 18;
             UpdateCheck = AchievementUpdateCheck.NPCKill;

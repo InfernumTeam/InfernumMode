@@ -166,6 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             {
                 for (int i = 0; i < 4; i++)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PolterghastLeg>(), 1, i);
+
                 npc.localAI[3] = 1f;
             }
 

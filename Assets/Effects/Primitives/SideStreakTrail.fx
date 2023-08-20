@@ -58,7 +58,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     if (coords.y > 0.15 && coords.y < 0.85)
     {
         float minOpacity = pow(1 - sin(coords.y * 3.141) + tex2D(uImage1, coords * 1.1 + float2(uTime * -0.6, 0)).r * 2.2, 0.2);
-        bloomOpacity += pow(coords.x, 0.3) * lerp(0.04, 0.4, minOpacity);
+        bloomOpacity += pow(coords.x, 0.3) * lerp(0.04, 0.5, minOpacity);
     }
     
     // Make the front half of the trail have a strong bloom effect.

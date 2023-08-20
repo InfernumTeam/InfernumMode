@@ -510,7 +510,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                                 if (target.Center.Y < npc.Center.Y - 400f)
                                     shroomVelocity.Y *= 1.5f;
 
-                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBomb>(), MushroomBombDamage, 0f, -1, 0f, npc.Bottom.Y);
+                                Utilities.NewProjectileBetter(clawCenter, shroomVelocity, ModContent.ProjectileType<MushBombInfernum>(), MushroomBombDamage, 0f, -1, 0f, npc.Bottom.Y);
                             }
                         }
                     }

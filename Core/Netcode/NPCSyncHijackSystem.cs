@@ -1,4 +1,4 @@
-using InfernumMode.Core.Netcode.Packets;
+﻿using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.ID;

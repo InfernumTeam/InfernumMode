@@ -1116,6 +1116,7 @@ Mods: {
 			WayfinderHoldout.DisplayName: Wayfinder
 			WayfinderItemProjectile.DisplayName: Wayfinder
 			WayfinderSymbol.DisplayName: Wayfinder Gate Symbol
+			MushBombInfernum.DisplayName: Mush Bomb Infernum
 		}
 
 		NPCs: {

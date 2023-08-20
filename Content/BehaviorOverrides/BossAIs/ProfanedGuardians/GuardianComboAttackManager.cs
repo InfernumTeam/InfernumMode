@@ -906,7 +906,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 ref float spearStatus = ref npc.Infernum().ExtraAI[CommanderSpearStatusIndex];
                 ref float spearRotation = ref npc.Infernum().ExtraAI[CommanderSpearRotationIndex];
-                ref float drawShieldSmear = ref npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex];
+                ref float drawSpearSmear = ref npc.Infernum().ExtraAI[CommanderDrawSpearSmearIndex];
 
                 float flySpeed = 20f;
                 float spinLength = 20f;
@@ -952,7 +952,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     case 2:
                         hoverDestination = target.Center + new Vector2(xOffset, 0f);
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
-                        drawShieldSmear = 1f;
+                        drawSpearSmear = 1f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 
                         if (localAttackTimer == 0)
@@ -1216,6 +1216,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                                 npc.Opacity = Clamp(npc.Opacity - 0.1f, 0f, 1f);
                                 npc.dontTakeDamage = true;
+
                                 // Switch to next attack. It will stall here if the commander is mid spin/charge until it is free. This is to avoid abruptly stopping mid spin/charge.
                                 if (commander.Infernum().ExtraAI[0] is 0f or 1f && pillarsAreMostlyGone)
                                     SelectNewAttack(commander, ref universalAttackTimer);
@@ -1449,7 +1450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 ref float shieldStatus = ref npc.Infernum().ExtraAI[DefenderShieldStatusIndex];
 
-                npc.damage = npc.defDamage;
+                npc.damage = npc.Opacity >= 0.95f ? npc.defDamage : 0;
 
                 switch (substate)
                 {

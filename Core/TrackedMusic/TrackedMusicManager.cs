@@ -13,6 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Core.TrackedMusic
 {
+    // I don't know how to fix this. I'm sorry.
     public class TrackedMusicManager : ModSystem
     {
         internal static bool PausedBecauseOfUI;
@@ -115,12 +116,13 @@ namespace InfernumMode.Core.TrackedMusic
                 CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke(new object[] { musicPath, path });
             }
 
-            Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
-            Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrackTowardStopping += PermitVolumeFadeoutForCustomTracks;
-            Terraria.Audio.On_LegacyAudioSystem.PauseAll += PauseMainTrack;
-            Terraria.Audio.On_LegacyAudioSystem.ResumeAll += ResumeMainTrack;
-        }
+            //Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;
+            //Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrackTowardStopping += PermitVolumeFadeoutForCustomTracks;
+            //Terraria.Audio.On_LegacyAudioSystem.PauseAll += PauseMainTrack;
+            //Terraria.Audio.On_LegacyAudioSystem.ResumeAll += ResumeMainTrack;
+        } // IDE0051
 
+        #pragma warning disable IDE0051
         private static void PauseMainTrack(Terraria.Audio.On_LegacyAudioSystem.orig_PauseAll orig, Terraria.Audio.LegacyAudioSystem self)
         {
             orig(self);
@@ -189,11 +191,14 @@ namespace InfernumMode.Core.TrackedMusic
             }
             orig(self, i, totalVolume, ref tempFade, isMainTrackAudible);
         }
+        #pragma warning restore IDE0051
 
         public static bool TryGetSongInformation(out BaseTrackedMusic information)
         {
             information = null;
+            return false;
 
+            /*
             // If there is no tracked song currently being played, return immediately. There is no time-based information to acquire.
             if (TrackedSong is null)
                 return false;
@@ -203,10 +208,14 @@ namespace InfernumMode.Core.TrackedMusic
                 return false;
 
             return true;
+            */
         }
 
         public override void UpdateUI(GameTime gameTime)
         {
+            return;
+
+            /*
             // Don't run any audio effects server-side.
             if (Main.netMode == NetmodeID.Server)
                 return;
@@ -262,6 +271,8 @@ namespace InfernumMode.Core.TrackedMusic
                 MediaPlayer.Volume = currentVolume;
             MediaPlayer.IsRepeating = true;
             MediaPlayer.IsMuted = false;
+
+            */
         }
     }
 }

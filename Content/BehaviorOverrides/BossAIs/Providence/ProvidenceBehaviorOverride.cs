@@ -237,7 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static bool IsEnraged => !Main.dayTime || BossRushEvent.BossRushActive;
 
-        public static bool SyncAttacksWithMusic => Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;
+        public static bool SyncAttacksWithMusic => false;//Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;
 
         public static readonly Color[] NightPalette = new[]
         {

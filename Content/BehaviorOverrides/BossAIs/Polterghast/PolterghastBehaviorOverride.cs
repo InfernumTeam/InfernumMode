@@ -5,6 +5,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.Content.Buffs;
@@ -1480,6 +1481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 (telegraphStart + telegraphEnd) * 0.5f,
                 telegraphEnd
             };
+            InfernumEffectsRegistry.SideStreakVertexShader.UseImage1(InfernumTextureRegistry.WavyNoise);
             npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 44);
 
             if (inPhase3 || enraged)

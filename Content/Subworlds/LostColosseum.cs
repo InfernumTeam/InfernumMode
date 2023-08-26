@@ -1,10 +1,11 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Schematics;
 using CalamityMod.World;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
@@ -193,13 +194,15 @@ namespace InfernumMode.Content.Subworlds
             SunsetInterpolant = 0f;
 
             // Ensure that the vassal defeat achievement translates over when the player goes to a different subworld.
-            List<Achievement> achievementList = new();
-            foreach (var achievement in achievementList)
+            if (Main.netMode != NetmodeID.Server)
             {
-                if (achievement.GetType() == typeof(BereftVassalAchievement))
+                foreach (var achievement in Main.LocalPlayer.GetModPlayer<AchievementPlayer>().AchievementInstances)
                 {
-                    if (achievement.DoneCompletionEffects)
-                        VassalWasBeaten = true;
+                    if (achievement.GetType() == typeof(BereftVassalAchievement))
+                    {
+                        if (achievement.DoneCompletionEffects)
+                            VassalWasBeaten = true;
+                    }
                 }
             }
 

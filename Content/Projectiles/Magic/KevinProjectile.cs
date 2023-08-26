@@ -222,7 +222,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningTarget.IsDisposed)
+            if (LightningTarget == null || LightningTarget.IsDisposed)
                 return true;
 
             Main.Rasterizer = RasterizerState.CullNone;

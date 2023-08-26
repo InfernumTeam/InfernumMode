@@ -150,7 +150,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         public override float[] PhaseLifeRatioThresholds => new float[]
         {
             Phase2LifeRatio,
-            DoGPhase2HeadBehaviorOverride.CanUseSpecialAttacksLifeRatio,
             DoGPhase2HeadBehaviorOverride.FinalPhaseLifeRatio
         };
 

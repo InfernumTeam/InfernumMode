@@ -330,6 +330,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     MoveChainBasedOnEntity(Chains[i], p, npc);
                 }
 
+                for (int j = 0; j < Main.maxProjectiles; j++)
+                {
+                    Projectile proj = Main.projectile[j];
+
+                    if (!proj.active || proj.hostile)
+                        continue;
+
+                    MoveChainBasedOnEntity(Chains[i], proj, npc);
+                }
+
                 Vector2 chainStart = Chains[i][0].position;
                 Vector2 chainEnd = Chains[i].Last().position;
                 float segmentDistance = Vector2.Distance(chainStart, chainEnd) / Chains[i].Count;
@@ -406,7 +416,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void MoveChainBasedOnEntity(List<VerletSimulatedSegment> chain, Entity e, NPC npc)
         {
-            Vector2 entityVelocity = e.velocity * 0.425f;
+            // Cap the velocity to ensure it doesn't make the chains go flying.
+            Vector2 entityVelocity = (e.velocity * 0.425f).ClampMagnitude(0f, 5f);
+
             for (int i = 1; i < chain.Count - 1; i++)
             {
                 VerletSimulatedSegment segment = chain[i];
@@ -420,7 +432,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     // Weigh the entity's distance between the two segments.
                     // If they are close to one point that means the strength of the movement force applied to the opposite segment is weaker, and vice versa.
                     float distanceBetweenSegments = segment.position.Distance(next.position);
-                    float currentMovementOffsetInterpolant = Utils.GetLerpValue(e.Distance(segment.position), distanceBetweenSegments, distanceBetweenSegments * 0.2f, true);
+                    float distanceToChains = e.Distance(segment.position);
+                    float currentMovementOffsetInterpolant = Utils.GetLerpValue(distanceToChains, distanceBetweenSegments, distanceBetweenSegments * 0.2f, true);
                     float nextMovementOffsetInterpolant = 1f - currentMovementOffsetInterpolant;
 
                     // Move the segments based on the weight values.
@@ -431,7 +444,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     // Play some cool chain sounds.
                     if (npc.soundDelay <= 0 && entityVelocity.Length() >= 0.1f)
                     {
-                        SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidChainSound with { Volume = 0.25f }, e.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidChainSound with { Volume = 0.25f, PitchVariance = 0.05f }, e.Center);
                         npc.soundDelay = 27;
                     }
                 }

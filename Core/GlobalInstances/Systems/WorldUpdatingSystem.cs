@@ -77,7 +77,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             {
                 int x = Main.maxTilesX * 8 + 8000;
                 int y = Main.maxTilesY * 8 - 180;
-                NPC.NewNPC(new EntitySource_WorldEvent(), x, y, ModContent.NPCType<BereftVassal>(), 1);
+
+                if (Main.netMode is not NetmodeID.MultiplayerClient)
+                    NPC.NewNPC(new EntitySource_WorldEvent(), x, y, ModContent.NPCType<BereftVassal>(), 1);
+
                 LostColosseum.HasBereftVassalAppeared = true;
             }
 

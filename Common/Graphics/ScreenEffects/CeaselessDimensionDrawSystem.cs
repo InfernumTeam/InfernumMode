@@ -131,7 +131,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Texture2D pixel = InfernumTextureRegistry.Pixel.Value;
             Vector2 screenArea = new(Main.instance.GraphicsDevice.Viewport.Width, Main.instance.GraphicsDevice.Viewport.Height);
-            Vector2 textureArea = screenArea / pixel.Size();
+            Vector2 textureArea = screenArea;
             var backgroundShader = InfernumEffectsRegistry.CeaselessVoidBackgroundShader;
             backgroundShader.Shader.Parameters["vortexSwirlSpeed"].SetValue(-2.33f);
             backgroundShader.Shader.Parameters["vortexSwirlDetail"].SetValue(67f);

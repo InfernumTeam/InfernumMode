@@ -979,7 +979,7 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldloc, 6);
             cursor.EmitDelegate<Func<Vector2, Vector2>>(unclampedValue =>
             {
-                unclampedValue.X = Clamp(unclampedValue.X, CustomAbyss.MaxAbyssWidth + 25, Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 25);
+                unclampedValue.X = Clamp(unclampedValue.X, CustomAbyss.MaxAbyssWidth + 150, Main.maxTilesX - CustomAbyss.MaxAbyssWidth - 150);
                 return unclampedValue;
             });
             cursor.Emit(OpCodes.Stloc, 6);

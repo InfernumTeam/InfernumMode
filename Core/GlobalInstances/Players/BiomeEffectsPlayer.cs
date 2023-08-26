@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Linq;
+using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Systems;
@@ -236,7 +237,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
             // Ensure that the player respawns at the campfire in the Lost Colosseum.
             if (SubworldSystem.IsActive<LostColosseum>())
             {
-                LostColosseum.HasBereftVassalAppeared = false;
+                // Only mark this if no other players are alive.
+                if (!Main.player.Any(player => !player.dead && player.active))
+                    LostColosseum.HasBereftVassalAppeared = false;
+
                 Main.spawnTileX = LostColosseum.CampfirePosition.X;
                 Main.spawnTileY = LostColosseum.CampfirePosition.Y;
             }

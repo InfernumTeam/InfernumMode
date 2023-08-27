@@ -253,7 +253,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
             target.breath = target.breathMax;
             target.ignoreWater = true;
-            target.DoInfiniteFlightCheck(Color.DeepSkyBlue);
+
+            // Give targets infinite flight time.
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.DoInfiniteFlightCheck(Color.DeepSkyBlue);
+            }
 
             // Set the global whoAmI variable.
             CalamityGlobalNPC.adultEidolonWyrmHead = npc.whoAmI;

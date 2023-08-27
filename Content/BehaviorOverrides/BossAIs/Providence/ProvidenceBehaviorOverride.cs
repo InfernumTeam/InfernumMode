@@ -399,7 +399,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
-                target.DoInfiniteFlightCheck(IsEnraged ? Color.Turquoise : Color.Yellow);
+                player.DoInfiniteFlightCheck(IsEnraged ? Color.Turquoise : Color.Yellow);
             }
 
             // For a few frames Providence will play Boss 1 due to the custom music system. Don't allow this.

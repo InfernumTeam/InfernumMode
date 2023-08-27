@@ -106,6 +106,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.Calamity().DR = BaseDR;
             npc.Calamity().unbreakableDR = false;
 
+            // Reset homing every frame.
+            npc.chaseable = true;
+
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -8f, 0.25f);
@@ -584,6 +587,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Have a small delay prior to the bullet hell to allow the target to prepare.
             if (attackTimer < bulletHellShootDelay)
                 return;
+
+            // Prevent homing.
+            npc.chaseable = false;
 
             // Release the bullet hell cinders.
             shootTimer++;

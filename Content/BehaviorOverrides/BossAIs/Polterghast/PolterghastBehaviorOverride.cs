@@ -714,7 +714,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             npc.damage = 0;
 
             // Provide the target infinite flight time.
-            target.DoInfiniteFlightCheck(Color.LightCyan);
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.DoInfiniteFlightCheck(Color.LightCyan);
+            }
 
             if (ringShootCounter >= ringCount)
             {
@@ -1302,7 +1309,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             npc.damage = 0;
 
             // Provide the target infinite flight time.
-            target.DoInfiniteFlightCheck(Color.LightCyan);
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.DoInfiniteFlightCheck(Color.LightCyan);
+            }
 
             // Drift towards the target.
             npc.Center = npc.Center.MoveTowards(target.Center, 4f);

@@ -1142,7 +1142,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 // Do things during the blender.
                 case 3:
                     // Grant the target infinite flight time.
-                    target.DoInfiniteFlightCheck(Color.DarkRed);
+                    for (int i = 0; i < Main.maxPlayers; i++)
+                    {
+                        Player player = Main.player[i];
+                        if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                            continue;
+
+                        player.DoInfiniteFlightCheck(Color.DarkRed);
+                    }
 
                     // Make the laser spin.
                     float spinSpeedInterpolant = Utils.GetLerpValue(0f, 360f, attackTimer, true);

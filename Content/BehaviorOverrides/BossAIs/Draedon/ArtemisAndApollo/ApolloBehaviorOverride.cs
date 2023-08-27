@@ -600,7 +600,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             // Provide the target infinite flight time.
             if (npc.type == ModContent.NPCType<Apollo>())
-                target.DoInfiniteFlightCheck(Color.ForestGreen);
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player player = Main.player[i];
+                    if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                        continue;
+
+                    player.DoInfiniteFlightCheck(Color.ForestGreen);
+                }
+            }
 
             if (npc.type == ModContent.NPCType<Apollo>() && CalamityGlobalNPC.draedonExoMechTwinRed >= 0)
             {

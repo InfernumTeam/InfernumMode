@@ -528,8 +528,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (attackTimer == 10f)
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CVEnergyBurstTip3");
 
-            // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
-            target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
+            // Grant the targets infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.DoInfiniteFlightCheck(InfiniteFlightTextColor);
+            }
 
             // Initialize by creating the dark energy ring.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedDarkEnergy == 0f)
@@ -756,7 +763,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Grant the target infinite flight time during the portal tear charge up attack, so that they don't run out and take an unfair hit.
             if (attackTimer <= chargeUpDelay)
-                target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
+            {
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player player = Main.player[i];
+                    if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                        continue;
+
+                    player.DoInfiniteFlightCheck(InfiniteFlightTextColor);
+                }
+            }
 
             // Play a shoot sound if ready.
             if (playShootSound)
@@ -1136,7 +1152,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             float burstAcceleration = 1.023f;
 
             // Grant the target infinite flight time so that they don't run out and take an unfair hit.
-            target.DoInfiniteFlightCheck(InfiniteFlightTextColor);
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                    continue;
+
+                player.DoInfiniteFlightCheck(InfiniteFlightTextColor);
+            }
 
             // Create a dark energy circle on the first frame.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)

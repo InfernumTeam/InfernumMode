@@ -198,7 +198,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
-                target.DoInfiniteFlightCheck(Color.White);
+                player.DoInfiniteFlightCheck(Color.White);
             }
 
             // Use the bloom shader at night.

@@ -1,5 +1,5 @@
 author = Dominic Karma, Toasty
-version = 1.9.28
+version = 1.9.29
 displayName = Calamity Mod Infernum Mode
 modReferences = CalamityMod, SubworldLibrary
 hideCode = false

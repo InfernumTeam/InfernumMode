@@ -684,13 +684,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
 
-                for (float dy = 0f; dy < DivineLightLaserbeam.LaserLengthCost - 108f; dy += perpendicularLaserSpacing)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 boltSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * dy;
-                    Vector2 boltPerpendicularVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * 3f;
+                    for (float dy = 0f; dy < DivineLightLaserbeam.LaserLengthCost - 108f; dy += perpendicularLaserSpacing)
+                    {
+                        Vector2 boltSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * dy;
+                        Vector2 boltPerpendicularVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(PiOver2) * 3f;
 
-                    Utilities.NewProjectileBetter(boltSpawnPosition, -boltPerpendicularVelocity, ModContent.ProjectileType<DivineLightBolt>(), StrongerNormalShotDamage, 0f, -1, 0f, 18f);
-                    Utilities.NewProjectileBetter(boltSpawnPosition, boltPerpendicularVelocity, ModContent.ProjectileType<DivineLightBolt>(), StrongerNormalShotDamage, 0f, -1, 0f, 18f);
+                        Utilities.NewProjectileBetter(boltSpawnPosition, -boltPerpendicularVelocity, ModContent.ProjectileType<DivineLightBolt>(), StrongerNormalShotDamage, 0f, -1, 0f, 18f);
+                        Utilities.NewProjectileBetter(boltSpawnPosition, boltPerpendicularVelocity, ModContent.ProjectileType<DivineLightBolt>(), StrongerNormalShotDamage, 0f, -1, 0f, 18f);
+                    }
                 }
             }
 
@@ -789,14 +792,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             void createWyrms(float horizontalOffset)
             {
-                for (float dx = -1900f; dx < 1900f; dx += demonSpacing)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                    for (float dx = -1900f; dx < 1900f; dx += demonSpacing)
                     {
-                        telegraph.ModProjectile<AEWTelegraphLine>().CreateSplitAEW = false;
-                    });
-                    Utilities.NewProjectileBetter(wyrmSpawnPoint + Vector2.UnitX * (dx + horizontalOffset), -Vector2.UnitY, ModContent.ProjectileType<AEWTelegraphLine>(), 0, 0f, -1, 1f, 50f);
-                    Utilities.NewProjectileBetter(wyrmSpawnPoint + Vector2.UnitX * (dx + horizontalOffset + 85f), -Vector2.UnitY * demonUpwardChargeSpeed, ModContent.ProjectileType<AEWNightmareWyrm>(), StrongerNormalShotDamage, 0f, -1);
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
+                        {
+                            telegraph.ModProjectile<AEWTelegraphLine>().CreateSplitAEW = false;
+                        });
+                        Utilities.NewProjectileBetter(wyrmSpawnPoint + Vector2.UnitX * (dx + horizontalOffset), -Vector2.UnitY, ModContent.ProjectileType<AEWTelegraphLine>(), 0, 0f, -1, 1f, 50f);
+                        Utilities.NewProjectileBetter(wyrmSpawnPoint + Vector2.UnitX * (dx + horizontalOffset + 85f), -Vector2.UnitY * demonUpwardChargeSpeed, ModContent.ProjectileType<AEWNightmareWyrm>(), StrongerNormalShotDamage, 0f, -1);
+                    }
                 }
             }
 
@@ -1216,16 +1222,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 if (attackTimer % 24f == 0f)
                     SoundEngine.PlaySound(SoundID.Item9, target.Center);
-                for (int i = 0; i < totalArmSpirals; i++)
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 spiralDirection = (TwoPi * i / totalArmSpirals + crystalShootOffsetAngle).ToRotationVector2();
-                    Vector2 spinCenter = new(spinCenterX, spinCenterY);
-                    ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(crystal =>
+                    for (int i = 0; i < totalArmSpirals; i++)
                     {
-                        crystal.ModProjectile<ConvergingLumenylCrystal>().ConvergenceCenter = spinCenter;
-                    });
-                    Vector2 spiralSpawnOffset = spiralDirection * (spinRadius - 72f);
-                    Utilities.NewProjectileBetter(spinCenter + spiralSpawnOffset, spiralDirection * -crystalShootSpeed, ModContent.ProjectileType<ConvergingLumenylCrystal>(), NormalShotDamage, 0f);
+                        Vector2 spiralDirection = (TwoPi * i / totalArmSpirals + crystalShootOffsetAngle).ToRotationVector2();
+                        Vector2 spinCenter = new(spinCenterX, spinCenterY);
+                        ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(crystal =>
+                        {
+                            crystal.ModProjectile<ConvergingLumenylCrystal>().ConvergenceCenter = spinCenter;
+                        });
+                        Vector2 spiralSpawnOffset = spiralDirection * (spinRadius - 72f);
+                        Utilities.NewProjectileBetter(spinCenter + spiralSpawnOffset, spiralDirection * -crystalShootSpeed, ModContent.ProjectileType<ConvergingLumenylCrystal>(), NormalShotDamage, 0f);
+                    }
                 }
                 crystalShootOffsetAngle += spiralSpinRate;
             }

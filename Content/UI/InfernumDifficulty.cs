@@ -58,7 +58,7 @@ namespace InfernumMode.Content.UI
             ActivationSound = InfernumSoundRegistry.ModeToggleLaugh;
             ChatTextColor = Color.DarkRed;
 
-            MostAlternateDifficulties = 1;
+            
             Difficulties = new DifficultyMode[] { new NoDifficulty(), new RevengeanceDifficulty(), new DeathDifficulty(), this };
             Difficulties = Difficulties.OrderBy(d => d.DifficultyScale).ToArray();
 

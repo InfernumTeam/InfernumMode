@@ -249,9 +249,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Apply hexes to the target.
             if (GetHexNames(out string hexName, out string hexName2))
             {
-                target.Infernum_CalShadowHex().ActivateHex(hexName);
-                if (lifeRatio < Phase2LifeRatio)
-                    target.Infernum_CalShadowHex().ActivateHex(hexName2);
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player player = Main.player[i];
+                    if (!player.active || player.dead)
+                        continue;
+
+                    player.Infernum_CalShadowHex().ActivateHex(hexName);
+                    if (lifeRatio < Phase2LifeRatio)
+                        player.Infernum_CalShadowHex().ActivateHex(hexName2);
+                }
             }
 
             // Use a custom hitsound.

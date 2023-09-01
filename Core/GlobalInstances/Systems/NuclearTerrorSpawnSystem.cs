@@ -43,7 +43,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (NPC.AnyNPCs(ModContent.NPCType<NuclearTerror>()))
                 return;
 
-            Player playerToSpawnTerrorOn = Main.player.First(p => p.active && !p.dead && p.Calamity().ZoneSulphur);
+            // If there is no valid player, don't try to spawn one.
+            if (!Main.player.Any(p => p.active && !p.dead && p.Calamity().ZoneSulphur))
+                return;
+
+            Player playerToSpawnTerrorOn = Main.player.FirstOrDefault(p => p.active && !p.dead && p.Calamity().ZoneSulphur);
             int nuclearTerror = NPC.NewNPC(new EntitySource_WorldEvent(), (int)playerToSpawnTerrorOn.Center.X, (int)playerToSpawnTerrorOn.Center.Y + 900, ModContent.NPCType<NuclearTerror>(), 1);
             Main.npc[nuclearTerror].netUpdate = true;
         }

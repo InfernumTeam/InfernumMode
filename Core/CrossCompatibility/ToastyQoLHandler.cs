@@ -40,14 +40,11 @@ namespace InfernumMode.Core.CrossCompatibility
             AddBossLockInfo();
 
             // Register Bereft Vassal in the boss status toggle UI.
-            ToastyQoLMod.Call("AddBossToggle", "InfernumMode/Content/BehaviorOverrides/GreatSandShark/BereftVassal_Head_Boss", "Bereft Vassal",
+            ToastyQoLMod.Call("AddBossToggle", "InfernumMode/Content/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassal_Head_Boss", "Bereft Vassal",
                 typeof(WorldSaveSystem).GetField("downedBereftVassal", Utilities.UniversalBindingFlags), BereftVassalWeight, 1f);
         }
 
-        public override void OnModUnload()
-        {
-            ToastyQoLMod = null;
-        }
+        public override void OnModUnload() => ToastyQoLMod = null;
 
         private static void AddBossLockInfo()
         {

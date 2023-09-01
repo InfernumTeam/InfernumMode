@@ -8,6 +8,7 @@ using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
+using InfernumMode.Core.GlobalInstances.Systems;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -23,6 +24,9 @@ namespace InfernumMode.Core.CrossCompatibility
             private set;
         }
 
+        // Deus has a weight of 17.5, so have a value just before that.
+        public const float BereftVassalWeight = 17.33f;
+
         public override void PostAddRecipes()
         {
             if (ModLoader.TryGetMod("ToastyQoL", out var result))
@@ -34,6 +38,10 @@ namespace InfernumMode.Core.CrossCompatibility
                 return;
 
             AddBossLockInfo();
+
+            // Register Bereft Vassal in the boss status toggle UI.
+            ToastyQoLMod.Call("AddBossToggle", "InfernumMode/Content/BehaviorOverrides/GreatSandShark/BereftVassal_Head_Boss", "Bereft Vassal",
+                typeof(WorldSaveSystem).GetField("downedBereftVassal", Utilities.UniversalBindingFlags), BereftVassalWeight, 1f);
         }
 
         public override void OnModUnload()

@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.CeaselessVoid;
+﻿using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -138,10 +138,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
+        // Use a backing field, for ToastyQoL support.
+        private static bool downedBereftVassal;
+
         public static bool DownedBereftVassal
         {
-            get;
-            set;
+            get => downedBereftVassal;
+            set => downedBereftVassal = value;
         }
 
         public static bool DisplayedEmodeWarningText

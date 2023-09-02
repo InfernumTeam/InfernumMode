@@ -48,9 +48,9 @@ namespace InfernumMode.Core.TrackedMusic
         // As such, we need to save them separately from the embedded tmod file data.
         public static readonly string MusicDirectory = $"{Main.SavePath}/TrackedMusic";
 
-        public delegate bool PauseInUIConditionDelegate();
+        // public delegate bool PauseInUIConditionDelegate();
 
-        public static event PauseInUIConditionDelegate PauseInUIConditionEvent;
+        // public static event PauseInUIConditionDelegate PauseInUIConditionEvent;
 
         public static Song TrackedSong
         {

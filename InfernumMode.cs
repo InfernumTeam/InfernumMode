@@ -1,7 +1,9 @@
 ﻿global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 using CalamityMod.Cooldowns;
+using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BossBars;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.UI;
@@ -16,7 +18,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Particles.Metaballs.FusableParticleManager;
-using InfernumMode.Common.Graphics.Primitives;
 
 namespace InfernumMode
 {
@@ -146,7 +147,10 @@ namespace InfernumMode
                 });
             }
 
-            _ = new InfernumDifficulty();
+            // This is now the official way to add difficulties. A Mod.Call also exists, but this is a bit more efficient.
+            InfernumDifficulty difficulty = new();
+            DifficultyModeSystem.Difficulties.Add(difficulty);
+            DifficultyModeSystem.CalculateDifficultyData();
         }
 
         public override void PostSetupContent()

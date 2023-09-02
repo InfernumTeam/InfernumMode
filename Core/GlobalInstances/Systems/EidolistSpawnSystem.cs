@@ -22,6 +22,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (NPC.AnyNPCs(eidolistID))
                 return;
 
+            // If the position was lost, do not try to spawn them.
+            if (WorldSaveSystem.EidolistWorshipPedestalCenter == Point.Zero)
+                return;
+
             SpawnEidolists(WorldSaveSystem.EidolistWorshipPedestalCenter);
         }
 

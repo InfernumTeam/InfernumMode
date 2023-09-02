@@ -150,7 +150,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             GlobalNPCOverrides.OnKillEvent += DetermineNightDefeatStatus;
             GlobalNPCOverrides.StrikeNPCEvent += PerformDamageRestrictions;
-            TrackedMusicManager.PauseInUIConditionEvent += AddMusicPauseCondition;
+            //TrackedMusicManager.PauseInUIConditionEvent += AddMusicPauseCondition;
         }
 
         private bool PerformDamageRestrictions(NPC npc, ref NPC.HitModifiers modifiers)
@@ -172,11 +172,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        private bool AddMusicPauseCondition()
-        {
-            string songName = TrackedMusicManager.TrackedSong.Name;
-            return (songName.Contains("Providence") || songName.Contains("Guardians")) && CalamityGlobalNPC.holyBoss != -1;
-        }
+        //private bool AddMusicPauseCondition()
+        //{
+        //    string songName = TrackedMusicManager.TrackedSong.Name;
+        //    return (songName.Contains("Providence") || songName.Contains("Guardians")) && CalamityGlobalNPC.holyBoss != -1;
+        //}
         #endregion Loading
 
         #region AI

@@ -16,7 +16,7 @@ namespace InfernumMode.Core.TrackedMusic
     // I don't know how to fix this. I'm sorry.
     public class TrackedMusicManager : ModSystem
     {
-        internal static bool PausedBecauseOfUI;
+        // internal static bool PausedBecauseOfUI;
 
         internal static List<int> TracksThatDontUseTerrariasSystem = new();
 
@@ -135,7 +135,7 @@ namespace InfernumMode.Core.TrackedMusic
         {
             orig(self);
 
-            if (MediaPlayer.State == MediaState.Paused && !PausedBecauseOfUI)
+            if (MediaPlayer.State == MediaState.Paused)// && !PausedBecauseOfUI)
                 MediaPlayer.Resume();
         }
 

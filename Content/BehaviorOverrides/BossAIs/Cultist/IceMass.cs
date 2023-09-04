@@ -1,5 +1,7 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -7,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 {
-    public class IceMass : ModProjectile
+    public class IceMass : ModProjectile, IScreenCullDrawer
     {
         public ref float Time => ref Projectile.ai[0];
 
@@ -42,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             // Draw telegraph lines.
             // The amount of these will create a somewhat geometric pattern.
@@ -59,7 +61,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + lineDirection * 5980f, Color.SkyBlue, lineWidth);
                 }
             }
-            return true;
         }
 
         public override void Kill(int timeLeft)

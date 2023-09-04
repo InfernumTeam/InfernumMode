@@ -1,6 +1,7 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 {
-    public class DestroyerPierceLaser : ModProjectile, IAdditiveDrawer
+    public class DestroyerPierceLaser : ModProjectile, IScreenCullDrawer
     {
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[0]) ? Main.npc[(int)Projectile.ai[0]] : null;
 
@@ -56,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool ShouldUpdatePosition() => false;
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
@@ -66,14 +67,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
             Vector2 beamOrigin = new(line.Width / 2f, line.Height);
             Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);
-            Main.spriteBatch.Draw(line, start, null, Color.Lerp(Color.Orange, Color.Red, 0.56f), Projectile.rotation, beamOrigin, beamScale, 0, 0f);
-            Main.spriteBatch.Draw(line, start, null, Color.Red, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.7f, 1f), 0, 0f);
-            Main.spriteBatch.Draw(line, start, null, Color.White, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
+            Main.spriteBatch.Draw(line, start, null, Color.Lerp(Color.Orange, Color.Red, 0.56f) with { A = 0 }, Projectile.rotation, beamOrigin, beamScale, 0, 0f);
+            Main.spriteBatch.Draw(line, start, null, Color.Red with { A = 0 }, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.7f, 1f), 0, 0f);
+            Main.spriteBatch.Draw(line, start, null, Color.White with { A = 0 }, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
 
             // Draw the energy focus at the start.
             Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
+            spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White with { A = 0 } * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
         }
     }
 }

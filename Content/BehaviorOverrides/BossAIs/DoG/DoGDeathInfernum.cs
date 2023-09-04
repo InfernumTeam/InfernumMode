@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 {
-    public class DoGDeathInfernum : ModProjectile
+    public class DoGDeathInfernum : ModProjectile, IScreenCullDrawer
     {
         public Vector2 OldVelocity;
 
@@ -99,10 +100,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             return new Color(255, 255, 255, Projectile.alpha);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             if (TelegraphDelay >= TelegraphTotalTime)
-                return true;
+                return;
 
             Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
 
@@ -124,7 +125,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, OldVelocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, OldVelocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0);
-            return false;
         }
+
+        public override bool PreDraw(ref Color lightColor) => TelegraphDelay >= TelegraphTotalTime;
     }
 }

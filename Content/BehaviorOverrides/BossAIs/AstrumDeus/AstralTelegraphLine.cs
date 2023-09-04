@@ -1,11 +1,13 @@
-using CalamityMod;
+﻿using CalamityMod;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class AstralTelegraphLine : ModProjectile
+    public class AstralTelegraphLine : ModProjectile, IScreenCullDrawer
     {
         public ref float Time => ref Projectile.ai[0];
 
@@ -35,7 +37,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             float telegraphWidth = Lerp(0.3f, 6f, CalamityUtils.Convert01To010(Time / Lifetime));
 
@@ -43,8 +45,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
             Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;
             Main.spriteBatch.DrawLineBetter(start, end, Color.Lerp(Color.Orange, Color.Red, 0.5f), telegraphWidth);
-            return false;
         }
+
+        public override bool PreDraw(ref Color lightColor) => false;
 
         public override bool ShouldUpdatePosition() => false;
     }

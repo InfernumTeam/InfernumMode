@@ -270,7 +270,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                             Vector2 middleBoltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(TwoPi * i / 42f + middleRingAngularOffset) * 3.69f;
                             Utilities.NewProjectileBetter(pupilPosition, boltVelocity, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
                             Utilities.NewProjectileBetter(pupilPosition, middleBoltVelocity, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
-                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.4f, ProjectileID.PhantasmalBolt, PhantasmalBoltDamage, 0f);
                         }
                     }
 
@@ -343,6 +342,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 if (lineTelegraphInterpolant > 0f)
                 {
                     Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+                    var rasterizer = Main.Rasterizer;
+                    rasterizer.ScissorTestEnable = true;
+                    Main.instance.GraphicsDevice.ScissorRectangle = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
                     Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;
 

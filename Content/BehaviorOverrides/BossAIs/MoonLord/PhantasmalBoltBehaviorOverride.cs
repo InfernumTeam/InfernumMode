@@ -1,7 +1,8 @@
-using InfernumMode.Core;
+﻿using InfernumMode.Core;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -16,20 +17,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreAI(Projectile projectile)
         {
-            projectile.Infernum().ExtraAI[0]++;
-            if (projectile.localAI[0] == 0f)
-            {
-                if (Main.rand.NextBool(2))
-                    SoundEngine.PlaySound(SoundID.Item124, projectile.position);
-                else
-                    SoundEngine.PlaySound(SoundID.Item125, projectile.position);
-                projectile.localAI[0] = 1f;
-            }
+            ref float timer = ref projectile.Infernum().ExtraAI[0];
+            ref float lifetime = ref projectile.Infernum().ExtraAI[1];
 
-            projectile.alpha = Utils.Clamp(projectile.alpha - 40, 0, 255);
-            projectile.rotation = projectile.velocity.ToRotation() + PiOver2;
-            projectile.velocity = Vector2.Clamp(projectile.velocity, new Vector2(-10f), new Vector2(10f));
-            projectile.timeLeft = (int)MathF.Min(250 * projectile.MaxUpdates, projectile.timeLeft);
 
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
             {
@@ -38,10 +28,32 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             }
             NPC core = Main.npc[NPC.FindFirstNPC(NPCID.MoonLordCore)];
             Rectangle collisionArea = core.Infernum().Arena;
-            collisionArea.Inflate(-600, -600);
 
-            // Determine whether the bolt should collide with tiles.
-            projectile.tileCollide = projectile.Hitbox.Intersects(collisionArea);
+            if (projectile.localAI[0] == 0f)
+            {
+                if (Main.rand.NextBool(2))
+                    SoundEngine.PlaySound(SoundID.Item124, projectile.position);
+                else
+                    SoundEngine.PlaySound(SoundID.Item125, projectile.position);
+
+                // If moonlord is doing the blender attack, mark the lifetime.
+                bool deathrayAttack = (MoonLordCoreBehaviorOverride.MoonLordAttackState)core.Infernum().ExtraAI[0] == MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDeathrays;
+                if (deathrayAttack)
+                    lifetime = collisionArea.Intersects(projectile.Hitbox) ? 270f : -1f;
+
+                projectile.localAI[0] = 1f;
+            }
+
+            if (timer > lifetime && lifetime != 0f)
+            {
+                projectile.Kill();
+                return false;
+            }
+
+            projectile.alpha = Utils.Clamp(projectile.alpha - 40, 0, 255);
+            projectile.rotation = projectile.velocity.ToRotation() + PiOver2;
+            projectile.velocity = Vector2.Clamp(projectile.velocity, new Vector2(-10f), new Vector2(10f));
+            projectile.timeLeft = (int)MathF.Min(250 * projectile.MaxUpdates, projectile.timeLeft);
 
             // Determine frames.
             projectile.frameCounter++;
@@ -52,6 +64,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 if (projectile.frame >= 5)
                     projectile.frame = 0;
             }
+
+            timer++;
 
             if (InfernumConfig.Instance.ReducedGraphicsConfig)
                 return false;

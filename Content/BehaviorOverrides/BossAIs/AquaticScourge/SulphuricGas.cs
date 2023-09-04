@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
@@ -20,8 +20,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public static int Lifetime => 120;
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/NebulaGas1";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Sulphuric Acid Gas");
 
         public override void SetDefaults()
         {

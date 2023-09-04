@@ -1,18 +1,15 @@
+﻿using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 {
-    public class DestroyerPierceLaserTelegraph : ModProjectile
+    public class DestroyerPierceLaserTelegraph : ModProjectile, IScreenCullDrawer
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Telegraph");
-        }
 
         public override void SetDefaults()
         {
@@ -31,11 +28,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             Projectile.scale = Sin(Pi * Projectile.timeLeft / 45f) * 6f;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
+        public override bool? CanDamage() => false;
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             // Create an inner and outer telegraph.
             Color outerTelegraphColor = new(255, 70, 53, 0);
@@ -47,7 +46,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
             Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, outerTelegraphColor, outerTelegraphScale);
             Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, innerTelegraphColor, innerTelegraphScale);
-            return false;
         }
 
         public override void Kill(int timeLeft)

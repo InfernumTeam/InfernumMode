@@ -529,6 +529,8 @@ namespace InfernumMode
             }
         }
 
+        public static void SwapToRenderTarget(this ManagedRenderTarget renderTarget, Color? flushColor = null) => SwapToRenderTarget(renderTarget.Target, flushColor);
+
         public static void SwapToRenderTarget(this RenderTarget2D renderTarget, Color? flushColor = null)
         {
             // Local variables for convinience.

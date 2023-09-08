@@ -292,6 +292,11 @@ Mods: {
 				The Brimstone Witch
 				Calamitas
 				'''
+            SignusIntroScreen.TextToDisplay:
+				'''
+				The Fathomless Assassin
+				Signus
+				'''
 			SkeletronIntroScreen.TextToDisplay:
 				'''
 				The Old Man's Curse

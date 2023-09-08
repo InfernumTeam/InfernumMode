@@ -488,7 +488,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             return false;
         }
 
-        public static void DoLaughEffect(NPC npc, Player target)
+        public static void DoLaughEffect(NPC npc)
         {
             SoundEngine.PlaySound(InfernumSoundRegistry.AresLaughSound with
             {
@@ -498,10 +498,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 56f, Vector2.Zero, ModContent.ProjectileType<AresLaughBoom>(), 0, 0f);
 
             ScreenEffectSystem.SetBlurEffect(npc.Center, 1.3f, 45);
-        }
-
-        public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset)
-        {
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, ref float deathAnimationTimer)
@@ -616,7 +612,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
                 SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechFinalPhaseSound, target.Center);
-                DoLaughEffect(npc, target);
+                DoLaughEffect(npc);
 
                 // Destroy all lasers and telegraphs.
                 for (int i = 0; i < Main.maxProjectiles; i++)
@@ -697,7 +693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Laugh.
             frameType = (int)AresBodyFrameType.Laugh;
             if (attackTimer == shootDelay + 1f)
-                DoLaughEffect(npc, target);
+                DoLaughEffect(npc);
 
             // Create telegraph lines that show where the laserbeams will appear.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == shootDelay + 1f)
@@ -820,7 +816,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (attackDelayTimer <= 60f)
             {
                 if (attackDelayTimer == 1f)
-                    DoLaughEffect(npc, target);
+                    DoLaughEffect(npc);
 
                 attackTimer = 1f;
                 npc.velocity *= 0.9f;
@@ -914,7 +910,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (attackTimer == anticipationTime - 40f)
                 {
-                    DoLaughEffect(npc, target);
+                    DoLaughEffect(npc);
 
                     // Play the impending death sound.
                     SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with
@@ -1009,7 +1005,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 // Sit in place and give some warning text before attacking.
                 case 0:
                     if (attackTimer == 1f)
-                        DoLaughEffect(npc, target);
+                        DoLaughEffect(npc);
 
                     // Cease movement.
                     npc.velocity = Vector2.Zero;
@@ -1108,7 +1104,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     if (attackTimer >= laserbeamTelegraphTime)
                     {
-                        DoLaughEffect(npc, target);
+                        DoLaughEffect(npc);
 
                         SoundEngine.PlaySound(TeslaCannon.FireSound, target.Center);
 

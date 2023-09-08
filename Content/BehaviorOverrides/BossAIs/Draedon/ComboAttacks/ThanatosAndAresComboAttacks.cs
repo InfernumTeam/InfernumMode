@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -158,7 +158,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 {
                     frame = (int)AresBodyFrameType.Laugh;
                     if (attackTimer == attackDelay - 45f)
-                        DoLaughEffect(npc, target);
+                        DoLaughEffect(npc);
                 }
 
                 // Create telegraphs.

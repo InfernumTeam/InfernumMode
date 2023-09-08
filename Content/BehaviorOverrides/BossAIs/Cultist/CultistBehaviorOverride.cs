@@ -1584,7 +1584,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             shield.Parameters["mainColor"].SetValue(color.ToVector3());
             shield.Parameters["noiseScale"].SetValue(noiseScale);
             shield.Parameters["noiseDirection"].SetValue(noiseDirection);
-            shield.Parameters["resolution"].SetValue(new Vector2(130f));
+            shield.Parameters["resolution"].SetValue(Utilities.CreatePixelationResolution(new Vector2(scale * 150f)));
             shield.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
             shield.Parameters["fresnelPower"].SetValue(fresnelScale * 9f);
             shield.Parameters["scrollSpeed"].SetValue(0.345f);

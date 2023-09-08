@@ -37,7 +37,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 Player.AddBuff(ModContent.BuffType<BrimstoneBarrier>(), CalamityUtils.SecondsToFrames(DebuffTime));
         }
 
-        public override void ModifyHurt(ref Player.HurtModifiers modifiers)/* tModPorter Override ImmuneTo, FreeDodge or ConsumableDodge instead to prevent taking damage */
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
             if (ForcefieldIsActive)
             {

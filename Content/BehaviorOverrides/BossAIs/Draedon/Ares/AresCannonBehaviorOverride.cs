@@ -1,4 +1,4 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
@@ -105,10 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Check to see if Ares is in the middle of a death animation. If he is, participate in the death animation.
             if (performingDeathAnimation)
-            {
-                HaveArmPerformDeathAnimation(npc, hoverOffset);
                 return false;
-            }
 
             // Check to see if this arm should be used for special things in a combo attack.
             if (IsInUseByComboAttack(npc))

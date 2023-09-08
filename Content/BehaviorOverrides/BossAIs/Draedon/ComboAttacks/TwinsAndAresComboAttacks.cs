@@ -494,7 +494,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 if (aresSlowdownPreparationInProgress)
                     frame = (int)AresBodyFrameType.Laugh;
                 if (wrappedAttackTimer == redirectTime - 16f)
-                    DoLaughEffect(npc, target);
+                    DoLaughEffect(npc);
             }
 
             bool doneAttacking = attackTimer >= (redirectTime + chargeupTime + laserTelegraphTime + laserSpinTime) * laserBurstCount;

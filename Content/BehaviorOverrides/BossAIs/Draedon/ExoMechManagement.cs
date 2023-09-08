@@ -1,4 +1,4 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
@@ -59,6 +59,44 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         public const float Phase4LifeRatio = 0.5f;
         public const int FinalPhaseTransitionTime = 290;
         public const float ComplementMechInvincibilityThreshold = 0.5f;
+
+        // This is checked by the music mod.
+        public static bool SecondThemeShouldPlay
+        {
+            get
+            {
+                NPC initialMech = FindInitialMech();
+
+                if (initialMech != null)
+                {
+                    if (initialMech.Infernum().ExtraAI[FinalMechIndexIndex] >= 0)
+                    {
+                        int mechType = initialMech.type;
+                        int currentPhase = 0;
+                        if (mechType == ModContent.NPCType<AresBody>())
+                            currentPhase = CurrentAresPhase;
+                        else if (mechType == ModContent.NPCType<Artemis>() || mechType == ModContent.NPCType<Apollo>())
+                            currentPhase = CurrentTwinsPhase;
+                        else if (mechType == ModContent.NPCType<ThanatosHead>())
+                            currentPhase = CurrentThanatosPhase;
+                        return currentPhase is 3 or 5 or 6;
+                    }
+                    else
+                        return false;
+                }
+                else
+                {
+                    if (Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
+                        return CurrentAresPhase == 6;
+                    else if (Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechTwinGreen) && Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechTwinRed))
+                        return CurrentTwinsPhase == 6;
+                    else if (Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechWorm))
+                        return CurrentThanatosPhase == 6;
+                }
+
+                return true;
+            }
+        }
 
         public static int CurrentAresPhase
         {

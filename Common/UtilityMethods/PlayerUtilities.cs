@@ -42,6 +42,7 @@ namespace InfernumMode
 
             player.AddCooldown(InfiniteFlight.ID, CalamityUtils.SecondsToFrames(0.5f));
             player.wingTime = player.wingTimeMax;
+            player.Calamity().infiniteFlight = true;
         }
     }
 }

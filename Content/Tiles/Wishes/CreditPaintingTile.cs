@@ -32,10 +32,5 @@ namespace InfernumMode.Content.Tiles.Wishes
             AddMapEntry(new Color(55, 27, 7));
             DustType = DustID.WoodFurniture;
         }
-
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<CreditPainting>());
-        }
     }
 }

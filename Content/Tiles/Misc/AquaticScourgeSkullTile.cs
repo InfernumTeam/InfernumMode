@@ -1,4 +1,4 @@
-using CalamityMod.Tiles.Abyss;
+﻿using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -36,7 +36,7 @@ namespace InfernumMode.Content.Tiles.Misc
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
             HitSound = AbyssGravel.MineSound with { Pitch = 0.3f };
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<AquaticScourgeSkull>());
+            //Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<AquaticScourgeSkull>());
         }
     }
 }

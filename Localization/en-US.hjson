@@ -292,7 +292,7 @@ Mods: {
 				The Brimstone Witch
 				Calamitas
 				'''
-            SignusIntroScreen.TextToDisplay:
+			SignusIntroScreen.TextToDisplay:
 				'''
 				The Fathomless Assassin
 				Signus

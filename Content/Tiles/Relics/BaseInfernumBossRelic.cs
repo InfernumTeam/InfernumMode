@@ -88,7 +88,10 @@ namespace InfernumMode.Content.Tiles.Relics
 
         public override bool CreateDust(int i, int j, ref int type) => false;
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, DropItemID);
+        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        {
+            //Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, DropItemID);
+        }
 
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
         {

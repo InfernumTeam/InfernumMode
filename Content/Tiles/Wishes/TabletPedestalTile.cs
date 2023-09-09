@@ -1,4 +1,4 @@
-using InfernumMode.Content.Items.Pets;
+﻿using InfernumMode.Content.Items.Pets;
 using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
@@ -33,11 +33,6 @@ namespace InfernumMode.Content.Tiles.Wishes
             AddMapEntry(new Color(107, 142, 160));
         }
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<TabletPedestal>());
-        }
-
         public override bool RightClick(int i, int j)
         {
             Tile tile = Main.tile[i, j];
@@ -54,7 +49,6 @@ namespace InfernumMode.Content.Tiles.Wishes
 
             // Eat the disenchanted tablet.
             Main.LocalPlayer.ConsumeItem(ModContent.ItemType<DisenchantedTablet>(), true);
-
             return true;
         }
 

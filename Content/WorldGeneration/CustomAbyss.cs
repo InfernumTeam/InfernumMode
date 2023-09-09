@@ -1116,6 +1116,7 @@ namespace InfernumMode.Content.WorldGeneration
         public static void GenerateTerminusTile(Point searchPosition)
         {
             int terminusTileID = ModContent.TileType<TerminusTile>();
+            int dylanShellID = ModContent.TileType<AbyssFossilTile>();
 
             for (int tries = 0; tries < 180; tries++)
             {
@@ -1128,6 +1129,20 @@ namespace InfernumMode.Content.WorldGeneration
                 // Slide to the right for a different search position if the current one didn't find a valid spot.
                 searchPosition.X++;
             }
+
+            // TODO: Figure out how  to properly do this because I do not know worldgen code.
+            //// Also place down Dylan's dev item tile, as it otherwise would not be obtainable.
+            //for (int tries = 0; tries < 180; tries++)
+            //{
+            //    Point groundPosition = Utilities.GetGroundPositionFrom(searchPosition);
+            //    groundPosition.X++;
+
+            //    if (WorldGen.PlaceTile(groundPosition.X, groundPosition.Y, dylanShellID))
+            //        break;
+
+            //    // Slide down for a different search position if the current one didn't find a valid spot.
+            //    searchPosition.X++;
+            //}
         }
 
         public static void GenerateVoidstone()

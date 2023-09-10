@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Dusts;
 using InfernumMode.Content.BehaviorOverrides.AbyssAIs;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -162,12 +162,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             static Texture2D decideSegmentTexture(int index)
             {
                 // By default, segments are heads.
-                Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/PrimordialWyrmHead").Value;
+                Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PrimordialWyrm/PrimordialWyrmHead").Value;
 
                 // After the head is drawn, use body segments.
                 if (index >= 1)
                 {
-                    string bodyTexturePath = "CalamityMod/NPCs/AdultEidolonWyrm/PrimordialWyrmBody";
+                    string bodyTexturePath = "CalamityMod/NPCs/PrimordialWyrm/PrimordialWyrmBody";
                     if (index % 2 == 1)
                         bodyTexturePath += "Alt";
 
@@ -176,7 +176,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 // The last segment should be a tail.
                 if (index == SegmentCount)
-                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AdultEidolonWyrm/PrimordialWyrmTail").Value;
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PrimordialWyrm/PrimordialWyrmTail").Value;
 
                 return texture;
             }

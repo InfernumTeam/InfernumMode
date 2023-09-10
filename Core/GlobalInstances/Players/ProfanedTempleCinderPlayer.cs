@@ -1,7 +1,9 @@
-﻿using CalamityMod.CalPlayer;
+﻿using CalamityMod;
+using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.Items.Misc;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -18,6 +20,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             get;
             set;
+        }
+
+        public override void PostUpdateMiscEffects()
+        {
+            if (Player.ActiveItem().type == ModContent.ItemType<ProfanedGardenLocationSetter>())
+                Player.rulerGrid = true;
         }
 
         public override void PostUpdate()

@@ -1928,6 +1928,17 @@ Mods: {
 					}
 				}
 			}
+
+			ProfanedGardenLocationSetter: {
+				DisplayName: Profaned Garden Location Setter
+				Tooltip:
+                '''
+                Use this to fix the profaned garden not functioning properly.
+                Left click the bottom-center of the Profaned Plaque tile in the middle of the garden.
+                This will center the garden position around that point correctly.
+                You can right click to revert the position to the previous one.
+                '''
+			}
 		}
 
 		Tiles: {

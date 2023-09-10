@@ -27,7 +27,8 @@ namespace InfernumMode.Content.Items.Misc
 
         public override void SetDefaults()
         {
-            Item.width = Item.height = 16;
+            Item.width = 589;
+            Item.height = 363;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useTime = 60;
             Item.useAnimation = 60;

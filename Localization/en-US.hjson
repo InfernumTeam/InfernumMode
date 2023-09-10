@@ -1979,7 +1979,7 @@ Mods: {
 		}
 
 		Status: {
-            AchievementCompletionText: Achievement Completed!
+			AchievementCompletionText: Achievement Completed!
 			InfernumDisallowedInWeirdDifficulties: Infernum is not allowed in Master Mode, For the Worthy or Get fixed boi.
 			EternityModeWarning: Eternity mode's boss AI changes are overridden by Infernum if there are conflicts.
 			CyberneticImmortalityEnabled: Cybernetic immortality has been enabled.

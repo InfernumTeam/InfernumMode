@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -171,7 +171,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             while (enrageTextEnd < enrageTooltip.Text.Length && enrageTooltip.Text[enrageTextEnd] != '\n')
                 enrageTextEnd++;
 
-            enrageTooltip.Text = enrageTooltip.Text.Remove(enrageTextStart, Math.Min(enrageTextEnd - enrageTextStart + 1, enrageTooltip.Text.Length));
+            enrageTooltip.Text = enrageTooltip.Text.Remove(enrageTextStart, Math.Min(enrageTextEnd - enrageTextStart + 1, enrageTooltip.Text.Length - 1));
 
             // If a replacement exists, insert it into the enrage text instead.
             if (tooltipReplacement is not null)

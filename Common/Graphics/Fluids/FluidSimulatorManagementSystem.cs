@@ -1,4 +1,4 @@
-using InfernumMode.Core;
+﻿using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -18,19 +18,6 @@ namespace InfernumMode.Common.Graphics.Fluids
         {
             CreatedFields = new();
             Main.OnPreDraw += UpdateFields;
-        }
-
-        public override void OnModUnload()
-        {
-            // Clear all GPU memory that was used by the created fields when the mod is unloaded.
-            Main.RunOnMainThread(() =>
-            {
-                for (int i = 0; i < CreatedFields.Count; i++)
-                {
-                    CreatedFields[i]?.Dispose();
-                    i = 0;
-                }
-            });
         }
 
         internal static void UpdateFields(GameTime obj)

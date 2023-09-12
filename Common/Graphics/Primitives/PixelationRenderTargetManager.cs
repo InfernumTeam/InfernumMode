@@ -11,11 +11,9 @@ namespace InfernumMode.Common.Graphics.Primitives
     public class PixelationRenderTargetManager : ModSystem
     {
         #region Fields And Properities
-        private Vector2 previousScreenSize;
+        private static ManagedRenderTarget pixelRenderTarget;
 
-        private static RenderTarget2D pixelRenderTarget;
-
-        private static RenderTarget2D pixelRenderTargetBeforeNPCs;
+        private static ManagedRenderTarget pixelRenderTargetBeforeNPCs;
 
         private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
 
@@ -27,32 +25,20 @@ namespace InfernumMode.Common.Graphics.Primitives
         {
             On_Main.CheckMonoliths += DrawToCustomRenderTargets;
             On_Main.DoDraw_DrawNPCsOverTiles += DrawPixelRenderTarget;
-            ResizePixelRenderTarget(true);
+            pixelRenderTarget = new(true, CreatePixelTarget);
+            pixelRenderTargetBeforeNPCs = new(true, CreatePixelTarget);
         }
 
         public override void Unload()
         {
             On_Main.CheckMonoliths -= DrawToCustomRenderTargets;
             On_Main.DoDraw_DrawNPCsOverTiles -= DrawPixelRenderTarget;
-
-            Main.QueueMainThreadAction(() =>
-            {
-                if (pixelRenderTarget != null && !pixelRenderTarget.IsDisposed) 
-                    pixelRenderTarget.Dispose();
-
-                pixelRenderTarget = null;
-
-                if (pixelRenderTargetBeforeNPCs != null && !pixelRenderTargetBeforeNPCs.IsDisposed)
-                    pixelRenderTargetBeforeNPCs.Dispose();
-
-                pixelRenderTargetBeforeNPCs = null;
-            });
         }
-
-        public override void PostUpdateEverything() => ResizePixelRenderTarget(false);
         #endregion
 
         #region Methods
+        public static RenderTarget2D CreatePixelTarget(int width, int height) => new(Main.instance.GraphicsDevice, width / 2, height / 2);
+
         private static void DrawScaledTarget(RenderTarget2D target)
         {
             if (!pixelPrimDrawersList.Any() && !pixelPrimDrawersListBeforeNPCs.Any())
@@ -67,9 +53,11 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private void DrawPixelRenderTarget(On_Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
         {
-            DrawScaledTarget(pixelRenderTargetBeforeNPCs);
+            if (pixelPrimDrawersList.Any())
+                DrawScaledTarget(pixelRenderTargetBeforeNPCs.Target);
             orig(self);
-            DrawScaledTarget(pixelRenderTarget);
+            if (pixelPrimDrawersListBeforeNPCs.Any())
+                DrawScaledTarget(pixelRenderTarget.Target);
         }
 
         private void DrawToCustomRenderTargets(On_Main.orig_CheckMonoliths orig)
@@ -111,8 +99,8 @@ namespace InfernumMode.Common.Graphics.Primitives
             // Draw the prims. The render target gets set here.
             if (pixelPrimDrawersList.Any() || pixelPrimDrawersListBeforeNPCs.Any())
             {
-                DrawPrimsToRenderTarget(pixelRenderTarget, pixelPrimDrawersList);
-                DrawPrimsToRenderTarget(pixelRenderTargetBeforeNPCs, pixelPrimDrawersListBeforeNPCs);
+                DrawPrimsToRenderTarget(pixelRenderTarget.Target, pixelPrimDrawersList);
+                DrawPrimsToRenderTarget(pixelRenderTargetBeforeNPCs.Target, pixelPrimDrawersListBeforeNPCs);
 
                 // Clear the current render target.
                 Main.graphics.GraphicsDevice.SetRenderTarget(null);
@@ -138,39 +126,6 @@ namespace InfernumMode.Common.Graphics.Primitives
 
                 // Prepare the sprite batch for the next draw cycle.
                 Main.spriteBatch.End();
-            }
-        }
-
-        private void ResizePixelRenderTarget(bool load)
-        {
-            // If not in the game menu, and not on a dedicated server, or this is the initial setup.
-            if (!Main.gameMenu && !Main.dedServ || load && !Main.dedServ)
-            {
-                // Get the current screen size.
-                Vector2 currentScreenSize = new(Main.screenWidth, Main.screenHeight);
-
-                // If it does not match the previous one, update it.
-                if (currentScreenSize != previousScreenSize)
-                {
-                    // Render target stuff should be done on the main thread only.
-                    Main.QueueMainThreadAction(() =>
-                    {
-                        // If they are not null, or already disposed, dispose them.
-                        if (pixelRenderTarget is not null && !pixelRenderTarget.IsDisposed)
-                            pixelRenderTarget.Dispose();
-
-                        if (pixelRenderTargetBeforeNPCs is not null && !pixelRenderTargetBeforeNPCs.IsDisposed)
-                            pixelRenderTargetBeforeNPCs.Dispose();
-
-                        // Recreate the render targets with the current, accurate screen dimensions.
-                        // In this case, we want to halve them to downscale them, performing pixelation.
-                        pixelRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
-                        pixelRenderTargetBeforeNPCs = new RenderTarget2D(Main.graphics.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
-                    });
-                }
-
-                // Set the current one to the previous one for next frame.
-                previousScreenSize = currentScreenSize;
             }
         }
         #endregion

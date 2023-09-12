@@ -28,11 +28,11 @@ namespace InfernumMode.Common.Graphics.Metaballs
                 if (!type.IsAbstract && type.IsSubclassOf(baseType))
                 {
                     BaseMetaballCollection collection = Activator.CreateInstance(type) as BaseMetaballCollection;
+                    collection.Load();
                     MetaballCollections.Add(collection);
                 }
             }
 
-            Main.OnResolutionChanged += ResizeTargets;
             On_Main.SortDrawCacheWorms += DrawToMetaballTargets;
             On_Main.DrawInfernoRings += DrawParticles;
         }
@@ -42,15 +42,6 @@ namespace InfernumMode.Common.Graphics.Metaballs
             if (Main.netMode is NetmodeID.Server)
                 return;
 
-            Main.QueueMainThreadAction(() =>
-            {
-                foreach (BaseMetaballCollection collection in MetaballCollections)
-                    collection.DisposeOfTargets();
-
-                MetaballCollections = null;
-            });
-
-            Main.OnResolutionChanged -= ResizeTargets;
             On_Main.SortDrawCacheWorms -= DrawToMetaballTargets;
             On_Main.DrawInfernoRings -= DrawParticles;
         }
@@ -103,12 +94,6 @@ namespace InfernumMode.Common.Graphics.Metaballs
                 return null;
 
             return MetaballCollections.First(mc => mc.GetType() == typeof(T));
-        }
-
-        private void ResizeTargets(Vector2 obj)
-        {
-            foreach (BaseMetaballCollection collection in MetaballCollections)
-                collection.ResizeRenderTargets(obj);
         }
     }
 }

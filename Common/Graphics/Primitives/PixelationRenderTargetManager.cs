@@ -53,10 +53,10 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private void DrawPixelRenderTarget(On_Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
         {
-            if (pixelPrimDrawersList.Any())
+            if (pixelPrimDrawersListBeforeNPCs.Any())
                 DrawScaledTarget(pixelRenderTargetBeforeNPCs.Target);
             orig(self);
-            if (pixelPrimDrawersListBeforeNPCs.Any())
+            if (pixelPrimDrawersList.Any())
                 DrawScaledTarget(pixelRenderTarget.Target);
         }
 

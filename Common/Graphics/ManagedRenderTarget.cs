@@ -42,10 +42,10 @@ namespace InfernumMode.Common.Graphics
                 {
                     target = CreationCondition(Main.screenWidth, Main.screenHeight);
                     WaitingForFirstInitialization = false;
+                    IsDisposed = false;
                 }
 
                 TimeSinceLastAccessed = 0;
-                IsDisposed = false;
                 return target;
             }
             private set => target = value;

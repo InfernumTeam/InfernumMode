@@ -18,13 +18,13 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public virtual bool UseLighting => true;
 
-        public RenderTarget2D Target
+        public ManagedRenderTarget MainTarget
         {
             get;
             private set;
         }
 
-        public RenderTarget2D LightingTarget
+        public ManagedRenderTarget LightingTarget
         {
             get;
             private set;
@@ -36,27 +36,10 @@ namespace InfernumMode.Common.Graphics.Metaballs
             set;
         } = new();
 
-        public void ResizeRenderTargets(Vector2 _)
+        public void Load()
         {
-            Dispose();
-            Target = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
-            LightingTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
-        }
-
-        public void DisposeOfTargets()
-        {
-            Dispose();
-            Target = null;
-            LightingTarget = null;
-        }
-
-        private void Dispose()
-        {
-            if (Target != null && !Target.IsDisposed)
-                Target.Dispose();
-
-            if (LightingTarget != null && !LightingTarget.IsDisposed)
-                LightingTarget.Dispose();
+            MainTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            LightingTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
         }
 
         public void UpdateMetaballs()
@@ -90,13 +73,10 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public void DrawToTarget(SpriteBatch spriteBatch)
         {
-            if (Target is null)
-                ResizeRenderTargets(Vector2.Zero);
-
             if (!Metaballs.Any())
                 return;
 
-            Target.SwapToRenderTarget();
+            MainTarget.SwapToRenderTarget();
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicWrap, DepthStencilState.None, Main.Rasterizer, null);
             Rectangle screenArea = new((int)(Main.screenPosition.X - 150), (int)(Main.screenPosition.Y - 150), Main.screenWidth + 300, Main.screenHeight + 300);
@@ -130,15 +110,13 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public void DrawTarget(SpriteBatch spriteBatch)
         {
-            if (Target is null)
-                ResizeRenderTargets(Vector2.Zero);
 
             if (!Metaballs.Any())
                 return;
 
             Effect metaballShader = PrepareEdgeShader();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, metaballShader, Main.GameViewMatrix.TransformationMatrix);
-            spriteBatch.Draw(Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(MainTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             spriteBatch.End();
         }
 
@@ -146,10 +124,10 @@ namespace InfernumMode.Common.Graphics.Metaballs
         {
             Effect edgeShader = InfernumEffectsRegistry.BaseMetaballEdgeShader.GetShader().Shader;
             edgeShader.Parameters["threshold"].SetValue(0.6f);
-            edgeShader.Parameters["rtSize"].SetValue(new Vector2(Target.Width, Target.Height));
+            edgeShader.Parameters["rtSize"].SetValue(new Vector2(MainTarget.Width, MainTarget.Height));
             edgeShader.Parameters["mainColor"].SetValue(DrawColor.ToVector3());
             edgeShader.Parameters["edgeColor"].SetValue(EdgeColor.ToVector3());
-            Utilities.SetTexture1(LightingTarget);
+            Utilities.SetTexture1(LightingTarget.Target);
             return edgeShader;
         }
 

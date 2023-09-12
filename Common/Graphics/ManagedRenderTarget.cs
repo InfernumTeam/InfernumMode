@@ -44,6 +44,8 @@ namespace InfernumMode.Common.Graphics
                     WaitingForFirstInitialization = false;
                 }
 
+                TimeSinceLastAccessed = 0;
+                IsDisposed = false;
                 return target;
             }
             private set => target = value;
@@ -53,12 +55,20 @@ namespace InfernumMode.Common.Graphics
 
         public int Height => Target.Height;
 
+        public readonly bool ShouldAutoDispose;
+
+        /// <summary>
+        /// How many frames since this target has been gotten. Used to dispose of unused targets for the sake of performance.
+        /// </summary>
+        public int TimeSinceLastAccessed;
+
         public delegate RenderTarget2D RenderTargetCreationCondition(int screenWidth, int screenHeight);
 
-        public ManagedRenderTarget(bool shouldResetUponScreenResize, RenderTargetCreationCondition creationCondition)
+        public ManagedRenderTarget(bool shouldResetUponScreenResize, RenderTargetCreationCondition creationCondition, bool shouldAutoDispose = true)
         {
             ShouldResetUponScreenResize = shouldResetUponScreenResize;
             CreationCondition = creationCondition;
+            ShouldAutoDispose = shouldAutoDispose;
             RenderTargetManager.ManagedTargets.Add(this);
         }
 
@@ -78,6 +88,7 @@ namespace InfernumMode.Common.Graphics
             IsDisposed = false;
 
             target = CreationCondition(screenWidth, screenHeight);
+            TimeSinceLastAccessed = 0;
         }
     }
 }

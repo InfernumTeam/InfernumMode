@@ -436,6 +436,12 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => FuckYou();
         }
 
+        public static event ILContext.Manipulator CalamityGlobalNPCPreAI
+        {
+            add => Modify(typeof(CalamityGlobalNPC).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
+            remove => FuckYou();
+        }
+
         public static void FuckYou()
         {
 

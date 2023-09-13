@@ -176,6 +176,8 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             // If a replacement exists, insert it into the enrage text instead.
             if (tooltipReplacement is not null)
                 enrageTooltip.Text = enrageTooltip.Text.Insert(enrageTextStart, tooltipReplacement);
+            else
+                enrageTooltip.Text = enrageTooltip.Text.Replace("\n\n", "\n");
         }
     }
 }

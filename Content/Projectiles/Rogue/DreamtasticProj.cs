@@ -4,7 +4,6 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

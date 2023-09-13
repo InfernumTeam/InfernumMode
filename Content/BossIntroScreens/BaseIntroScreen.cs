@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System.Globalization;
 using System.Linq;
-using InfernumMode.Common.UtilityMethods;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

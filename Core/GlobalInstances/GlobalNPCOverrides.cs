@@ -35,6 +35,14 @@ namespace InfernumMode.Core.GlobalInstances
 {
     public partial class GlobalNPCOverrides : GlobalNPC
     {
+        #region Statics
+        internal static bool ShouldSetDefaults
+        {
+            get;
+            set;
+        }
+        #endregion
+
         #region Instance and Variables
         public override bool InstancePerEntity => true;
 
@@ -108,6 +116,10 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void SetDefaults(NPC npc)
         {
+            // Only set these when told to.
+            if (!ShouldSetDefaults)
+                return;
+
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 

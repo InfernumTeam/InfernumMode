@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.CalPlayer;
+﻿using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Bumblebirb;
 using InfernumMode.Core.OverridingSystem;

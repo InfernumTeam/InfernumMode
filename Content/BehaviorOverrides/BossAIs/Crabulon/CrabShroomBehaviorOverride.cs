@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.Crabulon;
+﻿using CalamityMod.NPCs.Crabulon;
 using InfernumMode.Core.OverridingSystem;
 using System;
 using Terraria;

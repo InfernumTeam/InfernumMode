@@ -3,7 +3,6 @@ using CalamityMod.Items.Materials;
 using InfernumMode.Content.Items.Placeables;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.LoreItems

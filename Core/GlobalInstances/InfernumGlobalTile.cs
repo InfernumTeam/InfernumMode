@@ -9,15 +9,12 @@ using InfernumMode.Content.Tiles.Profaned;
 using InfernumMode.Content.Tiles.Wishes;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Core;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Achievements.DevWishes;
 
 namespace InfernumMode.Core.GlobalInstances

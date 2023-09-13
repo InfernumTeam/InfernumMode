@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

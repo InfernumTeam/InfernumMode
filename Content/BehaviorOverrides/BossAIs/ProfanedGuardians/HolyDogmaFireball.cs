@@ -105,7 +105,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float telegraphMaxAngularVelocity = ToRadians(1.2f);
 
             // Handle setting the telegraph opacities.
-
             switch (CurrentState)
             {
                 case StateType.Growing:

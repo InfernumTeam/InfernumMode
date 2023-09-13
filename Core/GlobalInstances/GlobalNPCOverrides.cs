@@ -121,8 +121,11 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (InfernumMode.CanUseCustomAIs)
             {
-                if (OverridingListManager.InfernumSetDefaultsOverrideList.TryGetValue(npc.type, out Delegate value))
-                    value.DynamicInvoke(npc);
+                //if (OverridingListManager.InfernumSetDefaultsOverrideList.TryGetValue(npc.type, out Delegate value))
+                //    value.DynamicInvoke(npc);
+
+                if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
+                    value.SetDefaults(npc);
             }
         }
 
@@ -167,7 +170,7 @@ namespace InfernumMode.Core.GlobalInstances
                     }
                 }
 
-                if (OverridingListManager.InfernumNPCPreAIOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCPreAIDelegate value))
+                if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
                 {
                     // Disable the effects of timed DR.
                     if (npc.Calamity().KillTime >= 1 && npc.Calamity().AITimer < npc.Calamity().KillTime)
@@ -190,7 +193,7 @@ namespace InfernumMode.Core.GlobalInstances
                     // Disable netOffset effects.
                     npc.netOffset = Vector2.Zero;
 
-                    bool result = value.Invoke(npc);
+                    bool result = value.PreAI(npc);
                     if (npc.Infernum().ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
                         ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
 
@@ -287,8 +290,8 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool CheckDead(NPC npc)
         {
-            if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumCheckDeadOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCCheckDeadDelegate value))
-                return (bool)value.DynamicInvoke(npc);
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
+                return value.CheckDead(npc);
 
             return base.CheckDead(npc);
         }

@@ -36,7 +36,7 @@ namespace InfernumMode.Core.ILEditingStuff
                         overridableNPC |= global.GetType().IsSubclassOf(emodeGlobalNPCType);
                     }
 
-                    if (overridableNPC && OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
+                    if (overridableNPC && OverridingListManager.InfernumNPCPreAIOverrideList.Contains(npc.type) && InfernumMode.CanUseCustomAIs)
                         continue;
 
                     result &= global.PreAI(npc);
@@ -58,7 +58,7 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate(new Action<NPC, bool>((npc, createModNPC) =>
             {
-                if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
+                if (NPCBehaviorOverride.BehaviorOverrides.ContainsKey(npc.type))
                     npc.Infernum().SetDefaults(npc);
             }));
             cursor.Emit(OpCodes.Ret);
@@ -75,7 +75,7 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 GlobalHookList<GlobalNPC> list = (GlobalHookList<GlobalNPC>)typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
 
-                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+                if (OverridingListManager.InfernumPreDrawOverrideList.Contains(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                     return npc.Infernum().PreDraw(npc, spriteBatch, screenPosition, drawColor);
 
                 foreach (GlobalNPC global in list.Enumerate(npc))
@@ -103,7 +103,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 if (npc.ModNPC != null && npc.ModNPC.AnimationType > 0)
                     npc.type = npc.ModNPC.AnimationType;
 
-                if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+                if (OverridingListManager.InfernumFrameOverrideList.Contains(type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
                 {
                     npc.Infernum().FindFrame(npc, frameHeight);
                     return;
@@ -159,7 +159,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 foreach (GlobalProjectile global in list.Enumerate(projectile))
                 {
                     bool overridableProjectile = global is null || global is CalamityGlobalProjectile || global.GetType().FullName.Contains("EModeGlobalProjectile");
-                    if (overridableProjectile && OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
+                    if (overridableProjectile && OverridingListManager.InfernumProjectilePreAIOverrideList.Contains(projectile.type))
                         continue;
 
                     result &= global.PreAI(projectile);

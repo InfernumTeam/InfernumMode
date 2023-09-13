@@ -1,5 +1,4 @@
 ﻿using CalamityMod.Tiles.Abyss;
-using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;

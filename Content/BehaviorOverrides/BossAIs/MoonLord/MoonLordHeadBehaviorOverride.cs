@@ -341,11 +341,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
                 if (lineTelegraphInterpolant > 0f)
                 {
-                    Main.spriteBatch.SetBlendState(BlendState.Additive);
-
                     var rasterizer = Main.Rasterizer;
                     rasterizer.ScissorTestEnable = true;
                     Main.instance.GraphicsDevice.ScissorRectangle = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
+                    Main.spriteBatch.End();
                     Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
                     Texture2D line = InfernumTextureRegistry.BloomLineSmall.Value;

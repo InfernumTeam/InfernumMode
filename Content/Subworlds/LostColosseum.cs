@@ -2,7 +2,6 @@
 using CalamityMod.DataStructures;
 using CalamityMod.Schematics;
 using CalamityMod.World;
-using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Core.GlobalInstances.Players;

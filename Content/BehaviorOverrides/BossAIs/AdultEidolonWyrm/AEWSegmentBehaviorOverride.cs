@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.PrimordialWyrm;
+﻿using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Schematics;
 using InfernumMode.Content.Schematics;
 using InfernumMode.Core.GlobalInstances.Systems;

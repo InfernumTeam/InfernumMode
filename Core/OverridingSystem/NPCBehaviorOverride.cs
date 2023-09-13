@@ -23,30 +23,26 @@ namespace InfernumMode.Core.OverridingSystem
             {
                 NPCBehaviorOverride instance = (NPCBehaviorOverride)Activator.CreateInstance(type);
 
-                // Cache the PreAI method if it exists.
+                // Check that all the methods exist, and add the npc type to the list if so.
                 MethodInfo preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);
                 if (preAIMethod is not null)
-                    OverridingListManager.InfernumNPCPreAIOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreAIDelegate(n => (bool)preAIMethod.Invoke(instance, new object[] { n }));
+                    OverridingListManager.InfernumNPCPreAIOverrideList.Add(instance.NPCOverrideType); // = new OverridingListManager.NPCPreAIDelegate(n => (bool)preAIMethod.Invoke(instance, new object[] { n }));
 
-                // Cache the SetDefaults method if it exists.
                 MethodInfo setDefaultsMethod = type.GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
                 if (setDefaultsMethod is not null && setDefaultsMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumSetDefaultsOverrideList[instance.NPCOverrideType] = setDefaultsMethod.ConvertToDelegate(instance);
+                    OverridingListManager.InfernumSetDefaultsOverrideList.Add(instance.NPCOverrideType); //= setDefaultsMethod.ConvertToDelegate(instance);
 
-                // Cache the PreDraw method if it exists.
                 MethodInfo preDrawMethod = type.GetMethod("PreDraw", Utilities.UniversalBindingFlags);
                 if (preDrawMethod is not null && preDrawMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumPreDrawOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)preDrawMethod.Invoke(instance, new object[] { n, s, c }));
+                    OverridingListManager.InfernumPreDrawOverrideList.Add(instance.NPCOverrideType); //= new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)preDrawMethod.Invoke(instance, new object[] { n, s, c }));
 
-                // Cache the FindFrame method if it exists.
                 MethodInfo findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
                 if (findFrameMethod is not null && findFrameMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumFrameOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCFindFrameDelegate((n, h) => findFrameMethod.Invoke(instance, new object[] { n, h }));
+                    OverridingListManager.InfernumFrameOverrideList.Add(instance.NPCOverrideType); //= new OverridingListManager.NPCFindFrameDelegate((n, h) => findFrameMethod.Invoke(instance, new object[] { n, h }));
 
-                // Cache the CheckDead method if it exists.
                 MethodInfo checkDeadMethod = type.GetMethod("CheckDead", Utilities.UniversalBindingFlags);
                 if (checkDeadMethod is not null && checkDeadMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumCheckDeadOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCCheckDeadDelegate(n => (bool)checkDeadMethod.Invoke(instance, new object[] { n }));
+                    OverridingListManager.InfernumCheckDeadOverrideList.Add(instance.NPCOverrideType); //= new OverridingListManager.NPCCheckDeadDelegate(n => (bool)checkDeadMethod.Invoke(instance, new object[] { n }));
 
                 // Call the load hook.
                 instance.Load();

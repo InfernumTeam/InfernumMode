@@ -13,33 +13,34 @@ namespace InfernumMode.Core.OverridingSystem
         private const string Message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
 #pragma warning restore IDE0051 // Remove unused private members
 
-        internal static Dictionary<int, NPCPreAIDelegate> InfernumNPCPreAIOverrideList = new();
-        internal static Dictionary<int, Delegate> InfernumSetDefaultsOverrideList = new();
-        internal static Dictionary<int, NPCPreDrawDelegate> InfernumPreDrawOverrideList = new();
-        internal static Dictionary<int, NPCFindFrameDelegate> InfernumFrameOverrideList = new();
-        internal static Dictionary<int, NPCCheckDeadDelegate> InfernumCheckDeadOverrideList = new();
+        internal static List<int> InfernumNPCPreAIOverrideList = new();
+        internal static List<int> InfernumSetDefaultsOverrideList = new();
+        internal static List<int> InfernumPreDrawOverrideList = new();
+        internal static List<int> InfernumFrameOverrideList = new();
+        internal static List<int> InfernumCheckDeadOverrideList = new();
 
-        internal static Dictionary<int, Delegate> InfernumProjectilePreAIOverrideList = new();
-        internal static Dictionary<int, Delegate> InfernumProjectilePreDrawOverrideList = new();
+        internal static List<int> InfernumProjectilePreAIOverrideList = new();
+        internal static List<int> InfernumProjectilePreDrawOverrideList = new();
 
         public delegate bool NPCPreAIDelegate(NPC npc);
         public delegate bool NPCPreDrawDelegate(NPC npc, SpriteBatch spriteBatch, Color lightColor);
         public delegate void NPCFindFrameDelegate(NPC npc, int frameHeight);
         public delegate bool NPCCheckDeadDelegate(NPC npc);
 
-        public static bool Registered(int npcID) => InfernumNPCPreAIOverrideList.ContainsKey(npcID);
+        public static bool Registered(int npcID) => NPCBehaviorOverride.BehaviorOverrides.ContainsKey(npcID);
 
         public static bool Registered<T>() where T : ModNPC => Registered(ModContent.NPCType<T>());
 
         public void Load(Mod mod)
         {
-            InfernumNPCPreAIOverrideList = new Dictionary<int, NPCPreAIDelegate>();
-            InfernumSetDefaultsOverrideList = new Dictionary<int, Delegate>();
-            InfernumPreDrawOverrideList = new Dictionary<int, NPCPreDrawDelegate>();
-            InfernumFrameOverrideList = new Dictionary<int, NPCFindFrameDelegate>();
-            InfernumCheckDeadOverrideList = new Dictionary<int, NPCCheckDeadDelegate>();
-            InfernumProjectilePreAIOverrideList = new Dictionary<int, Delegate>();
-            InfernumProjectilePreDrawOverrideList = new Dictionary<int, Delegate>();
+            InfernumNPCPreAIOverrideList = new();
+            InfernumSetDefaultsOverrideList = new();
+            InfernumPreDrawOverrideList = new();
+            InfernumFrameOverrideList = new();
+            InfernumCheckDeadOverrideList = new();
+
+            InfernumProjectilePreAIOverrideList = new();
+            InfernumProjectilePreDrawOverrideList = new();
         }
 
         public void Unload()

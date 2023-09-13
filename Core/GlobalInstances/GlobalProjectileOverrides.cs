@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
@@ -89,8 +89,8 @@ namespace InfernumMode.Core.GlobalInstances
                 if (projectile.type == ModContent.ProjectileType<TrilobiteSpike>())
                     projectile.ModProjectile.CooldownSlot = 1;
 
-                if (OverridingListManager.InfernumProjectilePreAIOverrideList.TryGetValue(projectile.type, out Delegate value))
-                    return (bool)value.DynamicInvoke(projectile);
+                if (ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
+                    return value.PreAI(projectile);
             }
 
             // No tombs.
@@ -217,8 +217,8 @@ namespace InfernumMode.Core.GlobalInstances
                             frame, shroomColor, projectile.rotation, origin, projectile.scale, direction, 0);
                     }
                 }
-                if (OverridingListManager.InfernumProjectilePreDrawOverrideList.TryGetValue(projectile.type, out Delegate value))
-                    return (bool)value.DynamicInvoke(projectile, Main.spriteBatch, lightColor);
+                if (ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
+                    return value.PreDraw(projectile, Main.spriteBatch, lightColor);
             }
             return true;
         }

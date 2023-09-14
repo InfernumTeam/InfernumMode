@@ -37,11 +37,6 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public override bool CanKillTile(int i, int j, ref bool blockDamaged) => NPC.downedBoss3;
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<StrangeOrb>());
-        }
-
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
             Tile t = Main.tile[i, j];

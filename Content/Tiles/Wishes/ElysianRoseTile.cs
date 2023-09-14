@@ -39,11 +39,6 @@ namespace InfernumMode.Content.Tiles.Wishes
             HitSound = SoundID.Grass;
         }
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<ElysianRose>());
-        }
-
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
         {
             int xFrameOffset = Main.tile[i, j].TileFrameX;

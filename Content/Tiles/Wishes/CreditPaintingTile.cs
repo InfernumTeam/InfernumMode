@@ -11,6 +11,7 @@ namespace InfernumMode.Content.Tiles.Wishes
     public class CreditPaintingTile : ModTile
     {
         public const int Width = 6;
+
         public const int Height = 4;
 
         public override void SetStaticDefaults()

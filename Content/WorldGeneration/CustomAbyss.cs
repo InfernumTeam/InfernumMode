@@ -1116,7 +1116,7 @@ namespace InfernumMode.Content.WorldGeneration
         public static void GenerateTerminusTile(Point searchPosition)
         {
             int terminusTileID = ModContent.TileType<TerminusTile>();
-            int dylanShellID = ModContent.TileType<AbyssFossilTile>();
+            //int dylanShellID = ModContent.TileType<AbyssFossilTile>();
 
             for (int tries = 0; tries < 180; tries++)
             {

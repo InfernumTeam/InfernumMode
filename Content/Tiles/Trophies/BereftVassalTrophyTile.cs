@@ -1,7 +1,5 @@
-using InfernumMode.Content.Items.Placeables;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -22,11 +20,6 @@ namespace InfernumMode.Content.Tiles.Trophies
 
             AddMapEntry(new Color(120, 85, 60), Language.GetText("MapObject.Trophy"));
             DustType = 7;
-        }
-
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<BereftVassalTrophy>());
         }
     }
 }

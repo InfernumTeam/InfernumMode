@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (TelegraphDelay >= TelegraphTotalTime)
                 return;
 
-            Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;//ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
+            Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
             float yScale = 1f;
             if (TelegraphDelay < TelegraphFadeTime)
@@ -114,17 +114,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
                 yScale = Lerp(1f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / TelegraphFadeTime);
 
-            Vector2 scaleInner = new(yScale, TelegraphWidth / laserTelegraph.Height);
+            Vector2 scaleOuter = new(yScale, TelegraphWidth / laserTelegraph.Height);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
-            Vector2 scaleOuter = scaleInner;// * new Vector2(1.6f, 1f);
 
-            Color colorOuter = Color.Lerp(Color.Cyan, Color.Purple, TelegraphDelay / TelegraphTotalTime * 2f % 1f); // Iterate through purple and cyan once and then flash.
-            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
+            // Iterate through purple and cyan once and then flash.
+            Color colorOuter = Color.Lerp(Color.Cyan, Color.Purple, TelegraphDelay / TelegraphTotalTime * 2f % 1f);
 
             colorOuter *= 0.7f;
-            colorInner *= 0.7f;
 
-            //Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, OldVelocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0);
             Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter with { A = 0 }, OldVelocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
         }
 

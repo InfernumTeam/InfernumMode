@@ -32,10 +32,6 @@ namespace InfernumMode.Content.Tiles.Misc
             AddMapEntry(new Color(122, 97, 87));
         }
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            HitSound = AbyssGravel.MineSound with { Pitch = 0.3f };
-            //Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<AquaticScourgeSkull>());
-        }
+        public override void KillMultiTile(int i, int j, int frameX, int frameY) => HitSound = AbyssGravel.MineSound with { Pitch = 0.3f };
     }
 }

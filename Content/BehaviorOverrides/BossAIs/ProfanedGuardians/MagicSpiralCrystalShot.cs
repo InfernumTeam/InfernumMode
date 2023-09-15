@@ -1,5 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class MagicSpiralCrystalShot : ModProjectile
+    public class MagicSpiralCrystalShot : ModProjectile, IScreenCullDrawer
     {
         public static readonly Color[] ColorSet = new Color[]
         {
@@ -24,11 +25,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         };
 
         public ref float Timer => ref Projectile.ai[0];
+
         public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, ColorSet);
+
         public ref float Direction => ref Projectile.ai[1];
 
         public Vector2 InitialVelocity;
+
         public Vector2 InitialCenter;
+
         public float RotationAmount => Lerp(0.034f, 0.001f, Timer / 300f);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
@@ -82,7 +87,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Timer++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             if (Timer < 30)
                 DrawLines(Main.spriteBatch);
@@ -105,16 +112,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Main.spriteBatch.Draw(streakTexture, drawPosition, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(streakTexture, drawPosition2, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
-            return false;
         }
 
-        // TODO: Optimize this to need to draw less things.
         public void DrawLines(SpriteBatch spriteBatch)
         {
             // The total number of lines to draw.
             int totalDrawPoints = 80;
 
             Texture2D lineTexture = InfernumTextureRegistry.Pixel.Value;
+
             // Initialize the previous point + velocity with the projectiles initial ones.
             Vector2 previousDrawPoint = InitialCenter;
             Vector2 previousDrawVelocity = InitialVelocity;

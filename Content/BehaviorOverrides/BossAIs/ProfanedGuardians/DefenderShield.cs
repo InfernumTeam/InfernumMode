@@ -22,8 +22,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public Vector2 PositionOffset;
 
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Rock Shield");
-
         public override void SetDefaults()
         {
             Projectile.width = 60;

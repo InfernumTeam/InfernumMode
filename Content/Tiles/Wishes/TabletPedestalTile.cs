@@ -1,5 +1,4 @@
 ﻿using InfernumMode.Content.Items.Pets;
-using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;

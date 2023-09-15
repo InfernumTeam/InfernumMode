@@ -1,4 +1,4 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Core;
@@ -80,11 +80,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             int width = 2048;
             int height = 2048;
-            if (Main.gfxQuality >= 0.5f)
-            {
-                width *= 2;
-                height *= 2;
-            }
 
             int iterations = 14;
 
@@ -95,7 +90,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             KalisetFractal = new(false, (_, _2) =>
             {
                 return new(Main.instance.GraphicsDevice, width, height, false, SurfaceFormat.Single, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
-            });
+            }, false);
 
             // This number is highly important to the resulting structure of the fractal, and is very sensitive (as is typically the case with objects from Chaos Theory).
             // Many numbers will give no fractal at all, pure white, or pure black. But tweaking it to be just right gives some amazing patterns.

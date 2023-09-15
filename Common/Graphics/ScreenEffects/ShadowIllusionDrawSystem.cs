@@ -17,19 +17,19 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             set;
         }
 
-        public static RenderTarget2D ShadowDrawTarget
+        public static ManagedRenderTarget ShadowDrawTarget
         {
             get;
             private set;
         }
 
-        public static RenderTarget2D ShadowWispTarget
+        public static ManagedRenderTarget ShadowWispTarget
         {
             get;
             private set;
         }
 
-        public static RenderTarget2D TemporaryAuxillaryTarget
+        public static ManagedRenderTarget TemporaryAuxillaryTarget
         {
             get;
             private set;
@@ -38,54 +38,23 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         public override void OnModLoad()
         {
             Main.OnPreDraw += PrepareShadowTargets;
-            On_Main.SetDisplayMode += ResetTargetSizes;
+            ShadowDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            ShadowWispTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
         }
 
         public override void OnModUnload()
         {
             Main.OnPreDraw -= PrepareShadowTargets;
-            On_Main.SetDisplayMode -= ResetTargetSizes;
-
-            Main.QueueMainThreadAction(() =>
-            {
-                if (ShadowDrawTarget is not null && !ShadowDrawTarget.IsDisposed)
-                    ShadowDrawTarget.Dispose();
-
-                if (ShadowWispTarget is not null && !ShadowWispTarget.IsDisposed)
-                    ShadowWispTarget.Dispose();
-
-                if (TemporaryAuxillaryTarget is not null && !TemporaryAuxillaryTarget.IsDisposed)
-                    TemporaryAuxillaryTarget.Dispose();
-            });
         }
 
-        private void ResetTargetSizes(On_Main.orig_SetDisplayMode orig, int width, int height, bool fullscreen)
-        {
-            if (ShadowDrawTarget is not null && width == ShadowDrawTarget.Width && height == ShadowDrawTarget.Height)
-                return;
-
-            ScreenSaturationBlurSystem.DrawActionQueue.Enqueue(() =>
-            {
-                // Free GPU resources for the old targets.
-                ShadowDrawTarget?.Dispose();
-                ShadowWispTarget?.Dispose();
-                TemporaryAuxillaryTarget?.Dispose();
-
-                // Recreate targets.
-                ShadowDrawTarget = new(Main.instance.GraphicsDevice, width, height);//, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-                ShadowWispTarget = new(Main.instance.GraphicsDevice, width, height);//, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.PreserveContents);
-                TemporaryAuxillaryTarget = new(Main.instance.GraphicsDevice, width, height);//, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
-            });
-
-            orig(width, height, fullscreen);
-        }
 
         internal static void PrepareShadowTargets(GameTime obj)
         {
             if (Main.gameMenu || ShadowDrawTarget.IsDisposed)
                 return;
 
-            Main.instance.GraphicsDevice.SetRenderTarget(ShadowDrawTarget);
+            Main.instance.GraphicsDevice.SetRenderTarget(ShadowDrawTarget.Target);
             Main.instance.GraphicsDevice.Clear(Color.Transparent);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
@@ -156,34 +125,34 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             }
 
             // Update the shadowy wisp effect every frame.
-            Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget);
+            Main.instance.GraphicsDevice.SetRenderTarget(TemporaryAuxillaryTarget.Target);
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer);
 
-            Main.instance.GraphicsDevice.Textures[0] = ShadowWispTarget;
-            Main.instance.GraphicsDevice.Textures[1] = ShadowDrawTarget;
+            Main.instance.GraphicsDevice.Textures[0] = ShadowWispTarget.Target;
+            Main.instance.GraphicsDevice.Textures[1] = ShadowDrawTarget.Target;
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
             var shader = InfernumEffectsRegistry.AEWShadowFormShader.Shader;
-            shader.Parameters["actualSize"].SetValue(ShadowWispTarget.Size());
+            shader.Parameters["actualSize"].SetValue(ShadowWispTarget.Target.Size());
             shader.Parameters["screenMoveOffset"].SetValue(Main.screenPosition - Main.screenLastPosition);
             shader.CurrentTechnique.Passes["UpdatePass"].Apply();
 
-            Main.spriteBatch.Draw(ShadowWispTarget, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
+            Main.spriteBatch.Draw(ShadowWispTarget.Target, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, 1f, 0, 0f);
             Main.spriteBatch.End();
 
-            ShadowWispTarget.CopyContentsFrom(TemporaryAuxillaryTarget);
+            ShadowWispTarget.Target.CopyContentsFrom(TemporaryAuxillaryTarget.Target);
         }
 
         public static void DrawTarget()
         {
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["lightFormInterpolant"].SetValue(0f);
             InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["darkFormInterpolant"].SetValue(1f);
-            InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["actualSize"].SetValue(ShadowDrawTarget.Size());
+            InfernumEffectsRegistry.AEWShadowFormShader.Shader.Parameters["actualSize"].SetValue(ShadowDrawTarget.Target.Size());
             InfernumEffectsRegistry.AEWShadowFormShader.UseColor(Color.Purple);
             InfernumEffectsRegistry.AEWShadowFormShader.UseSecondaryColor(Color.DarkViolet * 0.7f);
             InfernumEffectsRegistry.AEWShadowFormShader.UseImage1("Images/Misc/Perlin");
             InfernumEffectsRegistry.AEWShadowFormShader.Apply();
-            Main.instance.GraphicsDevice.Textures[2] = ShadowWispTarget;
-            Main.spriteBatch.Draw(ShadowDrawTarget, Vector2.Zero, Color.White);
+            Main.instance.GraphicsDevice.Textures[2] = ShadowWispTarget.Target;
+            Main.spriteBatch.Draw(ShadowDrawTarget.Target, Vector2.Zero, Color.White);
         }
     }
 }

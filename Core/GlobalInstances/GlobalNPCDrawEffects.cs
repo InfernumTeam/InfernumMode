@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.NPCs.DevourerofGods;
@@ -88,7 +88,7 @@ namespace InfernumMode.Core.GlobalInstances
                 if (isDoG && npc.alpha >= 252)
                     return false;
 
-                if (OverridingListManager.InfernumPreDrawOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCPreDrawDelegate value))
+                if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
                 {
                     if (Main.LocalPlayer.Calamity().trippy)
                     {
@@ -124,7 +124,7 @@ namespace InfernumMode.Core.GlobalInstances
                             Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                         }
                     }
-                    return value.Invoke(npc, Main.spriteBatch, drawColor);
+                    return value.PreDraw(npc, Main.spriteBatch, drawColor);
                 }
             }
             return base.PreDraw(npc, Main.spriteBatch, screenPos, drawColor);
@@ -174,8 +174,8 @@ namespace InfernumMode.Core.GlobalInstances
         #region Frame Manipulation
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            if (OverridingListManager.InfernumFrameOverrideList.TryGetValue(npc.type, out OverridingListManager.NPCFindFrameDelegate value) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
-                value.Invoke(npc, frameHeight);
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value) && !npc.IsABestiaryIconDummy)
+                value.FindFrame(npc, frameHeight);
         }
         #endregion
 

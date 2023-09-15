@@ -29,7 +29,13 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public static partial class HookManager
     {
-        internal static List<ILHook> hooks
+        internal static List<ILHook> IlHooks
+        {
+            get;
+            set;
+        } = new();
+
+        internal static List<Hook> OnHooks
         {
             get;
             set;
@@ -37,181 +43,181 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static event ILContext.Manipulator ModifyPreAINPC
         {
-            add => Modify(typeof(NPCLoader).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(NPCLoader).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModifySetDefaultsNPC
         {
-            add => Modify(typeof(NPCLoader).GetMethod("SetDefaults", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(NPCLoader).GetMethod("SetDefaults", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModifyCheckDead
         {
-            add => Modify(typeof(NPCLoader).GetMethod("CheckDead", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(NPCLoader).GetMethod("CheckDead", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModifyPreDrawNPC
         {
-            add => Modify(typeof(NPCLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(NPCLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModifyPreDrawProjectile
         {
-            add => Modify(typeof(ProjectileLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ProjectileLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModifyFindFrameNPC
         {
-            add => Modify(typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModifyPreAIProjectile
         {
-            add => Modify(typeof(ProjectileLoader).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ProjectileLoader).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ModeIndicatorUIDraw
         {
-            add => Modify(typeof(ModeIndicatorUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ModeIndicatorUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator CalamityWorldPostUpdate
         {
-            add => Modify(typeof(WorldMiscUpdateSystem).GetMethod("PostUpdateWorld", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(WorldMiscUpdateSystem).GetMethod("PostUpdateWorld", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator CalamityPlayerModifyHitByProjectile
         {
-            add => Modify(typeof(CalamityPlayer).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityPlayer).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator CalamityGenNewTemple
         {
-            add => Modify(typeof(CustomTemple).GetMethod("GenNewTemple", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CustomTemple).GetMethod("GenNewTemple", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SepulcherHeadModifyProjectile
         {
-            add => Modify(typeof(SepulcherHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SepulcherHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SepulcherBodyModifyProjectile
         {
-            add => Modify(typeof(SepulcherBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SepulcherBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SepulcherBody2ModifyProjectile
         {
-            add => Modify(typeof(SepulcherBodyEnergyBall).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SepulcherBodyEnergyBall).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SepulcherTailModifyProjectile
         {
-            add => Modify(typeof(SepulcherTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SepulcherTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator DesertScourgeItemUseItem
         {
-            add => Modify(typeof(DesertMedallion).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(DesertMedallion).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator AresBodyCanHitPlayer
         {
-            add => Modify(typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator YharonOnHitPlayer
         {
-            add => Modify(typeof(Yharon).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(Yharon).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SCalOnHitPlayer
         {
-            add => Modify(typeof(SupremeCalamitas).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SupremeCalamitas).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator NPCStatsDefineContactDamage
         {
-            add => Modify(typeof(NPCStats).GetMethod("GetNPCDamage", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(NPCStats).GetMethod("GetNPCDamage", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ExoMechIsPresent
         {
-            add => Modify(typeof(Draedon).GetMethod("get_ExoMechIsPresent", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(Draedon).GetMethod("get_ExoMechIsPresent", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ExoMechSelectionUIDraw
         {
-            add => Modify(typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ExoMechDropLoot
         {
-            add => Modify(typeof(AresBody).GetMethod("DropExoMechLoot", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AresBody).GetMethod("DropExoMechLoot", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator UpdateRippers
         {
-            add => Modify(typeof(CalamityPlayer).GetMethod("UpdateRippers", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityPlayer).GetMethod("UpdateRippers", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator GetAdrenalineDamage
         {
-            add => Modify(typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator PlaceHellLab
         {
-            add => Modify(typeof(DraedonStructures).GetMethod("PlaceHellLab", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(DraedonStructures).GetMethod("PlaceHellLab", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SpawnProvLootBox
         {
-            add => Modify(typeof(Providence).GetMethod("SpawnLootBox", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(Providence).GetMethod("SpawnLootBox", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator DashMovement
         {
-            add => Modify(typeof(CalamityPlayer).GetMethod("ModDashMovement", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityPlayer).GetMethod("ModDashMovement", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator BossRushTier
         {
-            add => Modify(typeof(BossRushEvent).GetMethod("get_CurrentTier", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(BossRushEvent).GetMethod("get_CurrentTier", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ExoMechsSkyIsActive
         {
-            add => Modify(typeof(ExoMechsSky).GetMethod("get_CanSkyBeActive", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ExoMechsSky).GetMethod("get_CanSkyBeActive", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
@@ -223,25 +229,25 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static event ILContext.Manipulator FargosCanDestroyTileWithInstabridge
         {
-            add => Modify(InfernumMode.FargosMutantMod.Code.GetType("Fargowiltas.Projectiles.Explosives.DoubleObsInstaBridgeProj").GetMethod("Kill", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(InfernumMode.FargosMutantMod.Code.GetType("Fargowiltas.Projectiles.Explosives.DoubleObsInstaBridgeProj").GetMethod("Kill", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator FargosCanDestroyTileWithInstabridge2
         {
-            add => Modify(InfernumMode.FargosMutantMod.Code.GetType("Fargowiltas.Projectiles.Explosives.InstabridgeProj").GetMethod("Kill", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(InfernumMode.FargosMutantMod.Code.GetType("Fargowiltas.Projectiles.Explosives.InstabridgeProj").GetMethod("Kill", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator GenerateSulphSeaCheeseCaves
         {
-            add => Modify(typeof(SulphurousSea).GetMethod("GenerateCheeseWaterCaves", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SulphurousSea).GetMethod("GenerateCheeseWaterCaves", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator GenerateSulphSeaSpaghettiCaves
         {
-            add => Modify(typeof(SulphurousSea).GetMethod("GenerateSpaghettiWaterCaves", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(SulphurousSea).GetMethod("GenerateSpaghettiWaterCaves", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
@@ -253,7 +259,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static event ILContext.Manipulator ExoMechTileTileColor
         {
-            add => Modify(typeof(ExoMechsSky).GetMethod("OnTileColor", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ExoMechsSky).GetMethod("OnTileColor", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
@@ -307,42 +313,42 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static event ILContext.Manipulator AbyssLayer1Color
         {
-            add => Modify(typeof(AbyssLayer1Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AbyssLayer1Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator AbyssLayer2Color
         {
-            add => Modify(typeof(AbyssLayer2Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AbyssLayer2Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator AbyssLayer3Color
         {
-            add => Modify(typeof(AbyssLayer3Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AbyssLayer3Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator AbyssLayer4Color
         {
-            add => Modify(typeof(AbyssLayer4Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AbyssLayer4Biome).GetMethod("get_WaterStyle", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
         public static event ILContext.Manipulator BRSkyColor
         {
-            add => Modify(typeof(BossRushSky).GetMethod("get_GeneralColor", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(BossRushSky).GetMethod("get_GeneralColor", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator BRXerocEyeTexure
         {
-            add => Modify(typeof(BossRushSky).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(BossRushSky).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator DoGSkyDraw
         {
-            add => Modify(typeof(DoGBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(DoGBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
@@ -366,88 +372,113 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static event ILContext.Manipulator UpdateBadLifeRegen
         {
-            add => Modify(typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator SelectSulphuricWaterColor
         {
-            add => Modify(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ILChanges).GetMethod("SelectSulphuricWaterColor", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator DrawCodebreakerUI
         {
-            add => Modify(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CodebreakerUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator DisplayCodebreakerCommunicationPanel
         {
-            add => Modify(typeof(CodebreakerUI).GetMethod("DisplayCommunicationPanel", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CodebreakerUI).GetMethod("DisplayCommunicationPanel", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator RuneOfKosCanUseItem
         {
-            add => Modify(typeof(RuneofKos).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(RuneofKos).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator RuneOfKosUseItem
         {
-            add => Modify(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(RuneofKos).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator PlaceForbiddenArchive
         {
-            add => Modify(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(DungeonArchive).GetMethod("PlaceArchive", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator ProfanedShardUseItem
         {
-            add => Modify(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator CalGlobalNPCPostDraw
         {
-            add => Modify(typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator AquaticScourgeSpecialOnKill
         {
-            add => Modify(typeof(AquaticScourgeHead).GetMethod("SpecialOnKill", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(AquaticScourgeHead).GetMethod("SpecialOnKill", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator CalPlayerProcessTriggers
         {
-            add => Modify(typeof(CalamityPlayer).GetMethod("ProcessTriggers", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(CalamityPlayer).GetMethod("ProcessTriggers", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
 
         public static event ILContext.Manipulator EternityHexAI
         {
-            add => Modify(typeof(EternityHex).GetMethod("AI", Utilities.UniversalBindingFlags), value);
+            add => ModifyIl(typeof(EternityHex).GetMethod("AI", Utilities.UniversalBindingFlags), value);
             remove => FuckYou();
         }
+
+        public static event ILContext.Manipulator CalamityGlobalNPCPreAI
+        {
+            add => ModifyIl(typeof(CalamityGlobalNPC).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
+            remove => FuckYou();
+        }
+
+        private static readonly MethodInfo SetDefaultMethod = typeof(NPCLoader).GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_SetDefaultDelegate(NPC npc, bool createModNPC);
+
+        private static readonly MethodInfo FindFrameMethod = typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_FindFrameDelegate(NPC npc, int frameHeight);
+
+        private static readonly MethodInfo CalPreAIMethod = typeof(CalamityGlobalNPC).GetMethod("PreAI", Utilities.UniversalBindingFlags);
+
+        public delegate bool Orig_CalPreAIDelegate(CalamityGlobalNPC self, NPC npc);
 
         public static void FuckYou()
         {
 
         }
 
-        public static void Modify(MethodBase method, ILContext.Manipulator edit)
+        public static void ModifyIl(MethodBase method, ILContext.Manipulator edit)
         {
-            hooks ??= new();
+            IlHooks ??= new();
 
             var hook = new ILHook(method, edit);
             hook.Apply();
-            hooks.Add(hook);
+            IlHooks.Add(hook);
+        }
+
+        public static void ModifyDetour(MethodBase methodBase, Delegate method)
+        {
+            Hook hook = new(methodBase, method);
+            hook.Apply();
+            OnHooks.Add(hook);
         }
     }
 }

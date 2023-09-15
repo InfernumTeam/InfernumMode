@@ -59,7 +59,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            //Main.QueueMainThreadAction(PrepareTarget);
+            Main.QueueMainThreadAction(PrepareTarget);
         }
 
         public override void OnModUnload()
@@ -67,24 +67,19 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            //Main.QueueMainThreadAction(() =>
-            //{
-            //    if (KalisetFractal is not null && !KalisetFractal.IsDisposed)
-            //        KalisetFractal.Dispose();
+            Main.QueueMainThreadAction(() =>
+            {
+                if (KalisetFractal is not null && !KalisetFractal.IsDisposed)
+                    KalisetFractal.Dispose();
 
-            //    KalisetFractal = null;
-            //});
+                KalisetFractal = null;
+            });
         }
 
         internal static void PrepareTarget()
         {
             int width = 2048;
             int height = 2048;
-            if (Main.gfxQuality >= 0.5f)
-            {
-                width *= 2;
-                height *= 2;
-            }
 
             int iterations = 14;
 
@@ -148,8 +143,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public static void Draw()
         {
-            return;
-
             // Make the intensity dissipate.
             if (IdealExtraIntensity != 0f)
             {

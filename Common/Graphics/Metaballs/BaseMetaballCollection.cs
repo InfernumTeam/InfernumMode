@@ -110,7 +110,6 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public void DrawTarget(SpriteBatch spriteBatch)
         {
-
             if (!Metaballs.Any())
                 return;
 

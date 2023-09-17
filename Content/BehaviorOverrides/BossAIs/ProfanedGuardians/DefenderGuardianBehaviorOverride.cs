@@ -164,6 +164,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         GeneralParticleHandler.SpawnParticle(energyLeak);
                     }
 
+                    BlockerSystem.SetBlockers(ui: true);
+
                     shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
 
                     if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
@@ -214,10 +216,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case 1:
                     if (InfernumConfig.Instance.FlashbangOverlays && localAttackTimer == 30f)
                         typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);
+
                     npc.Opacity = 0f;
+
                     if (localAttackTimer > 45f)
                     {
-                        Main.hideUI = false;
                         SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndCharge);
                         commander.Infernum().ExtraAI[CommanderAttackCyclePositionIndex] = 1f;
 
@@ -225,6 +228,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.life = 0;
                         npc.NPCLoot();
                         npc.active = false;
+                    }
+                    else
+                    {
+                        BlockerSystem.SetBlockers(ui: true);
                     }
                     break;
             }

@@ -1923,8 +1923,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Do not deal damage.
                     npc.damage = 0;
                     // Hide UI.
+
                     if (Main.myPlayer == npc.target && Main.netMode == NetmodeID.SinglePlayer)
-                        Main.hideUI = true;
+                        BlockerSystem.SetBlockers(ui: true);
                 }
 
                 // Spawn cool symbols.

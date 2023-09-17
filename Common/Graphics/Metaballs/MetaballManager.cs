@@ -48,7 +48,6 @@ namespace InfernumMode.Common.Graphics.Metaballs
         {
             orig(self);
             DrawTargets(Main.spriteBatch);
-
         }
 
         private void DrawParticles(On_Main.orig_DrawInfernoRings orig, Main self)

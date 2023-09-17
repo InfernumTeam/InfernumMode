@@ -85,13 +85,13 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         public override void OnModLoad()
         {
             // Initialize target defintions.
-            BloomTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            FinalScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            BloomTarget = new(true, RenderTargetManager.CreateScreenSizedTarget, false);
+            FinalScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget, false);
             DownscaledBloomTarget = new(true, new((width, height) =>
             {
                 return new(Main.instance.GraphicsDevice, (int)(width / DownscaleFactor), (int)(height / DownscaleFactor));
-            }));
-            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            }), false);
+            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget, false);
 
             Main.OnPreDraw += HandleDrawMainThreadQueue;
             On_FilterManager.EndCapture += GetFinalScreenShader;

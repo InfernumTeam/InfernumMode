@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Projectile.height = 14;
             Projectile.hostile = true;
             Projectile.tileCollide = false;
-            Projectile.Opacity = 0.25f;
+            Projectile.Opacity = 1f;
             Projectile.penetrate = 1;
             Projectile.timeLeft = 600;
             Projectile.aiStyle = 1;

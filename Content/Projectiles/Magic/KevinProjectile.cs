@@ -68,7 +68,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 30;
+            Projectile.width = Projectile.height = 38;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.tileCollide = false;
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             }
 
             // Stick to the owner.
-            Projectile.Center = Owner.MountedCenter + Projectile.velocity * new Vector2(24f, 16f);
+            Projectile.Center = Owner.MountedCenter;
 
             // Decide a target every frame.
             TargetIndex = -1;
@@ -132,12 +132,6 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (LightningDistance >= maxLightningRange)
                 LightningDistance = maxLightningRange;
 
-            // Determine the direction the owner should face.
-            Owner.ChangeDir(Math.Sign(Projectile.velocity.X));
-
-            // Determine the rotation based on the direction of the velocity.
-            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
-
             // Update the sound's position.
             if (SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)
                 t.Position = Projectile.Center;
@@ -148,7 +142,6 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (Time % 5f == 4f && !Owner.CheckMana(Owner.ActiveItem(), -1, true))
                 Projectile.Kill();
 
-            // Adjust player values such as arm rotation.
             AdjustPlayerValues();
 
             // Decide frames.
@@ -160,16 +153,23 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public void AdjustPlayerValues()
         {
-            Projectile.spriteDirection = Projectile.direction = -Owner.direction;
             Projectile.timeLeft = 2;
             Owner.heldProj = Projectile.whoAmI;
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
             Owner.itemRotation = (Projectile.direction * Projectile.velocity).ToRotation();
 
-            // Update the player's arm directions to make it look as though they're holding the horn.
-            float frontArmRotation = (PiOver2 - 0.31f) * -Owner.direction;
+            Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Owner.ChangeDir(Projectile.spriteDirection);
+
+            Projectile.Center += Projectile.velocity.SafeNormalize(Vector2.UnitY) * 20f;
+
+            // Update the player's arm directions to make it look as though they're holding the flamethrower.
+            float frontArmRotation = Projectile.rotation - PiOver2;
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
+
+            Projectile.rotation += PiOver2;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -222,16 +222,22 @@ namespace InfernumMode.Content.Projectiles.Magic
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (LightningTarget == null || LightningTarget.IsDisposed)
-                return true;
+            if (LightningTarget != null || !LightningTarget.IsDisposed)
+            {
 
-            Main.Rasterizer = RasterizerState.CullNone;
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation - PiOver2, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
-            Main.spriteBatch.ResetBlendState();
+                Main.Rasterizer = RasterizerState.CullNone;
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Draw(LightningTarget.Target, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation - PiOver2, LightningTarget.Target.Size() * 0.5f, Projectile.scale, 0, 0f);
+                Main.spriteBatch.ResetBlendState();
+            }
 
-            return true;
+            Texture2D kevin = ModContent.Request<Texture2D>(Texture).Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Rectangle frame = new(0, Projectile.height * Projectile.frame, Projectile.width, Projectile.height);
+            Vector2 origin = frame.Size() * 0.5f;
+            Main.spriteBatch.Draw(kevin, drawPosition, frame, Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            return false;
         }
 
         public override bool? CanHitNPC(NPC target) => target.whoAmI == TargetIndex ? null : false;
@@ -256,8 +262,11 @@ namespace InfernumMode.Content.Projectiles.Magic
             if (Main.netMode != NetmodeID.Server)
             {
                 RenderTargetManager.RenderTargetUpdateLoopEvent -= UpdateLightningField;
-                LightningTarget?.Dispose();
-                TemporaryAuxillaryTarget?.Dispose();
+                Main.QueueMainThreadAction(() =>
+                {
+                    LightningTarget?.Dispose();
+                    TemporaryAuxillaryTarget?.Dispose();
+                });
             }
 
             if (SoundEngine.TryGetActiveSound(ElectricitySound, out var t) && t.IsPlaying)

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,8 +40,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Calculate light power. This checks below the position of the fog to check if this fog is underground.
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
-            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
-            LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
+            if (Main.netMode != NetmodeID.Server)
+            {
+                float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
+                LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
+            }
             Projectile.Opacity = Utils.GetLerpValue(105f, 100f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
             Projectile.rotation += Projectile.velocity.X * 0.003f;
             Projectile.velocity *= 0.98f;

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
@@ -54,13 +54,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             float idealScale = IdealScale + Utils.Remap(Projectile.timeLeft, 72f, 0f, 0f, 12f);
             Projectile.scale = Lerp(Projectile.scale, idealScale, 0.067f);
 
-            // Calculate light power. This checks below the position of the fog to check if this fog is underground.
-            // Without this, it may render over the fullblack that the game renders for obscured tiles.
-            float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
-            if (CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).LiquidAmount >= 25)
-                lightPowerBelow = 1f;
+            if (Main.netMode != NetmodeID.Server)
+            {
+                // Calculate light power. This checks below the position of the fog to check if this fog is underground.
+                // Without this, it may render over the fullblack that the game renders for obscured tiles.
+                float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
+                if (CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).LiquidAmount >= 25)
+                    lightPowerBelow = 1f;
 
-            LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
+                LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
+            }
             Projectile.Opacity = Utils.GetLerpValue(Lifetime, Lifetime - 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true) * 0.72f;
             Projectile.rotation += Projectile.velocity.X * 0.002f;
             Projectile.velocity *= 0.97f;

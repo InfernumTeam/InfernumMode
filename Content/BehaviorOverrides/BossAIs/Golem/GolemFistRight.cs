@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             NPC.noTileCollide = true;
         }
 
-        public override bool PreAI() => GolemFistLeft.DoFistAI(NPC, false);
+        public override bool PreAI() => GolemFistLeft.DoFistAI(NPC);
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => GolemFistLeft.DrawFist(NPC, Main.spriteBatch, drawColor, false);
 

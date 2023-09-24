@@ -1928,6 +1928,11 @@ Mods: {
 					}
 				}
 			}
+
+			ProfanedGardenLocationSetter: {
+				DisplayName: Profaned Garden Location Setter
+				Tooltip: ""
+			}
 		}
 
 		Tiles: {
@@ -1979,7 +1984,7 @@ Mods: {
 		}
 
 		Status: {
-            AchievementCompletionText: Achievement Completed!
+			AchievementCompletionText: Achievement Completed!
 			InfernumDisallowedInWeirdDifficulties: Infernum is not allowed in Master Mode, For the Worthy or Get fixed boi.
 			EternityModeWarning: Eternity mode's boss AI changes are overridden by Infernum if there are conflicts.
 			CyberneticImmortalityEnabled: Cybernetic immortality has been enabled.
@@ -2093,7 +2098,7 @@ Mods: {
 			CVEnergyChainsTip: Those chains wont seem to hold it much longer, brace yourself!
 			CrabulonTip1: Crabulon will only launch spores every three jumps, better keep count!
 			CrabulonTip2: Try focusing on those Crab Shrooms. They'll overwhelm you if you leave them alone!
-            CrabulonTip3: Staying leveled with Crabulon might be helpful, better than catching multiple types of bacterial diseases in the air above...
+			CrabulonTip3: Staying leveled with Crabulon might be helpful, better than catching multiple types of bacterial diseases in the air above...
 			CrabulonJokeTip1: There isnt Mushroom for the three of us, and I can tell who won the roullete.
 			CryogenTip1: Move as little as possible while it's above you. That should calm down its spastic jittering!
 			CryogenTip2: Watch for the gaps in the icicles around Cryogen, they're a great indicator of where a safe spot is!
@@ -2106,7 +2111,7 @@ Mods: {
 			DestroyerTip1: Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!
 			DSTip1: I’ve noticed the Scourge sends an audible roar before whipping up those massive dust pillars, how considerate!
 			DSTip2: Skill with a grappling hook will prove very useful to get out of the Scourge’s way.
-            DSFinalPhaseTip: I think these vultures are going to earn a meal here, one way or another...
+			DSFinalPhaseTip: I think these vultures are going to earn a meal here, one way or another...
 			DSJokeTip1: Really served yourself as a dessert course right there...
 			DoGLaserTip: Oh man, theres so many lasers! Slow and precise movements seem like your best bet here...
 			DoGRoDTip: It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!
@@ -2132,7 +2137,7 @@ Mods: {
 			EoCTip1: Stay near those tooth balls! The teeth they fire are aimed far away from them!
 			EoCTip2: Don’t bother trying to kill the servants, they’ll be out of your eye before they die!
 			EoCJokeTip1: Eye can’t believe you got blind-sided by that!
-            EoCJokeTip2: Eye ay ay! what a way to die...
+			EoCJokeTip2: Eye ay ay! what a way to die...
 			GolemTip1: Golem's eye color will change depending on it's attack. Keep your own eyes peeled!
 			GolemJokeTip1: You're gonna have a bad time...
 			HiveMindTip1: This is the time you would want to learn the opponents moves, use their tells to get the upper hand!
@@ -2143,10 +2148,10 @@ Mods: {
 			HiveMindJokeTip2: I would make a snarky comment right now, but I probably should Mind my own business...
 			KingSlimeTip1: Try to learn King Slime’s jump cycle! It could help you plan your actions ahead of time.
 			KingSlimeTip2: With a jump that high, I wonder if you could duck beneath him?
-            KingSlimeJewelTip: That Crown Jewel sure is dangerous! Keep in mind that it shoots at the same rate all the time, so time yourself accordingly!
+			KingSlimeJewelTip: That Crown Jewel sure is dangerous! Keep in mind that it shoots at the same rate all the time, so time yourself accordingly!
 			KingSlimeNinjaTip: The ninja shoots more shurikens the farther you are, so don't go too far!
 			KingSlimeJokeTip1: Quite a sticky situation you had to deal with...
-            KingSlimeDefeatTip: And that's a Goo’d bye!
+			KingSlimeDefeatTip: And that's a Goo’d bye!
 			AnahitaTip1: You can weave through the clefs if you manipulate Anahita's movement well!
 			AnahitaFinalPhaseTip: Home stretch! Do the same as you did before!
 			LeviathanTip1: The meteors all split in the same way; use this to your advantage!

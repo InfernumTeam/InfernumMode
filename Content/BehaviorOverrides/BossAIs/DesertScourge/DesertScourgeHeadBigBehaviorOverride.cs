@@ -5,6 +5,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -609,17 +610,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             // Summon vultures.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == vultureSummonDelay)
+            if (attackTimer == vultureSummonDelay)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.DesertScourgeShortRoar, npc.Center);
-                for (int i = 0; i < 3; i++)
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DSFinalPhaseTip");
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    // Prevent NPC spam if there's more than 8 vultures present.
-                    if (NPC.CountNPCS(NPCID.Vulture) >= 8)
-                        break;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        // Prevent NPC spam if there's more than 8 vultures present.
+                        if (NPC.CountNPCS(NPCID.Vulture) >= 8)
+                            break;
 
-                    Vector2 vultureSpawnPosition = target.Center + new Vector2(Lerp(-600f, 600f, i / 2f), -500f);
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
+                        Vector2 vultureSpawnPosition = target.Center + new Vector2(Lerp(-600f, 600f, i / 2f), -500f);
+                        NPC.NewNPC(npc.GetSource_FromAI(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
+                    }
                 }
             }
 

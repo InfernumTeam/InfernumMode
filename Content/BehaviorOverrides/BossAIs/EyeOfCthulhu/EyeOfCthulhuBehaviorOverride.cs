@@ -861,6 +861,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     return "Mods.InfernumMode.PetDialog.EoCJokeTip1";
                 return string.Empty;
             };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.EoCJokeTip2";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

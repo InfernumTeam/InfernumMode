@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -105,26 +106,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (TelegraphDelay >= TelegraphTotalTime)
                 return;
 
-            Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
+            Texture2D laserTelegraph = InfernumTextureRegistry.BloomLineSmall.Value;
 
-            float yScale = 2f;
+            float yScale = 1f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = Lerp(0f, 2f, TelegraphDelay / TelegraphFadeTime);
+                yScale = Lerp(0f, 1f, TelegraphDelay / TelegraphFadeTime);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                yScale = Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / TelegraphFadeTime);
+                yScale = Lerp(1f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / TelegraphFadeTime);
 
-            Vector2 scaleInner = new(TelegraphWidth / laserTelegraph.Width, yScale);
-            Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
-            Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.6f);
+            Vector2 scaleOuter = new(yScale, TelegraphWidth / laserTelegraph.Height);
+            Vector2 origin = laserTelegraph.Size() * new Vector2(0.5f, 0f);
 
-            Color colorOuter = Color.Lerp(Color.Cyan, Color.Purple, TelegraphDelay / TelegraphTotalTime * 2f % 1f); // Iterate through purple and cyan once and then flash.
-            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
+            // Iterate through purple and cyan once and then flash.
+            Color colorOuter = Color.Lerp(Color.Cyan, Color.Purple, TelegraphDelay / TelegraphTotalTime * 2f % 1f);
 
             colorOuter *= 0.7f;
-            colorInner *= 0.7f;
 
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, OldVelocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0);
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, OldVelocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter with { A = 0 }, OldVelocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
         }
 
         public override bool PreDraw(ref Color lightColor) => TelegraphDelay >= TelegraphTotalTime;

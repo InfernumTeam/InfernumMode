@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
@@ -171,8 +171,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                 Player.Infernum_Camera().ScreenFocusInterpolant = CalamityUtils.SineInOutEasing(Clamp(Time / MoveTime, 0f, 1f), 0);
 
                 // Disable input and UI during the animation.
-                Main.blockInput = true;
-                Main.hideUI = true;
+                BlockerSystem.SetBlockers(true, true);
             }
 
             if (Time is >= 210f and <= SpawnTime)
@@ -228,11 +227,11 @@ namespace InfernumMode.Content.Projectiles.Generic
             Time++;
         }
 
-        public override void Kill(int timeLeft)
-        {
-            Main.blockInput = false;
-            Main.hideUI = false;
-        }
+        //public override void Kill(int timeLeft)
+        //{
+        //    //Main.blockInput = false;
+        //    //Main.hideUI = false;
+        //}
 
         private static void CreateSpawnExplosion(Vector2 impactCenter)
         {

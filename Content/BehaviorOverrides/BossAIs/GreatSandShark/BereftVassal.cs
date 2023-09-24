@@ -462,10 +462,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Disable controls and UI for the target.
             if (Main.myPlayer == NPC.target && Main.netMode == NetmodeID.SinglePlayer)
-            {
-                Main.hideUI = true;
-                Main.blockInput = true;
-            }
+                BlockerSystem.SetBlockers(true, true);
 
             if (AttackTimer >= animationTime + animationFocusReturnTime)
             {
@@ -1554,10 +1551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 // Disable controls and UI for the target.
                 if (Main.myPlayer == NPC.target)
-                {
-                    Main.hideUI = true;
-                    Main.blockInput = true;
-                }
+                    BlockerSystem.SetBlockers(true, true);
 
                 // Delete all old projectiles.
                 Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<GroundSlamWave>(), ModContent.ProjectileType<SandBlob>(), ModContent.ProjectileType<TorrentWave>(), ModContent.ProjectileType<WaterSpear>(), ModContent.ProjectileType<WaterTorrentBeam>());

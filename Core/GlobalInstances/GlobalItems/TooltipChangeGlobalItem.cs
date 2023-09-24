@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -24,8 +24,8 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
         public static Dictionary<int, string> EnrageTooltipReplacements => new()
         {
             [ModContent.ItemType<DecapoditaSprout>()] = "Enrages outside of the Mushroom biome",
-            [ItemID.WormFood] = "Enrages outside of the Corruption\n",
-            [ItemID.BloodySpine] = "Enrages outside of the Crimson\n",
+            [ItemID.WormFood] = "Enrages outside of the Corruption",
+            [ItemID.BloodySpine] = "Enrages outside of the Crimson",
             [ModContent.ItemType<Teratoma>()] = "Enrages outside of the Corruption",
             [ModContent.ItemType<BloodyWormFood>()] = "Enrages outside of the Crimson",
             [ModContent.ItemType<Seafood>()] = "Enrages outside of the waters of the Sulphurous Sea",
@@ -171,11 +171,13 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             while (enrageTextEnd < enrageTooltip.Text.Length && enrageTooltip.Text[enrageTextEnd] != '\n')
                 enrageTextEnd++;
 
-            enrageTooltip.Text = enrageTooltip.Text.Remove(enrageTextStart, Math.Min(enrageTextEnd - enrageTextStart + 1, enrageTooltip.Text.Length));
+            enrageTooltip.Text = enrageTooltip.Text.Remove(enrageTextStart, Math.Min(enrageTextEnd - enrageTextStart, enrageTooltip.Text.Length));
 
             // If a replacement exists, insert it into the enrage text instead.
             if (tooltipReplacement is not null)
                 enrageTooltip.Text = enrageTooltip.Text.Insert(enrageTextStart, tooltipReplacement);
+            else
+                enrageTooltip.Text = enrageTooltip.Text.Replace("\n\n", "\n");
         }
     }
 }

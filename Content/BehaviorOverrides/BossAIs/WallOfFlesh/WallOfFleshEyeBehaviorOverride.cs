@@ -16,7 +16,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public const int IsDetachedFlagIndex = 2;
 
-        public const int DetachDamage = 1550;
+        public const int DetachDamage = 1350;
 
         #region AI
 
@@ -220,18 +220,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         public override bool CheckDead(NPC npc)
         {
             // Do direct damage to the wall and have the eye "pop" out, as though it's detatching.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (npc.Infernum().ExtraAI[IsDetachedFlagIndex] < 1f && Main.netMode != NetmodeID.MultiplayerClient && Main.npc.IndexInRange(Main.wofNPCIndex))
             {
-                if (Main.npc.IndexInRange(Main.wofNPCIndex))
+                NPC.HitInfo hit = new()
                 {
-                    NPC.HitInfo hit = new()
-                    {
-                        Damage = DetachDamage,
-                        Knockback = 0f,
-                        HitDirection = 0
-                    };
-                    Main.npc[Main.wofNPCIndex].StrikeNPC(hit);
-                }
+                    Damage = DetachDamage,
+                    Knockback = 0f,
+                    HitDirection = 0
+                };
+                Main.npc[Main.wofNPCIndex].StrikeNPC(hit);
             }
 
             npc.life = 1;

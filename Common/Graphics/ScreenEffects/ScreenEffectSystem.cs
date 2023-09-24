@@ -9,7 +9,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
     public class ScreenEffectSystem : ModSystem
     {
         #region Blur
-        private static RenderTarget2D BlurRenderTarget;
+        private static ManagedRenderTarget BlurRenderTarget;
 
         private static Vector2 BlurPosition;
 
@@ -46,7 +46,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         #endregion
 
         #region Flash
-        private static RenderTarget2D FlashRenderTarget;
+        private static ManagedRenderTarget FlashRenderTarget;
 
         private static Vector2 FlashPosition;
 
@@ -81,13 +81,10 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void Load()
         {
-            Main.OnResolutionChanged += ResizeRenderTarget;
+            BlurRenderTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            FlashRenderTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
         }
 
-        public override void Unload()
-        {
-            Main.OnResolutionChanged -= ResizeRenderTarget;
-        }
 
         public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;
 
@@ -120,9 +117,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             if (BlurActive)
             {
-                if (BlurRenderTarget is null)
-                    ResizeRenderTarget(Vector2.Zero);
-
                 // Draw the screen contents to the blur render target.
                 BlurRenderTarget.SwapToRenderTarget();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
@@ -148,7 +142,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                     Rectangle frameOffset = new(-100, -100, Main.screenWidth + 200, Main.screenHeight + 200);
                     // Use that and the position to set the origin to the draw position.
                     Vector2 origin = BlurPosition + new Vector2(100) - Main.screenPosition;
-                    Main.spriteBatch.Draw(BlurRenderTarget, BlurPosition - Main.screenPosition, frameOffset, drawColor, 0f, origin, scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(BlurRenderTarget.Target, BlurPosition - Main.screenPosition, frameOffset, drawColor, 0f, origin, scale, SpriteEffects.None, 0f);
                 }
 
                 Main.spriteBatch.End();
@@ -157,9 +151,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             // This draws over the blur, so doing them together isn't really ideal.
             else if (FlashActive)
             {
-                if (FlashRenderTarget is null)
-                    ResizeRenderTarget(Vector2.Zero);
-
                 // Draw the screen contents to the blur render target.
                 FlashRenderTarget.SwapToRenderTarget();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
@@ -177,24 +168,11 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 // Use that and the position to set the origin to the draw position.
                 Vector2 origin = FlashPosition + new Vector2(100) - Main.screenPosition;
                 for (int i = 0; i < 2; i++)
-                    Main.spriteBatch.Draw(FlashRenderTarget, FlashPosition - Main.screenPosition, frameOffset, drawColor, 0f, origin, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(FlashRenderTarget.Target, FlashPosition - Main.screenPosition, frameOffset, drawColor, 0f, origin, 1f, SpriteEffects.None, 0f);
                 Main.spriteBatch.End();
             }
 
             return screenTarget1;
-        }
-
-        private static void ResizeRenderTarget(Vector2 obj)
-        {
-            if (BlurRenderTarget is not null && !BlurRenderTarget.IsDisposed)
-                BlurRenderTarget.Dispose();
-
-            BlurRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
-
-            if (FlashRenderTarget is not null && !FlashRenderTarget.IsDisposed)
-                FlashRenderTarget.Dispose();
-
-            FlashRenderTarget = new(Main.instance.GraphicsDevice, Main.screenWidth, Main.screenHeight);
         }
     }
 }

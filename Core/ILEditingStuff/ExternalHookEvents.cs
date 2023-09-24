@@ -24,6 +24,11 @@ namespace InfernumMode.Core.ILEditingStuff
                     Hooks.Add(hook);
                 }
             }
+
+            // Load the override system detours.
+            ModifyDetour(SetDefaultMethod, OverrideSystemHooks.SetDefaultDetourMethod);
+            ModifyDetour(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
+            ModifyDetour(CalPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
         }
 
         public static void Unload()
@@ -31,8 +36,11 @@ namespace InfernumMode.Core.ILEditingStuff
             foreach (IHookEdit hook in Hooks)
                 hook.Unload();
 
-            foreach (var fuck in hooks)
+            foreach (var fuck in IlHooks)
                 fuck?.Undo();
+
+            foreach (var fuck2 in OnHooks)
+                fuck2.Undo();
         }
     }
 }

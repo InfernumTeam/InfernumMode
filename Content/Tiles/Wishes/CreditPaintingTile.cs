@@ -1,5 +1,4 @@
-﻿using InfernumMode.Content.Items.Placeables;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -11,6 +10,7 @@ namespace InfernumMode.Content.Tiles.Wishes
     public class CreditPaintingTile : ModTile
     {
         public const int Width = 6;
+
         public const int Height = 4;
 
         public override void SetStaticDefaults()

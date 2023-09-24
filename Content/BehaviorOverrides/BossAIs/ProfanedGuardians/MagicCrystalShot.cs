@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class MagicCrystalShot : ModProjectile
+    public class MagicCrystalShot : ModProjectile, IScreenCullDrawer
     {
         public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, MagicSpiralCrystalShot.ColorSet);
 
@@ -52,7 +53,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Timer++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor) => false;
+
+        public void CullDraw(SpriteBatch spriteBatch)
         {
             if (Timer <= TelegraphLength)
             {
@@ -68,8 +71,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, Color.HotPink with { A = 0 } * 2, Projectile.velocity.ToRotation() + PiOver2, origin, scaleOuter, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(telegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor * 2, Projectile.velocity.ToRotation() + PiOver2, origin, scaleInner, SpriteEffects.None, 0f);
-
             }
+
             Texture2D streakTexture = TextureAssets.Projectile[Projectile.type].Value;
             for (int i = 1; i < Projectile.oldPos.Length; i++)
             {
@@ -88,7 +91,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Main.spriteBatch.Draw(streakTexture, drawPosition, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(streakTexture, drawPosition2, null, drawColor, Projectile.oldRot[i], streakTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
-            return false;
         }
     }
 }

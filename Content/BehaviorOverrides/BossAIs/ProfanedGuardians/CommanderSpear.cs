@@ -26,7 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Holy Spear");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 5;
         }
@@ -55,6 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Projectile.Kill();
                 return;
             }
+
             Vector2 offset = Projectile.rotation.ToRotationVector2() * ((AttackerGuardianBehaviorOverride.TotalRemaininGuardians == 1 ? 100f : 20f) + PositionOffset);
 
             // Move where the commander tells it to.
@@ -68,6 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Move the aiming hand while being stuck to it.
                     RightHandPosition = offset;
             }
+
             if (AttackerGuardianBehaviorOverride.TotalRemaininGuardians > 1)
                 Projectile.Center = Owner.Center + offset;
             else
@@ -78,11 +79,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             Projectile.Opacity = Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
             Projectile.timeLeft = 2000;
-        }
-
-        public override bool CanHitPlayer(Player target)
-        {
-            return base.CanHitPlayer(target);
         }
 
         public override bool PreDraw(ref Color lightColor)

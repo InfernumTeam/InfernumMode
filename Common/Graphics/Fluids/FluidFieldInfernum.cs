@@ -1,20 +1,19 @@
-using InfernumMode.Assets.ExtraTextures;
+﻿using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 
 namespace InfernumMode.Common.Graphics.Fluids
 {
-    public class FluidFieldInfernum : IDisposable
+    public class FluidFieldInfernum
     {
-        internal RenderTarget2D ColorTarget;
+        internal ManagedRenderTarget ColorTarget;
 
-        internal RenderTarget2D VelocityTarget;
+        internal ManagedRenderTarget VelocityTarget;
 
-        internal RenderTarget2D TempTarget;
+        internal ManagedRenderTarget TempTarget;
 
         public bool IsDisposing
         {
@@ -46,6 +45,9 @@ namespace InfernumMode.Common.Graphics.Fluids
 
         public readonly int Height;
 
+        public RenderTarget2D FluidCreateCondition(int width, int height) =>
+            new(Main.instance.GraphicsDevice, Width, Height, false, SurfaceFormat.Vector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+
         public FluidFieldInfernum(int width, int height, FluidFieldProperties properties)
         {
             if (Main.netMode == NetmodeID.Server)
@@ -57,9 +59,9 @@ namespace InfernumMode.Common.Graphics.Fluids
 
             // Initialize targets.
             var graphics = Main.instance.GraphicsDevice;
-            ColorTarget = new(graphics, width, height, false, SurfaceFormat.Vector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-            VelocityTarget = new(graphics, width, height, false, SurfaceFormat.Vector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
-            TempTarget = new(graphics, width, height, false, SurfaceFormat.Vector4, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+            ColorTarget = new(false, FluidCreateCondition);
+            VelocityTarget = new(false, FluidCreateCondition);
+            TempTarget = new(false, FluidCreateCondition);
 
             // Store the field in the cache.
             FluidSimulatorManagementSystem.CreatedFields.Add(this);
@@ -68,12 +70,12 @@ namespace InfernumMode.Common.Graphics.Fluids
         internal void PerformUpdateStep()
         {
             for (int i = 0; i < MovementUpdateSteps; i++)
-                PerformPassToTarget("VelocityUpdatePass", VelocityTarget);
-            PerformPassToTarget("VelocityUpdateVorticityPass", VelocityTarget);
-            PerformPassToTarget("DiffusePass", VelocityTarget, Properties.VelocityDiffusion);
+                PerformPassToTarget("VelocityUpdatePass", VelocityTarget.Target);
+            PerformPassToTarget("VelocityUpdateVorticityPass", VelocityTarget.Target);
+            PerformPassToTarget("DiffusePass", VelocityTarget.Target, Properties.VelocityDiffusion);
 
-            PerformPassToTarget("DiffusePass", ColorTarget, Properties.ColorDiffusion);
-            PerformPassToTarget("AdvectPass", ColorTarget);
+            PerformPassToTarget("DiffusePass", ColorTarget.Target, Properties.ColorDiffusion);
+            PerformPassToTarget("AdvectPass", ColorTarget.Target);
         }
 
         internal void PerformPassToTarget(string passName, RenderTarget2D target, float viscosity = 0f)
@@ -81,7 +83,7 @@ namespace InfernumMode.Common.Graphics.Fluids
             var graphics = Main.instance.GraphicsDevice;
             var fluidShader = GameShaders.Misc["Infernum:FluidAdvect"].Shader;
 
-            graphics.SetRenderTarget(TempTarget);
+            graphics.SetRenderTarget(TempTarget.Target);
             graphics.Clear(Color.Transparent);
 
             // Draw the target to the temp target with the shader effect.
@@ -89,8 +91,8 @@ namespace InfernumMode.Common.Graphics.Fluids
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
 
             graphics.Textures[0] = target;
-            graphics.Textures[1] = VelocityTarget;
-            graphics.Textures[2] = ColorTarget;
+            graphics.Textures[1] = VelocityTarget.Target;
+            graphics.Textures[2] = ColorTarget.Target;
             fluidShader.Parameters["simulationArea"].SetValue(new Vector2(Width, Height));
             fluidShader.Parameters["viscosity"].SetValue(viscosity);
             fluidShader.Parameters["vorticityAmount"].SetValue(Properties.VorticityAmount);
@@ -114,7 +116,7 @@ namespace InfernumMode.Common.Graphics.Fluids
 
             // Set the temp target's contents to the original target.
             graphics.SetRenderTarget(target);
-            Main.spriteBatch.Draw(TempTarget, Vector2.Zero, Color.White);
+            Main.spriteBatch.Draw(TempTarget.Target, Vector2.Zero, Color.White);
 
             // Return to the backbuffer.
             graphics.SetRenderTarget(null);
@@ -128,8 +130,8 @@ namespace InfernumMode.Common.Graphics.Fluids
             var graphics = Main.instance.GraphicsDevice;
             Texture2D pixel = InfernumTextureRegistry.Pixel.Value;
 
-            graphics.Textures[1] = VelocityTarget;
-            graphics.Textures[2] = ColorTarget;
+            graphics.Textures[1] = VelocityTarget.Target;
+            graphics.Textures[2] = ColorTarget.Target;
             GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["simulationArea"].SetValue(new Vector2(Width, Height));
             GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["colorInterpolateSharpness"].SetValue(colorInterpolateSharpness);
             GameShaders.Misc["Infernum:DrawFluidResult"].Shader.Parameters["lifetimeFadeStops"].SetValue(fadeColors.Length);
@@ -158,27 +160,9 @@ namespace InfernumMode.Common.Graphics.Fluids
 
             Main.RunOnMainThread(() =>
             {
-                VelocityTarget.SetData(0, areaRect, velocities, 0, totalElements);
-                ColorTarget.SetData(0, areaRect, colors, 0, totalElements);
+                VelocityTarget.Target.SetData(0, areaRect, velocities, 0, totalElements);
+                ColorTarget.Target.SetData(0, areaRect, colors, 0, totalElements);
             });
-        }
-
-        public void Dispose()
-        {
-            if (IsDisposing)
-                return;
-
-            // Disallow disposing the render targets twice.
-            IsDisposing = true;
-
-            // Clear the render targets.
-            ColorTarget?.Dispose();
-            VelocityTarget?.Dispose();
-            TempTarget?.Dispose();
-
-            // Remove this instance from the list.
-            GC.SuppressFinalize(this);
-            FluidSimulatorManagementSystem.CreatedFields.Remove(this);
         }
     }
 }

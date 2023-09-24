@@ -141,6 +141,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 SoundEngine.PlaySound(SoundID.Item67, target.Center);
                 Dust.QuickDustLine(npc.Top + Vector2.UnitY * 60f, jewelSpawnPosition, 150f, Color.Red);
 
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.KingSlimeJewelTip");
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC(npc.GetSource_FromAI(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
                 jewelSummonTimer = 1f;
@@ -313,6 +315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             if (deathTimer >= deathAnimationLength || BossRushEvent.BossRushActive)
             {
                 // Die
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.KingSlimeDefeatTip");
                 KillKingSlime(npc, target);
             }
         }

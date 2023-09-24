@@ -2140,8 +2140,10 @@ Mods: {
 			HiveMindJokeTip2: I would make a snarky comment right now, but I probably should Mind my own business...
 			KingSlimeTip1: Try to learn King Slime’s jump cycle! It could help you plan your actions ahead of time
 			KingSlimeTip2: With a jump that high, I wonder if you could duck beneath him?
+            KingSlimeJewelTip: That Crown Jewel sure is dangerous! Keep in mind that it shoots at the same rate all the time, so time yourself accordingly!
 			KingSlimeNinjaTip: The ninja shoots more shurikens the farther you are, so don't go too far!
 			KingSlimeJokeTip1: Quite a sticky situation you had to deal with...
+            KingSlimeDefeatTip: And that's a Goo’d bye!
 			AnahitaTip1: You can weave through the clefs if you manipulate Anahita's movement well!
 			AnahitaFinalPhaseTip: Home stretch! Do the same as you did before!
 			LeviathanTip1: The meteors all split in the same way; use this to your advantage!

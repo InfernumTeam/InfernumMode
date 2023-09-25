@@ -1135,7 +1135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             if (attackTimer == wormSummonTime)
             {
                 MakeWormEruptFromHive(npc, -Vector2.UnitY, 1f, ModContent.NPCType<PerforatorHeadMedium>());
-                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PerforatorsProjectilesTip");
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PerforatorsWorm2Tip");
             }
 
             // Go to the next attack if the small perforator is dead.
@@ -1600,6 +1600,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "Mods.InfernumMode.PetDialog.PerforatorsTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.PerforatorsProjectilesTip";
         }
         #endregion Tips
     }

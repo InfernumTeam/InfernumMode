@@ -2171,6 +2171,7 @@ Mods: {
 			PBGDroneJailTip: Those drones are building a jail around you, destroying one will give you an opening!
 			PBGDroneBuildTip: Destroy those builder drones before the whole jungle goes kablooey!
 			PerforatorsTip1: The Hive spews out a ton of lingering ichor, so space management is key!
+            PerforatorsWorm2Tip: The medium worm doesn't seem as offensive as its pals, Maybe let it coil around you instead?
 			PerforatorsProjectilesTip: Staying calm and still will help dodge the slow projectiles!
 			PerforatorsFinalPhaseTip: It's still going?!
 			PlanteraPlanteraTip: Manage those clouds carefully. You'll need to weave through them to find the gap in her tentacles!

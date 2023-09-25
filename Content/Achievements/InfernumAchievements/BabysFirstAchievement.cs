@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (CalamityPlayer.areThereAnyDamnBosses && WorldSaveSystem.InfernumMode)
+            if (CalamityPlayer.areThereAnyDamnBosses && WorldSaveSystem.InfernumModeEnabled)
                 CurrentCompletion++;
         }
 

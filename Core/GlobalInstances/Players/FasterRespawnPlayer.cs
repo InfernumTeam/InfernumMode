@@ -9,7 +9,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
     {
         public override void UpdateDead()
         {
-            if (WorldSaveSystem.InfernumMode && !CalamityPlayer.areThereAnyDamnBosses)
+            if (WorldSaveSystem.InfernumModeEnabled && !CalamityPlayer.areThereAnyDamnBosses)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
 
         }

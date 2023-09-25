@@ -28,28 +28,28 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public override void PreUpdateWorld()
         {
             // Ensure that Death and Revengeance Mode are always active while Infernum is.
-            if (WorldSaveSystem.InfernumMode && !CalamityWorld.revenge)
+            if (WorldSaveSystem.InfernumModeEnabled && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;
-            if (WorldSaveSystem.InfernumMode && !CalamityWorld.death)
+            if (WorldSaveSystem.InfernumModeEnabled && !CalamityWorld.death)
                 CalamityWorld.death = true;
 
             // Disable Infernum interactions with FTW/Master/GFB because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || Main.zenithWorld;
-            if (WorldSaveSystem.InfernumMode && stupidDifficultyIsActive && DisableDifficultyModes)
+            if (WorldSaveSystem.InfernumModeEnabled && stupidDifficultyIsActive && DisableDifficultyModes)
             {
                 CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.InfernumDisallowedInWeirdDifficulties", Color.Red);
                 if (Main.netMode == NetmodeID.Server)
                     PacketManager.SendPacket<InfernumModeActivityPacket>();
-                WorldSaveSystem.InfernumMode = false;
+                WorldSaveSystem.InfernumModeEnabled = false;
             }
 
             // Ensure that Infernum is always active in the Lost Colosseum.
             // This is necessary because difficulty states do not automatically translate over to subworlds.
             if (!stupidDifficultyIsActive && SubworldSystem.IsActive<LostColosseum>())
-                WorldSaveSystem.InfernumMode = true;
+                WorldSaveSystem.InfernumModeEnabled = true;
 
             // Create some warning text about Eternity Mode if the player enables Infernum with it enabled.
-            if (Main.netMode != NetmodeID.MultiplayerClient && WorldSaveSystem.InfernumMode && InfernumMode.EmodeIsActive && !WorldSaveSystem.DisplayedEmodeWarningText)
+            if (Main.netMode != NetmodeID.MultiplayerClient && WorldSaveSystem.InfernumModeEnabled && InfernumMode.EmodeIsActive && !WorldSaveSystem.DisplayedEmodeWarningText)
             {
                 CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.EternityModeWarning", Color.Red);
                 WorldSaveSystem.DisplayedEmodeWarningText = true;

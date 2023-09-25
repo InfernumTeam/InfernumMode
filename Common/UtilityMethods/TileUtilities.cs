@@ -1,3 +1,4 @@
+﻿using Microsoft.Xna.Framework;
 using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode
@@ -32,5 +33,9 @@ namespace InfernumMode
 
             return false;
         }
+
+        public static Rectangle ToWorldCoords(this Rectangle rectangle) => new(rectangle.X * 16, rectangle.Y * 16, rectangle.Width * 16, rectangle.Height * 16);
+
+        public static Rectangle ToTileCoords(this Rectangle rectangle) => new(rectangle.X / 16, rectangle.Y / 16, rectangle.Width / 16, rectangle.Height / 16);
     }
 }

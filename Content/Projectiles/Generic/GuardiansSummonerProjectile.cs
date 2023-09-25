@@ -85,7 +85,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                 DefaultPlayerPosition = Player.Center;
 
                 // If infernum is not enabled, just spawn the guardians.
-                if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.InfernumMode)
+                if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.InfernumModeEnabled)
                 {
                     NPC.SpawnOnPlayer(Main.player[Projectile.owner].whoAmI, ModContent.NPCType<ProfanedGuardianCommander>());
                     Projectile.Kill();

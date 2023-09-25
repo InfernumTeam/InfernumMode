@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (Main.npc[extraInfo].type == ModContent.NPCType<AquaticScourgeHead>() && WorldSaveSystem.InfernumMode && Main.npc[extraInfo].Infernum().ExtraAI[AquaticScourgeHeadBehaviorOverride.AcidMeterEverReachedHalfIndex] == 0f)
+            if (Main.npc[extraInfo].type == ModContent.NPCType<AquaticScourgeHead>() && WorldSaveSystem.InfernumModeEnabled && Main.npc[extraInfo].Infernum().ExtraAI[AquaticScourgeHeadBehaviorOverride.AcidMeterEverReachedHalfIndex] == 0f)
                 CurrentCompletion = TotalCompletion;
         }
 

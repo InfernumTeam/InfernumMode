@@ -11,7 +11,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             BitsByte flags = new();
             BitsByte flags2 = new();
-            flags[0] = WorldSaveSystem.InfernumMode;
+            flags[0] = WorldSaveSystem.InfernumModeEnabled;
             flags[1] = HasBeatenInfernumNightProvBeforeDay;
             flags[2] = HasBeatenInfernumProvRegularly;
             flags[3] = HasProvidenceDoorShattered;
@@ -48,7 +48,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             BitsByte flags = reader.ReadByte();
             BitsByte flags2 = reader.ReadByte();
-            WorldSaveSystem.InfernumMode = flags[0];
+            WorldSaveSystem.InfernumModeEnabled = flags[0];
             HasBeatenInfernumNightProvBeforeDay = flags[1];
             HasBeatenInfernumProvRegularly = flags[2];
             HasProvidenceDoorShattered = flags[3];

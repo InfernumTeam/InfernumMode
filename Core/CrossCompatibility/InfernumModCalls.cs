@@ -29,9 +29,9 @@ namespace InfernumMode.Core.CrossCompatibility
             switch (methodName)
             {
                 case "GetInfernumActive":
-                    return WorldSaveSystem.InfernumMode;
+                    return WorldSaveSystem.InfernumModeEnabled;
                 case "SetInfernumActive":
-                    WorldSaveSystem.InfernumMode = (bool)args[1];
+                    WorldSaveSystem.InfernumModeEnabled = (bool)args[1];
                     break;
                 case "BopHeadToMusic":
                     Player player = (Player)args[1];

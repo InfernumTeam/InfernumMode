@@ -110,6 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     RedHotGlowTimer = 120;
                     Projectile.timeLeft = 360;
+                    DoNotDrawLine = true;
                 }
             }
 

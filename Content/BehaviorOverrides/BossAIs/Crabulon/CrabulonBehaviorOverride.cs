@@ -794,6 +794,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip1";
             yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip2";
             yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip3";
+            yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip4";
 
             yield return n =>
             {

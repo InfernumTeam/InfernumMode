@@ -642,6 +642,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         {
             yield return n => "Mods.InfernumMode.PetDialog.BoCTip1";
             yield return n => "Mods.InfernumMode.PetDialog.BoCTip2";
+
+            yield return n => "Mods.InfernumMode.PetDialog.BoCTip3";
         }
         #endregion Tips
     }

@@ -979,7 +979,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             // Have the worm erupt from the hive.
             if (attackTimer == wormSummonTime)
+            {
                 MakeWormEruptFromHive(npc, -Vector2.UnitY, 1f, ModContent.NPCType<PerforatorHeadSmall>());
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PerforatorsWorm1Tip");
+            }
+
 
             // Go to the next attack if the small perforator is dead.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= wormSummonTime + 1f && !NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadSmall>()))

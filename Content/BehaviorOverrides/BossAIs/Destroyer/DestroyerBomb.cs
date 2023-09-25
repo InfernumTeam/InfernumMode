@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             if (Projectile.frameCounter % 4 == 3)
                 Projectile.frame = Projectile.frame == 0 ? Projectile.timeLeft < 60 ? 2 : 1 : 0;
 
-            if (Projectile.velocity.Y < 20f)
+            if (Projectile.velocity.Y < 17f)
                 Projectile.velocity.Y += 0.25f;
 
             // Rotate.

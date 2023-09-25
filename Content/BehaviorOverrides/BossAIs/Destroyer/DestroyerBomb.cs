@@ -1,11 +1,8 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -13,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 {
-    public class DestroyerBomb : ModProjectile, ISpecializedDrawRegion
+    public class DestroyerBomb : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -80,32 +77,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         {
             Projectile.DrawProjectileWithBackglowTemp(Color.Red with { A = 0 } * 0.4f, Color.White, Projectile.Opacity * 4f);
             return false;
-        }
-
-        public void SpecialDraw(SpriteBatch spriteBatch)
-        {
-            // Draw the bloom laser line telegraph.
-            float laserRotation = -Projectile.velocity.ToRotation();
-            float telegraphInterpolant = Utils.GetLerpValue(660f, 630f, Projectile.timeLeft, true);
-
-            BloomLineDrawInfo lineInfo = new()
-            {
-                LineRotation = laserRotation,
-                WidthFactor = 0.0035f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
-                Scale = Vector2.One * telegraphInterpolant * 200f,
-                MainColor = Color.Lerp(Color.Orange, Color.Red, telegraphInterpolant * 0.6f + 0.4f),
-                DarkerColor = Color.Orange,
-                Opacity = Sqrt(telegraphInterpolant),
-                BloomOpacity = 0.375f,
-                LightStrength = 5f
-            };
-            Utilities.DrawBloomLineTelegraph(Projectile.Center - Main.screenPosition, lineInfo, false);
-        }
-
-        public void PrepareSpriteBatch(SpriteBatch spriteBatch)
-        {
-            spriteBatch.EnforceCutoffRegion(new(0, 0, Main.screenWidth, Main.screenHeight), Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
         }
     }
 }

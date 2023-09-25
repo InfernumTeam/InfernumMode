@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Core.OverridingSystem;
@@ -66,6 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
                 if (attackTimer >= ReelBackTime)
                 {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeImpactSound with { Pitch = 0.5f, Volume = 0.6f }, npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * hoverSpeed;
                     npc.oldPos = new Vector2[npc.oldPos.Length];
                     npc.ai[0] = 2f;

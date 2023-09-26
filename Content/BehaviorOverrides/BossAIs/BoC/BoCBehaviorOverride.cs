@@ -642,6 +642,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
         {
             yield return n => "Mods.InfernumMode.PetDialog.BoCTip1";
             yield return n => "Mods.InfernumMode.PetDialog.BoCTip2";
+
+            yield return n =>
+            {
+                if (n.life < n.lifeMax * Phase3LifeRatio) 
+                {
+                    return "Mods.InfernumMode.PetDialog.BoCTip3";
+                }
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

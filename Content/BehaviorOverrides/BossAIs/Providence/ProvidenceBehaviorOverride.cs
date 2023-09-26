@@ -2784,6 +2784,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Mods.InfernumMode.PetDialog.ProvidenceTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.ProvidenceTip2";
             yield return n =>
             {
                 if (Main.dayTime && Main.time >= Main.dayLength - 3600D)

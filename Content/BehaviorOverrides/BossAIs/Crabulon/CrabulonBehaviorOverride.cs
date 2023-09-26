@@ -793,6 +793,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
         {
             yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip1";
             yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip2";
+            yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip3";
+            yield return n => "Mods.InfernumMode.PetDialog.CrabulonTip4";
+            yield return n =>
+            {
+                if(n.life < n.lifeMax * Phase3LifeRatio)
+                {
+                    return "Mods.InfernumMode.PetDialog.CrabulonClawTip";
+                }
+                return string.Empty;
+            };
 
             yield return n =>
             {

@@ -1279,6 +1279,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
         {
             yield return n => "Mods.InfernumMode.PetDialog.DragonfollyTip1";
             yield return n => "Mods.InfernumMode.PetDialog.DragonfollyTip2";
+            yield return n => "Mods.InfernumMode.PetDialog.DragonfollyTip3";
         }
         #endregion Tips
     }

@@ -9,6 +9,7 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -752,6 +753,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         #endregion
 
         #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Mods.InfernumMode.PetDialog.DestroyerTip2";
+            yield return n => "Mods.InfernumMode.PetDialog.DestroyerTip3";
+        }
         #endregion Tips
     }
 }

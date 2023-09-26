@@ -382,10 +382,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Mods.InfernumMode.PetDialog.WoFTip2";
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
                     return "Mods.InfernumMode.PetDialog.WoFTip1";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.WoFJokeTip1";
                 return string.Empty;
             };
         }

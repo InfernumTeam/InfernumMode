@@ -865,6 +865,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
             };
             yield return n =>
             {
+                if (n.life < n.lifeMax * Phase2LifeRatio)
+                    return "Mods.InfernumMode.PetDialog.SkeletronTip3";
+                return string.Empty;
+            };
+            yield return n =>
+            {
                 if (TipsManager.ShouldUseJokeText)
                     return "Mods.InfernumMode.PetDialog.SkeletronJokeTip1";
                 return string.Empty;

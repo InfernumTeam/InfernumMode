@@ -989,5 +989,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             npc.netUpdate = true;
         }
         #endregion AI
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Mods.InfernumMode.PetDialog.StormWeaverTip1";
+
+        }
+        #endregion Tips
     }
 }

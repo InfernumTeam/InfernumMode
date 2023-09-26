@@ -17,6 +17,7 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Credits;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -1379,6 +1380,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                         float seekerAngle = TwoPi * i / 50f;
                         NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>(), npc.whoAmI, seekerAngle);
                     }
+
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CalShadowBrosTip");
                 }
             }
 
@@ -1468,6 +1471,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             // Make the eye gleam effect happen.
             eyeGleamInterpolant = blackFadeCompletion * 0.67f;
+
+            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CalShadowFinalPhaseTip");
 
             if (attackTimer >= teleportDelay + blackFadeTime + 8f)
             {
@@ -2201,5 +2206,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return false;
         }
         #endregion Death Effects
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n =>"Mods.InfernumMode.PetDialog.CalShadowTip1";
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.CalShadowJokeTip1";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

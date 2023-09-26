@@ -6,6 +6,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -950,5 +951,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             return false;
         }
         #endregion Frames and Drawcode
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Mods.InfernumMode.PetDialog.PrimeTip1";
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.PrimeJokeTip1";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

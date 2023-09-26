@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -817,5 +818,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             }
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Mods.InfernumMode.PetDialog.PlanteraTip1";
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.PlanteraJokeTip1";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.PlanteraJokeTip2";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

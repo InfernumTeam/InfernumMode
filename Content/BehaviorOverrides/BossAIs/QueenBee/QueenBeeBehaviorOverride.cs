@@ -661,6 +661,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
         {
             yield return n => "Mods.InfernumMode.PetDialog.QueenBeeTip1";
             yield return n => "Mods.InfernumMode.PetDialog.QueenBeeTip2";
+            yield return n => "Mods.InfernumMode.PetDialog.QueenBeeTip3";
 
             yield return n =>
             {

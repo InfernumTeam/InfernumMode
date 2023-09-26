@@ -3,10 +3,12 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -985,5 +987,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             return false;
         }
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Mods.InfernumMode.PetDialog.DreadnautilusSummonItemTip";
+            yield return n =>
+            {
+                if (n.life < n.lifeMax * Phase3LifeRatio)
+                    return "Mods.InfernumMode.PetDialog.DreadnautilusTip1";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.DreadnautilusJokeTip1";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.DreadnautilusJokeTip2";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

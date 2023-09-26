@@ -1151,8 +1151,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
             yield return n =>
             {
-                if (n.life < n.lifeMax * Phase4LifeRatio)
+                if (n.life < n.lifeMax * Phase3LifeRatio)
                     return "Mods.InfernumMode.PetDialog.OldDukeFinalPhaseTip";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (n.life < n.lifeMax * Phase4LifeRatio)
+                    return "Mods.InfernumMode.PetDialog.OldDukeRealFinalPhaseTip";
                 return string.Empty;
             };
             yield return n =>

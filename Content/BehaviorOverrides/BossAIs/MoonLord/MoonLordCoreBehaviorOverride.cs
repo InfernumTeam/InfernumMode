@@ -631,6 +631,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Mods.InfernumMode.PetDialog.MoonLordTip2";
             yield return n =>
             {
                 if (NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2)

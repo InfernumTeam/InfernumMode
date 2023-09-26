@@ -11,6 +11,7 @@ using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -900,5 +901,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             return false;
         }
         #endregion
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n => "Mods.InfernumMode.PetDialog.SignusTip1";
+
+        }
+        #endregion Tips
     }
 }

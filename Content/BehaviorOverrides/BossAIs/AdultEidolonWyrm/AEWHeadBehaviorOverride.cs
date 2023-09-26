@@ -1729,5 +1729,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return false;
         }
         #endregion Death Effects
+
+        #region Tips
+        public override IEnumerable<Func<NPC, string>> GetTips()
+        {
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.AEWJokeTip1";
+                return string.Empty;
+            };
+        }
+        #endregion Tips
     }
 }

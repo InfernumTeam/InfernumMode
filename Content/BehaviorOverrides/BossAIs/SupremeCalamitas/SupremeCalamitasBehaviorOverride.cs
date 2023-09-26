@@ -2657,6 +2657,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Mods.InfernumMode.PetDialog.SCalTip1";
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)

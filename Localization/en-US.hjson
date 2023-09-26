@@ -2146,6 +2146,8 @@ Mods: {
 			DreadnautilusJokeTip2: Seems like you failed again, but dreadnaut! you will eventually defeat the terror!
 			DukeFishronRazorbladeTip: Try your best to weave through the razorblades and brace youself!
 			DukeFishronTidalWaveTip: Keep track of where the long charge stops! You might get swept up by a tidal wave!
+            EoLTip1: Most attacks don’t really require a lot of movement, keep your movement on the low!
+            EoLMoonTip: Stay close! You're fighting the light of moon, you can't run away!
 			EoLJokeTip1: You know, I was already quite partial to rainbows, but this things attacks have killer looks- oh. Poor choice of words, then.
 			EoWTip1: Many layered platforms can help greatly to avoid the exploding Cursed Flames!
 			EoWTip2: If the Eater slows to a crawl, do the same or you’ll run right into a vilethorn!
@@ -2176,6 +2178,7 @@ Mods: {
 			LeviathanFinalPhaseTip: Home stretch! try focusing on yourself more than the boss!
 			MoonLordTip1: Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!
 			MoonLordLaserTip: Brace yourself! A barrage of slow bolts are going to be released!
+            MoonLordTip2: Remember to manage your space, or you might get cornered!
 			MoonLordBlackHoleTip: The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!
 			MoonLordJokeTip1: Squib emoji
 			OldDukeTip1: Be sure to remember if any sharkrons or tooth balls appear, so that their remains don't surprise you later!

@@ -2,6 +2,7 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -1548,6 +1549,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 480f, Vector2.Zero, ModContent.ProjectileType<StolenCelestialObject>(), 350, 0f);
             }
 
+            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.EoLMoonTip");
+
             // Periodically release rainbow beams at the target.
             if (attackTimer % rainbowReleaseRate == rainbowReleaseRate - 1f && rainbowShootCounter <= rainbowShootCount)
             {
@@ -2203,6 +2206,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Mods.InfernumMode.PetDialog.EoLTip1";
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)

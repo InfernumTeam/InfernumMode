@@ -2184,7 +2184,8 @@ Mods: {
 			MoonLordJokeTip1: Squib emoji
 			OldDukeTip1: Be sure to remember if any sharkrons or tooth balls appear, so that their remains don't surprise you later!
 			OldDukeTip2: Movement speed is gonna matter a lot against that fish!
-			OldDukeFinalPhaseTip: Try to keep a counter in the last phase. The Old Duke will teleport, charge seven times, and then repeat.
+			OldDukeFinalPhaseTip: Keep a mental counter of when he teleports, or he’ll catch you by surprise!
+            OldDukeRealFinalPhaseTip: Just ramming won’t work, but neither will just dodging… Try doing both at once!
 			OldDukeDashTip1: Are you really sure you don't want to use a dash for that fish?
 			OldDukeDashTip2: A dashing accessory would be reeaaally helpful here...
 			PBGDroneJailTip: Those drones are building a jail around you, destroying one will give you an opening!

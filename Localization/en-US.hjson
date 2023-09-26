@@ -2113,7 +2113,7 @@ Mods: {
 			DeerclopsTip3: Space management is key!
 			DeerclopsCharlieTip: If you let these shadows gather around Deerclops' eye, it's light will not be strong enough to keep the dark away, ward them off!
 			DeerclopsJokeTip1: Deer god...
-            DeerclopsDefeatTip: Looks like it's the end of the act!
+			DeerclopsDefeatTip: Looks like it's the end of the act!
 			DestroyerTip1: Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!
 			DSTip1: I’ve noticed the Scourge sends an audible roar before whipping up those massive dust pillars, how considerate!
 			DSTip2: Skill with a grappling hook will prove very useful to get out of the Scourge’s way.
@@ -2134,10 +2134,10 @@ Mods: {
 			DragonfollyTip1: The fight against the Dragonfolly is very chaotic and fast paced. Good mobility and reaction time help a lot!
 			DragonfollyTip2: Those large red lightning pillars can be negated by flying below them!
 			DragonfollyBoltTip: Static bolts seem to be flying towards you! Be wary of them, and don't get trapped by the lightning telegraphs!
-            DreadnautilusSummonItemTip: I've heared somewhere that Dreadnautilus' cannot resist the call of a special Red Bait! Do you happen to have one?
-            DreadnautilusTip1: Those bats are really out for you, but they aren't very agile. Try juking them out!
-            DreadnautilusJokeTip1: Considering how much you die now, I dread your future...
-            DreadnautilusJokeTip2: Seems like you failed again, but dreadnaut! you will eventually defeat the terror!
+			DreadnautilusSummonItemTip: I've heared somewhere that Dreadnautilus' cannot resist the call of a special Red Bait! Do you happen to have one?
+			DreadnautilusTip1: Those bats are really out for you, but they aren't very agile. Try juking them out!
+			DreadnautilusJokeTip1: Considering how much you die now, I dread your future...
+			DreadnautilusJokeTip2: Seems like you failed again, but dreadnaut! you will eventually defeat the terror!
 			DukeFishronRazorbladeTip: Try your best to weave through the razorblades and brace youself!
 			DukeFishronTidalWaveTip: Keep track of where the long charge stops! You might get swept up by a tidal wave!
 			EoLJokeTip1: You know, I was already quite partial to rainbows, but this things attacks have killer looks- oh. Poor choice of words, then.
@@ -2200,7 +2200,7 @@ Mods: {
 			ProvidenceFinalPhaseTip: It looks like Providence is preparing something!
 			QueenBeeTip1: Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!
 			QueenBeeTip2: Getting rid of those extra hornets should be your top priority!
-            QueenBeeTip3: Y'know, this poison is quite sickening; maybe you should search for a Bezoar?
+			QueenBeeTip3: Y'know, this poison is quite sickening; maybe you should search for a Bezoar?
 			QueenBeeJokeTip1: I can't Bee-lieve that, totally uncalled for!
 			QueenBeeJokeTip2: Oof, that mustve Stung...
 			QueenSlimeTip1: Don't flail about, and figure out what she's doing. Do still try and stay on the move, though!
@@ -2210,7 +2210,7 @@ Mods: {
 			SignusBombTip: Those bombs will explode into kunai that fly towards you. Be careful!
 			SkeletronTip1: Contrary to what you may think, running into the shadowflame walls will not work, take it slow!
 			SkeletronTip2: Don't panic when Skeletron does his barrages of hand fireballs! Just jump and stay calm!
-            SkeletronTip3: The homing skulls take a long while to turn around, so it's possibly better to stay in a general spot rather than run far!
+			SkeletronTip3: The homing skulls take a long while to turn around, so it's possibly better to stay in a general spot rather than run far!
 			SkeletronJokeTip1: Geeettttttt DUNKED ON!!!
 			SlimeGodTip1: They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?
 			SlimeGodTip2: That was a little overwhelming! I wonder if mirroring its moves could work in your favor?
@@ -2219,12 +2219,13 @@ Mods: {
 			SCalDesperationTip: Even when all hell breaks loose, stay focused on your dodging!
 			SCalFireSpinTip: Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!
 			SCalFireChargeTip: Calamitas' is laying exploding brimstone magic with every charge, try to direct them away from a safe location!
-			TwinsTip1: Having trouble dodging during the spin? Three can play at that game, Spin!
+			TwinsTip1: Having trouble dodging during the spin? Three can play at that game, Spin along!
+            TwinsFinalOptionTip: Each one of the Twins has their own special last resort procedure, if one is giving you a hard time; try focusing on the other first!
 			TwinsFinalPhaseTip: Watch out, that last twin is gonna hit you with everything it's got! Don't let up!
 			WoFTip1: Be sure to run the opposite direction!
-            WoFTip2: These detached eyes are rather intimidating, Good thing they only shoot at very specific points!
-            WoFTip3: Yuck, Those grotesque mouths break off and fly?! Wish I could just burn them in an Inferno myself…	
-            WoFJokeTip1: Welp, that one was a bust! Nothing beats having more opportunities to bully the Guide though!
+			WoFTip2: These detached eyes are rather intimidating, Good thing they only shoot at very specific points!
+			WoFTip3: Yuck, Those grotesque mouths break off and fly?! Wish I could just burn them in an Inferno myself…
+			WoFJokeTip1: Welp, that one was a bust! Nothing beats having more opportunities to bully the Guide though!
 			YharonSpeedTip: This speed is crazy! Make sure you know when it starts; you might get jumpscared!
 			YharonFlashbangTip: Don't let the flashbang faze you! Keep your eyes peeled for where the embers are!
 			YharonCarpetBombTip: Better stay near the edges of the arena during those carpet bomb flames, That should keep them out of the way!

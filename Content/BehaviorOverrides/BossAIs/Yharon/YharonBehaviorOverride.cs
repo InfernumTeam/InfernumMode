@@ -461,7 +461,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             // Go to phase 2 if close to death.
             if (npc.Infernum().ExtraAI[HasEnteredPhase2Index] == 0f && lifeRatio < Phase2LifeRatio)
             {
-
                 // Set Yharon's private phase 2 flag that base Calamity uses.
                 // This is necessary to ensure that the special phase 2 name is used.
                 typeof(YharonBoss).GetField("startSecondAI", Utilities.UniversalBindingFlags).SetValue(npc.ModNPC, true);
@@ -491,6 +490,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Activate the invincibility countdown.
                 invincibilityTime = Phase2InvincibilityTime;
+
+                // Say the phase2 joke entry tip.
+                HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonPreHealTip");
             }
 
             // Manually set the Yharon index.
@@ -704,6 +706,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Heal up again.
                 npc.life = (int)Lerp(npc.lifeMax * 0.1f, npc.lifeMax, 1f - invincibilityTime / Phase2InvincibilityTime);
+
+                // Say the post heal joke tip.
+                if (invincibilityTime == 1f)          
+                    HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonPostHealTip");
             }
             
             // Create blossoms from the sky if in the last subphase.

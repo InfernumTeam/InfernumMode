@@ -5,6 +5,7 @@ using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -799,6 +800,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             inverseCoveredDistance = nearbyHands.Sum(n => 240f - Vector2.Distance(GetEyePosition(npc), n.Center));
             smoothDistance = Lerp(smoothDistance, inverseCoveredDistance, 0.08f);
 
+            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DeerclopsCharlieTip");
+
             // Fade in and out as necessary.
             float fadeInterpolant = Utils.GetLerpValue(180f, 850f, smoothDistance, true);
             radiusDecreaseInterpolant = Lerp(maxNaturalRadiusDecreaseInterpolant, maxRadiusDecreaseInterpolant, fadeInterpolant);
@@ -1295,6 +1298,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         {
             yield return n => "Mods.InfernumMode.PetDialog.DeerclopsTip1";
             yield return n => "Mods.InfernumMode.PetDialog.DeerclopsTip2";
+            yield return n => "Mods.InfernumMode.PetDialog.DeerclopsTip3";
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)

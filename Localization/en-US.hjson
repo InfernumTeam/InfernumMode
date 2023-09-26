@@ -2108,8 +2108,10 @@ Mods: {
 			CultistTip1: That guy was quite a lunatic, You might want extra mobility!
 			CultistIceBurstTip: Try to get between those lines, before the ice barrages explode!
 			CultistLightningTip: Lightning is going to aim ahead of you! Try to bait it!
-			DeerclopsTip1: Deerclops' are Myopic, so they will force you to stay close, dont let them corner you!
-			DeerclopsTip2: The Deerclops will follow a set pattern, learn it to gain the upper hand!
+			DeerclopsTip1: Deerclops are Myopic, so they will force you to stay close, dont let them corner you!
+			DeerclopsTip2: Deerclops attack in a set pattern, study their behaviour and kite their attacks!
+			DeerclopsTip3: Space management is key!
+			DeerclopsCharlieTip: If you let these shadows gather around Deerclops' eye, it's light will not be strong enough to keep the dark away, ward them off!
 			DeerclopsJokeTip1: Deer god...
 			DestroyerTip1: Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!
 			DSTip1: I’ve noticed the Scourge sends an audible roar before whipping up those massive dust pillars, how considerate!

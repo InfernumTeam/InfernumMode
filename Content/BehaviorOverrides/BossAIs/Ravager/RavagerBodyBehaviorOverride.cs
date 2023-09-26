@@ -960,6 +960,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "Mods.InfernumMode.PetDialog.RavagerTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.RavagerTip2";
         }
         #endregion Tips
     }

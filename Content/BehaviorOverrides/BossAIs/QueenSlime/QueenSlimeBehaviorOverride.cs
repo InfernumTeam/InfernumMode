@@ -638,6 +638,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 }
             }
 
+            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.QueenSlimeBladeBeamTip");
+
             // Release blades towards the laser.
             if (Main.netMode != NetmodeID.MultiplayerClient && currentlyCharging && attackTimer % 3f == 2f)
             {

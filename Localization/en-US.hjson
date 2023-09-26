@@ -2210,7 +2210,8 @@ Mods: {
 			QueenBeeTip3: Y'know, this poison is quite sickening; maybe you should search for a Bezoar?
 			QueenBeeJokeTip1: I can't Bee-lieve that, totally uncalled for!
 			QueenBeeJokeTip2: Oof, that mustve Stung...
-			QueenSlimeTip1: Don't flail about, and figure out what she's doing. Do still try and stay on the move, though!
+			QueenSlimeTip1: If it feels like you can’t run, then don’t! Moving less will help a lot!
+            QueenSlimeBladeBeamTip: What is THAT?! Get away from it! I don’t want to get atomized today!
 			QueenSlimeCrystalTip: Those crystals are equally spaced... seems like you can dodge them the same way consistently!
 			RavagerTip1: Some of Ravager's attacks reward you for staying close. Try not to run away!
 			SignusShadowSlashTip: Watch out, he might try to trick you at the end!

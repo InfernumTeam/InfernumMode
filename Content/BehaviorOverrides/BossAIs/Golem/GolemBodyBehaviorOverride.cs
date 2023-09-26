@@ -1918,6 +1918,14 @@ LeaveLoop:
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "Mods.InfernumMode.PetDialog.GolemTip1";
+            yield return n =>
+            {
+                if (n.life < n.lifeMax * Phase2LifeRatio)
+                {
+                    return "Mods.InfernumMode.PetDialog.GolemTip2";
+                }
+                return string.Empty;
+            };
         }
     }
 }

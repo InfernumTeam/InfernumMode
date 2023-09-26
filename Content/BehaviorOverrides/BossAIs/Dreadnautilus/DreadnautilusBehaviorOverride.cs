@@ -1011,6 +1011,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 return string.Empty;
             };
         }
-        #endregion
+        #endregion Tips
     }
 }

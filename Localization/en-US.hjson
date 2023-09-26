@@ -2104,7 +2104,10 @@ Mods: {
 			CrabulonClawTip: Crabulon gets protective when it exposes its insides - maybe you can push it back if you need more space!
 			CrabulonJokeTip1: There isnt Mushroom for the three of us, and I can tell who won the roullete.
 			CryogenTip1: Move as little as possible while it's above you. That should calm down its spastic jittering!
-			CryogenTip2: Watch for the gaps in the icicles around Cryogen, they're a great indicator of where a safe spot is!
+			CryogenTip2: The Ice pillars break down into Ice daggers as well, watch out from the sides!
+            CryogenJokeTip1: Man, that was totally uncool!
+            CryogenJokeTip2: This thing has zero chill!
+            CryogenBlizzardTip: The blizzard is picking up Aurora Spirits from both sides, beware running to the sides!
 			CultistTip1: That guy was quite a lunatic, You might want extra mobility!
 			CultistIceBurstTip: Try to get between those lines, before the ice barrages explode!
 			CultistLightningTip: Lightning is going to aim ahead of you! Try to bait it!

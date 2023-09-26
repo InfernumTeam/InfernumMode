@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Projectiles;
+using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -829,6 +830,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 npc.velocity *= 0.96f;
             npc.rotation = npc.velocity.X * 0.02f;
 
+            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CryogenBlizzardTip");
+
             bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
             if (Main.netMode != NetmodeID.MultiplayerClient && canShoot && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
             {
@@ -1027,6 +1030,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         {
             yield return n => "Mods.InfernumMode.PetDialog.CryogenTip1";
             yield return n => "Mods.InfernumMode.PetDialog.CryogenTip2";
+
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.CryogenJokeTip1";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.CryogenJokeTip2";
+                return string.Empty;
+            };
         }
         #endregion Tips
     }

@@ -2081,7 +2081,7 @@ Mods: {
 			AquaticScourgeTyphoonTip: Looks like that's not all this serpent could do, we gotta skeddadle!
 			AquaticScourgeBonkJokeTip: Bonk!
 			AstrumAureusTip1: Stay somewhat close, otherwise you may be caught off guard!
-            AstrumAureusTip2: Watch out for those shockwaves! staying above ground level should be the best of your interest there.
+			AstrumAureusTip2: Watch out for those shockwaves! staying above ground level should be the best of your interest there.
 			AstrumDeusTip1: That serpent is really fast! Good mobility will be important to defeat it!
 			AstrumDeusShellTip: That thing seems to have shed its outer shell. Brace yourself, it's going to be a lot faster now!
 			AstrumDeusDarkBurstTip: Don't panic while trying to evade the bolts!
@@ -2125,13 +2125,13 @@ Mods: {
 			DSTip2: Skill with a grappling hook will prove very useful to get out of the Scourge’s way.
 			DSFinalPhaseTip: I think these vultures are going to earn a meal here, one way or another...
 			DSJokeTip1: Really served yourself as a dessert course right there...
-            DoGTip1: The Devourer has a rythem to it's madness, find that rythem and fight along!
+			DoGTip1: The Devourer has a rythem to it's madness, find that rythem and fight along!
 			DoGLaserTip: Oh man, theres so many lasers! Slow and precise movements seem like your best bet here...
 			DoGRoDTip: It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!
 			DoGChargeTip: Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!
 			DoGDashTip: A dashing accessory would be reeaaaally helpful here...
 			DoGBashTip: Being able to face it head on with a ram sounds like a good idea, don't you think?
-            DoGJokeTip1: What the DoG doin'?
+			DoGJokeTip1: What the DoG doin'?
 			ExoMechComboTip: Seems like they are combining efforts, beware!
 			DraedonChooseTip1: Better choose well!
 			DraedonChooseTip2: If a certain starting combo isnt working too well, maybe experiment with another one?
@@ -2141,7 +2141,7 @@ Mods: {
 			ThanatosChargeTip: Don't fret, face fear in the eyes and dash directly into Thanatos' face-plates!
 			DragonfollyTip1: The Dragonfolly wants you to think it’s chaotic, but it really isn’t! Slow down a little and analyze things!
 			DragonfollyTip2: Those large red lightning pillars can be negated by flying below them!
-            Dragonfollytip3: Watch for when it turns red - if it can’t close in, it’ll jump you from behind!
+			Dragonfollytip3: Watch for when it turns red - if it can’t close in, it’ll jump you from behind!
 			DragonfollyBoltTip: Static bolts seem to be flying towards you! Be wary of them, and don't get trapped by the lightning telegraphs!
 			DreadnautilusSummonItemTip: I've heared somewhere that Dreadnautilus' cannot resist the call of a special Red Bait! Do you happen to have one?
 			DreadnautilusTip1: Those bats are really out for you, but they aren't very agile. Try juking them out!
@@ -2149,8 +2149,8 @@ Mods: {
 			DreadnautilusJokeTip2: Seems like you failed again, but dreadnaut! you will eventually defeat the terror!
 			DukeFishronRazorbladeTip: Try your best to weave through the razorblades and brace youself!
 			DukeFishronTidalWaveTip: Keep track of where the long charge stops! You might get swept up by a tidal wave!
-            EoLTip1: Most attacks don’t really require a lot of movement, keep your movement on the low!
-            EoLMoonTip: Stay close! You're fighting the light of moon, you can't run away!
+			EoLTip1: Most attacks don’t really require a lot of movement, keep your movement on the low!
+			EoLMoonTip: Stay close! You're fighting the light of moon, you can't run away!
 			EoLJokeTip1: You know, I was already quite partial to rainbows, but this things attacks have killer looks- oh. Poor choice of words, then.
 			EoWTip1: Many layered platforms can help greatly to avoid the exploding Cursed Flames!
 			EoWTip2: If the Eater slows to a crawl, do the same or you’ll run right into a vilethorn!
@@ -2161,7 +2161,7 @@ Mods: {
 			EoCJokeTip1: Eye can’t believe you got blind-sided by that!
 			EoCJokeTip2: Eye ay ay! what a way to die...
 			GolemTip1: Golem's eye color will change depending on it's attack. Keep your own eyes peeled!
-            GolemTip2: if you find it hard to get onto platforms, just know that you can hook onto walls to regain your flight time!
+			GolemTip2: if you find it hard to get onto platforms, just know that you can hook onto walls to regain your flight time!
 			GolemJokeTip1: You're gonna have a bad time...
 			HiveMindTip1: This is the time you would want to learn the opponents moves, use their tells to get the upper hand!
 			HiveMindTip2: Try to push his Rain Charge away by running towards the Hive Mind, this can help keep your arena clean!
@@ -2181,13 +2181,13 @@ Mods: {
 			LeviathanFinalPhaseTip: Home stretch! try focusing on yourself more than the boss!
 			MoonLordTip1: Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!
 			MoonLordLaserTip: Brace yourself! A barrage of slow bolts are going to be released!
-            MoonLordTip2: Remember to manage your space, or you might get cornered!
+			MoonLordTip2: Remember to manage your space, or you might get cornered!
 			MoonLordBlackHoleTip: The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!
 			MoonLordJokeTip1: Squib emoji
 			OldDukeTip1: Be sure to remember if any sharkrons or tooth balls appear, so that their remains don't surprise you later!
 			OldDukeTip2: Movement speed is gonna matter a lot against that fish!
 			OldDukeFinalPhaseTip: Keep a mental counter of when he teleports, or he’ll catch you by surprise!
-            OldDukeRealFinalPhaseTip: Just ramming won’t work, but neither will just dodging… Try doing both at once!
+			OldDukeRealFinalPhaseTip: Just ramming won’t work, but neither will just dodging… Try doing both at once!
 			OldDukeDashTip1: Are you really sure you don't want to use a dash for that fish?
 			OldDukeDashTip2: A dashing accessory would be reeaaally helpful here...
 			PBGDroneJailTip: Those drones are building a jail around you, destroying one will give you an opening!
@@ -2197,11 +2197,11 @@ Mods: {
 			PerforatorsWorm2Tip: This perforator doesn't seem as offensive as its pals, Maybe let it coil around you instead?
 			PerforatorsProjectilesTip: Staying calm and still will help dodge the slow projectiles!
 			PerforatorsFinalPhaseTip: It's still going?!
-            PlanteraTip1: During the tentacle spreads, look for the blind spot!
+			PlanteraTip1: During the tentacle spreads, look for the blind spot!
 			PlanteraPlanteraTip: Manage those clouds carefully. You'll need to weave through them to find the gap in her tentacles!
 			PlanteraFinalPhaseTip: Plantera isn't keeping anything back, watch out!
-            PlanteraJokeTip1: A bit embarassing, dying to a plant.
-            PlanteraJokeTip2: From what I can tell, Plantera is winning - but who's keeping spore?
+			PlanteraJokeTip1: A bit embarassing, dying to a plant.
+			PlanteraJokeTip2: From what I can tell, Plantera is winning - but who's keeping spore?
 			PolterghastTip1: A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!
 			PolterghastTip2: If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!
 			PolterghastDesperationPhaseTip: Polterghast's spirits have been released! But they don't seem very happy with us...
@@ -2213,11 +2213,11 @@ Mods: {
 			ProfanedRoDTip: The profaned magic seems to be blocking your Rod of Discord!
 			ProfanedDefenderTip: Ohhh, he's really mad now! Stay on your toes!
 			ProfanedFlappyBirdTip: They've holed themselves up on the right, but if you get there you can probably breach their defenses!
-            ProfanedFlappyJokeTip: That onslaught of fire walls reminds me of a certain game, but the players could only jump in the air! Good thing you have wings, right?
+			ProfanedFlappyJokeTip: That onslaught of fire walls reminds me of a certain game, but the players could only jump in the air! Good thing you have wings, right?
 			ProfanedFlappyBirdEndTip: They're a really good team! You'll want to manage everything at once, taking it slow is your best shot!
 			ProfanedHealerDeathTip: It's getting physical now! Don't let one distract you from the other!
-            ProvidenceTip1: Her attack cycle is similar to the music cycle, try using the music as a way to guide you through the fight!
-            ProvidenceTip2: Focus on dodging, You don't have to keep attacking at all times! What worth is there to damage if you dont live to see the end of it? 
+			ProvidenceTip1: Her attack cycle is similar to the music cycle, try using the music as a way to guide you through the fight!
+			ProvidenceTip2: Focus on dodging, You don't have to keep attacking at all times! What worth is there to damage if you dont live to see the end of it?
 			ProvidenceExplosionTip: Those fireballs seem to only explode if they hit lava, you should probably bait them away!
 			ProvidenceFinalPhaseTip: It looks like Providence is preparing something!
 			QueenBeeTip1: Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!
@@ -2229,8 +2229,8 @@ Mods: {
 			QueenSlimeBladeBeamTip: What is THAT?! Get away from it! I don’t want to get atomized today!
 			QueenSlimeCrystalTip: Those crystals are equally spaced... seems like you can dodge them the same way consistently!
 			RavagerTip1: Some of Ravager's attacks reward you for staying close. Try not to run away!
-            RavagerTip2: Manage the lingering blob splotches, last thing you want is to play "the floor is lava"!
-            SignusTip1: Pay close attention when it’s about to do a blackout - it might give you more warning than you think!
+			RavagerTip2: Manage the lingering blob splotches, last thing you want is to play "the floor is lava"!
+			SignusTip1: Pay close attention when it’s about to do a blackout - it might give you more warning than you think!
 			SignusShadowSlashTip: Watch out, he might try to trick you at the end!
 			SignusBombTip: Those bombs will explode into kunai that fly towards you. Be careful!
 			SkeletronTip1: Contrary to what you may think, running into the shadowflame walls will not work, take it slow!
@@ -2239,7 +2239,7 @@ Mods: {
 			SkeletronJokeTip1: Geeettttttt DUNKED ON!!!
 			SlimeGodTip1: They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?
 			SlimeGodTip2: That was a little overwhelming! I wonder if mirroring its moves could work in your favor?
-            StormWeaverTip1: Those cloud barrages can take you by surprise! Stay focused - that storm scourge only seems to be focused on summoning attacks, not ramming you!
+			StormWeaverTip1: Those cloud barrages can take you by surprise! Stay focused - that storm scourge only seems to be focused on summoning attacks, not ramming you!
 			SCalJokeTip1: Do you want my Witch's hat? Matching her atire could be fun...
 			SCalSkullTip: So many skulls, but it appears they aren't focused directly at you! Try going inbetween!
 			SCalDesperationTip: Even when all hell breaks loose, stay focused on your dodging!
@@ -2252,7 +2252,9 @@ Mods: {
 			WoFTip2: These detached eyes are rather intimidating, Good thing they only shoot at very specific points!
 			WoFTip3: Yuck, Those grotesque mouths break off and fly?! Wish I could just burn them in an Inferno myself…
 			WoFJokeTip1: Welp, that one was a bust! Nothing beats having more opportunities to bully the Guide though!
-			YharonSpeedTip: This speed is crazy! Make sure you know when it starts; you might get jumpscared!
+			YharonPreHealTip: You're almost there! Yharon is surely at the end of his rope now!
+			YharonPostHealTip: Oh..
+			YharonSpeedTip: Try and remember when Yharon starts hyper-dashing, or he’ll catch you off guard!
 			YharonFlashbangTip: Don't let the flashbang faze you! Keep your eyes peeled for where the embers are!
 			YharonCarpetBombTip: Better stay near the edges of the arena during those carpet bomb flames, That should keep them out of the way!
 			YharonJokeTip1: AND IF I SHOULD DIE BEFORE YOU CONTINUEE, YOU SHALL HAV-... Wait, you died? Come on, I was on a roll here!

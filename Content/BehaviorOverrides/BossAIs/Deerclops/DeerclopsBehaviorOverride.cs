@@ -872,6 +872,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
             // Make the portal appear.
             dragPortalAppearInterpolant = Utils.GetLerpValue(0f, portalAppearTime, attackTimer, true);
+            HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DeerclopsDefeatTip");
 
             if (attackTimer >= ShadowHandSpinTime + ShadowHandReelbackTime + ShadowHandGrabTime + 10f)
             {

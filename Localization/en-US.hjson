@@ -2227,6 +2227,7 @@ Mods: {
 			QueenSlimeCrystalTip: Those crystals are equally spaced... seems like you can dodge them the same way consistently!
 			RavagerTip1: Some of Ravager's attacks reward you for staying close. Try not to run away!
             RavagerTip2: Manage the lingering blob splotches, last thing you want is to play "the floor is lava"!
+            SignusTip1: Pay close attention when it’s about to do a blackout - it might give you more warning than you think!
 			SignusShadowSlashTip: Watch out, he might try to trick you at the end!
 			SignusBombTip: Those bombs will explode into kunai that fly towards you. Be careful!
 			SkeletronTip1: Contrary to what you may think, running into the shadowflame walls will not work, take it slow!
@@ -2235,6 +2236,7 @@ Mods: {
 			SkeletronJokeTip1: Geeettttttt DUNKED ON!!!
 			SlimeGodTip1: They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?
 			SlimeGodTip2: That was a little overwhelming! I wonder if mirroring its moves could work in your favor?
+            StormWeaverTip1: Those cloud barrages can take you by surprise! Stay focused - that storm scourge only seems to be focused on summoning attacks, not ramming you!
 			SCalJokeTip1: Do you want my Witch's hat? Matching her atire could be fun...
 			SCalSkullTip: So many skulls, but it appears they aren't focused directly at you! Try going inbetween!
 			SCalDesperationTip: Even when all hell breaks loose, stay focused on your dodging!

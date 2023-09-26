@@ -2105,9 +2105,9 @@ Mods: {
 			CrabulonJokeTip1: There isnt Mushroom for the three of us, and I can tell who won the roullete.
 			CryogenTip1: Move as little as possible while it's above you. That should calm down its spastic jittering!
 			CryogenTip2: The Ice pillars break down into Ice daggers as well, watch out from the sides!
-            CryogenJokeTip1: Man, that was totally uncool!
-            CryogenJokeTip2: This thing has zero chill!
-            CryogenBlizzardTip: The blizzard is picking up Aurora Spirits from both sides, beware running to the sides!
+			CryogenJokeTip1: Man, that was totally uncool!
+			CryogenJokeTip2: This thing has zero chill!
+			CryogenBlizzardTip: The blizzard is picking up Aurora Spirits from both sides, beware running to the sides!
 			CultistTip1: That guy was quite a lunatic, You might want extra mobility!
 			CultistIceBurstTip: Try to get between those lines, before the ice barrages explode!
 			CultistLightningTip: Lightning is going to aim ahead of you! Try to bait it!
@@ -2118,8 +2118,8 @@ Mods: {
 			DeerclopsJokeTip1: Deer god...
 			DeerclopsDefeatTip: Looks like it's the end of the act!
 			DestroyerTip1: Prepare for it's final stand! Watch for red laser telegraphs and prepare to dash to safety!
-            DestroyerTip2: That debris falls really fast, huh? Try going up with the Destroyer so you can see it better!
-            DestroyerTip3: Its charges are quite powerful, a form of Ram or method to quickly get out of the way will prove helpful!
+			DestroyerTip2: That debris falls really fast, huh? Try going up with the Destroyer so you can see it better!
+			DestroyerTip3: Its charges are quite powerful, a form of Ram or method to quickly get out of the way will prove helpful!
 			DSTip1: I’ve noticed the Scourge sends an audible roar before whipping up those massive dust pillars, how considerate!
 			DSTip2: Skill with a grappling hook will prove very useful to get out of the Scourge’s way.
 			DSFinalPhaseTip: I think these vultures are going to earn a meal here, one way or another...
@@ -2188,16 +2188,19 @@ Mods: {
 			PerforatorsWorm2Tip: This perforator doesn't seem as offensive as its pals, Maybe let it coil around you instead?
 			PerforatorsProjectilesTip: Staying calm and still will help dodge the slow projectiles!
 			PerforatorsFinalPhaseTip: It's still going?!
+            PlanteraTip1: During the tentacle spreads, look for the blind spot!
 			PlanteraPlanteraTip: Manage those clouds carefully. You'll need to weave through them to find the gap in her tentacles!
 			PlanteraFinalPhaseTip: Plantera isn't keeping anything back, watch out!
+            PlanteraJokeTip1: A bit embarassing, dying to a plant.
+            PlanteraJokeTip2: From what I can tell, Plantera is winning - but who's keeping spore?
 			PolterghastTip1: A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!
 			PolterghastTip2: If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!
 			PolterghastDesperationPhaseTip: Polterghast's spirits have been released! But they don't seem very happy with us...
 			ProvidenceDawnWarningTip: Make sure it doesn't become dawn if you fight Providence again!
 			ProvidenceDuskWarningTip: Make sure it doesn't become dusk if you fight Providence again!
-            PrimeTip1: His arms seem to be aiming towards where you’re heading, a direction change last second will surely throw off those calculations…
+			PrimeTip1: His arms seem to be aiming towards where you’re heading, a direction change last second will surely throw off those calculations…
 			PrimeTeslaTip: Those blue tesla mines are going to explode into gas; take cover!
-            PrimeJokeTip1: Now this is a prime example of what NOT to do..
+			PrimeJokeTip1: Now this is a prime example of what NOT to do..
 			ProfanedRoDTip: The profaned magic seems to be blocking your Rod of Discord!
 			ProfanedDefenderTip: Ohhh, he's really mad now! Stay on your toes!
 			ProfanedFlappyBirdTip: They've holed themselves up on the right, but if you get there you can probably breach their defenses!
@@ -2211,7 +2214,7 @@ Mods: {
 			QueenBeeJokeTip1: I can't Bee-lieve that, totally uncalled for!
 			QueenBeeJokeTip2: Oof, that mustve Stung...
 			QueenSlimeTip1: If it feels like you can’t run, then don’t! Moving less will help a lot!
-            QueenSlimeBladeBeamTip: What is THAT?! Get away from it! I don’t want to get atomized today!
+			QueenSlimeBladeBeamTip: What is THAT?! Get away from it! I don’t want to get atomized today!
 			QueenSlimeCrystalTip: Those crystals are equally spaced... seems like you can dodge them the same way consistently!
 			RavagerTip1: Some of Ravager's attacks reward you for staying close. Try not to run away!
 			SignusShadowSlashTip: Watch out, he might try to trick you at the end!
@@ -2228,7 +2231,7 @@ Mods: {
 			SCalFireSpinTip: Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!
 			SCalFireChargeTip: Calamitas' is laying exploding brimstone magic with every charge, try to direct them away from a safe location!
 			TwinsTip1: Having trouble dodging during the spin? Three can play at that game, Spin along!
-            TwinsFinalOptionTip: Each one of the Twins has their own special last resort procedure, if one is giving you a hard time; try focusing on the other first!
+			TwinsFinalOptionTip: Each one of the Twins has their own special last resort procedure, if one is giving you a hard time; try focusing on the other first!
 			TwinsFinalPhaseTip: Watch out, that last twin is gonna hit you with everything it's got! Don't let up!
 			WoFTip1: Be sure to run the opposite direction!
 			WoFTip2: These detached eyes are rather intimidating, Good thing they only shoot at very specific points!

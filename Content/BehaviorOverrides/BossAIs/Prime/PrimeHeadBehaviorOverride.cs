@@ -959,7 +959,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             yield return n =>
             {
                 if (TipsManager.ShouldUseJokeText)
-                    return "Mods.InfernumMode.PetDialog.CrabulonJokeTip1";
+                    return "Mods.InfernumMode.PetDialog.PrimeJokeTip1";
                 return string.Empty;
             };
         }

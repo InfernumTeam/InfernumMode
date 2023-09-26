@@ -1123,6 +1123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
             yield return n => "Mods.InfernumMode.PetDialog.AstrumAureusTip1";
+            yield return n => "Mods.InfernumMode.PetDialog.AstrumAureusTip2";
         }
         #endregion Tips
     }

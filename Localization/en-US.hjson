@@ -2081,6 +2081,7 @@ Mods: {
 			AquaticScourgeTyphoonTip: Looks like that's not all this serpent could do, we gotta skeddadle!
 			AquaticScourgeBonkJokeTip: Bonk!
 			AstrumAureusTip1: Stay somewhat close, otherwise you may be caught off guard!
+            AstrumAureusTip2: Watch out for those shockwaves! staying above ground level should be the best of your interest there.
 			AstrumDeusTip1: That serpent is really fast! Good mobility will be important to defeat it!
 			AstrumDeusShellTip: That thing seems to have shed its outer shell. Brace yourself, it's going to be a lot faster now!
 			AstrumDeusDarkBurstTip: Don't panic while trying to evade the bolts!
@@ -2168,7 +2169,7 @@ Mods: {
 			KingSlimeNinjaTip: The ninja shoots more shurikens the farther you are, so don't go too far!
 			KingSlimeJokeTip1: Quite a sticky situation you had to deal with...
 			KingSlimeDefeatTip: And that's a Goo’d bye!
-			AnahitaTip1: You can weave through the clefs if you manipulate Anahita's movement well!
+			AnahitaTip1: If you lead Anahita’s movement well enough, she’ll leave gaps in the clefs to dodge through!
 			AnahitaFinalPhaseTip: Home stretch! Do the same as you did before!
 			LeviathanTip1: The meteors all split in the same way; use this to your advantage!
 			LeviathanFinalPhaseTip: Home stretch! try focusing on yourself more than the boss!

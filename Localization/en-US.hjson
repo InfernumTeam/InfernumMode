@@ -2125,11 +2125,13 @@ Mods: {
 			DSTip2: Skill with a grappling hook will prove very useful to get out of the Scourge’s way.
 			DSFinalPhaseTip: I think these vultures are going to earn a meal here, one way or another...
 			DSJokeTip1: Really served yourself as a dessert course right there...
+            DoGTip1: The Devourer has a rythem to it's madness, find that rythem and fight along!
 			DoGLaserTip: Oh man, theres so many lasers! Slow and precise movements seem like your best bet here...
 			DoGRoDTip: It seems as if it is manipulating telelocational magic, your Rod of Discord is of no use here!
 			DoGChargeTip: Don't feel intimidated, face fear in the eyes and dash directly into the Devourer's maw!
 			DoGDashTip: A dashing accessory would be reeaaaally helpful here...
 			DoGBashTip: Being able to face it head on with a ram sounds like a good idea, don't you think?
+            DoGJokeTip1: What the DoG doin'?
 			ExoMechComboTip: Seems like they are combining efforts, beware!
 			DraedonChooseTip1: Better choose well!
 			DraedonChooseTip2: If a certain starting combo isnt working too well, maybe experiment with another one?

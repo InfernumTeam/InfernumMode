@@ -552,12 +552,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
         #region Tips
         public override IEnumerable<Func<NPC, string>> GetTips()
         {
+            yield return n => "Mods.InfernumMode.PetDialog.DoGTip1";
             yield return n =>
             {
                 if (!Main.LocalPlayer.HasDash())
                     return "Mods.InfernumMode.PetDialog.DoGDashTip";
                 else if (!Main.LocalPlayer.HasShieldBash())
                     return "Mods.InfernumMode.PetDialog.DoGBashTip";
+                return string.Empty;
+            };
+            yield return n =>
+            {
+                if (TipsManager.ShouldUseJokeText)
+                    return "Mods.InfernumMode.PetDialog.DoGJokeTip1";
                 return string.Empty;
             };
         }

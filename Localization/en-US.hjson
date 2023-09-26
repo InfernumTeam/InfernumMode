@@ -2092,6 +2092,10 @@ Mods: {
 			BoCTip1: The Brain of Cthulhu uses a lot of prediction and deception in its attacks, so play extra smart!
 			BoCTip2: The Brain of Cthulhu surely loves some trickery, Pay close attention to the real threat among the crowd!
 			BoCTip3: Try changing direction often when the Creepers start showering you with ichor, perhaps that will give you leeway!
+            CalShadowTip1: What’s that magical ring around you doing? Pay attention to the effects it might cause!
+            CalShadowBrosTip: The brothers’ attacks are deceptively easy if you move slow!
+            CalShadowFinalPhaseTip: She’s pulling out all the stops… but her hexes are gone! Now you can focus on her alone!
+            CalShadowJokeTip1: I'd be mad but, look at her! such a small bean.
 			CVTip1: Try not to move too much at the start of the battle. Finding a good spot and staying near it helps a lot!
 			CVTip2: Most of the Void's attacks require fast maneuvering to evade. Be sure to pay attention to any projectiles on-screen!
 			CVPortalTip: Those portals are preparing something! Get near the void, quickly!

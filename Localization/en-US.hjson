@@ -2213,6 +2213,8 @@ Mods: {
             ProfanedFlappyJokeTip: That onslaught of fire walls reminds me of a certain game, but the players could only jump in the air! Good thing you have wings, right?
 			ProfanedFlappyBirdEndTip: They're a really good team! You'll want to manage everything at once, taking it slow is your best shot!
 			ProfanedHealerDeathTip: It's getting physical now! Don't let one distract you from the other!
+            ProvidenceTip1: Her attack cycle is similar to the music cycle, try using the music as a way to guide you through the fight!
+            ProvidenceTip2: Focus on dodging, You don't have to keep attacking at all times! What worth is there to damage if you dont live to see the end of it? 
 			ProvidenceExplosionTip: Those fireballs seem to only explode if they hit lava, you should probably bait them away!
 			ProvidenceFinalPhaseTip: It looks like Providence is preparing something!
 			QueenBeeTip1: Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!

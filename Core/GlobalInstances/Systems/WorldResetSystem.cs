@@ -10,7 +10,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         // TODO: Look into this.
         public override void OnWorldLoad()
         {
-            WorldSaveSystem.InfernumMode = false;
+            WorldSaveSystem.InfernumModeEnabled = false;
             WorldSaveSystem.AbyssLayer1ForestSeed = 0;
             WorldSaveSystem.AbyssLayer3CavernSeed = 0;
             //WorldSaveSystem.BlossomGardenCenter = Point.Zero;
@@ -38,7 +38,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void OnWorldUnload()
         {
-            WorldSaveSystem.InfernumMode = false;
+            WorldSaveSystem.InfernumModeEnabled = false;
             CreditManager.StopAbruptly();
         }
     }

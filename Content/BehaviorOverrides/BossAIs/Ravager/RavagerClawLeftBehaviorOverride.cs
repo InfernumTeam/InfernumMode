@@ -330,12 +330,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f;
                 Color color = npc.GetAlpha(Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f)));
                 Vector2 screenDrawPosition = drawPosition - Main.screenPosition;
-                Main.spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             Vector2 clawDrawPosition = npc.Center - Main.screenPosition;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Main.spriteBatch.Draw(npcTexture, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation, npcTexture.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(npcTexture, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation, npcTexture.Size() * 0.5f, npc.scale, direction, 0f);
             return false;
         }
     }

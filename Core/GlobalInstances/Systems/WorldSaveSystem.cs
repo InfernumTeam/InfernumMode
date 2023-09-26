@@ -10,7 +10,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class WorldSaveSystem : ModSystem
     {
-        private static bool infernumMode;
+        private static bool infernumModeEnabled;
 
         public static int AbyssLayer1ForestSeed
         {
@@ -48,9 +48,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
-        public static bool InfernumMode
+        public static bool InfernumModeEnabled
         {
-            get => infernumMode;
+            get => infernumModeEnabled;
             set
             {
                 if (!value)
@@ -72,7 +72,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     CeaselessVoidArchivesSpawnSystem.WaitingForPlayersToLeaveArchives = true;
                 }
 
-                infernumMode = value;
+                infernumModeEnabled = value;
             }
         }
 
@@ -197,7 +197,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 return;
 
             var downed = new List<string>();
-            if (InfernumMode)
+            if (InfernumModeEnabled)
                 downed.Add("InfernumModeActive");
             if (HasGeneratedProfanedShrine)
                 downed.Add("HasGeneratedProfanedShrine");
@@ -252,7 +252,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         public override void LoadWorldData(TagCompound tag)
         {
             var downed = tag.GetList<string>("downed");
-            InfernumMode = downed.Contains("InfernumModeActive");
+            InfernumModeEnabled = downed.Contains("InfernumModeActive");
             HasGeneratedProfanedShrine = downed.Contains("HasGeneratedProfanedShrine");
             HasGeneratedColosseumEntrance = downed.Contains("HasGeneratedColosseumEntrance");
 
@@ -284,6 +284,17 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             ForbiddenArchiveCenter = new(tag.GetInt("ForbiddenArchiveCenterX"), tag.GetInt("ForbiddenArchiveCenterY"));
 
             BlossomGardenCenter = new(tag.GetInt("BlossomGardenCenterX"), tag.GetInt("BlossomGardenCenterY"));
+            FargosBridgeModcallSupport();
+        }
+
+        public static void FargosBridgeModcallSupport()
+        {
+            var mutant = InfernumMode.FargosMutantMod;
+            if (mutant == null || ProvidenceArena == Rectangle.Empty)
+                return;
+
+            string command = "AddIndestructibleRectangle";
+            mutant.Call(command, ProvidenceArena.ToWorldCoords());
         }
     }
 }

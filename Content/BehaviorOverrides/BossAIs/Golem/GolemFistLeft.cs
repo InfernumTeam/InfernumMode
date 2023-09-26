@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             NPC.noTileCollide = true;
         }
 
-        public override bool PreAI() => DoFistAI(NPC, true);
+        public override bool PreAI() => DoFistAI(NPC);
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => DrawFist(NPC, Main.spriteBatch, drawColor, true);
 
@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             return base.CanHitPlayer(target, ref cooldownSlot);
         }
 
-        public static bool DoFistAI(NPC npc, bool leftFist)
+        public static bool DoFistAI(NPC npc)
         {
             if (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].type != NPCID.Golem)
             {
@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
                 Color color = Lighting.GetColor((int)(FistCenterPos.X / 16f), (int)(FistCenterPos.Y / 16f));
                 Texture2D armTexture = TextureAssets.Chain21.Value;
                 Rectangle frame = new(0, 0, armTexture.Width, moveDistance);
-                Main.spriteBatch.Draw(armTexture, FistCenterPos - Main.screenPosition, frame, color, armRotation, armTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(armTexture, FistCenterPos - Main.screenPosition, frame, color, armRotation, armTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 FistCenterPos += (npc.Center - FistCenterPos).SafeNormalize(Vector2.Zero) * moveDistance;
             }
 
@@ -82,7 +82,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
             Main.instance.LoadNPC(NPCID.GolemFistRight);
             Texture2D texture = TextureAssets.Npc[NPCID.GolemFistRight].Value;
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, 1f, effect, 0f);
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, npc.frame.Size() * 0.5f, 1f, effect, 0f);
             return false;
         }
     }

@@ -49,7 +49,7 @@ namespace InfernumMode
             private set;
         }
 
-        public static bool CanUseCustomAIs => WorldSaveSystem.InfernumMode;
+        public static bool CanUseCustomAIs => WorldSaveSystem.InfernumModeEnabled;
 
         public static float BlackFade
         {

@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void ExtraUpdate(Player player, int extraInfo)
         {
-            if (Main.npc[extraInfo].type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode && Main.npc[extraInfo].Infernum().ExtraAI[CalamitasShadowBehaviorOverride.FoughtInUnderworldIndex] == 1f)
+            if (Main.npc[extraInfo].type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumModeEnabled && Main.npc[extraInfo].Infernum().ExtraAI[CalamitasShadowBehaviorOverride.FoughtInUnderworldIndex] == 1f)
                 CurrentCompletion = TotalCompletion;
         }
 

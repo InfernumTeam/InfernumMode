@@ -704,7 +704,7 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.EmitDelegate((Player player) =>
             {
                 // Normal spawning stuff
-                if (!WorldSaveSystem.InfernumMode)
+                if (!WorldSaveSystem.InfernumModeEnabled)
                 {
                     // This runs like 6 times without this check for some fucking reason.
                     if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()))

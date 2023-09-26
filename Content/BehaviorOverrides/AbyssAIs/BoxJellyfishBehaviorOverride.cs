@@ -82,7 +82,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 case AttackType.Attack:
                     DoBehavior_Attack(npc, ref attackTimer, npc.GetTargetData(), ref zapCooldown);
                     break;
-
             }
             attackTimer++;
             return false;

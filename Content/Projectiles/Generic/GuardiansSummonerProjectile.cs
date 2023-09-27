@@ -83,6 +83,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             if (Owner.dead || !Owner.active)
             {
                 Projectile.Kill();
+                Player.Infernum_Camera().ScreenFocusHoldInPlaceTime = 0;
                 return;
             }
 

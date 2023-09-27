@@ -164,8 +164,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         GeneralParticleHandler.SpawnParticle(energyLeak);
                     }
 
-                    BlockerSystem.SetBlockers(ui: true);
-
                     shieldStatus = (float)DefenderShieldStatus.ActiveAndStatic;
 
                     if ((Collision.SolidCollision(npc.Center, npc.width, npc.height) && npc.Center.Y > target.Center.Y) || localAttackTimer >= 120f)
@@ -228,10 +226,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.life = 0;
                         npc.NPCLoot();
                         npc.active = false;
-                    }
-                    else
-                    {
-                        BlockerSystem.SetBlockers(ui: true);
                     }
                     break;
             }

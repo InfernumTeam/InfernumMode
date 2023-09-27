@@ -1,4 +1,5 @@
 ﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
@@ -17,7 +18,17 @@ namespace InfernumMode.Common.Graphics.Metaballs.CalMetaballs
 {
     public class ProfanedLavaParticleSet : BaseFusableParticleSet
     {
-        public override Color BorderColor => ProvidenceBehaviorOverride.IsEnraged ? Color.DeepSkyBlue : Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0f);
+        public override Color BorderColor
+        {
+            get
+            {
+                Color dayColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0.2f);
+                if (NPC.AnyNPCs(ModContent.NPCType<Providence>()))
+                    return ProvidenceBehaviorOverride.IsEnraged ? Color.DeepSkyBlue: dayColor;
+
+                return dayColor;
+            }
+        }
 
         public override bool BorderShouldBeSolid => true;
 

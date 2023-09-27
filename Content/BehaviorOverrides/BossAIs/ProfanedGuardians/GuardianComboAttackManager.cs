@@ -1914,6 +1914,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 focusPosition = target.Center + new Vector2(0f, target.gfxOffY) + (-0.4f).ToRotationVector2() * 70f;
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
                 target.Infernum_Camera().ScreenFocusPosition = focusPosition;
+
                 if (substate < 6f)
                 {
                     target.Infernum_Camera().CurrentScreenShakePower = 2f;
@@ -1922,10 +1923,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     npc.dontTakeDamage = true;
                     // Do not deal damage.
                     npc.damage = 0;
-                    // Hide UI.
-
-                    if (Main.myPlayer == npc.target && Main.netMode == NetmodeID.SinglePlayer)
-                        BlockerSystem.SetBlockers(ui: true);
                 }
 
                 // Spawn cool symbols.
@@ -1962,6 +1959,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             // Mark the spear for removal.
                             spearStatus = (float)DefenderShieldStatus.MarkedForRemoval;
                         break;
+
                     case 3:
                         npc.velocity *= 0.9f;
                         break;
@@ -2001,7 +1999,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Vector2 hoverDestination = target.Center + new Vector2(1200f, 0f);
 
                         if (localAttackTimer == 1)
+                        {
                             npc.Center = hoverDestination;
+                            if (Main.myPlayer == npc.target && Main.netMode == NetmodeID.SinglePlayer)
+                            {
+                                BlockerSystem.Start(false, true, () =>
+                                {
+                                    return NPC.AnyNPCs(DefenderType);
+                                });
+                            }
+                        }
                         npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathF.Min(npc.Distance(hoverDestination), flySpeed)) / 8f;
                         npc.spriteDirection = (npc.DirectionTo(target.Center).X > 0f) ? 1 : -1;
 

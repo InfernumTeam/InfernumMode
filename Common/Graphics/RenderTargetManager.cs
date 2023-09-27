@@ -18,7 +18,7 @@ namespace InfernumMode.Common.Graphics
         /// <summary>
         /// How many frames should pass since a target was last accessed before automatically disposing of it.
         /// </summary>
-        public const int TimeBeforeAutoDispose = 120;
+        public const int TimeBeforeAutoDispose = 600;
 
         internal static void ResetTargetSizes(Vector2 obj)
         {

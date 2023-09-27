@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Despawn if no valid target exists.
             npc.timeLeft = 3600;
             Player target = Main.player[npc.target];
-            if (((!target.active || target.dead) || target.Center.X < WorldSaveSystem.ProvidenceArena.X * 16) || !Main.dayTime)
+            if (((!target.active || target.dead) || target.Center.X < WorldSaveSystem.ProvidenceArena.X * 16))
             {
                 npc.velocity.Y = Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
                 if (npc.timeLeft < 180)

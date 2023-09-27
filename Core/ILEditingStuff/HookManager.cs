@@ -412,6 +412,12 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => FuckYou();
         }
 
+        public static event ILContext.Manipulator ProfanedShardCanUseItem
+        {
+            add => ModifyIl(typeof(ProfanedShard).GetMethod("CanUseItem", Utilities.UniversalBindingFlags), value);
+            remove => FuckYou();
+        }
+
         public static event ILContext.Manipulator ProfanedShardUseItem
         {
             add => ModifyIl(typeof(ProfanedShard).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);

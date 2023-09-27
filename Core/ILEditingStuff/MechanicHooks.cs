@@ -21,6 +21,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver;
 using InfernumMode.Content.Items.Accessories;
@@ -693,9 +694,17 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class ChangeProfanedShardUsageHook : IHookEdit
     {
-        public void Load() => ProfanedShardUseItem += SummonGuardianSpawnerManager;
+        public void Load()
+        {
+            ProfanedShardUseItem += SummonGuardianSpawnerManager;
+            ProfanedShardCanUseItem += CanUseItemEdit;
+        }
 
-        public void Unload() => ProfanedShardUseItem -= SummonGuardianSpawnerManager;
+        public void Unload()
+        {
+            ProfanedShardUseItem -= SummonGuardianSpawnerManager;
+            ProfanedShardCanUseItem -= CanUseItemEdit;
+        }
 
         private void SummonGuardianSpawnerManager(ILContext il)
         {
@@ -720,6 +729,28 @@ namespace InfernumMode.Core.ILEditingStuff
                     Utilities.NewProjectileBetter(player.Center, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f);
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        private void CanUseItemEdit(ILContext il)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate((Player player) =>
+            {
+                bool correctBiome = player.Hitbox.Intersects(GuardianComboAttackManager.ShardUseisAllowedArea) && !WeakReferenceSupport.InAnySubworld();
+                bool bossIsNotPresent = !NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>());
+
+                if (InfernumMode.CanUseCustomAIs)
+                    return correctBiome && bossIsNotPresent && !BossRushEvent.BossRushActive;
+                else
+                {
+                    // Base cals checks, so they still function if you have the mod on but not the mode.
+                    if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) && (Main.dayTime || Main.remixWorld) && (player.ZoneHallow || player.ZoneUnderworldHeight))
+                        return !BossRushEvent.BossRushActive;
+                    return false;
+                }
+            });
             cursor.Emit(OpCodes.Ret);
         }
     }

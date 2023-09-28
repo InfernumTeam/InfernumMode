@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 dealDamage++;
             }
 
-            Rectangle screen = new Rectangle((int)(Main.screenPosition.X - 50), (int)(Main.screenPosition.Y - 50), Main.screenWidth + 100, Main.screenHeight + 100);
+            Rectangle screen = new((int)(Main.screenPosition.X - 50), (int)(Main.screenPosition.Y - 50), Main.screenWidth + 100, Main.screenHeight + 100);
 
             if (attackTimer % 136f >= 75f && attackTimer % 136f < 135f && screen.Contains(npc.Center.ToPoint()))
             {

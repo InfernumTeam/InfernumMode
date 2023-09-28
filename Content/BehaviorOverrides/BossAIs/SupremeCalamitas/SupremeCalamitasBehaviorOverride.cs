@@ -1760,8 +1760,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             float maxHeartRadius = 135f;
             if (WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
             {
-                animationDelay = 40;
-                heartSpinAnimationTime = 30;
+                animationDelay = 30;
+                heartSpinAnimationTime = 60;
+                focusTime = 38;
             }
 
             ref float heartSpinAngle = ref npc.Infernum().ExtraAI[0];

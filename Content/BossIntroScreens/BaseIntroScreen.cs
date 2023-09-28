@@ -107,7 +107,10 @@ namespace InfernumMode.Content.BossIntroScreens
             {
                 bool isBright = ScreenCoverColor.ToVector3().Length() / 1.414f > 0.8f;
                 if (isBright)
-                    sb.SetBlendState(BlendState.Additive);
+                {
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+                }
 
                 Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/THanosAura").Value;
                 float coverScaleFactor = Utils.GetLerpValue(0f, 0.5f, AnimationCompletion, true) * 12.5f;
@@ -119,17 +122,26 @@ namespace InfernumMode.Content.BossIntroScreens
                     sb.Draw(greyscaleTexture, coverCenter, null, ScreenCoverColor, 0f, greyscaleTexture.Size() * 0.5f, coverScaleFactor, 0, 0);
 
                 if (isBright)
-                    sb.ResetBlendState();
+                {
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Deferred, null);
+                }
             }
 
             // Prepare the sprite batch for the shader, if one is applied.
             if (ShaderToApplyToLetters != null)
-                sb.EnterShaderRegion();
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
+            }
 
             DrawText(sb);
 
             if (ShaderToApplyToLetters != null)
-                sb.ExitShaderRegion();
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, null);
+            }
         }
 
         protected LocalizedText GetLocalizedText(string key)

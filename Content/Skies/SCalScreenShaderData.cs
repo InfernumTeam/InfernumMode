@@ -77,7 +77,7 @@ namespace InfernumMode.Content.Skies
 
             // Perform various matrix calculations to transform SCal's arena to UV coordinate space.
             Rectangle arena = scal.Infernum().Arena;
-            Vector4 uvScaledArena = new(arena.X, arena.Y - 6f, arena.Width + 8f, arena.Height + 14f);
+            Vector4 uvScaledArena = new(arena.X, arena.Y - 6f, arena.Width - 8f, arena.Height + 14f);
             uvScaledArena.X -= Main.screenPosition.X;
             uvScaledArena.Y -= Main.screenPosition.Y;
             Vector2 downscaleFactor = new(Main.screenWidth, Main.screenHeight);
@@ -89,12 +89,12 @@ namespace InfernumMode.Content.Skies
                 M42 = 0f
             }) / downscaleFactor;
             uvScaledArena = new Vector4(coordinatePart.X, coordinatePart.Y, areaPart.X, areaPart.Y);
-
+            Shader.Parameters["isScal"]?.SetValue(true);
             Shader.Parameters["uvArenaArea"].SetValue(uvScaledArena);
             UseImage(InfernumTextureRegistry.GrayscaleWater.Value, 0, SamplerState.AnisotropicWrap);
 
             UseOpacity(0.36f);
-            UseIntensity(brightness + MusicBrightness * 2f);
+            UseIntensity(brightness * 1.2f);
             base.Apply();
         }
 

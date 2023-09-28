@@ -21,6 +21,7 @@ float4 uSourceRect;
 float2 uZoom;
 float4 uShaderSpecificData;
 float4 uvArenaArea;
+bool isScal;
 
 bool InsideArena(float2 coords)
 {
@@ -38,7 +39,13 @@ float RectangularDistance(float2 a, float2 b)
 {
     float n = 100;
     float2 absoluteDistance = abs(a - b);
-    absoluteDistance.x *= 1.72;
+    if (isScal)
+    {
+        absoluteDistance.x *= 2.14;
+        absoluteDistance.y *= 1.13;
+    }
+    else
+        absoluteDistance.x *= 1.62;
     return pow(pow(absoluteDistance.x, n) + pow(absoluteDistance.y, n), 1.0 / n);
 }
 

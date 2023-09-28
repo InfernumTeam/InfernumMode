@@ -35,6 +35,7 @@ namespace InfernumMode.Content.Skies
             uvScaledArena = new(coordinatePart.X, coordinatePart.Y, areaPart.X, areaPart.Y);
 
             Shader.Parameters["uvArenaArea"].SetValue(uvScaledArena);
+            Shader.Parameters["isScal"]?.SetValue(false);
             UseImage(InfernumTextureRegistry.MoonLordBackground.Value, 0, SamplerState.AnisotropicWrap);
 
             UseOpacity(1f);

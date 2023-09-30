@@ -155,7 +155,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public float GetSegmentOpacity(float xPosition) => CalamityUtils.Convert01To010(Utils.GetLerpValue(InitialPortalPosition.X + 50, SecondPortalPosition.X - 50, xPosition, true));
 
-        public void DrawPortal(Vector2 portalPosition, float opacity)
+        public static void DrawPortal(Vector2 portalPosition, float opacity)
         {
             Texture2D noiseTexture = InfernumTextureRegistry.VoronoiShapes.Value;
             Vector2 origin = noiseTexture.Size() * 0.5f;

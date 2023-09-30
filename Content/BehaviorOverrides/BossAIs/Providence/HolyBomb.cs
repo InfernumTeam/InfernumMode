@@ -116,7 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Texture2D noise = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes2").Value;
                 Effect fireballShader = InfernumEffectsRegistry.FireballShader.GetShader().Shader;
 
-                Vector2 scale = Vector2.One * ExplosionRadius / invisible.Size() * circleFadeinInterpolant * Projectile.Opacity * 1.67f;
+                Vector2 scale = Vector2.One * ExplosionRadius / invisible.Size() * circleFadeinInterpolant * Projectile.Opacity * 2.47f;
                 fireballShader.Parameters["sampleTexture2"].SetValue(noise);
                 fireballShader.Parameters["mainColor"].SetValue(explosionTelegraphColor.ToVector3());
                 fireballShader.Parameters["resolution"].SetValue(Vector2.One * 250f);
@@ -126,7 +126,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 fireballShader.Parameters["dist"].SetValue(60f);
                 fireballShader.Parameters["opacity"].SetValue(circleFadeinInterpolant * Projectile.Opacity / 0.48f * 0.335f);
                 fireballShader.CurrentTechnique.Passes[0].Apply();
-
+                 
                 Vector2 drawPosition = Projectile.Center + Vector2.UnitY * Projectile.scale * 18f - Main.screenPosition;
                 Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale, 0, 0f);
                 Main.spriteBatch.Draw(invisible, drawPosition, null, Color.White, Projectile.rotation, invisible.Size() * 0.5f, scale * 0.5f, 0, 0f);

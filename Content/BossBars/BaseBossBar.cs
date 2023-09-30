@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
@@ -399,6 +400,11 @@ namespace InfernumMode.Content.BossBars
             float idealIconSize = 40f;
             float actualIconSize = MathF.Max(BossIcon.Width, BossIcon.Height);
             float iconScaleNeeded = idealIconSize / actualIconSize;
+
+            // Provis is very wide.
+            if (NPCType == ModContent.NPCType<Providence>())
+                iconScaleNeeded *= 1.55f;
+
             Vector2 iconDrawPos = barCenter + new Vector2(135f, 0f);
             Color afterimageColor = Color.White;
 

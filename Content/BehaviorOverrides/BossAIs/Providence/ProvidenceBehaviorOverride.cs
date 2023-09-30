@@ -741,7 +741,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (target.WithinRange(npc.Center, 5000f) && !NPC.AnyNPCs(dogHeadType))
             {
                 target.Infernum_Camera().ScreenFocusPosition = npc.Center;
-                target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 180;
+                target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 45;
 
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
             }
@@ -2202,7 +2202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Cast the laser telegraphs.
-            int telegraphTime = 45;
+            int telegraphTime = IsEnraged ? 48 : 55;
             int laserShootTime = 35;
             bool bellIsPlaying = SyncAttacksWithMusic && ProvidenceTrackedMusic.Bells.Any(b => attackTimer >= b.StartInFrames && attackTimer < b.EndInFrames);
             bool shootLaser = bellIsPlaying;
@@ -2217,11 +2217,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Force a laser to be shot if there hasn't been one in a while. This is done to prevent awkward transition points in the song without bells from messing with fight flow.
             if (countdownUntilNextLaser > 0f)
-            {
-                countdownUntilNextLaser--;
-                if (countdownUntilNextLaser <= 0f)
-                    shootLaser = true;
-            }
+                countdownUntilNextLaser--;             
+
+            if (countdownUntilNextLaser <= 0f)
+                shootLaser = true;
 
             // Release slow fireballs from the lava below.
             if (Main.netMode != NetmodeID.MultiplayerClient && localAttackTimer % 18 == 17)

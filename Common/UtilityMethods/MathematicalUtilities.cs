@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -252,5 +252,7 @@ namespace InfernumMode
             Vector2 thirdTerm = Pow(interpolant, 2f) * c;
             return firstTerm + secondTerm + thirdTerm;
         }
+
+        public static float Saturate(this float value) => Clamp(value, 0f, 1f);
     }
 }

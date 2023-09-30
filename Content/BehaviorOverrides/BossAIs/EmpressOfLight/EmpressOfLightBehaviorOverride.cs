@@ -1688,8 +1688,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 outwardExpandFactor = Utils.GetLerpValue(-fadeOutTime, 0f, attackTimer - deathAnimationTime, true);
                 npc.Opacity = Pow(deathAnimationScreenShaderStrength, 3f) * (1f - outwardExpandFactor);
 
-                if (InfernumConfig.Instance.FlashbangOverlays)
-                    MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
+                MoonlordDeathDrama.RequestLight(outwardExpandFactor * 1.2f, target.Center);
             }
 
             // Create sparkles everywhere.

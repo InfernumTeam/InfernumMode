@@ -57,8 +57,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
             Time++;
 
-            if (InfernumConfig.Instance.FlashbangOverlays)
-                MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(90f, 25f, Projectile.timeLeft, true), Projectile.Center);
+            MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(90f, 25f, Projectile.timeLeft, true), Projectile.Center);
         }
 
         public override void Kill(int timeLeft)

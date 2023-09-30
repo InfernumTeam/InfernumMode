@@ -51,7 +51,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             // Fade out before teleporting the player.
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
 
-            if (Main.myPlayer == Projectile.owner && InfernumConfig.Instance.FlashbangOverlays)
+            if (Main.myPlayer == Projectile.owner)
                 MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(60f, 20f, Projectile.timeLeft, true), Owner.Center);
             Time++;
         }

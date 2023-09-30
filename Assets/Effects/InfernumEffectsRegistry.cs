@@ -74,6 +74,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
+        public static Filter DoGPortalShader => Filters.Scene["InfernumMode:DoGPortalShader"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
         public static Filter EoLScreenShader => Filters.Scene["InfernumMode:EmpressOfLight"];
@@ -265,6 +266,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // DoG portal shader.
+            Ref<Effect> dogPortalShader = new(assets.Request<Effect>("Assets/Effects/Shapes/DoGPortalShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:DoGPortalShader"] = new Filter(new(dogPortalShader, "PortalPass"), EffectPriority.VeryHigh);
+
             // Base Metaball Edge shader
             Ref<Effect> baseMetaballEdgeShader = new(assets.Request<Effect>("Assets/Effects/Metaballs/BaseMetaballEdgeShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:BaseMetaballEdgeShader"] = new Filter(new(baseMetaballEdgeShader, "EdgePass"), EffectPriority.VeryHigh);

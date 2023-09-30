@@ -41,6 +41,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -1307,6 +1308,28 @@ namespace InfernumMode.Core.ILEditingStuff
                 cursor.GotoNext(MoveType.Before, i => i.MatchLdcR4(out float originalDamage));
                 cursor.Remove();
                 cursor.EmitDelegate(() => (float)ItemDamageValues.DamageValues[ModContent.ItemType<Eternity>()]);
+            }
+        }
+    }
+
+    public class AntiFlashbangSupportHook : IHookEdit
+    {
+        public void Load() => IL_MoonlordDeathDrama.DrawWhite += IL_MoonlordDeathDrama_DrawWhite;
+
+        public void Unload() => IL_MoonlordDeathDrama.DrawWhite -= IL_MoonlordDeathDrama_DrawWhite;
+
+        // Do NOT remove this method, despite its 0 references it is used by IL.
+        public static Color DrawColor() => InfernumConfig.Instance.FlashbangOverlays ? Color.White : new Color(5, 5, 5);
+
+        private void IL_MoonlordDeathDrama_DrawWhite(ILContext il)
+        {
+            ILCursor cursor = new(il);
+
+            // Replace the white color with a gray one, if the flashbang config is disbaled.
+            if (cursor.TryGotoNext(MoveType.After, i => i.MatchCall<Color>("get_White")))
+            {
+                cursor.Emit(OpCodes.Pop);
+                cursor.EmitCall(typeof(AntiFlashbangSupportHook).GetMethod("DrawColor", Utilities.UniversalBindingFlags));
             }
         }
     }

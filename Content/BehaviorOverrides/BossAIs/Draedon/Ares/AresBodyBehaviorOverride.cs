@@ -1199,9 +1199,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Explode violently.
                 case 4:
-
-                    if (InfernumConfig.Instance.FlashbangOverlays)
-                        MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
+                     MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
 
                     if (attackTimer == 60f)
                     {

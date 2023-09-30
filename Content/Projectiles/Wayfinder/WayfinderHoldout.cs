@@ -187,7 +187,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             // Why is this a problem?
             Owner.fallStart = (int)(Owner.position.Y / 16f);
 
-            if (IsGateSet && Main.myPlayer == Projectile.owner && InfernumConfig.Instance.FlashbangOverlays)
+            if (IsGateSet && Main.myPlayer == Projectile.owner)
                 MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(30f, 64f, Time, true), Owner.Center);
 
             if (Time == 0)

@@ -1122,6 +1122,8 @@ Mods: {
 			WayfinderItemProjectile.DisplayName: Wayfinder
 			WayfinderSymbol.DisplayName: Wayfinder Gate Symbol
 			MushBombInfernum.DisplayName: Mush Bomb Infernum
+			DoGProviCutsceneInitialPortal.DisplayName: Do G Provi Cutscene Initial Portal
+			DoGProviCutsceneProjectile.DisplayName: Do G Provi Cutscene Projectile
 		}
 
 		NPCs: {

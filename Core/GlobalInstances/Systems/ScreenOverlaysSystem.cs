@@ -124,11 +124,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         internal static void DrawCulledProjectiles()
         {
+            Main.spriteBatch.End();
+
             RasterizerState rasterizer = Main.Rasterizer;
             rasterizer.ScissorTestEnable = true;
+            Main.instance.GraphicsDevice.RasterizerState.ScissorTestEnable = true;
             Main.instance.GraphicsDevice.ScissorRectangle = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
 
-            Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             for (int i = 0; i < Main.maxProjectiles; i++)

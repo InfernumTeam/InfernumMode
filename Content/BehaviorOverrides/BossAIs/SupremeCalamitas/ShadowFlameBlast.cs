@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item104, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

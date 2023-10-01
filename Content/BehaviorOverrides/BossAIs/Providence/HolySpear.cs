@@ -179,7 +179,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Burst into lava metaballs on death.
             if (Main.netMode != NetmodeID.Server)

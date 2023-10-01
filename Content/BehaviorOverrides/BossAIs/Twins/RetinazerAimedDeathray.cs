@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.Center = Main.npc[(int)Projectile.ai[1]].Center + Projectile.velocity * 40f;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;

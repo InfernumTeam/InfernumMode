@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.rotation = Projectile.velocity.ToRotation() - PiOver2;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(HolyBlast.ShootSound, Projectile.Center);
 

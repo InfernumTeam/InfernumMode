@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Make a sound and release some blood dust on death.
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);

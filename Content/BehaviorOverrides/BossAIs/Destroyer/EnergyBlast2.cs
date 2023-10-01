@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
         }
 
         // Explode on death.
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Create particles and sounds at the explosion point.
             for (int i = 0; i < 20; i++)

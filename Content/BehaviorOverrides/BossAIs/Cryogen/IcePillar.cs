@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Time >= 70f;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Play a break sound.
             SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceCrystalPillarShatterSound with { Pitch = 0.4f }, Projectile.Center);

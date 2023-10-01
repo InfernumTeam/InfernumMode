@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(NuclearTerrorNPC.HitSound with { Pitch = 0.4f }, Projectile.Center);
 

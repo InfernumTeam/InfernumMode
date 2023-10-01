@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.5f);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (int k = 0; k < 20; k++)
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, Math.Sign(Projectile.velocity.X), -1f, 0, default, 1f);

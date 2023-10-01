@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Do funny screen stuff.
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;

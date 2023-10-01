@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 Projectile.Kill();
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient && !Projectile.WithinRange(Target.Center, 150f) && Projectile.identity % 3 == 0)
             {

@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (float speed = 2f; speed <= 6f; speed += 0.7f)
             {

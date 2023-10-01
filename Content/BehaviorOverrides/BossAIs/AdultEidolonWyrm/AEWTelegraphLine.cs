@@ -62,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(ref Color lightColor) => false;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!CreateSplitAEW)
                 return;

@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Time++;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item42, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

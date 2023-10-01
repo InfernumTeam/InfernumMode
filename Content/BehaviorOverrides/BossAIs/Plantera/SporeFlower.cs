@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Projectile.scale = Utils.GetLerpValue(-5f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(150f, 130f, Projectile.timeLeft, true);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;

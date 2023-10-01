@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Timer++;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!Main.dedServ)
             {

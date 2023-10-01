@@ -91,7 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)

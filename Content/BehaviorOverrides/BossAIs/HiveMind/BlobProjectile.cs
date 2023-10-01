@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 return;
             }
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (int k = 0; k < 10; k++)
             {

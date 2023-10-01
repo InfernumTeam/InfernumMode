@@ -109,7 +109,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             behindNPCsAndTiles.Add(index);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
                 sound.Stop();

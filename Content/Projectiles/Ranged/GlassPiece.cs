@@ -55,7 +55,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(lightColor, new(1f, 0.3f, 0.12f, 0f), FireInterpolant * 0.87f) * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Explode into a bunch of glass shards.
             SoundEngine.PlaySound(SoundID.Item27, Projectile.Center);

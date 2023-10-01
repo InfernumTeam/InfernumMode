@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             FlameTrailDrawer.DrawPixelated(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Zombie103, Projectile.Center);
 

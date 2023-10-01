@@ -228,7 +228,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion with { Pitch = 0.4f, Volume = 0.4f }, Projectile.Center);
             for (int i = 0; i < 8; i++)

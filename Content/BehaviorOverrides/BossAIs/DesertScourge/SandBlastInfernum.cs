@@ -42,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             sand.velocity *= 0f;
         }
 
-        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
+        public override void OnKill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
 
         public override bool PreDraw(ref Color lightColor)
         {

@@ -35,6 +35,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
         }
 
         // Summon a random enemy after disappearing. Nah, get trolled play a sound instead lol
-        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item8, Projectile.Center);
+        public override void OnKill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item8, Projectile.Center);
     }
 }

@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Time++;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (IsGeneralPortalIndex)
                 DoGPhase1HeadBehaviorOverride.GeneralPortalIndex = -1;

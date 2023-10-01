@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.Opacity = Clamp(Projectile.Opacity + 0.15f, 0f, 1f);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 12f;
             ScreenEffectSystem.SetBlurEffect(Projectile.Center, 0.3f, 16);

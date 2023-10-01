@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Projectile.velocity.X *= 0.995f;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(in SoundID.NPCDeath1, Projectile.Center);
             Projectile.position.X = Projectile.position.X + (Projectile.width / 2);

@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Zombie104, Target.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

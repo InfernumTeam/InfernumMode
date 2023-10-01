@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool ShouldUpdatePosition() => Timer >= TelegraphTime;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (!ExplodeOnImpact)
                 return;

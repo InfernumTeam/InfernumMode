@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool PreDraw(ref Color lightColor) => false;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Target.Center.Y > (Main.maxTilesY - 300f) * 16f)
                 SoundEngine.PlaySound(SoundID.Item74, Target.Center);

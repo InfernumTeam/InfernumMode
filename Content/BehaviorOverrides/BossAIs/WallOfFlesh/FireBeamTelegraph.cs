@@ -81,7 +81,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Target.Center.Y > (Main.maxTilesY - 300f) * 16f)
                 SoundEngine.PlaySound(SoundID.Item74, Target.Center);

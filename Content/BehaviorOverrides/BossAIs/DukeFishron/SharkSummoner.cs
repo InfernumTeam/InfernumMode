@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 

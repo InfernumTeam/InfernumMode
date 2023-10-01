@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Projectile.Kill();
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item73, Projectile.Center);
             Utilities.CreateGenericDustExplosion(Projectile.Center, (int)CalamityDusts.Brimstone, 10, 7f, 1.25f);

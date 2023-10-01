@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SCalBrimstoneGigablast.ImpactSound, Projectile.Center);
 

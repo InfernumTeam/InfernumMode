@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override bool? CanDamage() => CurrentBehavior == SpearAttackState.Charge ? null : false;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (timeLeft <= 5)
                 return;

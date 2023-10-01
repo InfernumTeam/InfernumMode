@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.SandElemental
             Time++;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(Projectile.Center, 32, 15, 8f, 1.2f);
             Utilities.CreateGenericDustExplosion(Projectile.Center, 65, 8, 9f, 1.35f);

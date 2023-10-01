@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.npc.IndexInRange(CalamityGlobalNPC.ghostBoss) && Main.npc[CalamityGlobalNPC.ghostBoss].active)
             {

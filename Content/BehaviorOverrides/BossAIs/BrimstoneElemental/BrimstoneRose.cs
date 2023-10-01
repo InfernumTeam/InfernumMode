@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             SoundEngine.PlaySound(SoundID.Item20, Projectile.Center);

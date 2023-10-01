@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return c * 1.18f;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Main.netMode != NetmodeID.MultiplayerClient && !Projectile.WithinRange(target.Center, 300f))

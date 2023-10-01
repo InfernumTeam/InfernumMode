@@ -86,7 +86,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Terminate the charge sound once the projectile is destroyed.
             if (SoundEngine.TryGetActiveSound(ChargeSound, out var sound))

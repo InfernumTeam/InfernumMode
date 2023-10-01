@@ -145,7 +145,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         {
             overPlayers.Add(index);
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Time > 90)
                 return;

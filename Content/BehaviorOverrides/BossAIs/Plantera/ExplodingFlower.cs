@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (int i = 0; i < 10; i++)
             {

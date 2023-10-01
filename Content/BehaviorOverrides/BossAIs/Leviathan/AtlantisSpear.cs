@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             target.immune[Projectile.owner] = 6;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             int numProj = 2;
             float rotation = ToRadians(20);

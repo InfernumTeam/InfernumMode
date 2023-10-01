@@ -53,6 +53,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             return false;
         }
 
-        public override void Kill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
+        public override void OnKill(int timeLeft) => SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
     }
 }

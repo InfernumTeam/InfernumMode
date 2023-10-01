@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.timeLeft < Lifetime - 40f;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Projectile.position = Projectile.Center;
             Projectile.width = Projectile.height = 64;

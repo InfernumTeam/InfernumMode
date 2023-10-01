@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             Time++;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Make a sound and release some ichor dust on death.
             SoundEngine.PlaySound(SoundID.Item10, Projectile.position);

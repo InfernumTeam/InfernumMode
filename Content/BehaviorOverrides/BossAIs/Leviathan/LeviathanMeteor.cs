@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.9f;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

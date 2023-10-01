@@ -87,7 +87,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Explode into a barrage of crystals.
             SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceCrystalPillarShatterSound, Projectile.Center + Projectile.velocity * CurrentLength * 0.5f);

@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override Color? GetAlpha(Color lightColor) => new Color(1f, 0.1f, 1f, 0.4f) * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.dedServ)
                 return;

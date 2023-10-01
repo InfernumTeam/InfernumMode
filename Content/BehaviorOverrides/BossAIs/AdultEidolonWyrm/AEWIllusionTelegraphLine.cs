@@ -67,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             spriteBatch.DrawLineBetter(start, end, CreatesRealAEW ? Color.HotPink : Color.DarkGray, telegraphWidth);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             int aewIndex = NPC.FindFirstNPC(ModContent.NPCType<PrimordialWyrmHead>());
             int aewBodyID = ModContent.NPCType<PrimordialWyrmBody>();

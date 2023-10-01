@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Player closetstPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Main.netMode == NetmodeID.MultiplayerClient || Distance(closetstPlayer.Center.X, Projectile.Center.X) < 240f)

@@ -5,6 +5,6 @@ modReferences = CalamityMod, SubworldLibrary
 hideCode = false
 hideResources = false
 includeSource = true
-homepage = https://github.com/DominicKarma/InfernumModePublic
+homepage = https://discord.gg/S9duFWAnzD
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
 dllReferences = Gif

@@ -761,7 +761,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (deathEffectsTimer == 1)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
             }
 
             if (deathEffectsTimer == shatterTime)

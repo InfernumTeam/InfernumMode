@@ -73,6 +73,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
+        public static Filter CrystalCrackShader => Filters.Scene["InfernumMode:CrystalCrackShader"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
         public static Filter DoGPortalShader => Filters.Scene["InfernumMode:DoGPortalShader"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
@@ -266,6 +267,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Crystal crack shader.
+            Ref<Effect> crystalCrackShader = new(assets.Request<Effect>("Assets/Effects/Cutouts/CrystalCrackShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:CrystalCrackShader"] = new Filter(new(crystalCrackShader, "CrackPass"), EffectPriority.VeryHigh);
+
             // DoG portal shader.
             Ref<Effect> dogPortalShader = new(assets.Request<Effect>("Assets/Effects/Shapes/DoGPortalShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:DoGPortalShader"] = new Filter(new(dogPortalShader, "PortalPass"), EffectPriority.VeryHigh);

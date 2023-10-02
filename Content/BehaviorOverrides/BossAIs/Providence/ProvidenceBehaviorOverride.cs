@@ -17,7 +17,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.Credits;
-using InfernumMode.Content.Projectiles.Generic;
+using InfernumMode.Content.Projectiles.Cutscene;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
@@ -741,7 +741,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (target.WithinRange(npc.Center, 5000f) && !NPC.AnyNPCs(dogHeadType))
             {
                 target.Infernum_Camera().ScreenFocusPosition = npc.Center;
-                target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 180;
+                target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 45;
 
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
             }

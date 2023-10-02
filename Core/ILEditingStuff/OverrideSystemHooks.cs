@@ -11,7 +11,7 @@ namespace InfernumMode.Core.ILEditingStuff
         // Don't let Calamity's PreAI run on vanilla bosses to avoid ai conflicts.
         internal static bool CalPreAIDetourMethod(Orig_CalPreAIDelegate orig, CalamityGlobalNPC self, NPC npc)
         {
-            if (OverridingListManager.InfernumNPCPreAIOverrideList.Contains(npc.type) && npc.ModNPC == null)
+            if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumNPCPreAIOverrideList.Contains(npc.type) && npc.ModNPC == null)
                 return false;
 
             return orig(self, npc);

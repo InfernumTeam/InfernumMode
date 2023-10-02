@@ -39,7 +39,7 @@ namespace InfernumMode.Content.Projectiles.Cutscene
             set;
         }
 
-        public Vector2 InitialPortalPosition => Projectile.Center + Vector2.UnitX * 850f;
+        public Vector2 InitialPortalPosition => Projectile.Center + Vector2.UnitX * 900f;
 
         public Vector2 SecondPortalPosition => Projectile.Center - Vector2.UnitX * 650f;
 
@@ -76,34 +76,38 @@ namespace InfernumMode.Content.Projectiles.Cutscene
                 JawRotation = 0.05f;
             }
             int startTime = InitialPortalStartTime + 60;
-            int slowddownTime = 60;
-            int chompTime = 30;
-            int whiteningWait = 10;
+            int jawOpenTime = 60;
+            int slowddownTime = 150;
+            int chompTime = 20;
+            int whiteningWait = 40;
+            if  (Timer == startTime)
+                SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, Projectile.Center);
             if (Timer > startTime)
             {
                 DoGHeadPosition += Projectile.velocity; //Vector2.Lerp(InitialPortalPosition, InitialPortalPosition - Vector2.UnitX * 600f, Utils.GetLerpValue(startTime, startTime + DoGLifetime, Timer, true));
 
                 if (Timer < startTime + slowddownTime)
                 {
-                    Projectile.velocity *= 0.94f;
-                    JawRotation = Lerp(0.05f, 0.65f, Utilities.Saturate((Timer - startTime) / slowddownTime));
+                    Projectile.velocity *= 0.96f;
+                    JawRotation = Lerp(0.05f, 0.75f, ((Timer - startTime) / jawOpenTime).Saturate());
 
                 }
                 else if (Timer <= startTime + slowddownTime + chompTime)
                 {
-                    float interpolant = (Timer - startTime + slowddownTime) / chompTime;
-                    Projectile.velocity = Vector2.Lerp(Vector2.Zero, Vector2.UnitX * -10f, CalamityUtils.Convert01To010(interpolant));
-                    JawRotation = Lerp(0.65f, -0.03f, Utilities.Saturate(interpolant));
+                    float interpolant = (Timer - startTime - slowddownTime) / chompTime;
+                    Projectile.velocity = Vector2.Lerp(Vector2.UnitX * -10f, Vector2.Zero, interpolant);
+                    JawRotation = Lerp(0.75f, -0.03f, interpolant.Saturate());
                 }
 
-                if (Timer > startTime + whiteningWait)
-                    CeaselessVoidWhiteningEffect.WhiteningInterpolant = 1f;
+                if (Timer > startTime)
+                    CeaselessVoidWhiteningEffect.WhiteningInterpolant = (Timer / startTime + whiteningWait).Saturate();
             }
 
             if (Timer == startTime + slowddownTime + (int)(chompTime * 0.5f))
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.DoGLaughSound, Projectile.Center);
-                SoundEngine.PlaySound(DevourerofGodsHead.AttackSound, Projectile.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceScreamSound, Projectile.Center);
+
             }
             Timer++;
         }
@@ -135,9 +139,9 @@ namespace InfernumMode.Content.Projectiles.Cutscene
             if (firstPortalOpacity > 0f)
                 DrawPortal(InitialPortalPosition - Main.screenPosition, firstPortalOpacity);
 
-            float secondPortalOpacity = Utils.GetLerpValue(SecondPortalStartTime, SecondPortalStartTime + PortalFadeTime, Timer, true) * Utils.GetLerpValue(TotalLifetime, TotalLifetime - PortalFadeTime, Timer, true);
-            if (secondPortalOpacity > 0f)
-                DrawPortal(SecondPortalPosition - Main.screenPosition, secondPortalOpacity);
+            //float secondPortalOpacity = Utils.GetLerpValue(SecondPortalStartTime, SecondPortalStartTime + PortalFadeTime, Timer, true) * Utils.GetLerpValue(TotalLifetime, TotalLifetime - PortalFadeTime, Timer, true);
+            //if (secondPortalOpacity > 0f)
+            //    DrawPortal(SecondPortalPosition - Main.screenPosition, secondPortalOpacity);
 
             return false;
         }
@@ -147,7 +151,16 @@ namespace InfernumMode.Content.Projectiles.Cutscene
             DrawCrystal(Color.Black * opacity);
 
             if (Timer > InitialPortalStartTime + 60f)
+            {
+                int startTime = InitialPortalStartTime + 60;
+                int slowddownTime = 150;
+                int chompTime = 20;
+
+                int fullTime = startTime + slowddownTime + (int)(chompTime * 0.5f);
+
+                opacity *= Utils.GetLerpValue(fullTime + 10, fullTime, Timer, true);
                 DrawSegments(Color.Black * opacity);
+            }
         }
 
         public float GetSegmentOpacity(float xPosition) => CalamityUtils.Convert01To010(Utils.GetLerpValue(InitialPortalPosition.X + 50, SecondPortalPosition.X - 50, xPosition, true));
@@ -186,11 +199,11 @@ namespace InfernumMode.Content.Projectiles.Cutscene
             if (overrideColor != null)
             {
                 int startTime = InitialPortalStartTime + 60;
-                int slowddownTime = 60;
-                int chompTime = 30;
+                int slowddownTime = 150;
+                int chompTime = 20;
                 float threshold = 1f;
                 if (Timer >= startTime + slowddownTime + (int)(chompTime * 0.5f))
-                    threshold = 0.55f;
+                    threshold = 0.45f;
 
                 Main.spriteBatch.EnterShaderRegion();
                 Effect crack = InfernumEffectsRegistry.CrystalCrackShader.GetShader().Shader;
@@ -209,15 +222,15 @@ namespace InfernumMode.Content.Projectiles.Cutscene
 
         public void DrawSegments(Color? overrideColor = null)
         {
-            Texture2D headTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2HeadAntimatter").Value;
-            Texture2D glowTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlowAntimatter").Value;
-            Texture2D jawTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2JawAntimatter").Value;
+            Texture2D headTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2Head").Value;
+            Texture2D glowTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlow").Value;
+            Texture2D jawTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2Jaw").Value;
 
-            Texture2D bodyTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2BodyAntimatter").Value;
-            Texture2D glowmaskTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlowAntimatter").Value;
+            Texture2D bodyTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2Body").Value;
+            Texture2D glowmaskTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow").Value;
 
-            Texture2D tailTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2TailAntimatter").Value;
-            Texture2D tailGlowmaskTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlowAntimatter").Value;
+            Texture2D tailTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2Tail").Value;
+            Texture2D tailGlowmaskTexture2Antimatter = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow").Value;
 
             int segmentCount = 81;
             Vector2 segmentDrawPosition = DoGHeadPosition + InitialPortalPosition;

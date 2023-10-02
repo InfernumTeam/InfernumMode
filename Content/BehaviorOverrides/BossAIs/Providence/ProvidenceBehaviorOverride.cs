@@ -764,11 +764,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
             }
 
-            if (deathEffectsTimer == shatterTime)
-            {
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceScreamSound, target.position);
-            }
-
             if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectsTimer >= timeTilShatter + shatterTime)
             {
                 npc.active = false;

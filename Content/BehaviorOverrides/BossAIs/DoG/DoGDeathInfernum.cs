@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             colorOuter *= 0.7f;
 
-            Main.EntitySpriteDraw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter with { A = 0 }, OldVelocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter with { A = 0 }, OldVelocity.ToRotation() - PiOver2, origin, scaleOuter, SpriteEffects.None, 0);
         }
 
         public override bool PreDraw(ref Color lightColor) => TelegraphDelay >= TelegraphTotalTime;

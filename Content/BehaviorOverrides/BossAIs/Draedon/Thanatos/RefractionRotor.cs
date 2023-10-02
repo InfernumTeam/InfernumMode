@@ -117,7 +117,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             spriteBatch.Draw(glowmask, drawPosition, null, glowmaskColor * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBoltSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

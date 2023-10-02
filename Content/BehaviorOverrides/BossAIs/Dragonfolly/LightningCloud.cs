@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Vector2 offsetDirection = Vector2.UnitY.RotatedBy(AngularOffset);
             SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);

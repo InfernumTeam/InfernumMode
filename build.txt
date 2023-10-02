@@ -1,10 +1,10 @@
 author = Dominic Karma, Toasty
-version = 1.9.30
+version = 1.9.32
 displayName = Calamity Mod Infernum Mode
 modReferences = CalamityMod, SubworldLibrary
 hideCode = false
 hideResources = false
 includeSource = true
-homepage = https://github.com/DominicKarma/InfernumModePublic
+homepage = https://discord.gg/S9duFWAnzD
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
 dllReferences = Gif

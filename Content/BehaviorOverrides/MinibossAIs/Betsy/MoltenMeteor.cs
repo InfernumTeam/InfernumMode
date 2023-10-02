@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

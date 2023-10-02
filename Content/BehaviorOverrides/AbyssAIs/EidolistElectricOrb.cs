@@ -74,7 +74,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override bool? CanDamage() => Projectile.velocity == Vector2.Zero ? false : null;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Play a lightning burst sound.
             SoundEngine.PlaySound(SoundID.Item122, Projectile.Center);

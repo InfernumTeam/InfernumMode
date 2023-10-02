@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                 Projectile.Kill();
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

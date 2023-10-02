@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Main.dedServ)
                 return;

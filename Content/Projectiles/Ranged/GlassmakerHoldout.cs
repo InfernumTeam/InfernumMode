@@ -113,7 +113,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Stop the flame sounds abruptly if the flamethrower is destroyed.
             if (SoundEngine.TryGetActiveSound(FlameIntroSoundSlot, out var t) && t.IsPlaying)

@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(90f, 25f, Projectile.timeLeft, true), Projectile.Center);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(InfernumSoundRegistry.CeaselessVoidStrikeSound with { Pitch = 0.5f }, Projectile.Center);
             Item.NewItem(Projectile.GetSource_Death(), Projectile.Center, ModContent.ItemType<RisingWarriorsSoulstone>());

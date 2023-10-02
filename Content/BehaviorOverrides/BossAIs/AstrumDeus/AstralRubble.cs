@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 
         // Explode into a bunch of astral cinders on death. This is purely visual and does not do damage.
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Projectile.position = Projectile.Center;
             Projectile.width = Projectile.height = 96;

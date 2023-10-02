@@ -80,7 +80,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.eyeHelper.BlinkBecausePlayerGotHurt();
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Stop the horn sound abruptly if the horn is destroyed.
             if (SoundEngine.TryGetActiveSound(HornSoundSlot, out var t) && t.IsPlaying)

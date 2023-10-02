@@ -135,7 +135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(Projectile.Center, 235, 105, 30f, 2.25f);
             SoundEngine.PlaySound(TeslaCannon.FireSound, Projectile.Center);

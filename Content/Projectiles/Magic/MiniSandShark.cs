@@ -65,7 +65,7 @@ namespace InfernumMode.Content.Projectiles.Magic
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Main.rand.NextVector2Circular(4f, 4f) * Main.rand.NextFloat(1f, 2f), ModContent.ProjectileType<LingeringSandSkull>(), Projectile.damage / 3, 0f, Projectile.owner);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Projectile.penetrate >= 1)
                 return;

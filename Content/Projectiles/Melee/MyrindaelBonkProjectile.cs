@@ -94,7 +94,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Time++;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Owner.Calamity().LungingDown = false;
         }

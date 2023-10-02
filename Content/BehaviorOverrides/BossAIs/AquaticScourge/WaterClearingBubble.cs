@@ -118,7 +118,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             return Color.Lerp(new Color(103, 218, 224), new Color(144, 114, 166), colorInterpolant) * Projectile.Opacity * 0.3f;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(InfernumSoundRegistry.BubblePop with { Pitch = -0.3f, Volume = 1.3f }, Projectile.Center);
         }

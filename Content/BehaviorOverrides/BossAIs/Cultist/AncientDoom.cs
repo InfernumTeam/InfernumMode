@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
 
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             // Make some strong sounds.
             SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.61f }, Target.Center);

@@ -124,8 +124,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             EnterLightForm,
             FinalPhaseRadianceBursts,
-
-            CrystalForm
         }
 
         public enum ProvidenceFrameDrawingType
@@ -332,7 +330,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
             bool shouldDespawnBecauseOfTime = (shouldDespawnAtNight || shouldDespawnAtDay) && !BossRushEvent.BossRushActive;
-            bool inDeathCutscene = attackType == (int)ProvidenceAttackType.CrystalForm;
 
             Vector2 crystalCenter = npc.Center + new Vector2(8f, 56f);
 
@@ -443,7 +440,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.Calamity().CurrentlyEnraged = IsEnraged;
 
             // Enable the distortion filter if it isnt active and the player's config permits it.
-            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion && !inDeathCutscene)
+            if (Main.netMode != NetmodeID.Server && !InfernumEffectsRegistry.ScreenDistortionScreenShader.IsActive() && Main.UseHeatDistortion)
             {
                 Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
                 InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
@@ -471,9 +468,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             // Perform the death animation.
-            if (lifeRatio < DeathAnimationLifeRatio && !inDeathCutscene)
+            if (lifeRatio < DeathAnimationLifeRatio)
             {
-                DoBehavior_DeathAnimation(npc, target, ref deathEffectTimer, wasSummonedAtNight == 1f, ref burnIntensity);
+                DoBehavior_DeathAnimation(npc, target, deathEffectTimer, wasSummonedAtNight == 1f, ref burnIntensity);
                 deathEffectTimer++;
                 return false;
             }
@@ -484,7 +481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             int localAttackDuration = attackInfo.LocalAttackDuration;
 
             // Reset things if the attack changed.
-            if (attackType != (int)attackInfo.CurrentAttack && !inDeathCutscene)
+            if (attackType != (int)attackInfo.CurrentAttack)
             {
                 for (int i = 0; i < 5; i++)
                     npc.Infernum().ExtraAI[i] = 0f;
@@ -562,11 +559,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 case ProvidenceAttackType.FinalPhaseRadianceBursts:
                     DoBehavior_FinalPhaseRadianceBursts(npc, target, arenaTopCenter, localAttackTimer, localAttackDuration, ref lavaHeight, ref hasCompletedCycle);
                     break;
-
-                case ProvidenceAttackType.CrystalForm:
-                    DoBehavior_CrystalForm(npc, target, ref deathEffectTimer);
-                    deathEffectTimer++;
-                    break;
             }
 
             // Rotate slightly in the direction of horizontal movement.
@@ -607,34 +599,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             return new(localAttackTimer, localAttackDuration, currentAttack);
         }
 
-        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float deathEffectTimer, bool wasSummonedAtNight, ref float burnIntensity)
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, float deathEffectTimer, bool wasSummonedAtNight, ref float burnIntensity)
         {
-            ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
-            ref float originalLavaHeight = ref npc.Infernum().ExtraAI[14];
-
             // Mark death effects on the first frame of the animation.
             if (deathEffectTimer == 1f)
             {
-                typeof(MoonlordDeathDrama).GetField("whitening", Utilities.UniversalBindingFlags).SetValue(null, 1f);
-
                 AchievementPlayer.ProviDefeated = true;
 
                 if (wasSummonedAtNight)
                     AchievementPlayer.NightProviDefeated = true;
-
-                originalLavaHeight = lavaHeight;
-
-                lavaHeight = 0f;
-
-                BlockerSystem.Start(false, true, () => NPC.AnyNPCs(ModContent.NPCType<ProvidenceBoss>()));
-
-                npc.Center = new Vector2(WorldSaveSystem.ProvidenceArena.Center().X + 395f, WorldSaveSystem.ProvidenceArena.Top + 85) * 16f + Vector2.One * 8f;
-                ReleaseSparkles(npc.Center, 150, 100f);
-                ClearEntities();
             }
-
             npc.Opacity = 1f;
-            npc.rotation = 0f;//npc.rotation.AngleTowards(0f, 0.02f);
+            npc.rotation = npc.rotation.AngleTowards(0f, 0.02f);
             if (deathEffectTimer == 1f && !Main.dedServ)
             {
                 SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with
@@ -643,21 +619,31 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }, target.Center);
             }
 
-            // Cause the screen to focus on the crystal.
-            if (target.WithinRange(npc.Center, 5000f))
-            {
-                target.Infernum_Camera().ScreenFocusPosition = npc.Center;
-                target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 60;
-                target.Infernum_Camera().ScreenFocusInterpolant = 1f;
-            }
-
             // Mark Providence as defeated at night. This is necessary for ensuring that the moonlight dye drops.
             npc.ModNPC<ProvidenceBoss>().hasTakenDaytimeDamage = wasSummonedAtNight;
+
+            // Delete remaining projectiles with a shockwave.
+            if (deathEffectTimer == 96f)
+            {
+                int[] typesToDelete = new int[]
+                {
+                    ModContent.ProjectileType<AcceleratingCrystalShard>(),
+                    ModContent.ProjectileType<FallingCrystalShard>(),
+                    ModContent.ProjectileType<HolySunExplosion>(),
+                    ModContent.ProjectileType<ProfanedSpear>(),
+                    ModContent.ProjectileType<HolyBlast>(),
+                };
+                Utilities.DeleteAllProjectiles(false, typesToDelete);
+            }
 
             burnIntensity = MathF.Max(burnIntensity, Utils.GetLerpValue(0f, 45f, deathEffectTimer, true));
             npc.life = (int)Lerp(npc.lifeMax * DeathAnimationLifeRatio - 1f, 1f, Utils.GetLerpValue(0f, 435f, deathEffectTimer, true));
             npc.dontTakeDamage = true;
-            npc.velocity = Vector2.Zero;
+            npc.velocity *= 0.9f;
+
+            // Move towards the player if inside of walls, to ensure that the loot is obtainable.
+            if (Collision.SolidCollision(npc.TopLeft, npc.width, npc.height))
+                npc.Center = npc.Center.MoveTowards(target.Center, 10f);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -714,62 +700,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             if (deathEffectTimer >= 435f)
-            {
-                npc.ai[0] = (float)ProvidenceAttackType.CrystalForm;
-                npc.ai[1] = 0f;
-                npc.netUpdate = true;
-                deathEffectTimer = 0f;
-            }
-        }
-
-        public static void DoBehavior_CrystalForm(NPC npc, Player target, ref float deathEffectsTimer)
-        {
-            int timeTilShatter = 180;
-            int shatterTime = 120;
-            ref float drawCrystal = ref npc.Infernum().ExtraAI[DrawCrystalInterpolant];
-            drawCrystal = 1f;
-
-            int dogHeadType = ModContent.NPCType<DevourerofGodsHead>();
-
-            npc.velocity = Vector2.Zero;
-            npc.dontTakeDamage = true;
-            npc.damage = 0;
-            npc.Calamity().ShouldCloseHPBar = true;
-            npc.ShowNameOnHover = false;
-
-            // Cause the screen to focus on the crystal.
-            if (target.WithinRange(npc.Center, 5000f) && !NPC.AnyNPCs(dogHeadType))
-            {
-                target.Infernum_Camera().ScreenFocusPosition = npc.Center;
-                target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 45;
-
-                target.Infernum_Camera().ScreenFocusInterpolant = 1f;
-            }
-
-            if (deathEffectsTimer < shatterTime)
-            {
-                // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
-                if (deathEffectsTimer % 90f == 67f)
-                    Utilities.CreateShockwave(npc.Center, 2, 7, 18f, false);
-                else if (deathEffectsTimer % 90f == 89f)
-                {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.TerminusPulseSound with { Pitch = 0.6f }, npc.Center);
-                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 0.4f }, npc.Center);
-                }
-            }
-
-            if (deathEffectsTimer == 1)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
-            }
-
-            if (deathEffectsTimer == shatterTime)
-            {
-                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceScreamSound, target.position);
-            }
-
-            if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectsTimer >= timeTilShatter + shatterTime)
             {
                 npc.active = false;
                 if (!target.dead)

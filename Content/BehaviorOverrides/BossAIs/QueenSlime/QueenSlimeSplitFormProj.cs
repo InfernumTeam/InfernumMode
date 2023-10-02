@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.Purple with { A = 0 }, Color.White, Utils.GetLerpValue(0f, 16f, Time, true)) * Projectile.Opacity;
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             int queenSlimeIndex = NPC.FindFirstNPC(NPCID.QueenSlimeBoss);
             if (queenSlimeIndex == -1)

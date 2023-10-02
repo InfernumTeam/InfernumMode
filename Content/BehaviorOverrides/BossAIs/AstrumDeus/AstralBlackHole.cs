@@ -143,7 +143,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkStar>());
 

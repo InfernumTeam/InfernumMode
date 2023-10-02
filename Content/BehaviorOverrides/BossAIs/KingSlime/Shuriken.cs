@@ -46,6 +46,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             return false;
         }
 
-        public override void Kill(int timeLeft) => Collision.HitTiles(Projectile.position, Projectile.velocity, 24, 24);
+        public override void OnKill(int timeLeft) => Collision.HitTiles(Projectile.position, Projectile.velocity, 24, 24);
     }
 }

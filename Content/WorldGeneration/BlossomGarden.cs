@@ -29,7 +29,7 @@ namespace InfernumMode.Content.WorldGeneration
                 Rectangle area = CalamityUtils.GetSchematicProtectionArea(schematic, placementPoint, schematicAnchor);
 
                 // Check if the spot is valid.
-                if (CalamityUtils.ParanoidTileRetrieval(area.Center.X, area.Center.Y).WallType == WallID.HiveUnsafe)
+                if (CalamityUtils.ParanoidTileRetrieval(area.Center.X, area.Center.Y).WallType == WallID.HiveUnsafe && GenVars.structures.CanPlace(area, 10))
                 {
                     protectionArea = area;
                     break;

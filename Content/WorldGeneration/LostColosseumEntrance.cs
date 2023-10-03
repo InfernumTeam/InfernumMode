@@ -52,7 +52,7 @@ namespace InfernumMode.Content.WorldGeneration
             for (int i = 0; i < 5; i++)
             {
                 Point lumpCenter = (placementPosition.ToVector2() + WorldGen.genRand.NextVector2Circular(15f, 15f)).ToPoint();
-                WorldUtils.Gen(lumpCenter, new Shapes.Circle(68, 55), Actions.Chain(new GenAction[]
+                WorldUtils.Gen(lumpCenter, new Shapes.Circle(88, 50), Actions.Chain(new GenAction[]
                 {
                     new Modifiers.RadialDither(82f, 88f),
                     new Actions.SetTile(TileID.Sandstone, true)

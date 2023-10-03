@@ -1,5 +1,7 @@
+﻿using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
@@ -10,6 +12,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override float MaxRadius => 1200f;
 
         public override float RadiusExpandRateInterpolant => 0.15f;
+
+        public override Texture2D ExplosionNoiseTexture => InfernumTextureRegistry.HarshNoise.Value;
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam";
 

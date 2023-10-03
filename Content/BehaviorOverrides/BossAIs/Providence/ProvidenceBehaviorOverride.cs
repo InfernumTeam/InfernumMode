@@ -724,8 +724,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_CrystalForm(NPC npc, Player target, ref float deathEffectsTimer)
         {
-            int timeTilShatter = 180;
-            int shatterTime = 120;
+            int dieTime = DoGProviCutsceneProjectile.TotalLifetime;
             ref float drawCrystal = ref npc.Infernum().ExtraAI[DrawCrystalInterpolant];
             drawCrystal = 1f;
 
@@ -746,7 +745,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
             }
 
-            if (deathEffectsTimer < shatterTime)
+            if (deathEffectsTimer < DoGProviCutsceneProjectile.StartTime)
             {
                 // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
                 if (deathEffectsTimer % 90f == 67f)
@@ -764,8 +763,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectsTimer >= timeTilShatter + shatterTime)
+            if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectsTimer >= dieTime)
             {
+                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
+                Utilities.CreateShockwave(npc.Center, 3, 13, 150, false);
+                for (int i = 0; i < 2; i++)
+                    GuardianComboAttackManager.CreateFireExplosion(npc.Center, true);
+
+                for (int i = 0; i < 30; i++)
+                {
+                    Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
+                    if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
+                        shootVelocity *= 1.7f;
+
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<SwirlingFire>(), 0, 0f, 255);
+                }
+
                 npc.active = false;
                 if (!target.dead)
                 {
@@ -2668,6 +2681,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             ref float drawCrystal = ref npc.Infernum().ExtraAI[DrawCrystalInterpolant];
 
+            // Don't draw anything, the cutscene proejectile will handle it.
+            if (drawCrystal > 0)
+                return false;
+
             void drawProvidenceInstance(Vector2 baseDrawPosition, int frameOffset, Color baseDrawColor)
             {
                 rockTextureString = "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/";
@@ -2804,34 +2821,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         A = 0
                     } * npc.Opacity * Pow(1f - npc.localAI[3], 3f), npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 }
-            }
-
-            // Only draw the crystal in the post death cutscene.
-            if (drawCrystal == 1f)
-            {
-                Color timeColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0.2f);
-                if (IsEnraged)
-                    timeColor = Color.DeepSkyBlue;
-
-                Texture2D fatCrystalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal").Value;
-                Texture2D bloomTexture = InfernumTextureRegistry.BloomFlare.Value;
-
-                spriteBatch.Draw(bloomTexture, npc.Center - Main.screenPosition, null, timeColor with { A = 0 } * Lerp(0.3f, 0.6f, (1f + Sin(PI * Main.GlobalTimeWrappedHourly * 1.1f)) * 0.5f), Main.GlobalTimeWrappedHourly, bloomTexture.Size() * 0.5f, 0.3f, SpriteEffects.None, 0f); ;
-                spriteBatch.Draw(bloomTexture, npc.Center - Main.screenPosition, null, Color.Lerp(timeColor, Color.White, 0.3f) with { A = 0 } * Lerp(0.3f, 0.6f, (1f + Sin(PI * Main.GlobalTimeWrappedHourly * 1.4f)) * 0.5f), -Main.GlobalTimeWrappedHourly, bloomTexture.Size() * 0.5f, 0.3f, SpriteEffects.None, 0f); ;
-
-                float crystalScale = npc.scale * Lerp(0.9f, 1.1f, (1f + Sin(PI * Main.GlobalTimeWrappedHourly * 0.85f)) * 0.5f);
-
-                for (int i = 0; i < 8; i++)
-                {
-                    Vector2 offset = (TwoPi * i / 8f + Main.GlobalTimeWrappedHourly).ToRotationVector2() * Lerp(4f, 10f, (1f + Sin(PI * Main.GlobalTimeWrappedHourly)) * 0.5f);
-                    Color glowColor = Color.LightPink with { A = 0 } * 0.5f;
-                    spriteBatch.Draw(fatCrystalTexture, npc.Center + offset - Main.screenPosition, null, glowColor, npc.rotation, fatCrystalTexture.Size() * 0.5f, crystalScale, SpriteEffects.None, 0f);
-                }
-
-                spriteBatch.Draw(fatCrystalTexture, npc.Center - Main.screenPosition, null, Color.White, npc.rotation, fatCrystalTexture.Size() * 0.5f, crystalScale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(fatCrystalTexture, npc.Center - Main.screenPosition, null, timeColor with { A = 0 } * Sin(PI * Main.GlobalTimeWrappedHourly * 0.8f) * 0.7f, npc.rotation, fatCrystalTexture.Size() * 0.5f, crystalScale, SpriteEffects.None, 0f);
-
-                return false;
             }
 
             int totalProvidencesToDraw = (int)Lerp(1f, 30f, burnIntensity);

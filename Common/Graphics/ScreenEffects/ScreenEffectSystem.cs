@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.ScreenEffects
@@ -34,7 +35,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         /// <param name="lifetime">How long the effect should last</param>
         public static void SetBlurEffect(Vector2 position, float intensity, int lifetime)
         {
-            if (!CalamityConfig.Instance.Screenshake)
+            if (!CalamityConfig.Instance.Screenshake || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             BlurPosition = position;
@@ -68,7 +69,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         /// <param name="lifetime">How long the effect should last</param>
         public static void SetFlashEffect(Vector2 position, float intensity, int lifetime)
         {
-            if (!CalamityConfig.Instance.Screenshake)
+            if (!CalamityConfig.Instance.Screenshake || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             FlashPosition = position;

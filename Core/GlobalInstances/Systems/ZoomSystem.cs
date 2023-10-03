@@ -1,5 +1,6 @@
 ﻿using Terraria;
 using Terraria.Graphics;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Systems
@@ -16,6 +17,20 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Call to create a zoom effect for the local client.
+        /// </summary>
+        /// <param name="zoom">The amount of zoom to apply.</param>
+        /// <param name="holdTime">The length of time to hold the zoom. Defaults to one frame.</param>
+        public static void SetZoomEffect(float zoom, int holdTime = 1)
+        {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            Zoom = zoom;
+            ZoomHoldTime = holdTime;
         }
 
         public override void ModifyScreenPosition()

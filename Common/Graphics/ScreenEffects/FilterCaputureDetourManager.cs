@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Common.BaseEntities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
@@ -7,20 +9,37 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 {
     public class FilterCaputureDetourManager : ModSystem
     {
+        public ManagedRenderTarget ScreenTarget
+        {
+            get;
+            private set;
+        }
+
         public override void Load()
         {
+            ScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget, true);
             On_FilterManager.EndCapture += EndCaptureManager;
         }
 
-        public override void Unload()
-        {
-            On_FilterManager.EndCapture -= EndCaptureManager;
-        }
+        public override void Unload() => On_FilterManager.EndCapture -= EndCaptureManager;
 
-        // The purpose of this is to make these all work together and apply in the correct order.
+        // The purpose of this is to make these all work together and apply in the correct order. Even though it does it for two things. Oh well!
         private void EndCaptureManager(On_FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
         {
-            // Draw the screen effects first.
+            ScreenTarget.SwapToRenderTarget();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, Color.White);
+            Main.spriteBatch.End();
+
+            // Draw pulse rings.
+            BasePulseRingProjectile.DrawPulseRings();
+
+            screenTarget1.SwapToRenderTarget();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            Main.spriteBatch.Draw(ScreenTarget, Vector2.Zero, Color.White);
+            Main.spriteBatch.End();
+
+            // Draw the screen effects.
             screenTarget1 = ScreenEffectSystem.DrawBlurEffect(screenTarget1);
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);

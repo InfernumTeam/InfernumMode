@@ -90,5 +90,7 @@ namespace InfernumMode.Common.Graphics
             target = CreationCondition(screenWidth, screenHeight);
             TimeSinceLastAccessed = 0;
         }
+
+        public static implicit operator RenderTarget2D(ManagedRenderTarget target) => target.Target;
     }
 }

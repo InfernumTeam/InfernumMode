@@ -107,7 +107,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 DrawCulledProjectiles();
                 DrawSpecializedProjectileGroups();
-
+                
                 // Draw the madness effect.
                 if (InfernumMode.CanUseCustomAIs && NPC.AnyNPCs(NPCID.Deerclops))
                 {

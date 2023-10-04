@@ -667,8 +667,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     for (int i = 0; i < 3; i++)
                     {
                         int shootType = ModContent.ProjectileType<SwirlingFire>();
+
+                        Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
+                        if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
+                            shootVelocity *= 1.7f;
+
                         if (Main.rand.NextBool(150) && deathEffectTimer >= 110f || deathEffectTimer == 92f)
                         {
+
                             if (deathEffectTimer >= 320f)
                             {
                                 shootType = ModContent.ProjectileType<YharonBoom>();
@@ -677,15 +683,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                             else
                             {
                                 shootType = ModContent.ProjectileType<ProvBoomDeath>();
+                                shootVelocity = Vector2.Zero;
                                 ReleaseSparkles(npc.Center, 6, 18f);
                                 SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                                 SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                             }
                         }
-
-                        Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
-                        if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
-                            shootVelocity *= 1.7f;
 
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
                     }
@@ -695,8 +698,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (deathEffectTimer >= 320f && deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)
             {
                 int sparkleCount = (int)Lerp(10f, 30f, Main.gfxQuality);
-                int boomChance = (int)Lerp(8f, 3f, Main.gfxQuality);
-                if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(boomChance))
+                //int boomChance = (int)Lerp(8f, 3f, Main.gfxQuality);
+                if (Main.netMode != NetmodeID.MultiplayerClient)// && Main.rand.NextBool(boomChance))
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
 
                 ReleaseSparkles(npc.Center, sparkleCount, 18f);

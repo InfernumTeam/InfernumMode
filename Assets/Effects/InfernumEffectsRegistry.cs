@@ -86,6 +86,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
+        public static Filter PulseRingShader => Filters.Scene["InfernumMode:PulseRing"];
         public static Filter RaindropShader => Filters.Scene["InfernumMode:Raindrops"];
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
@@ -267,6 +268,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Pulse ring shader.
+            Ref<Effect> pulseRingShader = new(assets.Request<Effect>("Assets/Effects/Shapes/PulseRing", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:PulseRing"] = new Filter(new(pulseRingShader, "PulsePass"), EffectPriority.VeryHigh);
+
             // Crystal crack shader.
             Ref<Effect> crystalCrackShader = new(assets.Request<Effect>("Assets/Effects/Cutouts/CrystalCrackShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:CrystalCrackShader"] = new Filter(new(crystalCrackShader, "CrackPass"), EffectPriority.VeryHigh);

@@ -175,51 +175,9 @@ namespace InfernumMode.Core.GlobalInstances
                 return false;
             }
 
-            if (InfernumMode.CanUseCustomAIs)
-            {
-                if (Main.LocalPlayer.Calamity().trippy)
-                {
-                    SpriteEffects direction = SpriteEffects.None;
-                    if (projectile.spriteDirection == 1)
-                        direction = SpriteEffects.FlipHorizontally;
+            if (InfernumMode.CanUseCustomAIs && ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
+                return value.PreDraw(projectile, Main.spriteBatch, lightColor);
 
-                    Color shroomColor = projectile.GetAlpha(new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0));
-                    float colorFadeFactor = 0.99f;
-                    shroomColor.R = (byte)(shroomColor.R * colorFadeFactor);
-                    shroomColor.G = (byte)(shroomColor.G * colorFadeFactor);
-                    shroomColor.B = (byte)(shroomColor.B * colorFadeFactor);
-                    shroomColor.A = (byte)(shroomColor.A * colorFadeFactor);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        Vector2 drawPosition = projectile.Center;
-                        float horizontalOffset = Math.Abs(projectile.Center.X - Main.LocalPlayer.Center.X);
-                        float verticalOffset = Math.Abs(projectile.Center.Y - Main.LocalPlayer.Center.Y);
-
-                        if (i is 0 or 2)
-                            drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
-                        else
-                            drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
-
-                        if (i is 0 or 1)
-                            drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
-                        else
-                            drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
-
-                        Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
-                        int frames = texture.Height / Main.projFrames[projectile.type];
-                        int y = frames * projectile.frame;
-                        drawPosition.Y -= projectile.height / 2;
-                        Rectangle frame = new(0, y, texture.Width, frames);
-                        Vector2 origin = frame.Size() * 0.5f;
-
-                        Main.spriteBatch.Draw(texture,
-                            drawPosition - Main.screenPosition + Vector2.UnitY * origin * 0.5f,
-                            frame, shroomColor, projectile.rotation, origin, projectile.scale, direction, 0);
-                    }
-                }
-                if (ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
-                    return value.PreDraw(projectile, Main.spriteBatch, lightColor);
-            }
             return true;
         }
 

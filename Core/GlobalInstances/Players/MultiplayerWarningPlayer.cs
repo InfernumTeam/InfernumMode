@@ -10,7 +10,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public const string MultiplayerWarningMessage = "InfernumMode: Multiplayer is NOT supported, expect things to break and the mod not be fully playable. Do not report MP bugs.";
 
         // Other mods (looking at you OE) LOVE to spam the chat with utterly useless join messages lasting several lines. Ensure that this message waits before sending to avoid getting buried by them.
-        public static int DisplayMessageTimerLength => 60;
+        public const int DisplayMessageTimerLength = 180;
 
         public static int DisplayMessageTimer
         {

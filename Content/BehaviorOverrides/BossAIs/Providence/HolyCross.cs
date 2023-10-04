@@ -1,5 +1,4 @@
 ﻿using CalamityMod.Dusts;
-using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

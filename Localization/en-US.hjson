@@ -2051,6 +2051,7 @@ Mods: {
 			DraedonDefeat9: But now, I must return to my machinery. You may use the Codebreaker if you wish to face my creations once again.
 			DraedonDefeat10: In the meantime, I bid you farewell, and good luck in your future endeavors.
 			SCalCongratulations: ... Congratulations.
+			MultiplayerWarning: InfernumMode: Multiplayer is NOT supported, expect things to break and the mod not be fully playable. Do not report MP bugs.
 		}
 
 		PetDialog: {

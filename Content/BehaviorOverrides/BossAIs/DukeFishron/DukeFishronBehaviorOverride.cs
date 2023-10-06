@@ -2,8 +2,8 @@
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.OverridingSystem;

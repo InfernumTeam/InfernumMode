@@ -23,7 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
-using Terraria.GameContent.Events;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.ILEditingStuff

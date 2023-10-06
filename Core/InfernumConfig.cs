@@ -39,5 +39,4 @@ namespace InfernumMode.Core
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref string message) => false;
     }
-
 }

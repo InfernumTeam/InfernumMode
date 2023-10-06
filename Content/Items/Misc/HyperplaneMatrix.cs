@@ -1,11 +1,15 @@
 ﻿using CalamityMod;
 using CalamityMod.Items;
 using CalamityMod.NPCs.ExoMechs;
+using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.DataStructures;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Rarities.InfernumRarities;
+using InfernumMode.Core.GlobalInstances.Players;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -20,17 +24,20 @@ namespace InfernumMode.Content.Items.Misc
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Hyperplane Matrix");
-            /* Tooltip.SetDefault("An incalculably complex apparatus containing infinite power\n" +
-                "Using it opens a panel that can grants a variety of reality-warping abilities\n" +
-                "Upon a distant celestial body, a being named Draedon is born\n" +
-                "Made to construct and to evolve\n" +
-                "One purpose, one cycle\n" +
-                "High, the machine works\n" +
-                "Low, it rests\n" +
-                "All ordered\n" +
-                "All same"); */
             Item.ResearchUnlockCount = 1;
+
+            InfernumPlayer.FreeDodgeEvent += (InfernumPlayer player, Player.HurtInfo info) =>
+            {
+                Referenced<int> hurtSoundCooldown = player.GetRefValue<int>("HurtSoundCooldown");
+                if (player.GetValue<bool>("CyberneticImmortalityIsActive") && hurtSoundCooldown.Value <= 0)
+                {
+                    hurtSoundCooldown.Value = 60;
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, player.Player.Center);
+                    info.SoundDisabled = true;
+                }
+
+                return player.GetValue<bool>("CyberneticImmortalityIsActive");
+            };
         }
 
         public override void SetDefaults()

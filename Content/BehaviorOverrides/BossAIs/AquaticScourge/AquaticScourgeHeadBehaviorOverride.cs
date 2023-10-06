@@ -8,9 +8,10 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using InfernumMode.Common.VerletIntergration;
+using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.WorldGeneration;
@@ -205,7 +206,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Attach the verlet segments to the head.
             if (attackType != (int)AquaticScourgeAttackType.DeathAnimation && WormSegments.Any())
-                WormSegments[0].position = npc.Center;
+                WormSegments[0].Position = npc.Center;
 
             // Determine hostility.
             CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
@@ -1486,8 +1487,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             npc.rotation = npc.velocity.ToRotation() + PiOver2;
             if (timeAfterSpitting != 0f)
             {
-                WormSegments[0].locked = false;
-                WormSegments = VerletSimulatedSegmentInfernum.TileCollisionVerletSimulation(WormSegments, 36f, 18, 0.14f);
+                WormSegments[0].Locked = false;
+                WormSegments = VerletSimulations.TileCollisionVerletSimulation(WormSegments, 36f, 18, 0.14f);
 
                 // Perform visual effects.
                 npc.gfxOffY = 16;
@@ -1498,10 +1499,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.Calamity().newAI[0] = 0f;
                 npc.boss = false;
 
-                npc.rotation = (WormSegments[0].position - WormSegments[1].position).ToRotation() + PiOver2;
+                npc.rotation = (WormSegments[0].Position - WormSegments[1].Position).ToRotation() + PiOver2;
 
                 if (timeAfterSpitting >= 2f)
-                    npc.Center = WormSegments[0].position;
+                    npc.Center = WormSegments[0].Position;
 
                 // Spawn leeches that will eat away at the segment.
                 if (Main.netMode != NetmodeID.MultiplayerClient && totalSpawnedLeeches < 3f && Main.rand.NextBool(36))
@@ -1550,7 +1551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
             else
             {
-                WormSegments[0].position = npc.Center;
+                WormSegments[0].Position = npc.Center;
                 jawRotation = jawRotation.AngleLerp(idealJawRotation, 0.04f).AngleTowards(idealJawRotation, 0.02f);
             }
 

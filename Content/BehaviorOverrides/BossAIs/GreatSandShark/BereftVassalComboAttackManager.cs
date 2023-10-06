@@ -1,7 +1,7 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
 using InfernumMode.Common.Graphics.AttemptRecording;
+using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

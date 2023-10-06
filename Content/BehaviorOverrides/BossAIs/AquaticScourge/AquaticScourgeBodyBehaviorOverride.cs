@@ -108,15 +108,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 }
 
                 if (AquaticScourgeHeadBehaviorOverride.WormSegments.Any())
-                    AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position = npc.Center;
+                    AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].Position = npc.Center;
             }
 
             // Follow the verlet segment as directed by the head.
             else
             {
-                npc.Center = AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex + 1].position;
+                npc.Center = AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex + 1].Position;
 
-                float idealRotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].position - npc.Center).ToRotation() + PiOver2;
+                float idealRotation = (AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].Position - npc.Center).ToRotation() + PiOver2;
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.03f).AngleLerp(idealRotation, 0.05f);
 
                 // Release blood if in water. If the flesh is eaten, release acid instead as it disappears.

@@ -5,7 +5,7 @@ using Terraria.Map;
 using Terraria.ModLoader;
 using Terraria.UI;
 
-namespace InfernumMode.Common
+namespace InfernumMode.Common.MapLayers
 {
     public class WayfinderMapLayer : ModMapLayer
     {

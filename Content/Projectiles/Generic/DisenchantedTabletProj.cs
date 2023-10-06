@@ -1,7 +1,6 @@
 ﻿using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Items.Pets;
-using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

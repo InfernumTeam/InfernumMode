@@ -28,10 +28,13 @@ namespace InfernumMode.Content.UI
         // If the player isn't within this range of the plaque, the UI will close.
         public static float DistanceThresholdToDrawUI => 100f;
 
+        // No I'm not going to localize this. Seethe :3
         public const string TextToDraw = "Three disciples. One mind. One deity. One purpose. Tempered by the holy flames of Providence, an ancient artifact is crystalized, with the sole purpose of initiating the Ritual at the cliff of this Temple.";
 
         // The part of the TextToDraw should be drawn separately.
         public const string SpecialText = "ancient artifact";
+
+        public const string FieldName = "DrawPlaqueUI";
 
         public static float TextPadding => 30f;
 
@@ -48,7 +51,7 @@ namespace InfernumMode.Content.UI
 
         public static Vector2 PlaqueScale => Vector2.One;
 
-        public static bool ShouldDraw => Player.Infernum_UI().DrawPlaqueUI;
+        public static bool ShouldDraw => Player.Infernum().GetValue<bool>(FieldName);
 
         public static DynamicSpriteFont TextFont
         {
@@ -144,7 +147,7 @@ namespace InfernumMode.Content.UI
         public static void CloseUI()
         {
             SoundEngine.PlaySound(SoundID.MenuClose);
-            Player.Infernum_UI().DrawPlaqueUI = false;
+            Player.Infernum().SetValue<bool>(FieldName, false);
         }
     }
 }

@@ -29,18 +29,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
             CalamityUtils.DisplayLocalizedText($"Mods.InfernumMode.Status.CyberneticImmortality{(CyberneticImmortalityIsActive ? "Enabled" : "Disabled")}", Draedon.TextColor);
         }
 
-        public override bool FreeDodge(Player.HurtInfo info)
-        {
-            if (CyberneticImmortalityIsActive && HurtSoundCountdown <= 0)
-            {
-                HurtSoundCountdown = 60;
-                SoundEngine.PlaySound(InfernumSoundRegistry.AresTeslaShotSound, Player.Center);
-                info.SoundDisabled = true;
-            }
-
-            return CyberneticImmortalityIsActive;
-        }
-
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             return !CyberneticImmortalityIsActive;

@@ -1,4 +1,4 @@
-using InfernumMode.Core.GlobalInstances;
+﻿using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.GlobalItems;
 using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
@@ -7,7 +7,7 @@ namespace InfernumMode
 {
     public static partial class Utilities
     {
-        public static AccessoryPlayer Infernum_Accessory(this Player player) => player.GetModPlayer<AccessoryPlayer>();
+        //public static AccessoryPlayer Infernum_Accessory(this Player player) => player.GetModPlayer<AccessoryPlayer>();
 
         public static BiomeEffectsPlayer Infernum_Biome(this Player player) => player.GetModPlayer<BiomeEffectsPlayer>();
 
@@ -27,11 +27,11 @@ namespace InfernumMode
 
         public static EelSwallowEffectPlayer Infernum_Eel(this Player player) => player.GetModPlayer<EelSwallowEffectPlayer>();
 
+        public static InfernumPlayer Infernum(this Player player) => player.GetModPlayer<InfernumPlayer>();
+
         public static TipsPlayer Infernum_Tips(this Player player) => player.GetModPlayer<TipsPlayer>();
 
         public static PetsPlayer Infernum_Pet(this Player player) => player.GetModPlayer<PetsPlayer>();
-
-        public static UIPlayer Infernum_UI(this Player player) => player.GetModPlayer<UIPlayer>();
 
         public static TooltipChangeGlobalItem Infernum_Tooltips(this Item item) => item.GetGlobalItem<TooltipChangeGlobalItem>();
 

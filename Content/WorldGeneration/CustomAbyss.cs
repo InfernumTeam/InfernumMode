@@ -4,7 +4,7 @@ using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
 using CalamityMod.World;
-using InfernumMode.Common;
+using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

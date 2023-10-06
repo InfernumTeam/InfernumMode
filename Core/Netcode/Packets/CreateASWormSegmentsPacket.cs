@@ -16,9 +16,9 @@ namespace InfernumMode.Core.Netcode.Packets
             packet.Write(WormSegments.Count);
             for (int i = 0; i < WormSegments.Count; i++)
             {
-                packet.Write(WormSegments[i].locked);
-                packet.WritePackedVector2(WormSegments[i].position);
-                packet.WritePackedVector2(WormSegments[i].velocity);
+                packet.Write(WormSegments[i].Locked);
+                packet.WritePackedVector2(WormSegments[i].Position);
+                packet.WritePackedVector2(WormSegments[i].Velocity);
             }
         }
 

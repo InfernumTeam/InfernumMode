@@ -2,8 +2,7 @@
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
-using InfernumMode.Core;
+using InfernumMode.Common.Worldgen;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

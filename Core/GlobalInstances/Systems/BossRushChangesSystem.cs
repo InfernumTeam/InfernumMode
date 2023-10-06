@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.CalPlayer;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -45,6 +46,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -61,27 +63,39 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     public class BossRushChangesSystem : ModSystem
     {
         public static List<Boss> InfernumBosses { get; private set; }
+
         public static List<Boss> CalamityBosses { get; private set; }
 
         public static Dictionary<int, Action<NPC>> InfernumBossDeathEffects { get; private set; }
+
         public static Dictionary<int, Action<NPC>> CalamityBossDeathEffects { get; private set; }
 
         public static Dictionary<int, int[]> InfernumBossIDsAfterDeath { get; private set; }
 
-        public static bool InfernumChangesActive
-        {
-            get
-            {
-                if (Bosses == InfernumBosses)
-                    return true;
-                return false;
-            }
-        }
+        public const int MinBossRushDamage = 500;
 
         public override void OnModLoad()
         {
             // Cache the calamity boss order.
             //CalamityBosses = Bosses;
+
+            InfernumPlayer.ModifyHitByNPCEvent += (InfernumPlayer player, NPC npc, ref Player.HurtModifiers modifiers) =>
+            {
+                if (modifiers.FinalDamage.Base <= 0f)
+                    return;
+
+                if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+                    modifiers.FinalDamage.Base = Clamp(modifiers.FinalDamage.Base, MinBossRushDamage + Main.rand.Next(35), float.MaxValue);
+            };
+
+            InfernumPlayer.ModifyHitByProjectileEvent += (InfernumPlayer player, Projectile projectile, ref Player.HurtModifiers modifiers) =>
+            {
+                if (modifiers.FinalDamage.Base <= 0f)
+                    return;
+
+                if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+                    modifiers.FinalDamage.Base = Clamp(modifiers.FinalDamage.Base, MinBossRushDamage + Main.rand.Next(35), float.MaxValue);
+            };
 
             // Cache our own boss order.
             Bosses = new List<Boss>()

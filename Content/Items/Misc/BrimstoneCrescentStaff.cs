@@ -1,10 +1,15 @@
-﻿using InfernumMode.Content.Projectiles.Generic;
+﻿using CalamityMod;
+using InfernumMode.Content.Buffs;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Rarities.InfernumRarities;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
 namespace InfernumMode.Content.Items.Misc
 {
@@ -25,6 +30,47 @@ namespace InfernumMode.Content.Items.Misc
         public static float ForcefieldDRMultiplier => 0.66f;
 
         public static float DamageMultiplier => 0.33f;
+
+        public override void SetStaticDefaults()
+        {
+            InfernumPlayer.UpdateDeadEvent += (InfernumPlayer player) => player.SetValue<bool>("ForcefieldIsActive", false);
+
+            InfernumPlayer.AccessoryUpdateEvent += (InfernumPlayer player) =>
+            {
+                player.SetValue<float>("ForcefieldStrengthInterpolant", Clamp(player.GetValue<float>("ForcefieldStrengthInterpolant") + player.GetValue<bool>("ForcefieldIsActive").ToDirectionInt() * 0.02f, 0f, 1f));
+                if (player.GetValue<bool>("ForcefieldIsActive"))
+                    player.Player.AddBuff(ModContent.BuffType<BrimstoneBarrier>(), CalamityUtils.SecondsToFrames(DebuffTime));
+            };
+
+            InfernumPlayer.ModifyHurtEvent += (InfernumPlayer player, ref Player.HurtModifiers modifiers) =>
+            {
+                var hits = player.GetRefValue<int>("ForcefieldHits");
+                if (player.GetValue<bool>("ForcefieldIsActive"))
+                {
+                    // Apply DR and disable typical hit graphical/sound effects.
+                    modifiers.FinalDamage *= (1f - ForcefieldDRMultiplier);
+
+                    // Play a custom fire hit effect.
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, player.Player.Center);
+
+                    int explosionDamage = (int)player.Player.GetBestClassDamage().ApplyTo(ExplosionBaseDamage);
+                    if (Main.myPlayer == player.Player.whoAmI)
+                        Projectile.NewProjectile(player.Player.GetSource_OnHurt(player.Player), player.Player.Center, Vector2.Zero, ModContent.ProjectileType<BrimstoneForcefieldExplosion>(), explosionDamage, 0f, player.Player.whoAmI, 0f, 100f);
+
+                    // Break the forcefield once it incurs enough hits.
+                    hits.Value++;
+                    //player.SetValue<int>("ForcefieldHits", player.GetValue<int>("ForcefieldHits") + 1);
+                    if (hits.Value >= MaxForcefieldHits)
+                    {
+                        player.Player.AddBuff(ModContent.BuffType<BrimstoneExhaustion>(), CalamityUtils.SecondsToFrames(ForcefieldCreationDelayAfterBreak));
+                        hits.Value = 0;
+                        player.SetValue<bool>("ForcefieldIsActive", false);
+                    }
+                }
+                else
+                    hits.Value = 0;
+            };
+        }
 
         public override void SetDefaults()
         {

@@ -1,5 +1,5 @@
 using CalamityMod;
-using InfernumMode.Common;
+using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

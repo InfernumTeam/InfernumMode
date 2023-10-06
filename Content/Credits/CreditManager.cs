@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Credits
 {
@@ -105,6 +106,16 @@ namespace InfernumMode.Content.Credits
         {
             Main.OnPreDraw += CreditFinalScene.PreparePortraitTarget;
             Main.OnPostDraw += DrawCredits;
+
+            InfernumPlayer.LoadDataEvent += (InfernumPlayer player, TagCompound tag) =>
+            {
+                player.SetValue<bool>("CreditsHavePlayed", tag.GetBool("CreditsHavePlayed"));
+            };
+
+            InfernumPlayer.SaveDataEvent += (InfernumPlayer player, TagCompound tag) =>
+            {
+                tag["CreditsHavePlayed"] = player.GetValue<bool>("CreditsHavePlayed");
+            };
         }
 
         public override void Unload()
@@ -131,7 +142,7 @@ namespace InfernumMode.Content.Credits
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
-            if (CreditsPlaying || Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed)
+            if (CreditsPlaying || Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed"))
                 return;
 
             // Else, mark them as playing.
@@ -234,7 +245,7 @@ namespace InfernumMode.Content.Credits
                             CreditGIFs[ActiveGifIndex] = null;
                         }
                         // Mark the credits as completed.
-                        Main.LocalPlayer.GetModPlayer<CreditsPlayer>().CreditsHavePlayed = true;
+                        Main.LocalPlayer.Infernum().SetValue<bool>("CreditsHavePlayed", true);
                         CreditsPlaying = false;
                     }
                     break;

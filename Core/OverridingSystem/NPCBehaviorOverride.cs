@@ -13,6 +13,7 @@ namespace InfernumMode.Core.OverridingSystem
 {
     public abstract class NPCBehaviorOverride
     {
+        #region Statics
         internal static Dictionary<int, NPCBehaviorOverride> BehaviorOverrides = new();
 
         internal static void LoadAll()
@@ -26,23 +27,23 @@ namespace InfernumMode.Core.OverridingSystem
                 // Check that all the methods exist, and add the npc type to the list if so.
                 MethodInfo preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);
                 if (preAIMethod is not null)
-                    OverridingListManager.InfernumNPCPreAIOverrideList.Add(instance.NPCOverrideType); // = new OverridingListManager.NPCPreAIDelegate(n => (bool)preAIMethod.Invoke(instance, new object[] { n }));
+                    OverridingListManager.InfernumNPCPreAIOverrideList.Add(instance.NPCOverrideType);
 
                 MethodInfo setDefaultsMethod = type.GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
                 if (setDefaultsMethod is not null && setDefaultsMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumSetDefaultsOverrideList.Add(instance.NPCOverrideType); //= setDefaultsMethod.ConvertToDelegate(instance);
+                    OverridingListManager.InfernumSetDefaultsOverrideList.Add(instance.NPCOverrideType);
 
                 MethodInfo preDrawMethod = type.GetMethod("PreDraw", Utilities.UniversalBindingFlags);
                 if (preDrawMethod is not null && preDrawMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumPreDrawOverrideList.Add(instance.NPCOverrideType); //= new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)preDrawMethod.Invoke(instance, new object[] { n, s, c }));
+                    OverridingListManager.InfernumPreDrawOverrideList.Add(instance.NPCOverrideType);
 
                 MethodInfo findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
                 if (findFrameMethod is not null && findFrameMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumFrameOverrideList.Add(instance.NPCOverrideType); //= new OverridingListManager.NPCFindFrameDelegate((n, h) => findFrameMethod.Invoke(instance, new object[] { n, h }));
+                    OverridingListManager.InfernumFrameOverrideList.Add(instance.NPCOverrideType);
 
                 MethodInfo checkDeadMethod = type.GetMethod("CheckDead", Utilities.UniversalBindingFlags);
                 if (checkDeadMethod is not null && checkDeadMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumCheckDeadOverrideList.Add(instance.NPCOverrideType); //= new OverridingListManager.NPCCheckDeadDelegate(n => (bool)checkDeadMethod.Invoke(instance, new object[] { n }));
+                    OverridingListManager.InfernumCheckDeadOverrideList.Add(instance.NPCOverrideType);
 
                 // Call the load hook.
                 instance.Load();
@@ -66,7 +67,9 @@ namespace InfernumMode.Core.OverridingSystem
                 TipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips().ToList();
             }
         }
+        #endregion
 
+        #region Abstracts/Virtuals
         public virtual void Load() { }
 
         public virtual void SendExtraData(NPC npc, ModPacket writer) { }
@@ -90,5 +93,6 @@ namespace InfernumMode.Core.OverridingSystem
         public virtual void FindFrame(NPC npc, int frameHeight) { }
 
         public virtual bool CheckDead(NPC npc) => true;
+        #endregion
     }
 }

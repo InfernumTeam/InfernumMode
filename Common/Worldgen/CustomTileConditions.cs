@@ -1,9 +1,9 @@
-using CalamityMod;
+﻿using CalamityMod;
 using Terraria;
 using Terraria.ID;
 using Terraria.WorldBuilding;
 
-namespace InfernumMode.Common
+namespace InfernumMode.Common.Worldgen
 {
     public class CustomTileConditions
     {

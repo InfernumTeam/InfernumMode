@@ -4,7 +4,6 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Content.WorldGeneration;
-using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;

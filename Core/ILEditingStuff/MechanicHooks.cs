@@ -403,7 +403,6 @@ namespace InfernumMode.Core.ILEditingStuff
         public static void DrawForcefield(Player player)
         {
             SealocketPlayer sealocketPlayer = player.GetModPlayer<SealocketPlayer>();
-            BrimstoneCrescentForcefieldPlayer crescentPlayer = player.GetModPlayer<BrimstoneCrescentForcefieldPlayer>();
 
             sealocketPlayer.ForcefieldOpacity = 1f;
 
@@ -416,10 +415,10 @@ namespace InfernumMode.Core.ILEditingStuff
             }
 
             // Draw the Brimstone Crescent forcefield.
-            if (crescentPlayer.ForcefieldStrengthInterpolant > 0f)
+            if (player.Infernum().GetValue<float>("ForcefieldStrengthInterpolant") > 0f)
             {
-                float scale = Lerp(0.55f, 1.5f, 1f - crescentPlayer.ForcefieldStrengthInterpolant);
-                Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * crescentPlayer.ForcefieldStrengthInterpolant;
+                float scale = Lerp(0.55f, 1.5f, 1f - player.Infernum().GetValue<float>("ForcefieldStrengthInterpolant"));
+                Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * player.Infernum().GetValue<float>("ForcefieldStrengthInterpolant");
                 CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.FireNoise.Value, true, scale);
             }
         }

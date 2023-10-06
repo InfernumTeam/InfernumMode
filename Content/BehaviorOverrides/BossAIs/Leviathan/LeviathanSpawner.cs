@@ -1,6 +1,6 @@
 using CalamityMod;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
+using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

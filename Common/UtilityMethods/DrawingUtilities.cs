@@ -7,6 +7,7 @@ using InfernumMode.Common;
 using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Common.MapLayers;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;

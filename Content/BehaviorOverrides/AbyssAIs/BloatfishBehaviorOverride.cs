@@ -1,5 +1,5 @@
 using CalamityMod.NPCs.Abyss;
-using InfernumMode.Common;
+using InfernumMode.Common.Worldgen;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

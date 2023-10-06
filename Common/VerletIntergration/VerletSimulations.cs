@@ -1,27 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 
-namespace InfernumMode.Common
+namespace InfernumMode.Common.VerletIntergration
 {
-    public class VerletSimulatedSegmentInfernum
+    /// <summary>
+    /// Contains various simulations for verlet chains.
+    /// </summary>
+    public static class VerletSimulations
     {
-        public bool locked;
-
-        public Vector2 position;
-
-        public Vector2 oldPosition;
-
-        public Vector2 velocity;
-
-        public VerletSimulatedSegmentInfernum(Vector2 _position, Vector2 velocity, bool locked = false)
-        {
-            this.locked = locked;
-            position = _position;
-            oldPosition = _position;
-            this.velocity = velocity;
-        }
-
         public static List<VerletSimulatedSegmentInfernum> TileCollisionVerletSimulation(List<VerletSimulatedSegmentInfernum> segments, float segmentDistance, int loops = 10, float gravity = 0.3f)
         {
             // https://youtu.be/PGk0rnyTa1U?t=400 is a good verlet integration chains reference.
@@ -29,37 +16,38 @@ namespace InfernumMode.Common
             for (int i = segments.Count - 1; i >= 0; i--)
             {
                 var segment = segments[i];
-                if (!segment.locked)
+                if (!segment.Locked)
                 {
-                    Vector2 positionBeforeUpdate = segment.position;
+                    Vector2 positionBeforeUpdate = segment.Position;
 
                     // Disallow tile collision.
                     gravity *= Lerp(1f, 1.02f, i / (float)segments.Count);
                     float maxFallSpeed = 19f;
                     Vector2 gravityForce = Vector2.UnitY * gravity;
-                    if (Collision.WetCollision(segment.position, 1, 1))
+
+                    if (Collision.WetCollision(segment.Position, 1, 1))
                     {
                         gravityForce *= 0.4f;
                         maxFallSpeed *= 0.3f;
                     }
 
                     // Add gravity to the segment.
-                    Vector2 newVelocity = segment.velocity + gravityForce;
+                    Vector2 newVelocity = segment.Velocity + gravityForce;
                     if (newVelocity.Y >= maxFallSpeed)
                         newVelocity.Y = maxFallSpeed;
 
-                    Vector2 velocity = Collision.TileCollision(segment.position, newVelocity, (int)segmentDistance, (int)segmentDistance);
+                    Vector2 velocity = Collision.TileCollision(segment.Position, newVelocity, (int)segmentDistance, (int)segmentDistance);
 
                     if (velocity.Distance(newVelocity) >= 0.15f)
                     {
                         groundHitSegments.Add(i);
-                        segment.locked = true;
+                        segment.Locked = true;
                     }
 
-                    segment.position += velocity;
-                    segment.velocity = velocity;
+                    segment.Position += velocity;
+                    segment.Velocity = velocity;
 
-                    segment.oldPosition = positionBeforeUpdate;
+                    segment.OldPosition = positionBeforeUpdate;
                 }
             }
 
@@ -71,14 +59,14 @@ namespace InfernumMode.Common
                 {
                     VerletSimulatedSegmentInfernum pointA = segments[j];
                     VerletSimulatedSegmentInfernum pointB = segments[j + 1];
-                    Vector2 segmentCenter = (pointA.position + pointB.position) / 2f;
-                    Vector2 segmentDirection = (pointA.position - pointB.position).SafeNormalize(Vector2.UnitY);
+                    Vector2 segmentCenter = (pointA.Position + pointB.Position) / 2f;
+                    Vector2 segmentDirection = (pointA.Position - pointB.Position).SafeNormalize(Vector2.UnitY);
 
-                    if (!pointA.locked && !groundHitSegments.Contains(j))
-                        pointA.position = segmentCenter + segmentDirection * segmentDistance / 2f;
+                    if (!pointA.Locked && !groundHitSegments.Contains(j))
+                        pointA.Position = segmentCenter + segmentDirection * segmentDistance / 2f;
 
-                    if (!pointB.locked && !groundHitSegments.Contains(j + 1))
-                        pointB.position = segmentCenter - segmentDirection * segmentDistance / 2f;
+                    if (!pointB.Locked && !groundHitSegments.Contains(j + 1))
+                        pointB.Position = segmentCenter - segmentDirection * segmentDistance / 2f;
 
                     segments[j] = pointA;
                     segments[j + 1] = pointB;

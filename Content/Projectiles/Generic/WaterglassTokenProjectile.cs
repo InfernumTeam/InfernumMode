@@ -1,5 +1,4 @@
 ﻿using InfernumMode.Content.Subworlds;
-using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria;

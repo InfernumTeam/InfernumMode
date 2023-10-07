@@ -6,6 +6,7 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Items.Misc;
@@ -140,7 +141,12 @@ namespace InfernumMode.Content.Projectiles
             {
                 HoverText = "Toggle cybernetic immortality",
                 IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/CyborgImmortalityIcon"),
-                ClickBehavior = player => player.Infernum_Immortality().ToggleImmortality()
+                ClickBehavior = (Player player) => 
+                {
+                    Referenced<bool> cyberneticImmortality = player.Infernum().GetRefValue<bool>("CyberneticImmortalityIsActive");
+                    cyberneticImmortality.Value = !cyberneticImmortality.Value;
+                    CalamityUtils.DisplayLocalizedText($"Mods.InfernumMode.Status.CyberneticImmortality{(cyberneticImmortality.Value ? "Enabled" : "Disabled")}", Draedon.TextColor);
+                }
             },
 
             new()

@@ -7,50 +7,17 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics.ScreenEffects
+namespace InfernumMode.Common.Graphics.Drawers
 {
-    public class StormWeaverDrawSystem : ModSystem
+    public class StormWeaverDrawSystem : BaseDrawerSystem
     {
-        public static ManagedRenderTarget WeaverDrawTarget
-        {
-            get;
-            private set;
-        }
+        public override int AssosiatedNPCType => ModContent.NPCType<StormWeaverHead>();
 
-        public override void OnModLoad()
-        {
-            Main.OnPreDraw += PrepareTarget;
-            WeaverDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            On_Main.DrawNPCs += DrawWeaver;
-        }
-
-        private void DrawWeaver(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
-        {
-            orig(self, behindTiles);
-            if (!behindTiles)
-                DrawTarget();
-        }
-
-        public override void OnModUnload()
-        {
-            Main.QueueMainThreadAction(() =>
-            {
-                Main.OnPreDraw -= PrepareTarget;
-                if (WeaverDrawTarget is not null && !WeaverDrawTarget.IsDisposed)
-                    WeaverDrawTarget.Dispose();
-            });
-        }
-
-        internal static void PrepareTarget(GameTime obj)
+        public override void DrawToMainTarget(SpriteBatch spriteBatch)
         {
             int weaverHeadID = ModContent.NPCType<StormWeaverHead>();
-            if (Main.gameMenu || !NPC.AnyNPCs(weaverHeadID) || !InfernumMode.CanUseCustomAIs || WeaverDrawTarget.Target.IsDisposed)
+            if (Main.gameMenu || !NPC.AnyNPCs(weaverHeadID) || !InfernumMode.CanUseCustomAIs || MainTarget.Target.IsDisposed)
                 return;
-
-            Main.instance.GraphicsDevice.SetRenderTarget(WeaverDrawTarget.Target);
-            Main.instance.GraphicsDevice.Clear(Color.Transparent);
-
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.Default, Main.Rasterizer, null, Matrix.Identity);
 
             // Draw all weaver segments.
             int weaverBodyID = ModContent.NPCType<StormWeaverBody>();
@@ -81,12 +48,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 Main.spriteBatch.Draw(texture, drawPosition, null, n.GetAlpha(Color.White), n.rotation, texture.Size() * 0.5f, n.scale, 0, 0f);
                 Main.spriteBatch.Draw(vortexTexture, drawPosition, null, n.GetAlpha(Color.White) * n.Infernum().ExtraAI[StormWeaverHeadBehaviorOverride.FogInterpolantIndex], n.rotation, texture.Size() * 0.5f, n.scale, 0, 0f);
             }
-
-            Main.spriteBatch.End();
-            Main.instance.GraphicsDevice.SetRenderTarget(null);
         }
 
-        public static void DrawTarget()
+        public override void DrawMainTargetContents(SpriteBatch spriteBatch)
         {
             int weaverIndex = NPC.FindFirstNPC(ModContent.NPCType<StormWeaverHead>());
             if (weaverIndex == -1 || !InfernumMode.CanUseCustomAIs)
@@ -99,7 +63,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 for (int i = 0; i < 15; i++)
                 {
                     Vector2 drawOffset = (TwoPi * i / 15f).ToRotationVector2() * electricityFormInterpolant * 6f;
-                    Main.spriteBatch.Draw(WeaverDrawTarget.Target, WeaverDrawTarget.Target.Size() * 0.5f + drawOffset, null, Color.Lerp(drawColor, Color.White, 0.5f) with { A = 0 } * 1f, 0f, WeaverDrawTarget.Target.Size() * 0.5f, 1f, 0, 0f);
+                    Main.spriteBatch.Draw(MainTarget.Target, MainTarget.Target.Size() * 0.5f + drawOffset, null, Color.Lerp(drawColor, Color.White, 0.5f) with { A = 0 } * 1f, 0f, MainTarget.Target.Size() * 0.5f, 1f, 0, 0f);
                 }
                 Main.spriteBatch.EnterShaderRegion();
                 Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.WavyNeuronsNoise.Value;
@@ -111,11 +75,11 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["color"]?.SetValue(Color.LightSkyBlue.ToVector3());
                 InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["brightColor"]?.SetValue(Color.White.ToVector3());
                 InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["intensity"]?.SetValue(electricityFormInterpolant);
-                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(WeaverDrawTarget.Target.Size()));
+                InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(MainTarget.Target.Size()));
                 InfernumEffectsRegistry.LightningOverlayShader.GetShader().Shader.CurrentTechnique.Passes[0].Apply();
             }
 
-            Main.spriteBatch.Draw(WeaverDrawTarget.Target, Vector2.Zero, drawColor);
+            Main.spriteBatch.Draw(MainTarget.Target, Vector2.Zero, drawColor);
 
             if (electricityFormInterpolant > 0f)
                 Main.spriteBatch.ExitShaderRegion();

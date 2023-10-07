@@ -1124,6 +1124,7 @@ Mods: {
 			MushBombInfernum.DisplayName: Mush Bomb Infernum
 			DoGProviCutsceneInitialPortal.DisplayName: Do G Provi Cutscene Initial Portal
 			DoGProviCutsceneProjectile.DisplayName: Do G Provi Cutscene Projectile
+			ProviBurnPulseRing.DisplayName: Provi Burn Pulse Ring
 		}
 
 		NPCs: {

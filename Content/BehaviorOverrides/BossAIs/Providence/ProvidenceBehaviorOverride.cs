@@ -609,6 +609,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
             ref float originalLavaHeight = ref npc.Infernum().ExtraAI[14];
 
+            Vector2 crystalCenter = npc.Center + Vector2.UnitY * 55f;
             // Mark death effects on the first frame of the animation.
             if (deathEffectTimer == 1f)
             {
@@ -666,28 +667,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         int shootType = ModContent.ProjectileType<SwirlingFire>();
 
                         Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
-                        if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
+                        if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), crystalCenter.DirectionTo(target.Center)) < 0.5f)
                             shootVelocity *= 1.7f;
 
                         if (Main.rand.NextBool(150) && deathEffectTimer >= 110f || deathEffectTimer == 92f)
                         {
 
-                            if (deathEffectTimer >= 320f)
-                            {
-                                shootType = ModContent.ProjectileType<YharonBoom>();
-                                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
-                            }
-                            else
-                            {
-                                shootType = ModContent.ProjectileType<ProvBoomDeath>();
+                            //if (deathEffectTimer >= 320f)
+                            //{
+                            //    shootType = ModContent.ProjectileType<YharonBoom>();
+                            //    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
+                            //}
+                            //else
+                            //{
+                                shootType = ModContent.ProjectileType<ProviBurnPulseRing>();
                                 shootVelocity = Vector2.Zero;
-                                ReleaseSparkles(npc.Center, 6, 18f);
+                                ReleaseSparkles(crystalCenter, 6, 18f);
                                 SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                                 SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
-                            }
+                            //}
                         }
 
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
+                        Utilities.NewProjectileBetter(crystalCenter, shootVelocity, shootType, 0, 0f, 255);
                     }
                 }
             }
@@ -697,11 +698,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 int sparkleCount = (int)Lerp(10f, 30f, Main.gfxQuality);
                 //int boomChance = (int)Lerp(8f, 3f, Main.gfxQuality);
                 if (Main.netMode != NetmodeID.MultiplayerClient)// && Main.rand.NextBool(boomChance))
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
+                    Utilities.NewProjectileBetter(crystalCenter, Vector2.Zero, ModContent.ProjectileType<ProviBurnPulseRing>(), 0, 0f);
 
-                ReleaseSparkles(npc.Center, sparkleCount, 18f);
+                ReleaseSparkles(crystalCenter, sparkleCount, 18f);
                 SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                 SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+
+                var burst = new BurstParticle(crystalCenter, Vector2.Zero, DoGProviCutsceneProjectile.TimeColor, 90, true, Color.Lerp(DoGProviCutsceneProjectile.TimeColor, Color.White, 0.5f));
+                GeneralParticleHandler.SpawnParticle(burst);
             }
 
             if (deathEffectTimer >= 370f)
@@ -710,7 +714,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectTimer == 400f)
             {
                 ReleaseSparkles(npc.Center, 80, 22f);
-                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
+                //Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
             }
 
             if (deathEffectTimer >= 435f)
@@ -760,7 +764,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (deathEffectsTimer == 1)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 55f, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectsTimer >= dieTime)
@@ -2660,213 +2664,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static Color RuneColorFunction(NPC n, float _) => Color.Lerp(Color.Yellow, Color.Wheat, 0.8f) * (1f - n.Opacity) * n.Infernum().ExtraAI[1];
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            // Initialize the 3D strip.
-            npc.Infernum().Optional3DStripDrawer ??= new(RuneHeightFunction, c => RuneColorFunction(npc, c));
-
-            string baseTextureString = "CalamityMod/NPCs/Providence/";
-            string baseGlowTextureString = baseTextureString + "Glowmasks/";
-            string rockTextureString = "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock";
-
-            string getTextureString = baseTextureString + "Providence";
-            string getTextureGlowString;
-            string getTextureGlow2String;
-
-            bool useDefenseFrames = npc.localAI[1] == 1f;
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            ProvidenceAttackType attackType = (ProvidenceAttackType)(int)npc.ai[0];
-
-            ref float burnIntensity = ref npc.localAI[3];
-
-            ref float drawCrystal = ref npc.Infernum().ExtraAI[DrawCrystalInterpolant];
-
-            // Don't draw anything, the cutscene proejectile will handle it.
-            if (drawCrystal > 0)
-                return false;
-
-            void drawProvidenceInstance(Vector2 baseDrawPosition, int frameOffset, Color baseDrawColor)
-            {
-                rockTextureString = "InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/";
-                if (npc.localAI[0] == (int)ProvidenceFrameDrawingType.CocoonState)
-                {
-                    if (!useDefenseFrames)
-                    {
-                        rockTextureString += "ProvidenceDefenseRock";
-                        getTextureString = baseTextureString + "ProvidenceDefense";
-                        getTextureGlowString = baseGlowTextureString + "ProvidenceDefenseGlow";
-                        getTextureGlow2String = baseGlowTextureString + "ProvidenceDefenseGlow2";
-                    }
-                    else
-                    {
-                        rockTextureString += "ProvidenceDefenseAltRock";
-                        getTextureString = baseTextureString + "ProvidenceDefenseAlt";
-                        getTextureGlowString = baseGlowTextureString + "ProvidenceDefenseAltGlow";
-                        getTextureGlow2String = baseGlowTextureString + "ProvidenceDefenseAltGlow2";
-                    }
-                }
-                else
-                {
-                    if (npc.localAI[2] == 0f)
-                    {
-                        rockTextureString += "ProvidenceRock";
-                        getTextureGlowString = baseGlowTextureString + "ProvidenceGlow";
-                        getTextureGlow2String = baseGlowTextureString + "ProvidenceGlow2";
-                    }
-                    else if (npc.localAI[2] == 1f)
-                    {
-                        getTextureString = baseTextureString + "ProvidenceAlt";
-                        rockTextureString += "ProvidenceAltRock";
-                        getTextureGlowString = baseGlowTextureString + "ProvidenceAltGlow";
-                        getTextureGlow2String = baseGlowTextureString + "ProvidenceAltGlow2";
-                    }
-                    else if (npc.localAI[2] == 2f)
-                    {
-                        rockTextureString += "ProvidenceAttackRock";
-                        getTextureString = baseTextureString + "ProvidenceAttack";
-                        getTextureGlowString = baseGlowTextureString + "ProvidenceAttackGlow";
-                        getTextureGlow2String = baseGlowTextureString + "ProvidenceAttackGlow2";
-                    }
-                    else
-                    {
-                        rockTextureString += "ProvidenceAttackAltRock";
-                        getTextureString = baseTextureString + "ProvidenceAttackAlt";
-                        getTextureGlowString = baseGlowTextureString + "ProvidenceAttackAltGlow";
-                        getTextureGlow2String = baseGlowTextureString + "ProvidenceAttackAltGlow2";
-                    }
-                }
-
-                float wingVibrance = 1f;
-                getTextureGlowString += "Night";
-
-                Texture2D generalTexture = ModContent.Request<Texture2D>(getTextureString).Value;
-                Texture2D crystalTexture = ModContent.Request<Texture2D>(getTextureGlow2String).Value;
-                Texture2D wingTexture = ModContent.Request<Texture2D>(getTextureGlowString).Value;
-                Texture2D fatCrystalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal").Value;
-
-                SpriteEffects spriteEffects = SpriteEffects.None;
-                if (npc.spriteDirection == 1)
-                    spriteEffects = SpriteEffects.FlipHorizontally;
-
-                Vector2 drawOrigin = npc.frame.Size() * 0.5f;
-
-                // Draw the crystal behind everything. It will appear if providence is herself invisible.
-                if (npc.localAI[3] <= 0f)
-                {
-                    float backglowTelegraphInterpolant = 0f;
-                    if (npc.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
-                        backglowTelegraphInterpolant = npc.Infernum().ExtraAI[2];
-
-                    Vector2 crystalOrigin = fatCrystalTexture.Size() * 0.5f;
-
-                    // Draw a backglow if necessary.
-                    if (backglowTelegraphInterpolant > 0f)
-                    {
-                        for (int i = 0; i < 8; i++)
-                        {
-                            Vector2 drawOffset = (TwoPi * i / 8f).ToRotationVector2() * backglowTelegraphInterpolant * 12f;
-                            Color backglowColor = Color.Pink with
-                            {
-                                A = 0
-                            };
-                            Main.spriteBatch.Draw(fatCrystalTexture, npc.Center - Main.screenPosition + drawOffset, null, backglowColor, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
-                        }
-                    }
-
-                    for (int i = 4; i >= 0; i--)
-                    {
-                        Color afterimageColor = Color.White * (1f - i / 5f);
-                        Vector2 crystalDrawPosition = Vector2.Lerp(npc.oldPos[i], npc.position, 0.4f) + npc.Size * 0.5f - Main.screenPosition;
-                        Main.spriteBatch.Draw(fatCrystalTexture, crystalDrawPosition, null, afterimageColor, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
-                    }
-                }
-
-                int frameHeight = generalTexture.Height / 3;
-                if (frameHeight <= 0)
-                    frameHeight = 1;
-
-                Rectangle frame = generalTexture.Frame(1, 3, 0, (npc.frame.Y / frameHeight + frameOffset) % 3);
-
-                // Draw the converging shell if applicable.
-                float rockReformOffset = npc.Infernum().ExtraAI[RockReformOffsetIndex];
-                if (rockReformOffset > 0f)
-                {
-                    Texture2D headRock = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock1").Value;
-                    Texture2D leftBodyRock = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock2").Value;
-                    Texture2D rightBodyRock = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/Sheets/ProvidenceRock3").Value;
-
-                    float rockOffsetRotation = TwoPi * rockReformOffset / 2500f;
-                    float rockOpacity = Utils.GetLerpValue(700f, 300f, rockReformOffset, true);
-                    Vector2 crystalOffsetCorrection = -Vector2.UnitY.RotatedBy(npc.rotation * npc.spriteDirection) * npc.scale * 40f;
-                    Vector2 headDrawPosition = baseDrawPosition - new Vector2(0.1f, 1f).RotatedBy(npc.rotation * npc.spriteDirection) * (npc.scale * 60f + rockReformOffset) + crystalOffsetCorrection;
-                    Vector2 leftDrawPosition = baseDrawPosition - Vector2.UnitX.RotatedBy(npc.rotation * npc.spriteDirection) * (rockReformOffset - 10f) + crystalOffsetCorrection;
-                    Vector2 rightDrawPosition = baseDrawPosition + Vector2.UnitX.RotatedBy(npc.rotation * npc.spriteDirection) * (rockReformOffset - 12f) + crystalOffsetCorrection;
-                    Main.spriteBatch.Draw(headRock, headDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, headRock.Size() * new Vector2(0.5f, 1f), npc.scale, spriteEffects, 0f);
-                    Main.spriteBatch.Draw(leftBodyRock, leftDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, leftBodyRock.Size() * new Vector2(1f, 0.5f), npc.scale, spriteEffects, 0f);
-                    Main.spriteBatch.Draw(rightBodyRock, rightDrawPosition, null, baseDrawColor * rockOpacity, npc.rotation + rockOffsetRotation, leftBodyRock.Size() * new Vector2(0f, 0.5f), npc.scale, spriteEffects, 0f);
-                }
-
-                // Draw the base texture.
-                Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, npc.GetAlpha(baseDrawColor), npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
-
-                // Draw the wings.
-                DrawProvidenceWings(npc, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
-
-                // Draw the crystals.
-                for (int i = 0; i < 9; i++)
-                {
-                    Vector2 drawOffset = (TwoPi * i / 9f).ToRotationVector2() * 2f;
-                    Main.spriteBatch.Draw(crystalTexture, baseDrawPosition + drawOffset, frame, Color.White with
-                    {
-                        A = 0
-                    } * npc.Opacity * Pow(1f - npc.localAI[3], 3f), npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
-                }
-            }
-
-            int totalProvidencesToDraw = (int)Lerp(1f, 30f, burnIntensity);
-            for (int i = 0; i < totalProvidencesToDraw; i++)
-            {
-                float offsetAngle = TwoPi * i * 2f / totalProvidencesToDraw;
-                float drawOffsetScalar = Sin(offsetAngle * 6f + Main.GlobalTimeWrappedHourly * Pi);
-                drawOffsetScalar *= Pow(burnIntensity, 1.4f) * 36f;
-                drawOffsetScalar *= Lerp(1f, 2f, 1f - lifeRatio);
-
-                Vector2 drawOffset = offsetAngle.ToRotationVector2() * drawOffsetScalar;
-                if (totalProvidencesToDraw <= 1)
-                    drawOffset = Vector2.Zero;
-
-                Vector2 drawPosition = npc.Center - Main.screenPosition + drawOffset;
-
-                Color baseColor = Color.White * (Lerp(0.4f, 0.8f, burnIntensity) / totalProvidencesToDraw * 7f);
-                baseColor.A = 0;
-                baseColor = Color.Lerp(Color.White, baseColor, burnIntensity);
-                if (IsEnraged)
-                {
-                    baseColor = Color.Lerp(baseColor, Color.Cyan with
-                    {
-                        A = 0
-                    }, 0.5f);
-                }
-
-                drawProvidenceInstance(drawPosition, 0, baseColor);
-            }
-
-            // Draw the rock texture above the bloom effects.
-            Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
-            float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * (1f - npc.localAI[3]) * 0.6f;
-            Main.spriteBatch.Draw(rockTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(Color.White) * opacity, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, 0, 0);
-
-            // Draw the rune strip on top of everything else during the ritual attack.
-            if (npc.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
-            {
-                Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
-                npc.Infernum().Optional3DStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols"));
-                npc.Infernum().Optional3DStripDrawer.Draw(npc.Center - Vector2.UnitX * 80f - Main.screenPosition, npc.Center + Vector2.UnitX * 80f - Main.screenPosition, 0.4f, 0f, 0f);
-                Main.spriteBatch.ExitShaderRegion();
-            }
-
-            return false;
-        }
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => false;
         #endregion
 
         #region Tips

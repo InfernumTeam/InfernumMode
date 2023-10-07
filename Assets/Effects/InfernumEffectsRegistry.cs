@@ -94,6 +94,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter ScreenSaturationBlurScreenShader => Filters.Scene["InfernumMode:ScreenSaturationBlur"];
         public static Filter ScreenShakeScreenShader => Filters.Scene["InfernumMode:ScreenShake"];
         public static Filter ScreenShakeScreenShader2 => Filters.Scene["InfernumMode:ScreenShake2"];
+        public static Filter SpriteBurnShader => Filters.Scene["InfernumMode:SpriteBurn"];
         public static Filter ShadowShader => Filters.Scene["InfernumMode:ShadowShader"];
         public static Filter TwinsScreenShader => Filters.Scene["InfernumMode:Twins"];
         #endregion
@@ -268,6 +269,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Sprite burn shader.
+            Ref<Effect> spriteBurnShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/SpriteBurnShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:SpriteBurn"] = new Filter(new(spriteBurnShader, "BurnPass"), EffectPriority.VeryHigh);
+
             // Pulse ring shader.
             Ref<Effect> pulseRingShader = new(assets.Request<Effect>("Assets/Effects/Shapes/PulseRing", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:PulseRing"] = new Filter(new(pulseRingShader, "PulsePass"), EffectPriority.VeryHigh);

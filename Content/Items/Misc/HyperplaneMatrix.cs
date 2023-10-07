@@ -12,6 +12,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Items.Misc
 {
@@ -37,6 +38,33 @@ namespace InfernumMode.Content.Items.Misc
                 }
 
                 return player.GetValue<bool>("CyberneticImmortalityIsActive");
+            };
+
+            InfernumPlayer.PreKillEvent += (InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref Terraria.DataStructures.PlayerDeathReason damageSource) =>
+            {
+                return !player.GetValue<bool>("CyberneticImmortalityIsActive");
+            };
+
+            InfernumPlayer.PreUpdateEvent += (InfernumPlayer player) =>
+            {
+                Referenced<int> cooldown = player.GetRefValue<int>("HurtSoundCountdown");
+                if (cooldown.Value > 0)
+                    cooldown.Value--;
+
+                if (!player.GetValue<bool>("CyberneticImmortalityIsActive"))
+                    return;
+
+                player.Player.statLife = player.Player.statLifeMax2;
+            };
+
+            InfernumPlayer.SaveDataEvent += (InfernumPlayer player, TagCompound tag) =>
+            {
+                tag["CyberneticImmortalityIsActive"] = player.GetValue<bool>("CyberneticImmortalityIsActive");
+            };
+
+            InfernumPlayer.LoadDataEvent += (InfernumPlayer player, TagCompound tag) =>
+            {
+                player.GetRefValue<bool>("CyberneticImmortalityIsActive").Value = tag.GetBool("CyberneticImmortalityIsActive");
             };
         }
 

@@ -7,11 +7,7 @@ namespace InfernumMode
 {
     public static partial class Utilities
     {
-        //public static AccessoryPlayer Infernum_Accessory(this Player player) => player.GetModPlayer<AccessoryPlayer>();
-
         public static BiomeEffectsPlayer Infernum_Biome(this Player player) => player.GetModPlayer<BiomeEffectsPlayer>();
-
-        public static CyberneticImmortalityPlayer Infernum_Immortality(this Player player) => player.GetModPlayer<CyberneticImmortalityPlayer>();
 
         public static EggPlayer Infernum_Egg(this Player player) => player.GetModPlayer<EggPlayer>();
 

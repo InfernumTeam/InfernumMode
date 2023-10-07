@@ -28,7 +28,7 @@ namespace InfernumMode.Common.BaseEntities
 
             public float InnerNoiseFactor;
 
-            public static PulseParameterData Default => new(15f, 9f, 1.4f, 2.5f, 0.02f, 1.5f);
+            public static PulseParameterData Default => new(10f, 9f, 1.2f, 2.5f, 0.015f, 3.5f);
 
             public PulseParameterData(float noiseZoom, float noiseSpeed, float noiseFactor, float brightnessFactor, float thickness, float innerNoiseFactor)
             {
@@ -79,10 +79,6 @@ namespace InfernumMode.Common.BaseEntities
 
         public virtual Texture2D InnerNoiseTexure { get; } = InfernumTextureRegistry.BlurryPerlinNoise.Value;
 
-        public virtual float MaxScale { get; } = 5f;
-
-        public virtual float ScaleEasing(float value) => value;
-
         public virtual PulseParameterData SetParameters(float lifetimeCompletionRatio) => PulseParameterData.Default;
 
         public abstract int Lifetime { get; }
@@ -119,7 +115,7 @@ namespace InfernumMode.Common.BaseEntities
             Main.LocalPlayer.Calamity().GeneralScreenShakePower = DetermineScreenShakePower(1f - Projectile.timeLeft / (float)Lifetime, distanceFromPlayer);
 
             // Cause the pulse to expand outward, along with its hitbox.
-            Projectile.scale = Lerp(0f, MaxScale, ScaleEasing(Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true)));
+            Projectile.scale += 60f;// Lerp(0f, MaxScale, ScaleEasing(Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true)));
 
             // Fade out at the end of the lifetime.
 

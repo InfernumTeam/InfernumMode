@@ -1,5 +1,4 @@
-using CalamityMod.NPCs.Polterghast;
-using InfernumMode.Content.Dusts;
+﻿using InfernumMode.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -10,12 +9,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
 {
     public class DebuffEffectsPlayer : ModPlayer
     {
-        public int MadnessTime
-        {
-            get;
-            set;
-        }
-
         public bool RedElectrified
         {
             get;
@@ -34,21 +27,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
-        public bool Madness
-        {
-            get;
-            set;
-        }
-
-        public float MadnessInterpolant => Clamp(MadnessTime / 600f, 0f, 1f);
-
         #region Reset Effects
         public override void ResetEffects()
         {
             RedElectrified = false;
             ShadowflameInferno = false;
             DarkFlames = false;
-            Madness = false;
         }
         #endregion
 
@@ -58,8 +42,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
             RedElectrified = false;
             ShadowflameInferno = false;
             DarkFlames = false;
-            Madness = false;
-            MadnessTime = 0;
         }
         #endregion
 
@@ -72,8 +54,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} could not withstand the red lightning.");
                 if (DarkFlames)
                     damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} was incinerated by ungodly fire.");
-                if (Madness)
-                    damageSource = PlayerDeathReason.ByCustomReason($"{Player.name} went mad.");
             }
             return true;
         }
@@ -99,9 +79,6 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 causeLifeRegenLoss(30);
                 Player.statDefense -= 8;
             }
-            if (Madness)
-                causeLifeRegenLoss(NPC.AnyNPCs(ModContent.NPCType<Polterghast>()) ? 800 : 50);
-            MadnessTime = Utils.Clamp(MadnessTime + (Madness ? 1 : -8), 0, 660);
         }
         #endregion
 

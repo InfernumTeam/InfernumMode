@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -27,6 +28,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public delegate void ModifyHitNPCWithProjDelegate(InfernumPlayer player, Projectile proj, NPC target, ref NPC.HitModifiers modifiers);
 
         public delegate bool FreeDodgeDelegate(InfernumPlayer player, Player.HurtInfo info);
+
+        public delegate bool PreKillDelegate(InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource);
         #endregion
 
         #region Events
@@ -57,6 +60,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public static event ModifyHitNPCWithProjDelegate ModifyHitNPCWithProjEvent;
 
         public static event FreeDodgeDelegate FreeDodgeEvent;
+
+        public static event PreKillDelegate PreKillEvent;
+
+        public static event PlayerActionDelegate UpdateLifeRegenEvent;
         #endregion
 
         #region Overrides
@@ -117,6 +124,14 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (FreeDodgeEvent != null)
                 foreach (var subscription in FreeDodgeEvent.GetInvocationList())
                     FreeDodgeEvent -= (FreeDodgeDelegate)subscription;
+
+            if (PreKillEvent != null)
+                foreach (var subscription in PreKillEvent.GetInvocationList())
+                    PreKillEvent -= (PreKillDelegate)subscription;
+
+            if (UpdateLifeRegenEvent != null)
+                foreach (var subcription in UpdateLifeRegenEvent.GetInvocationList())
+                    UpdateLifeRegenEvent -= (PlayerActionDelegate)subcription;
         }
 
         public override void ResetEffects()
@@ -192,6 +207,20 @@ namespace InfernumMode.Core.GlobalInstances.Players
                 result |= ((FreeDodgeDelegate)subscription).Invoke(this, info);
 
             return result;
+        }
+
+        public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)
+        {
+            bool dontDie = false;
+
+            foreach (var subscription in FreeDodgeEvent.GetInvocationList())
+                dontDie |= ((PreKillDelegate)subscription).Invoke(this, damage, hitDirection, pvp, ref playSound, ref genDust, ref damageSource);
+            return !dontDie;
+        }
+
+        public override void UpdateLifeRegen()
+        {
+            UpdateLifeRegenEvent?.Invoke(this);
         }
         #endregion
     }

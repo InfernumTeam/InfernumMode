@@ -60,7 +60,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
-                new FlavorTextBestiaryInfoElement("Even in the overwhelmingly hostile environment of the Abyss, ecosystems may flourish.")
+                new FlavorTextBestiaryInfoElement("Mods.InfernumMode.Bestiary.DepthFeeder")
             });
         }
 

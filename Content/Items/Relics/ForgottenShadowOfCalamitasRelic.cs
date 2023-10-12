@@ -7,7 +7,7 @@ namespace InfernumMode.Content.Items.Relics
     [LegacyName("CalamitasCloneRelic")]
     public class ForgottenShadowOfCalamitasRelic : BaseRelicItem
     {
-        public override string DisplayNameToUse => $"Infernal {CalamitasShadowBehaviorOverride.CustomName} Relic";
+        public override string DisplayNameToUse => "Infernal" + CalamitasShadowBehaviorOverride.CustomName.Value + "Relic";
 
         public override int TileID => ModContent.TileType<ForgottenShadowOfCalamitasRelicTile>();
     }

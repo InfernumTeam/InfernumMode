@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Items.Relics
     {
         public override string DisplayNameToUse => "Infernal Empress of Light Relic";
 
-        public override string PersonalMessage => "The optional foes may at times be the most formidable. So too may they yield the greatest rewards.";
+        public override string PersonalMessage => Utilities.GetLocalization("Items.EmpressOfLightRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.DeepPink;
 

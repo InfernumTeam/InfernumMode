@@ -14,8 +14,8 @@ namespace InfernumMode.Content.Items.Accessories
 {
     public class SakuraBloom : ModItem
     {
-        private List<RaritySparkle> loveSparkles = new();
-        private List<RaritySparkle> memorySparkles = new();
+        private readonly List<RaritySparkle> LoveSparkles = new();
+        private readonly List<RaritySparkle> memorySparkles = new();
 
         public override void SetStaticDefaults()
         {
@@ -50,32 +50,33 @@ namespace InfernumMode.Content.Items.Accessories
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
         {
-            loveSparkles.RemoveAll(s => s.Time >= s.Lifetime);
+            LoveSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             memorySparkles.RemoveAll(s => s.Time >= s.Lifetime);
+
             if (line.Text.StartsWith("A symbol of how beautiful love is when in bloom, and how easily it can wither away"))
             {
                 Vector2 drawOffset = Vector2.UnitY * yOffset;
 
-                drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles, "A symbol of how beautiful ");
+                drawOffset.X += DrawLine(line, drawOffset, LoveSparkles, Utilities.GetLocalization("Items.SakuraBloom.TooltipEffect.FirstText").Value);
 
-                drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles, "love", true);
+                drawOffset.X += DrawLine(line, drawOffset, LoveSparkles, Utilities.GetLocalization("Items.SakuraBloom.TooltipEffect.SecondText").Value, true);
 
-                DrawLine(line, drawOffset, ref loveSparkles, " is when it’s in bloom, and yet how easily it can wither away");
+                DrawLine(line, drawOffset, LoveSparkles, Utilities.GetLocalization("Items.SakuraBloom.TooltipEffect.ThirdText").Value);
                 return false;
             }
             else if (line.Text == "Temporary")
             {
                 Vector2 drawOffset = Vector2.UnitY * yOffset;
-                drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles, "Maybe with this, we can hold onto the ");
-                drawOffset.X += DrawLine(line, drawOffset, ref memorySparkles, "memories", true, 12);
-                drawOffset.X += DrawLine(line, drawOffset, ref loveSparkles, "?");
+                drawOffset.X += DrawLine(line, drawOffset, LoveSparkles, Utilities.GetLocalization("Items.SakuraBloom.TooltipEffect.FourthText").Value);
+                drawOffset.X += DrawLine(line, drawOffset, memorySparkles, Utilities.GetLocalization("Items.SakuraBloom.TooltipEffect.FifthText").Value, true, 12);
+                drawOffset.X += DrawLine(line, drawOffset, LoveSparkles, Utilities.GetLocalization("Items.SakuraBloom.TooltipEffect.SixthText").Value);
                 return false;
             }
 
             return true;
         }
 
-        public static float DrawLine(DrawableTooltipLine line, Vector2 drawOffset, ref List<RaritySparkle> sparkles, string overridingText = null, bool specialText = false, int spawnRate = 16, Color? overrideColor = null)
+        public static float DrawLine(DrawableTooltipLine line, Vector2 drawOffset, List<RaritySparkle> sparkles, string overridingText = null, bool specialText = false, int spawnRate = 16, Color? overrideColor = null)
         {
             Color textOuterColor = new(235, 195, 240);
             if (specialText)

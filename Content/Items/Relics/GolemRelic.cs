@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Items.Relics
     {
         public override string DisplayNameToUse => "Infernal Golem Relic";
 
-        public override string PersonalMessage => "Simple methodical planning goes a long way. It will be invaluable against future obstacles.";
+        public override string PersonalMessage => Utilities.GetLocalization("Items.GolemRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.Lerp(Color.Orange, Color.Brown, 0.4f);
 

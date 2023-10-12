@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Items.Relics
     {
         public override string DisplayNameToUse => "Infernal King Slime Relic";
 
-        public override string PersonalMessage => "Even seasoned players may struggle somewhat in the face of something new and unfamiliar. Adaptability is key.";
+        public override string PersonalMessage => Utilities.GetLocalization("Items.KingSlimeRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.Lerp(Color.DeepSkyBlue, Color.LightGray, 0.6f);
 

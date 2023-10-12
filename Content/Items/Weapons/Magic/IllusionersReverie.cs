@@ -21,11 +21,6 @@ namespace InfernumMode.Content.Items.Weapons.Magic
 
         public override void SetStaticDefaults()
         {
-            //string tooltip = "Casts shadow illusions of yourself that hunt down nearby enemies before dispersing into clouds of dark magic\n" +
-            //    "You shouldn't see this\n" +
-            //    "Its existence compels one to wonder what knowledge has been lost to the mysterious, watery depths";
-            // DisplayName.SetDefault("Illusioner's Reverie");
-            // Tooltip.SetDefault(tooltip);
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 12));
             ItemID.Sets.AnimatesAsSoul[Type] = true;
             Item.ResearchUnlockCount = 1;
@@ -61,7 +56,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             if (line.Name == "Tooltip1")
             {
                 Vector2 drawOffset = Vector2.UnitY * yOffset;
-                drawOffset.X += DrawLine(line, drawOffset, "An ");
+                drawOffset.X += DrawLine(line, drawOffset, Utilities.GetLocalization("Items.IllusionersReverie.TooltipEffect.FirstText").Value);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.UIScaleMatrix);
@@ -74,12 +69,12 @@ namespace InfernumMode.Content.Items.Weapons.Magic
                 displacementShader.Shader.Parameters["noiseIntensity"].SetValue(2f);
                 displacementShader.Shader.Parameters["horizontalDisplacementFactor"].SetValue(0.0094f);
                 displacementShader.Apply();
-                drawOffset.X += DrawLine(line, drawOffset, "incomprehensibly ");
+                drawOffset.X += DrawLine(line, drawOffset, Utilities.GetLocalization("Items.IllusionersReverie.TooltipEffect.SecondText").Value);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.UIScaleMatrix);
 
-                drawOffset.X += DrawLine(line, drawOffset, "old tome. Somehow, in spite of its supposed age, it appears to be completely unscathed");
+                drawOffset.X += DrawLine(line, drawOffset, Utilities.GetLocalization("Items.IllusionersReverie.TooltipEffect.ThirdText").Value);
 
                 return false;
             }

@@ -28,6 +28,42 @@ Mods: {
 			AchievementsLabelText: Next
 			WishesHeader: Dev Wishes
 			WishesHoverTextButton: Open Death Wishes
+
+			GuardiansPlaqueUI: {
+				HoverText: Read
+				// !! Beware translators: The "ancient artifact" string must be the same as the one in the SpecialText
+				PlaqueText: Three disciples. One mind. One deity. One purpose. Tempered by the holy flames of Providence, an ancient artifact is crystalized, with the sole purpose of initiating the Ritual at the cliff of this Temple.
+				SpecialText: ancient artifact
+			}
+
+			// Enrage tooltips
+			EnrageTooltipReplacements: {
+				DecapoditaSprout: Enrages outside of the Mushroom biome
+				WormFood: Enrages outside of the Corruption
+				BloodySpine: Enrages outside of the Crimson
+				Teratoma: Enrages outside of the Corruption
+				BloodyWormFood: Enrages outside of the Crimson
+				Seafood: Enrages outside of the waters of the Sulphurous Sea
+				Abombination: Enrages outside of the Underground Jungle
+				NecroplasmicBeacon: Enrages outside of the Underground
+			}
+
+			HyperplaneMatrixUI: {
+				GodMode: Toggle cybernetic immortality
+				NoClip: Toggle physics defiance flying
+				TimeSetMorning: Accelerate time until sunrise
+				TimeSetNoon: Accelerate time until noon"
+				TimeSetDusk: Accelerate time until sunset
+				Butcher: Atomize every single hostile NPC
+				Godmode: Mods.InfernumMode.UI.HyperplaneMatrixUI.Godmode
+			}
+		}
+
+		Bestiary: {
+			BereftVassal: A vigilant guardian, once wandering without a purpose. Having learned that his king lives on, it'd seem that he has started to regain his will to live. He looks forward to fighting you again.
+			DepthFeeder: Even in the overwhelmingly hostile environment of the Abyss, ecosystems may flourish.
+			Herring: Unusually hardy, these creatures somehow flourish in the toxic upper abyssal caverns. Regardless, they are at the bottom of the food chain.
+			Lionfish: These rugged fish are seldom hunted in their natural habitats, relying heavily on their venomous spines for both offense and defense.
 		}
 
 		IntroScreen: {
@@ -1144,7 +1180,16 @@ Mods: {
 			ExplodingServant.DisplayName: Servant of Cthulhu
 			GolemFistLeft.DisplayName: Golem Fist
 			GolemFistRight.DisplayName: Golem Fist
-			BereftVassal.DisplayName: Argus, the Bereft Vassal
+
+			BereftVassal: {
+				DisplayName: Argus, the Bereft Vassal
+
+				BossChecklistIntegration: {
+					SpawnInfo: Use a [i:7119] at the pedestal in the heart of the desert.
+					EntryName: Bereft Vassal
+				}
+			}
+
 			Ninja.DisplayName: Ninja
 			BuilderDroneBig.DisplayName: Big Builder Drone
 			BuilderDroneSmall.DisplayName: Small Builder Drone
@@ -1159,7 +1204,13 @@ Mods: {
 			SplitBigSlimeAnimation.DisplayName: Unstable Slime Spawn
 			ShadowDemon.DisplayName: Shadow Hydra
 			GolemArenaPlatform.DisplayName: Golem Arena Platform
+			CalamitasShadowClone.DisplayName: Forgotten Shadow of Calamitas
+			CataclysmShadow.DisplayName: Forgotten Shadow of Cataclysm
+			CatastropheShadow.DisplayName: Forgotten Shadow of Catastrophe
 		}
+
+		// Will use the CalamitasShadowClone.DisplayName field
+		NameOverrides.CalamitasShadowClone.EntryName: The {0}
 
 		Biomes: {
 			LostColosseumBiome: {
@@ -1256,6 +1307,11 @@ Mods: {
 		}
 
 		Items: {
+			// Beware translators, this line must match the "enrage" word in the tooltip of your language
+			EnrageTooltip: enrage
+			DeveloperItem: "[c/{0}:~ Developer Item ~]"
+			InfernalRelicText: Imbued with the infernal flames of a defeated foe
+
 			Lore: {
 				KnowledgeBereftVassal: {
 					Lore:
@@ -1268,6 +1324,38 @@ Mods: {
 					DisplayName: Knowledge Bereft Vassal
 				}
 			}
+
+			CelestialSigil.SummoningText:
+				'''
+				Summons the Moon Lord immediately
+				Creates an arena at the player's position
+				Not consumable
+				'''
+
+			ProfanedShard: {
+				SummoningText: Summons the Profaned Guardians when used on the cliff in the profaned garden at the far right of the underworld during day
+				GardenWarning:
+					'''
+					Your world does not currently have a Profaned Garden. Kill the Moon Lord again to generate it
+					Be sure to grab the Hell schematic first if you do this, as the garden might destroy the lab
+					'''
+			}
+
+			EyeofDesolation.SummoningText: Summons the {0} when used during nighttime
+			ProfanedCore.SummoningText: Summons Providence when used at the altar in the profaned temple at the far right of the underworld
+			RuneofKos.DeveloperText: The Ceaseless Void can only be fought in the Archives
+
+			SandstormsCore: {
+				PortalDetail: Opens a portal to the Lost Colosseum
+				GatewayWarning: Your world does not currently have a Lost Gateway. Kill the Lunatic Cultist again to generate it.
+			}
+
+			LihzahrdPowerCell.SummoningText:
+				'''
+				Summons Golem when used at the Lihzhard Altar
+				Golem summons a rectangular arena around the altar
+				If the altar is inside of the temple solid tiles within the arena are broken
+				'''
 
 			CherishedSealocket: {
 				DisplayName: Cherished Sealocket
@@ -1295,6 +1383,7 @@ Mods: {
 					'''
 			}
 
+			// Important: Don't translate this tooltip, currently is being used for the tooltip effect
 			SakuraBloom: {
 				DisplayName: Sakura Bloom
 				Tooltip:
@@ -1302,6 +1391,15 @@ Mods: {
 					A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyy
 					Temporary
 					'''
+
+				TooltipEffect: {
+					FirstText: "A symbol of how beautiful "
+					SecondText: love
+					ThirdText: " is when it’s in bloom, and yet how easily it can wither away"
+					FourthText: "Maybe with this, we can hold onto the "
+					FifthText: memories
+					SixthText: ?
+				}
 			}
 
 			BereftVassalBossBag: {
@@ -1522,11 +1620,30 @@ Mods: {
 			DevourerOfGodsRelic: {
 				DisplayName: Infernal Devourer of Gods Relic
 				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					Sometimes pure reaction skill is the most valuable thing to cultivate.
+					You are in the final stretch. Your determination has proven invaluable up to this point.
+					May it guide you through the last challenges.
+					'''
 			}
 
 			DraedonRelic: {
 				DisplayName: Infernal Draedon Relic
 				Tooltip: GetsChanged
+
+				PersonalMessage: {
+					DefaultMessage:
+						'''
+						You have done phenomenally. There is only one challenge left now-
+						Face the Witch.
+						'''
+					DownedCalamitasMessage:
+						'''
+						Spectacular work. You have conquered all of the major obstacles.
+						Take pride in this accomplishment, for you are considerably stronger than you were when you began.
+						'''
+				}
 			}
 
 			DragonfollyRelic: {
@@ -1552,11 +1669,17 @@ Mods: {
 			EmpressOfLightRelic: {
 				DisplayName: Infernal Empress of Light Relic
 				Tooltip: GetsChanged
+				PersonalMessage: The optional foes may at times be the most formidable. So too may they yield the greatest rewards.
 			}
 
 			EyeOfCthulhuRelic: {
 				DisplayName: Infernal Eye of Cthulhu Relic
 				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					Remember to not force yourself too much in the pursuit of victory. Take breaks if you need to.
+					The most important thing is fun.
+					'''
 			}
 
 			ForgottenShadowOfCalamitasRelic: {
@@ -1572,6 +1695,7 @@ Mods: {
 			GolemRelic: {
 				DisplayName: Infernal Golem Relic
 				Tooltip: GetsChanged
+				PersonalMessage: Simple methodical planning goes a long way. It will be invaluable against future obstacles.
 			}
 
 			HiveMindRelic: {
@@ -1582,6 +1706,7 @@ Mods: {
 			KingSlimeRelic: {
 				DisplayName: Infernal King Slime Relic
 				Tooltip: GetsChanged
+				PersonalMessage: Even seasoned players may struggle somewhat in the face of something new and unfamiliar. Adaptability is key.
 			}
 
 			LeviathanRelic: {
@@ -1597,6 +1722,11 @@ Mods: {
 			MoonLordRelic: {
 				DisplayName: Infernal Moon Lord Relic
 				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					You have done very well thus far.
+					May your tenacity guide you through the remaining challenges.
+					'''
 			}
 
 			OgreRelic: {
@@ -1607,6 +1737,11 @@ Mods: {
 			OldDukeRelic: {
 				DisplayName: Infernal Old Duke Relic
 				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					Difficult as the fight may be, you were wise to endure and overcome the challenge it brings.
+					You will find that the mechanics it tested will be relevant again soon.
+					'''
 			}
 
 			PerforatorsRelic: {
@@ -1622,6 +1757,11 @@ Mods: {
 			PlanteraRelic: {
 				DisplayName: Infernal Plantera Relic
 				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					Be proud of your death count!
+					The more you die, the more you're learning. Keep going!
+					'''
 			}
 
 			PolterghastRelic: {
@@ -1637,6 +1777,19 @@ Mods: {
 			ProvidenceRelic: {
 				DisplayName: Infernal Providence Relic
 				Tooltip: GetsChanged
+
+				PersonalMessage: {
+					DefaultMessage:
+						'''
+						The first major hurdle following the defeat of the Moon Lord. Your triumph over her was by no means a small feat.
+						Perhaps consider fighting her again during the night for a special challenge?
+						'''
+					HasBeatenInfernumNightProvBeforeDayMessage:
+						'''
+						Bruh? What the heck? Are you OK?
+						            You were supposed to fight her at night AFTER beating her during the day first!
+						'''
+				}
 			}
 
 			QueenBeeRelic: {
@@ -1667,6 +1820,7 @@ Mods: {
 			SkeletronRelic: {
 				DisplayName: Infernal Skeletron Relic
 				Tooltip: GetsChanged
+				PersonalMessage: The first major roadblock. You are better now than before you faced it. Did you have fun learning its patterns?
 			}
 
 			SlimeGodRelic: {
@@ -1682,11 +1836,33 @@ Mods: {
 			SupremeCalamitasRelic: {
 				DisplayName: Infernal Supreme Calamitas Relic
 				Tooltip: GetsChanged
+
+				PersonalMessage: {
+					DefaultMessage:
+						'''
+						You have done phenomenally. There is only one challenge left now-
+						Face the Cosmic Engineer.
+						'''
+					DownedExoMechsMessage:
+						'''
+						Spectacular work. You have conquered all of the major obstacles.
+						Take pride in this accomplishment, for you are considerably stronger than you were when you began.
+						'''
+				}
 			}
 
 			TwinsRelic: {
 				DisplayName: Infernal Twins Relic
 				Tooltip: GetsChanged
+
+				TooltipEffect: {
+					FirstText: "You feel a "
+					SecondText: guiding spirit
+					ThirdText: " trying to lead you the bloom’s home"
+					FourthText: "The spirit is trying to draw your attention to the "
+					FifthText: water
+					SixthText: Maybe you should follow its call?
+				}
 			}
 
 			WallOfFleshRelic: {
@@ -1817,6 +1993,12 @@ Mods: {
 					Does not work when a boss is alive
 					ModifedInModifyTooltips
 					'''
+				TooltipEffect:
+					'''
+					Hold LMB to teleport to the gate
+					Hold LMB and {0} to set the gate to your position
+					Hold LMB and {1} to remove the gate
+					'''
 			}
 
 			AridBattlecry: {
@@ -1843,6 +2025,12 @@ Mods: {
 					You shouldn't see this
 					Its existence compels one to wonder what knowledge has been lost to the mysterious, watery depths
 					'''
+
+				TooltipEffect: {
+					FirstText: "An "
+					SecondText: "incomprehensibly "
+					ThirdText: old tome. Somehow, in spite of its supposed age, it appears to be completely unscathed
+				}
 			}
 
 			Kevin: {
@@ -1997,6 +2185,13 @@ Mods: {
 			}
 		}
 
+		ExoMechsFight: {
+			PickTwoText: Pick two. The first mech will be fought alone. Once sufficiently damaged, the second mech will be summoned and the two will fight together.
+			ThanatosDesc: Thanatos, a serpentine terror with impervious armor and innumerable laser turrets.
+			AresDesc: Ares, a heavyweight, diabolical monstrosity with six Exo superweapons.
+			ArtemisApolloDesc: Artemis and Apollo, a pair of extremely agile destroyers with unstable energy reserves.
+		}
+
 		Status: {
 			AchievementCompletionText: Achievement Completed!
 			InfernumDisallowedInWeirdDifficulties: Infernum is not allowed in Master Mode, For the Worthy or Get fixed boi.
@@ -2058,6 +2253,13 @@ Mods: {
 			DraedonDefeat10: In the meantime, I bid you farewell, and good luck in your future endeavors.
 			SCalCongratulations: ... Congratulations.
 			MultiplayerWarning: InfernumMode: Multiplayer is NOT supported, expect things to break and the mod not be fully playable. Do not report MP bugs.
+
+			Death: {
+				RedElectrified: "{0} could not withstand the red lightning."
+				DarkFlames: "{0} was incinerated by ungodly fire."
+				Madness: "{0} went mad."
+				HyperplaneMatrixExplosion: "{0} was blown up."
+			}
 		}
 
 		PetDialog: {

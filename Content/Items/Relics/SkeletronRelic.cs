@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Items.Relics
     {
         public override string DisplayNameToUse => "Infernal Skeletron Relic";
 
-        public override string PersonalMessage => "The first major roadblock. You are better now than before you faced it. Did you have fun learning its patterns?";
+        public override string PersonalMessage => Utilities.GetLocalization("Items.SkeletronRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.Violet;
 

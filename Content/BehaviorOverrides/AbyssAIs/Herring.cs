@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
-                new FlavorTextBestiaryInfoElement("Unusually hardy, these creatures somehow flourish in the toxic upper abyssal caverns. Regardless, they are at the bottom of the food chain.")
+                new FlavorTextBestiaryInfoElement("Mods.InfernumMode.Bestiary.Herring")
             });
         }
 

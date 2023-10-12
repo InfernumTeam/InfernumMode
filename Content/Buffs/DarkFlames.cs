@@ -54,7 +54,7 @@ namespace InfernumMode.Content.Buffs
                 if (damage == 10.0 && hitDirection == 0 && damageSource.SourceOtherIndex == 8)
                 {
                     if (player.GetValue<bool>("DarkFlames"))
-                        damageSource = PlayerDeathReason.ByCustomReason($"{player.Player.name} was incinerated by ungodly fire.");
+                        damageSource = PlayerDeathReason.ByCustomReason(Utilities.GetLocalization("Status.Death.DarkFlames").Format(player.Player.name));
                 }
 
                 return true;

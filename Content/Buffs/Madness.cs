@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Buffs
             InfernumPlayer.PreKillEvent += (InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) =>
             {
                 if (player.GetValue<bool>("Madness"))
-                    damageSource = PlayerDeathReason.ByCustomReason($"{player.Player.name} went mad.");
+                    damageSource = damageSource = PlayerDeathReason.ByCustomReason(Utilities.GetLocalization("Status.Death.Madness").Format(player.Player.name));
 
                 return true;
             };

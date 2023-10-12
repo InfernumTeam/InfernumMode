@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
-                new FlavorTextBestiaryInfoElement("These rugged fish are seldom hunted in their natural habitats, relying heavily on their venomous spines for both offense and defense.")
+                new FlavorTextBestiaryInfoElement("Mods.InfernumMode.Bestiary.Lionfish")
             });
         }
 

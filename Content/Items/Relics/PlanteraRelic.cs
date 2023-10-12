@@ -8,8 +8,7 @@ namespace InfernumMode.Content.Items.Relics
     {
         public override string DisplayNameToUse => "Infernal Plantera Relic";
 
-        public override string PersonalMessage => "Be proud of your death count!\n" +
-            "The more you die, the more you're learning. Keep going!";
+        public override string PersonalMessage => Utilities.GetLocalization("Items.PlanteraRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.Lerp(Color.Lime, Color.White, 0.5f);
 

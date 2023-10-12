@@ -77,7 +77,7 @@ namespace InfernumMode.Core.ILEditingStuff
         internal string RenameGSS(On_Lang.orig_GetNPCNameValue orig, int netID)
         {
             if (netID == ModContent.NPCType<GreatSandShark>() && InfernumMode.CanUseCustomAIs)
-                return GreatSandSharkBehaviorOverride.NewName;
+                return GreatSandSharkBehaviorOverride.NewName.Value;
 
             return orig(netID);
         }

@@ -15,17 +15,9 @@ namespace InfernumMode.Content.Items.Misc
 {
     public class SakuraBud : ModItem
     {
-        private List<RaritySparkle> spiritSparkles = new();
-        private List<RaritySparkle> waterSparkles = new();
+        private readonly List<RaritySparkle> SpiritSparkles = new();
+        private readonly List<RaritySparkle> WaterSparkles = new();
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Sakura Bud");
-            /* Tooltip.SetDefault("A delicate, fragile sakura bud, just about to bloom\n" +
-                "You feel a guiding spirit trying to lead you the bloom’s home\n" +
-                "Maybe you should follow its call?"); */
-            Item.ResearchUnlockCount = 1;
-        }
         public override void SetDefaults()
         {
             Item.width = Item.height = 14;
@@ -50,28 +42,32 @@ namespace InfernumMode.Content.Items.Misc
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
         { 
-            spiritSparkles.RemoveAll(s => s.Time >= s.Lifetime);
-            waterSparkles.RemoveAll(s => s.Time >= s.Lifetime);
+            SpiritSparkles.RemoveAll(s => s.Time >= s.Lifetime);
+            WaterSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             Vector2 drawOffset = Vector2.UnitY * yOffset;
+
+            // Detecting the line like this is really bad. Not sure how else to do it though.
             if (line.Text.StartsWith("You feel"))
             {                
-                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref spiritSparkles, "You feel a ");
-                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref spiritSparkles, "guiding spirit", true);
-                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref spiritSparkles, " trying to lead you the bloom’s home");
+                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.FirstText").Value);
+                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.SecondText").Value, true);
+                drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.ThirdText").Value);
                 return false;
             }
+
             if (line.Text.StartsWith("Maybe you"))
             {
                 if (Main.LocalPlayer.WithinRange(WorldSaveSystem.BlossomGardenCenter.ToWorldCoordinates(), 3200f))
                 {
-                    drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref waterSparkles, "The spirit is trying to draw your attention to the ");
-                    drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, ref waterSparkles, "water", true, overrideColor: new(26, 169, 208));
+                    drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, WaterSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.FourthText").Value);
+                    drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, WaterSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.FifthText").Value, true, overrideColor: new(26, 169, 208));
                 }
                 else
-                    SakuraBloom.DrawLine(line, drawOffset, ref waterSparkles, "Maybe you should follow its call?");
+                    SakuraBloom.DrawLine(line, drawOffset, WaterSparkles, "Maybe you should follow its call?");
 
-                return false;            
+                return false;
             }
+
             return true;
         }
 

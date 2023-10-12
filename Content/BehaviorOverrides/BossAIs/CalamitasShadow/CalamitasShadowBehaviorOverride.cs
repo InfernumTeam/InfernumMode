@@ -33,6 +33,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using CalamitasShadowBoss = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
@@ -187,11 +188,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public static Color TextColor => Color.Lerp(Color.MediumPurple, Color.Black, 0.32f);
 
-        public const string CustomName = "Forgotten Shadow of Calamitas";
+        public static LocalizedText CustomName => Utilities.GetLocalization("NPCs.CalamitasShadowClone.DisplayName");
 
-        public const string CustomNameCataclysm = "Forgotten Shadow of Cataclysm";
+        public static LocalizedText CustomNameCataclysm => Utilities.GetLocalization("NPCs.CataclysmShadow.DisplayName");
 
-        public const string CustomNameCatastrophe = "Forgotten Shadow of Catastrophe";
+        public static LocalizedText CustomNameCatastrophe => Utilities.GetLocalization("NPCs.CatastropheShadow.DisplayName");
 
         public override bool PreAI(NPC npc)
         {

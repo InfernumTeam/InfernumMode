@@ -1288,7 +1288,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             orig(npc, ref typeName);
             if (npc.type == ModContent.NPCType<CalamitasClone>() && InfernumMode.CanUseCustomAIs)
-                typeName = $"The {CalamitasShadowBehaviorOverride.CustomName}";
+                typeName = Utilities.GetLocalization("NameOverrides.CalamitasShadowClone.EntryName").Format(CalamitasShadowBehaviorOverride.CustomName);
         }
     }
 

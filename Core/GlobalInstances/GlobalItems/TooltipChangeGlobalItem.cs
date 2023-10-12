@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.GlobalItems
@@ -21,21 +22,21 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
 
         public bool DeveloperItem;
 
-        public static Dictionary<int, string> EnrageTooltipReplacements => new()
+        public static Dictionary<int, LocalizedText> EnrageTooltipReplacements => new()
         {
-            [ModContent.ItemType<DecapoditaSprout>()] = "Enrages outside of the Mushroom biome",
-            [ItemID.WormFood] = "Enrages outside of the Corruption",
-            [ItemID.BloodySpine] = "Enrages outside of the Crimson",
-            [ModContent.ItemType<Teratoma>()] = "Enrages outside of the Corruption",
-            [ModContent.ItemType<BloodyWormFood>()] = "Enrages outside of the Crimson",
-            [ModContent.ItemType<Seafood>()] = "Enrages outside of the waters of the Sulphurous Sea",
+            [ModContent.ItemType<DecapoditaSprout>()] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.DecapoditaSprout"),
+            [ItemID.WormFood] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.WormFood"),
+            [ItemID.BloodySpine] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.BloodySpine"),
+            [ModContent.ItemType<Teratoma>()] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.Teratoma"),
+            [ModContent.ItemType<BloodyWormFood>()] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.BloodyWormFood"),
+            [ModContent.ItemType<Seafood>()] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.Seafood"),
             [ItemID.MechanicalEye] = null,
             [ItemID.MechanicalSkull] = null,
             [ItemID.MechanicalWorm] = null,
             [ItemID.ClothierVoodooDoll] = null,
-            [ModContent.ItemType<Abombination>()] = "Enrages outside of the Underground Jungle",
+            [ModContent.ItemType<Abombination>()] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.Abombination"),
             [ModContent.ItemType<ExoticPheromones>()] = null,
-            [ModContent.ItemType<NecroplasmicBeacon>()] = "Enrages outside of the Underground",
+            [ModContent.ItemType<NecroplasmicBeacon>()] = Utilities.GetLocalization("UI.EnrageTooltipReplacements.NecroplasmicBeacon")
         };
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -65,18 +66,17 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
 
             if (item.type == ItemID.CelestialSigil)
             {
-                string summoningText = "Summons the Moon Lord immediately\n" +
-                        "Creates an arena at the player's position\n" +
-                        "Not consumable.";
-                replaceTooltipText("Tooltip0", summoningText);
+                LocalizedText summoningText = Utilities.GetLocalization("Items.CelestialSigil.SummoningText");
+                replaceTooltipText("Tooltip0", summoningText.Value);
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedShard>())
             {
                 bool inGarden = Main.LocalPlayer.Infernum_Biome().InProfanedArena;
-                string summoningText = "Summons the Profaned Guardians when used on the cliff in the profaned garden at the far right of the underworld during day";
+                LocalizedText summoningText = Utilities.GetLocalization("Items.ProfanedShard.SummoningText");
+
                 Color textColor = inGarden ? WayfinderSymbol.Colors[2] : Color.White;
-                replaceTooltipText("Tooltip1", summoningText, textColor);
+                replaceTooltipText("Tooltip0", summoningText.Value, textColor); // Same here, old tooltip: "Tooltip1"
 
                 // Remove the next line about an enrage condition.
                 tooltips.RemoveAll(x => x.Name == "Tooltip2" && x.Mod == "Terraria");
@@ -84,9 +84,8 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 // Add a warning about the lack of a garden if it hasn't been generated yet.
                 if (!WorldSaveSystem.HasGeneratedProfanedShrine)
                 {
-                    TooltipLine warningTooltip = new(Mod, "Warning",
-                        "Your world does not currently have a Profaned Garden. Kill the Moon Lord again to generate it\n" +
-                        "Be sure to grab the Hell schematic first if you do this, as the garden might destroy the lab")
+                    LocalizedText gardenWarning = Utilities.GetLocalization("Items.ProfanedShard.GardenWarning");
+                    TooltipLine warningTooltip = new(Mod, "Warning", gardenWarning.Value)
                     {
                         OverrideColor = Color.Orange
                     };
@@ -96,28 +95,27 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<EyeofDesolation>())
             {
-                string summoningText = $"Summons the {CalamitasShadowBehaviorOverride.CustomName} when used during nighttime";
-                replaceTooltipText("Tooltip1", summoningText);
+                string summoningText = Utilities.GetLocalization("Items.EyeofDesolation.SummoningText").Format(CalamitasShadowBehaviorOverride.CustomName);
+                replaceTooltipText("Tooltip0", summoningText);
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<ProfanedCore>())
             {
-                string summoningText = "Summons Providence when used at the altar in the profaned temple at the far right of the underworld";
-                replaceTooltipText("Tooltip1", summoningText);
+                LocalizedText summoningText = Utilities.GetLocalization("Items.ProfanedCore.SummoningText");
+                replaceTooltipText("Tooltip0", summoningText.Value);
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ModContent.ItemType<RuneofKos>() && WorldSaveSystem.ForbiddenArchiveCenter.X != 0)
             {
-                TooltipLine developerLine = new(Mod, "CVWarning", CalamityUtils.ColorMessage("The Ceaseless Void can only be fought in the Archives", Color.Magenta));
-                tooltips.Add(developerLine);
+                LocalizedText summoningText = Utilities.GetLocalization("Items.RuneofKos.DeveloperText");
+                TooltipLine warningLine = new(Mod, "CVWarning", CalamityUtils.ColorMessage(summoningText.Value, Color.Magenta));
+                tooltips.Add(warningLine);
             }
 
             if (InfernumMode.CanUseCustomAIs && item.type == ItemID.LihzahrdPowerCell)
             {
-                string summoningText = "Summons Golem when used at the Lihzhard Altar\n" +
-                    "Golem summons a rectangular arena around the altar\n" +
-                    "If the altar is inside of the temple solid tiles within the arena are broken";
-                replaceTooltipText("Tooltip0", summoningText);
+                LocalizedText summoningText = Utilities.GetLocalization("Items.LihzahrdPowerCell.SummoningText");
+                replaceTooltipText("Tooltip0", summoningText.Value);
             }
 
             if (item.type == ModContent.ItemType<SandstormsCore>())
@@ -127,14 +125,14 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 {
                     if (WorldSaveSystem.HasGeneratedColosseumEntrance || SubworldSystem.IsActive<LostColosseum>())
                     {
-                        tooltip0.Text = "Opens a portal to the Lost Colosseum";
+                        tooltip0.Text = Utilities.GetLocalization("Items.SandstormsCore.PortalDetail").Value;
                         tooltip0.OverrideColor = Color.Lerp(Color.Orange, Color.Yellow, 0.55f);
                     }
 
                     // Warn the player about not having a colosseum entrance if it hasn't been generated yet.
                     else
                     {
-                        tooltip0.Text = "Your world does not currently have a Lost Gateway. Kill the Lunatic Cultist again to generate it.";
+                        tooltip0.Text = Utilities.GetLocalization("Items.SandstormsCore.GatewayWarning").Value;
                         tooltip0.OverrideColor = Color.Orange;
                     }
                 }
@@ -148,7 +146,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             if (DeveloperItem)
             {
                 Color devColor = CalamityUtils.ColorSwap(Color.OrangeRed, Color.DarkRed, 2f);
-                TooltipLine developerLine = new(Mod, "Developer", $"[c/{devColor.Hex3()}:~ Developer Item ~]");
+                TooltipLine developerLine = new(Mod, "Developer", Utilities.GetLocalization("Items.DeveloperItem").Format(devColor.Hex3()));
                 tooltips.Add(developerLine);
             }
         }
@@ -156,11 +154,12 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
         public static void EditEnrageTooltips(Item item, List<TooltipLine> tooltips)
         {
             // Don't do anything if the item doesn't call for a tooltip replacement.
-            if (!EnrageTooltipReplacements.TryGetValue(item.type, out string tooltipReplacement))
+            if (!EnrageTooltipReplacements.TryGetValue(item.type, out var tooltipReplacement))
                 return;
 
             // Don't do anything if the item has no enrage tooltip to reference.
-            var enrageTooltip = tooltips.FirstOrDefault(x => x.Text.Contains("enrage", StringComparison.OrdinalIgnoreCase));
+            string localizedEnrageText = Utilities.GetLocalization("Items.EnrageTooltip").Value.ToLower();
+            var enrageTooltip = tooltips.FirstOrDefault(x => x.Text.Contains(localizedEnrageText, StringComparison.OrdinalIgnoreCase));
             if (enrageTooltip is null)
                 return;
 
@@ -175,7 +174,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
 
             // If a replacement exists, insert it into the enrage text instead.
             if (tooltipReplacement is not null)
-                enrageTooltip.Text = enrageTooltip.Text.Insert(enrageTextStart, tooltipReplacement);
+                enrageTooltip.Text = enrageTooltip.Text.Insert(enrageTextStart, tooltipReplacement.Value);
             else
                 enrageTooltip.Text = enrageTooltip.Text.Replace("\n\n", "\n");
         }

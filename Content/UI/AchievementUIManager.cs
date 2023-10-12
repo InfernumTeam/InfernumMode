@@ -65,7 +65,7 @@ namespace InfernumMode.Content.UI
             AchivementList.ListPadding = 5f;
             uIPanel.Append(AchivementList);
 
-            UITextPanel<LocalizedText> uITextPanel = new(Language.GetText("Death Wishes"), 1f, large: true)
+            UITextPanel<LocalizedText> uITextPanel = new(Utilities.GetLocalization("UI.AchievementsHeader"), 1f, large: true)
             {
                 HAlign = 0.5f
             };
@@ -221,7 +221,7 @@ namespace InfernumMode.Content.UI
             AchivementList.ListPadding = 5f;
             uIPanel.Append(AchivementList);
 
-            UITextPanel<LocalizedText> uITextPanel = new(Language.GetText("Dev Wishes"), 1f, large: true)
+            UITextPanel<LocalizedText> uITextPanel = new(Utilities.GetLocalization("UI.WishesHeader"), 1f, large: true)
             {
                 HAlign = 0.5f
             };

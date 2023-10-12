@@ -41,20 +41,6 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
 
             if (Main.rand.NextBool(2))
             {
-                //bool horizontal = Main.rand.NextBool();
-                //float xPos;
-                //float yPos;
-
-                //if (horizontal)
-                //{
-                //    xPos = Main.rand.NextFloat(-1000f, Main.screenWidth + 1000f);
-                //    yPos = Main.rand.NextBool() ? Main.rand.NextFloat(-1000f, -900f) : Main.rand.NextFloat(Main.screenHeight + 900f, Main.screenHeight + 1000f);
-                //}
-                //else
-                //{
-                //    xPos = Main.rand.NextBool() ? Main.rand.NextFloat(-1000f, -900f) : Main.rand.NextFloat(Main.screenWidth + 900f, Main.screenWidth + 1000f);
-                //    yPos = Main.rand.NextFloat(-1000f, Main.screenHeight + 1000f);
-                //}
                 Vector2 position = Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloatDirection() * 7500f, Main.rand.NextFloat(-Main.screenHeight * 3f, Main.screenHeight * 3f));//Main.screenPosition + new Vector2(xPos * 3.25f, yPos * 2f);
 
                 Vector2 velocity = position.DirectionTo(Main.LocalPlayer.Center).RotatedBy(Main.rand.NextFloat(-Pi, Pi)) * Main.rand.NextFloat(2f, 3.5f);

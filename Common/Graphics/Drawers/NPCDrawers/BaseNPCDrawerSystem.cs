@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
-namespace InfernumMode.Common.Graphics.Drawers
+namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
-    public abstract class BaseDrawerSystem
+    public abstract class BaseNPCDrawerSystem
     {
         public ManagedRenderTarget MainTarget
         {
@@ -27,15 +27,6 @@ namespace InfernumMode.Common.Graphics.Drawers
             Main.QueueMainThreadAction(() =>
             {
                 MainTarget = new(true, TargetCreationCondition, true);
-            });
-        }
-
-        public void Unload()
-        {
-            Main.QueueMainThreadAction(() =>
-            {
-                MainTarget?.Dispose();
-                MainTarget = null;
             });
         }
 

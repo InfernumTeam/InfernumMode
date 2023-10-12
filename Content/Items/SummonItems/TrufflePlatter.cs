@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,11 +9,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 3;
-            // DisplayName.SetDefault("Truffle Worm Platter");
-            /* Tooltip.SetDefault("Summons Duke Fishron\n" +
-                "Can only be used at the Ocean\n" +
-                "Not consumable"); */
+            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 12; // Duke Fishron
         }
 

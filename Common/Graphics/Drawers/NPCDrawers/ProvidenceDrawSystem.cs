@@ -7,13 +7,11 @@ using CalamityMod.NPCs.Providence;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Projectiles.Cutscene;
 using InfernumMode.Assets.ExtraTextures;
-using static InfernumMode.Content.BehaviorOverrides.AbyssAIs.BoxJellyfishBehaviorOverride;
-using CalamityMod;
 using InfernumMode.Content.Projectiles.Wayfinder;
 
-namespace InfernumMode.Common.Graphics.Drawers
+namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
-    public class ProvidenceDrawSystem : BaseDrawerSystem
+    public class ProvidenceDrawSystem : BaseNPCDrawerSystem
     {
         public override int AssosiatedNPCType => ModContent.NPCType<Providence>();
 
@@ -203,7 +201,7 @@ namespace InfernumMode.Common.Graphics.Drawers
             }
 
             drawProvidenceInstance(drawPosition, 0, baseColor);
-            
+
 
             // Draw the rock texture above the bloom effects.
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
@@ -213,10 +211,13 @@ namespace InfernumMode.Common.Graphics.Drawers
             // Draw the rune strip on top of everything else during the ritual attack.
             if (AssosiatedNPC.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
             {
-                Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
                 AssosiatedNPC.Infernum().Optional3DStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols"));
                 AssosiatedNPC.Infernum().Optional3DStripDrawer.Draw(AssosiatedNPC.Center - Vector2.UnitX * 80f - Main.screenPosition, AssosiatedNPC.Center + Vector2.UnitX * 80f - Main.screenPosition, 0.4f, 0f, 0f);
-                Main.spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
+
             }
         }
         public override void DrawMainTargetContents(SpriteBatch spriteBatch)
@@ -230,25 +231,26 @@ namespace InfernumMode.Common.Graphics.Drawers
                 Main.spriteBatch.Draw(fatCrystalTexture, AssosiatedNPC.Center + Vector2.UnitY * 55f - Main.screenPosition, null, Color.White, 0f, fatCrystalTexture.Size() * 0.5f, AssosiatedNPC.scale, SpriteEffects.None, 0f);
             }
 
-            if (burnIntensity > 0f)
+            bool shouldBurn = burnIntensity > 0f/* && AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] > 0f*/;
+            if (shouldBurn)
             {
                 Effect burn = InfernumEffectsRegistry.SpriteBurnShader.GetShader().Shader;
                 burn.Parameters["noiseZoom"]?.SetValue(20f);
                 burn.Parameters["noiseSpeed"]?.SetValue(2f);
-                burn.Parameters["noiseFactor"]?.SetValue(2.8f);
+                burn.Parameters["noiseFactor"]?.SetValue(1.8f);
                 burn.Parameters["brightnessFactor"]?.SetValue(1.9f);
                 burn.Parameters["thickness"]?.SetValue(0.006f);
                 burn.Parameters["time"]?.SetValue(Main.GlobalTimeWrappedHourly);
                 float burnRatio = Lerp(0.35f, 0f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f));
                 burn.Parameters["burnRatio"]?.SetValue(burnRatio);
-                burn.Parameters["innerNoiseFactor"]?.SetValue(0.6f);
+                burn.Parameters["innerNoiseFactor"]?.SetValue(Lerp(0.7f, 0.2f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f)) * burnIntensity);
                 burn.Parameters["distanceMultiplier"]?.SetValue(1f);
                 burn.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(MainTarget.Target.Size()));
-                burn.Parameters["focalPointUV"]?.SetValue(new Vector2(0.5f, 0.5f));
+                burn.Parameters["focalPointUV"]?.SetValue((AssosiatedNPC.Center - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight));
                 burn.Parameters["burnColor"]?.SetValue(DoGProviCutsceneProjectile.TimeColor.ToVector3());
 
-                Utilities.SetTexture1(InfernumTextureRegistry.HarshNoise.Value);
-                Utilities.SetTexture2(InfernumTextureRegistry.HarshNoise.Value);
+                InfernumTextureRegistry.HarshNoise.Value.SetTexture1();
+                InfernumTextureRegistry.HarshNoise.Value.SetTexture2();
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, burn, Main.GameViewMatrix.TransformationMatrix);
@@ -256,7 +258,7 @@ namespace InfernumMode.Common.Graphics.Drawers
 
             spriteBatch.Draw(MainTarget.Target, Vector2.Zero, Color.White);
 
-            if (burnIntensity > 0f)
+            if (shouldBurn)
                 Main.spriteBatch.ExitShaderRegion();
         }
     }

@@ -1,4 +1,4 @@
-using CalamityMod.Items.Materials;
+﻿using CalamityMod.Items.Materials;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,11 +9,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 3;
-            // DisplayName.SetDefault("Flesh Chunk");
-            /* Tooltip.SetDefault("Summons the Wall of Flesh\n" +
-                "Can only be used in the underworld\n" +
-                "Not consumable"); */
+            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 5; // Abeemination / Deer Thing
         }
 

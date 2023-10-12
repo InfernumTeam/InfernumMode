@@ -28,7 +28,7 @@ namespace InfernumMode.Common.BaseEntities
 
             public float InnerNoiseFactor;
 
-            public static PulseParameterData Default => new(10f, 9f, 1.2f, 2.5f, 0.015f, 3.5f);
+            public static PulseParameterData Default => new(10f, 9f, 1.2f, 2.5f, 0.03f, 3.5f);
 
             public PulseParameterData(float noiseZoom, float noiseSpeed, float noiseFactor, float brightnessFactor, float thickness, float innerNoiseFactor)
             {
@@ -89,7 +89,7 @@ namespace InfernumMode.Common.BaseEntities
         #endregion
 
         #region AI
-        public float Radius
+        public float StartingScale
         {
             get => Projectile.ai[0];
             set => Projectile.ai[0] = value;
@@ -105,7 +105,7 @@ namespace InfernumMode.Common.BaseEntities
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = Lifetime;
-            Projectile.scale = 0f;
+            Projectile.scale = StartingScale;
         }
 
         public override void AI()
@@ -118,8 +118,7 @@ namespace InfernumMode.Common.BaseEntities
             Projectile.scale += 60f;// Lerp(0f, MaxScale, ScaleEasing(Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true)));
 
             // Fade out at the end of the lifetime.
-
-            Projectile.Opacity = Lerp(1f, 0f, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+            Projectile.Opacity = Lerp(1f, 0f, Utils.GetLerpValue(Lifetime, Lifetime - 10, Projectile.timeLeft, true));
         }
         #endregion
 

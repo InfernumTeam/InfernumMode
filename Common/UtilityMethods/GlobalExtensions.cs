@@ -9,23 +9,13 @@ namespace InfernumMode
     {
         public static BiomeEffectsPlayer Infernum_Biome(this Player player) => player.GetModPlayer<BiomeEffectsPlayer>();
 
-        public static EggPlayer Infernum_Egg(this Player player) => player.GetModPlayer<EggPlayer>();
-
-        public static PhysicsDefiancePlayer Infernum_PhysicsDefiance(this Player player) => player.GetModPlayer<PhysicsDefiancePlayer>();
-
         public static ProfanedTempleCinderPlayer Infernum_TempleCinder(this Player player) => player.GetModPlayer<ProfanedTempleCinderPlayer>();
 
         public static CameraEffectsPlayer Infernum_Camera(this Player player) => player.GetModPlayer<CameraEffectsPlayer>();
 
-        public static DebuffEffectsPlayer Infernum_Debuff(this Player player) => player.GetModPlayer<DebuffEffectsPlayer>();
-
         public static CalShadowHexesPlayer Infernum_CalShadowHex(this Player player) => player.GetModPlayer<CalShadowHexesPlayer>();
 
-        public static EelSwallowEffectPlayer Infernum_Eel(this Player player) => player.GetModPlayer<EelSwallowEffectPlayer>();
-
         public static InfernumPlayer Infernum(this Player player) => player.GetModPlayer<InfernumPlayer>();
-
-        public static TipsPlayer Infernum_Tips(this Player player) => player.GetModPlayer<TipsPlayer>();
 
         public static PetsPlayer Infernum_Pet(this Player player) => player.GetModPlayer<PetsPlayer>();
 

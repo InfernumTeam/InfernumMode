@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.OldDuke;
 using Microsoft.Xna.Framework;
@@ -12,11 +12,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 3;
-            // DisplayName.SetDefault("Bloodworm Platter");
-            /* Tooltip.SetDefault("Summons the Old Duke\n" +
-                "Can only be used in the Sulphurous Sea\n" +
-                "Not consumable"); */
+            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 17; // Celestial Sigil
         }
 

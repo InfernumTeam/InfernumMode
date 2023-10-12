@@ -1,5 +1,4 @@
 ﻿using InfernumMode.Content.Items.Pets;
-using InfernumMode.Core.GlobalInstances.Players;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -11,7 +10,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
     {
         public override string LocalizationCategory => "Achievements.Wishes";
 
-        public override LocalizedText Description => GetLocalizedText(nameof(Description)).WithFormatArgs(NightmareCatcherPlayer.AchievementSleepTime);
+        public override LocalizedText Description => GetLocalizedText(nameof(Description)).WithFormatArgs(NightmareCatcher.AchievementSleepTime);
 
         public override void Initialize()
         {

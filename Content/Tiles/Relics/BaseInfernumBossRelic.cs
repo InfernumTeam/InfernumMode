@@ -112,6 +112,7 @@ namespace InfernumMode.Content.Tiles.Relics
                 Main.instance.TilesRenderer.AddSpecialLegacyPoint(i, j);
             }
         }
+
         public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
         {
             // This is lighting-mode specific, always include this if you draw tiles manually

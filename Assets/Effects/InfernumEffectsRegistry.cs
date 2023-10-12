@@ -75,6 +75,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
         public static Filter CrystalCrackShader => Filters.Scene["InfernumMode:CrystalCrackShader"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
+        public static Filter DeusGasShader => Filters.Scene["InfernumMode:DeusGasShader"];
         public static Filter DoGPortalShader => Filters.Scene["InfernumMode:DoGPortalShader"];
         public static Filter DragonfollyScreenShader => Filters.Scene["InfernumMode:Dragonfolly"];
         public static Filter DoGScreenShader => Filters.Scene["InfernumMode:DoG"];
@@ -269,6 +270,14 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Devourer of Gods.
+            Filters.Scene["InfernumMode:AstralDimension"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:AstralDimension"] = new AstralDimensionSky();
+
+            // Deus gas shader.
+            Ref<Effect> deusGasShader = new(assets.Request<Effect>("Assets/Effects/Overlays/DeusGasShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:DeusGasShader"] = new Filter(new(deusGasShader, "GasPass"), EffectPriority.VeryHigh);
+
             // Sprite burn shader.
             Ref<Effect> spriteBurnShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/SpriteBurnShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:SpriteBurn"] = new Filter(new(spriteBurnShader, "BurnPass"), EffectPriority.VeryHigh);

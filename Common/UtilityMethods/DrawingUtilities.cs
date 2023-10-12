@@ -3,7 +3,6 @@ using CalamityMod.DataStructures;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common;
 using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Primitives;
@@ -637,5 +636,8 @@ namespace InfernumMode
         public static void SetTexture1(this Texture2D texture) => Main.instance.GraphicsDevice.Textures[1] = texture;
 
         public static void SetTexture2(this Texture2D texture) => Main.instance.GraphicsDevice.Textures[2] = texture;
+
+        public static void SetTexture3(this Texture2D texture) => Main.instance.GraphicsDevice.Textures[3] = texture;
+
     }
 }

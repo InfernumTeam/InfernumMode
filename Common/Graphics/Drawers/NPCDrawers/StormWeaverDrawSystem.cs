@@ -7,9 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics.Drawers
+namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
-    public class StormWeaverDrawSystem : BaseDrawerSystem
+    public class StormWeaverDrawSystem : BaseNPCDrawerSystem
     {
         public override int AssosiatedNPCType => ModContent.NPCType<StormWeaverHead>();
 

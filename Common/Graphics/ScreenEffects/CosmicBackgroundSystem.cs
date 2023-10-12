@@ -170,7 +170,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 intensity *= MonolithIntensity;
             }
 
-            Vector2 scale = new Vector2(Main.screenWidth, Main.screenWidth) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom * 2f;
+            Vector2 scale = new Vector2(Main.screenWidth, Main.screenWidth) / TextureAssets.MagicPixel.Value.Size() * 2f;
 
             Main.instance.GraphicsDevice.Textures[1] = KalisetFractal.Target;
             InfernumEffectsRegistry.CosmicBackgroundShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);

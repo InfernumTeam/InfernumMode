@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CalamityMod.CalPlayer;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -30,6 +26,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public delegate bool FreeDodgeDelegate(InfernumPlayer player, Player.HurtInfo info);
 
         public delegate bool PreKillDelegate(InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource);
+
+        public delegate void OnHitByNPCDelegate(InfernumPlayer player, NPC npc, Player.HurtInfo hurtInfo);
+
+        public delegate void KillDelegate(InfernumPlayer player, double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource);
         #endregion
 
         #region Events
@@ -64,6 +64,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public static event PreKillDelegate PreKillEvent;
 
         public static event PlayerActionDelegate UpdateLifeRegenEvent;
+
+        public static event OnHitByNPCDelegate OnHitByNPCEvent;
+
+        public static event PlayerActionDelegate OnEnterWorldEvent;
+
+        public static event KillDelegate KillEvent;
         #endregion
 
         #region Overrides
@@ -132,6 +138,18 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (UpdateLifeRegenEvent != null)
                 foreach (var subcription in UpdateLifeRegenEvent.GetInvocationList())
                     UpdateLifeRegenEvent -= (PlayerActionDelegate)subcription;
+
+            if (OnHitByNPCEvent != null)
+                foreach (var subcription in OnHitByNPCEvent.GetInvocationList())
+                    OnHitByNPCEvent -= (OnHitByNPCDelegate)subcription;
+
+            if (OnEnterWorldEvent != null)
+                foreach (var subcription in OnEnterWorldEvent.GetInvocationList())
+                    OnEnterWorldEvent -= (PlayerActionDelegate)subcription;
+
+            if (KillEvent != null)
+                foreach (var subcription in KillEvent.GetInvocationList())
+                    KillEvent -= (KillDelegate)subcription;
         }
 
         public override void ResetEffects()
@@ -203,7 +221,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override bool FreeDodge(Player.HurtInfo info)
         {
             bool result = false;
-            foreach (var subscription in FreeDodgeEvent.GetInvocationList())
+            foreach (var subscription in FreeDodgeEvent?.GetInvocationList())
                 result |= ((FreeDodgeDelegate)subscription).Invoke(this, info);
 
             return result;
@@ -213,7 +231,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             bool dontDie = false;
 
-            foreach (var subscription in FreeDodgeEvent.GetInvocationList())
+            foreach (var subscription in PreKillEvent?.GetInvocationList())
                 dontDie |= ((PreKillDelegate)subscription).Invoke(this, damage, hitDirection, pvp, ref playSound, ref genDust, ref damageSource);
             return !dontDie;
         }
@@ -221,6 +239,34 @@ namespace InfernumMode.Core.GlobalInstances.Players
         public override void UpdateLifeRegen()
         {
             UpdateLifeRegenEvent?.Invoke(this);
+        }
+
+        public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo)
+        {
+            OnHitByNPCEvent?.Invoke(this, npc, hurtInfo);
+        }
+
+        public override void OnEnterWorld()
+        {
+            OnEnterWorldEvent?.Invoke(this);
+        }
+
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            KillEvent?.Invoke(this, damage, hitDirection, pvp, damageSource);
+        }
+        #endregion
+
+        // These are small things that don't need their own file.
+        #region Misc Overrides
+        public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText)
+        {
+            if (InfernumMode.CanUseCustomAIs && CalamityPlayer.areThereAnyDamnBosses)
+            {
+                chatText = "I cannot help you. Good luck.";
+                return false;
+            }
+            return true;
         }
         #endregion
     }

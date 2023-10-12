@@ -3,9 +3,11 @@ using CalamityMod.Dusts;
 using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent.ObjectInteractions;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -67,6 +69,7 @@ namespace InfernumMode.Content.Tiles.Misc
         public override bool RightClick(int i, int j)
         {
             CalamityUtils.LightHitWire(Type, i, j, 2, 4);
+            SoundEngine.PlaySound(SoundID.MenuTick, new Point(i, j).ToWorldCoordinates());
             return true;
         }
 

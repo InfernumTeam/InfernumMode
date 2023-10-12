@@ -1,11 +1,13 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.InverseKinematics;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -139,9 +141,53 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void SetStaticDefaults()
         {
             this.HideFromBestiary();
-            // DisplayName.SetDefault("XF-09 Ares Energy Katana");
             NPCID.Sets.TrailingMode[NPC.type] = 3;
             NPCID.Sets.TrailCacheLength[NPC.type] = 50;
+
+            InfernumPlayer.PostUpdateEvent += (InfernumPlayer player) =>
+            {
+                Referenced<int> cooldown = player.GetRefValue<int>("HitSoundCountdown");
+                cooldown.Value--;
+            };
+
+            InfernumPlayer.OnHitByNPCEvent += (InfernumPlayer player, NPC npc, Player.HurtInfo hurtInfo) =>
+            {
+                if (npc.type != ModContent.NPCType<AresEnergyKatana>() || hurtInfo.Damage <= 0)
+                    return;
+
+                Referenced<int> cooldown = player.GetRefValue<int>("HitSoundCountdown");
+
+                // Play hit souds if the countdown has passed.
+                if (cooldown.Value <= 0)
+                {
+                    SoundEngine.PlaySound(InfernumSoundRegistry.AquaticScourgeGoreSound with { Volume = 3f }, player.Player.Center);
+                    cooldown.Value = 30;
+                }
+
+                for (int i = 0; i < 15; i++)
+                {
+                    int bloodLifetime = Main.rand.Next(22, 36);
+                    float bloodScale = Main.rand.NextFloat(0.6f, 0.8f);
+                    Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat());
+                    bloodColor = Color.Lerp(bloodColor, new Color(51, 22, 94), Main.rand.NextFloat(0.65f));
+
+                    if (Main.rand.NextBool(20))
+                        bloodScale *= 2f;
+
+                    Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.81f) * Main.rand.NextFloat(11f, 30f);
+                    bloodVelocity.Y -= 12f;
+                    BloodParticle blood = new(player.Player.Center, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
+                    GeneralParticleHandler.SpawnParticle(blood);
+                }
+                for (int i = 0; i < 25; i++)
+                {
+                    float bloodScale = Main.rand.NextFloat(0.2f, 0.33f);
+                    Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat(0.5f, 1f));
+                    Vector2 bloodVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.9f) * Main.rand.NextFloat(9f, 20.5f);
+                    BloodParticle2 blood = new(player.Player.Center, bloodVelocity, 20, bloodScale, bloodColor);
+                    GeneralParticleHandler.SpawnParticle(blood);
+                }
+            };
         }
 
         public override void SetDefaults()

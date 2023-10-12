@@ -1,7 +1,6 @@
 ﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Projectiles.Wayfinder;
-using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -21,7 +20,7 @@ namespace InfernumMode.Content.Skies
 
         public override bool IsSceneEffectActive(Player player)
         {
-            return player.GetModPlayer<FlowerOceanPlayer>().VisualsActive;
+            return player.Infernum().GetValue<bool>("FlowerOceanVisualsActive");
         }
 
         public override void SpecialVisuals(Player player, bool isActive)
@@ -127,7 +126,7 @@ namespace InfernumMode.Content.Skies
 
             Main.windSpeedTarget = 0f;
 
-            if (!Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive || Main.dayTime)
+            if (!Main.LocalPlayer.Infernum().GetValue<bool>("FlowerOceanVisualsActive") || Main.dayTime)
             {
                 isActive = false;
                 if (intensity <= 0)

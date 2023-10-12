@@ -1,10 +1,13 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Items.Materials;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Items.SummonItems
 {
@@ -14,13 +17,23 @@ namespace InfernumMode.Content.Items.SummonItems
         public int frame;
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 3;
-            // DisplayName.SetDefault("Dungeon's Curse");
-            /* Tooltip.SetDefault("Summons Skeletron\n" +
-                "Skeletron enrages during daytime\n" +
-                "It becomes nighttime if this item is used during daytime\n" +
-                "Not consumable"); */
-            ItemID.Sets.SortingPriorityBossSpawns[Type] = 5; // Abeemination / Deer Thing
+            Item.ResearchUnlockCount = 1;
+            ItemID.Sets.SortingPriorityBossSpawns[Type] = 5;
+
+            InfernumPlayer.LoadDataEvent += (InfernumPlayer player, TagCompound tag) =>
+            {
+                var flagData = tag.GetList<string>("FlagData");
+
+                player.SetValue<bool>("WasGivenDungeonsCurse",flagData.Contains("WasGivenDungeonsCurse"));
+            };
+
+            InfernumPlayer.SaveDataEvent += (InfernumPlayer player, TagCompound tag) =>
+            {
+                var flagData = new List<string>();
+                flagData.AddWithCondition("WasGivenDungeonsCurse", player.GetValue<bool>("WasGivenDungeonsCurse"));
+
+                tag["FlagData"] = flagData;
+            };
         }
 
         public override void SetDefaults()

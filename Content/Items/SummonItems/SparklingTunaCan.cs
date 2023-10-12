@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Placeables;
 using CalamityMod.NPCs.SunkenSea;
 using Microsoft.Xna.Framework;
@@ -12,11 +12,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 3;
-            // DisplayName.SetDefault("Sparkling Mollusk Can");
-            /* Tooltip.SetDefault("Summons the Giant Clam\n" +
-                "Can only be used in the sunken sea\n" +
-                "Not consumable"); */
+            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 2; // King Slime
         }
 

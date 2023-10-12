@@ -1,10 +1,8 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Items.Misc;
-using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -132,9 +130,9 @@ namespace InfernumMode.Content.Projectiles.Generic
             // Make the staff disappear into a burst of flames and enable the forcefield after enough time has passed.
             if (Time >= BrimstoneCrescentStaff.RaiseUpwardsTime)
             {
-                Owner.Infernum().SetValue<bool>("ForcefieldIsActive", !Owner.Infernum().GetValue<bool>("ForcefieldIsActive"));
+                Owner.Infernum().SetValue<bool>("BrimstoneCrescentForcefieldIsActive", !Owner.Infernum().GetValue<bool>("BrimstoneCrescentForcefieldIsActive"));
                 if (Owner.HasBuff<BrimstoneExhaustion>())
-                    Owner.Infernum().SetValue<bool>("ForcefieldIsActive", false);
+                    Owner.Infernum().SetValue<bool>("BrimstoneCrescentForcefieldIsActive", false);
 
                 SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Owner.Center);
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalShadowTeleportSound, Owner.Center);

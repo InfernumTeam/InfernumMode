@@ -62,6 +62,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
             set;
         }
 
+        public bool AstralMonolithEffect
+        {
+            get;
+            set;
+        }
+
         public float MapObscurityInterpolant
         {
             get;

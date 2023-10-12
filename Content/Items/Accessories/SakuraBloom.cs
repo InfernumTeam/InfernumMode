@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Items;
+using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Content.Rarities.Sparkles;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -18,9 +19,23 @@ namespace InfernumMode.Content.Items.Accessories
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Sakura Bloom");
-            // Tooltip.SetDefault("A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyy\nTemporary");
             Item.ResearchUnlockCount = 1;
+
+            InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) =>
+            {
+                player.SetValue<bool>("CreatingCherryBlossoms", false);
+            };
+
+            InfernumPlayer.PreUpdateEvent += (InfernumPlayer player) =>
+            {
+                // Create a bunch of blossoms.
+                if (!player.GetValue<bool>("CreatingCherryBlossoms") || Main.myPlayer != player.Player.whoAmI || !Main.rand.NextBool(4) || player.Player.dead)
+                    return;
+
+                Vector2 blossomSpawnPosition = player.Player.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -600f);
+                Vector2 blossomVelocity = Vector2.UnitY.RotatedByRandom(1.23f) * Main.rand.NextFloat(0.3f, 4f);
+                Projectile.NewProjectile(player.Player.GetSource_FromThis(), blossomSpawnPosition, blossomVelocity, ModContent.ProjectileType<CherryBlossomPetal>(), 0, 0f, player.Player.whoAmI);
+            };
         }
 
         public override void SetDefaults()
@@ -116,8 +131,8 @@ namespace InfernumMode.Content.Items.Accessories
             return line.Font.MeasureString(text).X * line.BaseScale.X;
         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual) => player.GetModPlayer<CherryBlossomPlayer>().CreatingCherryBlossoms = true;
+        public override void UpdateAccessory(Player player, bool hideVisual) => player.Infernum().SetValue<bool>("CreatingCherryBlossoms", true);
 
-        public override void UpdateVanity(Player player) => player.GetModPlayer<CherryBlossomPlayer>().CreatingCherryBlossoms = true;
+        public override void UpdateVanity(Player player) => player.Infernum().SetValue<bool>("CreatingCherryBlossoms", true);
     }
 }

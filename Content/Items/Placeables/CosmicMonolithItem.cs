@@ -1,4 +1,4 @@
-using CalamityMod.Items.Materials;
+﻿using CalamityMod.Items.Materials;
 using CalamityMod.Rarities;
 using CalamityMod.Tiles.Furniture.CraftingStations;
 using InfernumMode.Content.Tiles.Misc;
@@ -30,7 +30,18 @@ namespace InfernumMode.Content.Items.Placeables
             Item.value = Item.buyPrice(0, 4, 0, 0);
             Item.rare = ModContent.RarityType<DarkBlue>();
             Item.createTile = ModContent.TileType<CosmicMonolithTile>();
+            Item.accessory = true;
+            Item.vanity = true;
         }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            if (!hideVisual)
+                player.Infernum_Biome().CosmicBackgroundEffect = true;
+        }
+
+        public override void UpdateVanity(Player player) => player.Infernum_Biome().CosmicBackgroundEffect = true;
+
 
         public override void AddRecipes()
         {

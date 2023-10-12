@@ -1,6 +1,10 @@
-﻿using InfernumMode.Content.Buffs;
+﻿using CalamityMod;
+using InfernumMode.Common.DataStructures;
+using InfernumMode.Content.Achievements;
+using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Rarities.InfernumRarities;
+using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +16,28 @@ namespace InfernumMode.Content.Items.Pets
 {
     public class NightmareCatcher : ModItem
     {
+        public const int AchievementSleepTime = 15;
+
         public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Nightmare Catcher");
-            /* Tooltip.SetDefault("Summons the Sheep Lord to follow you around\n" +
-                "It Appears From the Darkness, As I Softly Slink Into The Dream"); */
+
+            InfernumPlayer.PostUpdateEvent += (InfernumPlayer player) =>
+            {
+                Referenced<int> brimstoneCragsSleepTimer = player.GetRefValue<int>("BrimstoneCragsSleepTimer");
+
+                if (player.Player.sleeping.FullyFallenAsleep && player.Player.Calamity().ZoneCalamity)
+                    brimstoneCragsSleepTimer.Value++;
+                else
+                    brimstoneCragsSleepTimer.Value = 0;
+
+                // Apply the achievement if sleeping for long enough.
+                if (brimstoneCragsSleepTimer.Value >= CalamityUtils.SecondsToFrames(AchievementSleepTime))
+                {
+                    AchievementPlayer.ExtraUpdateHandler(player.Player, AchievementUpdateCheck.NightmareCatcher);
+                    brimstoneCragsSleepTimer.Value = 0;
+                }
+            };
         }
         public override void SetDefaults()
         {

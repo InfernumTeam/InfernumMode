@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
 using InfernumMode.Common.DataStructures;
 
 namespace InfernumMode.Core.GlobalInstances.Players

@@ -1942,6 +1942,11 @@ Mods: {
 					You can right click to revert the position to the previous one.
 					'''
 			}
+
+			DeusMonolithItem: {
+				DisplayName: Astral Dimension Monolith
+				Tooltip: ""
+			}
 		}
 
 		Tiles: {

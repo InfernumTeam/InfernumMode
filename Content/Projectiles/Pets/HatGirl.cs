@@ -53,10 +53,20 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Hat Girl");
             Main.projFrames[Type] = 11;
             Main.projPet[Type] = true;
+
+            InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) =>
+            {
+                player.SetValue<bool>("HatGirl", false);
+            };
+
+            InfernumPlayer.KillEvent += (InfernumPlayer player, double damage, int hitDirection, bool pvp, Terraria.DataStructures.PlayerDeathReason damageSource) =>
+            {
+                TipsManager.PotentialTipToUse = TipsManager.SelectTip();
+            };
         }
+
 
         public override void SetDefaults()
         {
@@ -94,7 +104,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                 pet.netUpdate = true;
             }
 
-            owner.Infernum_Tips().ShouldDisplayTips = true;
+            owner.Infernum().SetValue<bool>("ShouldDisplayTips", true);
             TipsManager.PotentialTipToUse = text;
             TipsManager.SaidText.Add(text);
         }
@@ -107,17 +117,17 @@ namespace InfernumMode.Content.Projectiles.Pets
                 Projectile.active = false;
                 return;
             }
-            TipsPlayer modPlayer = Owner.Infernum_Tips();
+            InfernumPlayer modPlayer = Owner.Infernum();
             if (Owner.dead)
             {
-                modPlayer.HatGirl = false;
-                modPlayer.ShouldDisplayTips = true;
+                modPlayer.SetValue<bool>("HatGirl", false);
+                modPlayer.SetValue<bool>("ShouldDisplayTips", false);
             }
-            if (modPlayer.HatGirl)
+            if (modPlayer.GetValue<bool>("HatGirl"))
                 Projectile.timeLeft = 2;
 
             // Give some advice if the player died to a boss.
-            if (Main.myPlayer == Projectile.owner && modPlayer.ShouldDisplayTips && !Owner.dead)
+            if (Main.myPlayer == Projectile.owner && modPlayer.GetValue<bool>("ShouldDisplayTips") && !Owner.dead)
             {
                 string tipText = TipsManager.PotentialTipToUse;
                 Color messageColor = Color.DeepPink;
@@ -138,7 +148,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                         Main.combatText[textIndex].lifeTime *= 3;
                     }
 
-                    Owner.Infernum_Tips().ShouldDisplayTips = false;
+                    modPlayer.SetValue<bool>("ShouldDisplayTips", false);
                     TalkAnimationCounter = 1f;
 
                     TipsManager.SaidText.Add(tipText);

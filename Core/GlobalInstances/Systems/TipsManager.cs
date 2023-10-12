@@ -32,7 +32,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PostUpdateEverything()
         {
-            if (!Main.LocalPlayer.dead && !Main.LocalPlayer.Infernum_Tips().ShouldDisplayTips)
+            if (!Main.LocalPlayer.dead && !Main.LocalPlayer.Infernum().GetValue<bool>("ShouldDisplayTips"))
             {
                 NPC foughtBoss = Utilities.CurrentlyFoughtBoss;
                 BossBeingFought = foughtBoss is null ? null : foughtBoss.Clone() as NPC;

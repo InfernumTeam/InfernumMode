@@ -13,6 +13,7 @@ using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
+using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Achievements;
@@ -321,10 +322,11 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void OnChatButtonClicked(NPC npc, bool firstButton)
         {
-            if (npc.type == NPCID.OldMan && firstButton && InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.GetModPlayer<SkeletronSummonerGiftPlayer>().WasGivenDungeonsCurse)
+            Referenced<bool> wasGivenDungeonsCurse = Main.LocalPlayer.Infernum().GetRefValue<bool>("WasGivenDungeonsCurse");
+            if (npc.type == NPCID.OldMan && firstButton && InfernumMode.CanUseCustomAIs && !wasGivenDungeonsCurse.Value)
             {
                 Item.NewItem(npc.GetSource_FromThis(), Main.LocalPlayer.Hitbox, ModContent.ItemType<DungeonsCurse>());
-                Main.LocalPlayer.GetModPlayer<SkeletronSummonerGiftPlayer>().WasGivenDungeonsCurse = true;
+                wasGivenDungeonsCurse.Value = true;
             }
         }
         #endregion

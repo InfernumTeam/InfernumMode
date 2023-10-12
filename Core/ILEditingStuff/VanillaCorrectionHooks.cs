@@ -25,7 +25,6 @@ using InfernumMode.Content.Tiles.Relics;
 using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.Balancing;
-using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -372,7 +371,7 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 if (StolenCelestialObject.MoonIsNotInSky)
                     return;
-                else if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive)
+                else if (!Main.gameMenu && Main.LocalPlayer.Infernum().GetValue<bool>("FlowerOceanVisualsActive"))
                     return;
             }
 
@@ -1257,7 +1256,7 @@ namespace InfernumMode.Core.ILEditingStuff
         private void DrawStarsHook(On_Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea, bool artificial)
         {
             // Do not draw if the flower ocean visuals are active.
-            if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<FlowerOceanPlayer>().VisualsActive)
+            if (!Main.gameMenu && Main.LocalPlayer.Infernum().GetValue<bool>("FlowerOceanVisualsActive"))
                 return;
 
             orig(self, sceneArea, artificial);

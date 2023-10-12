@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.PrimordialWyrm;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -11,11 +11,7 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 3;
-            // DisplayName.SetDefault("Evoking Searune");
-            /* Tooltip.SetDefault("Summons the Adult Eidolon Wyrm in the deepest layer of the Abyss\n" +
-                "A primordial artifact said to have been formed by the First God, it is capable of summoning a guarding apparition\n" +
-                "Not consumable"); */
+            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 17; // Celestial Sigil
         }
 

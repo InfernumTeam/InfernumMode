@@ -15,6 +15,7 @@ using CalamityMod.Schematics;
 using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
@@ -28,7 +29,6 @@ using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Balancing;
-using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
@@ -361,16 +361,18 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
             }
 
+            Referenced<float> sealocketForcefieldOpacity = Main.LocalPlayer.Infernum().GetRefValue<float>("SealocketForcefieldOpacity");
+            Referenced<float> forcefieldDissipationInterpolant = Main.LocalPlayer.Infernum().GetRefValue<float>("SealocketForcefieldDissipationInterpolant");
+
             // Draw the render target, optionally with a dye shader.
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer);
 
-            float shieldScale = Main.LocalPlayer.GetModPlayer<SealocketPlayer>().ForcefieldOpacity * 0.3f;
+            float shieldScale = sealocketForcefieldOpacity.Value * 0.3f;
             Vector2 shieldSize = Vector2.One * shieldScale * 512f;
             Rectangle shaderArea = Utils.CenteredRectangle(PlayerForcefieldTarget.Target.Size(), shieldSize);
-            SealocketPlayer sealocketPlayer = Main.LocalPlayer.GetModPlayer<SealocketPlayer>();
-
-            if (sealocketPlayer.ForcefieldOpacity >= 0.01f && sealocketPlayer.ForcefieldDissipationInterpolant < 0.99f)
+            
+            if (sealocketForcefieldOpacity.Value >= 0.01f && forcefieldDissipationInterpolant.Value < 0.99f)
                 ForcefieldShader?.Apply(null, new(PlayerForcefieldTarget.Target, Vector2.Zero, shaderArea, Color.White));
             Main.spriteBatch.Draw(PlayerForcefieldTarget.Target, Main.LocalPlayer.Center - Main.screenPosition, null, Color.White, 0f, PlayerForcefieldTarget.Target.Size() * 0.5f, 1f, 0, 0f);
 
@@ -382,6 +384,9 @@ namespace InfernumMode.Core.ILEditingStuff
         private void PrepareSealocketTarget(On_Main.orig_CheckMonoliths orig)
         {
             orig();
+
+            if (Main.gameMenu)
+                return;
 
             var device = Main.instance.GraphicsDevice;
             RenderTargetBinding[] bindings = device.GetRenderTargets();
@@ -402,23 +407,23 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static void DrawForcefield(Player player)
         {
-            SealocketPlayer sealocketPlayer = player.GetModPlayer<SealocketPlayer>();
-
-            sealocketPlayer.ForcefieldOpacity = 1f;
+            Referenced<float> sealocketForcefieldOpacity = player.Infernum().GetRefValue<float>("SealocketForcefieldOpacity");
+            Referenced<float> forcefieldDissipationInterpolant = player.Infernum().GetRefValue<float>("SealocketForcefieldDissipationInterpolant");
+            sealocketForcefieldOpacity.Value = 1f;
 
             // Draw the sealocket forcefield.
             Vector2 forcefieldDrawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f + Vector2.UnitY * player.gfxOffY;
-            if (sealocketPlayer.ForcefieldOpacity >= 0.01f && sealocketPlayer.ForcefieldDissipationInterpolant < 0.99f)
+            if (sealocketForcefieldOpacity.Value >= 0.01f && forcefieldDissipationInterpolant.Value < 0.99f)
             {
-                float forcefieldOpacity = (1f - sealocketPlayer.ForcefieldDissipationInterpolant) * sealocketPlayer.ForcefieldOpacity;
-                BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, sealocketPlayer.ForcefieldDissipationInterpolant * 1.5f + 1.3f);
+                float forcefieldOpacity = (1f - forcefieldDissipationInterpolant.Value) * sealocketForcefieldOpacity.Value;
+                BereftVassal.DrawElectricShield(forcefieldOpacity, forcefieldDrawPosition, forcefieldOpacity, forcefieldDissipationInterpolant.Value * 1.5f + 1.3f);
             }
 
             // Draw the Brimstone Crescent forcefield.
-            if (player.Infernum().GetValue<float>("ForcefieldStrengthInterpolant") > 0f)
+            if (player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant") > 0f)
             {
-                float scale = Lerp(0.55f, 1.5f, 1f - player.Infernum().GetValue<float>("ForcefieldStrengthInterpolant"));
-                Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * player.Infernum().GetValue<float>("ForcefieldStrengthInterpolant");
+                float scale = Lerp(0.55f, 1.5f, 1f - player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant"));
+                Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant");
                 CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.FireNoise.Value, true, scale);
             }
         }

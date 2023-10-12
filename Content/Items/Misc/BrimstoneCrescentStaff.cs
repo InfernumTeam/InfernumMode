@@ -9,7 +9,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 
 namespace InfernumMode.Content.Items.Misc
 {
@@ -33,19 +32,19 @@ namespace InfernumMode.Content.Items.Misc
 
         public override void SetStaticDefaults()
         {
-            InfernumPlayer.UpdateDeadEvent += (InfernumPlayer player) => player.SetValue<bool>("ForcefieldIsActive", false);
+            InfernumPlayer.UpdateDeadEvent += (InfernumPlayer player) => player.SetValue<bool>("BrimstoneCrescentForcefieldIsActive", false);
 
             InfernumPlayer.AccessoryUpdateEvent += (InfernumPlayer player) =>
             {
-                player.SetValue<float>("ForcefieldStrengthInterpolant", Clamp(player.GetValue<float>("ForcefieldStrengthInterpolant") + player.GetValue<bool>("ForcefieldIsActive").ToDirectionInt() * 0.02f, 0f, 1f));
-                if (player.GetValue<bool>("ForcefieldIsActive"))
+                player.SetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant", Clamp(player.GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant") + player.GetValue<bool>("BrimstoneCrescentForcefieldIsActive").ToDirectionInt() * 0.02f, 0f, 1f));
+                if (player.GetValue<bool>("BrimstoneCrescentForcefieldIsActive"))
                     player.Player.AddBuff(ModContent.BuffType<BrimstoneBarrier>(), CalamityUtils.SecondsToFrames(DebuffTime));
             };
 
             InfernumPlayer.ModifyHurtEvent += (InfernumPlayer player, ref Player.HurtModifiers modifiers) =>
             {
-                var hits = player.GetRefValue<int>("ForcefieldHits");
-                if (player.GetValue<bool>("ForcefieldIsActive"))
+                var hits = player.GetRefValue<int>("BrimstoneCrescentForcefieldHits");
+                if (player.GetValue<bool>("BrimstoneCrescentForcefieldIsActive"))
                 {
                     // Apply DR and disable typical hit graphical/sound effects.
                     modifiers.FinalDamage *= (1f - ForcefieldDRMultiplier);
@@ -64,7 +63,7 @@ namespace InfernumMode.Content.Items.Misc
                     {
                         player.Player.AddBuff(ModContent.BuffType<BrimstoneExhaustion>(), CalamityUtils.SecondsToFrames(ForcefieldCreationDelayAfterBreak));
                         hits.Value = 0;
-                        player.SetValue<bool>("ForcefieldIsActive", false);
+                        player.SetValue<bool>("BrimstoneCrescentForcefieldIsActive", false);
                     }
                 }
                 else

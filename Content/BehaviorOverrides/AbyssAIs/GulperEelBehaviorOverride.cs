@@ -1,7 +1,9 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.DataStructures;
+using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +24,30 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public const int SegmentCount = 20;
 
+        public override void Load()
+        {
+            InfernumPlayer.PostUpdateEvent += (InfernumPlayer player) =>
+            {
+                Referenced<int> eelSwallowIndex = player.GetRefValue<int>("EelSwallowIndex");
+                // Handle eel swallow behaviors.
+                if (eelSwallowIndex.Value >= 0 && Main.npc[eelSwallowIndex.Value].active && Main.npc[eelSwallowIndex.Value].type == ModContent.NPCType<GulperEelHead>() && !Collision.SolidCollision(player.Player.TopLeft, player.Player.width, player.Player.height))
+                {
+                    // Be completely invisible when stuck, so as to give the illusion that they're inside of the eel.
+                    player.Player.immuneAlpha = 260;
+
+                    // Stick to the Gulper eel's mouth, changing the player's field of view.
+                    player.Player.Center = Main.npc[eelSwallowIndex.Value].Center;
+                    player.Player.velocity = Vector2.Zero;
+
+                    player.Player.mount?.Dismount(player.Player);
+                }
+
+                // Reset the swallow index if it's no longer applicable.
+                else if (eelSwallowIndex.Value != -1)
+                    eelSwallowIndex.Value = -1;
+            };
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Pick a target if a valid one isn't already decided.
@@ -40,13 +66,15 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             ref float screamSlotID = ref npc.Infernum().ExtraAI[4];
             ref float turnCountdown = ref npc.Infernum().ExtraAI[5];
 
+            Referenced<int> eelSwallowIndex = target.Infernum().GetRefValue<int>("EelSwallowIndex");
+
             int hostilityDelay = 167;
             float snapFieldOfView = 0.46f;
             float noticeFieldOfView = 0.73f;
             float snapSpeed = 24.5f;
             bool aboutToScream = false;
             bool canNoticePlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < noticeFieldOfView && npc.WithinRange(target.Center, 840f);
-            bool swallowingPlayer = target.Infernum_Eel().EelSwallowIndex == npc.whoAmI;
+            bool swallowingPlayer = eelSwallowIndex.Value == npc.whoAmI;
             bool passiveMovement = swallowingPlayer || isHostile == 0f;
             bool canSnapAtPlayer = npc.velocity.Length() > 7.5f && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < snapFieldOfView && npc.WithinRange(target.Center, 450f);
             if (!Collision.CanHitLine(npc.TopLeft, npc.width, npc.height, target.TopLeft, target.width, target.height) || swallowingPlayer)
@@ -163,12 +191,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Swallow the player if they're on top of the hitbox of the eel's head and snapping.
             if (npc.velocity.Length() > 14.5f && npc.Hitbox.Intersects(target.Hitbox) && jawRotation > 0.1f && !target.immune)
-                target.Infernum_Eel().EelSwallowIndex = npc.whoAmI;
+                eelSwallowIndex.Value = npc.whoAmI;
 
             // Let the player go if hit while they're being swallowed.
             if (npc.justHit && swallowingPlayer)
             {
-                target.Infernum_Eel().EelSwallowIndex = -1;
+                eelSwallowIndex.Value = -1;
                 target.velocity = npc.velocity.SafeNormalize(Vector2.Zero) * 16f;
                 target.GiveIFrames(45, true);
                 jawRotation = 0.8f;

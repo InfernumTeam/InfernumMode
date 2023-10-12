@@ -8,7 +8,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
     public class ProviBurnPulseRing : BasePulseRingProjectile
     {
-        public override int Lifetime => 120;
+        public override int Lifetime => 180;
 
         public override Color DeterminePulseColor(float lifetimeCompletionRatio) => DoGProviCutsceneProjectile.TimeColor;
 

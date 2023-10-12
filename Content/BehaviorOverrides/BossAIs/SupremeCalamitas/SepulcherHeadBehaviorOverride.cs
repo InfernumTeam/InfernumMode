@@ -84,6 +84,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // No.
             npc.scale = 1.25f;
 
+            // Clients will miss the take damage check in AttackDelay, so ensure that they get updated.
+            if (Main.netMode == NetmodeID.MultiplayerClient && (SepulcherAttackType)attackState != SepulcherAttackType.AttackDelay)
+            {
+                npc.dontTakeDamage = false;
+                npc.Opacity = 1f;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedSegments == 0f)
             {
                 SummonSegments(npc);

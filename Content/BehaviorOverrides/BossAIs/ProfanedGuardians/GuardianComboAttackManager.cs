@@ -482,6 +482,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         hoverOffsetX = hoverOffset.X;
                         hoverOffsetY = hoverOffset.Y;
                         universalAttackTimer = 0;
+                        npc.netUpdate = true;
                         substate++;
                         break;
 
@@ -1276,6 +1277,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Get an offset from the player.
                     case 0:
                         commanderOffset += Main.rand.NextFloat(0f, TwoPi) * Main.rand.NextFromList(-1f, 1f);
+                        npc.netUpdate = true;
                         if (universalAttackTimer <= fadeInTime)
                             npc.Opacity = Clamp(npc.Opacity - 0.0625f, 0f, 1f);
                         else
@@ -1466,6 +1468,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         if (universalAttackTimer == 1)
                         {
                             npc.Center = hoverDestination;
+                            npc.netUpdate = true;
                             for (int i = 0; i < 75; i++)
                             {
                                 Particle fire = new HeavySmokeParticle(hoverDestination + Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f), Vector2.Zero,
@@ -1748,8 +1751,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         Utilities.NewProjectileBetter(npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 75f, Vector2.Zero, ModContent.ProjectileType<DefenderShield>(), 0, 0f, -1, 0f, npc.whoAmI);
                 }
 
-                //Main.NewText(dashTelegraphOpacity);
-
                 switch (substate)
                 {
                     // Decide the position to hover at.
@@ -1770,6 +1771,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         hoverOffsetX = hoverOffset.X;
                         hoverOffsetY = hoverOffset.Y;
                         localAttackTimer = 0;
+                        npc.netUpdate = true;
                         substate++;
                         break;
 
@@ -2829,6 +2831,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         npc.Center = riftPosition;
                         npc.velocity = Vector2.Zero;
                         sittingInPortalIndex = Utilities.NewProjectileBetter(riftPosition, Vector2.Zero, ModContent.ProjectileType<HolyFireRift>(), 0, 0f);
+                        npc.netUpdate = true;
                     }
 
                     else if (universalAttackTimer > fadeOutTime)
@@ -2981,6 +2984,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Main.player[commander.target].Infernum_Camera().CurrentScreenShakePower = commander.Infernum().ExtraAI[GuardianSkyExtraIntensityIndex] * 12f;
                 ScreenEffectSystem.SetBlurEffect(commander.Center, 2f, 90);
             }
+            commander.netUpdate = true;
         }
 
         public static void SelectNewAttack(NPC commander, ref float universalAttackTimer, float specificAttackToSwapTo = -1)
@@ -3007,6 +3011,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         else
                             defender.Infernum().ExtraAI[DefenderShieldStatusIndex] = (float)DefenderShieldStatus.Inactive;
                     }
+
+                    defender.netUpdate = true;
                 }
             }
 
@@ -3017,11 +3023,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     NPC healer = Main.npc[CalamityGlobalNPC.doughnutBossHealer];
                     for (int i = 0; i < aiSlotsToClear; i++)
                         healer.Infernum().ExtraAI[i] = 0f;
+
+                    healer.netUpdate = true;
                 }
             }
 
             // Reset the universal attack timer.
             universalAttackTimer = 0f;
+
+            commander.netUpdate = true;
 
             // Swap to a specific attack if one is specified.
             if (specificAttackToSwapTo != -1f)

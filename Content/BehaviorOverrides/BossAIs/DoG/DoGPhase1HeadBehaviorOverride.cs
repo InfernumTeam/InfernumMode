@@ -7,6 +7,8 @@ using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.Skies;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.Netcode.Packets;
+using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -194,6 +196,33 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             return !isDoG || HandleDoGLifeBasedHitTriggers(npc, modifiers.FinalDamage.Base, ref modifiers);
         }
 
+        // HandleDoGLifeBasedHitTriggers will never be run serverside, thus ensuring DoG will never properly change phase. This sends a packet to the server to run the intended health phase change calculations.
+        public static void UpdateDoGPhaseServer(int npcIndex, double damage)
+        {
+            NPC npc = Main.npc[npcIndex];
+            int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
+            if (life - damage <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
+            {
+                npc.dontTakeDamage = true;
+                CurrentPhase2TransitionState = Phase2TransitionState.NeedsToSummonPortal;
+                npc.netUpdate = true;
+                return;
+            }
+
+            // Disable damage and start the death animation if the hit would kill DoG.
+            if (life - damage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
+            {
+                npc.dontTakeDamage = true;
+                if (npc.Infernum().ExtraAI[DeathAnimationTimerIndex] == 0f)
+                {
+                    SoundEngine.PlaySound(DoGHead.SpawnSound, npc.Center);
+                    npc.Infernum().ExtraAI[DeathAnimationTimerIndex] = 1f;
+                }
+                npc.netUpdate = true;
+                return;
+            }
+        }
+
         public static bool HandleDoGLifeBasedHitTriggers(NPC npc, double realDamage, ref NPC.HitModifiers modifiers)
         {
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
@@ -202,8 +231,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (life - realDamage <= npc.lifeMax * Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2 && CurrentPhase2TransitionState == Phase2TransitionState.NotEnteringPhase2)
             {
                 modifiers.FinalDamage.Base *= 0;
-                npc.dontTakeDamage = true;
-                CurrentPhase2TransitionState = Phase2TransitionState.NeedsToSummonPortal;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.dontTakeDamage = true;
+                    CurrentPhase2TransitionState = Phase2TransitionState.NeedsToSummonPortal;
+                }
+                else
+                    PacketManager.SendPacket<SyncDoGPacket>(npc.whoAmI, realDamage);
                 return false;
             }
 
@@ -211,12 +245,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             if (life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 modifiers.FinalDamage.Base *= 0;
-                npc.dontTakeDamage = true;
-                if (npc.Infernum().ExtraAI[DeathAnimationTimerIndex] == 0f)
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    SoundEngine.PlaySound(DoGHead.SpawnSound, npc.Center);
-                    npc.Infernum().ExtraAI[DeathAnimationTimerIndex] = 1f;
+                    npc.dontTakeDamage = true;
+                    if (npc.Infernum().ExtraAI[DeathAnimationTimerIndex] == 0f)
+                    {
+                        SoundEngine.PlaySound(DoGHead.SpawnSound, npc.Center);
+                        npc.Infernum().ExtraAI[DeathAnimationTimerIndex] = 1f;
+                    }
                 }
+                else
+                    PacketManager.SendPacket<SyncDoGPacket>(npc.whoAmI, realDamage);
+
                 return false;
             }
             return true;

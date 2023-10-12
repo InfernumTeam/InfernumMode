@@ -26,12 +26,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public static void DoGSegmentAI(NPC npc)
         {
+            // Body segments for clients sometimes don't update the head segment before running segment AI, causing them to self-terminate and decapitate the worm.
+            if (Main.netMode == NetmodeID.MultiplayerClient && (npc.realLife == -1 || !Main.npc[npc.realLife].active))
+            {
+                // If the head really doesnt exist, segments will time out.
+                npc.timeLeft -= 100;
+                if (npc.timeLeft < 100)
+                {
+                    npc.life = 0;
+                    npc.HitEffect();
+                    npc.active = false;
+                }
+                return;
+            }
+
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             NPC head = Main.npc[(int)npc.ai[2]];
+
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.defense = BodySegmentDefense;
             npc.Calamity().DR = BodySegmentDR;
+
             if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)

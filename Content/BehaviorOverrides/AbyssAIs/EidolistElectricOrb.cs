@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
@@ -85,12 +85,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 for (int i = 0; i < LightningCount; i++)
                 {
                     Vector2 lightningVelocity = (Lerp(-LightningSpread, LightningSpread, i / (float)(LightningCount - 1f)) + TelegraphDirection).ToRotationVector2() * 13f;
-                    int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 175, 0f);
-                    if (Main.projectile.IndexInRange(lightning))
-                    {
-                        Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
-                        Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                    }
+                    float InitialVelocityAngle = lightningVelocity.ToRotation();
+                    float BaseTurnAngleRatio = Main.rand.Next(100);
+                    Utilities.NewProjectileBetter(Projectile.Center, lightningVelocity, lightningID, 175, 0f, -1, InitialVelocityAngle, BaseTurnAngleRatio);
                 }
             }
         }

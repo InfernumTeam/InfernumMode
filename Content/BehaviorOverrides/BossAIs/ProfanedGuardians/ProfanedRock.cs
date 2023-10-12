@@ -47,14 +47,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Profaned Rock");
             ProjectileID.Sets.TrailingMode[Type] = 2;
             ProjectileID.Sets.TrailCacheLength[Type] = 6;
         }
 
         public override void SetDefaults()
         {
-            // These get changed later, but are this be default.
+            // These get changed later, but are this by default.
             Projectile.width = 42;
             Projectile.height = 36;
 

@@ -6,6 +6,8 @@ using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.Netcode.Packets;
+using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -356,11 +358,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (npc.life - realDamage > minLife)
                 return;
 
-            npc.life = 0;
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-                npc.StrikeInstantKill();
-            npc.checkDead();
+            // Server side never receives StrikeNPCEvent. if a client believes they killed a ML part the server will receive a packet telling it to run their own HandleBodyPartDeathStrigger.
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                PacketManager.SendPacket<SyncMoonlordPacket>(npc.whoAmI, realDamage);
+            else
+            {
+                npc.life = 0;
+                npc.checkDead();
+            }
         }
 
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackTimer)

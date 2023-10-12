@@ -39,6 +39,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoAI(NPC npc)
         {
+            // Due to lag, a client's segment can perform its AI before its npc.realLife can be assigned. This causes the worm to decapitate itself immediately.
+            if (Main.netMode == NetmodeID.MultiplayerClient && npc.realLife == -1)
+            {
+                npc.timeLeft -= 100;
+                if (npc.timeLeft < 100)
+                {
+                    npc.life = 0;
+                    npc.HitEffect();
+                    npc.active = false;
+                }
+                return;
+            }
+
             // Go away if the ahead segment is not present.
             if (!Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {

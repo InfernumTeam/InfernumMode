@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetDefaults()
         {
-            // These get changed later, but are this be default.
+            // These get changed later, but are this by default.
             base.SetDefaults();
             Projectile.Opacity = 0;
             Projectile.timeLeft = Lifetime;
@@ -40,6 +40,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             if (!Owner.active || Owner.type != ModContent.NPCType<ProfanedGuardianDefender>())
             {
+                // Client's may not recognize their owner immediately, give it a bit of time.
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    Projectile.timeLeft -= 40;
+                    if (Projectile.timeLeft < 50)
+                    {
+                        Projectile.Kill();
+                    }
+                    return;
+                }
+
                 Projectile.Kill();
                 return;
             }

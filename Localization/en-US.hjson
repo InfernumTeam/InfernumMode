@@ -2454,7 +2454,7 @@ Mods: {
 			}
 
 			HyperplaneMatrixUI: {
-				GodMode: Toggle cybernetic immortality
+				Godmode: Toggle cybernetic immortality
 				NoClip: Toggle physics defiance flying
 				TimeSetMorning: Accelerate time until sunrise
 				TimeSetNoon: Accelerate time until noon"

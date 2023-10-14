@@ -47,7 +47,7 @@ namespace InfernumMode.Content.Items.Misc
 
             InfernumPlayer.PreUpdateEvent += (InfernumPlayer player) =>
             {
-                Referenced<int> cooldown = player.GetRefValue<int>("HurtSoundCountdown");
+                Referenced<int> cooldown = player.GetRefValue<int>("HurtSoundCooldown");
                 if (cooldown.Value > 0)
                     cooldown.Value--;
 

@@ -207,6 +207,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int StartedWithMusicDisabledIndex = 12;
 
+        public const int DeathAnimationGlowIntensityIndex = 13;
+
         public const float DefaultLavaHeight = 1400f;
 
         public const float HighestLavaHeight = 2284f;
@@ -322,6 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float rockReformOffset = ref npc.Infernum().ExtraAI[RockReformOffsetIndex];
             ref float hasCompletedCycle = ref npc.Infernum().ExtraAI[HasCompletedCycleIndex];
             ref float hasEnteredPhase2 = ref npc.Infernum().ExtraAI[HasEnteredPhase2Index];
+            ref float deathAnimationGlowIntensity = ref npc.Infernum().ExtraAI[DeathAnimationGlowIntensityIndex];
 
             bool shouldDespawnAtNight = wasSummonedAtNight == 0f && IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
             bool shouldDespawnAtDay = wasSummonedAtNight == 1f && !IsEnraged && attackType != (int)ProvidenceAttackType.EnterFireFormBulletHell;
@@ -475,7 +478,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Perform the death animation.
             if (lifeRatio < DeathAnimationLifeRatio && !inDeathCutscene)
             {
-                DoBehavior_DeathAnimation(npc, target, ref deathEffectTimer, wasSummonedAtNight == 1f, ref burnIntensity);
+                DoBehavior_DeathAnimation(npc, target, ref deathEffectTimer, wasSummonedAtNight == 1f, ref deathAnimationGlowIntensity);
                 deathEffectTimer++;
                 return false;
             }
@@ -751,12 +754,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (deathEffectsTimer < DoGProviCutsceneProjectile.StartTime + DoGProviCutsceneProjectile.SlowddownTime + (int)(DoGProviCutsceneProjectile.ChompTime * 0.5f))
             {
                 // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
-                if (deathEffectsTimer % 90f == 67f)
+                if (deathEffectsTimer % 120f == 67f)
                     Utilities.CreateShockwave(npc.Center, 2, 7, 18f, false);
-                else if (deathEffectsTimer % 90f == 89f)
+                else if (deathEffectsTimer % 120f == 89f)
                 {
-                    SoundEngine.PlaySound(InfernumSoundRegistry.TerminusPulseSound with { Pitch = 0.6f }, npc.Center);
-                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 0.4f }, npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.TerminusPulseSound with { Pitch = 0.9f }, npc.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 0.3f }, npc.Center);
                 }
             }
 

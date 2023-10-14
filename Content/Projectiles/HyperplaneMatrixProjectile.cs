@@ -137,7 +137,7 @@ namespace InfernumMode.Content.Projectiles
 
         public Player Owner => Main.player[Projectile.owner];
 
-        public List<MatrixUIIcon> UIStates;
+        internal static List<MatrixUIIcon> UIStates;
 
         public ref float Time => ref Projectile.ai[0];
 

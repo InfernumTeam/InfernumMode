@@ -176,61 +176,52 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
                 }
             }
 
-            Vector2 drawPosition = AssosiatedNPC.Center - Main.screenPosition;// + drawOffset;
-
-            Color baseColor = Color.White * AssosiatedNPC.Opacity;
-            if (IsEnraged)
+            int totalProvidencesToDraw = (int)Lerp(1f, 30f, burnIntensity);
+            for (int i = 0; i < totalProvidencesToDraw; i++)
             {
-                baseColor = Color.Lerp(baseColor, Color.Cyan with
+                float offsetAngle = TwoPi * i * 2f / totalProvidencesToDraw;
+                float drawOffsetScalar = Sin(offsetAngle * 6f + Main.GlobalTimeWrappedHourly * Pi);
+                drawOffsetScalar *= Pow(burnIntensity, 1.4f) * 36f;
+                drawOffsetScalar *= Lerp(1f, 2f, 1f - lifeRatio);
+
+                Vector2 drawOffset = offsetAngle.ToRotationVector2() * drawOffsetScalar;
+                if (totalProvidencesToDraw <= 1)
+                    drawOffset = Vector2.Zero;
+
+                Vector2 drawPosition = AssosiatedNPC.Center - Main.screenPosition + drawOffset;
+
+                Color baseColor = Color.White * (Lerp(0.4f, 0.8f, burnIntensity) / totalProvidencesToDraw * 7f);
+                baseColor.A = 0;
+                baseColor = Color.Lerp(Color.White, baseColor, burnIntensity);
+                if (IsEnraged)
                 {
-                    A = 0
-                }, 0.5f);
+                    baseColor = Color.Lerp(baseColor, Color.Cyan with
+                    {
+                        A = 0
+                    }, 0.5f);
+                }
+
+                drawProvidenceInstance(drawPosition, 0, baseColor);
             }
-
-            //if (burnIntensity > 0)
-            //{
-            //    for (int i = 0; i < 12; i++)
-            //    {
-            //        Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * 15f * burnIntensity;
-            //        Color backimageColor = WayfinderSymbol.Colors[0];
-            //        backimageColor.A = 0;
-            //        //drawProvidenceInstance(drawPosition + drawOffset, 0, backimageColor * (1f - burnIntensity));
-            //    }
-            //}
-
-            drawProvidenceInstance(drawPosition, 0, baseColor);
-
 
             // Draw the rock texture above the bloom effects.
             Texture2D rockTexture = ModContent.Request<Texture2D>(rockTextureString).Value;
             float opacity = Utils.GetLerpValue(0.038f, 0.04f, lifeRatio, true) * (1f - AssosiatedNPC.localAI[3]) * 0.6f;
             Main.spriteBatch.Draw(rockTexture, AssosiatedNPC.Center - Main.screenPosition, AssosiatedNPC.frame, AssosiatedNPC.GetAlpha(Color.White) * opacity, AssosiatedNPC.rotation, AssosiatedNPC.frame.Size() * 0.5f, AssosiatedNPC.scale, 0, 0);
-
-            // Draw the rune strip on top of everything else during the ritual attack.
-            if (AssosiatedNPC.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
-            {
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
-                AssosiatedNPC.Infernum().Optional3DStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols"));
-                AssosiatedNPC.Infernum().Optional3DStripDrawer.Draw(AssosiatedNPC.Center - Vector2.UnitX * 80f - Main.screenPosition, AssosiatedNPC.Center + Vector2.UnitX * 80f - Main.screenPosition, 0.4f, 0f, 0f);
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
-
-            }
         }
 
         public override void DrawMainTargetContents(SpriteBatch spriteBatch)
         {
-            ref float burnIntensity = ref AssosiatedNPC.localAI[3];
+            ref float glowIntensity = ref AssosiatedNPC.Infernum().ExtraAI[DeathAnimationGlowIntensityIndex];
 
-            if ((ProvidenceAttackType)AssosiatedNPC.ai[0] != ProvidenceAttackType.CrystalForm)
-            {
-                Texture2D fatCrystalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal").Value;
+            //if ((ProvidenceAttackType)AssosiatedNPC.ai[0] != ProvidenceAttackType.CrystalForm)
+            //{
+            //    Texture2D fatCrystalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal").Value;
 
-                Main.spriteBatch.Draw(fatCrystalTexture, AssosiatedNPC.Center + Vector2.UnitY * 55f - Main.screenPosition, null, Color.White, 0f, fatCrystalTexture.Size() * 0.5f, AssosiatedNPC.scale, SpriteEffects.None, 0f);
-            }
+            //    Main.spriteBatch.Draw(fatCrystalTexture, AssosiatedNPC.Center + Vector2.UnitY * 55f - Main.screenPosition, null, Color.White, 0f, fatCrystalTexture.Size() * 0.5f, AssosiatedNPC.scale, SpriteEffects.None, 0f);
+            //}
 
-            bool shouldBurn = burnIntensity > 0f/* && AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] > 0f*/;
+            bool shouldBurn = glowIntensity > 0f/* && AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] > 0f*/;
             if (shouldBurn)
             {
                 Effect burn = InfernumEffectsRegistry.SpriteBurnShader.GetShader().Shader;
@@ -242,7 +233,7 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
                 burn.Parameters["time"]?.SetValue(Main.GlobalTimeWrappedHourly);
                 float burnRatio = Lerp(0.3f, 0.075f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f));
                 burn.Parameters["burnRatio"]?.SetValue(burnRatio);
-                burn.Parameters["innerNoiseFactor"]?.SetValue(Lerp(0.2f, 1f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f)) * burnIntensity);
+                burn.Parameters["innerNoiseFactor"]?.SetValue(Lerp(0.2f, 1f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f)) * glowIntensity);
                 burn.Parameters["distanceMultiplier"]?.SetValue(1f);
                 burn.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(MainTarget.Target.Size()));
                 burn.Parameters["focalPointUV"]?.SetValue((AssosiatedNPC.Center + Vector2.UnitY * 55f - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight));
@@ -259,6 +250,15 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 
             if (shouldBurn)
                 Main.spriteBatch.ExitShaderRegion();
+
+            // Draw the rune strip on top of everything else during the ritual attack.
+            if (AssosiatedNPC.ai[0] == (int)ProvidenceAttackType.RockMagicRitual)
+            {
+                Main.spriteBatch.SetBlendState(BlendState.NonPremultiplied);
+                AssosiatedNPC.Infernum().Optional3DStripDrawer.UseBandTexture(ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/AdultEidolonWyrm/TerminusSymbols"));
+                AssosiatedNPC.Infernum().Optional3DStripDrawer.Draw(AssosiatedNPC.Center - Vector2.UnitX * 80f - Main.screenPosition, AssosiatedNPC.Center + Vector2.UnitX * 80f - Main.screenPosition, 0.4f, 0f, 0f);
+                Main.spriteBatch.ResetBlendState();
+            }
         }
     }
 }

@@ -223,7 +223,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             bool result = false;
             foreach (var subscription in FreeDodgeEvent?.GetInvocationList())
                 result |= ((FreeDodgeDelegate)subscription).Invoke(this, info);
-
+               
             return result;
         }
 

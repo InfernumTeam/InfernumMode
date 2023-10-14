@@ -24,11 +24,11 @@ namespace InfernumMode.Content.Items.Misc
 
         public static int MaxForcefieldHits => 3;
 
-        public static int ForcefieldCreationDelayAfterBreak => 15;
+        public static int ForcefieldCreationDelayAfterBreak => 45;
 
-        public static float ForcefieldDRMultiplier => 0.66f;
+        public static float ForcefieldDRMultiplier => 0.6f;
 
-        public static float DamageMultiplier => 0.33f;
+        public static float DamageMultiplier => 0.4f;
 
         public override void SetStaticDefaults()
         {
@@ -58,7 +58,6 @@ namespace InfernumMode.Content.Items.Misc
 
                     // Break the forcefield once it incurs enough hits.
                     hits.Value++;
-                    //player.SetValue<int>("ForcefieldHits", player.GetValue<int>("ForcefieldHits") + 1);
                     if (hits.Value >= MaxForcefieldHits)
                     {
                         player.Player.AddBuff(ModContent.BuffType<BrimstoneExhaustion>(), CalamityUtils.SecondsToFrames(ForcefieldCreationDelayAfterBreak));

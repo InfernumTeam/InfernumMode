@@ -131,6 +131,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             if (Time >= BrimstoneCrescentStaff.RaiseUpwardsTime)
             {
                 Owner.Infernum().SetValue<bool>("BrimstoneCrescentForcefieldIsActive", !Owner.Infernum().GetValue<bool>("BrimstoneCrescentForcefieldIsActive"));
+
                 if (Owner.HasBuff<BrimstoneExhaustion>())
                     Owner.Infernum().SetValue<bool>("BrimstoneCrescentForcefieldIsActive", false);
 

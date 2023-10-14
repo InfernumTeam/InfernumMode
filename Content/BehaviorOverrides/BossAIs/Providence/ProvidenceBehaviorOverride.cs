@@ -183,7 +183,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         #endregion Loading
 
         #region AI
-
         public const int AuraTime = 300;
 
         public const int CocoonDefense = 600;

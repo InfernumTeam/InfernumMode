@@ -32,7 +32,7 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
             Texture2D starTexture = InfernumTextureRegistry.Gleam.Value;
             Texture2D bloom = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
 
-            // The + shape stars typically have is actually caused by lens flare from what is viewing the star. Therefore, it cannot rotate.
+            // The + shape stars typically have is actually caused by lens flare from what is viewing the star (such as eyes, or a camera lens). Therefore, it cannot rotate.
             spriteBatch.Draw(BackgroundStarTexture, drawPosition, null, bloomColor * opacity, PiOver2, BackgroundStarTexture.Size() * 0.5f, scale2 * 1.2f, SpriteEffects.None, 0f);
             spriteBatch.Draw(bloom, drawPosition, null, mainColor * opacity * 0.6f, Rotation, bloom.Size() * 0.5f, scale2 * 0.6f, SpriteEffects.None, 0f);
             spriteBatch.Draw(starTexture, drawPosition, null, bloomColor * opacity, 0f, starTexture.Size() * 0.5f, scale2, SpriteEffects.None, 0f);

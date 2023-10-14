@@ -7,12 +7,13 @@ using Terraria.ModLoader;
 using Terraria;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using InfernumMode.Common.Graphics.ScreenEffects;
 
 namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
 {
     public class DeusMonolithSceneDrawSystem : BaseSceneDrawSystem
     {
-        public override bool ShouldDrawThisFrame => true;
+        public override bool ShouldDrawThisFrame => AstralDimensionSystem.MonolithIntensity > 0f;
 
         public List<BaseSceneObject> StarObjects
         {

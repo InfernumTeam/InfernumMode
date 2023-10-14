@@ -162,7 +162,7 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
                 }
 
                 // Draw the base texture.
-                Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, AssosiatedNPC.GetAlpha(baseDrawColor), AssosiatedNPC.rotation, drawOrigin, AssosiatedNPC.scale, spriteEffects, 0f);
+                 Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, AssosiatedNPC.GetAlpha(baseDrawColor), AssosiatedNPC.rotation, drawOrigin, AssosiatedNPC.scale, spriteEffects, 0f);
 
                 // Draw the wings.
                 DrawProvidenceWings(AssosiatedNPC, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
@@ -220,6 +220,7 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 
             }
         }
+
         public override void DrawMainTargetContents(SpriteBatch spriteBatch)
         {
             ref float burnIntensity = ref AssosiatedNPC.localAI[3];

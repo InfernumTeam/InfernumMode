@@ -48,8 +48,8 @@ namespace InfernumMode.Common.Graphics
             });
         }
 
-        public static RenderTarget2D CreateScreenSizedTarget(int screenWidth, int screenHeight) =>
-            new(Main.instance.GraphicsDevice, screenWidth, screenHeight, true, SurfaceFormat.Color, DepthFormat.Depth24, 2, RenderTargetUsage.DiscardContents);
+        // For some reason, adding more arguments to this constructor causes really low end pcs to crash. I cannot find out why, so do not use them.
+        public static RenderTarget2D CreateScreenSizedTarget(int screenWidth, int screenHeight) => new(Main.instance.GraphicsDevice, screenWidth, screenHeight);
 
         public override void OnModLoad()
         {
@@ -62,6 +62,7 @@ namespace InfernumMode.Common.Graphics
         {
             DisposeOfTargets();
             Main.OnPreDraw -= HandleTargetUpdateLoop;
+            Main.OnResolutionChanged -= ResetTargetSizes;
         }
 
         private void HandleTargetUpdateLoop(GameTime obj)

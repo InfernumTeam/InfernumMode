@@ -45,7 +45,7 @@ namespace InfernumMode.Common.Graphics.Drawers
             }
 
 
-            Main.OnPreDraw += DrawToDrawerTargets;
+            Main.OnPreDraw += PrepareDrawerTargets;
             On_Main.DrawNPCs += DrawDrawerContents;
         }
 
@@ -55,25 +55,28 @@ namespace InfernumMode.Common.Graphics.Drawers
             if (Main.netMode is NetmodeID.Server)
                 return;
 
-            Main.OnPreDraw -= DrawToDrawerTargets;
+            Main.OnPreDraw -= PrepareDrawerTargets;
             On_Main.DrawNPCs -= DrawDrawerContents;
         }
 
-        private void DrawToDrawerTargets(GameTime obj)
+        private void PrepareDrawerTargets(GameTime obj)
         {
-            // If not ingame, leave.
+            // If not in-game, leave.
             if (Main.gameMenu)
                 return;
 
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
             foreach (BaseNPCDrawerSystem drawer in NPCDrawers)
             {
                 if (!drawer.ShouldDrawThisFrame || !NPC.AnyNPCs(drawer.AssosiatedNPCType) || !InfernumMode.CanUseCustomAIs)
                     continue;
 
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
                 drawer.MainTarget.SwapToRenderTarget();
                 drawer.DrawToMainTarget(Main.spriteBatch);
+                Main.spriteBatch.End();
+                Main.instance.GraphicsDevice.SetRenderTargets(null);
             }
+
 
             foreach (BaseSceneDrawSystem drawer in SceneDrawers)
             {
@@ -81,14 +84,15 @@ namespace InfernumMode.Common.Graphics.Drawers
                     continue;
 
                 drawer.Update();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
                 drawer.MainTarget.SwapToRenderTarget();
                 drawer.DrawToMainTarget(Main.spriteBatch);
                 drawer.DrawObjectsToMainTarget(Main.spriteBatch);
+                Main.spriteBatch.End();
+                Main.instance.GraphicsDevice.SetRenderTargets(null);
             }
-            Main.spriteBatch.End();
-            Main.instance.GraphicsDevice.SetRenderTarget(null);
         }
-
+        
         private void DrawDrawerContents(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             orig(self, behindTiles);
@@ -101,6 +105,14 @@ namespace InfernumMode.Common.Graphics.Drawers
                 if (drawer.ShouldDrawThisFrame && NPC.AnyNPCs(drawer.AssosiatedNPCType) && InfernumMode.CanUseCustomAIs)
                     drawer.DrawMainTargetContents(Main.spriteBatch);
             }
+        }
+
+        public static T GetNPCDrawer<T>() where T : BaseNPCDrawerSystem
+        {
+            if (Main.netMode is NetmodeID.Server || !NPCDrawers.Any())
+                return null;
+
+            return (T)NPCDrawers.First(mc => mc.GetType() == typeof(T));
         }
 
         public static T GetSceneDrawer<T>() where T : BaseSceneDrawSystem

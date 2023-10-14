@@ -233,8 +233,9 @@ namespace InfernumMode.Content.Projectiles.Cutscene
 
         public override bool PreDraw(ref Color lightColor)
         {
-            // Draw the crystal shards.
+            // Draw the crystal.
             DrawCrystal();
+
             // Draw DoG.
             if (Timer > InitialPortalStartTime + 60f)
                 DrawSegments();
@@ -242,10 +243,6 @@ namespace InfernumMode.Content.Projectiles.Cutscene
             // Draw the first portal.
             if (FirstPortalOpacity > 0f)
                 DrawPortal(InitialPortalPosition - Main.screenPosition, FirstPortalOpacity);
-
-            //float secondPortalOpacity = Utils.GetLerpValue(SecondPortalStartTime, SecondPortalStartTime + PortalFadeTime, Timer, true) * Utils.GetLerpValue(TotalLifetime, TotalLifetime - PortalFadeTime, Timer, true);
-            //if (secondPortalOpacity > 0f)
-            //    DrawPortal(SecondPortalPosition - Main.screenPosition, secondPortalOpacity);
 
             return false;
         }
@@ -267,32 +264,6 @@ namespace InfernumMode.Content.Projectiles.Cutscene
 
         public void DrawCrystal(Color? overrideColor = null)
         {
-            //int crystalAmount = 11;
-
-            //Vector2[] shardOffsets = new Vector2[11]
-            //{
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero,
-            //    Vector2.Zero
-            //};
-
-            //Vector2 baseShardPosition = Projectile.Center + Vector2.UnitY * -250f - Main.screenPosition;
-
-            //for (int i = 1; i <= crystalAmount; i++)
-            //{
-            //    Texture2D shardTexture = ModContent.Request<Texture2D>($"InfernumMode/Content/Projectiles/Cutscene/CrystalShards/CrystalBreak{i}").Value;
-
-            //    Main.spriteBatch.Draw(shardTexture, baseShardPosition + shardOffsets[i - 1], null, Color.White, 0f, shardTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            //}
-
             float backstuffOpacity = 1f - CeaselessVoidWhiteningEffect.WhiteningInterpolant;
 
             Texture2D fatCrystalTexture = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal").Value;

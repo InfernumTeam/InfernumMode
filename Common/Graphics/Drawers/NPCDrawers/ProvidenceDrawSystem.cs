@@ -34,8 +34,6 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 
             ref float burnIntensity = ref AssosiatedNPC.localAI[3];
 
-            ref float drawCrystal = ref AssosiatedNPC.Infernum().ExtraAI[DrawCrystalInterpolant];
-
             // Don't draw anything, the cutscene projectile will handle it.
             if (attackType == ProvidenceAttackType.CrystalForm)
                 return;

@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.DevourerofGods;
+﻿using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
@@ -147,7 +147,7 @@ namespace InfernumMode.Content.Skies
                 CosmicBackgroundSystem.Draw();
 
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicWrap, DepthStencilState.None, Main.Rasterizer, null, Utilities.GetCustomSkyBackgroundMatrix());
             }
         }
 

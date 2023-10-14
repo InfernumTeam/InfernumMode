@@ -207,8 +207,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public const int StartedWithMusicDisabledIndex = 12;
 
-        public const int DrawCrystalInterpolant = 13;
-
         public const float DefaultLavaHeight = 1400f;
 
         public const float HighestLavaHeight = 2284f;
@@ -608,11 +606,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
             ref float originalLavaHeight = ref npc.Infernum().ExtraAI[14];
 
-            int startFadingTime = 370;
-            int attackLength = 435;
-
-            Vector2 crystalCenter = npc.Center + Vector2.UnitY * 55f;
-
             // Mark death effects on the first frame of the animation.
             if (deathEffectTimer == 1f)
             {
@@ -660,47 +653,64 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.dontTakeDamage = true;
             npc.velocity = Vector2.Zero;
 
-            int pulseRingRate = (int)Lerp(20f, 90f, Utils.GetLerpValue(0f, attackLength, deathEffectTimer, true));
-            int burstParticleRate = (int)Lerp(18f, 90f, Utils.GetLerpValue(0f, attackLength, deathEffectTimer, true));
-
-            int swirlyFireShootRate = (int)Lerp(12f, 5f, Utils.GetLerpValue(0f, 250f, deathEffectTimer, true));
-
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                // Spawn the pulse rings
-                if (deathEffectTimer % pulseRingRate == pulseRingRate - 1 || deathEffectTimer == 92f)
+                int shootRate = (int)Lerp(12f, 5f, Utils.GetLerpValue(0f, 250f, deathEffectTimer, true));
+                if (deathEffectTimer % shootRate == shootRate - 1 || deathEffectTimer == 92f)
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        ReleaseSparkles(crystalCenter, 6, 18f);
-                        SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
-                        SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+                        int shootType = ModContent.ProjectileType<SwirlingFire>();
 
-                        Utilities.NewProjectileBetter(crystalCenter, Vector2.Zero, ModContent.ProjectileType<ProviBurnPulseRing>(), 0, 0f, -1, 300f);
+                        Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
+                        if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
+                            shootVelocity *= 1.7f;
+
+                        if (Main.rand.NextBool(150) && deathEffectTimer >= 110f || deathEffectTimer == 92f)
+                        {
+
+                            if (deathEffectTimer >= 320f)
+                            {
+                                shootType = ModContent.ProjectileType<YharonBoom>();
+                                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
+                            }
+                            else
+                            {
+                                shootType = ModContent.ProjectileType<ProvBoomDeath>();
+                                shootVelocity = Vector2.Zero;
+                                ReleaseSparkles(npc.Center, 6, 18f);
+                                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+                            }
+                        }
+
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
                     }
                 }
-
-                // Spawn the swirly fire.
-                if (deathEffectTimer % swirlyFireShootRate == swirlyFireShootRate - 1)
-                {
-                    Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
-                    if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), crystalCenter.DirectionTo(target.Center)) < 0.5f)
-                        shootVelocity *= 1.7f;
-
-                    Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<SwirlingFire>(), 0, 0f);
-                }
             }
 
-            if (deathEffectTimer % burstParticleRate == burstParticleRate - 1)
+            if (deathEffectTimer >= 320f && deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)
             {
-                var burst = new BurstParticle(crystalCenter, Vector2.Zero, DoGProviCutsceneProjectile.TimeColor, 90, true, Color.Lerp(DoGProviCutsceneProjectile.TimeColor, Color.White, 0.5f));
-                GeneralParticleHandler.SpawnParticle(burst);
+                int sparkleCount = (int)Lerp(10f, 30f, Main.gfxQuality);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
+
+                ReleaseSparkles(npc.Center, sparkleCount, 18f);
+                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
             }
 
-            if (deathEffectTimer >= startFadingTime)
+            if (deathEffectTimer >= 370f)
                 npc.Opacity *= 0.97f;
 
-            if (deathEffectTimer >= attackLength)
+            if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectTimer == 400f)
+            {
+                ReleaseSparkles(npc.Center, 80, 22f);
+                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
+            }
+
+            if (deathEffectTimer >= 435f)
             {
                 npc.ai[0] = (float)ProvidenceAttackType.CrystalForm;
                 npc.ai[1] = 0f;
@@ -712,8 +722,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_CrystalForm(NPC npc, Player target, ref float deathEffectsTimer)
         {
             int dieTime = DoGProviCutsceneProjectile.TotalLifetime;
-            ref float drawCrystal = ref npc.Infernum().ExtraAI[DrawCrystalInterpolant];
-            drawCrystal = 1f;
 
             int dogHeadType = ModContent.NPCType<DevourerofGodsHead>();
 

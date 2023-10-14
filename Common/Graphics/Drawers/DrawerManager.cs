@@ -44,7 +44,6 @@ namespace InfernumMode.Common.Graphics.Drawers
                 }
             }
 
-
             Main.OnPreDraw += PrepareDrawerTargets;
             On_Main.DrawNPCs += DrawDrawerContents;
         }
@@ -71,28 +70,33 @@ namespace InfernumMode.Common.Graphics.Drawers
                     continue;
 
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
+
                 drawer.MainTarget.SwapToRenderTarget();
                 drawer.DrawToMainTarget(Main.spriteBatch);
+
                 Main.spriteBatch.End();
-                Main.instance.GraphicsDevice.SetRenderTargets(null);
             }
 
+            Main.instance.GraphicsDevice.SetRenderTargets(null);
 
             foreach (BaseSceneDrawSystem drawer in SceneDrawers)
             {
                 if (!drawer.ShouldDrawThisFrame)
                     continue;
 
-                drawer.Update();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer);
+
+                drawer.Update();
                 drawer.MainTarget.SwapToRenderTarget();
                 drawer.DrawToMainTarget(Main.spriteBatch);
                 drawer.DrawObjectsToMainTarget(Main.spriteBatch);
+
                 Main.spriteBatch.End();
-                Main.instance.GraphicsDevice.SetRenderTargets(null);
             }
+
+            Main.instance.GraphicsDevice.SetRenderTargets(null);
         }
-        
+
         private void DrawDrawerContents(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             orig(self, behindTiles);

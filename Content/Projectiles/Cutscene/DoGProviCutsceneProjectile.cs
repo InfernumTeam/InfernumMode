@@ -64,7 +64,7 @@ namespace InfernumMode.Content.Projectiles.Cutscene
 
         public Vector2 SecondPortalPosition => Projectile.Center - Vector2.UnitX * 650f;
 
-        public float FirstPortalOpacity => Utils.GetLerpValue(InitialPortalStartTime, InitialPortalStartTime + PortalFadeTime, Timer, true) * Utils.GetLerpValue(InitialPortalEndTime, InitialPortalEndTime - PortalFadeTime, Timer, true);
+        public float FirstPortalOpacity => Utils.GetLerpValue(InitialPortalStartTime, InitialPortalStartTime + PortalFadeTime, Timer, true) * Utils.GetLerpValue(InitialPortalEndTime, InitialPortalEndTime - PortalFadeTime * 2f, Timer, true);
 
         private static Projectile myself;
 

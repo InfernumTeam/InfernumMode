@@ -29,6 +29,7 @@ namespace InfernumMode.Content.Items.Accessories
             InfernumPlayer.OnEnterWorldEvent += (InfernumPlayer player) =>
             {
                 player.SetValue<float>("SealocketForcefieldDissipationInterpolant", 1f);
+                player.SetValue<int>("SealocketRemainingHits", 3);
             };
 
             InfernumPlayer.ResetEffectsEvent += (InfernumPlayer player) =>
@@ -88,8 +89,7 @@ namespace InfernumMode.Content.Items.Accessories
 
                 Referenced<int> remainingHits = player.GetRefValue<int>("SealocketRemainingHits");
 
-                if (player.GetValue<bool>("SealocketMechanicalEffectsApply") && !player.Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out _)
-                    && player.GetValue<bool>("SealocketShouldReduceDamage"))
+                if (player.GetValue<bool>("SealocketMechanicalEffectsApply") && !player.Player.Calamity().cooldowns.TryGetValue(SealocketForcefieldRecharge.ID, out _) && player.GetValue<bool>("SealocketShouldReduceDamage"))
                 {
                     // Apply DR and disable typical hit sound effects.
                     modifiers.FinalDamage *= (1f - ForcefieldDRMultiplier);

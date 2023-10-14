@@ -441,7 +441,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Filters.Scene.Activate("InfernumMode:ScreenDistortion", Main.LocalPlayer.Center);
                 InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().UseImage("Images/Extra_193");
-                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(4f);
+
+                // Slowly vanish during the death animation.
+                float strength = 4f;
+                if (deathEffectTimer > 0f)
+                    strength *= Utils.GetLerpValue(435f, 0f, deathEffectTimer, true);
+                if (inDeathCutscene)
+                    strength = 0f;
+
+                InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["distortionAmount"].SetValue(strength);
                 InfernumEffectsRegistry.ScreenDistortionScreenShader.GetShader().Shader.Parameters["wiggleSpeed"].SetValue(2f);
             }
 
@@ -740,7 +748,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
             }
 
-            if (deathEffectsTimer < DoGProviCutsceneProjectile.StartTime)
+            if (deathEffectsTimer < DoGProviCutsceneProjectile.StartTime + DoGProviCutsceneProjectile.SlowddownTime + (int)(DoGProviCutsceneProjectile.ChompTime * 0.5f))
             {
                 // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
                 if (deathEffectsTimer % 90f == 67f)

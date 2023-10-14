@@ -187,16 +187,16 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
                 }, 0.5f);
             }
 
-            if (burnIntensity > 0)
-            {
-                for (int i = 0; i < 24; i++)
-                {
-                    Vector2 drawOffset = (TwoPi * i / 24f).ToRotationVector2() * 25f * burnIntensity;
-                    Color backimageColor = WayfinderSymbol.Colors[0];
-                    backimageColor.A = 0;
-                    drawProvidenceInstance(drawPosition + drawOffset, 0, backimageColor * (1f - burnIntensity));
-                }
-            }
+            //if (burnIntensity > 0)
+            //{
+            //    for (int i = 0; i < 12; i++)
+            //    {
+            //        Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * 15f * burnIntensity;
+            //        Color backimageColor = WayfinderSymbol.Colors[0];
+            //        backimageColor.A = 0;
+            //        //drawProvidenceInstance(drawPosition + drawOffset, 0, backimageColor * (1f - burnIntensity));
+            //    }
+            //}
 
             drawProvidenceInstance(drawPosition, 0, baseColor);
 
@@ -240,12 +240,12 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
                 burn.Parameters["brightnessFactor"]?.SetValue(1.9f);
                 burn.Parameters["thickness"]?.SetValue(0.006f);
                 burn.Parameters["time"]?.SetValue(Main.GlobalTimeWrappedHourly);
-                float burnRatio = Lerp(0.35f, 0f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f));
+                float burnRatio = Lerp(0.3f, 0.075f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f));
                 burn.Parameters["burnRatio"]?.SetValue(burnRatio);
-                burn.Parameters["innerNoiseFactor"]?.SetValue(Lerp(0.7f, 0.2f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f)) * burnIntensity);
+                burn.Parameters["innerNoiseFactor"]?.SetValue(Lerp(0.2f, 1f, Pow(AssosiatedNPC.Infernum().ExtraAI[DeathEffectTimerIndex] / 400f, 3f)) * burnIntensity);
                 burn.Parameters["distanceMultiplier"]?.SetValue(1f);
                 burn.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(MainTarget.Target.Size()));
-                burn.Parameters["focalPointUV"]?.SetValue((AssosiatedNPC.Center - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight));
+                burn.Parameters["focalPointUV"]?.SetValue((AssosiatedNPC.Center + Vector2.UnitY * 55f - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight));
                 burn.Parameters["burnColor"]?.SetValue(DoGProviCutsceneProjectile.TimeColor.ToVector3());
 
                 InfernumTextureRegistry.HarshNoise.Value.SetTexture1();

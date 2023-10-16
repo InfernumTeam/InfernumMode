@@ -111,27 +111,27 @@ namespace InfernumMode.Content.Projectiles.Pets
                 Projectile.Center = Owner.Center + Owner.SafeDirectionTo(Projectile.Center) * 1600f;
 
             // Fade out based on distance.
-            //Projectile.Opacity = Utils.GetLerpValue(720f, 300f, Projectile.Distance(Owner.Center), true);
+            Projectile.Opacity = Utils.GetLerpValue(720f, 300f, Projectile.Distance(Owner.Center), true);
 
-            //// Temporarily disappear, make the player fall asleep, and provide adrenaline if the sheep god touches the owner.
-            //if (Projectile.Hitbox.Intersects(Owner.Hitbox) && !HasSpecialName)
-            //{
-            //    SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, Owner.Center);
-            //    for (int i = 0; i < 32; i++)
-            //    {
-            //        Vector2 fireSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(54f, 54f);
-            //        Color fireColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.72f));
-            //        HeavySmokeParticle fire = new(fireSpawnPosition, Main.rand.NextVector2Circular(4f, 4f), fireColor, 40, 0.8f, 1f, Main.rand.NextFloat(0.0025f), true);
-            //        GeneralParticleHandler.SpawnParticle(fire);
-            //    }
+            // Temporarily disappear, make the player fall asleep, and provide adrenaline if the sheep god touches the owner.
+            if (Projectile.Hitbox.Intersects(Owner.Hitbox) && !HasSpecialName)
+            {
+                SoundEngine.PlaySound(InfernumSoundRegistry.VassalTeleportSound, Owner.Center);
+                for (int i = 0; i < 32; i++)
+                {
+                    Vector2 fireSpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(54f, 54f);
+                    Color fireColor = Color.Lerp(Color.Red, Color.Yellow, Main.rand.NextFloat(0.72f));
+                    HeavySmokeParticle fire = new(fireSpawnPosition, Main.rand.NextVector2Circular(4f, 4f), fireColor, 40, 0.8f, 1f, Main.rand.NextFloat(0.0025f), true);
+                    GeneralParticleHandler.SpawnParticle(fire);
+                }
 
-            //    // Give the player the (de)buffs.
-            //    Owner.Calamity().adrenaline = Clamp(Owner.Calamity().adrenaline + 20f, 0f, 100f);
-            //    Owner.AddBuff(ModContent.BuffType<Sleepy>(), 300);
+                // Give the player the (de)buffs.
+                Owner.Calamity().adrenaline = Clamp(Owner.Calamity().adrenaline + 20f, 0f, 100f);
+                Owner.AddBuff(ModContent.BuffType<Sleepy>(), 300);
 
-            //    Projectile.Center = Owner.Center - Vector2.UnitY * 950f + Main.rand.NextVector2Circular(80f, 80f);
-            //    Projectile.netUpdate = true;
-            //}
+                Projectile.Center = Owner.Center - Vector2.UnitY * 950f + Main.rand.NextVector2Circular(80f, 80f);
+                Projectile.netUpdate = true;
+            }
             PreviousCenter = Projectile.Center;
             Time++;
         }
@@ -175,27 +175,19 @@ namespace InfernumMode.Content.Projectiles.Pets
             Main.instance.LoadProjectile(Type);
             Texture2D sheepTexture = TextureAssets.Projectile[Type].Value;
 
-            Vector2 offset = Vector2.Zero;
-            if (PreviousCenter != Projectile.Center)
-                offset = PreviousCenter - Projectile.Center;
+            SpriteEffects direction = Projectile.spriteDirection > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            Main.spriteBatch.Draw(sheepTexture, Vector2.One * 30f, null, Projectile.GetAlpha(Lighting.GetColor(Projectile.Center.ToTileCoordinates())), Projectile.rotation, Vector2.Zero, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(sheepTexture, Vector2.One * 30f, null, Projectile.GetAlpha(Lighting.GetColor(Projectile.Center.ToTileCoordinates())), Projectile.rotation, Vector2.Zero, Projectile.scale, direction, 0f);
 
             PreviousMainTarget.SwapToRenderTarget();
 
             Effect afterimageShader = InfernumEffectsRegistry.AfterimageShader.GetShader().Shader;
             afterimageShader.Parameters["screenSize"]?.SetValue(new Vector2(Main.screenWidth, Main.screenHeight));
             afterimageShader.Parameters["time"]?.SetValue(Main.GlobalTimeWrappedHourly);
-            afterimageShader.Parameters["warpSpeed"]?.SetValue(0.001f);
+            afterimageShader.Parameters["warpSpeed"]?.SetValue(0.0013f);
             afterimageShader.Parameters["fadeAmount"]?.SetValue(0.82f);
 
-            afterimageShader.Parameters["sheepPosition"]?.SetValue(Projectile.Center);
-            afterimageShader.Parameters["screenPosition"]?.SetValue(Main.screenPosition);
-            afterimageShader.Parameters["sheepSize"]?.SetValue(sheepTexture.Size());
-
-
-
-            Utilities.SetTexture1(InfernumTextureRegistry.BlurryPerlinNoise.Value);
+            Utilities.SetTexture1(InfernumTextureRegistry.HoneycombNoise.Value);
             Utilities.SetTexture2(sheepTexture);
 
             afterimageShader.CurrentTechnique.Passes[0].Apply();

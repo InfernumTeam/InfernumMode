@@ -210,12 +210,14 @@ namespace InfernumMode.Core.ILEditingStuff
                     panValue = Clamp(panValue, -1f, 1f);
                     self.Sound.Pan = panValue;
 
+                    // Modified code:
+                    // ---->
                     float distance;
                     if (SoundStylesToEdit.Contains(self.Style.SoundPath))
                         distance = Vector2.Distance(self.Position.Value, screenMiddle) * 2 + 800;
                     else
                         distance = Vector2.Distance(self.Position.Value, screenMiddle);
-
+                    // <----
                     volumeModifier = 1f - distance / (Main.screenWidth * 1.5f);
                 }
 

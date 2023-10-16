@@ -617,6 +617,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float lavaHeight = ref npc.Infernum().ExtraAI[LavaHeightIndex];
             ref float originalLavaHeight = ref npc.Infernum().ExtraAI[14];
 
+            float attackLength = 435f;
+
             // Mark death effects on the first frame of the animation.
             if (deathEffectTimer == 1f)
             {
@@ -639,7 +641,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             npc.Opacity = 1f;
-            npc.rotation = 0f;//npc.rotation.AngleTowards(0f, 0.02f);
+            npc.rotation = 0f;
+
+            ZoomSystem.SetZoomEffect(Lerp(0.15f, 0f, Utils.GetLerpValue(0f, attackLength, deathEffectTimer, true)));
+
             if (deathEffectTimer == 1f && !Main.dedServ)
             {
                 SoundEngine.PlaySound(ProvidenceBoss.DeathAnimationSound with
@@ -669,6 +674,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 int shootRate = (int)Lerp(12f, 5f, Utils.GetLerpValue(0f, 250f, deathEffectTimer, true));
                 if (deathEffectTimer % shootRate == shootRate - 1 || deathEffectTimer == 92f)
                 {
+                    target.Infernum_Camera().CurrentScreenShakePower = 2f;
+
                     for (int i = 0; i < 3; i++)
                     {
                         int shootType = ModContent.ProjectileType<SwirlingFire>();
@@ -693,6 +700,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                                 SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
                                 SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                             }
+                            target.Infernum_Camera().CurrentScreenShakePower = 8f;
+
                         }
 
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
@@ -700,20 +709,33 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
-            if (deathEffectTimer >= 320f && deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)
+            if (deathEffectTimer >= 320f && deathEffectTimer <= 410f)
             {
-                int sparkleCount = (int)Lerp(10f, 30f, Main.gfxQuality);
+                if (deathEffectTimer >= 340f && deathEffectTimer % 10f == 1f)
+                {
+                    GeneralParticleHandler.SpawnParticle(new BurstParticle(npc.Center, Vector2.Zero, DoGProviCutsceneProjectile.TimeColor, 36, true));
+                    ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 30);
+                    ScreenEffectSystem.SetFlashEffect(npc.Center, 1.3f, 30);
+                    target.Infernum_Camera().CurrentScreenShakePower = 10f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
+                    ReleaseSparkles(npc.Center, 6, 150);
+                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                    SoundEngine.PlaySound(HolyBlast.ImpactSound with { Pitch = 0.2f}, target.Center);
+                }
 
-                ReleaseSparkles(npc.Center, sparkleCount, 18f);
-                SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
-                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+                if (deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)
+                {
+                    int sparkleCount = (int)Lerp(10f, 30f, Main.gfxQuality);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
+
+                    ReleaseSparkles(npc.Center, sparkleCount, 50f);
+                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                    SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
+                }
+
             }
-
-            if (deathEffectTimer >= 370f)
-                npc.Opacity *= 0.97f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectTimer == 400f)
             {
@@ -721,12 +743,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
             }
 
-            if (deathEffectTimer >= 435f)
+
+            if (deathEffectTimer >= attackLength)
             {
-                npc.ai[0] = (float)ProvidenceAttackType.CrystalForm;
-                npc.ai[1] = 0f;
-                npc.netUpdate = true;
-                deathEffectTimer = 0f;
+                if (WorldSaveSystem.HasSeenDoGCutscene || BossRushEvent.BossRushActive)
+                    DoBehavior_DropLootAndDie(npc, target);
+                else
+                {
+                    npc.ai[0] = (float)ProvidenceAttackType.CrystalForm;
+                    npc.ai[1] = 0f;
+                    npc.netUpdate = true;
+                    deathEffectTimer = 0f;
+                }
             }
         }
 
@@ -745,7 +773,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Cause the screen to focus on the crystal.
             if (target.WithinRange(npc.Center, 5000f) && !NPC.AnyNPCs(dogHeadType))
             {
-                target.Infernum_Camera().ScreenFocusPosition = npc.Center;
+                target.Infernum_Camera().ScreenFocusPosition = npc.Center + Vector2.UnitY * 55f;
                 target.Infernum_Camera().ScreenFocusHoldInPlaceTime = 45;
 
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
@@ -767,16 +795,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 55f, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
+
+                WorldSaveSystem.HasSeenDoGCutscene = true;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectsTimer >= dieTime)
+            if (deathEffectsTimer >= dieTime)
+                DoBehavior_DropLootAndDie(npc, target);
+        }
+
+        private static void DoBehavior_DropLootAndDie(NPC npc, Player target)
+        {
+            for (int i = 0; i < 2; i++)
+                GuardianComboAttackManager.CreateFireExplosion(npc.Center, true);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
                 Utilities.CreateShockwave(npc.Center, 3, 13, 150, false);
-                for (int i = 0; i < 2; i++)
-                    GuardianComboAttackManager.CreateFireExplosion(npc.Center, true);
 
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 80; i++)
                 {
                     Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
                     if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
@@ -784,6 +821,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<SwirlingFire>(), 0, 0f, 255);
                 }
+                npc.Center += Vector2.UnitY * 55f;
 
                 npc.active = false;
                 if (!target.dead)

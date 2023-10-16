@@ -84,6 +84,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter HiveMindScreenShader => Filters.Scene["InfernumMode:HiveMind"];
         public static Filter LightningOverlayShader => Filters.Scene["InfernumMode:LightningOverlay"];
         public static Filter MadnessScreenShader => Filters.Scene["InfernumMode:Madness"];
+        public static Filter MovieBarShader => Filters.Scene["InfernumMode:MovieBarShader"];
         public static Filter NightProviScreenShader => Filters.Scene["InfernumMode:NightProvidence"];
         public static Filter OldDukeScreenShader => Filters.Scene["InfernumMode:OldDuke"];
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
@@ -270,7 +271,11 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
-            // Devourer of Gods.
+            // Movie bar shader.
+            Ref<Effect> movieBarShader = new(assets.Request<Effect>("Assets/Effects/Overlays/MovieBarShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:MovieBarShader"] = new Filter(new(movieBarShader, "BarPass"), EffectPriority.VeryHigh);
+
+            // Astral Dimension.
             Filters.Scene["InfernumMode:AstralDimension"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:AstralDimension"] = new AstralDimensionSky();
 

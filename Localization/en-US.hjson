@@ -276,6 +276,42 @@ Mods: {
 			}
 		}
 
+        Configs: {
+			InfernumConfig: {
+				DisplayName: Config
+
+				BossIntroductionAnimationsAreAllowed: {
+					Label: Boss Introduction Animations
+					Tooltip: Enables boss introduction animations. They only activate when Infernum Mode is active.
+				}
+
+				DisplayTipsInChat: {
+					Label: Blasted Tophat Tips in Chat
+					Tooltip: Determines whether the pet from the Blasted Tophat should display its tips in chat or not.
+				}
+
+				ReducedGraphicsConfig: {
+					Label: Reduced Graphical Settings
+					Tooltip: Enables reduced graphics mode. Use this if lag is an issue.
+				}
+
+				SaturationBloomIntensity: {
+					Label: Saturation Bloom Intensity
+					Tooltip: How intense color saturation bloom effects should be. Such effects are disabled when this is zero. Be warned that high values may be overwhelming.
+				}
+
+				FlashbangOverlays: {
+					Label: Screen Overlays
+					Tooltip: Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.
+				}
+
+				CreditsRecordings: {
+					Label: Boss Footage Credits Recording
+					Tooltip: Enables boss footage recordings for the playback during the credits.
+				}
+			}
+		}
+
 		Cooldowns: {
 			SealocketForcefieldCooldown: Forcefield Cooldown
 			InfiniteFlightCooldown: Infinite Flight
@@ -2460,43 +2496,6 @@ Mods: {
 				TimeSetNoon: Accelerate time until noon"
 				TimeSetDusk: Accelerate time until sunset
 				Butcher: Atomize every single hostile NPC
-				Godmode: Mods.InfernumMode.UI.HyperplaneMatrixUI.Godmode
-			}
-		}
-
-		Configs: {
-			InfernumConfig: {
-				DisplayName: Infernum Config
-
-				BossIntroductionAnimationsAreAllowed: {
-					Label: Boss Introduction Animations Are Allowed
-					Tooltip: ""
-				}
-
-				DisplayTipsInChat: {
-					Label: Display Tips In Chat
-					Tooltip: ""
-				}
-
-				ReducedGraphicsConfig: {
-					Label: Reduced Graphics Config
-					Tooltip: ""
-				}
-
-				SaturationBloomIntensity: {
-					Label: Saturation Bloom Intensity
-					Tooltip: ""
-				}
-
-				FlashbangOverlays: {
-					Label: Flashbang Overlays
-					Tooltip: ""
-				}
-
-				CreditsRecordings: {
-					Label: Credits Recordings
-					Tooltip: ""
-				}
 			}
 		}
 	}

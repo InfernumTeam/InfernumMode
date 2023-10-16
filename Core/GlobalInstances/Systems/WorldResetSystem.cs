@@ -34,6 +34,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             //WorldSaveSystem.ProvidenceDoorXPosition = 0;
             //WorldSaveSystem.SquidDenCenter = Point.Zero;
             WorldSaveSystem.WayfinderGateLocation = Vector2.Zero;
+            WorldSaveSystem.HasSeenDoGCutscene = false;
         }
 
         public override void OnWorldUnload()

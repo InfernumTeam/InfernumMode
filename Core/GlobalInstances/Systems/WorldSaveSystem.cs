@@ -189,6 +189,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
+        public static bool HasSeenDoGCutscene
+        {
+            get;
+            set;
+        }
+
         public const int LostColosseumPortalAnimationTime = 150;
 
         public override void SaveWorldData(TagCompound tag)
@@ -225,6 +231,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("MetSignusAtProfanedGarden");
             if (MetCalamitasAtCrags)
                 downed.Add("MetCalamitasAtCrags");
+            if (HasSeenDoGCutscene)
+                downed.Add("HasSeenDoGCutscene");
 
             tag["downed"] = downed;
             tag["ProvidenceArenaX"] = ProvidenceArena.X;
@@ -270,6 +278,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             PerformedLacewingAnimation = downed.Contains("PerformedLacewingAnimation");
             MetSignusAtProfanedGarden = downed.Contains("MetSignusAtProfanedGarden");
             MetCalamitasAtCrags = downed.Contains("MetCalamitasAtCrags");
+            HasSeenDoGCutscene = downed.Contains("HasSeenDoGCutscene");
 
             ProvidenceArena = new(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
             ProvidenceDoorXPosition = tag.GetInt("ProvidenceDoorXPosition");

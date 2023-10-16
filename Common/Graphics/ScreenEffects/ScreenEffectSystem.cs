@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using CalamityMod;
+using InfernumMode.Assets.Effects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -80,12 +82,45 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         }
         #endregion
 
+        #region Movie Bars
+        private static ManagedRenderTarget MovieBarTarget;
+
+        private static bool ScreenBarActive;
+
+        private static int ScreenBarLength;
+
+        private static int ScreenBarTime;
+
+        private static float ScreenBarOffset;
+
+        private static Func<int, float> ScreenBarFadeInterpolant;
+
+        /// <summary>
+        /// Call this to set a screen bar effect. Any existing ones will be replaced.
+        /// </summary>
+        /// <param name="barOffset">How much of the screen the bars should cover. 0-1.
+        /// <param name="lifetime">How long the effect should last</param>
+        /// <param name="fadeInterpolantFunction">How much of the offset should be present for values of timer passed through.</param>
+        public static void SetMovieBarEffect(float barOffset, int lifetime, Func<int, float> fadeInterpolantFunction = null)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            ScreenBarOffset = barOffset;
+            ScreenBarLength = lifetime;
+            ScreenBarFadeInterpolant = fadeInterpolantFunction ?? new Func<int, float>(timer =>
+            Utilities.EaseInOutCubic(Utils.GetLerpValue(0f, 20f, timer, true)) * Utilities.EaseInOutCubic(Utils.GetLerpValue(lifetime, lifetime - 20f, timer, true)));
+            ScreenBarTime = 0;
+            ScreenBarActive = true;
+        }
+        #endregion
+
         public override void Load()
         {
             BlurRenderTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
             FlashRenderTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            MovieBarTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
         }
-
 
         public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;
 
@@ -112,6 +147,18 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 else
                     FlashTime++;
             }
+
+            if (ScreenBarActive)
+            {
+                if (ScreenBarTime >= ScreenBarLength)
+                {
+                    ScreenBarActive = false;
+                    ScreenBarTime = 0;
+                }
+                else
+                    ScreenBarTime++;
+            }
+
         }
 
         internal static RenderTarget2D DrawBlurEffect(RenderTarget2D screenTarget1)
@@ -173,7 +220,25 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 Main.spriteBatch.End();
             }
 
-            return screenTarget1;
+            return DrawMovieBars(screenTarget1);
+        }
+
+        private static RenderTarget2D DrawMovieBars(RenderTarget2D screenTarget1)
+        {
+            if (!ScreenBarActive)
+                return screenTarget1;
+
+            MovieBarTarget.SwapToRenderTarget();
+
+            Effect barShader = InfernumEffectsRegistry.MovieBarShader.GetShader().Shader;
+
+            float fade = ScreenBarFadeInterpolant(ScreenBarTime);
+            barShader.Parameters["barSize"]?.SetValue(ScreenBarOffset * fade);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, barShader);
+            Main.spriteBatch.Draw(screenTarget1, Vector2.Zero, Color.White);
+            Main.spriteBatch.End();
+            return MovieBarTarget;
         }
     }
 }

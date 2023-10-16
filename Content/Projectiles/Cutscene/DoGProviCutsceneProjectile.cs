@@ -48,7 +48,7 @@ namespace InfernumMode.Content.Projectiles.Cutscene
 
         public static int AfterHoldTime => 50;
 
-        public static int WhiteningWait => 65;
+        public static int WhiteningWait => 45;
 
         public static int ZoomInLength => 120;
 
@@ -107,7 +107,13 @@ namespace InfernumMode.Content.Projectiles.Cutscene
             Myself = Projectile;
 
             if (Timer == 0f)
+            {
                 JawRotation = 0.05f;
+
+                int barLength = TotalLifetime;
+                ScreenEffectSystem.SetMovieBarEffect(0.15f, barLength, timer =>
+                    Utils.GetLerpValue(0f, InitialPortalStartTime, timer, true) * Utilities.EaseInOutCubic(Utils.GetLerpValue(TotalLifetime, TotalLifetime - 30, timer, true)));
+            }
 
             if (Timer > RocksDelay && Timer < StartTime + WhiteningWait)
             {
@@ -122,8 +128,8 @@ namespace InfernumMode.Content.Projectiles.Cutscene
                     }
                     while (position.WithinRange(Projectile.Center, 200f));
 
-                    int lifeTime = 70;
-                    Vector2 velocity = position.DirectionTo(Projectile.Center) * (position.Distance(Projectile.Center) / (lifeTime));
+                    int lifeTime = 90;
+                    Vector2 velocity = position.DirectionTo(Projectile.Center) * (position.Distance(Projectile.Center) / lifeTime) * 1.2f;
                     ProfanedRockParticle rock = new(position, velocity, Color.White, Main.rand.NextFloat(1.2f, 1.5f), lifeTime, gravity: false, fadeIn: true);
                     GeneralParticleHandler.SpawnParticle(rock);
 
@@ -136,13 +142,8 @@ namespace InfernumMode.Content.Projectiles.Cutscene
                     }
                 }
             }
-
-            //if (Timer > InitialPortalStartTime)
-            //{
-                // Perform zoom effects.
-                float zoom = Lerp(0f, 0.45f, (Timer / InitialPortalStartTime).Saturate());
-                ZoomSystem.SetZoomEffect(zoom);
-            //}
+            float zoom = Lerp(0f, 0.45f, (Timer / InitialPortalStartTime).Saturate());
+            ZoomSystem.SetZoomEffect(zoom);
 
             if (Timer == StartTime)
             {
@@ -193,8 +194,8 @@ namespace InfernumMode.Content.Projectiles.Cutscene
                     target.Infernum_Camera().CurrentScreenShakePower = 20f;
                 }
 
-                ScreenEffectSystem.SetBlurEffect(Projectile.Center, 1f, 60);
-                ScreenEffectSystem.SetFlashEffect(Projectile.Center, 1f, 60);
+                ScreenEffectSystem.SetBlurEffect(Projectile.Center, 1.5f, 120);
+                ScreenEffectSystem.SetFlashEffect(Projectile.Center, 1.5f, 120);
             }
 
             if (FirstPortalOpacity > 0 && Timer < StartTime)

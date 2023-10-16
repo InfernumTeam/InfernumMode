@@ -50,7 +50,7 @@ namespace InfernumMode.Common.Graphics.Particles
         public override void Update()
         {
             Opacity = Lerp(1f, 0f, CalamityUtils.SineInOutEasing(LifetimeCompletion, 1));
-            DrawScale += Vector2.One * 0.24f;
+            DrawScale += Vector2.One * 0.28f;
         }
 
         public override void CustomDraw(SpriteBatch spriteBatch)

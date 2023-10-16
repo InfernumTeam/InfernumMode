@@ -38,11 +38,11 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 if (player.GetValue<bool>(FieldName))
                 {
-                    modifiers.ModifyHitInfo += (ref NPC.HitInfo info) =>
-                    {
-                        if (info.Crit)
-                            OnHitParticles(target);
-                    };
+                    // Lie and check if it was a crit seperately because its not possible else.
+                    float crit = player.Player.GetWeaponCrit(item);
+                    if (Main.rand.Next(0, 101) < crit)
+                        OnHitParticles(target);
+
                     modifiers.DisableCrit();
                 }
             };
@@ -51,12 +51,6 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 if (player.GetValue<bool>(FieldName))
                 {
-                    modifiers.ModifyHitInfo += (ref NPC.HitInfo info) =>
-                    {
-                        if (info.Crit)
-                            OnHitParticles(target);
-                    };
-
                     // Lie and check if it was a crit seperately because its not possible else.
                     float crit = player.Player.GetWeaponCrit(player.Player.HeldItem);
                     if (Main.rand.Next(0, 101) < crit)
@@ -67,11 +61,8 @@ namespace InfernumMode.Content.Items.Accessories
             };
         }
 
-        private void OnHitParticles(NPC npc)
+        private static void OnHitParticles(NPC npc)
         {
-            //var bloom = new GenericBloom(Main.rand.NextVector2FromRectangle(npc.Hitbox), Vector2.Zero, Color.Lerp(Color.Cyan, Color.LightBlue, Main.rand.NextFloat()), Main.rand.NextFloat(0.5f, 0.7f), 15, false);
-            //GeneralParticleHandler.SpawnParticle(bloom);
-
             for (int i = 0; i < 3; i++)
             {
                 Vector2 position = Main.rand.NextVector2FromRectangle(npc.Hitbox);

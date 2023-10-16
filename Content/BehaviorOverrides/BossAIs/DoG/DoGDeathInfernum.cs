@@ -36,8 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Projectile.tileCollide = false;
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
-            Projectile.extraUpdates = 3;
-            Projectile.timeLeft = 780;
+            Projectile.timeLeft = 600;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }

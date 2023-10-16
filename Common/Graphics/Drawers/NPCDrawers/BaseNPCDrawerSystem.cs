@@ -3,6 +3,7 @@ using Terraria;
 
 namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
+    // This only works for one instance of the NPC. Not the most ideal, but it will suffice for these use cases.
     public abstract class BaseNPCDrawerSystem
     {
         public ManagedRenderTarget MainTarget

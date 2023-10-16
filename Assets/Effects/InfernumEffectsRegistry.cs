@@ -68,6 +68,7 @@ namespace InfernumMode.Assets.Effects
         #endregion
 
         #region Screen Shaders
+        public static Filter AfterimageShader => Filters.Scene["InfernumMode:AfterimageShader"];
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
         public static Filter BaseMetaballEdgeShader => Filters.Scene["InfernumMode:BaseMetaballEdgeShader"];
         public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
@@ -271,6 +272,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // Movie bar shader.
+            Ref<Effect> afterimageShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/AfterimageShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:AfterimageShader"] = new Filter(new(afterimageShader, "AfterimagePass"), EffectPriority.VeryHigh);
+
             // Movie bar shader.
             Ref<Effect> movieBarShader = new(assets.Request<Effect>("Assets/Effects/Overlays/MovieBarShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:MovieBarShader"] = new Filter(new(movieBarShader, "BarPass"), EffectPriority.VeryHigh);

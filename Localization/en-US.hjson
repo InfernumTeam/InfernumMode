@@ -276,7 +276,7 @@ Mods: {
 			}
 		}
 
-        Configs: {
+		Configs: {
 			InfernumConfig: {
 				DisplayName: Config
 

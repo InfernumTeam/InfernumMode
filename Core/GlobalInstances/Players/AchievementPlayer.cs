@@ -1,4 +1,5 @@
-﻿using InfernumMode.Content.Achievements;
+﻿using CalamityMod.Events;
+using InfernumMode.Content.Achievements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +65,11 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             foreach (Achievement achievement in player.GetModPlayer<AchievementPlayer>().AchievementInstances)
             {
-                if (achievement.UpdateCheck == updateCheck)
+                bool bossRushCheck = !BossRushEvent.BossRushActive;
+                if (!bossRushCheck)
+                    bossRushCheck = achievement.ObtainableDuringBossRush;
+
+                if (bossRushCheck && achievement.UpdateCheck == updateCheck)
                     achievement.ExtraUpdate(player, extraInfo);
             }
         }

@@ -12,17 +12,27 @@ namespace InfernumMode.Content.Achievements
         internal int PositionInMainList;
         
         public int TotalCompletion = 1;
+
         public int CurrentCompletion;
+
         public bool DoneCompletionEffects;
+
         public AchievementUpdateCheck UpdateCheck;
+
         public bool IsDevWish;
         #endregion
 
         #region Properties
         public LocalizedText DisplayName => GetLocalizedText(nameof(DisplayName));
+
         public virtual LocalizedText Description => GetLocalizedText(nameof(Description));
+
         public virtual string LocalizationCategory => "Achievements";
+
+        public virtual bool ObtainableDuringBossRush => false;
+
         public float CompletionRatio => CurrentCompletion / (float)TotalCompletion;
+
         public bool IsCompleted => CurrentCompletion >= TotalCompletion;
         #endregion
 

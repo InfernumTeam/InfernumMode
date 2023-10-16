@@ -6,6 +6,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
     public class InfernalChaliceAchievement : Achievement
     {
         #region Overrides
+        public override bool ObtainableDuringBossRush => true;
+
         public override void Initialize()
         {
             TotalCompletion = 1;

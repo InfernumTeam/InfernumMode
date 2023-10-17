@@ -229,11 +229,11 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)
         {
-            bool dontDie = false;
+            bool die = false;
 
             foreach (var subscription in PreKillEvent?.GetInvocationList())
-                dontDie |= ((PreKillDelegate)subscription).Invoke(this, damage, hitDirection, pvp, ref playSound, ref genDust, ref damageSource);
-            return !dontDie;
+                die |= ((PreKillDelegate)subscription).Invoke(this, damage, hitDirection, pvp, ref playSound, ref genDust, ref damageSource);
+            return die;
         }
 
         public override void UpdateLifeRegen()

@@ -7,6 +7,8 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using SubworldLibrary;
 using System;
 using System.Collections.Generic;
@@ -24,52 +26,6 @@ namespace InfernumMode.Content.Subworlds
 {
     public class LostColosseum : Subworld
     {
-        internal static bool VassalWasBeaten;
-
-        internal static bool WasInColosseumLastFrame;
-
-        public static bool HasBereftVassalAppeared
-        {
-            get;
-            set;
-        }
-
-        public static bool HasBereftVassalBeenDefeated
-        {
-            get;
-            set;
-        }
-
-        public static float SunsetInterpolant
-        {
-            get;
-            set;
-        }
-
-        public static Color SunlightColor =>
-            Color.Lerp(Color.White, new(210, 85, 135), SunsetInterpolant * SunsetInterpolant * 0.67f);
-
-        public static int SchematicWidth => 1435;
-
-        public static int SchematicHeight => 203;
-
-        public static int CaveWidth => 280;
-
-        public static Point PortalPosition => new(CaveWidth + 166, 155);
-
-        public static Point CampfirePosition => new(CaveWidth + 464, 160);
-
-        public override int Width => SchematicWidth + CaveWidth - 64;
-
-        public override int Height => SchematicHeight + 32;
-
-        public override bool ShouldSave => true;
-
-        public override List<GenPass> Tasks => new()
-        {
-            new LostColosseumGenPass()
-        };
-
         public class LostColosseumGenPass : GenPass
         {
             public LostColosseumGenPass() : base("Terrain", 1f) { }
@@ -176,6 +132,68 @@ namespace InfernumMode.Content.Subworlds
             }
         }
 
+        internal static bool VassalWasBeaten;
+
+        internal static bool WasInColosseumLastFrame;
+
+        public static bool HasBereftVassalAppeared
+        {
+            get;
+            set;
+        }
+
+        public static bool HasBereftVassalBeenDefeated
+        {
+            get;
+            set;
+        }
+
+        public static float SunsetInterpolant
+        {
+            get;
+            set;
+        }
+
+        public static Color SunlightColor =>
+            Color.Lerp(Color.White, new(210, 85, 135), SunsetInterpolant * SunsetInterpolant * 0.67f);
+
+        public static int SchematicWidth => 1435;
+
+        public static int SchematicHeight => 203;
+
+        public static int CaveWidth => 280;
+
+        public static Point PortalPosition => new(CaveWidth + 166, 155);
+
+        public static Point CampfirePosition => new(CaveWidth + 464, 160);
+
+        public override int Width => SchematicWidth + CaveWidth - 64;
+
+        public override int Height => SchematicHeight + 32;
+
+        public override bool ShouldSave => true;
+
+        public override List<GenPass> Tasks => new()
+        {
+            new LostColosseumGenPass()
+        };
+
+        public static Texture2D LoadingBackgroundTexture
+        {
+            get;
+            private set;
+        }
+
+        public override void Load()
+        {
+            LoadingBackgroundTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Subworlds/ColosseumLoadingBackground", AssetRequestMode.ImmediateLoad).Value;
+        }
+
+        public override void Unload()
+        {
+            LoadingBackgroundTexture = null;
+        }
+
         public override bool GetLight(Tile tile, int x, int y, ref FastRandom rand, ref Vector3 color)
         {
             Vector3 lightMin = Vector3.Zero;
@@ -241,6 +259,27 @@ namespace InfernumMode.Content.Subworlds
 
             if (HasBereftVassalBeenDefeated)
                 SunsetInterpolant = 1f;
+        }
+
+        public override void DrawMenu(GameTime gameTime)
+        {
+            Vector2 drawOffset = Vector2.Zero;
+            float xScale = (float)Main.screenWidth / LoadingBackgroundTexture.Width;
+            float yScale = (float)Main.screenHeight / LoadingBackgroundTexture.Height;
+            float scale = xScale;
+
+            if (xScale != yScale)
+            {
+                if (yScale > xScale)
+                {
+                    scale = yScale;
+                    drawOffset.X -= (LoadingBackgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
+                }
+                else
+                    drawOffset.Y -= (LoadingBackgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
+            }
+
+            Main.spriteBatch.Draw(LoadingBackgroundTexture, drawOffset, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
     }
 }

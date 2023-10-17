@@ -746,7 +746,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             if (deathEffectTimer >= attackLength)
             {
-                if (!WorldSaveSystem.HasSeenDoGCutscene || BossRushEvent.BossRushActive)
+                if (WorldSaveSystem.HasSeenDoGCutscene || BossRushEvent.BossRushActive)
                     DoBehavior_DropLootAndDie(npc, target);
                 else
                 {

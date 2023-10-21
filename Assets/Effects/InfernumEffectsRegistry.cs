@@ -91,6 +91,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter PerforatorsScreenShader => Filters.Scene["InfernumMode:Perforators"];
         public static Filter PulseRingShader => Filters.Scene["InfernumMode:PulseRing"];
         public static Filter RaindropShader => Filters.Scene["InfernumMode:Raindrops"];
+        public static Filter SandstormShader => Filters.Scene["InfernumMode:SandstormShader"];
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
         public static Filter ScreenBorderShader => Filters.Scene["InfernumMode:ScreenBorder"];
@@ -272,7 +273,11 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
-            // Movie bar shader.
+            // Sandstorm shader
+            Ref<Effect> sandstormShader = new(assets.Request<Effect>("Assets/Effects/Overlays/SandstormShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:SandstormShader"] = new Filter(new(sandstormShader, "SandstormPass"), EffectPriority.VeryHigh);
+
+            // Afterimage shader
             Ref<Effect> afterimageShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/AfterimageShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:AfterimageShader"] = new Filter(new(afterimageShader, "AfterimagePass"), EffectPriority.VeryHigh);
 

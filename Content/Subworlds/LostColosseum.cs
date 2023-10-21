@@ -2,6 +2,8 @@
 using CalamityMod.DataStructures;
 using CalamityMod.Schematics;
 using CalamityMod.World;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -9,10 +11,12 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using ReLogic.Graphics;
 using SubworldLibrary;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.IO;
@@ -184,14 +188,34 @@ namespace InfernumMode.Content.Subworlds
             private set;
         }
 
+        public static Texture2D LoadingAnimationTexture
+        {
+            get;
+            private set;
+        }
+
+        public static int FrameCounter
+        {
+            get;
+            set;
+        }
+
+        public static int Frame
+        {
+            get;
+            set;
+        }
+
         public override void Load()
         {
             LoadingBackgroundTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Subworlds/ColosseumLoadingBackground", AssetRequestMode.ImmediateLoad).Value;
+            LoadingAnimationTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Subworlds/LoadingAnimation", AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void Unload()
         {
             LoadingBackgroundTexture = null;
+            LoadingAnimationTexture = null;
         }
 
         public override bool GetLight(Tile tile, int x, int y, ref FastRandom rand, ref Vector3 color)
@@ -268,18 +292,63 @@ namespace InfernumMode.Content.Subworlds
             float yScale = (float)Main.screenHeight / LoadingBackgroundTexture.Height;
             float scale = xScale;
 
-            if (xScale != yScale)
-            {
-                if (yScale > xScale)
-                {
-                    scale = yScale;
-                    drawOffset.X -= (LoadingBackgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
-                }
-                else
-                    drawOffset.Y -= (LoadingBackgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
-            }
+            //if (xScale != yScale)
+            //{
+            //    if (yScale > xScale)
+            //    {
+            //        scale = yScale;
+            //        drawOffset.X -= (LoadingBackgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
+            //    }
+            //    else
+            //        drawOffset.Y -= (LoadingBackgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
+            //}
+
+            Effect sandstorm = InfernumEffectsRegistry.SandstormShader.GetShader().Shader;
+            sandstorm.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
+            sandstorm.Parameters["intensity"].SetValue(0.4f);
+            sandstorm.Parameters["distortAmount"].SetValue(0.0075f);
+            sandstorm.Parameters["distortZoom"].SetValue(5.2f);
+            sandstorm.Parameters["distortSpeed"].SetValue(0.2f);
+            sandstorm.Parameters["sandZoom"].SetValue(1.5f);
+            sandstorm.Parameters["lerpIntensity"].SetValue(0.3f);
+
+            sandstorm.Parameters["resolution"].SetValue(Utilities.CreatePixelationResolution(new Vector2(Main.screenWidth, Main.screenHeight)));
+            sandstorm.Parameters["mainColor"].SetValue(new Color(0.74f, 0.56f, 0.4f).ToVector3());
+
+            Utilities.SetTexture1(InfernumTextureRegistry.BlurryPerlinNoise.Value);
+            Utilities.SetTexture2(InfernumTextureRegistry.HarshNoise.Value);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, Main.Rasterizer, sandstorm, Main.UIScaleMatrix);
 
             Main.spriteBatch.Draw(LoadingBackgroundTexture, drawOffset, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+
+            Vector2 textPosition = new Vector2(Main.screenWidth, Main.screenHeight) / 2f - FontAssets.DeathText.Value.MeasureString(Main.statusText) / 2f;
+
+            Main.spriteBatch.DrawString(FontAssets.DeathText.Value, Main.statusText, textPosition, Color.White);
+
+            float sineOffset = (1f + Sin(Pi * Main.GlobalTimeWrappedHourly)) * 0.5f;
+            Vector2 animationDrawPosition = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2) + Vector2.UnitY * Lerp(-100f, -125f, sineOffset) + Vector2.UnitX * -20f;
+
+            float rotation = Lerp(-0.1f, 0.1f, sineOffset);
+
+            int frameCount = 8;
+            int frameHeight = LoadingAnimationTexture.Height / frameCount;
+
+            FrameCounter++;
+            if (FrameCounter > 6)
+            {
+                Frame++;
+                if (Frame > 7)
+                    Frame = 0;
+                FrameCounter = 0;
+            }
+
+            Rectangle frame = new(0, frameHeight * Frame, LoadingAnimationTexture.Width, frameHeight);
+            Main.spriteBatch.Draw(LoadingAnimationTexture, animationDrawPosition, frame, Color.White, 0f, frame.Size() * 0.5f, 1f, SpriteEffects.FlipHorizontally, 0f);
         }
     }
 }

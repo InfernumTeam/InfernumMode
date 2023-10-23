@@ -70,7 +70,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
 
             // This mechanic is ridiculous.
-            c.EmitDelegate(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f);
+            c.EmitDelegate(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? 0.3f/*BalancingChangesManager.AdrenalineChargeTimeFactor*/ : 1f);
             c.Emit(OpCodes.Div);
         }
 

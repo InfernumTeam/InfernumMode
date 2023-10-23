@@ -54,6 +54,12 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public class NerfAdrenalineHook : IHookEdit
     {
+        internal static bool ShouldGetRipperDamageModifiers
+        {
+            get;
+            set;
+        }
+
         internal static void NerfAdrenalineRates(ILContext context)
         {
             ILCursor c = new(context);
@@ -68,8 +74,79 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Div);
         }
 
-        public void Load() => UpdateRippers += NerfAdrenalineRates;
-        public void Unload() => UpdateRippers -= NerfAdrenalineRates;
+        internal static void ApplyRippersToDamageDetour(Orig_CalApplyRippersToDamageMethod orig, CalamityPlayer mp, bool trueMelee, ref float damageMult)
+        {
+            if (!InfernumMode.CanUseCustomAIs || ShouldGetRipperDamageModifiers)
+            {
+                orig(mp, trueMelee, ref damageMult);
+                return;
+            }
+        }
+
+        internal static void ModifyHitNPCWithItemDetour(Orig_CalModifyHitNPCWithItemMethod orig, CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+            {
+                orig(self, item, target, ref modifiers);
+                return;
+            }
+
+            ShouldGetRipperDamageModifiers = false;
+            orig(self, item, target, ref modifiers);
+            ShouldGetRipperDamageModifiers = true;
+            float damageMult = 1f;
+            CalamityUtils.ApplyRippersToDamage(self, item.IsTrueMelee(), ref damageMult);
+            modifiers.SourceDamage += damageMult;
+        }
+
+        internal static void ModifyHitNPCWithProjDetour(Orig_CalModifyHitNPCWithProjMethod orig, CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+            {
+                orig(self, proj, target, ref modifiers);
+                return;
+            }
+
+            ShouldGetRipperDamageModifiers = false;
+            orig(self, proj, target, ref modifiers);
+            ShouldGetRipperDamageModifiers = true;
+            float damageMult = 1f;
+            CalamityUtils.ApplyRippersToDamage(self, proj.IsTrueMelee(), ref damageMult);
+            modifiers.SourceDamage += damageMult;
+        }
+
+        internal static float NerfAdrenDamageMethod(Orig_CalGetAdrenalineDamageMethod orig, CalamityPlayer mp)
+        {
+            if (!InfernumMode.CanUseCustomAIs)
+            {
+                return orig(mp);
+            }
+
+            float adrenalineBoost = BalancingChangesManager.AdrenalineDamageBoost;
+            if (mp.adrenalineBoostOne)
+            {
+                adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
+            }
+            if (mp.adrenalineBoostTwo)
+            {
+                adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
+            }
+            if (mp.adrenalineBoostThree)
+            {
+                adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
+            }
+            return adrenalineBoost;
+        }
+
+        public void Load()
+        {
+            UpdateRippers += NerfAdrenalineRates;
+        }
+
+        public void Unload()
+        {
+            UpdateRippers -= NerfAdrenalineRates;
+        }
     }
 
     public class RenameGreatSandSharkHook : IHookEdit

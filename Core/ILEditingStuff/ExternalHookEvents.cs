@@ -29,6 +29,10 @@ namespace InfernumMode.Core.ILEditingStuff
             ModifyDetour(SetDefaultMethod, OverrideSystemHooks.SetDefaultDetourMethod);
             ModifyDetour(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
             ModifyDetour(CalPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
+            ModifyDetour(CalGetAdrenalineDamageMethod, NerfAdrenalineHook.NerfAdrenDamageMethod);
+            ModifyDetour(CalApplyRippersToDamageMethod, NerfAdrenalineHook.ApplyRippersToDamageDetour);
+            ModifyDetour(CalModifyHitNPCWithItemMethod, NerfAdrenalineHook.ModifyHitNPCWithItemDetour);
+            ModifyDetour(CalModifyHitNPCWithProjMethod, NerfAdrenalineHook.ModifyHitNPCWithProjDetour);
         }
 
         public static void Unload()

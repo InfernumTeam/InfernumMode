@@ -466,6 +466,22 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public delegate bool Orig_CalPreAIDelegate(CalamityGlobalNPC self, NPC npc);
 
+        private static readonly MethodInfo CalGetAdrenalineDamageMethod = typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags);
+
+        public delegate float Orig_CalGetAdrenalineDamageMethod(CalamityPlayer mp);
+
+        private static readonly MethodInfo CalApplyRippersToDamageMethod = typeof(CalamityUtils).GetMethod("ApplyRippersToDamage", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_CalApplyRippersToDamageMethod(CalamityPlayer mp, bool trueMelee, ref float damageMult);
+
+        private static readonly MethodInfo CalModifyHitNPCWithProjMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithProj", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_CalModifyHitNPCWithProjMethod(CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers);
+
+        private static readonly MethodInfo CalModifyHitNPCWithItemMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithItem", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_CalModifyHitNPCWithItemMethod(CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers);
+
         public static void FuckYou()
         {
 

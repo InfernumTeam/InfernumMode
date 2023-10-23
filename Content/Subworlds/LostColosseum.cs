@@ -292,16 +292,16 @@ namespace InfernumMode.Content.Subworlds
             float yScale = (float)Main.screenHeight / LoadingBackgroundTexture.Height;
             float scale = xScale;
 
-            //if (xScale != yScale)
-            //{
-            //    if (yScale > xScale)
-            //    {
-            //        scale = yScale;
-            //        drawOffset.X -= (LoadingBackgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
-            //    }
-            //    else
-            //        drawOffset.Y -= (LoadingBackgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
-            //}
+            if (xScale != yScale)
+            {
+                if (yScale > xScale)
+                {
+                    scale = yScale;
+                    drawOffset.X -= (LoadingBackgroundTexture.Width * scale - Main.screenWidth) * 0.5f;
+                }
+                else
+                    drawOffset.Y -= (LoadingBackgroundTexture.Height * scale - Main.screenHeight) * 0.5f;
+            }
 
             Effect sandstorm = InfernumEffectsRegistry.SandstormShader.GetShader().Shader;
             sandstorm.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
@@ -332,8 +332,6 @@ namespace InfernumMode.Content.Subworlds
 
             float sineOffset = (1f + Sin(Pi * Main.GlobalTimeWrappedHourly)) * 0.5f;
             Vector2 animationDrawPosition = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2) + Vector2.UnitY * Lerp(-100f, -125f, sineOffset) + Vector2.UnitX * -20f;
-
-            float rotation = Lerp(-0.1f, 0.1f, sineOffset);
 
             int frameCount = 8;
             int frameHeight = LoadingAnimationTexture.Height / frameCount;

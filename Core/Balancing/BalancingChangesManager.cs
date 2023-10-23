@@ -31,6 +31,10 @@ namespace InfernumMode.Core.Balancing
 
         public const int DashDelay = 15;
 
+        public const float AdrenalineDamageBoost = 1.5f;
+
+        public const float AdrenalineDamagePerBooster = 0.3f;
+
         internal static void Load()
         {
             var eowIsSplitRequirement = new NPCSpecificRequirementBalancingRule(n => n.type == NPCID.EaterofWorldsBody && n.realLife >= 0 && Main.npc[n.realLife].ai[2] >= 1f);

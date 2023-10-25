@@ -94,7 +94,7 @@ namespace InfernumMode.Core.ILEditingStuff
             ShouldGetRipperDamageModifiers = false;
             orig(self, item, target, ref modifiers);
             ShouldGetRipperDamageModifiers = true;
-            float damageMult = 1f;
+            float damageMult = 0f;
             CalamityUtils.ApplyRippersToDamage(self, item.IsTrueMelee(), ref damageMult);
             modifiers.SourceDamage += damageMult;
         }
@@ -110,7 +110,7 @@ namespace InfernumMode.Core.ILEditingStuff
             ShouldGetRipperDamageModifiers = false;
             orig(self, proj, target, ref modifiers);
             ShouldGetRipperDamageModifiers = true;
-            float damageMult = 1f;
+            float damageMult = 0f;
             CalamityUtils.ApplyRippersToDamage(self, proj.IsTrueMelee(), ref damageMult);
             modifiers.SourceDamage += damageMult;
         }

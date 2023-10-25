@@ -1318,7 +1318,7 @@ namespace InfernumMode.Core.ILEditingStuff
         public void Unload() => IL_MoonlordDeathDrama.DrawWhite -= IL_MoonlordDeathDrama_DrawWhite;
 
         // Do NOT remove this method, despite its 0 references it is used by IL.
-        public static Color DrawColor() => InfernumConfig.Instance.FlashbangOverlays ? Color.White : new Color(5, 5, 5);
+        public static Color DrawColor() => InfernumConfig.Instance.FlashbangOverlays ? Color.White : Color.Black;
 
         private void IL_MoonlordDeathDrama_DrawWhite(ILContext il)
         {

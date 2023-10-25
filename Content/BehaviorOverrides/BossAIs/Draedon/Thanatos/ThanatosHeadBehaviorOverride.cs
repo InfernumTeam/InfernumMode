@@ -658,6 +658,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 finalChargeSpeed += 3f;
             }
 
+            // Don't deal damage because its apparently really annoying to dodge even though its half the damn attack.
+            npc.damage = 0;
+
             // Approach the player at an increasingly slow speed.
             if (attackTimer < slowdownTime)
             {

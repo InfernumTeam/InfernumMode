@@ -1236,6 +1236,11 @@ Mods: {
 					You feel a guiding spirit trying to lead you the bloom’s home
 					Maybe you should follow its call?
 					'''
+                TooltipEffect: {
+                    FirstText: You feel a
+                    SecondText: " guiding spirit "
+                    ThirdText: trying to lead you the bloom’s home
+                }
 			}
 
 			BloodwormPlatter: {

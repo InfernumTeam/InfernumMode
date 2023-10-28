@@ -28,7 +28,7 @@ namespace InfernumMode.Common.Graphics
                 if (target is null || target.IsDisposed || target.WaitingForFirstInitialization)
                     continue;
 
-                ScreenSaturationBlurSystem.DrawActionQueue.Enqueue(() =>
+                Main.QueueMainThreadAction(() =>
                 {
                     target.Recreate((int)obj.X, (int)obj.Y);
                 });

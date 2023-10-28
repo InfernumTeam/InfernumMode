@@ -202,10 +202,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 player.DoInfiniteFlightCheck(Color.White);
             }
 
-            // Use the bloom shader at night.
-            if (!Main.dayTime && currentPhase >= 1f && attackType != (int)EmpressOfLightAttackType.UltimateRainbow)
-                npc.Infernum().ShouldUseSaturationBlur = true;
-
             if (ShouldBeEnraged)
                 npc.Calamity().CurrentlyEnraged = true;
 

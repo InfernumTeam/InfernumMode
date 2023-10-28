@@ -51,7 +51,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         internal static void PrepareShadowTargets(GameTime obj)
         {
-            if (Main.gameMenu || ShadowDrawTarget.IsDisposed)
+            if (Main.gameMenu || ShadowDrawTarget.Target.IsDisposed)
                 return;
 
             Main.instance.GraphicsDevice.SetRenderTarget(ShadowDrawTarget.Target);

@@ -295,11 +295,6 @@ Mods: {
 					Tooltip: Enables reduced graphics mode. Use this if lag is an issue.
 				}
 
-				SaturationBloomIntensity: {
-					Label: Saturation Bloom Intensity
-					Tooltip: How intense color saturation bloom effects should be. Such effects are disabled when this is zero. Be warned that high values may be overwhelming.
-				}
-
 				FlashbangOverlays: {
 					Label: Screen Overlays
 					Tooltip: Enables screen overlay 'flashbang' effects. This will not directly affect gameplay mechanics.
@@ -1236,11 +1231,12 @@ Mods: {
 					You feel a guiding spirit trying to lead you the bloom’s home
 					Maybe you should follow its call?
 					'''
-                TooltipEffect: {
-                    FirstText: You feel a
-                    SecondText: " guiding spirit "
-                    ThirdText: trying to lead you the bloom’s home
-                }
+
+				TooltipEffect: {
+					FirstText: You feel a
+					SecondText: " guiding spirit "
+					ThirdText: trying to lead you the bloom’s home
+				}
 			}
 
 			BloodwormPlatter: {

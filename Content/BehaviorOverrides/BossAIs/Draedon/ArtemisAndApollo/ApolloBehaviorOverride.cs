@@ -134,9 +134,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[ExoMechManagement.Twins_SideSwitchDelayIndex];
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
-            // Use the screen saturation effect.
-            npc.Infernum().ShouldUseSaturationBlur = true;
-
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)complementMechIndex]) ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();

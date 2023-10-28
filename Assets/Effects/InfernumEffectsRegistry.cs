@@ -414,10 +414,6 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
 
-            // Screen saturation blur system shader.
-            Ref<Effect> screenSaturationBlurShader = new(assets.Request<Effect>("Assets/Effects/Overlays/ScreenSaturationBlurShader", AssetRequestMode.ImmediateLoad).Value);
-            Filters.Scene["InfernumMode:ScreenSaturationBlur"] = new Filter(new ScreenSaturationBlurShaderData(screenSaturationBlurShader, "ScreenPass"), EffectPriority.VeryHigh);
-
             // Supreme Calamitas.
             Filters.Scene["InfernumMode:SCal"] = new Filter(new SCalScreenShaderData(fireBGShader, "DyePass").UseColor(0.3f, 0f, 0f).UseOpacity(0.5f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:SCal"] = new SCalSkyInfernum();

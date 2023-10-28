@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Content.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;

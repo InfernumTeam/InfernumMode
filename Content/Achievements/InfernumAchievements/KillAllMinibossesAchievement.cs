@@ -84,6 +84,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             CurrentCompletion = tag.Get<int>("MinibossesCurrentCompletion");
             DoneCompletionEffects = tag.Get<bool>("MinibossesDoneCompletionEffects");
         }
+
         public override void SaveProgress(TagCompound tag)
         {
             tag["MinibossesDictInt"] = MinibossesCompleted.Keys.ToList();
@@ -91,6 +92,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             tag["MinibossesCurrentCompletion"] = CurrentCompletion;
             tag["MinibossesDoneCompletionEffects"] = DoneCompletionEffects;
         }
+
         public override void Update()
         {
             int currentCompletion = 0;
@@ -101,6 +103,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             }
             CurrentCompletion = currentCompletion;
         }
+
         public override void ExtraUpdate(Player player, int npcIndex)
         {
             bool updatedList = false;

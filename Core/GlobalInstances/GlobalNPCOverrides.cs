@@ -54,8 +54,6 @@ namespace InfernumMode.Core.GlobalInstances
 
         public bool DisableNaturalDespawning;
 
-        public bool ShouldUseSaturationBlur;
-
         public bool IsAbyssPredator;
 
         public bool IsAbyssPrey;
@@ -125,7 +123,6 @@ namespace InfernumMode.Core.GlobalInstances
                 ExtraAI[i] = 0f;
 
             var infernum = npc.Infernum();
-            infernum.ShouldUseSaturationBlur = false;
             infernum.IsAbyssPredator = false;
             infernum.IsAbyssPrey = false;
             infernum.HasResetHP = false;
@@ -149,9 +146,6 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool PreAI(NPC npc)
         {
-            // Reset the saturation blur state.
-            npc.Infernum().ShouldUseSaturationBlur = false;
-
             // Initialize the amount of players the NPC had when it spawned.
             if (!npc.Infernum().TotalPlayersAtStart.HasValue)
             {
@@ -207,8 +201,6 @@ namespace InfernumMode.Core.GlobalInstances
                     npc.netOffset = Vector2.Zero;
 
                     bool result = value.PreAI(npc);
-                    if (npc.Infernum().ShouldUseSaturationBlur && !BossRushEvent.BossRushActive)
-                        ScreenSaturationBlurSystem.ShouldEffectBeActive = true;
 
                     // Disable the effects of certain unpredictable freeze debuffs.
                     // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.

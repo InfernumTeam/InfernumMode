@@ -155,9 +155,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float secondComboPhaseResistanceBoostFlag = ref npc.Infernum().ExtraAI[17];
             ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
-            // Use the screen saturation effect.
-            npc.Infernum().ShouldUseSaturationBlur = true;
-
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)complementMechIndex]) ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();

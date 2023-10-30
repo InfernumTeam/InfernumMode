@@ -717,7 +717,11 @@ Mods: {
 
 			FlowerOfTheOcean: {
 				DisplayName: Flower of the Ocean
-				Tooltip: Grants vastly increased visibility while underwater
+				Tooltip:
+                    '''
+                    Grants vastly increased visibility while underwater
+                    Creates an underwater visual
+                    '''
 			}
 
 			Purity: {

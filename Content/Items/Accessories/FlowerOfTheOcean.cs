@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 // If underwater and not in the last zone of the abyss.
                 if (player.Player.wet && !player.Player.Calamity().ZoneAbyssLayer4 && player.GetValue<bool>("FlowerOceanMechanicsActive"))
-                    Lighting.AddLight((int)(player.Player.Center.X / 16f), (int)(player.Player.Center.Y / 16f), TorchID.Torch, 20f);
+                    Lighting.AddLight((int)(player.Player.Center.X / 16f), (int)(player.Player.Center.Y / 16f), TorchID.Ice, 20f);
             };
         }
 
@@ -40,7 +40,7 @@ namespace InfernumMode.Content.Items.Accessories
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.Infernum().SetValue<bool>("FlowerOceanMechanicsActive", false);
+            player.Infernum().SetValue<bool>("FlowerOceanMechanicsActive", true);
             player.Infernum().SetValue<bool>("FlowerOceanVisualsActive", !hideVisual);
         }
 

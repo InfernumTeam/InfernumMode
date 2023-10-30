@@ -305,12 +305,12 @@ namespace InfernumMode.Content.Subworlds
 
             Effect sandstorm = InfernumEffectsRegistry.SandstormShader.GetShader().Shader;
             sandstorm.Parameters["time"].SetValue(Main.GlobalTimeWrappedHourly);
-            sandstorm.Parameters["intensity"].SetValue(0.4f);
+            sandstorm.Parameters["intensity"].SetValue(0.6f);
             sandstorm.Parameters["distortAmount"].SetValue(0.0075f);
             sandstorm.Parameters["distortZoom"].SetValue(5.2f);
             sandstorm.Parameters["distortSpeed"].SetValue(0.2f);
             sandstorm.Parameters["sandZoom"].SetValue(1.5f);
-            sandstorm.Parameters["lerpIntensity"].SetValue(0.3f);
+            sandstorm.Parameters["lerpIntensity"].SetValue(0.5f);
 
             sandstorm.Parameters["resolution"].SetValue(Utilities.CreatePixelationResolution(new Vector2(Main.screenWidth, Main.screenHeight)));
             sandstorm.Parameters["mainColor"].SetValue(new Color(0.74f, 0.56f, 0.4f).ToVector3());

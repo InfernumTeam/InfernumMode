@@ -3,12 +3,20 @@ using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
+using InfernumMode.Content.Tiles.Abyss;
+using InfernumMode.Content.Tiles.Colosseum;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.Core.GlobalInstances.Systems.ScreenOverlaysSystem;
 
 namespace InfernumMode.Common.Graphics.ScreenEffects
 {
@@ -50,6 +58,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             AEWDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
             AEWShadowWispTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
             TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            Filters.Scene.OnPostDraw += WhatTheFuck;
         }
 
         public override void OnModUnload()
@@ -143,6 +152,69 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             InfernumEffectsRegistry.AEWShadowFormShader.Apply();
             Main.instance.GraphicsDevice.Textures[2] = AEWShadowWispTarget.Target;
             Main.spriteBatch.Draw(AEWDrawTarget.Target, Vector2.Zero, Color.White);
+        }
+
+        private void WhatTheFuck()
+        {
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
+
+            if (Main.GameUpdateCount % 10 == 0)
+                LargeLumenylCrystal.DefineCrystalDrawers();
+
+            IcicleDrawer.ApplyShader();
+            foreach (Point p in LargeLumenylCrystal.CrystalCache.Keys)
+            {
+                IcicleDrawer crystal = LargeLumenylCrystal.CrystalCache[p];
+                crystal.Draw((p.ToWorldCoordinates(8f, 0f) + Vector2.UnitY.RotatedBy(crystal.BaseDirection) * 10f).ToPoint(), false);
+            }
+
+            // Regularly reset the crystal cache.
+            if (Main.GameUpdateCount % 120 == 119)
+                LargeLumenylCrystal.CrystalCache.Clear();
+
+            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
+            foreach (Point p in ColosseumPortal.PortalCache)
+                ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
+
+            DrawAdditiveCache();
+            DrawEntityTargets();
+            DrawAboveWaterProjectiles();
+            Main.spriteBatch.End();
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) && Lighting.NotRetro)
+                Main.PlayerRenderer.DrawPlayers(Main.Camera, Main.player.Where(p => p.active && !p.dead && p.Calamity().ZoneAbyssLayer4));
+        }
+
+        internal static void DrawAdditiveCache()
+        {
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+            ThingsToDrawOnTopOfBlurAdditive.EmptyDrawCache();
+        }
+
+        internal static void DrawEntityTargets()
+        {
+            if (NPC.AnyNPCs(ModContent.NPCType<PrimordialWyrmHead>()) || ShadowIllusionDrawSystem.ShadowProjectilesExist)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                DrawTarget();
+                ShadowIllusionDrawSystem.DrawTarget();
+            }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int i = 0; i < AEWEyesDrawCache.Count; i++)
+            {
+                AEWEyesDrawCache[i] = AEWEyesDrawCache[i] with
+                {
+                    position = AEWEyesDrawCache[i].position + Main.screenPosition - Main.screenLastPosition
+                };
+            }
+
+            AEWEyesDrawCache.EmptyDrawCache();
         }
     }
 }

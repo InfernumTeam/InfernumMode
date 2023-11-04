@@ -171,12 +171,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (npc.Center.X < 700f)
                 npc.velocity.X += 0.8f;
 
-            // Update the scream sound in terms of position and other side things.
+            // Update the scream sound in terms of position.
             if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(screamSlotID), out ActiveSound result))
-            {
-                result.Sound.SetReverb(0.9f);
                 result.Position = target.Center;
-            }
 
             // Try to snap at and swallow the player.
             snapAnticipation = Clamp(snapAnticipation + canSnapAtPlayer.ToDirectionInt(), 0f, 30f);

@@ -166,12 +166,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
             // Update played sounds.
             if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(soundSlotID), out ActiveSound result))
-            {
-                float lowPassFilter = Utils.GetLerpValue(1400f, 460f, teleportOffset, true) * 0.8f + 0.05f;
-                result.Sound.SetLowPassFilter(lowPassFilter);
-                result.Sound.SetReverb(1f - lowPassFilter);
                 result.Position = target.Center;
-            }
 
             // Decide the eye opacity.
             eyeOpacity = Utils.GetLerpValue(delayBetweenTeleports - 20f, delayBetweenTeleports - 50f, nextTeleportDelay, true) * Utils.GetLerpValue(4f, 54f, nextTeleportDelay, true);

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Assets.Sounds;
@@ -79,7 +79,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             {
                 if (SoundEngine.TryGetActiveSound(SlotId.FromFloat(choirSlotID), out ActiveSound result) && result.Sound.Volume > 0f)
                 {
-                    result.Sound.SetLowPassFilter(0.9f);
                     result.Position = npc.Center;
                     if (volume > 0f)
                         result.Volume = volume;

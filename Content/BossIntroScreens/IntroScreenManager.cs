@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using InfernumMode.Core;
 using System;
 using System.Collections.Generic;
@@ -25,18 +25,6 @@ namespace InfernumMode.Content.BossIntroScreens
                 int introTextDisplayChance = Utilities.IsAprilFirst() ? 5 : 500;
                 return Main.rand.NextBool(introTextDisplayChance);
             }
-        }
-
-        internal static void Load()
-        {
-            IntroScreens = new List<BaseIntroScreen>();
-            foreach (Type introScreen in InfernumMode.Instance.Code.GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(BaseIntroScreen))))
-                IntroScreens.Add(FormatterServices.GetUninitializedObject(introScreen) as BaseIntroScreen);
-        }
-
-        internal static void Unload()
-        {
-            IntroScreens = null;
         }
 
         public static void UpdateScreens()

@@ -118,35 +118,23 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static float NerfAdrenDamageMethod(Orig_CalGetAdrenalineDamageMethod orig, CalamityPlayer mp)
         {
             if (!InfernumMode.CanUseCustomAIs)
-            {
                 return orig(mp);
-            }
 
             float adrenalineBoost = BalancingChangesManager.AdrenalineDamageBoost;
+            
             if (mp.adrenalineBoostOne)
-            {
                 adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
-            }
             if (mp.adrenalineBoostTwo)
-            {
                 adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
-            }
             if (mp.adrenalineBoostThree)
-            {
                 adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
-            }
+
             return adrenalineBoost;
         }
 
-        public void Load()
-        {
-            UpdateRippers += NerfAdrenalineRates;
-        }
+        public void Load() => UpdateRippers += NerfAdrenalineRates;
 
-        public void Unload()
-        {
-            UpdateRippers -= NerfAdrenalineRates;
-        }
+        public void Unload() => UpdateRippers -= NerfAdrenalineRates;
     }
 
     public class RenameGreatSandSharkHook : IHookEdit

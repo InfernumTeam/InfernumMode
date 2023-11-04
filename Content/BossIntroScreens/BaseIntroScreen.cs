@@ -16,7 +16,7 @@ using Terraria.UI.Chat;
 
 namespace InfernumMode.Content.BossIntroScreens
 {
-    public abstract class BaseIntroScreen
+    public abstract class BaseIntroScreen : ModType
     {
         public int AnimationTimer;
 
@@ -73,9 +73,17 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public virtual LocalizedText TextToDisplay => GetLocalizedText("TextToDisplay");
 
-        public abstract bool ShouldBeActive();
-
         public abstract SoundStyle? SoundToPlayWithTextCreation { get; }
+
+        protected sealed override void Register()
+        {
+            ModTypeLookup<BaseIntroScreen>.Register(this);
+
+            if (!IntroScreenManager.IntroScreens.Contains(this))
+                IntroScreenManager.IntroScreens.Add(this);
+        }
+
+        public abstract bool ShouldBeActive();
 
         public virtual void DoCompletionEffects() { }
 

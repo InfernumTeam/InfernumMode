@@ -99,7 +99,6 @@ namespace InfernumMode
                     method.GetCustomAttributes(false);
             }
 
-            IntroScreenManager.Load();
             NPCBehaviorOverride.LoadAll();
             ProjectileBehaviorOverride.LoadAll();
             BossBarManager.LoadPhaseInfo();
@@ -168,7 +167,6 @@ namespace InfernumMode
 
         public override void Unload()
         {
-            IntroScreenManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();
 

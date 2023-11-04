@@ -3,13 +3,15 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers
 {
     /// <summary>
     /// Used to create a scene texture in the form of a render target.
     /// </summary>
-    public abstract class BaseSceneDrawSystem
+    public abstract class BaseSceneDrawSystem : ModType
     {
         #region Instance Members
         public ManagedRenderTarget MainTarget
@@ -24,11 +26,25 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers
             private set;
         }
 
-        public void Load()
+        protected sealed override void Register()
         {
-            MainTarget = new(true, TargetCreationCondition);
+            ModTypeLookup<BaseSceneDrawSystem>.Register(this);
+
+            if (!DrawerManager.SceneDrawers.Contains(this))
+                DrawerManager.SceneDrawers.Add(this);
+
             Objects = new();
+
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            Main.QueueMainThreadAction(() =>
+            {
+                MainTarget = new(true, TargetCreationCondition, true);
+            });
         }
+
+        public sealed override void SetupContent() => SetStaticDefaults();
 
         public void Update()
         {

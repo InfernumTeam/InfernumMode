@@ -6,6 +6,7 @@ using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Achievements
 {
+    // Ideally these would use modtypes, but I don't know what I was smoking when loading these and I don't feel like remaking it.
     public abstract class Achievement
     {
         #region Fields
@@ -66,6 +67,7 @@ namespace InfernumMode.Content.Achievements
         {
 
         }
+
         /// <summary>
         /// Load the completion amount and DoneCompletionEffects here. Called from ModPlayer.LoadData(TagCompound tag).
         /// </summary>

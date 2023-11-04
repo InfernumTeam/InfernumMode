@@ -14,7 +14,7 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Common.Graphics.Metaballs.CalMetaballs
+namespace InfernumMode.Common.Graphics.Metaballs
 {
     public class ProfanedLavaParticleSet : BaseFusableParticleSet
     {
@@ -24,7 +24,7 @@ namespace InfernumMode.Common.Graphics.Metaballs.CalMetaballs
             {
                 Color dayColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0.2f);
                 if (NPC.AnyNPCs(ModContent.NPCType<Providence>()))
-                    return ProvidenceBehaviorOverride.IsEnraged ? Color.DeepSkyBlue: dayColor;
+                    return ProvidenceBehaviorOverride.IsEnraged ? Color.DeepSkyBlue : dayColor;
 
                 return dayColor;
             }

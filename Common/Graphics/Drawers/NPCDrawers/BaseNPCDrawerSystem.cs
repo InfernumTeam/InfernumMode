@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
     // This only works for one instance of the NPC. Not the most ideal, but it will suffice for these use cases.
-    public abstract class BaseNPCDrawerSystem
+    public abstract class BaseNPCDrawerSystem: ModType
     {
         public ManagedRenderTarget MainTarget
         {
@@ -23,13 +25,23 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
             }
         }
 
-        public void Load()
+        protected sealed override void Register()
         {
+            ModTypeLookup<BaseNPCDrawerSystem>.Register(this);
+
+            if(!DrawerManager.NPCDrawers.Contains(this))
+                DrawerManager.NPCDrawers.Add(this);
+
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             Main.QueueMainThreadAction(() =>
             {
                 MainTarget = new(true, TargetCreationCondition, true);
             });
         }
+
+        public sealed override void SetupContent() => SetStaticDefaults();
 
         #region Virtuals
         public virtual ManagedRenderTarget.RenderTargetCreationCondition TargetCreationCondition => RenderTargetManager.CreateScreenSizedTarget;

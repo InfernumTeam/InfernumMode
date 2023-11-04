@@ -718,10 +718,10 @@ Mods: {
 			FlowerOfTheOcean: {
 				DisplayName: Flower of the Ocean
 				Tooltip:
-                    '''
-                    Grants vastly increased visibility while underwater
-                    Creates an underwater visual
-                    '''
+					'''
+					Grants vastly increased visibility while underwater
+					Creates an underwater visual
+					'''
 			}
 
 			Purity: {
@@ -1492,6 +1492,16 @@ Mods: {
 			DeusMonolithItem: {
 				DisplayName: Astral Dimension Monolith
 				Tooltip: ""
+			}
+
+			ForbiddenArchivesLocationSetter: {
+				DisplayName: Forbidden Archives Location Setter
+				Tooltip:
+					'''
+					Use this if your archives were destroyed by the abyss.
+					Left click the center of your dungeon arena to allow Ceaseless Void to naturally spawn.
+					You can right click to revert the position to the previous one.
+					'''
 			}
 		}
 

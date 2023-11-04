@@ -13,37 +13,12 @@ namespace InfernumMode.Common.Graphics.Drawers
 {
     public class DrawerManager : ModSystem
     {
-        private static List<BaseNPCDrawerSystem> NPCDrawers;
+        internal static readonly List<BaseNPCDrawerSystem> NPCDrawers = new();
 
-        private static List<BaseSceneDrawSystem> SceneDrawers;
+        internal static readonly List<BaseSceneDrawSystem> SceneDrawers = new();
 
         public override void Load()
         {
-            if (Main.netMode is NetmodeID.Server)
-                return;
-
-            NPCDrawers = new();
-            SceneDrawers = new();
-
-            Type npcDrawerType = typeof(BaseNPCDrawerSystem);
-            Type sceneDrawerType = typeof(BaseSceneDrawSystem);
-
-            foreach (Type type in Mod.Code.GetTypes())
-            {
-                if (!type.IsAbstract && type.IsSubclassOf(npcDrawerType))
-                {
-                    BaseNPCDrawerSystem drawer = Activator.CreateInstance(type) as BaseNPCDrawerSystem;
-                    drawer.Load();
-                    NPCDrawers.Add(drawer);
-                }
-                else if (!type.IsAbstract && type.IsSubclassOf(sceneDrawerType))
-                {
-                    BaseSceneDrawSystem drawer = Activator.CreateInstance(type) as BaseSceneDrawSystem;
-                    drawer.Load();
-                    SceneDrawers.Add(drawer);
-                }
-            }
-
             Main.OnPreDraw += PrepareDrawerTargets;
             On_Main.DrawNPCs += DrawDrawerContents;
         }
@@ -51,9 +26,6 @@ namespace InfernumMode.Common.Graphics.Drawers
 
         public override void Unload()
         {
-            if (Main.netMode is NetmodeID.Server)
-                return;
-
             Main.OnPreDraw -= PrepareDrawerTargets;
             On_Main.DrawNPCs -= DrawDrawerContents;
         }

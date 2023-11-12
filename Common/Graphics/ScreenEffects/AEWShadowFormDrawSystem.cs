@@ -176,6 +176,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 
+            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
             DrawAdditiveCache();
             DrawEntityTargets();
             DrawAboveWaterProjectiles();

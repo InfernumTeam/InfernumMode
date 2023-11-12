@@ -1206,15 +1206,6 @@ Mods: {
 			TwinsRelic: {
 				DisplayName: Infernal Twins Relic
 				Tooltip: GetsChanged
-
-				TooltipEffect: {
-					FirstText: "You feel a "
-					SecondText: guiding spirit
-					ThirdText: " trying to lead you the bloom’s home"
-					FourthText: "The spirit is trying to draw your attention to the "
-					FifthText: water
-					SixthText: Maybe you should follow its call?
-				}
 			}
 
 			WallOfFleshRelic: {
@@ -1236,10 +1227,13 @@ Mods: {
 					Maybe you should follow its call?
 					'''
 
-				TooltipEffect: {
-					FirstText: You feel a
-					SecondText: " guiding spirit "
-					ThirdText: trying to lead you the bloom’s home
+			    TooltipEffect: {
+					FirstText: "You feel a "
+					SecondText: guiding spirit
+					ThirdText: " trying to lead you the bloom’s home"
+					FourthText: "The spirit is trying to draw your attention to the "
+					FifthText: water
+					SixthText: Maybe you should follow its call?
 				}
 			}
 

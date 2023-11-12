@@ -1324,7 +1324,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             ILCursor cursor = new(il);
 
-            // Replace the white color with a gray one, if the flashbang config is disbaled.
+            // Replace the white color with a black one, if the flashbang config is disbaled.
             if (cursor.TryGotoNext(MoveType.After, i => i.MatchCall<Color>("get_White")))
             {
                 cursor.Emit(OpCodes.Pop);

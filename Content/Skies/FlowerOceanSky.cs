@@ -137,7 +137,7 @@ namespace InfernumMode.Content.Skies
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             // Only draw at night time.
-            if (Main.dayTime && intensity <= 0)
+            if (Main.dayTime)
                 return;
 
             // Draw the sky and moon.
@@ -267,10 +267,10 @@ namespace InfernumMode.Content.Skies
 
             Fishes.RemoveAll(f => f.Time >= f.Lifetime);
 
-            foreach (var Fish in Fishes)
+            foreach (var fish in Fishes)
             {
-                Fish.Update();
-                Fish.Draw();
+                fish.Update();
+                fish.Draw();
             }
         }
 

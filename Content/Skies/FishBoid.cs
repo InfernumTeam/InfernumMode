@@ -87,6 +87,7 @@ namespace InfernumMode.Content.Skies
                 FishBoid otherBoid = FlowerOceanSky.Fishes[i];
                 if (otherBoid == this)
                     posInList = i;
+
                 // Get the distance.
                 float distance = Vector2.Distance(Position, otherBoid.Position);
                 if (otherBoid != this && distance < Radius && Depth == otherBoid.Depth)
@@ -97,6 +98,7 @@ namespace InfernumMode.Content.Skies
                         float avoidFactor = Utils.GetLerpValue(Radius * 0.3f, 0f, Vector2.Distance(Position, otherBoid.Position), true);
                         separation += (Position - otherBoid.Position) * avoidFactor;
                     }
+
                     coheshion += otherBoid.Position;
                     alignment += otherBoid.Velocity;
                     total++;
@@ -105,19 +107,17 @@ namespace InfernumMode.Content.Skies
 
             if (total == 0)
                 return;
-            else
-            {
 
-                coheshion /= total;
-                float clockCenterMoveInterpolant = Utils.GetLerpValue(0f, 40f, Vector2.Distance(Position, coheshion), true);
-                Velocity += (coheshion - Position) * clockCenterMoveInterpolant * ClumpCoeffecient;
+            coheshion /= total;
+            float clockCenterMoveInterpolant = Utils.GetLerpValue(0f, 40f, Vector2.Distance(Position, coheshion), true);
+            Velocity += (coheshion - Position) * clockCenterMoveInterpolant * ClumpCoeffecient;
 
-                separation /= total;
-                Velocity += separation * SeperateCoeffecient;
+            separation /= total;
+            Velocity += separation * SeperateCoeffecient;
 
-                alignment /= total;
-                Velocity += (alignment - Velocity) * AlignCoeffecient;
-            }
+            alignment /= total;
+            Velocity += (alignment - Velocity) * AlignCoeffecient;
+            
 
             // Swim around idly.
             Velocity = Velocity.RotatedBy(Pi * (posInList % 2f == 0f).ToDirectionInt() * 0.002f);

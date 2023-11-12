@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 // If underwater and not in the last zone of the abyss.
                 if (player.Player.wet && !player.Player.Calamity().ZoneAbyssLayer4 && player.GetValue<bool>("FlowerOceanMechanicsActive"))
-                    Lighting.AddLight((int)(player.Player.Center.X / 16f), (int)(player.Player.Center.Y / 16f), TorchID.Ice, 20f);
+                    Lighting.AddLight((int)(player.Player.Center.X / 16f), (int)(player.Player.Center.Y / 16f), TorchID.White, 20f);
             };
         }
 

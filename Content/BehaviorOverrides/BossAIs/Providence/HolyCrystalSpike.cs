@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 drawPosition = end;
             Vector2 scale = Vector2.One * Projectile.width / crystalSegment.Width;
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 500; i++)
             {
                 drawPosition += (start - end).SafeNormalize(Vector2.UnitY) * crystalSegment.Height * scale * 0.8f;
                 if (drawPosition.WithinRange(start, 35f))

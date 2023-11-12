@@ -1227,7 +1227,7 @@ Mods: {
 					Maybe you should follow its call?
 					'''
 
-			    TooltipEffect: {
+				TooltipEffect: {
 					FirstText: "You feel a "
 					SecondText: guiding spirit
 					ThirdText: " trying to lead you the bloom’s home"

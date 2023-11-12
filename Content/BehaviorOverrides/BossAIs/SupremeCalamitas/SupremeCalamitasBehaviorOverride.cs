@@ -2435,27 +2435,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            // Create the fire drawer.
-            FireDrawer ??= new FluidFieldInfernum(375, 375, new(0.0001f, 2.9f, 0.99f, 1.69f, 0.08f, 0.9f, 0.984f));
-            FireDrawer.MovementUpdateSteps = 3;
-
-            // Emit and draw fire behind everything else in phase 4.
-            FireDrawer.ShouldUpdate = true;
-            if (ForcefieldScale > 0f && npc.life < npc.lifeMax * Phase4LifeRatio)
+            if (!InfernumConfig.Instance.ReducedGraphicsConfig)
             {
-                int instanceCount = 11;
-                float interpolant = Main.GlobalTimeWrappedHourly % 2f;
-                for (int i = 0; i < instanceCount; i++)
+                // Create the fire drawer.
+                FireDrawer ??= new FluidFieldInfernum(375, 375, new(0.0001f, 2.9f, 0.99f, 1.69f, 0.08f, 0.9f, 0.984f));
+                FireDrawer.MovementUpdateSteps = 3;
+
+                // Emit and draw fire behind everything else in phase 4.
+                FireDrawer.ShouldUpdate = true;
+                if (ForcefieldScale > 0f && npc.life < npc.lifeMax * Phase4LifeRatio)
                 {
-                    var color = CalamityUtils.MulticolorLerp(interpolant, Color.Red, Color.Orange, Color.OrangeRed);
-                    float speedFactor = Main.rand.NextFloat(2f, 10f) * FireDrawer.Width * ForcefieldScale * 0.95f / (i * 0.04f + 1f);
-                    Vector2 angularSpawnOffset = (TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2();
-                    angularSpawnOffset = Vector2.Lerp(angularSpawnOffset, -Vector2.UnitY, 0.3f) * 2.96f;
+                    int instanceCount = 11;
+                    float interpolant = Main.GlobalTimeWrappedHourly % 2f;
+                    for (int i = 0; i < instanceCount; i++)
+                    {
+                        var color = CalamityUtils.MulticolorLerp(interpolant, Color.Red, Color.Orange, Color.OrangeRed);
+                        float speedFactor = Main.rand.NextFloat(2f, 10f) * FireDrawer.Width * ForcefieldScale * 0.95f / (i * 0.04f + 1f);
+                        Vector2 angularSpawnOffset = (TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2();
+                        angularSpawnOffset = Vector2.Lerp(angularSpawnOffset, -Vector2.UnitY, 0.3f) * 2.96f;
 
-                    FireDrawer.CreateSource(new Vector2(FireDrawer.Width / 2 + angularSpawnOffset.X, FireDrawer.Height / 2 + angularSpawnOffset.Y).ToPoint(), Vector2.One * 2f, angularSpawnOffset.RotatedByRandom(0.3f) * speedFactor, color, ForcefieldScale);
+                        FireDrawer.CreateSource(new Vector2(FireDrawer.Width / 2 + angularSpawnOffset.X, FireDrawer.Height / 2 + angularSpawnOffset.Y).ToPoint(), Vector2.One * 2f, angularSpawnOffset.RotatedByRandom(0.3f) * speedFactor, color, ForcefieldScale);
+                    }
+
+                    FireDrawer.Draw(npc.Center - Main.screenPosition);
                 }
-
-                FireDrawer.Draw(npc.Center - Main.screenPosition);
             }
 
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -2464,7 +2467,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             float berserkPhaseInterpolant = npc.ai[3];
             Texture2D energyChargeupEffect = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/PowerEffect").Value;
-            Texture2D texture2D15 = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
+            Texture2D texture = DownedBossSystem.downedCalamitas && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
 
             // Draw a chargeup effect behind SCal if berserk.
             if (berserkPhaseInterpolant > 0f)
@@ -2475,38 +2478,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Main.spriteBatch.Draw(energyChargeupEffect, chargeupDrawPosition, chargeupFrame, chargeupColor, npc.rotation, chargeupFrame.Size() * new Vector2(0.5f, 1f), npc.scale * 1.4f, 0, 0f);
             }
 
-            Vector2 vector11 = new(texture2D15.Width / 2f, texture2D15.Height / Main.npcFrameCount[npc.type] / 2f);
-            Color color36 = Color.White;
-            float amount9 = 0.5f;
-            int num153 = 7;
+            Vector2 origin = new(texture.Width / 2f, texture.Height / Main.npcFrameCount[npc.type] / 2f);
 
-            Rectangle frame = texture2D15.Frame(2, Main.npcFrameCount[npc.type], npc.frame.Y / Main.npcFrameCount[npc.type], npc.frame.Y % Main.npcFrameCount[npc.type]);
+            Rectangle frame = texture.Frame(2, Main.npcFrameCount[npc.type], npc.frame.Y / Main.npcFrameCount[npc.type], npc.frame.Y % Main.npcFrameCount[npc.type]);
 
             if (CalamityConfig.Instance.Afterimages)
             {
-                for (int num155 = 1; num155 < num153; num155 += 2)
+                int afterimageAmount = 7;
+                for (int i = 1; i < afterimageAmount; i += 2)
                 {
-                    Color color38 = lightColor;
-                    color38 = Color.Lerp(color38, color36, amount9);
-                    color38 = npc.GetAlpha(color38);
-                    color38 *= (num153 - num155) / 15f;
-                    Vector2 vector41 = npc.oldPos[num155] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                    vector41 -= new Vector2(texture2D15.Width / 2f, texture2D15.Height / Main.npcFrameCount[npc.type]) * npc.scale / 2f;
-                    vector41 += vector11 * npc.scale + new Vector2(0f, npc.gfxOffY);
-                    Main.spriteBatch.Draw(texture2D15, vector41, frame, color38, npc.rotation, vector11, npc.scale, spriteEffects, 0f);
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f));
+                    afterimageColor = npc.GetAlpha(afterimageColor);
+                    afterimageColor *= (afterimageAmount - i) / (afterimageAmount * 2f);
+                    Vector2 afterimagePosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
+                    afterimagePosition -= new Vector2(texture.Width / 2f, texture.Height / Main.npcFrameCount[npc.type]) * npc.scale / 2f;
+                    afterimagePosition += origin * npc.scale + new Vector2(0f, npc.gfxOffY);
+                    Main.spriteBatch.Draw(texture, afterimagePosition, frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             bool inPhase2 = npc.ai[0] >= 3f && npc.life > npc.lifeMax * 0.01 || berserkPhaseInterpolant > 0f;
-            Vector2 vector43 = npc.Center - Main.screenPosition;
-            vector43 -= new Vector2(texture2D15.Width / 2f, texture2D15.Height / Main.npcFrameCount[npc.type]) * npc.scale / 2f;
-            vector43 += vector11 * npc.scale + new Vector2(0f, npc.gfxOffY);
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            drawPosition -= new Vector2(texture.Width / 2f, texture.Height / Main.npcFrameCount[npc.type]) * npc.scale / 2f;
+            drawPosition += origin * npc.scale + new Vector2(0f, npc.gfxOffY);
 
             if (inPhase2)
             {
                 // Make the sprite jitter with rage in phase 2. This does not happen in rematches since it would make little sense logically.
                 if (!DownedBossSystem.downedCalamitas)
-                    vector43 += Main.rand.NextVector2Circular(0.8f, 2f);
+                    drawPosition += Main.rand.NextVector2Circular(0.8f, 2f);
 
                 // And gain a flaming aura.
                 Color auraColor = npc.GetAlpha(Color.Red) * 0.4f;
@@ -2514,10 +2514,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Vector2 rotationalDrawOffset = (TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2();
                     rotationalDrawOffset *= Lerp(3f, 4.25f, Cos(Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
-                    Main.spriteBatch.Draw(texture2D15, vector43 + rotationalDrawOffset, frame, auraColor, npc.rotation, vector11, npc.scale * 1.1f, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + rotationalDrawOffset, frame, auraColor, npc.rotation, origin, npc.scale * 1.1f, spriteEffects, 0f);
                 }
             }
-            Main.spriteBatch.Draw(texture2D15, vector43, frame, npc.GetAlpha(lightColor), npc.rotation, vector11, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             // Draw special effects in SCal's berserk phase.
             if (berserkPhaseInterpolant > 0f)

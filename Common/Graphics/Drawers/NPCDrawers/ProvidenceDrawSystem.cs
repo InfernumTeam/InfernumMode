@@ -7,7 +7,6 @@ using CalamityMod.NPCs.Providence;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Projectiles.Cutscene;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Content.Projectiles.Wayfinder;
 
 namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {

@@ -34,18 +34,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public bool SuperLaser => Main.npc[OwnerIndex].localAI[3] >= 0.1f;
 
         public float LifetimeThing = 600f;
+
         public override float MaxScale => 1f;
+
         public override float MaxLaserLength => AresDeathBeamTelegraph.TelegraphWidth;
+
         public override float Lifetime => LifetimeThing;
+
         public override Color LaserOverlayColor => new(250, 250, 250, 100);
+
         public override Color LightCastColor => Color.White;
+
         public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/AresDeathBeamStart", AssetRequestMode.ImmediateLoad).Value;
+
         public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/AresDeathBeamMiddle", AssetRequestMode.ImmediateLoad).Value;
+
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/AresDeathBeamEnd", AssetRequestMode.ImmediateLoad).Value;
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Exo Overload Beam");
             Main.projFrames[Projectile.type] = 5;
         }
 

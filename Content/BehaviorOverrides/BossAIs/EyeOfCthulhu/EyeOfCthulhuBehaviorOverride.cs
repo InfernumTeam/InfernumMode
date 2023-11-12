@@ -129,7 +129,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
 
-
             ref float attackTimer = ref npc.ai[2];
             ref float phase2ResetTimer = ref npc.Infernum().ExtraAI[6];
             ref float gleamTimer = ref npc.localAI[0];

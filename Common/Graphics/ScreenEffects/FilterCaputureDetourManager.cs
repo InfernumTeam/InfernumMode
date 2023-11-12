@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Common.BaseEntities;
+using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -40,7 +41,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.spriteBatch.End();
 
             // Draw the screen effects.
-            screenTarget1 = ScreenEffectSystem.DrawBlurEffect(screenTarget1);
+            if (!InfernumConfig.Instance.ReducedGraphicsConfig)
+                screenTarget1 = ScreenEffectSystem.DrawBlurEffect(screenTarget1);
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }

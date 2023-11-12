@@ -5,7 +5,6 @@ using CalamityMod.Items.Placeables.Ores;
 using CalamityMod.Particles;
 using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Rarities.InfernumRarities;
-using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;

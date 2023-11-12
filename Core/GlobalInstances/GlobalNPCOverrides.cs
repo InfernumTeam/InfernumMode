@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.CeaselessVoid;
@@ -15,7 +14,6 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.UI;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
-using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;

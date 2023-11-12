@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CalamityMod.Schematics;
-using InfernumMode.Content.Schematics;
-using InfernumMode.Core.GlobalInstances.Systems;
+﻿using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;

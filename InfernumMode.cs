@@ -5,7 +5,6 @@ using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BossBars;
-using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.UI;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.CrossCompatibility;

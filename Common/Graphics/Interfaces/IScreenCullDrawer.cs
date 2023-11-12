@@ -9,6 +9,6 @@ namespace InfernumMode.Common.Graphics.Interfaces
     // Manual drawing hooks should not be utilized when using this interface, such as ModNPC.PreDraw.
     public interface IScreenCullDrawer
     {
-        void CullDraw(SpriteBatch spriteBatch);
+        public void CullDraw(SpriteBatch spriteBatch);
     }
 }

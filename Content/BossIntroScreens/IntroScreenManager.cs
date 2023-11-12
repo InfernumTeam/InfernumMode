@@ -1,9 +1,7 @@
 ﻿using CalamityMod.Events;
 using InfernumMode.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Terraria;
 using Terraria.ID;
 

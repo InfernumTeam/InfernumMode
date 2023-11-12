@@ -437,6 +437,10 @@ namespace InfernumMode
         {
             DeleteAllProjectiles(false, ModContent.ProjectileType<ScreenShakeProj>());
 
+            // Don't bother spawning on low graphics mode.
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+                return;
+
             if (playSound)
                 SoundEngine.PlaySound(InfernumSoundRegistry.SonicBoomSound, Vector2.Lerp(shockwavePosition, Main.LocalPlayer.Center, 0.84f));
 
@@ -554,6 +558,22 @@ namespace InfernumMode
             // Leave if this is null, or this is called on the server.
             if (particleList is null || Main.netMode == NetmodeID.Server)
                 return;
+
+            // If on low detail mode, just give a bunch of random metaballs from the texture size to save on performance.
+            if (InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                Vector2 actualSize = texture.Size() * textureScale;
+                int metaballCount = (int)(actualSize.X * actualSize.Y) / 2;
+                for (int i = 0; i < metaballCount; i++)
+                {
+                    if (Main.rand.NextBool(spawnChance))
+                    {
+                        FusableParticle particle = new(Main.rand.NextVector2FromRectangle(new((int)texturePosition.X, (int)texturePosition.Y, (int)actualSize.X, (int)actualSize.Y)), Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f));
+                        particleList.Add(particle);
+                    }
+                }
+                return;
+            }
 
             // Get the dimensions of the texture.
             int textureWidth = texture.Width;

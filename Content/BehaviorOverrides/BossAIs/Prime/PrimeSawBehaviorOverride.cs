@@ -42,21 +42,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 return;
             }
 
-            int extendTime = 20;
-            int sawTime = 150;
-            float chargeSpeed = 18f;
-            float sawSpeed = 29f;
+            int extendTime = 50;
+            int arcTime = 120;
+            float chargeSpeed = 22.5f;
+            float arcSpeed = 10f;
 
             if (npc.life < npc.lifeMax * Phase2LifeRatio)
             {
                 chargeSpeed += 2.7f;
-                sawSpeed += 3f;
+                arcSpeed += 3f;
             }
 
             // Do more contact damage.
             npc.defDamage = 150;
 
-            if (attackTimer < extendTime + sawTime)
+            int attackCycleTime = extendTime + arcTime;
+            if (attackTimer < attackCycleTime)
                 npc.ai[2] = 1f;
             else
                 npc.damage = 0;
@@ -69,16 +70,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
                 npc.netUpdate = true;
             }
 
-            // Quickly attempt to saw through the target if sufficiently close.
-            if (attackTimer >= extendTime && npc.velocity.Y != 0f && Distance(target.Center.Y, npc.Center.Y) < 42f)
+            //// Quickly attempt to saw through the target if sufficiently close.
+            //if (attackTimer >= extendTime && npc.velocity.Y != 0f && Distance(target.Center.Y, npc.Center.Y) < 42f)
+            //{
+            //    npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * sawSpeed * 0.35f;
+            //    npc.netUpdate = true;
+            //}
+
+            // Arc around, towards the target.
+            if (attackTimer >= extendTime && attackTimer < attackCycleTime)
             {
-                npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * sawSpeed * 0.35f;
-                npc.netUpdate = true;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.12f);
+                npc.rotation = npc.velocity.ToRotation() - PiOver2;
+                if (npc.velocity.Length() > arcSpeed)
+                    npc.velocity *= 0.97f;
             }
 
-            // Acclerate the saw.
-            if (attackTimer >= extendTime && npc.velocity.Y == 0f && Math.Abs(npc.velocity.X) < sawSpeed)
-                npc.velocity *= 1.036f;
+            //// Acclerate the saw.
+            //if (attackTimer >= extendTime && npc.velocity.Y == 0f && Math.Abs(npc.velocity.X) < sawSpeed)
+            //    npc.velocity *= 1.036f;
 
             // Stun the saw if it was hit.
             if (attackTimer >= extendTime && npc.justHit)

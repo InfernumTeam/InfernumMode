@@ -1,13 +1,21 @@
+﻿using CalamityMod;
+using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Interfaces;
+using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 {
-    public class PrimeMissile : ModProjectile
+    public class PrimeMissile : ModProjectile, IPixelPrimitiveDrawer
     {
+        public PrimitiveTrailCopy FlameTrailDrawer;
+
         public ref float Time => ref Projectile.ai[0];
 
         public override void SetStaticDefaults()
@@ -15,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             // DisplayName.SetDefault("Missile");
             Main.projFrames[Projectile.type] = 3;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
         }
 
         public override void SetDefaults()
@@ -89,10 +97,26 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             return true;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public static float FlameTrailWidthFunction(float completionRatio) => SmoothStep(21f, 8f, completionRatio);
+
+        public static Color FlameTrailColorFunction(float completionRatio)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type]);
-            return false;
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true);
+            Color startingColor = Color.Lerp(Color.Cyan, Color.White, 0.4f);
+            Color firstThirdColor = Color.Lerp(Color.Orange, Color.Yellow, 0.3f);
+            Color secondThirdColor = Color.Lerp(Color.Orange, Color.Red, 0.67f);
+            Color endColor = Color.LightSlateGray;
+            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, firstThirdColor, secondThirdColor, endColor) * trailOpacity;
+        }
+
+        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        {
+            // Initialize the flame trail drawer.
+            FlameTrailDrawer ??= new(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+            Vector2 trailOffset = Projectile.Size * 0.5f;
+            trailOffset += (Projectile.rotation + PiOver2).ToRotationVector2() * 10f;
+            Utilities.SetTexture1(InfernumTextureRegistry.StreakMagma.Value);
+            FlameTrailDrawer.DrawPixelated(Projectile.oldPos, trailOffset - Main.screenPosition, 31);
         }
     }
 }

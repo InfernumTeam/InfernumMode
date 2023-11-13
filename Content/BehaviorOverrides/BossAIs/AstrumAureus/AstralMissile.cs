@@ -1,5 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Dusts;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
@@ -90,6 +91,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             FlameTrailDrawer ??= new(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
             Vector2 trailOffset = Projectile.Size * 0.5f;
             trailOffset += (Projectile.rotation + PiOver2).ToRotationVector2() * 10f;
+            Utilities.SetTexture1(InfernumTextureRegistry.StreakMagma.Value);
             FlameTrailDrawer.DrawPixelated(Projectile.oldPos, trailOffset - Main.screenPosition, 61);
         }
 

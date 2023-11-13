@@ -1,4 +1,4 @@
-using CalamityMod.Items.Weapons.Ranged;
+﻿using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             npc.defDamage = 150;
 
             int attackCycleTime = extendTime + arcTime;
-            if (attackTimer < extendTime + arcTime)
+            if (attackTimer < attackCycleTime)
                 npc.ai[2] = 1f;
             else
                 npc.damage = 0;

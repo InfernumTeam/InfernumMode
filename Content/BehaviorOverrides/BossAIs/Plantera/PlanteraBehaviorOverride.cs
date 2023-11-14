@@ -43,6 +43,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         #region AI
 
+        public static int GoreSpawnCountdownTime => 20;
+
+        public static int Phase2TransitionDuration => 180;
+
         public static int PetalDamage => 160;
 
         public static int SporeGasDamage => 165;
@@ -72,12 +76,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             int hookCount = 3;
             bool enraged = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool inPhase4 = lifeRatio < Phase3LifeRatio;
+            bool inPhase3 = lifeRatio < Phase3LifeRatio;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
-            ref float phaseTransitionCounter = ref npc.ai[2];
-            ref float phase2TransitionTimer = ref npc.Infernum().ExtraAI[6];
-            ref float phase3TransitionTimer = ref npc.Infernum().ExtraAI[7];
+            ref float currentPhase = ref npc.ai[2];
+            ref float phase2TransitionCountdown = ref npc.Infernum().ExtraAI[6];
             ref float hasCreatedHooksFlag = ref npc.localAI[0];
             ref float bulbHueInterpolant = ref npc.localAI[1];
 
@@ -97,39 +100,28 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             // Used by hooks.
             npc.ai[3] = 1.25f;
 
-            // Handle phase transitions.
-            if (phaseTransitionCounter == 0f)
+            // Perform the transition to Phase 2. This involves the usage of camera effects and the removal of Plantera's bulb.
+            if (currentPhase == 0f && lifeRatio < Phase2LifeRatio)
             {
-                phaseTransitionCounter++;
-                npc.netUpdate = true;
-            }
-            if (phaseTransitionCounter == 1f && lifeRatio < Phase2LifeRatio)
-            {
-                phase3TransitionTimer = 180f;
-                phaseTransitionCounter++;
+                phase2TransitionCountdown = Phase2TransitionDuration;
+                currentPhase++;
 
                 SelectNextAttack(npc);
                 DeleteHostileThings();
 
                 npc.netUpdate = true;
             }
-            if (phaseTransitionCounter == 2f && lifeRatio < Phase3LifeRatio)
+            if (currentPhase == 1f && lifeRatio < Phase3LifeRatio)
             {
-                phaseTransitionCounter++;
+                currentPhase++;
                 npc.netUpdate = true;
             }
 
-            if (phase2TransitionTimer > 0f)
+            if (phase2TransitionCountdown > 0f)
             {
-                DoPhase2Transition(npc, target, phase2TransitionTimer, ref bulbHueInterpolant);
-                phase2TransitionTimer--;
-                return false;
-            }
-            if (phase3TransitionTimer > 0f)
-            {
-                DoPhase3Transition(npc, target, phase3TransitionTimer);
-                phase3TransitionTimer--;
-                if (phase3TransitionTimer <= 0f)
+                DoPhase2Transition(npc, target, phase2TransitionCountdown);
+                phase2TransitionCountdown--;
+                if (phase2TransitionCountdown <= 0f)
                     HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PlanteraFinalPhaseTip");
                 return false;
             }
@@ -147,24 +139,24 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     break;
                 case PlanteraAttackState.RedBlossom:
                     npc.damage = npc.defDamage;
-                    DoAttack_RedBlossom(npc, target, inPhase4, enraged, ref attackTimer);
+                    DoAttack_RedBlossom(npc, target, inPhase3, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.PetalBurst:
                     npc.damage = npc.defDamage;
-                    DoAttack_PetalBurst(npc, target, inPhase4, enraged, ref attackTimer);
+                    DoAttack_PetalBurst(npc, target, inPhase3, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.PoisonousGasRelease:
                     DoAttack_PoisonousGasRelease(npc, target, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.TentacleSnap:
                     npc.damage = npc.defDamage;
-                    DoAttack_TentacleSnap(npc, target, inPhase4, ref attackTimer);
+                    DoAttack_TentacleSnap(npc, target, inPhase3, ref attackTimer);
                     break;
                 case PlanteraAttackState.NettleBorders:
-                    DoAttack_NettleBorders(npc, target, inPhase4, ref attackTimer);
+                    DoAttack_NettleBorders(npc, target, inPhase3, ref attackTimer);
                     break;
                 case PlanteraAttackState.RoseGrowth:
-                    DoAttack_RoseGrowth(npc, target, inPhase4, ref attackTimer);
+                    DoAttack_RoseGrowth(npc, target, inPhase3, ref attackTimer);
                     break;
                 case PlanteraAttackState.Charge:
                     DoAttack_Charge(npc, target, lifeRatio, enraged, ref attackTimer);
@@ -260,7 +252,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             }
         }
 
-        public static void DoAttack_RedBlossom(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
+        public static void DoAttack_RedBlossom(NPC npc, Player target, bool inPhase3, bool enraged, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + PiOver2;
             float hoverSpeed = 4f;
@@ -280,10 +272,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             // Cause flowers to appear on blocks, walls, and near hooks.
             // They will explode into bursts of petals after some time.
-            int blossomRate = inPhase4 ? 200 : 180;
+            int blossomRate = inPhase3 ? 200 : 180;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % blossomRate == blossomRate - 1f)
             {
-                int petalCount = inPhase4 ? 10 : 8;
+                int petalCount = inPhase3 ? 10 : 8;
 
                 for (int i = 0; i < petalCount; i++)
                 {
@@ -295,7 +287,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Release seeds.
-            if (inPhase4)
+            if (inPhase3)
                 seedFireRate -= 2;
             if (attackTimer % seedFireRate == seedFireRate - 1f)
             {
@@ -312,7 +304,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_PetalBurst(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
+        public static void DoAttack_PetalBurst(NPC npc, Player target, bool inPhase3, bool enraged, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
@@ -337,7 +329,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
             if (attackTimer == 1f)
             {
-                petalReleaseDelay = inPhase4 ? 12f : 16f;
+                petalReleaseDelay = inPhase3 ? 12f : 16f;
                 petalCount = 1f;
             }
 
@@ -422,7 +414,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_TentacleSnap(NPC npc, Player target, bool inPhase4, ref float attackTimer)
+        public static void DoAttack_TentacleSnap(NPC npc, Player target, bool inPhase3, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
@@ -431,7 +423,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             else
                 npc.velocity *= 0.9f;
 
-            int tentacleSpawnDelay = inPhase4 ? 45 : 60;
+            int tentacleSpawnDelay = inPhase3 ? 45 : 60;
             int tentacleSummonTime = 45;
             bool canCreateTentacles = attackTimer >= tentacleSpawnDelay && attackTimer < tentacleSpawnDelay + tentacleSummonTime;
             float tentacleAngle = Utils.GetLerpValue(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * TwoPi;
@@ -477,7 +469,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 // Time is relative to when the tentacle was created and as such is synchronized.
                 float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 85f;
-                if (inPhase4)
+                if (inPhase3)
                     time += 30f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > Pi * 0.14f)
@@ -489,7 +481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     }
                 }
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle2) > Pi * 0.16f && inPhase4)
+                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle2) > Pi * 0.16f && inPhase3)
                 {
                     for (int i = 0; i < 2; i++)
                     {
@@ -508,7 +500,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 telegraphPuff.scale = 1.2f;
                 telegraphPuff.noGravity = true;
             }
-            if (attackTimer < tentacleSpawnDelay + tentacleSummonTime + 265f && attackTimer > 25f && tentacleAngle > freeAreaAngle2 && inPhase4)
+            if (attackTimer < tentacleSpawnDelay + tentacleSummonTime + 265f && attackTimer > 25f && tentacleAngle > freeAreaAngle2 && inPhase3)
             {
                 Vector2 dustSpawnOffset = (freeAreaAngle2 + Main.rand.NextFloatDirection() * 0.14f).ToRotationVector2() * Main.rand.NextFloat(90f);
                 Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 267);
@@ -529,7 +521,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             }
         }
 
-        public static void DoAttack_NettleBorders(NPC npc, Player target, bool inPhase4, ref float attackTimer)
+        public static void DoAttack_NettleBorders(NPC npc, Player target, bool inPhase3, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
@@ -546,7 +538,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int vineCount = inPhase4 ? 6 : 4;
+                    int vineCount = inPhase3 ? 6 : 4;
                     for (int i = 0; i < vineCount; i++)
                     {
                         Vector2 thornVelocity = (TwoPi * i / vineCount).ToRotationVector2() * 12f;
@@ -559,7 +551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             }
         }
 
-        public static void DoAttack_RoseGrowth(NPC npc, Player target, bool inPhase4, ref float attackTimer)
+        public static void DoAttack_RoseGrowth(NPC npc, Player target, bool inPhase3, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + PiOver2;
 
@@ -593,7 +585,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // Stop attempting to spawn more flowers once enough have been decided.
-                    if (flowerSpawnPositions.Count > (inPhase4 ? 14 : 10))
+                    if (flowerSpawnPositions.Count > (inPhase3 ? 14 : 10))
                         break;
                 }
 
@@ -671,27 +663,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             npc.ai[3] = 2.6f;
         }
 
-        public static void DoPhase2Transition(NPC npc, Player target, float transitionCountdown, ref float bulbHueInterpolant)
-        {
-            npc.velocity *= 0.95f;
-            npc.rotation = npc.AngleTo(target.Center) + PiOver2;
-            npc.dontTakeDamage = true;
-            bulbHueInterpolant = Utils.GetLerpValue(105f, 30f, transitionCountdown, true);
-
-            // Focus on the boss as it transforms.
-            if (npc.WithinRange(Main.LocalPlayer.Center, 2850f))
-            {
-                Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
-                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
-            }
-
-            // Roar right before transitioning back to attacking.
-            if (transitionCountdown == 20f)
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center);
-        }
-
-        public static void DoPhase3Transition(NPC npc, Player target, float transitionCountdown)
+        public static void DoPhase2Transition(NPC npc, Player target, float transitionCountdown)
         {
             npc.velocity *= 0.95f;
             npc.rotation = npc.AngleTo(target.Center) + PiOver2;
@@ -701,15 +673,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             {
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, transitionCountdown, true);
-                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(180f, 172f, transitionCountdown, true);
+                Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant *= Utils.GetLerpValue(Phase2TransitionDuration, Phase2TransitionDuration - 8f, transitionCountdown, true);
             }
 
             // Roar right and turn into a trap plant thing before transitioning back to attacking.
-            if (Main.netMode != NetmodeID.Server && transitionCountdown == 20f)
+            if (Main.netMode != NetmodeID.Server && transitionCountdown == GoreSpawnCountdownTime)
             {
                 Vector2 goreVelocity = (npc.rotation - PiOver2).ToRotationVector2().RotatedByRandom(0.54f) * Main.rand.NextFloat(10f, 16f);
                 for (int i = 378; i <= 380; i++)
-                    Gore.NewGore(npc.GetSource_FromAI(), new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)), goreVelocity, i, npc.scale);
+                    Gore.NewGore(npc.GetSource_FromAI(), new Vector2(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height)) + goreVelocity * 3f, goreVelocity, i, npc.scale);
 
                 SoundEngine.PlaySound(SoundID.Roar, npc.Center);
             }
@@ -721,7 +693,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float phase3TransitionTimer = npc.Infernum().ExtraAI[7];
+            float phase2TransitionCountdown = npc.Infernum().ExtraAI[6];
 
             PlanteraAttackState oldAttackType = (PlanteraAttackState)(int)npc.ai[0];
             PlanteraAttackState newAttackType = oldAttackType;
@@ -753,7 +725,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     break;
             }
 
-            if (phase3TransitionTimer > 0f)
+            // Ensure that Plantera starts phase 2 off with the poisonous gas release attack.
+            if (phase2TransitionCountdown > 0f)
                 newAttackType = PlanteraAttackState.PoisonousGasRelease;
 
             npc.ai[0] = (int)newAttackType;
@@ -790,7 +763,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public override void FindFrame(NPC npc, int frameHeight)
         {
-            float phase3TransitionTimer = npc.Infernum().ExtraAI[7];
+            float phase2TransitionCountdown = npc.Infernum().ExtraAI[6];
 
             npc.frameCounter += 1D;
             if (npc.frameCounter > 6D)
@@ -799,11 +772,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                 npc.frame.Y += frameHeight;
             }
 
-            bool inPhase3 = npc.life < npc.lifeMax * Phase2LifeRatio;
-            if (phase3TransitionTimer > 20f)
-                inPhase3 = false;
+            bool inPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
+            if (phase2TransitionCountdown > GoreSpawnCountdownTime)
+                inPhase2 = false;
 
-            if (!inPhase3)
+            if (!inPhase2)
             {
                 if (npc.frame.Y >= frameHeight * 4)
                     npc.frame.Y = 0;

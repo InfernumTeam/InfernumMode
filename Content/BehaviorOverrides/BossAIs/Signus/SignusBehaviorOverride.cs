@@ -99,6 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
+            npc.chaseable = true;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[1];
@@ -170,6 +171,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             // Disable damage.
             npc.damage = 0;
             npc.dontTakeDamage = true;
+
+            // Don't be targetable.
+            npc.chaseable = false;
 
             // Prevent hovering over Signus' name to reveal who he is.
             npc.ShowNameOnHover = false;

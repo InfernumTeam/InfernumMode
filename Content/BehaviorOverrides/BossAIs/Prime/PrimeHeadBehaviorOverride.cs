@@ -896,6 +896,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D eyes = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Prime/PrimeEyes").Value;
             Rectangle frame = texture.Frame(1, Main.npcFrameCount[npc.type], 0, (int)npc.localAI[0]);
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             for (int i = 9; i >= 0; i -= 2)
@@ -927,6 +928,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             }
 
             Main.spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(eyes, baseDrawPosition, frame, Color.White, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 
             // Draw line telegraphs for the lightning attack.
             float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];

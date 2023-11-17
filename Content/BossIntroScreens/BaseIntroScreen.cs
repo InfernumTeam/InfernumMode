@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.UI;
+using InfernumMode.Content.BossIntroScreens.InfernumScreens;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -104,7 +105,7 @@ namespace InfernumMode.Content.BossIntroScreens
                 DoCompletionEffects();
             }
 
-            if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || (notInvolvedWithBoss && !ShouldBeActive()))
+            if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || notInvolvedWithBoss && !ShouldBeActive())
             {
                 if (AnimationTimer < AnimationTime)
                     AnimationTimer = 0;
@@ -157,11 +158,11 @@ namespace InfernumMode.Content.BossIntroScreens
         {
             string suffix = $"IntroScreen.{GetType().Name}";
             string localizationKey = $"{suffix}.{key}";
-            
+
             return Utilities.GetLocalization(localizationKey);
         }
-        
-        
+
+
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
             float extraOffset = character.ToLower(CultureInfo.InvariantCulture) == "i" ? 9f : 0f;
@@ -254,7 +255,7 @@ namespace InfernumMode.Content.BossIntroScreens
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            if (!ShouldBeActive() || !InfernumMode.CanUseCustomAIs || !InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
+            if (!ShouldBeActive() || !InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
             {
                 AnimationTimer = 0;
                 HasPlayedMainSound = false;

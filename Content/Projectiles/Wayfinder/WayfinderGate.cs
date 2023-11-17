@@ -45,15 +45,15 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             // Never die naturally.
             Projectile.timeLeft = 2;
 
-            //// Handle the loop sound.
-            //if (Timer % 115f is 0f)
-            //    LoopSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderGateLoop with { Volume = 0.2f }, Projectile.Center);
+            // Handle the loop sound.
+            if (Timer % 115f is 0f)
+                LoopSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderGateLoop with { Volume = 0.2f }, Projectile.Center);
 
-            //if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
-            //{
-            //    if (sound.Position != Projectile.Center)
-            //        sound.Position = Projectile.Center;
-            //}
+            if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
+            {
+                if (sound.Position != Projectile.Center)
+                    sound.Position = Projectile.Center;
+            }
 
             // Periodically emit particles if any player is nearby.
             bool nearbyPlayer = false;

@@ -1,4 +1,5 @@
 ﻿using System;
+using InfernumMode.Content.BossIntroScreens.InfernumScreens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.Audio;
@@ -64,7 +65,7 @@ namespace InfernumMode.Content.BossIntroScreens
         /// <summary>
         /// This is also really evil.
         /// </summary>
-        public override TextColorData TextColor => new((float ratio) => { return textColor(ratio, AnimationCompletion); });
+        public override TextColorData TextColor => new((ratio) => { return textColor(ratio, AnimationCompletion); });
 
         public override float TextScale => textScale;
 
@@ -117,7 +118,7 @@ namespace InfernumMode.Content.BossIntroScreens
 
         internal ModCallIntroScreen SetupScreenCovering(Color screenCoverColor)
         {
-            this.shouldCoverScreen = true;
+            shouldCoverScreen = true;
             this.screenCoverColor = screenCoverColor;
             return this;
         }

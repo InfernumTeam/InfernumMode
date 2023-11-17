@@ -1,4 +1,4 @@
-﻿using InfernumMode.Content.Items.Pets;
+﻿using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;

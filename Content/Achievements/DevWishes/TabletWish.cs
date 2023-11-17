@@ -1,6 +1,6 @@
 ﻿using CalamityMod.NPCs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
-using InfernumMode.Content.Items.Pets;
+using InfernumMode.Content.Items.Misc;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
 using Terraria.ModLoader;

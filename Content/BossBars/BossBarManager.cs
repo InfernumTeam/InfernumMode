@@ -152,10 +152,11 @@ namespace InfernumMode.Content.BossBars
             int startHeight = 100;
             int x = Main.screenWidth - 220;
             int y = Main.screenHeight - startHeight;
+
+            // Shove the bar to the left a bit if anything is taking up the default position.
             if (Main.playerInventory || Main.invasionType > 0 || Main.pumpkinMoon || Main.snowMoon || DD2Event.Ongoing || AcidRainEvent.AcidRainEventIsOngoing)
-            {
                 x -= 250;
-            }
+
             foreach (BaseBossBar bar in ActiveBossBars)
             {
                 bar.Draw(spriteBatch, x, y);
@@ -165,6 +166,7 @@ namespace InfernumMode.Content.BossBars
         #endregion
 
         #region Methods
+        // This is seperate to the provided Load hook due to requiring the NPCBehaviorOverrides to be loaded beforehand.
         internal static void LoadPhaseInfo()
         {
             PhaseInfos = new();
@@ -173,7 +175,7 @@ namespace InfernumMode.Content.BossBars
             {
                 NPCBehaviorOverride behaviorOverride = behaviorOverridePair.Value;
                 List<float> phaseThresholds = behaviorOverride.PhaseLifeRatioThresholds.ToList();
-                // Add 1, or 100% to the start.
+                // Add 1 (100%) to the start, as none of them include that.
                 phaseThresholds.Insert(0, 1f);
                 PhaseInfos.Add(behaviorOverride.NPCOverrideType, new(behaviorOverride.NPCOverrideType, phaseThresholds));
             }
@@ -187,6 +189,9 @@ namespace InfernumMode.Content.BossBars
             NPC npc = Main.npc[npcIndex];
             bool canAddBar = npc.active && npc.life > 0 && ActiveBossBars.All((BaseBossBar b) => b.NPCIndex != npcIndex) && !npc.Calamity().ShouldCloseHPBar;
 
+            // Not ideal. The Exo Twins have a singular HP bar, and having to hardcode check that here is annoying.
+            // TODO: Is this needed? Was taken from Calamity's bar without checking, but it seems weird that they are the only instance
+            // where this is required.
             if (npc.type == ModContent.NPCType<Artemis>() || !canAddBar)
                 return;
 

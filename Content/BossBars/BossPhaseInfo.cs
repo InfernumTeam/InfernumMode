@@ -2,11 +2,13 @@
 
 namespace InfernumMode.Content.BossBars
 {
-    public struct BossPhaseInfo
+    public readonly struct BossPhaseInfo
     {
-        public int NPCType;
-        public int PhaseCount;
-        public List<float> PhaseThresholds;
+        public readonly int NPCType;
+
+        public readonly int PhaseCount;
+
+        public readonly List<float> PhaseThresholds;
 
         public BossPhaseInfo(int npcType, List<float> phaseThresholds)
         {

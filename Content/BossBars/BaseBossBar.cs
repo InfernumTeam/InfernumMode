@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;
@@ -277,7 +278,7 @@ namespace InfernumMode.Content.BossBars
 
                 if (NPCType == ModContent.NPCType<Yharon>())
                 {
-                    // This is already hardcoded so i dont care.
+                    // This is already hardcoded so I dont care.
                     phaseCount = 4;
                     if (!YharonBehaviorOverride.InSecondPhase)
                         phaseThresholds = new List<float> { phaseThresholds[0], phaseThresholds[1], phaseThresholds[2], phaseThresholds[3] };
@@ -327,6 +328,7 @@ namespace InfernumMode.Content.BossBars
 
         private int GetTotalPhaseIndicators()
         {
+            // Isn't this AMAZING!? Deciding to make yharon (and any boss for that matter) regen HP was a bad idea for things like this.
             if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs)
             {
                 if (phaseInfo.NPCType == ModContent.NPCType<Yharon>())
@@ -361,7 +363,8 @@ namespace InfernumMode.Content.BossBars
             Color bloomColor = new(208, 47, 63);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+            PlayerInput.SetZoom_UI();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, Main.UIScaleMatrix);
 
             Effect barShader = InfernumEffectsRegistry.BossBarShader.GetShader().Shader;
             barShader.Parameters["pixelationAmount"].SetValue(4f);
@@ -373,7 +376,7 @@ namespace InfernumMode.Content.BossBars
 
             spriteBatch.Draw(InfernumTextureRegistry.Pixel.Value, hpBarRightPos, null, drawColor, 0f, hpOrigin, hpScale, SpriteEffects.None, 0f);
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.UIScaleMatrix);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Main.UIScaleMatrix);
 
             // Draw the invincibility overlay.
             if ((InvincibilityTimer > 0 || IncreasingDefenseOrDRTimer > 0) && AssociatedNPC.type != NPCID.MoonLordCore)

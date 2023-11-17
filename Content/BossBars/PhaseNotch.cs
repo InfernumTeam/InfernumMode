@@ -39,11 +39,9 @@ namespace InfernumMode.Content.BossBars
             {
                 Time++;
 
-                // Move
                 Position += Velocity;
                 Velocity *= 0.98f;
 
-                // Rotate
                 Rotation += RotationSpeed;
 
                 // Grow rapidly

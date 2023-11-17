@@ -19,7 +19,6 @@ namespace InfernumMode.Content.BossIntroScreens
     public abstract class BaseIntroScreen : ModType
     {
         public int AnimationTimer;
-
         public float AnimationCompletion => Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
 
         public bool HasPlayedMainSound;
@@ -83,6 +82,8 @@ namespace InfernumMode.Content.BossIntroScreens
                 IntroScreenManager.IntroScreens.Add(this);
         }
 
+        public sealed override void SetupContent() => SetStaticDefaults();
+
         public abstract bool ShouldBeActive();
 
         public virtual void DoCompletionEffects() { }
@@ -103,7 +104,7 @@ namespace InfernumMode.Content.BossIntroScreens
                 DoCompletionEffects();
             }
 
-            if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || notInvolvedWithBoss)
+            if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || (notInvolvedWithBoss && !ShouldBeActive()))
             {
                 if (AnimationTimer < AnimationTime)
                     AnimationTimer = 0;
@@ -214,8 +215,8 @@ namespace InfernumMode.Content.BossIntroScreens
 
                     if (ShaderToApplyToLetters != null)
                     {
-                        ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
-                        ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"].SetValue(individualLineLetterCompletionRatio);
+                        ShaderToApplyToLetters.Parameters["uTime"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                        ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"]?.SetValue(individualLineLetterCompletionRatio);
                         PrepareShader(ShaderToApplyToLetters);
                         ShaderToApplyToLetters.CurrentTechnique.Passes[0].Apply();
                     }

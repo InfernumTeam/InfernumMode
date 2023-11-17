@@ -244,6 +244,10 @@ namespace InfernumMode.Content.BossBars
             else if (AssociatedNPC.type == NPCID.MoonLordCore)
                 BossIcon = TextureAssets.NpcHeadBoss[8].Value;
 
+            // Swap to the mod call icon if it exists.
+            if (ModCallBossIcons.TryGetValue(NPCType, out var icon))
+                BossIcon = icon;
+
             // Ensure there is the correct amount of indicators.
             int indicatorAmount = GetTotalPhaseIndicators();
             if (PhaseNotches.Count > indicatorAmount)
@@ -268,7 +272,7 @@ namespace InfernumMode.Content.BossBars
         {
             float baseRatio = (float)CombinedNPCLife / CombinedNPCMaxLife;
             currentPhase = 1;
-            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs)
+            if ((PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs) || ModCallPhaseInfos.TryGetValue(NPCType, out phaseInfo))
             {
                 float startingHealthPercentForPhase = 1f;
                 float endingHealthPercentForPhase = 0f;
@@ -329,7 +333,7 @@ namespace InfernumMode.Content.BossBars
         private int GetTotalPhaseIndicators()
         {
             // Isn't this AMAZING!? Deciding to make yharon (and any boss for that matter) regen HP was a bad idea for things like this.
-            if (PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs)
+            if ((PhaseInfos.TryGetValue(NPCType, out BossPhaseInfo phaseInfo) && InfernumMode.CanUseCustomAIs) || ModCallPhaseInfos.TryGetValue(NPCType, out phaseInfo))
             {
                 if (phaseInfo.NPCType == ModContent.NPCType<Yharon>())
                     return phaseInfo.PhaseCount / 2;

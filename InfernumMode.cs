@@ -7,7 +7,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BossBars;
 using InfernumMode.Content.UI;
 using InfernumMode.Core.Balancing;
-using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.ILEditingStuff;
 using InfernumMode.Core.Netcode;
@@ -17,6 +16,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Particles.Metaballs.FusableParticleManager;
+using InfernumMode.Core.ModCalls;
 
 namespace InfernumMode
 {

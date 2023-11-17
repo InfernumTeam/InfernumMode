@@ -33,6 +33,12 @@ namespace InfernumMode.Content.BossBars
         // Store phase information for every boss, by type.
         internal static Dictionary<int, BossPhaseInfo> PhaseInfos;
 
+        internal static Dictionary<int, BossPhaseInfo> ModCallPhaseInfos;
+
+        internal static Dictionary<int, Texture2D> ModCallBossIcons;
+
+        internal static List<int> ModCallNPCsThatCanHaveAHPBar;
+
         public static DynamicSpriteFont BarFont { get; private set; }
 
         public static Texture2D BarFrame { get; private set; }
@@ -67,6 +73,9 @@ namespace InfernumMode.Content.BossBars
         public override void Load()
         {
             ActiveBossBars = new();
+            ModCallPhaseInfos = new();
+            ModCallBossIcons = new();
+            ModCallNPCsThatCanHaveAHPBar = new();
 
             if (!Main.dedServ)
             {
@@ -100,6 +109,9 @@ namespace InfernumMode.Content.BossBars
         {
             ActiveBossBars = null;
             PhaseInfos = null;
+            ModCallPhaseInfos = null;
+            ModCallBossIcons = null;
+            ModCallNPCsThatCanHaveAHPBar = null;
             BarFont = null;
             BarFrame = null;
             MainBarTip = null;
@@ -131,7 +143,7 @@ namespace InfernumMode.Content.BossBars
                     if (Main.npc[j].TryGetGlobalNPC<CalamityGlobalNPC>(out var result))
                         canHaveHpBar = result.CanHaveBossHealthBar;
 
-                    if ((Main.npc[j].IsABoss() && !isEoWSegment) || BossHealthBarManager.MinibossHPBarList.Contains(Main.npc[j].type) || canHaveHpBar)
+                    if ((Main.npc[j].IsABoss() && !isEoWSegment) || BossHealthBarManager.MinibossHPBarList.Contains(Main.npc[j].type) || canHaveHpBar || ModCallNPCsThatCanHaveAHPBar.Contains(Main.npc[j].type))
                         AddBar(j);
                 }
             }

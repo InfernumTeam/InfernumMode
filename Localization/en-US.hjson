@@ -282,7 +282,7 @@ Mods: {
 
 				BossIntroductionAnimationsAreAllowed: {
 					Label: Boss Introduction Animations
-					Tooltip: Enables boss introduction animations. They only activate when Infernum Mode is active.
+					Tooltip: Enables boss introduction animations. Infernum's only activate when Infernum Mode is active.
 				}
 
 				DisplayTipsInChat: {

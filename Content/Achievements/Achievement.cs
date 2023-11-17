@@ -44,7 +44,7 @@ namespace InfernumMode.Content.Achievements
         public virtual void OnCompletion(Player player)
         {
             AchievementsNotificationTracker.AddAchievementAsCompleted(this);
-            Main.NewText(Utilities.GetLocalization("Status.AchievementCompletionText").WithFormatArgs(DisplayName.ToString()));
+            Main.NewText(Utilities.GetLocalization("Status.AchievementCompletionText") + $"[c/ff884d: {DisplayName.Value}]");
             SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
         }
 
@@ -103,7 +103,7 @@ namespace InfernumMode.Content.Achievements
         protected void WishCompletionEffects(Player player, int assosiatedItemType)
         {
             AchievementsNotificationTracker.AddAchievementAsCompleted(this);
-            Main.NewText(Utilities.GetLocalization("Status.AchievementCompletionText") + $"[c/ff884d: {DisplayName.Value}");
+            Main.NewText(Utilities.GetLocalization("Status.AchievementCompletionText") + $"[c/ff884d: {DisplayName.Value}]");
             SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
             player.QuickSpawnItem(Entity.GetSource_None(), assosiatedItemType, 1);
         }

@@ -57,6 +57,7 @@ namespace InfernumMode.Content.Tiles.Relics
 
         public override void SetStaticDefaults()
         {
+            RegisterItemDrop(DropItemID);
             Main.shine(Color.DarkRed, Type);
             Main.tileFrameImportant[Type] = true; // Any multitile requires this
             TileID.Sets.InteractibleByNPCs[Type] = true; // Town NPCs will palm their hand at this tile

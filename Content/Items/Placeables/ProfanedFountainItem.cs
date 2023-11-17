@@ -1,4 +1,4 @@
-using CalamityMod.Items.Placeables.FurnitureProfaned;
+﻿using CalamityMod.Items.Placeables.FurnitureProfaned;
 using InfernumMode.Content.Tiles.Profaned;
 using Terraria;
 using Terraria.ID;
@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Items.Placeables
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.value = Item.buyPrice(0, 4, 0, 0);
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarityID.Blue;
             Item.createTile = ModContent.TileType<ProfanedFountainTile>();
         }
 

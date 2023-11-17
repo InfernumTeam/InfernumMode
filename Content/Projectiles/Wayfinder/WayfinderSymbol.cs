@@ -10,13 +10,18 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 {
     public class WayfinderSymbol : ModProjectile
     {
-
         public ref float Time => ref Projectile.ai[0];
+
         public ref float Initialized => ref Projectile.ai[1];
+
         public float MaxScale;
+
         public int ColorVariation;
+
         public float RotationAmount;
+
         public float Speed;
+
         public static Color[] Colors => new Color[]
         {
             // Light yellow
@@ -93,14 +98,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             Color color = Colors[ColorVariation];
             Vector2 origin = texture.Size() * 0.5f;
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
-            Main.spriteBatch.Draw(bloomTexture, drawPos, null, color * Projectile.Opacity * 0.55f, 0f, bloomTexture.Size() * 0.5f, 0.7f * MaxScale, 0, 0);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-
+            Main.spriteBatch.Draw(bloomTexture, drawPos, null, color with { A = 0 } * Projectile.Opacity * 0.35f, 0f, bloomTexture.Size() * 0.5f, 0.7f * MaxScale, 0, 0);
             Main.spriteBatch.Draw(texture, drawPos, null, color * Projectile.Opacity * 0.5f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }

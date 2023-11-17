@@ -7,6 +7,7 @@ using ReLogic.Utilities;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Wayfinder
@@ -16,11 +17,6 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         public SlotId LoopSlot;
 
         public ref float Timer => ref Projectile.ai[0];
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Wayfinder Gate");
-        }
 
         public override void SetDefaults()
         {
@@ -39,7 +35,6 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             // Only exist if the position is set.
             if (WorldSaveSystem.WayfinderGateLocation == Vector2.Zero)
                 Projectile.Kill();
-            Projectile.active = true;
 
             // Fade in.
             Projectile.Opacity = Clamp(Projectile.Opacity + 0.015f, 0f, 1f);
@@ -50,15 +45,15 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
             // Never die naturally.
             Projectile.timeLeft = 2;
 
-            // Handle the loop sound.
-            if (Timer % 115f is 0f)
-                LoopSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderGateLoop with { Volume = 0.2f }, Projectile.Center);
+            //// Handle the loop sound.
+            //if (Timer % 115f is 0f)
+            //    LoopSlot = SoundEngine.PlaySound(InfernumSoundRegistry.WayfinderGateLoop with { Volume = 0.2f }, Projectile.Center);
 
-            if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
-            {
-                if (sound.Position != Projectile.Center)
-                    sound.Position = Projectile.Center;
-            }
+            //if (SoundEngine.TryGetActiveSound(LoopSlot, out var sound))
+            //{
+            //    if (sound.Position != Projectile.Center)
+            //        sound.Position = Projectile.Center;
+            //}
 
             // Periodically emit particles if any player is nearby.
             bool nearbyPlayer = false;
@@ -71,7 +66,6 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                     break;
                 }
             }
-
             if (nearbyPlayer)
             {
                 if (Main.rand.NextBool(8))
@@ -89,17 +83,20 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                     Particle particle = new CritSpark(position, velocity, Main.rand.NextBool() ? Color.Orange : Color.Gold, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.35f, 0.6f), 60, 0.2f);
                     GeneralParticleHandler.SpawnParticle(particle);
                 }
-                if (Main.rand.NextBool(80))
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30f, 10f) + new Vector2(22f, 20f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(null), position, Vector2.Zero, ModContent.ProjectileType<WayfinderSymbol>(), 0, 0, Main.myPlayer);
-                }
+                    if (Main.rand.NextBool(80))
+                    {
+                        Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30f, 10f) + new Vector2(22f, 20f);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(null), position, Vector2.Zero, ModContent.ProjectileType<WayfinderSymbol>(), 0, 0, Main.myPlayer);
+                    }
 
-                // Spawn a symbol every 90 frames, due to the low chance of spawning often leading to empty patches of spawns.
-                if (Timer % 90f == 0f)
-                {
-                    Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30f, 10f) + new Vector2(22f, 20f);
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(null), position, Vector2.Zero, ModContent.ProjectileType<WayfinderSymbol>(), 0, 0, Main.myPlayer);
+                    // Spawn a symbol every 90 frames, due to the low chance of spawning often leading to empty patches of spawns.
+                    if (Timer % 90f == 0f)
+                    {
+                        Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(30f, 10f) + new Vector2(22f, 20f);
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(null), position, Vector2.Zero, ModContent.ProjectileType<WayfinderSymbol>(), 0, 0, Main.myPlayer);
+                    }
                 }
             }
             Timer++;

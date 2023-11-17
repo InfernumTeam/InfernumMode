@@ -52,7 +52,6 @@ namespace InfernumMode.Common.Graphics
 
         public override void OnModLoad()
         {
-            ManagedTargets = new();
             Main.OnPreDraw += HandleTargetUpdateLoop;
             Main.OnResolutionChanged += ResetTargetSizes;
         }

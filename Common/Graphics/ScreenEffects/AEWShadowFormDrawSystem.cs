@@ -79,6 +79,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                     TemporaryAuxillaryTarget.Dispose();
 
                 TemporaryAuxillaryTarget = null;
+
+                Filters.Scene.OnPostDraw -= WhatTheFuck;
             });
 
             LightAndDarkEffectsCache.Clear();

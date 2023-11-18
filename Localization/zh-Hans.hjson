@@ -1,0 +1,2511 @@
+Mods: {
+	InfernumMode: {
+		Achievements: {
+			BabysFirstAchievement: {
+				DisplayName: 死海无涯
+				Description:
+					'''
+					死的越多，懂得越多
+					[c/777777:在炼狱模式中死于任意一个Boss]
+					'''
+			}
+
+			BereftVassalAchievement: {
+				DisplayName: 尘封已久
+				Description:
+					'''
+					在远方的沙丘的边缘击败无邦封臣
+					[c/777777:击败无邦封臣]
+					'''
+			}
+
+			ExoPathAchievement: {
+				DisplayName: 实验白鼠
+				Description:
+					'''
+					成为嘉登最爱的实验素材
+					[c/777777:在炼狱模式中击败所有星流巨械组合]
+					'''
+			}
+
+			InfernalChaliceAchievement: {
+				DisplayName: 狱火洗礼
+				Description:
+					'''
+					完成最终挑战，并领取你的奖励
+					[c/777777:获得炼狱圣杯]
+					'''
+			}
+
+			KillAllBossesAchievement: {
+				DisplayName: 皆入炼狱
+				Description:
+					'''
+					撕碎一切，直至尘埃落定
+					[c/777777:在炼狱模式中击败每一个Boss]
+					'''
+			}
+
+			KillAllMinibossesAchievement: {
+				DisplayName: 小小的震撼！
+				Description:
+					'''
+					击败潜藏在世界各地的威胁
+					[c/777777:在炼狱模式中击败每一个迷你Boss]
+					'''
+			}
+
+			MechaMayhemAchievement: {
+				DisplayName: 恶意军械
+				Description:
+					'''
+					在一次清扫中同时让三台疯狂的机器报废
+					[c/777777:在炼狱模式中击败机甲混战]
+					'''
+			}
+
+			NightProviAchievement: {
+				DisplayName: 戌时戍侍
+				Description:
+					'''
+					在群星的注视中向亵渎天神发起挑战
+					[c/777777:在炼狱模式中击败夜晚亵渎天神]
+					'''
+			}
+
+			RamlessDoGAchievement: {
+				DisplayName: 寸止挑战
+				Description:
+					'''
+					将计就计击败神明吞噬者
+					[c/777777:在炼狱模式中不使用冲刺击败神明吞噬者]
+					'''
+			}
+
+			Wishes: {
+				BlahajWish: {
+					DisplayName: 仁爱之力
+					Description:
+						'''
+						温暖的拥抱
+						[c/777777:在一分钟内击败炼狱模式下的猪龙鱼公爵]
+						'''
+				}
+
+				CrescentWish: {
+					DisplayName: 末日之终
+					Description:
+						'''
+						女巫的罪孽永远无法偿还
+						[c/777777:在地狱击败遗落灾影]
+						'''
+				}
+
+				EggWish: {
+					DisplayName: 天选之子
+					Description:
+						'''
+						传说中有一位勇敢的勇者将会进入这个世界进行冒险，并找到隐藏其中的传奇之剑
+						[c/777777:在击败石巨人后找到一个蛋之剑冢]
+						'''
+				}
+
+				MatrixWish: {
+					DisplayName: 科学方法
+					Description:
+						'''
+						实验就是失败，失败就是学习，学习就是进步
+						[c/777777:击败所有Boss和星流巨械的全部组合]
+						'''
+				}
+
+				NightmareWish: {
+					DisplayName: 它已苏醒
+					Description:
+						'''
+						它需要献祭，而你正是个不错的选择
+						[c/777777:在硫火之崖睡 {0} 秒]
+						'''
+				}
+
+				PurityWish: {
+					DisplayName: 星光普照
+					Description:
+						'''
+						这感觉就像太阳风和太阳钟
+						[c/777777:在三分半内击败炼狱模式下的夜晚亵渎天神]
+						'''
+				}
+
+				SakuraWish: {
+					DisplayName: 无邪微风
+					Description:
+						'''
+						一百个淘气的精灵正欢快地跳舞
+						[c/777777:找到樱花花苞]
+						'''
+				}
+
+				StormMaidenWish: {
+					DisplayName: 哀歌
+					Description:
+						'''
+						他们的眼泪跟雨水混合在一起，为一切不可能的事物哀悼
+						[c/777777:击败星流巨械和灾厄，并在下雨天的出生点附近找到一把矛]
+						'''
+				}
+
+				TabletWish: {
+					DisplayName: 纯洁无暇
+					Description:
+						'''
+						不是所有的野兽都是怪物
+						[c/777777:在腐蚀度不超过50%的情况下击败渊海灾虫]
+						'''
+				}
+
+				TophatWish: {
+					DisplayName: 著名的铸币助手
+					Description:
+						'''
+						每一次失败都让你进步！继续前进！
+						[c/777777:在任意Boss战累计死亡3次]
+						'''
+				}
+			}
+		}
+
+		Bestiary: {
+			BereftVassal: 一位警惕的守护者，他曾漫无目的地流浪。在得知他的国王还活着后，他似乎已重新燃起了生存的意志。他期待着再次与你战斗。
+			DepthFeeder: 即使是在深渊这一极其恶劣的环境中，生态系统仍然有可能蓬勃发展。
+			Herring: 源于不寻常的顽强，这种生物得以在剧毒的深渊上层的洞穴中繁衍生息。但无论如何，它们仍处于食物链的底端。
+			Lionfish: 这些畸形的鱼在它们的自然栖息地很少被捕食，这在很大程度上归功于它们那攻守兼备的毒刺。
+		}
+
+		Biomes: {
+			LostColosseumBiome: {
+				DisplayName: 失落竞技场
+				TownNPCDialogueName: 失落竞技场
+			}
+
+			ProfanedTempleBiome: {
+				DisplayName: 亵渎神庙
+				TownNPCDialogueName: 亵渎神庙
+			}
+		}
+
+		Buffs: {
+			AccentuationHex: {
+				DisplayName: 引魔巫咒
+				Description: 你对手的魔法将会追踪你
+			}
+
+			AsterPetBuff: {
+				DisplayName: 星状体
+				Description: 是他
+			}
+
+			BlahajBuff: {
+				DisplayName: 蓝鲨
+				Description: 舒适的朋友
+			}
+
+			BrimstoneBarrier: {
+				DisplayName: 硫火屏障
+				Description: 你的魔法将以削弱武器为代价创造一个强大的魔法屏障
+			}
+
+			BrimstoneExhaustion: {
+				DisplayName: 硫火之疲倦
+				Description: 你不能再召唤出硫火新月法杖的立场
+			}
+
+			BronzePetBuff: {
+				DisplayName: 2018年灾厄的嗡嗡蜂鸟
+				Description: 你知道你能在泰拉瑞亚中抚摸一只蜂鸟吗？
+			}
+
+			CatharsisHex: {
+				DisplayName: 泄怒巫咒
+				Description: 自然生命再生被禁用，愤怒灵魂从你体内喷涌而出
+			}
+
+			DarkFlames: {
+				DisplayName: 黑暗火焰
+				Description: 你的身体被遗忘之火吞噬，你的防御力降低了
+			}
+
+			HatGirlBuff: {
+				DisplayName: 礼帽女孩
+				Description: 芳心纵火犯
+			}
+
+			IndignationHex: {
+				DisplayName: 愤慨巫咒
+				Description: 一个探魂者将以你作为目标
+			}
+
+			Madness: {
+				DisplayName: 精神失常
+				Description: 要疯了……
+			}
+
+			ShadowflameInferno: {
+				DisplayName: 暗影狱火
+				Description: 快速流失生命值
+			}
+
+			SheepGodBuff: {
+				DisplayName: 羔羊之神
+				Description: 羊也会数羊吗
+			}
+
+			Sleepy: {
+				DisplayName: 困倦
+				Description: 你快睡着了
+			}
+
+			WeaknessHex: {
+				DisplayName: 羸弱巫咒
+				Description: 你的防御力和伤害减免被大幅度削弱了
+			}
+
+			ZealHex: {
+				DisplayName: 狂化巫咒
+				Description: 你对手的魔法将会大幅度加速
+			}
+		}
+
+		Configs: {
+			InfernumConfig: {
+				DisplayName: 配置
+
+				BossIntroductionAnimationsAreAllowed: {
+					Label: Boss介绍动画
+					Tooltip: 开启Boss介绍动画，仅在炼狱模式启用时有效。
+				}
+
+				DisplayTipsInChat: {
+					Label: 爆炸礼帽提示聊天栏显示
+					Tooltip: 确认爆炸礼帽宠物是否在聊天栏中显示其提示。
+				}
+
+				ReducedGraphicsConfig: {
+					Label: 减少图形运算量设置
+					Tooltip: 启用减少图形运算量模式。如果你有卡顿问题，请启用此选项。
+				}
+
+				FlashbangOverlays: {
+					Label: 屏幕覆盖层
+					Tooltip: 启用屏幕覆盖层的“闪光弹”效果。此设置不会直接影响游戏机制。
+				}
+
+				CreditsRecordings: {
+					Label: Boss记录回放
+					Tooltip: 启用Boss记录以便在制作人名单期间播放
+				}
+			}
+		}
+
+		Cooldowns: {
+			SealocketForcefieldCooldown: 力场冷却
+			InfiniteFlightCooldown: 无限飞行
+		}
+
+		DifficultyUI: {
+			Name: 炼狱
+			ShortDescription:
+				'''
+				[c/B32E81:对于那些追求比死亡模式更高难度人而言，这是一个独特的挑战。]
+				[c/B32E81:该模式无法在大师模式下或For the Worthy种子中运行。]
+				'''
+			ExpandedDescription:
+				'''
+				 [c/B32E81:大部分敌人变得不同，拥有更具挑战的AI。]
+				 [c/B32E81:肾上腺素充能时间变长。]
+				 [c/FF0055:适应力必不可少。]
+				'''
+			InfernumText: 炼狱模式已开启，祝你好运。
+			InfernumText2: 炼狱模式已关闭，很好，继续吧。
+		}
+
+		ExoMechsFight: {
+			PickTwoText: 选择两台巨械。选择的第一台巨械一开始会单独作战。当它受到一定的伤害后，选择的第二台巨械将会出现并协同战斗
+			ThanatosDesc: 塔纳托斯，一条装备着厚重铠甲、搭载了无数机关炮的恐怖巨蟒。
+			AresDesc: 阿瑞斯，一个搭载着六台超级星流武器的庞然巨物。
+			ArtemisApolloDesc: 阿尔忒弥斯和阿波罗，一对能量储备十分不稳定的超耐久自动机器。
+		}
+
+		IntroScreen: {
+			AEWIntroScreen.TextToDisplay:
+				'''
+				始渊守卫
+				始源妖龙
+				'''
+			AnahitaIntroScreen.TextToDisplay:
+				'''
+				遗忘元素
+				阿娜希塔
+				'''
+			AquaticScourgeIntroScreen.TextToDisplay:
+				'''
+				硫磺巨蟒
+				渊海灾虫
+				'''
+
+			AresIntroScreen: {
+				TextToDisplay:
+					'''
+					终极战争机器
+					阿瑞斯
+					'''
+				JokeTextToDisplay:
+					'''
+					预判游戏大师
+					阿瑞斯
+					'''
+			}
+
+			ArtemisAndApolloIntroScreen.TextToDisplay:
+				'''
+				至尊猎手
+				阿尔忒弥斯和阿波罗
+				'''
+			AstrumAureusIntroScreen.TextToDisplay:
+				'''
+				感染践踏者
+				白金星舰
+				'''
+			AstrumDeusIntroScreen.TextToDisplay:
+				'''
+				织星者
+				星神游龙
+				'''
+			BereftVassalIntroScreen.TextToDisplay:
+				'''
+				阿尔戈斯
+				无邦封臣
+				'''
+			BetsyIntroScreen.TextToDisplay:
+				'''
+				飞龙之母
+				双足翼龙
+				'''
+			BrainOfCthulhuIntroScreen.TextToDisplay:
+				'''
+				邪神思维
+				克苏鲁之脑
+				'''
+			BrimstoneElementalIntroScreen.TextToDisplay:
+				'''
+				残殇之灵
+				硫磺火元素
+				'''
+			CalamitasShadowIntroScreen.TextToDisplay:
+				'''
+				虚假女巫
+				灾厄之影
+				'''
+			CeaselessVoidIntroScreen.TextToDisplay:
+				'''
+				无止之噬
+				无尽虚空
+				'''
+			CrabulonIntroScreen.TextToDisplay:
+				'''
+				复生死尸
+				菌生蟹
+				'''
+			CryogenIntroScreen.TextToDisplay:
+				'''
+				崩摧监牢
+				极地之灵
+				'''
+			CultistIntroScreen.TextToDisplay:
+				'''
+				远古末日预言者
+				拜月教邪教徒
+				'''
+			DeerclopsIntroScreen.TextToDisplay:
+				'''
+				冬日凶兽
+				独眼巨鹿
+				'''
+			DesertScourgeIntroScreen.TextToDisplay:
+				'''
+				干缩饕餮
+				荒漠灾虫
+				'''
+			DestroyerIntroScreen.TextToDisplay:
+				'''
+				世界挖掘者
+				毁灭者
+				'''
+			DoGIntroScreen.TextToDisplay:
+				'''
+				自命不凡的
+				神明吞噬者
+				'''
+			DraedonIntroScreen.TextToDisplay:
+				'''
+				寰宇神匠
+				嘉登
+				'''
+			DragonfollyIntroScreen.TextToDisplay:
+				'''
+				混血龙裔
+				痴愚金龙
+				'''
+			DreadnautilusIntroScreen.TextToDisplay:
+				'''
+				血月之魇
+				恐惧鹦鹉螺
+				'''
+			DukeFishronIntroScreen.TextToDisplay:
+				'''
+				渊洋骇兽
+				猪龙鱼公爵
+				'''
+			EaterOfWorldsIntroScreen.TextToDisplay:
+				'''
+				腐化惧魇
+				世界吞噬者
+				'''
+			EmpressOfLightIntroScreen.TextToDisplay:
+				'''
+				虹棱辐辉
+				光之女皇
+				'''
+			EyeOfCthulhuIntroScreen.TextToDisplay:
+				'''
+				恶魔凝视者
+				克苏鲁之眼
+				'''
+
+			GolemIntroScreen: {
+				TextToDisplay:
+					'''
+					古代神像
+					石巨人
+					'''
+				JokeTextToDisplay:
+					'''
+					号码【链接已屏蔽】
+					【推销员1997】
+					'''
+			}
+
+			GreatSandSharkIntroScreen.TextToDisplay:
+				'''
+				托勒斯
+				旱海狂鲨
+				'''
+			HiveMindIntroScreen.TextToDisplay:
+				'''
+				群生恶瘤
+				腐巢意志
+				'''
+			KingSlimeIntroScreen.TextToDisplay:
+				'''
+				凝胶君主
+				史莱姆王
+				'''
+			LeviathanIntroScreen.TextToDisplay:
+				'''
+				远古野兽
+				利维坦
+				'''
+			MoonLordIntroScreen.TextToDisplay:
+				'''
+				不可名状之遗骸
+				月亮领主
+				'''
+
+			OldDukeIntroScreen: {
+				TextToDisplay:
+					'''
+					硫海之惧
+					硫海遗爵
+					'''
+				JokeTextToDisplay:
+					'''
+					冲刺恶魔
+					硫海遗爵
+					'''
+			}
+
+			PBGIntroScreen.TextToDisplay:
+				'''
+				生物巨械
+				瘟疫使者歌莉娅
+				'''
+			PerforatorHiveIntroScreen.TextToDisplay:
+				'''
+				血殁寄生者
+				血肉宿主
+				'''
+			PlanteraIntroScreen.TextToDisplay:
+				'''
+				繁茂丛生的
+				世纪之花
+				'''
+			PolterghastIntroScreen.TextToDisplay:
+				'''
+				怨念融合体
+				噬魂幽花
+				'''
+			ProfanedGuardiansIntroScreen.TextToDisplay:
+				'''
+				圣洁使徒
+				亵渎守卫
+				'''
+			ProfanedTempleIntroScreen.TextToDisplay:
+				'''
+				圣洁之地
+				亵渎花园
+				'''
+
+			ProvidenceIntroScreen: {
+				TextToDisplay:
+					'''
+					圣洁之焰
+					亵渎天神 普罗维登斯
+					'''
+				EnragedTextToDisplay:
+					'''
+					赦罪之焰
+					亵渎天神 普罗维登斯
+					'''
+			}
+
+			QueenBeeIntroScreen.TextToDisplay:
+				'''
+				蜂群女王
+				蜂王
+				'''
+			QueenSlimeIntroScreen.TextToDisplay:
+				'''
+				神圣聚群
+				史莱姆皇后
+				'''
+			RavagerIntroScreen.TextToDisplay:
+				'''
+				血肉堡垒
+				毁灭魔像
+				'''
+			SCalIntroScreen.TextToDisplay:
+				'''
+				硫火女巫
+				至尊灾厄
+				'''
+			SignusIntroScreen.TextToDisplay:
+				'''
+				鬼魅刺客
+				神之使徒西格纳斯
+				'''
+			SkeletronIntroScreen.TextToDisplay:
+				'''
+				耄耋厄咒
+				骷髅王
+				'''
+			SkeletronPrimeIntroScreen.TextToDisplay:
+				'''
+				恐惧之械
+				机械骷髅王
+				'''
+			SlimeGodIntroScreen.TextToDisplay:
+				'''
+				原初之构
+				史莱姆之神
+				'''
+			StormWeaverIntroScreen.TextToDisplay:
+				'''
+				大气捕食者
+				风暴编织者
+				'''
+			TerminusIntroScreen.TextToDisplay: 你找到了终末石！
+			ThanatosIntroScreen.TextToDisplay:
+				'''
+				完美歼灭者
+				塔纳托斯
+				'''
+			TwinsIntroScreen.TextToDisplay:
+				'''
+				机械观察者
+				双子魔眼
+				'''
+			WoFIntroScreen.TextToDisplay:
+				'''
+				饥饿聚合体
+				血肉墙
+				'''
+
+			YharonIntroScreen: {
+				TextToDisplay:
+					'''
+					忠诚护卫
+					重生之龙 牙戎
+					'''
+				JokeTextToDisplay:
+					'''
+					超级无敌大大大的
+					重生之龙 牙戎
+					'''
+			}
+		}
+
+		Items: {
+			// Beware translators, this line must match the "enrage" word in the tooltip of your language
+			EnrageTooltip: 狂暴
+			DeveloperItem: "[c/{0}:~ 开发者物品 ~]"
+			InfernalRelicText: 以殁者之火铸其形，其焰猩赫
+
+			Lore: {
+				KnowledgeBereftVassal: {
+					Lore:
+						'''
+						源于孤独的非凡友情。
+						阿尔戈斯曾是一位声名显赫的战士，他似乎是少数从伊尔梅里斯废墟中走出来的幸存者之一。
+						他藏身于这些神秘的废墟中，默默见证着时间的流逝，没有任何目的，直到你的到来。
+						他的命运是个人正义误入歧途所结出的果实。不要为了远大理想而遭受无意义的苦痛。
+						'''
+					DisplayName: 无邦封臣和旱海狂鲨
+				}
+			}
+
+			CelestialSigil.SummoningText:
+				'''
+				立刻召唤月亮领主
+				在玩家所在的位置周围创造一圈战斗场地
+				不消耗
+				'''
+
+			ProfanedShard: {
+				SummoningText: 在白天地狱最右侧亵渎花园的悬崖上使用，召唤亵渎守卫
+				GardenWarning:
+					'''
+					你的世界目前没有亵渎神庙，击杀一次月亮领主以生成它
+					如果你要这样做的话，请确保已经拿到了地狱原型图，因为花园可能会摧毁实验室
+					'''
+			}
+
+			EyeofDesolation.SummoningText: 在夜晚使用时召唤{0}
+			ProfanedCore.SummoningText: 在地狱最右侧亵渎神庙中的圣坛使用，召唤亵渎天神
+			RuneofKos.DeveloperText: 无尽虚空只能在废弃档案室中战斗
+
+			SandstormsCore: {
+				PortalDetail: 开启前往失落竞技场的入口
+				GatewayWarning: 你的世界目前没有失落之门，杀死拜月教邪教徒以生成它。
+			}
+
+			LihzahrdPowerCell.SummoningText:
+				'''
+				在丛林蜥蜴祭坛使用，召唤石巨人
+				石巨人将会在祭坛周围创建一个矩形战斗场地
+				如果祭坛在神庙内，则场地内神庙方块会被破坏
+				'''
+
+			CherishedSealocket: {
+				DisplayName: 珍海吊坠
+				Tooltip:
+					'''
+					生成一个受击2次后消散的水波立场
+					当立场存在时，受到的伤害会减少60%，你会获得12%的伤害加成
+					立场会在90秒后再次生成
+					'''
+			}
+
+			FlowerOfTheOcean: {
+				DisplayName: 海之花
+				Tooltip:
+					'''
+					大幅提高水下能见度
+					创造一种水下视觉效果
+					'''
+			}
+
+			Purity: {
+				DisplayName: 纯净
+				Tooltip:
+					'''
+					增加30%伤害和攻击速度
+					免疫夜魇
+					[c/ff5d5d:你无法暴击]
+					[c/59aae7:这听起来就像两兄弟在阳光下追逐玻璃青蛙]
+					'''
+			}
+
+			// Important: Don't translate this tooltip, currently is being used for the tooltip effect
+			SakuraBloom: {
+				DisplayName: 盛开的樱花
+				Tooltip:
+					'''
+					这象征着爱情在盛开时是多么美丽，而它又多么容易枯萎
+					短暂的
+					'''
+
+				TooltipEffect: {
+					FirstText: 这象征着
+					SecondText: 爱情
+					ThirdText: 在盛开时是多么美丽，而它又多么容易枯萎
+					FourthText: 也许有了这个，我们就能保存
+					FifthText: 记忆
+					SixthText: ？
+				}
+			}
+
+			BereftVassalBossBag: {
+				DisplayName: 宝藏袋（无邦封臣）
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			BrimstoneCrescentStaff: {
+				// DisplayName: Brimstone Crescent Staff
+				/* Tooltip:
+					'''
+					Using the staff toggles a powerful forcefield that provides a universal 60% DR
+					Hits that are applied to you while the forcefield is up release a violent explosion that hurts nearby enemies
+					When the forcefield is activated, and for 15 seconds afterwards, your damage output is reduced by 60%
+					The forcefield breaks after 3 hits. After it breaks, you cannot recreate it until 45 seconds have passed
+					''' */
+			}
+
+			DemonicChaliceOfInfernum: {
+				DisplayName: 炼狱圣杯
+				Tooltip: ""
+			}
+
+			ProfanedCrystalDye.DisplayName: 渎神结晶染料
+
+			ElysianRose: {
+				DisplayName: 极乐玫瑰
+				Tooltip: 它向往深渊的最深处……
+			}
+
+			HyperplaneMatrix: {
+				DisplayName: 超平面矩阵
+				Tooltip:
+					'''
+					一个难以计算的复杂装置，其中蕴含着无限的力量
+					使用以打开一个面板，其能够授予你各种扭曲现实的能力
+					在遥远的天体上，一个名为嘉登的存在诞生了
+					生来为创造与改进
+					一个目标，一个循环
+					电量充足，日夜运转
+					电量不足，机械休眠
+					一切早已安排
+					一切毫无区别
+					'''
+			}
+
+			KnowledgeBereftVassal: {
+				DisplayName: 无邦封臣和旱海狂鲨
+				Tooltip:
+					'''
+					[c/e3af40:寄宿其上的低语流入你的耳中……]
+					[c/bebebe:按住“左Shift”仔细聆听]
+					'''
+			}
+
+			LunarCoin: {
+				DisplayName: 月之币章
+				Tooltip: ""
+			}
+
+			Blahaj: {
+				DisplayName: 蓝鲨抱枕
+				Tooltip: 召唤一只宜家毛绒玩具宠物
+			}
+
+			BlastedTophat: {
+				DisplayName: 爆炸礼帽
+				Tooltip: 召唤一个小小的礼帽女孩在你与Boss战斗时给予你建议
+			}
+
+			DisenchantedTablet: {
+				DisplayName: 未注魔的石碑
+				Tooltip:
+					'''
+					其容纳着被锁定的错综复杂的记忆之网
+					可以在地表某处的石碑祭坛上被附魔
+					'''
+			}
+
+			NightmareCatcher: {
+				DisplayName: 噩梦捕手
+				Tooltip:
+					'''
+					召唤羔羊之主跟着你
+					当我轻轻的进入梦乡，它便自黑暗之中诞生
+					'''
+			}
+
+			RisingWarriorsSoulstone: {
+				DisplayName: Rising Warrior的魂石
+				Tooltip:
+					'''
+					召唤一个狼星孩……“帮助”你?
+					这块石碑与强大的遗物产生了共鸣
+					'''
+			}
+
+			SuspiciouslyRoundFeather: {
+				DisplayName: 可疑的圆羽毛
+				Tooltip: 召唤一个老朋友
+			}
+
+			AquaticScourgeSkull: {
+				DisplayName: 渊海灾虫的头骨
+				Tooltip: ""
+			}
+
+			BereftVassalTrophy: {
+				DisplayName: 无邦封臣纪念章
+				Tooltip: ""
+			}
+
+			CosmicMonolithItem: {
+				DisplayName: 寰宇之石
+				Tooltip: ""
+			}
+
+			CreditPainting: {
+				DisplayName: 你应得的荣誉
+				Tooltip: ""
+			}
+
+			GrandStatueItem: {
+				DisplayName: 狂鲨雕像
+				Tooltip: ""
+			}
+
+			ProfanedFountainItem: {
+				DisplayName: 亵渎岩浆喷泉
+				Tooltip: ""
+			}
+
+			ProvidenceSpawnerItem: {
+				DisplayName: 亵渎祭坛Debug物品
+				Tooltip: 用亵渎晶核在其上右键以召唤亵渎天神
+			}
+
+			TabletPedestal: {
+				DisplayName: 石碑基座
+				Tooltip: 可用于附魔一块特殊的未注魔的石碑
+			}
+
+			AEWRelic: {
+				DisplayName: 始源妖龙炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			AquaticScourgeRelic: {
+				DisplayName: 渊海灾虫炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			AstrumAureusRelic: {
+				DisplayName: 白金星舰炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			AstrumDeusRelic: {
+				DisplayName: 星神游龙炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			BereftVassalRelic: {
+				DisplayName: 无邦封臣炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			BetsyRelic: {
+				DisplayName: 双足翼龙炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			BrainOfCthulhuRelic: {
+				DisplayName: 克苏鲁之脑炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			BrimstoneElementalRelic: {
+				DisplayName: 硫磺火元素炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			CeaselessVoidRelic: {
+				DisplayName: 无尽虚空炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			CrabulonRelic: {
+				DisplayName: 菌生蟹炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			CryogenRelic: {
+				DisplayName: 极地之灵炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DarkMageRelic: {
+				DisplayName: 暗黑魔法师炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DeerclopsRelic: {
+				DisplayName: 独眼巨鹿炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DesertScourgeRelic: {
+				DisplayName: 荒漠灾虫炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DestroyerRelic: {
+				DisplayName: 毁灭者炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DevourerOfGodsRelic: {
+				DisplayName: 神明吞噬者炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					有些时候，纯粹的反应能力是最值得去培养的。
+					你已经到了最终的阶段。目前为止，你已经证明了你那无价的决心。
+					愿它指引你完成最后的挑战。
+					'''
+			}
+
+			DraedonRelic: {
+				DisplayName: 嘉登炼狱圣物
+				Tooltip: GetsChanged
+
+				PersonalMessage: {
+					DefaultMessage:
+						'''
+						你做的很好。现在，只剩下一个挑战了-
+						面对那位女巫。
+						'''
+					DownedCalamitasMessage:
+						'''
+						令人赞叹，你已经战胜了所有的困难。
+						为这些成就感到骄傲吧，因为你已经比最初的时候更加强大了。
+						'''
+				}
+			}
+
+			DragonfollyRelic: {
+				DisplayName: 痴愚金龙炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DreadnautilusRelic: {
+				DisplayName: 恐惧鹦鹉螺炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			DukeFishronRelic: {
+				DisplayName: 猪龙鱼公爵炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			EaterOfWorldsRelic: {
+				DisplayName: 世界吞噬怪炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			EmpressOfLightRelic: {
+				DisplayName: 光之女皇炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage: 那些可选性的敌人有时可能很难对付，击败他们也可能会拥有很高的收益。
+			}
+
+			EyeOfCthulhuRelic: {
+				DisplayName: 克苏鲁之眼炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					记住，你没有必要一直强迫自己取得胜利，有必要的话小憩一下也未尝不可。
+					最重要的是享受游戏的乐趣。
+					'''
+			}
+
+			ForgottenShadowOfCalamitasRelic: {
+				DisplayName: 遗落灾影炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			GiantClamRelic: {
+				DisplayName: 巨像蛤炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			GolemRelic: {
+				DisplayName: 石巨人炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage: 还有很长的路要走，有条不紊的计划将有助于克服未来的障碍。
+			}
+
+			HiveMindRelic: {
+				DisplayName: 腐巢意志炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			KingSlimeRelic: {
+				DisplayName: 史莱姆王炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage: 即使是经验再丰富的玩家，面对陌生的挑战也会有些吃力。适应力是关键。
+			}
+
+			LeviathanRelic: {
+				DisplayName: 利维坦和阿娜希塔炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			LunaticCultistRelic: {
+				DisplayName: 拜月教邪教徒炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			MoonLordRelic: {
+				DisplayName: 月亮领主炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					到目前为止，你做得很好。
+					但愿你的坚韧不拔能指引你完成剩下的挑战。
+					'''
+			}
+
+			OgreRelic: {
+				DisplayName: 食人魔炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			OldDukeRelic: {
+				DisplayName: 硫海遗爵炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					这也许是场困难的战斗，但你十分明智的忍受并克服了它所带来的挑战。
+					你会发现它所测试你的机制将很快就会再次出现。
+					'''
+			}
+
+			PerforatorsRelic: {
+				DisplayName: 血肉宿主炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			PlaguebringerGoliathRelic: {
+				DisplayName: 瘟疫使者歌莉娅炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			PlanteraRelic: {
+				DisplayName: 世纪之花炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage:
+					'''
+					为死亡而感到骄傲吧！
+					死亡次数越多，你的经验便越丰富。继续加油！
+					'''
+			}
+
+			PolterghastRelic: {
+				DisplayName: 噬魂幽花炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			ProfanedGuardiansRelic: {
+				DisplayName: 亵渎守卫炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			ProvidenceRelic: {
+				DisplayName: 亵渎天神炼狱圣物
+				Tooltip: GetsChanged
+
+				PersonalMessage: {
+					DefaultMessage:
+						'''
+						这是在你击败月球领主后遇到的第一个阻碍，战胜她绝非易事。
+						也许你可以试试在晚上与她来一场特别的战斗？
+						'''
+					HasBeatenInfernumNightProvBeforeDayMessage:
+						'''
+						老兄？你在干什么？你还好吗？
+						你应该先在白天击败过她一次后再在晚上与她战斗的！
+						'''
+				}
+			}
+
+			QueenBeeRelic: {
+				DisplayName: 蜂王炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			QueenSlimeRelic: {
+				DisplayName: 史莱姆皇后炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			RavagerRelic: {
+				DisplayName: 毁灭魔像炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			SignusRelic: {
+				DisplayName: 西格纳斯炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			SkeletronPrimeRelic: {
+				DisplayName: 机械骷髅王炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			SkeletronRelic: {
+				DisplayName: 骷髅王炼狱圣物
+				Tooltip: GetsChanged
+				PersonalMessage: 流程第一个阻碍，你现在比之前面对它时更加熟练了，你享受熟练它攻击模式的过程吗？
+			}
+
+			SlimeGodRelic: {
+				DisplayName: 史莱姆之神炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			StormWeaverRelic: {
+				DisplayName: 风暴编织者炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			SupremeCalamitasRelic: {
+				DisplayName: 至尊女巫，灾厄炼狱圣物
+				Tooltip: GetsChanged
+
+				PersonalMessage: {
+					DefaultMessage:
+						'''
+						你做的很好。现在，只剩下一个挑战了-
+						面对那位神匠。
+						'''
+					DownedExoMechsMessage:
+						'''
+						令人赞叹，你已经战胜了所有的困难。
+						为这些成就感到骄傲吧，因为你已经比最初的时候更加强大了。
+						'''
+				}
+			}
+
+			TwinsRelic: {
+				DisplayName: 双子魔眼炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			WallOfFleshRelic: {
+				DisplayName: 血肉墙炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			YharonRelic: {
+				DisplayName: 犽戎炼狱圣物
+				Tooltip: GetsChanged
+			}
+
+			SakuraBud: {
+				DisplayName: 樱花花苞
+				Tooltip:
+					'''
+					一朵娇嫩脆弱的樱花花苞，含苞待放
+					你感觉一只精灵尝试指引你去往花苞的家
+					也许你应该跟随它的指引？
+					'''
+
+				TooltipEffect: {
+					FirstText: 你感觉一只
+					SecondText: 精灵尝试指引
+					ThirdText: 你去往花苞的家
+					FourthText: 精灵尝试吸引你的注意力到
+					FifthText: 水中
+					SixthText: 也许你应该跟随它的指引？
+				}
+			}
+
+			BloodwormPlatter: {
+				DisplayName: 血蠕虫拼盘
+				Tooltip:
+					'''
+					召唤硫海遗爵
+					只能在硫磺海使用
+					不消耗
+					'''
+			}
+
+			DungeonsCurse: {
+				DisplayName: 地牢厄咒
+				Tooltip:
+					'''
+					召唤骷髅王
+					在白天狂暴
+					在白天使用此物品会将时间变为夜晚
+					不消耗
+					'''
+			}
+
+			EvokingSearune: {
+				DisplayName: 唤海符石
+				Tooltip:
+					'''
+					在深渊底层召唤成年幻海妖龙
+					此乃原初之神创造的远古神器，其可用于召唤一个幽灵守卫
+					不消耗
+					'''
+			}
+
+			FleshChunk: {
+				DisplayName: 血肉碎块
+				Tooltip:
+					'''
+					召唤血肉墙
+					只能在地狱使用
+					不消耗
+					'''
+			}
+
+			LeviathanDetector: {
+				DisplayName: 利维坦探测器
+				Tooltip:
+					'''
+					召唤阿娜希塔
+					不消耗
+					'''
+			}
+
+			RadiantCrystal: {
+				DisplayName: 辐彩棱晶
+				Tooltip:
+					'''
+					召唤光之女皇
+					不需要在神圣之地使用
+					在白天狂暴
+					不消耗
+					'''
+			}
+
+			RedBait: {
+				DisplayName: 赤饵
+				Tooltip:
+					'''
+					召唤恐惧鹦鹉螺
+					只能在夜晚使用
+					不消耗
+					'''
+			}
+
+			SparklingTunaCan: {
+				DisplayName: 闪光软体生物罐头
+				Tooltip:
+					'''
+					召唤巨像蛤
+					只能在沉沦之海使用
+					不消耗
+					'''
+			}
+
+			TrufflePlatter: {
+				DisplayName: 松露虫拼盘
+				Tooltip:
+					'''
+					召唤猪龙鱼公爵
+					只能在海洋环境使用
+					不消耗
+					'''
+			}
+
+			WaterglassToken: {
+				DisplayName: 水琉璃之赠
+				Tooltip:
+					'''
+					将你传送到失落竞技场以及返回主世界
+					必须在快捷栏才可以使用
+					'''
+			}
+
+			Wayfinder: {
+				DisplayName: 寻路者
+				Tooltip:
+					'''
+					创造一扇魔法门让你快速到达那里
+					有boss存活时无法使用
+					ModifedInModifyTooltips
+					'''
+				TooltipEffect:
+					'''
+					长按鼠标左键来传送到魔法门
+					长按鼠标左键的同时按{0}在你的位置创造一个魔法门
+					长按鼠标左键的同时按{1}来移除魔法门
+					'''
+			}
+
+			AridBattlecry: {
+				DisplayName: 旱沙号角
+				Tooltip: 在光标下方召唤鲨鱼飞向敌人
+			}
+
+			EyeOfMadness: {
+				DisplayName: 癫狂魔眼
+				Tooltip:
+					'''
+					释放一连串的暗影卷须猎捕其范围内的敌人
+					一件曾被幻妖灵巫使用过的宗教器具。不知为何，其容纳着过去亿万年的知识
+					遗憾的是，它的全部内容已超出了你的理解范围，但你似乎对它的
+					秘法力量很感兴趣，即使使用它们会消耗你些许的理智
+					'''
+			}
+
+			IllusionersReverie: {
+				DisplayName: 幻迷之念
+				Tooltip:
+					'''
+					发射你的暗影幻象追踪攻击附近的敌怪，然后幻象会分散成黑魔法云
+					你不应该看见这个
+					它的存在让人不禁想知道，究竟是什么知识被神秘的深海淹没了
+					'''
+
+				TooltipEffect: {
+					FirstText: 一本
+					SecondText: 令人费解的
+					ThirdText: 古老巨著。不知何故，尽管它的年代久远，但它似乎仍然完好无损
+				}
+			}
+
+			Kevin: {
+				DisplayName: kevin
+				Tooltip:
+					'''
+					宏伟之铸的一小部分，外行人可理解不了这些
+					它是“动能电浆伏压注入器”的缩写
+					'''
+			}
+
+			CallUponTheEggs: {
+				DisplayName: 呼唤之蛋
+				Tooltip: "[c/f0ad56:这把武器只能由那些肩负着保护弱者使命的人使用]"
+			}
+
+			Myrindael: {
+				DisplayName: 颤沙霆戟
+				Tooltip:
+					'''
+					按住左键旋转长矛，然后投掷出去。投掷后，命中敌人会向敌人释放闪电与火花
+					右键会进行强力的冲刺，在命中敌人时从空中劈下闪电
+					[c/6fc8ff:争斗，毁灭，是要这世界任你予取予求]
+					[c/6fc8ff:然而，当这世界都对你刀兵相向，你还能做些什么？]
+					'''
+			}
+
+			TheGlassmaker: {
+				DisplayName: 熔璃化匠
+				Tooltip:
+					'''
+					90%几率不消耗凝胶
+					有时会发射出炽热的玻璃碎片追踪附近的目标
+					'''
+			}
+
+			Dyes: {
+				ProfanedCrystalDye: {
+					DisplayName: 渎神结晶染料
+					Tooltip: ""
+				}
+			}
+
+			NuclearTerrorRelic: {
+				DisplayName: 辐核骇兽孽狱圣物
+				Tooltip: ""
+			}
+
+			SakuraTreetop: {
+				DisplayName: 樱花树
+				Tooltip: ""
+			}
+
+			Weapons: {
+				Rogue: {
+					WanderersShell: {
+						DisplayName: 流浪者之壳
+						Tooltip:
+							'''
+							向敌人投掷贝壳，在它们反弹并停留在地上之前，这些贝壳会追踪敌人
+							潜伏攻击会将所有停留在地上的贝壳炸成会攻击附近敌人的水柱
+							开口边缘太锋利了，没法靠近耳朵
+							'''
+					}
+
+					StormMaidensRetribution: {
+						DisplayName: 风暴少女之复仇
+						Tooltip:
+							'''
+							射出长矛会释放出红色的闪电
+							潜伏攻击会释放第三只长矛追踪敌怪，命中后会天降闪电
+							一把由风暴女神所使用的神之长矛，由她强大的力量所锻造
+							这把武器本身似乎激荡着不可磨灭的苦痛，懊悔，和哀伤
+							'''
+					}
+
+					Dreamtastic: {
+						DisplayName: 梦幻
+						Tooltip:
+							'''
+							召唤两个笨蛋向敌人发射能量球
+							这本书本身也会释放能量
+							里面有限的页数，记录了两个梦幻之星他们丰富的冒险故事
+							你是个笨蛋
+							'''
+					}
+				}
+			}
+
+			ProfanedGardenLocationSetter: {
+				DisplayName: 亵渎花园位置设置器
+				Tooltip:
+					'''
+					用它来修复亵渎花园功能异常的问题。
+					左键单击花园中间亵渎碑文的物块底部中心。
+					这可以让花园的位置正确的绕该点居中。
+					你可以右键单击将位置恢复到上一次设置的位置。
+					'''
+			}
+
+			DeusMonolithItem: {
+				DisplayName: 星辉维度石
+				Tooltip: ""
+			}
+
+			ForbiddenArchivesLocationSetter: {
+				DisplayName: 废弃档案室位置设置器
+				Tooltip:
+					'''
+					如果你的档案室被深渊摧毁了的话，请使用这个。
+					左键单击你的地牢场地中心，让无尽虚空自然生成。
+					你可以右键单击将位置恢复到上一次设置的位置。
+					'''
+			}
+		}
+
+		Keybinds: {
+			"Wayfinder Create Key.DisplayName": 魔法门创建键
+			"Wayfinder Destroy Key.DisplayName": 魔法门删除键
+		}
+
+		MusicDisplay: {
+			ForgottenWinds: {
+				DisplayName: 遗忘之风
+				Author: by Toasty
+			}
+
+			UnholySanctuary: {
+				DisplayName: 秽色圣所
+				Author: by Toasty
+			}
+
+			SignusAmbience: {
+				DisplayName: ???
+				Author: by Dominic
+			}
+		}
+
+		// Will use the CalamitasShadowClone.DisplayName field
+		NameOverrides.CalamitasShadowClone.EntryName: The {0}
+
+		NPCs: {
+			ColossalSquidTentacle.DisplayName: 触手
+			DepthFeeder.DisplayName: 深水饵鱼
+			Herring.DisplayName: 鲱鱼
+			LionfishEnemy.DisplayName: 狮子鱼
+			DeusSpawn.DisplayName: 大白金
+			BrainIllusion.DisplayName: 克苏鲁之脑
+			BrainIllusion2.DisplayName: 克苏鲁之脑
+			SoulSeeker2.DisplayName: 探魂者
+			LightSnuffingHand.DisplayName: 熄芒暗手
+			AresEnergyKatana.DisplayName: XF-09“阿瑞斯”能量光刀
+			AresPulseCannon.DisplayName: XF-09“阿瑞斯”脉冲加农炮
+			RedPlasmaEnergy.DisplayName: 等离子球
+			RedirectingBubble.DisplayName: 泡泡
+			ExplodingServant.DisplayName: 克苏鲁之仆
+			GolemFistLeft.DisplayName: 石巨人拳
+			GolemFistRight.DisplayName: 石巨人拳
+
+			BereftVassal: {
+				DisplayName: 无邦封臣，阿尔戈斯
+
+				BossChecklistIntegration: {
+					SpawnInfo: 在沙漠中心的基座上使用[i:7119]。
+					EntryName: 无邦封臣
+				}
+			}
+
+			Ninja.DisplayName: 忍者
+			BuilderDroneBig.DisplayName: 大型建构无人机
+			BuilderDroneSmall.DisplayName: 小型建构无人机
+			ExplosivePlagueCharger.DisplayName: 爆炸瘟疫蜜蜂
+			PlagueNuke.DisplayName: 瘟疫核弹
+			SmallDrone.DisplayName: 小型无人机
+			PlanteraPinkTentacle.DisplayName: 世纪之花触手
+			PolterghastLeg.DisplayName: 诡灵腿
+			EtherealHand.DisplayName: 缥缈之手
+			HealerShieldCrystal.DisplayName: 圣洁之盾
+			SplitBigSlime.DisplayName: 不稳定的史莱姆子代
+			SplitBigSlimeAnimation.DisplayName: 不稳定的史莱姆子代
+			ShadowDemon.DisplayName: 暗影巨蛇
+			GolemArenaPlatform.DisplayName: 石巨人战斗平台
+			CalamitasShadowClone.DisplayName: 遗落灾影
+			CataclysmShadow.DisplayName: 遗落灾祸之影
+			CatastropheShadow.DisplayName: 遗落灾难之影
+		}
+
+		PetDialog: {
+			AsterSummon1: 你想远离我？ 再考虑下！
+			AsterSummon2: 芜湖!我回来了。
+			AsterSummon3: 哇，闻起来布满灰尘的石板……
+			AsterSummon4: 小心点我，我是个特殊的小家伙。
+			AsterSummon5: 终于回来了!是时候再一次肆虐了!
+			AsterSummon6: 玩家不会死亡，他们会复活。
+			AsterSummon7: 疼!
+			AsterPassive1: 外面是多美好的一天，鸟语花香……
+			AsterPassive2: 想和我一起去摘花吗?
+			AsterPassive3: 嘿，你把炸药放哪了?
+			AsterPassive4: 多么无聊的一天。
+			AsterPassive5: 来吧!让我们做些有趣的事情吧!
+			AsterPassive6: 接下来干什么，伙计?
+			AsterPassive7: 闪闪发光！
+			AsterBossSpawn1: 嘿，这很快就会结束。
+			AsterBossSpawn2: 这次别死，好吗?
+			AsterBossSpawn3: 这么快就回来了?
+			AsterBossSpawn4: 如果这次你输了，我就拆家。这就是在威胁你。
+			AsterBossSpawn5: 别忘了药水！
+			AsterBossSpawn6: 如果你是故意死的，我给你打二十分。
+			AsterBossSpawn7: 咳，这将易如反掌!
+			AsterBossSpawn8: 勇往直前，我的骄傲。
+			AsterBossSpawn9: 给我展示一手，大人物。
+			AsterBossSpawn10: 记住，坠落也是一种躲避方法！
+			AsterPet1: 嘿,现在……
+			AsterPet2: 嗯？
+			AsterPet3: 喜欢!
+			AsterPet4: 等等，别停下来……
+			AEWJokeTip1: 那块愚蠢的b石头到底有什么意义？！
+			AquaticScourgeTip1: 这条海蛇的疯狂游动似乎导致水体能够被轻易穿过，你甚至可以不借助任何装备在水中畅游！
+			AquaticScourgeTip2: 如果你觉得你需要更多的空间，试着清理周围的硫磺沙块！
+			AquaticScourgeBubbleTip: 那个纯净泡泡看起来是个能从酸水中恢复过来的好地方！
+			AquaticScourgeAcidTip: 水开始沸腾了，我们得浮出水面，除非你想变成油炸人！
+			AquaticScourgeTyphoonTip: 看起来这条海蛇还没法将那东西完成，我们得赶紧逃走！
+			AquaticScourgeBonkJokeTip: 砰！
+			AstrumAureusTip1: 保持一定的距离，否则你可能会被打个措手不及！
+			AstrumAureusTip2: 当心那些冲击波！你最好待在地面上来躲避那些攻击。
+			AstrumDeusTip1: 那条巨蛇也太快了！良好的机动性对于击败它来说很有必要！
+			AstrumDeusShellTip: 那东西似乎已经褪壳了。打起精神来，它现在会变得快很多！
+			AstrumDeusDarkBurstTip: 在试图躲避子弹时不要慌张！
+			AstrumDeusRubbleTip: 别忘了那些石块！它们会从天而降！
+			BrimstoneElementalLaserTip: 激光会预判你的位置，试着诱导它远离你！
+			BrimstoneElementalRoseCircleTip: 如果可以的话尽量靠近场地中心，那些刺真的很容易把你逼到角落！
+			BoCTip1: 克苏鲁之脑使用了大量的预判和伪装攻击，所以你要把脑袋放灵光点！
+			BoCTip2: 克苏鲁之脑喜欢并善用诡计，密切关注那堆大脑中真正有威胁的大脑！
+			BoCTip3: 当那些飞眼怪开始用灵液给你洗澡时，试着经常改变方向，这也许会给你一些回旋余地！
+			CalShadowTip1: 那个浮在你身边的魔法戒指在干什么？注意它可能造成的影响！
+			CalShadowBrosTip: 缓慢移动会有助于你躲避灾厄之影的兄弟们的攻击！
+			CalShadowFinalPhaseTip: 她正在使出全力......但她的巫术已经消失了！现在你可以把注意力集中在她身上了！
+			CalShadowJokeTip1: 我都要生气了但是，看看她！像是个小豆子。
+			CVTip1: 战斗开始时尽量不要随意移动，找到安定点才是关键！
+			CVTip2: 无尽虚空的大部分攻击都需要高机动性才能躲避，务必注意屏幕上的任何射弹！
+			CVPortalTip: 那些传送门在准备些什么！快靠近无尽虚空！快！
+			CVEnergyBurstTip: 那些东西释放了大量能量！尝试靠近边缘并上下移动来穿过它！
+			CVEnergyBurstTip2: 那些小东西好像在盘旋！跟它们一起转起来！
+			CVEnergyBurstTip3: 保持冷静！兜圈子！抓住重点！
+			CVEnergyChainsTip: 那些锁链撑不了多久了！振作起来！
+			CrabulonTip1: 菌生蟹只会在每第三次跳跃时发射孢子。最好数着点！
+			CrabulonTip2: 试着把注意力集中在真菌孢子上。如果你不管它们，它们有可能把你压到！
+			CrabulonTip3: 与菌生蟹的距离保持一种微妙的平衡可能会对你有所帮助，这总比在天上碰到一大堆孢子要好……
+			CrabulonTip4: 那只螃蟹可不傻。你的位置越高，他就跳得越高来够到你！
+			CrabulonClawTip: 菌生蟹暴露它的内部时将会保护自己——也许你可以往后撤，如果你需要更多的空间的话！
+			CrabulonJokeTip1: 我们三个中有一个身上有蘑菇，我没有，你也没有。
+			CryogenTip1: 当它在你上方时移动幅度尽量小些，这应该能够平息它那多动症般的晃动！
+			CryogenTip2: 冰柱同样会分裂成寒冰匕首，当心侧面！
+			CryogenJokeTip1: 老兄，那太不“冷”酷了！
+			CryogenJokeTip2: 这东西可毫无寒意！
+			CryogenBlizzardTip: 极光之灵正在从暴风雪中夹击你，往侧面跑的时候要小心！
+			CultistTip1: 那家伙可真是个疯子，你也许需要额外的机动性！
+			CultistIceBurstTip: 试着在冰雪雾爆炸之前钻进这些线里！
+			CultistLightningTip: 闪电会瞄准你的前方！试着诱导它的位置！
+			DeerclopsTip1: 独眼巨鹿是个大近视，因此它会不断逼近你，不要让它把你逼入绝境！
+			DeerclopsTip2: 独眼巨鹿有固定的攻击模式，研究它们的行为，然后用放风筝打法！
+			DeerclopsTip3: 空间规划至关重要！
+			DeerclopsCharlieTip: 如果你让这些暗影聚集在独眼巨鹿的眼睛周围，它发出的光线将不足以抵挡黑暗！
+			DeerclopsJokeTip1: 我敬皑的上帝啊……
+			DeerclopsDefeatTip: 看起来演出要结束了！
+			DestroyerTip1: 为它的最后一次向上冲刺做好准备！注意红色激光预判线并准备好冲向安全地带！
+			DestroyerTip2: 那碎片掉得真快，不是吗？试着和毁灭者一起上去，这样你能看得更清楚！
+			DestroyerTip3: 它的冲刺十分强大，一种冲刺或者快速逃脱的方式将会非常有用！
+			DSTip1: 我注意到灾虫在掀起那些巨大的沙尘柱前会发出一声很容易听见的咆哮，它可太体贴了！
+			DSTip2: 使用钩爪技巧来摆脱这只灾虫将会是十分有用的。
+			DSFinalPhaseTip: 我想这些秃鹫会在这里蹭到一顿饭的，不论结果如何……
+			DSJokeTip1: 你真把自己当成了个沙漠里的点心……
+			DoGTip1: 神明吞噬者拥有着疯狂的节奏，找到这一节奏并与其战斗！
+			DoGLaserTip: 哦天哪，这么多的激光！缓慢而精确的移动似乎是你最好的选择……
+			DoGRoDTip: 看起来它正在使用空间操纵术，你的混沌传送杖无法使用了！
+			DoGChargeTip: 不要害怕，直面那双恐惧的眼睛并直接冲向神明吞噬者的嘴！
+			DoGDashTip: 一个冲刺饰品在这场战斗中肯定会非常非常有用……
+			DoGBashTip: 用冲刺来面对它的头部听起来是个不错的主意，你觉得呢？
+			DoGJokeTip1: 神长在干什么？
+			ExoMechComboTip: 看起来它们正在进行组合攻击，当心！
+			DraedonChooseTip1: 你可得悠着点选！
+			DraedonChooseTip2: 如果一开始选的组合效果不太理想，也许你可以试试另一种组合？
+			AresTip1: 在星流过载攻击期间最好与其接近，不然你可能会跟不上他的旋转！
+			AresTip2: 阿瑞斯有一台超级计算机，他的手臂具有极强的预判能力！但也许你可以利用这一机制？
+			ExoTwinsTip1: 星流双子的攻击十分的协调，试着靠找到一个节奏来击败它们？
+			ThanatosChargeTip: 别担心，面对这双恐惧的眼睛并直接冲向塔纳托斯的脸！
+			DragonfollyTip1: 痴愚金龙想让你认为它的攻击杂乱无章，但事实并非如此！慢一些并分析一下战斗！
+			DragonfollyTip2: 那些巨大的红色闪电柱可以靠从下面飞过去来无视它们！
+			Dragonfollytip3: 注意它变红的时候—如果它无法接近你，它会直接从你背后跳过来！
+			DragonfollyBoltTip: 静电球似乎朝你飞过来了！小心它们并且不要被那些闪电预警线困住！
+			DreadnautilusSummonItemTip: 我听说在某个地方，恐惧鹦鹉螺可以被一种特殊的“赤饵”召唤，它们无法抗拒这玩意！你有吗？
+			DreadnautilusTip1: 那些蝙蝠真的很想干掉你，但它们不是很敏捷。试着跟它们绕圈子！
+			DreadnautilusJokeTip1: 考虑到你现在已经死了很多次，我很恐惧你的未来……
+			DreadnautilusJokeTip2: 看起来你又失败了，但是不要害怕！你终将战胜这个恐惧！
+			DukeFishronRazorbladeTip: 做好准备，尽你最大的努力穿过这些刀片！
+			DukeFishronTidalWaveTip: 注意它在哪停留了很久！你可能会被海啸卷走！
+			EoLTip1: 大部分攻击并不需要大幅度的移动，保持慢速移动！
+			EoLMoonTip: 别跑远了！你正在与月光战斗，你跑不掉的！
+			EoLJokeTip1: 你知道的，我很喜欢彩虹，但这东西的攻击有种杀手的样子-哦，我有些比喻不当。
+			EoWTip1: 多层平台有助于躲避爆炸的咒火！
+			EoWTip2: 如果世界吞噬者减速移动，跟它做同样的事，不然你可能会撞到魔刺上！
+			EoWRainTip: 吞噬者们将要生成雨云时会变慢并且飞到天上！注意这一点并规划好空间。
+			EoWJokeTip1: 我猜它吃的不仅仅是世界……
+			EoCTip1: 待在那些尖牙球附近！这些牙齿会瞄准的很远！
+			EoCTip2: 别费心去杀克苏鲁之仆了，只要它们没死就会从你的眼睛里钻出来！
+			EoCJokeTip1: 我的眼睛不敢相信你就这样被它干瞎了。
+			EoCJokeTip2: 哎呀！我的眼睛好痛……
+			GolemTip1: 石巨人的眼睛会随着攻击改变颜色，睁大你的眼睛！
+			GolemTip2: 如果你觉得登上平台太难了，你可以钩在墙上重置飞行时间！
+			GolemJokeTip1: 你将会有一段坏时光......
+			HiveMindTip1: 如果你想了解对手的移动行为，可以利用它们的前摇来占上风！
+			HiveMindTip2: 试着远离腐巢意志来拉开与雨云的距离，这可以让你的战斗场地更干净！
+			HiveMindTip3: 如果你攻击腐巢意志，它会提前开始下一次攻击；等它冷却完了再开火！
+			HiveMindFinalPhaseTip: 还没完吗？！
+			HiveMindJokeTip1: 那没啥用，但是别担心！我的意志十分坚定！
+			HiveMindJokeTip2: 我打算发表一些刻薄的评论，但我也许应该控制一下我的意志......
+			KingSlimeTip1: 试着理解史莱姆王的跳跃攻击！这有助于提前帮助你计划好你的走位。
+			KingSlimeTip2: 跳得挺高，但我想知道你能不能从下面越过去？
+			KingSlimeJewelTip: 那颗王冠宝石很危险！记住，它总是以相同频率射击，所以可以自己默数！
+			KingSlimeNinjaTip: 离得越远，忍者射出的飞镖就越多，所以别跑太远！
+			KingSlimeJokeTip1: 你不得不面对一个相当“黏”手的局面......
+			KingSlimeDefeatTip: 它已经史到临头了！
+			AnahitaTip1: If you lead Anahita’s movement well enough, she’ll leave gaps in the clefs to dodge through!
+			AnahitaFinalPhaseTip: Home stretch! Do the same as you did before!
+			LeviathanTip1: The meteors all split in the same way; use this to your advantage!
+			LeviathanFinalPhaseTip: Home stretch! try focusing on yourself more than the boss!
+			MoonLordTip1: Those eyeballs perform attacks that require a lot of weaving! Make sure to not panic when they happen!
+			MoonLordLaserTip: Brace yourself! A barrage of slow bolts are going to be released!
+			MoonLordTip2: Remember to manage your space, or you might get cornered!
+			MoonLordBlackHoleTip: The Moon Lord seems angry! Try to dodge the side projectiles, and don't touch that black hole!
+			MoonLordJokeTip1: Squib emoji
+			OldDukeTip1: Be sure to remember if any sharkrons or tooth balls appear, so that their remains don't surprise you later!
+			OldDukeTip2: Movement speed is gonna matter a lot against that fish!
+			OldDukeFinalPhaseTip: Keep a mental counter of when he teleports, or he’ll catch you by surprise!
+			OldDukeRealFinalPhaseTip: Just ramming won’t work, but neither will just dodging… Try doing both at once!
+			OldDukeDashTip1: Are you really sure you don't want to use a dash for that fish?
+			OldDukeDashTip2: A dashing accessory would be reeaaally helpful here...
+			PBGDroneJailTip: Those drones are building a jail around you, destroying one will give you an opening!
+			PBGDroneBuildTip: Destroy those builder drones before the whole jungle goes kablooey!
+			PerforatorsTip1: The Hive spews out a ton of lingering ichor, so space management is key!
+			PerforatorsWorm1Tip: The small perforator's projectiles accelerate quite a bit as they fall, watch out for any surprises!
+			PerforatorsWorm2Tip: This perforator doesn't seem as offensive as its pals, Maybe let it coil around you instead?
+			PerforatorsProjectilesTip: Staying calm and still will help dodge the slow projectiles!
+			PerforatorsFinalPhaseTip: It's still going?!
+			PlanteraTip1: During the tentacle spreads, look for the blind spot!
+			PlanteraPlanteraTip: Manage those clouds carefully. You'll need to weave through them to find the gap in her tentacles!
+			PlanteraFinalPhaseTip: Plantera isn't keeping anything back, watch out!
+			PlanteraJokeTip1: A bit embarassing, dying to a plant.
+			PlanteraJokeTip2: From what I can tell, Plantera is winning - but who's keeping spore?
+			PolterghastTip1: A dash of sorts helps a lot with the spinning ring attack, since it lets you quickly reach the opening!
+			PolterghastTip2: If one of the Polterghast's legs turn red, quickly back away; it's going to swipe at you and release accelerating projectiles!
+			PolterghastDesperationPhaseTip: Polterghast's spirits have been released! But they don't seem very happy with us...
+			ProvidenceDawnWarningTip: Make sure it doesn't become dawn if you fight Providence again!
+			ProvidenceDuskWarningTip: Make sure it doesn't become dusk if you fight Providence again!
+			PrimeTip1: His arms seem to be aiming towards where you’re heading, a direction change last second will surely throw off those calculations…
+			PrimeTeslaTip: Those blue tesla mines are going to explode into gas; take cover!
+			PrimeJokeTip1: Now this is a prime example of what NOT to do..
+			ProfanedRoDTip: The profaned magic seems to be blocking your Rod of Discord!
+			ProfanedDefenderTip: Ohhh, he's really mad now! Stay on your toes!
+			ProfanedFlappyBirdTip: They've holed themselves up on the right, but if you get there you can probably breach their defenses!
+			ProfanedFlappyJokeTip: That onslaught of fire walls reminds me of a certain game, but the players could only jump in the air! Good thing you have wings, right?
+			ProfanedFlappyBirdEndTip: They're a really good team! You'll want to manage everything at once, taking it slow is your best shot!
+			ProfanedHealerDeathTip: It's getting physical now! Don't let one distract you from the other!
+			ProvidenceTip1: Her attack cycle is similar to the music cycle, try using the music as a way to guide you through the fight!
+			ProvidenceTip2: Focus on dodging, You don't have to keep attacking at all times! What worth is there to damage if you dont live to see the end of it?
+			ProvidenceExplosionTip: Those fireballs seem to only explode if they hit lava, you should probably bait them away!
+			ProvidenceFinalPhaseTip: It looks like Providence is preparing something!
+			QueenBeeTip1: Those Honey Shots sure are bouncy, don't move too fast else they will splatter everywhere!
+			QueenBeeTip2: Getting rid of those extra hornets should be your top priority!
+			QueenBeeTip3: Y'know, this poison is quite sickening; maybe you should search for a Bezoar?
+			QueenBeeJokeTip1: I can't Bee-lieve that, totally uncalled for!
+			QueenBeeJokeTip2: Oof, that mustve Stung...
+			QueenSlimeTip1: If it feels like you can’t run, then don’t! Moving less will help a lot!
+			QueenSlimeBladeBeamTip: What is THAT?! Get away from it! I don’t want to get atomized today!
+			QueenSlimeCrystalTip: Those crystals are equally spaced... seems like you can dodge them the same way consistently!
+			RavagerTip1: Some of Ravager's attacks reward you for staying close. Try not to run away!
+			RavagerTip2: Manage the lingering blob splotches, last thing you want is to play "the floor is lava"!
+			SignusTip1: Pay close attention when it’s about to do a blackout - it might give you more warning than you think!
+			SignusShadowSlashTip: Watch out, he might try to trick you at the end!
+			SignusBombTip: Those bombs will explode into kunai that fly towards you. Be careful!
+			SkeletronTip1: Contrary to what you may think, running into the shadowflame walls will not work, take it slow!
+			SkeletronTip2: Don't panic when Skeletron does his barrages of hand fireballs! Just jump and stay calm!
+			SkeletronTip3: The homing skulls take a long while to turn around, so it's possibly better to stay in a general spot rather than run far!
+			SkeletronJokeTip1: 花式吊打！！！
+			SlimeGodTip1: They dont seem very intelligent, maybe you could trick them to jump higher if you do aswell?
+			SlimeGodTip2: That was a little overwhelming! I wonder if mirroring its moves could work in your favor?
+			StormWeaverTip1: Those cloud barrages can take you by surprise! Stay focused - that storm scourge only seems to be focused on summoning attacks, not ramming you!
+			SCalJokeTip1: Do you want my Witch's hat? Matching her atire could be fun...
+			SCalTip1: Get close when she pulls out her crossbow, and you can see where she’s going to aim it!
+			SCalSkullTip: So many skulls, but it appears they aren't focused directly at you! Try going inbetween!
+			SCalDesperationTip: Even when all hell breaks loose, stay focused on your dodging!
+			// SCalFireSpinTip: Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!
+			SCalFireChargeTip: Those bombs take up a lot of space! Try leading her to shoot them where you can easily get away!
+			TwinsTip1: Having trouble dodging during the spin? Three can play at that game, Spin!
+			TwinsFinalOptionTip: Each one of the Twins has their own special last resort procedure, if one is giving you a hard time; try focusing on the other first!
+			TwinsFinalPhaseTip: Watch out, that last twin is gonna hit you with everything it's got! Don't let up!
+			WoFTip1: 你一定要朝反方向跑！
+			WoFTip2: These detached eyes are rather intimidating, Good thing they only shoot at very specific points!
+			WoFTip3: Yuck, Those grotesque mouths break off and fly?! Wish I could just burn them in an Inferno myself…
+			WoFJokeTip1: Welp, that one was a bust! Nothing beats having more opportunities to bully the Guide though!
+			YharonPreHealTip: 你快做到了！犽戎现在肯定已是穷途末路了！
+			YharonPostHealTip: 啊？
+			YharonSpeedTip: 试着记住犽戎什么时候会疯狂冲刺，否则它会打你个措手不及！
+			YharonFlashbangTip: 不要让闪光吓到你！留意那些余烬在哪！
+			YharonCarpetBombTip: 在那些地毯式的爆炸火焰中，你最好待在战斗场地边缘，这样它们就不会影响走位了！
+			YharonJokeTip1: “如果我在你的伟业继续之前而死，你会......”等等，你死了？来吧，我在这里玩的很开心！
+		}
+
+		Projectiles: {
+			AbyssalIce.DisplayName: 深渊幻冰
+			BoxJellyZap.DisplayName: 水母电击
+			DevilfishExplosion.DisplayName: 魔鬼爆破
+			EidolistElectricOrb.DisplayName: 电球
+			EidolistElectricOrb2.DisplayName: 电球
+			EidolistIce.DisplayName: 深渊幻冰
+			EidolistIceBomb.DisplayName: 深渊幻冰
+			EidolistLightning.DisplayName: 闪电
+			EidolistRitual.DisplayName: 仪式
+			ElectricPulse.DisplayName: 电脉冲
+			InkBlob.DisplayName: 墨汁球
+			InkBolt.DisplayName: 墨汁
+			MiniReaperShark.DisplayName: 猎魂鲨
+			ReaperSharkIceBreath.DisplayName: 冰息
+			SimpleAbyssalSoul.DisplayName: 深渊之魂
+			AbyssalSoul.DisplayName: 深渊之魂
+			AbyssalSoulTelegraph.DisplayName: 深渊预警线
+			AEWIllusionTelegraphLine.DisplayName: 预警线
+			AEWNightmareWyrm.DisplayName: 幻海妖龙
+			AEWSplitForm.DisplayName: 始源妖龙
+			AEWTelegraphLine.DisplayName: 预警线
+			CircleCenterTelegraph.DisplayName: 预警线
+			ConvergingLumenylCrystal.DisplayName: 圣洁晶体
+			DivineLightBolt.DisplayName: 圣洁光弹
+			DivineLightLaserbeam.DisplayName: 圣洁死光
+			DivineLightOrb.DisplayName: 圣洁光球
+			HorizontalRayTerminus.DisplayName: 水平终末射线
+			LightCleaveTelegraph.DisplayName: 预警线
+			PsychicBlast.DisplayName: 心灵冲击
+			TerminusDeathray.DisplayName: 原始之光
+			AcceleratingArcingAcid.DisplayName: 酸
+			AcidBubble.DisplayName: 酸性气泡
+			AquaticScourgeBodySpike.DisplayName: 辐射毒牙
+			AquaticScourgeGore.DisplayName: 渊海凝块
+			FallingAcid.DisplayName: 酸
+			LeechFeeder.DisplayName: 水蛭
+			RadiationPulse.DisplayName: 辐射脉冲
+			SulphuricGas.DisplayName: 硫酸气体
+			SulphuricGasDebuff.DisplayName: 硫酸气体
+			SulphuricTornado.DisplayName: 硫酸龙卷
+			SulphurousRockRubble.DisplayName: 硫酸泡泡
+			WaterClearingBubble.DisplayName: 酸性气泡
+			AstralBlueComet.DisplayName: 星辉彗星
+			AstralLaserInfernum.DisplayName: 星界激光
+			AstralMissile.DisplayName: 星辉导弹
+			BlueLaserbeam.DisplayName: 星辉死亡射线
+			MissileTelegraphLine.DisplayName: 预警线
+			OrangeLaserbeam.DisplayName: 星辉死亡射线
+			AstralBlackHole.DisplayName: 星辉黑洞
+			AstralConstellation.DisplayName: 星星
+			AstralCrystal.DisplayName: 星辉水晶
+			AstralFlame2.DisplayName: 星辉火焰
+			AstralPlasmaFireball.DisplayName: 星辉等离子火焰
+			AstralPlasmaSpark.DisplayName: 星辉等离子火花
+			AstralRubble.DisplayName: 星辉巨石
+			AstralSparkle.DisplayName: 星辉火花
+			AstralTelegraphLine.DisplayName: 预警线
+			AstralVortex.DisplayName: 消亡漩涡
+			DarkGodLaser.DisplayName: 反物质死亡射线
+			DarkStar.DisplayName: 暗星
+			InfectionGlob.DisplayName: 感染球
+			MassiveInfectedStar.DisplayName: 消亡之星
+			BloodGeyser2.DisplayName: 灵液间歇泉
+			IchorSpit.DisplayName: 灵液
+			PsionicLightningBolt.DisplayName: 灵能闪电
+			PsionicOrb.DisplayName: 灵能球
+			Brimrose.DisplayName: 硫火玫瑰
+			BrimstoneDeathray.DisplayName: 硫火射线
+			BrimstoneFireball.DisplayName: 硫磺火球
+			BrimstonePetal.DisplayName: 硫火花瓣
+			BrimstonePetal2.DisplayName: 硫火花瓣
+			BrimstoneRose.DisplayName: 硫火玫瑰
+			BrimstoneSkull.DisplayName: 硫火之颅
+			BrimstoneTelegraphRay.DisplayName: 硫火死亡射线
+			HomingBrimstoneSkull.DisplayName: 硫火地狱冲击波
+			RedFlameTelegraph.DisplayName: 咦嘿嘿嘿嘿（fxxk），没人会看到这个名字
+			AccentuationHexProj.DisplayName: 灾厄巫咒
+			ArcingBrimstoneDart.DisplayName: 硫火飞镖
+			BrimstoneBomb.DisplayName: 硫火炸弹
+			BrimstoneBoomExplosion.DisplayName: 爆炸
+			BrimstoneLightning.DisplayName: 硫火闪电
+			BrimstoneMeteor.DisplayName: 硫火流星
+			BrimstoneSlash.DisplayName: 硫火冲刺
+			CatharsisHexProj.DisplayName: 灾厄巫咒
+			CatharsisSoul.DisplayName: 宣泄的燃烧之魂
+			CharredWand.DisplayName: 焦黑魔杖
+			ConvergingShadowSpark.DisplayName: 暗影火花
+			DarkMagicFlame.DisplayName: 暗黑魔法火焰
+			EntropyBeam.DisplayName: 暗熵光束
+			HauntingSoulSeeker.DisplayName: 探魂者
+			HomingBrimstoneBurst.DisplayName: 硫磺火焰
+			IndignationHexProj.DisplayName: 灾厄巫咒
+			LargeDarkFireOrb.DisplayName: 暗影火球
+			LingeringBrimstoneFlames.DisplayName: 硫火云
+			RisingBrimstoneFireball.DisplayName: 硫火炸弹
+			ShadowBlob.DisplayName: 暗影斑点
+			SoulSeekerResurrectionBeam.DisplayName: 死灵光束
+			ThinBrimstoneSlash.DisplayName: 硫火冲刺
+			WeaknessHexProj.DisplayName: 灾厄巫咒
+			ZealHexProj.DisplayName: 灾厄巫咒
+			AcceleratingDarkEnergy.DisplayName: 暗能量
+			CeaselessEnergyPulse.DisplayName: 无尽能量脉冲
+			CeaselessVoidLineTelegraph.DisplayName: 预警线
+			CeaselessVoidShell.DisplayName: 金属外壳
+			CeaselessVortex.DisplayName: 无尽漩涡
+			CeaselessVortexTear.DisplayName: 无尽撕裂
+			ConvergingDungeonRubble.DisplayName: 充能碎石
+			EnergyTelegraph.DisplayName: 暗能量碎片
+			GammaBurstLineTelegraph.DisplayName: 预警线
+			OtherworldlyBolt.DisplayName: 虚空射线
+			RealitySlice.DisplayName: 现实撕裂者
+			SpinningDarkEnergy.DisplayName: 暗能量
+			TelegraphedOtherwordlyBolt.DisplayName: 超凡之矢
+			HomingSpore.DisplayName: 孢子
+			MushroomPillar.DisplayName: 蘑菇柱
+			SporeCloud.DisplayName: 孢子气体
+			AimedIcicleSpike.DisplayName: 冰柱尖刺
+			AuroraSpirit.DisplayName: 极光尖刺
+			AuroraSpirit2.DisplayName: 极光尖刺
+			IceBomb2.DisplayName: 寒冰炸弹
+			IcePillar.DisplayName: 冰柱
+			IceRain2.DisplayName: 冰炸弹
+			IcicleSpike.DisplayName: 冰柱尖刺
+			AncientDoom.DisplayName: 光明妖
+			CultistFireBeamTelegraph.DisplayName: 预警线
+			CultistRitual.DisplayName: 仪式
+			DarkBolt.DisplayName: 熵离子球
+			DarkBoltLarge.DisplayName: 熵离子球
+			DarkPulse.DisplayName: 暗影脉冲
+			DeathExplosion.DisplayName: 爆炸
+			DoomBeam.DisplayName: 死亡射线
+			FireballLineTelegraph.DisplayName: 预警线
+			FireBeam.DisplayName: 火焰光束
+			IceMass.DisplayName: 冰块
+			IceShard.DisplayName: 冰碎片
+			LightBeam.DisplayName: 光束
+			LightBurst.DisplayName: 光爆
+			TeleportTelegraph.DisplayName: 预警线
+			AcceleratingShadowHand.DisplayName: 暗影之手
+			ArenaIcicle.DisplayName: 长冰柱
+			DeathAnimationShadowHand.DisplayName: 暗影之手
+			DeerclopsEyeLaserbeam.DisplayName: 火焰光束
+			DeerclopsP2Wave.DisplayName: 爆炸
+			GroundIcicleSpike.DisplayName: 冰刺
+			ShadowHandArena.DisplayName: 暗影之手
+			SpinningShadowHand.DisplayName: 暗影之手
+			SandBlastInfernum.DisplayName: 沙尘喷吐
+			Sandnado.DisplayName: 沙龙卷
+			SandstormBlast.DisplayName: 沙尘喷吐
+			DestroyerBomb.DisplayName: 爆炸
+			DestroyerPierceLaser.DisplayName: 火焰激光
+			DestroyerPierceLaserTelegraph.DisplayName: 预警线
+			EnergyBlast2.DisplayName: 能量冲击波
+			EnergySpark.DisplayName: 红色火花
+			EnergySpark2.DisplayName: 红色火花
+			AcceleratingDoGBurst.DisplayName: 死亡之火
+			DoGChargeGate.DisplayName: 传送门
+			DoGDeathInfernum.DisplayName: 死亡光束
+			DoGPhase2IntroPortalGate.DisplayName: 传送门
+			DoGSpawnBoom.DisplayName: 爆炸
+			RealityBreakPortalLaserWall.DisplayName: 传送门
+			RoDFailPulse.DisplayName: 爆炸
+			AresBeamExplosion.DisplayName: 星流爆炸
+			AresBeamTelegraph.DisplayName: 伽马分裂束预警线
+			AresCannonLaser.DisplayName: 星流火焰激光
+			AresDeathBeamTelegraph.DisplayName: 星流过载预警线
+			AresEnergyDeathray.DisplayName: 星流能量爆发
+			AresEnergyDeathrayTelegraph.DisplayName: 星流能量爆发预警线
+			AresEnergySlash.DisplayName: 星流能量冲刺
+			AresLaserDeathray.DisplayName: 激射死光
+			AresLaughBoom.DisplayName: 爆炸
+			AresPlasmaFireball.DisplayName: 挥发性等离子爆炸
+			AresPrecisionBlast.DisplayName: 精确爆发
+			AresPulseBlast.DisplayName: 星流脉冲能量爆发
+			AresPulseDeathray.DisplayName: 脉冲死光
+			AresSpinningDeathBeam.DisplayName: 星流过载射线
+			AresSpinningRedDeathray.DisplayName: 星流热能崩解死光
+			AresTeslaGasField.DisplayName: 电能云
+			AresTeslaOrb.DisplayName: 特斯拉球
+			AresTeslaSpark.DisplayName: 特斯拉火花
+			ExoburstSpark.DisplayName: 星流爆发火花
+			HotMetal.DisplayName: 过热金属
+			PlasmaGas.DisplayName: 等离子体
+			SmallPlasmaSpark.DisplayName: 等离子火花
+			ApolloAcceleratingPlasmaSpark.DisplayName: 等离子火花
+			ApolloFallingPlasmaSpark.DisplayName: 等离子火花
+			ApolloFlamethrower.DisplayName: 星流等离子火焰喷射器
+			ApolloPlasmaFireball.DisplayName: 挥发性等离子爆炸
+			ApolloRocketInfernum.DisplayName: 高爆等离子火箭
+			ArtemisBasicShotLaser.DisplayName: 星流火焰激光
+			ArtemisGasFireballBlast.DisplayName: 挥发性火球爆炸
+			ArtemisGatlingLaser.DisplayName: 星流火焰激光
+			ArtemisLaser.DisplayName: 星流火焰激光
+			ArtemisLaserbeamTelegraph.DisplayName: 激光预警线
+			ArtemisSpinLaser.DisplayName: 终末激光
+			ArtemisSweepLaserbeam.DisplayName: 终末激光
+			ExoplasmaBomb.DisplayName: 星流等离子炸弹
+			ExoplasmaExplosion.DisplayName: 星流等离子爆炸
+			PlasmaChargeTelegraph.DisplayName: 冲刺预警线
+			SuperheatedExofireGas.DisplayName: 过热火焰
+			ThermonuclearDeathOrb.DisplayName: 热核死亡光球
+			DetatchedThanatosLaser.DisplayName: 星流火焰激光
+			ExolaserBomb.DisplayName: 星流激光炸弹
+			ExolaserSpark.DisplayName: 星流激光火花
+			LightOverloadRay.DisplayName: 棱形过载激光
+			LightRayTelegraph.DisplayName: 棱形激光
+			OverloadBoom.DisplayName: 爆炸
+			RefractionRotor.DisplayName: 折射转子
+			ThanatosAresComboLaser.DisplayName: 星流火焰激光
+			BigFollyFeather.DisplayName: 羽毛
+			BirbThunderAuraFlare.DisplayName: 龙语光环闪
+			ExplodingEnergyOrb.DisplayName: 等离子球
+			FollyFeather.DisplayName: 羽毛
+			LightningCloud.DisplayName: 闪电
+			LightningCloud2.DisplayName: 闪电
+			LightningSuperchargeTelegraph.DisplayName: 冲刺预警线
+			RedLightningRedirectingFeather.DisplayName: 闪电羽毛
+			RedLightningSnipeFeather.DisplayName: 闪电羽毛
+			RedSpark.DisplayName: 闪电羽毛
+			VolatileLightning.DisplayName: 雷云
+			BloodBolt.DisplayName: 血箭
+			BloodShot2.DisplayName: 血
+			GoreSpike.DisplayName: 尖刺
+			GoreSpitBall.DisplayName: 血块喷吐球
+			SanguineBat.DisplayName: 血红蝙蝠
+			ChargeTyphoon.DisplayName: 台风
+			SharkSummoner.DisplayName: 召唤物
+			SmallWave.DisplayName: 波
+			TidalWave.DisplayName: 潮汐波
+			Tornado.DisplayName: 龙卷风
+			TyphoonBlade.DisplayName: 台风之刃
+			AcceleratingPrismaticBolt.DisplayName: 七彩矢
+			ArcingLightBolt.DisplayName: 光矢
+			EmpressAurora.DisplayName: 极光
+			EmpressExplosion.DisplayName: 爆炸
+			EmpressPrism.DisplayName: 棱镜
+			EmpressSparkle.DisplayName: 雄伟之光
+			EmpressSword.DisplayName: 女皇之刃
+			EtherealLance.DisplayName: 空灵长枪
+			LanceCreatingSword.DisplayName: 女皇之刃
+			LightOverloadBeam.DisplayName: 棱晶过载射线
+			PrismaticBolt.DisplayName: 七彩矢
+			PrismLaserbeam.DisplayName: 棱晶射线
+			ShimmeringLightWave.DisplayName: 爆炸
+			SpinningPrismLaserbeam.DisplayName: 棱晶射线
+			StarBolt.DisplayName: 星形射线
+			StolenCelestialObject.DisplayName: 被盗的巨大天体
+			CorruptThorn.DisplayName: 腐化荆棘
+			CursedBullet.DisplayName: 诅咒射击
+			CursedFlameBomb.DisplayName: 诅咒火焰炸弹
+			ShadowOrb.DisplayName: 暗影宝珠
+			BloodShot.DisplayName: 血
+			EoCTooth.DisplayName: 牙齿
+			EoCTooth2.DisplayName: 牙齿
+			SittingBlood.DisplayName: 血腥凝刺
+			FistBullet.DisplayName: 拳头子弹
+			FistBulletTelegraph.DisplayName: 预警线
+			GolemEyeLaserRay.DisplayName: 热射线
+			GolemLaser.DisplayName: 热能激光
+			GroundFireCrystal.DisplayName: 火焰水晶
+			SpikeTrap.DisplayName: 尖刺陷阱
+			StationarySpikeTrap.DisplayName: 尖刺陷阱
+			ThermalDeathray.DisplayName: 热能死光
+			BereftVassalBigBoom.DisplayName: 爆炸
+			BereftVassalSpear.DisplayName: 颤沙霆戟
+			BereftVassalTeleportBoom.DisplayName: 爆炸
+			DustDevil.DisplayName: 沙龙卷
+			GreatSandBlast.DisplayName: 沙尘吐息
+			GroundSlamWave.DisplayName: 波
+			PressureSandnado.DisplayName: 沙龙卷
+			SandBlob.DisplayName: 沙块
+			SparkTelegraphLine.DisplayName: 预警线
+			TorrentWave.DisplayName: 波
+			VassalLightning.DisplayName: 颤沙霆戟闪电
+			VassalSpark.DisplayName: 火花
+			WaterSlice.DisplayName: 水之泪
+			WaterSpear.DisplayName: 水之泪
+			WaterTorrentBeam.DisplayName: 水流
+			BlobProjectile.DisplayName: 沼泽之眼
+			EaterOfSouls.DisplayName: 灵魂吞噬者
+			HiveMindWave.DisplayName: 爆炸
+			ShadeFire.DisplayName: 火
+			DeathSlash.DisplayName: 快刀忍者
+			JewelBeam.DisplayName: 射线
+			Shuriken.DisplayName: 手里剑
+			AnahitaWaterIllusion.DisplayName: 阿娜希塔幻象
+			AquaticAberrationProj.DisplayName: 深海吞食者
+			AtlantisSpear.DisplayName: 亚特兰蒂斯之矛
+			AtlantisSpear2.DisplayName: 亚特兰蒂斯之矛
+			HeavenlyLullaby.DisplayName: 天堂摇篮曲
+			LeviathanMeteor.DisplayName: 流陨倾泻
+			LeviathanSpawner.DisplayName: 水
+			LeviathanSpawnWave.DisplayName: 波
+			LeviathanVomit.DisplayName: 利维坦之蚀
+			RedirectingWaterBolt.DisplayName: 水矛
+			WaterBolt.DisplayName: 水矛
+			LunarAsteroid.DisplayName: 月之火
+			LunarFireball.DisplayName: 月之火
+			LunarFlare.DisplayName: 幻影耀斑
+			LunarFlareTelegraph.DisplayName: 预警线
+			MoonLordDeathAnimationHandler.DisplayName: 死亡动画
+			MoonLordDeathBloodBlob.DisplayName: 灵液块
+			MoonLordExplosion.DisplayName: 爆炸
+			MoonLordExplosionCinder.DisplayName: 火花
+			MoonLordWave.DisplayName: 爆炸
+			NonHomingPhantasmalEye.DisplayName: 幻影之眼
+			PhantasmalDeathray.DisplayName: 幻影破灭光
+			PhantasmalOrb.DisplayName: 幻影球
+			PressurePhantasmalDeathray.DisplayName: 幻影破灭光
+			StardustConstellation.DisplayName: 星星
+			TrueEyeChargeTelegraph.DisplayName: 冲刺预警线
+			VoidBlackHole.DisplayName: 虚空
+			HomingAcid.DisplayName: 酸
+			OldDukeTooth.DisplayName: 腐烂之牙
+			SharkSummonVortex.DisplayName: 硫海漩涡
+			SulphuricBlob.DisplayName: 硫海凝块
+			BloodGlob.DisplayName: 血腥凝块
+			Crimera.DisplayName: 克里米亚//芭知道叫啥了
+			FallingIchor.DisplayName: 灵液
+			FallingIchorBlast.DisplayName: 灵液块
+			FlyingIchor.DisplayName: 灵液
+			IchorBlast.DisplayName: 灵液冲击
+			IchorBolt.DisplayName: 灵液喷吐
+			PerforatorWave.DisplayName: 爆炸
+			ToothBall.DisplayName: 血猩凝刺
+			BombingTelegraph.DisplayName: 预警线
+			HostilePlagueSeeker.DisplayName: 瘟疫搜寻者
+			LargePlagueExplosion.DisplayName: 爆炸
+			PlagueCloud.DisplayName: 瘟疫毒云
+			PlagueDeathray.DisplayName: 瘟疫射线
+			PlagueMissile.DisplayName: 火箭
+			PlagueMissile2.DisplayName: 火箭
+			PlagueNuclearExplosion.DisplayName: 爆炸
+			PlagueVomit.DisplayName: 瘟疫喷发
+			PlagueWave.DisplayName: 爆炸
+			RedirectingPlagueMissile.DisplayName: 火箭
+			BouncingPetal.DisplayName: 花瓣
+			ExplodingFlower.DisplayName: 花
+			NettlevineArenaSeparator.DisplayName: 荨麻
+			Petal.DisplayName: 花瓣
+			SporeFlower.DisplayName: 花
+			SporeGas.DisplayName: 孢子气体
+			ArcingSoul.DisplayName: 幻魂
+			CirclingEctoplasm.DisplayName: 幻灵
+			EctoplasmShot.DisplayName: 幻灵爆炸
+			GhostlyVortex.DisplayName: 幻魂漩涡
+			Light.DisplayName: 光
+			NonReturningSoul.DisplayName: 幻灵
+			NotSpecialSoul.DisplayName: 幻灵
+			PolterghastWave.DisplayName: 爆炸
+			SoulTelegraphLine.DisplayName: 预警线
+			SpinningSoul.DisplayName: 幻灵
+			WavySoul.DisplayName: 幻灵
+			EvenlySpreadPrimeLaserRay.DisplayName: 死亡射线
+			LightningStrike.DisplayName: 闪电
+			MetallicSpike.DisplayName: 金属钉
+			PrimeMissile.DisplayName: 导弹
+			PrimeShield.DisplayName: 盾
+			PrimeSmallLaser.DisplayName: 激光
+			SawSpark.DisplayName: 电锯火花
+			SmallElectricGasGloud.DisplayName: 电能云
+			TeslaBomb.DisplayName: 特斯拉炸弹
+			CommanderSpear.DisplayName: 神圣长矛
+			CommanderSpearThrown.DisplayName: 亵渎长矛
+			DefenderShield.DisplayName: 岩盾
+			GuardiansRodFailPulse.DisplayName: 爆炸
+			HolyAimedDeathray.DisplayName: 火焰光束
+			HolyAimedDeathrayTelegraph.DisplayName: 预警线
+			HolyDogmaFireball.DisplayName: 巨大火球
+			HolyFireRift.DisplayName: 火焰裂隙
+			HolyFireWall.DisplayName: 火墙
+			HolyPushbackWall.DisplayName: 火墙
+			HolySineSpear.DisplayName: 亵渎之矛
+			HolySpinningFireBeam.DisplayName: 圣火光束
+			LavaEruptionPillar.DisplayName: 熔岩间歇泉
+			LingeringHolyFire.DisplayName: 圣火
+			MagicCrystalShot.DisplayName: 水晶之光
+			MagicSpiralCrystalShot.DisplayName: 水晶之光
+			ProfanedCirclingRock.DisplayName: 亵渎岩
+			ProfanedCrack.DisplayName: 亵渎裂缝
+			ProfanedField.DisplayName: 亵渎防御盾牌
+			ProfanedRock.DisplayName: 亵渎岩
+			ProfanedSpearInfernum.DisplayName: 亵渎长矛
+			TelegraphedProfanedSpearInfernum.DisplayName: 亵渎长矛
+			AcceleratingCrystalShard.DisplayName: 神圣水晶碎片
+			AcceleratingMagicProfanedRock.DisplayName: 亵渎岩
+			CleansingFireball.DisplayName: 净化火球
+			CommanderSpear2.DisplayName: 神圣长矛
+			CrystalTelegraphLine.DisplayName: 预警线
+			DyingSun.DisplayName: 凋亡之阳
+			FallingCrystalShard.DisplayName: 圣晶碎片
+			HolyBasicFireball.DisplayName: 神圣火球
+			HolyBomb.DisplayName: 圣火炸弹
+			HolyCinder.DisplayName: 圣之烁光
+			HolyCross.DisplayName: 圣徽
+			HolyCrystalSpike.DisplayName: 水晶尖刺
+			HolyMagicLaserbeam.DisplayName: 圣火崩解死光
+			HolyRitual.DisplayName: 神圣仪式
+			HolySpear.DisplayName: 神圣长矛
+			HolySpearFirePillar.DisplayName: 熔岩间歇泉
+			HolySunExplosion.DisplayName: 神圣爆炸
+			ProfanedLava.DisplayName: 赎罪灼热熔岩
+			ProfanedLavaBlob.DisplayName: 熔岩球
+			ProvBoomDeath.DisplayName: 爆炸
+			ProvidenceArenaBorder.DisplayName: 边界
+			ProvidenceWave.DisplayName: 爆炸
+			ProvSummonFlameExplosion.DisplayName: 高温爆炸
+			StrongProfanedCrack.DisplayName: 亵渎裂缝
+			BeeWave.DisplayName: 爆炸
+			ConvergingHornet.DisplayName: 大黄蜂
+			HoneyBlast.DisplayName: 蜂蜜爆炸
+			HornetHive.DisplayName: 主巢
+			TinyBee.DisplayName: 蜜蜂
+			BouncingSlimeProj.DisplayName: 弹力史莱姆
+			FallingCrystal.DisplayName: 神圣水晶
+			FallingGel.DisplayName: 飘落凝胶
+			FallingSpikeSlimeProj.DisplayName: 水晶史莱姆
+			HallowBlade.DisplayName: 神圣之刃
+			HallowBladeLaserbeam.DisplayName: 神圣之刃死亡射线
+			HallowCrystalSpike.DisplayName: 水晶尖刺
+			HallowLaserbeam.DisplayName: 神圣死光
+			QueenJewelBeam.DisplayName: 宝石
+			QueenSlimeCrown.DisplayName: 史莱姆皇后的王冠
+			QueenSlimeCrystalSpike.DisplayName: 水晶尖刺
+			QueenSlimeLightWave.DisplayName: 爆炸
+			QueenSlimeSplitFormProj.DisplayName: 天堂史莱姆
+			SpinningLaserCrystal.DisplayName: 神圣水晶
+			DarkFlamePillar.DisplayName: 暗黑火柱
+			DarkFlamePillarTelegraph.DisplayName: 预警线
+			DarkMagicCinder.DisplayName: 黑魔法火花
+			DarkMagicFireball.DisplayName: 黑魔法火球
+			GroundBloodSpike.DisplayName: 血刺
+			GroundBloodSpikeCreator.DisplayName: 血刺创造者
+			RitualFlame.DisplayName: 蓝色火焰
+			SlammingRockPillar.DisplayName: 岩柱
+			StompShockwave.DisplayName: 冲击波
+			UnholyBloodGlob.DisplayName: 不虔之血
+			CosmicExplosion.DisplayName: 寰宇爆炸
+			CosmicKunai.DisplayName: 星界苦无
+			CosmicMine.DisplayName: 星界雷
+			DarkCosmicBomb.DisplayName: 星界雷
+			EldritchScythe.DisplayName: 鬼镰
+			ShadowDashTelegraph.DisplayName: 预警线
+			ShadowSlash.DisplayName: 暗影斩
+			AcceleratingSkull.DisplayName: 颅骨
+			NonHomingSkull.DisplayName: 颅骨
+			ShadowflameFireball.DisplayName: 暗影焰炸弹
+			SpinningFireball.DisplayName: 暗影焰火球
+			DeceleratingCrimulanGlob.DisplayName: 不稳定的血猩球
+			DeceleratingEbonianGlob.DisplayName: 不稳定的腐化球
+			GroundSlimeGlob.DisplayName: 不稳定的史莱姆球
+			HomingWeaverSpark.DisplayName: 火花
+			WeaverSpark.DisplayName: 火花
+			WindGust.DisplayName: 阵风
+			AcceleratingDarkMagicFlame.DisplayName: 黑魔法火焰
+			BrimstoneDemonSummonExplosion.DisplayName: 硫火爆炸
+			BrimstoneFlameOrb.DisplayName: 硫火球
+			BrimstoneFlamePillar.DisplayName: 硫火柱
+			BrimstoneFlamePillarTelegraph.DisplayName: 预警线
+			BrimstoneJewelProj.DisplayName: 硫火宝珠
+			BrimstoneLaserbeam.DisplayName: 硫火死亡射线
+			CatastropheSlash.DisplayName: 共鸣斩
+			CondemnationArrowSCal.DisplayName: 诘责之矢
+			CondemnationProj.DisplayName: 诘责
+			CalamitasCutsceneProj.DisplayName: 灾厄
+			DemonicBomb.DisplayName: 深渊炙炎
+			DemonicExplosion.DisplayName: 深渊炙炎
+			DemonicTelegraphLine.DisplayName: 预警线
+			FlameOverloadBeam.DisplayName: 硫火过载射线
+			HeresyProjSCal.DisplayName: 异端
+			InfernumBrimstoneGigablast.DisplayName: 硫火聚爆
+			LostSoulProj.DisplayName: 灼烧之灵
+			RedirectingDarkSoul.DisplayName: 复仇之灵
+			RedirectingHellfireSCal.DisplayName: 硫磺地狱火
+			RedirectingLostSoulProj.DisplayName: 灼烧之灵
+			RitualBrimstoneHeart.DisplayName: 硫磺之心
+			SepulcherBone.DisplayName: 魔物之骨
+			SepulcherSoulBomb.DisplayName: 愤怒之灵
+			ShadowBolt.DisplayName: 暗影箭
+			ShadowFlameBlast.DisplayName: 暗影冲击
+			ShadowGigablast.DisplayName: 暗影聚爆
+			ShadowSpark.DisplayName: 暗影火花
+			SuicideBomberDemonExplosion.DisplayName: 爆炸
+			SuicideBomberDemonHostile.DisplayName: 恶魔
+			SuicideBomberRitual.DisplayName: 仪式
+			SupremeCalamitasBrotherPortal.DisplayName: 黑暗之门
+			SCalSymbol.DisplayName: 炼金术符号
+			VigilanceProj.DisplayName: 警觉
+			CursedCinder.DisplayName: 诅咒火花
+			CursedFireballBomb.DisplayName: 诅咒火球炸弹
+			CursedFlameBurst.DisplayName: 诅咒焰
+			CursedFlameBurstTelegraph.DisplayName: 预警线
+			HomingCursedFlameBurst.DisplayName: 诅咒焰
+			LaserGroundShock.DisplayName: 地面震动
+			LightningTelegraph.DisplayName: 预警射线
+			RedLightning.DisplayName: 闪电
+			RetinazerAimedDeathray.DisplayName: 死亡射线
+			RetinazerAimedDeathray2.DisplayName: 死亡射线
+			RetinazerGroundDeathray.DisplayName: 死亡射线
+			RetinazerLaser.DisplayName: 死亡激光
+			SpazmatismFlamethrower.DisplayName: 诅咒焰喷射器
+			TwinsEnergyExplosion.DisplayName: 爆炸
+			TwinsLensFlare.DisplayName: 镜头光晕
+			TwinsShield.DisplayName: 盾
+			TwinsSpriteExplosion.DisplayName: 双子精灵爆炸
+			CursedSoul.DisplayName: 幻魂
+			FireBeamTelegraph.DisplayName: 预警线
+			FireBeamWoF.DisplayName: 火焰光束
+			TileTentacle.DisplayName: 触手
+			DraconicBlossomPetal.DisplayName: 龙焱余烬
+			DraconicInfernado.DisplayName: 火焰龙卷
+			DragonFireball.DisplayName: 火球
+			HomingFireball.DisplayName: 追踪火球
+			InfernadoSpawner.DisplayName: 大耀斑
+			LingeringDragonFlames.DisplayName: 龙焰
+			MajesticSparkleBig.DisplayName: 耀目之光
+			RedirectingYharonMeteor.DisplayName: 龙炎弹
+			VortexOfFlame.DisplayName: 火焰漩涡
+			VortexTelegraphBeam.DisplayName: 火焰光束预警线
+			YharonBoom.DisplayName: 爆炸
+			YharonFlameExplosion.DisplayName: 高温聚爆
+			YharonFlamethrower.DisplayName: 龙焰吐息
+			YharonHeatFlashFireball.DisplayName: 火焰
+			YharonMajesticSparkle.DisplayName: 耀目火花
+			DraconicBurst.DisplayName: 龙炎飞弹
+			ExplodingWyvern.DisplayName: 飞龙
+			MeteorCinder.DisplayName: 火花
+			MoltenMeteor.DisplayName: 流星
+			CloudLightning.DisplayName: 云层闪电
+			LargeCloud.DisplayName: 超大的云
+			LargeHail.DisplayName: 大冰雹
+			SmallHail.DisplayName: 小冰雹
+			ChainGuillotine.DisplayName: 链式断头台
+			CursedDart.DisplayName: 诅咒焰镖
+			CursedFlamePillar.DisplayName: 诅咒火柱
+			FetidBaghnakhs.DisplayName: 臭虎爪
+			IchorDart.DisplayName: 灵液镖
+			LifeDrainingField.DisplayName: 夺命场
+			DarkMagicCircle.DisplayName: 黑魔法
+			RedirectingWeakDarkMagicFlame.DisplayName: 黑暗火焰
+			PearlSwirl.DisplayName: 珍珠漩涡
+			CrystalShard.DisplayName: 水晶碎片
+			FlyingKnife.DisplayName: 飞刀
+			HolyStar.DisplayName: 神圣之星
+			PiercingCrystalShard.DisplayName: 水晶碎片
+			ConvergingGammaEnergy.DisplayName: 伽马火花
+			GammaRain.DisplayName: 伽马雨
+			GammaSuperDeathray.DisplayName: 伽马死亡射线
+			BouncingSpitBall.DisplayName: 喷吐球
+			RisingFireball.DisplayName: 火球
+			SandFlameBall.DisplayName: 沙球
+			Sandnado2.DisplayName: 沙龙卷
+			WanderersShellWater.DisplayName: 水流
+			BrimstoneCrescentStaffProj.DisplayName: 硫火新月法杖
+			BrimstoneForcefieldExplosion.DisplayName: 硫火爆炸
+			CherryBlossomPetal.DisplayName: 樱花花瓣
+			DisenchantedTabletProj.DisplayName: 未注魔的石碑基座
+			GuardiansSummonerProjectile.DisplayName: 守卫召唤弹幕
+			HydrothermalSmoke.DisplayName: 蒸汽
+			PortalLensFlare.DisplayName: 镜头光晕
+			ProvidenceSummonerProjectile.DisplayName: 亵渎天神召唤弹幕
+			ScreenShakeProj.DisplayName: 屏幕抖动
+			TerminusAnimationProj.DisplayName: 终末石动画弹幕
+			WaterglassTokenProjectile.DisplayName: Waterglass Token
+			HyperplaneMatrixProjectile.DisplayName: Hyperplane Matrix
+			AridBattlecryProjectile.DisplayName: Arid Battlecry
+			EyeOfMadnessProj.DisplayName: Eye of Madness
+			IllusionersReverieProj.DisplayName: Illusioner's Reverie
+			KevinProjectile.DisplayName: Kevin
+			LingeringSandSkull.DisplayName: Sand Skull
+			MiniSandShark.DisplayName: Mini Sand Shark
+			ShadowIllusion.DisplayName: Lens Flare
+			ShadowTendril.DisplayName: Shadow Tendril
+			EggGoldProjectile.DisplayName: 金蛋
+			EggProjectile.DisplayName: 蛋
+			MyrindaelBonkProjectile.DisplayName: Myrindael
+			MyrindaelLightning.DisplayName: Myrndael Lightning Bolt
+			MyrindaelSpark.DisplayName: Myrindael Spark
+			MyrindaelSpinProjectile.DisplayName: Myrindael
+			AsterPetProj.DisplayName: Aster
+			BlahajProj.DisplayName: Blahaj
+			BronzePetProj.DisplayName: Yharn
+			HatGirl.DisplayName: Hat Girl
+			SheepGod.DisplayName: Sheep God
+			GlassmakerFire.DisplayName: Glass Flames
+			GlassmakerHoldout.DisplayName: Glassmaker
+			GlassPiece.DisplayName: Glass Piece
+			DreamtasticEnergyBolt.DisplayName: Dreamer's Energy Bolt
+			DreamtasticProj.DisplayName: Dreamtastic
+			StormMaidensLightning.DisplayName: Storm Maiden Lightning Bolt
+			StormMaidensRetributionProj.DisplayName: Storm Maiden's Retribution
+			StormMaidensRetributionWorldProj.DisplayName: Storm Maiden's Retribution
+			WanderersShellProj.DisplayName: Wanderer's Shell
+			WayfinderGate.DisplayName: 寻路者魔法门
+			WayfinderHoldout.DisplayName: 寻路者
+			WayfinderItemProjectile.DisplayName: 寻路者
+			WayfinderSymbol.DisplayName: 寻路者魔法门
+			MushBombInfernum.DisplayName: Mush Bomb Infernum
+			DoGProviCutsceneInitialPortal.DisplayName: Do G Provi Cutscene Initial Portal
+			DoGProviCutsceneProjectile.DisplayName: Do G Provi Cutscene Projectile
+			ProviBurnPulseRing.DisplayName: Provi Burn Pulse Ring
+		}
+
+		Status: {
+			AchievementCompletionText: 成就完成！
+			InfernumDisallowedInWeirdDifficulties: 炼狱模式无法在大师模式或For the Worthy或Get fixed boi种子下启用。
+			EternityModeWarning: 如果存在冲突，永恒模式的BossAI将被炼狱覆盖。
+			CyberneticImmortalityEnabled: 无敌已启用。
+			CyberneticImmortalityDisabled: 无敌已禁用。
+			AbyssTeleportAwayDenial: 压力太大了，无法逃脱!
+			EggSwordShrineBreakFailure: 该蛋拒绝了你拔剑的企图！
+			WayfinderGateNotSet: 没有设置魔法门！
+			InfernumNeededToEnterColosseum: 必须启用炼狱模式才能进入失落竞技场！
+			InfiniteFlight: 准许无限飞行！
+			AquaticScourgeFinalPhaseAcid: 一股强酸正迅速从下方喷涌而上!
+			CalShadowBrothersSummon: 摧毁他，我的兄弟们。
+			CalShadowFinalPhase: 我才刚刚使出全力！
+			CalShadowFinalHexWarning: 还没完呢！准备迎接我的最强法术吧！
+			CalShadowFinalHexSurprise: 呃啊。
+			TwinsForcefieldSummonSpazmatism: 激光眼-MK4：防御被突破，启动程序SHLD-17ECF9。
+			TwinsForcefieldSummonRetinazer: 魔焰眼-MK7：防御被突破，启动程序SHLD-17ECF9。
+			TwinsFinalPhaseSpazmatism: 激光眼-MK4：检测到辅助装置错误，燃烧多余的燃料储备。
+			TwinsFinalPhaseRetinazer: 魔焰眼-MK7：检测到辅助装置错误，燃烧多余的燃料储备。
+			PBGNuclearCoreGeneration: 核能核心生成，组装程序开始启动！
+			PostCultistColosseumCreation: 神秘的废墟出现在沙漠的中心！
+			PostMLTempleCreation: 一座亵渎神庙从地狱边缘的灰烬中拔地而起！
+			ProvidenceLavaRise: 炽热的岩浆正在自下方涨起！
+			DoGTeleportDenial1: 想如此轻易地躲开我？绝无可能！
+			DoGTeleportDenial2: 智取一名掌控次元的大师？痴心妄想！
+			DoGTeleportDenial3: 太慢了！
+			DoGDeath1: 我不会被毁灭！！！
+			DoGDeath2: 我不会被毁灭！！！
+			DoGDeath3: 我不会被毁灭！！！
+			DoGDeath4: 我不会……
+			DoGDeath5: 我……
+			YharonSecondPhase: 空气炙烤着你的皮肤……
+			YharonFinalPhase: 热浪滚滚……
+			PostYharonWyrmHint: 一束原始之光在深渊的最深处闪烁……
+			DraedonEffortMock1: 你的努力十分有趣。
+			DraedonEffortMock2: 继续吧，向我的机械输送更多信息。
+			DraedonAresDesperationBlenderLeaveWarning: 你是个优秀的测试对象。
+			ExoMechDesperationAres1: 阿瑞斯-09：核心温度迅速升高，即将自毁。
+			ExoMechDesperationAres2: 阿瑞斯-09：准备启用“精准伽马射线”互毁协定。
+			ExoMechDesperationTwins1: 阿尔忒弥斯-01：联合能量储备过低，即将发生系统故障。
+			ExoMechDesperationTwins2: 阿波罗-03：准备启用“热核闪击”互毁协定。
+			ExoMechDesperationThanatos1: 塔纳托斯-05：星流炮塔在不稳定能量水平下燃烧，即将自毁。
+			ExoMechDesperationThanatos2: 塔纳托斯-05：准备启用“极限过载冲击”互毁协定。
+			DraedonDefeat1: 有趣，十分有趣。
+			DraedonDefeat2: 我引以为傲的杰作，彻底失败了。
+			DraedonDefeat2HyperplaneMatrix: 你是个优秀的测试对象。
+			DraedonDefeat3: 这也非是我预期中的结果。
+			DraedonDefeat3HyperplaneMatrix: 我从你的战斗中获得的数据是无价的。
+			DraedonDefeat4: ……也许，我该给你的付出给予一些奖励。
+			DraedonDefeat4HyperplaneMatrix: ……很抱歉，但在看了这样一场“展示”之后，我必须得花点时间整理我的思绪。
+			DraedonDefeat5: 分析你的行为已超出了我的计算能力，但这也许并不荒谬。
+			DraedonDefeat6: 现在。
+			DraedonDefeat6HyperplaneMatrix: 那是我最有用的发明，我相信你会找到它的用处的。
+			DraedonDefeat7: 你想要接触那位暴君，可惜我无法帮到你。
+			DraedonDefeat7HyperplaneMatrix: 明智地使用它。
+			DraedonDefeat8: 这并非出自怨恨，毕竟从一开始，我的目标就只有观察刚才的这一场战斗。
+			DraedonDefeat9: 但现在，我得把注意力放回到我的机械上了。如果你想再次面对我的造物，就使用密码破译器吧。
+			DraedonDefeat10: 至此，我向你道别，祝你的未来一路顺风。
+			SCalCongratulations: ……恭喜你。
+			MultiplayerWarning: InfernumMode: Multiplayer is NOT supported, expect things to break and the mod not be fully playable. Do not report MP bugs.
+
+			Death: {
+				RedElectrified: "{0}无法承受住红色闪电的洗礼。"
+				DarkFlames: "{0}被亵渎之火烧成了灰烬。"
+				Madness: "{0}发疯了。"
+				HyperplaneMatrixExplosion: "{0}被炸死了。"
+			}
+		}
+
+		Tiles: {
+			HydrothermalVent.MapEntry: 间歇泉
+			GolemArena.MapEntry: 战斗场地
+			MoonlordArena.MapEntry: 战斗场地
+			SeaShell.MapEntry: 海贝
+		}
+
+		UI: {
+			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
+			AchievementsHeader: 死亡祈愿
+			AchievementsLabelText: 下一个
+			WishesHeader: 开发者祈愿
+			WishesHoverTextButton: 打开死亡祈愿
+
+			GuardiansPlaqueUI: {
+				HoverText: Read
+				// !! Beware translators: The "ancient artifact" string must be the same as the one in the SpecialText
+				PlaqueText: 三位圣徒。同一思想，同一神性，同一目标。在亵渎圣火的淬炼下，一个远古圣器结晶而出，其唯一的目的是在这座神庙的悬崖上开启仪式。
+				SpecialText: 远古圣器
+			}
+
+			// Enrage tooltips
+			EnrageTooltipReplacements: {
+				DecapoditaSprout: Enrages outside of the Mushroom biome
+				WormFood: 在腐化外狂暴
+				BloodySpine: 在猩红外狂暴
+				Teratoma: 在腐化外狂暴
+				BloodyWormFood: 在猩红外狂暴
+				Seafood: Enrages outside of the waters of the Sulphurous Sea
+				Abombination: 在地下丛林外狂暴
+				NecroplasmicBeacon: Enrages outside of the Underground
+			}
+
+			HyperplaneMatrixUI: {
+				Godmode: 切换无敌控制
+				NoClip: 切换反物理飞行
+				TimeSetMorning: 加速时间至早晨
+				TimeSetNoon: 加速时间至正午
+				TimeSetDusk: 加速时间至傍晚
+				Butcher: 湮灭敌对NPC
+			}
+		}
+	}
+}

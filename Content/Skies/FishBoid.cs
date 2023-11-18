@@ -13,6 +13,7 @@ namespace InfernumMode.Content.Skies
         public float Scale;
         public float Rotation;
         public float Depth;
+        public float Opacity;
         public int CurrentFrame;
         public Vector2 Position;
         public Vector2 Velocity;
@@ -41,6 +42,7 @@ namespace InfernumMode.Content.Skies
             Lifetime = lifetime;
             Scale = 0f;
             MaxScale = scale;
+            Opacity = 0f;
             Position = position;
             Velocity = velocity;
             DrawColor = Color.Lerp(Color.Black, Color.CadetBlue, Main.rand.NextFloat());
@@ -51,11 +53,18 @@ namespace InfernumMode.Content.Skies
         {
             // Grow rapidly
             if (Time <= 120)
-                Scale = Lerp(0f, MaxScale, Time / 60f);
+            {
+                Scale = Lerp(MaxScale / 2, MaxScale, Time / 60f);
+                Opacity = Lerp(0f, 1f, Time / 60f);
+            }
 
             // Shrink rapidly.
             if (TimeLeft <= 120)
-                Scale = Lerp(0f, MaxScale, (float)TimeLeft / 60f);
+            {
+                Scale = Lerp(MaxScale / 2, MaxScale, (float)TimeLeft / 60f);
+                Opacity = Lerp(0f, 1f, TimeLeft / 60f);
+
+            }
 
             // Choose a direction.
 
@@ -138,7 +147,7 @@ namespace InfernumMode.Content.Skies
                 Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/AbyssAIs/DepthFeederGlow").Value;
                 Rectangle frame = new(0, FrameHeight * CurrentFrame, FrameWidth, FrameHeight);
                 Vector2 origin = frame.Size() * 0.5f;
-                float opacityScalar = Lerp(0.4f, 0.7f, (Depth - 1) / 2f);
+                float opacityScalar = Lerp(0.4f, 0.7f, (Depth - 1) / 2f) * Opacity;
                 Main.spriteBatch.Draw(texture, position, frame, DrawColor * opacityScalar, rotation, origin, scale * Scale, effects, 0f);
                 Main.spriteBatch.Draw(glowmask, position, frame, Color.White * 1.3f * opacityScalar, rotation, origin, scale * Scale, effects, 0f);
 

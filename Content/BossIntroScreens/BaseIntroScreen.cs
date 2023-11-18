@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.UI;
+using InfernumMode.Assets.Fonts;
 using InfernumMode.Content.BossIntroScreens.InfernumScreens;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
@@ -20,6 +21,7 @@ namespace InfernumMode.Content.BossIntroScreens
     public abstract class BaseIntroScreen : ModType
     {
         public int AnimationTimer;
+
         public float AnimationCompletion => Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
 
         public bool HasPlayedMainSound;
@@ -45,7 +47,16 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
-        public static DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
+        public static DynamicSpriteFont FontToUse
+        {
+            get
+            {
+                if (Utilities.LanguageIsActive(GameCulture.CultureName.Chinese))
+                    return InfernumFontRegistry.BossIntroScreensFontChinese;
+                
+                return InfernumFontRegistry.BossIntroScreensFont;
+            }
+        }
 
         public Vector2 DrawPosition => BaseDrawPosition;
 

@@ -5,6 +5,7 @@ using CalamityMod.NPCs.Yharon;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Fonts;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -471,9 +472,9 @@ namespace InfernumMode.Content.BossBars
             string percentText = formattedRatio.ToString() + "%";
             Vector2 textDrawPos = percentBaseDrawPos + new Vector2(16f, 6.5f);
             Color shadowColor = new(210, 158, 68);
-            Vector2 size = BarFont.MeasureString(percentText);
+            Vector2 size = InfernumFontRegistry.HPBarFont.MeasureString(percentText);
             Vector2 origin = new(size.X, size.Y * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, BarFont, percentText, textDrawPos, shadowColor * mainOpacity, 0f, origin, Vector2.One * 0.62f);
+            ChatManager.DrawColorCodedString(spriteBatch, InfernumFontRegistry.HPBarFont, percentText, textDrawPos, shadowColor * mainOpacity, 0f, origin, Vector2.One * 0.62f);
         }
         #endregion
     }

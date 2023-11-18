@@ -39,8 +39,6 @@ namespace InfernumMode.Content.BossBars
 
         internal static List<int> ModCallNPCsThatCanHaveAHPBar;
 
-        public static DynamicSpriteFont BarFont { get; private set; }
-
         public static Texture2D BarFrame { get; private set; }
 
         public static Texture2D IconFrame { get; private set; }
@@ -77,16 +75,6 @@ namespace InfernumMode.Content.BossBars
             ModCallBossIcons = new();
             ModCallNPCsThatCanHaveAHPBar = new();
 
-            if (!Main.dedServ)
-            {
-                // This was crashing on Linux and such in Calamity, I am unable to check if it will here so I am playing it safe and only allowing custom fonts to work on Windows.
-                if ((int)Environment.OSVersion.Platform == 2)
-                    BarFont = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/HPBarFont", AssetRequestMode.ImmediateLoad).Value;
-                else
-                    // If not the correct OS, we need to make it the default Terraria Font, Andy.
-                    BarFont = FontAssets.MouseText.Value;
-            }
-
             if (Main.netMode != NetmodeID.Server)
             {
                 BarFrame = ModContent.Request<Texture2D>("InfernumMode/Content/BossBars/Textures/Frame", AssetRequestMode.ImmediateLoad).Value;
@@ -112,7 +100,6 @@ namespace InfernumMode.Content.BossBars
             ModCallPhaseInfos = null;
             ModCallBossIcons = null;
             ModCallNPCsThatCanHaveAHPBar = null;
-            BarFont = null;
             BarFrame = null;
             MainBarTip = null;
             MinionBarTip = null;

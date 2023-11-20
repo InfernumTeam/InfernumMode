@@ -244,6 +244,8 @@ namespace InfernumMode.Content.BossBars
                 BossIcon = ModContent.Request<Texture2D>("CalamityMod/Items/Armor/Vanity/DraedonMask").Value;
             else if (AssociatedNPC.type == NPCID.MoonLordCore)
                 BossIcon = TextureAssets.NpcHeadBoss[8].Value;
+            else if (AssociatedNPC.type == NPCID.Golem)
+                BossIcon = TextureAssets.NpcHeadBoss[5].Value;
 
             // Swap to the mod call icon if it exists.
             if (ModCallBossIcons.TryGetValue(NPCType, out var icon))
@@ -409,7 +411,7 @@ namespace InfernumMode.Content.BossBars
             float actualIconSize = MathF.Max(BossIcon.Width, BossIcon.Height);
             float iconScaleNeeded = idealIconSize / actualIconSize;
 
-            // Provis is very wide.
+            // Provi is very wide.
             if (NPCType == ModContent.NPCType<Providence>())
                 iconScaleNeeded *= 1.55f;
 

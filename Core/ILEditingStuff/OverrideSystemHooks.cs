@@ -1,7 +1,10 @@
 ﻿using CalamityMod.NPCs;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
@@ -32,7 +35,7 @@ namespace InfernumMode.Core.ILEditingStuff
         }
 
         // Only run Infernum's findframe if it exists.
-        public static void FindFrameDetourMethod(Orig_FindFrameDelegate orig, NPC npc, int frameHeight)
+        internal static void FindFrameDetourMethod(Orig_FindFrameDelegate orig, NPC npc, int frameHeight)
         {
             if (OverridingListManager.InfernumFrameOverrideList.Contains(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
             {
@@ -41,6 +44,14 @@ namespace InfernumMode.Core.ILEditingStuff
             }
 
             orig(npc, frameHeight);
+        }
+
+        internal static bool CalGlobalNPCPredrawDetourMethod(Orig_CalGlobalNPCPredrawMethod orig, CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (npc.type == NPCID.GolemHeadFree)
+                return false;
+
+            return orig(self, npc, spriteBatch, screenPos, drawColor);
         }
     }
 }

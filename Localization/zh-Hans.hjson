@@ -4,7 +4,7 @@ Mods: {
 			BabysFirstAchievement: {
 				DisplayName: 死海无涯
 				Description:
-				    '''
+					'''
 					死的越多，懂得越多
 					[c/777777:在炼狱模式中死于任意一个Boss]
 					'''
@@ -717,7 +717,7 @@ Mods: {
 
 			FlowerOfTheOcean: {
 				DisplayName: 海之花
-				Tooltip: 
+				Tooltip:
 					'''
 					大幅提高水下能见度
 					创造一种水下视觉效果
@@ -745,10 +745,10 @@ Mods: {
 					'''
 
 				TooltipEffect: {
-					FirstText: "这象征着"
+					FirstText: 这象征着
 					SecondText: 爱情
-					ThirdText: "在盛开时是多么美丽，而它又多么容易枯萎"
-					FourthText: "也许有了这个，我们就能保存"
+					ThirdText: 在盛开时是多么美丽，而它又多么容易枯萎
+					FourthText: 也许有了这个，我们就能保存
 					FifthText: 记忆
 					SixthText: ？
 				}
@@ -759,7 +759,7 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
-			rimstoneCrescentStaff: {
+			BrimstoneCrescentStaff: {
 				DisplayName: 硫火新月法杖
 				Tooltip:
 					'''
@@ -1229,9 +1229,9 @@ Mods: {
 
 				TooltipEffect: {
 					FirstText: 你感觉一只
-					SecondText: "精灵尝试指引"
+					SecondText: 精灵尝试指引
 					ThirdText: 你去往花苞的家
-					FourthText: "精灵尝试吸引你的注意力到"
+					FourthText: 精灵尝试吸引你的注意力到
 					FifthText: 水中
 					SixthText: 也许你应该跟随它的指引？
 				}
@@ -1379,8 +1379,8 @@ Mods: {
 					'''
 
 				TooltipEffect: {
-					FirstText: "一本"
-					SecondText: "令人费解的"
+					FirstText: 一本
+					SecondText: 令人费解的
 					ThirdText: 古老巨著。不知何故，尽管它的年代久远，但它似乎仍然完好无损
 				}
 			}
@@ -1475,12 +1475,12 @@ Mods: {
 			ProfanedGardenLocationSetter: {
 				DisplayName: 亵渎花园位置设置器
 				Tooltip:
-				'''
-				用它来修复亵渎花园功能异常的问题。
-				左键单击花园中间亵渎碑文的物块底部中心。
-				这可以让花园的位置正确的绕该点居中。
-				你可以右键单击将位置恢复到上一次设置的位置。
-				'''
+					'''
+					用它来修复亵渎花园功能异常的问题。
+					左键单击花园中间亵渎碑文的物块底部中心。
+					这可以让花园的位置正确的绕该点居中。
+					你可以右键单击将位置恢复到上一次设置的位置。
+					'''
 			}
 
 			DeusMonolithItem: {
@@ -1522,7 +1522,7 @@ Mods: {
 		}
 
 		// Will use the CalamitasShadowClone.DisplayName field
-		NameOverrides.CalamitasShadowClone.EntryName: {0}
+		NameOverrides.CalamitasShadowClone.EntryName: "{0}"
 
 		NPCs: {
 			ColossalSquidTentacle.DisplayName: 触手
@@ -1567,7 +1567,7 @@ Mods: {
 			GolemArenaPlatform.DisplayName: 石巨人战斗平台
 			CalamitasShadowClone.DisplayName: 遗落灾影
 			CataclysmShadow.DisplayName: 遗落灾祸之影
-			CatastropheShadow.DisplayName: 遗落灾难之影	
+			CatastropheShadow.DisplayName: 遗落灾难之影
 		}
 
 		PetDialog: {
@@ -1607,8 +1607,8 @@ Mods: {
 			AquaticScourgeTyphoonTip: 看起来这条海蛇还没法将那东西完成，我们得赶紧逃走！
 			AquaticScourgeBonkJokeTip: 砰！
 			AstrumAureusTip1: 保持一定的距离，否则你可能会被打个措手不及！
-			AstrumDeusTip1: 那条巨蛇也太快了！良好的机动性对于击败它来说很有必要！
 			AstrumAureusTip2: 当心那些冲击波！你最好待在地面上来躲避那些攻击。
+			AstrumDeusTip1: 那条巨蛇也太快了！良好的机动性对于击败它来说很有必要！
 			AstrumDeusShellTip: 那东西似乎已经褪壳了。打起精神来，它现在会变得快很多！
 			AstrumDeusDarkBurstTip: 在试图躲避子弹时不要慌张！
 			AstrumDeusRubbleTip: 别忘了那些石块！它们会从天而降！
@@ -1774,6 +1774,7 @@ Mods: {
 			SCalTip1: 当她拔出弩的时候靠近她，你可以看见她在瞄准哪里！
 			SCalSkullTip: 好多头骨，但它们似乎没有直接瞄准你！试着从中间穿过去！
 			SCalDesperationTip: 即使一切都失控了，你也要专心躲避！
+			// SCalFireSpinTip: Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!
 			SCalFireChargeTip: 那些爆弹占据了很大的空间！试着诱导她在你容易躲开的地方发射它们！
 			TwinsTip1: 靠旋转来躲避很困难吗？三个人可以玩那个游戏，一起旋转！
 			TwinsFinalOptionTip: 双子魔眼中的每一个都有独特的最终程序，如果它们中的一个给你带来困扰，可以试着专注于另一个！
@@ -2373,7 +2374,7 @@ Mods: {
 			AsterPetProj.DisplayName: 星
 			BlahajProj.DisplayName: 蓝鲨
 			BronzePetProj.DisplayName: 癫痫鸟
-			HatGirl.DisplayName: 礼帽女孩 
+			HatGirl.DisplayName: 礼帽女孩
 			SheepGod.DisplayName: 羔羊之神
 			GlassmakerFire.DisplayName: 熔璃之火
 			GlassmakerHoldout.DisplayName: 熔璃化匠

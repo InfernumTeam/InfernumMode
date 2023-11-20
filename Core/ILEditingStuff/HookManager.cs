@@ -17,6 +17,8 @@ using CalamityMod.Systems;
 using CalamityMod.UI.DraedonSummoning;
 using CalamityMod.UI.ModeIndicator;
 using CalamityMod.World;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
 using System;
@@ -481,6 +483,10 @@ namespace InfernumMode.Core.ILEditingStuff
         private static readonly MethodInfo CalModifyHitNPCWithItemMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithItem", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalModifyHitNPCWithItemMethod(CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers);
+
+        private static readonly MethodInfo CalGlobalNPCPredrawMethod = typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
+
+        public delegate bool Orig_CalGlobalNPCPredrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
 
         public static void FuckYou()
         {

@@ -189,10 +189,10 @@ namespace InfernumMode.Content.Rarities
                         break;
 
                     case SparkleType.CreditSparkle:
-                        lifetime = (int)Main.rand.NextFloat(30f, 50f);
-                        scale = Main.rand.NextFloat(0.525f, 0.85f);
+                        lifetime = (int)Main.rand.NextFloat(20f, 25f);
+                        scale = Main.rand.NextFloat(0.325f, 0.65f);
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
-                        sparklesList.Add(new TransSparkle(lifetime, scale, 0f, 0f, position, Vector2.Zero));
+                        sparklesList.Add(new CreditSparkle(lifetime, scale, Main.rand.NextFloat(Tau), 0f, position, Vector2.Zero));
                         break;
                 }
             }

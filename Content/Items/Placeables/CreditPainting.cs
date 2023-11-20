@@ -7,12 +7,6 @@ namespace InfernumMode.Content.Items.Placeables
 {
     public class CreditPainting : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Credit where Credit is Due");
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.DefaultToPlaceableTile(ModContent.TileType<CreditPaintingTile>());

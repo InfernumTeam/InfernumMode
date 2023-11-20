@@ -228,7 +228,8 @@ namespace InfernumMode.Content.Credits
 
                     if (CreditsTimer >= maxTime)
                     {
-                        Item.NewItem(new EntitySource_WorldEvent(), Main.LocalPlayer.Hitbox, ModContent.ItemType<CreditPainting>());
+                        if (Main.netMode != NetmodeID.Server)
+                            Main.LocalPlayer.QuickSpawnItem(new EntitySource_WorldEvent(), ModContent.ItemType<CreditPainting>());
                         CreditsTimer = 0;
                         CurrentState = CreditState.FinalizingDisposing;
                         return;

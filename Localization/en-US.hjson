@@ -669,7 +669,7 @@ Mods: {
 						Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
 						Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.
 						'''
-					DisplayName: Knowledge Bereft Vassal
+					DisplayName: Bereft Vassal
 				}
 			}
 
@@ -710,7 +710,7 @@ Mods: {
 				Tooltip:
 					'''
 					Grants a water forcefield that dissipates after 2 hits
-					When the forcefield is up, hard-hitting hits do 60% less damage overall, and you recieve a 12% damage boost
+					When the forcefield is up, hard-hitting hits do 60% less damage overall, and you receive a 12% damage boost
 					The forcefield reappears after 90 seconds
 					'''
 			}
@@ -1502,6 +1502,7 @@ Mods: {
 		Keybinds: {
 			"Wayfinder Create Key.DisplayName": Wayfinder  Create  Key
 			"Wayfinder Destroy Key.DisplayName": Wayfinder  Destroy  Key
+			ToggleRecordingRarity.DisplayName: Toggle Recording Rarity
 		}
 
 		MusicDisplay: {

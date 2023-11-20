@@ -669,7 +669,7 @@ Mods: {
 						他藏身于这些神秘的废墟中，默默见证着时间的流逝，没有任何目的，直到你的到来。
 						他的命运是个人正义误入歧途所结出的果实。不要为了远大理想而遭受无意义的苦痛。
 						'''
-					DisplayName: 无邦封臣和旱海狂鲨
+					DisplayName: 无邦封臣
 				}
 			}
 
@@ -1502,6 +1502,7 @@ Mods: {
 		Keybinds: {
 			"Wayfinder Create Key.DisplayName": 魔法门创建键
 			"Wayfinder Destroy Key.DisplayName": 魔法门删除键
+			// ToggleRecordingRarity.DisplayName: Toggle Recording Rarity
 		}
 
 		MusicDisplay: {

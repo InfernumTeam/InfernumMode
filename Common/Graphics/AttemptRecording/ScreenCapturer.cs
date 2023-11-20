@@ -353,6 +353,9 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             data = gZipMem.ToArray();
             fileStream.Write(data);
+
+            // Clear the frames.
+            ClearFrames();
         }
 
         internal static Texture2D[] LoadGifAsTexture2Ds(RecordingBoss bossFootageToLoad, out bool baseCreditsUsed)

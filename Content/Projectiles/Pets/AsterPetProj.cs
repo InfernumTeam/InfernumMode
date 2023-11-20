@@ -299,6 +299,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             return true;
         }
 
+        // Yes this is shit. Yes this is intended. Don't ask.
         public override bool PreDraw(ref Color lightColor)
         {
             Projectile.position.X -= 5f;

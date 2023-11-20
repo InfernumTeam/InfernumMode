@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Rarities.Sparkles
 {
@@ -20,7 +19,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Velocity = velocity;
             DrawColor = Color.Lerp(new Color(172, 68, 118), new Color(114, 92, 168), Main.rand.NextFloat());
             DrawColor.A = 0;
-            Texture = ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/Book").Value;
+            Texture = RarityTextureRegistry.BookTexture;
             BaseFrame = null;
             DirectionMultiplier = Main.rand.NextBool().ToDirectionInt();
         }

@@ -11,15 +11,11 @@ namespace InfernumMode.Content.Rarities
 {
     public static class InfernumRarityHelper
     {
-        public static Texture2D GlowTexture => ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/BaseRarityGlow").Value;
-
-        public static Texture2D SparkleTexure => ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/BaseRaritySparkleTexture").Value;
-
-        public static void DrawBaseTooltipTextAndGlow(DrawableTooltipLine tooltipLine, Color glowColor, Color textOuterColor, Color? textInnerColor = null, Texture2D glowTexture = null)
+        public static void DrawBaseTooltipTextAndGlow(DrawableTooltipLine tooltipLine, Color glowColor, Color textOuterColor, Color? textInnerColor = null, Texture2D glowTexture = null, Vector2? glowScaleOffset = null)
         {
             textInnerColor ??= Color.Black;
-            glowTexture ??= GlowTexture;
-
+            glowTexture ??= RarityTextureRegistry.BaseRarityGlow;
+            glowScaleOffset ??= Vector2.One;
             // Get the text of the tooltip line.
             string text = tooltipLine.Text;
             // Get the size of the text in its font.
@@ -31,7 +27,7 @@ namespace InfernumMode.Content.Rarities
             // Get the position to draw the glow behind the text.
             Vector2 glowPosition = new(tooltipLine.X + textCenter.X, tooltipLine.Y + textCenter.Y / 1.5f);
             // Get the scale of the glow texture based off of the text size.
-            Vector2 glowScale = new(textSize.X * 0.115f, 0.6f);
+            Vector2 glowScale = new Vector2(textSize.X * 0.115f, 0.6f) * glowScaleOffset.Value;
             glowColor.A = 0;
             // Draw the glow texture.
             Main.spriteBatch.Draw(glowTexture, glowPosition, null, glowColor * 0.85f, 0f, glowTexture.Size() * 0.5f, glowScale, SpriteEffects.None, 0f);
@@ -182,6 +178,21 @@ namespace InfernumMode.Content.Rarities
                         position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
                         velocity = Vector2.UnitY * Main.rand.NextBool().ToDirectionInt() * Main.rand.NextFloat(0.05f, 0.15f);
                         sparklesList.Add(new BookSparkle(lifetime, scale, 0f, 0f, position, Vector2.Zero));
+                        break;
+
+                    case SparkleType.TransSparkle:
+                        lifetime = (int)Main.rand.NextFloat(90f, 120f);
+                        scale = Main.rand.NextFloat(0.525f, 0.85f);
+                        position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
+                        velocity = (-Vector2.UnitY * Main.rand.NextFloat(0.05f, 0.15f)).RotatedBy(Main.rand.NextFloat(-0.1f, 0.1f));
+                        sparklesList.Add(new TransSparkle(lifetime, scale, 0f, 0f, position, velocity));
+                        break;
+
+                    case SparkleType.CreditSparkle:
+                        lifetime = (int)Main.rand.NextFloat(30f, 50f);
+                        scale = Main.rand.NextFloat(0.525f, 0.85f);
+                        position = Main.rand.NextVector2FromRectangle(new(-(int)(textSize.X * 0.5f), -(int)(textSize.Y * 0.3f), (int)textSize.X, (int)(textSize.Y * 0.35f)));
+                        sparklesList.Add(new TransSparkle(lifetime, scale, 0f, 0f, position, Vector2.Zero));
                         break;
                 }
             }

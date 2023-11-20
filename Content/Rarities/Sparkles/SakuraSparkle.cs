@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Rarities.Sparkles
 {
@@ -24,7 +23,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Velocity = velocity;
             UseSingleFrame = true;
             DrawColor = Color.White;
-            Texture = ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Sparkles/SakuraSparkle").Value;
+            Texture = RarityTextureRegistry.SakuraTexture;
             Varient = Main.rand.Next(0, MaxVarients);
             BaseFrame = new(0, FrameHeight * Varient, FrameWidth, FrameHeight);
         }

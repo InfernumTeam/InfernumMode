@@ -14,6 +14,8 @@
         BubbleSparkle,
         CyanLightningSparkle,
         SakuraSparkle,
-        BookSparkle
+        BookSparkle,
+        TransSparkle,
+        CreditSparkle
     }
 }

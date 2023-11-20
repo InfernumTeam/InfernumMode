@@ -15,7 +15,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Position = position;
             Velocity = velocity;
             DrawColor = Color.Lerp(Color.OrangeRed, Color.Red, Main.rand.NextFloat(0, 1f));
-            Texture = InfernumRarityHelper.SparkleTexure;
+            Texture = RarityTextureRegistry.BaseRaritySparkleTexture;
             BaseFrame = null;
         }
     }

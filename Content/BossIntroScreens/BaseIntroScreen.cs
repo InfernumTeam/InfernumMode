@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
-using CalamityMod.UI;
 using InfernumMode.Assets.Fonts;
 using InfernumMode.Content.BossIntroScreens.InfernumScreens;
 using InfernumMode.Core;

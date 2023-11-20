@@ -1,7 +1,6 @@
 ﻿using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.Core.GlobalInstances;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

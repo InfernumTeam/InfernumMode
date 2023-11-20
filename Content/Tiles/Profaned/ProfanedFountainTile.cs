@@ -3,7 +3,6 @@ using CalamityMod.Dusts;
 using InfernumMode.Content.Items.Placeables;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.ObjectInteractions;
 using Terraria.Localization;
 using Terraria.ModLoader;

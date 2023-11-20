@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Content.Rarities.Sparkles;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria.ModLoader;
 
@@ -12,8 +11,6 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
         public override Color RarityColor => new(17, 17, 23);
 
         internal static List<RaritySparkle> CodeSymbols = new();
-
-        public static Texture2D SymbolTexture => ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/CodeSymbolTextures").Value;
 
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {

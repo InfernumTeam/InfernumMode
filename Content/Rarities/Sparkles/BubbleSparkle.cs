@@ -23,7 +23,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             else
             {
                 DrawColor = Color.Lerp(Color.Teal, Color.SkyBlue, Main.rand.NextFloat(1f));
-                Texture = InfernumRarityHelper.SparkleTexure;
+                Texture = RarityTextureRegistry.BaseRaritySparkleTexture;
                 MaxScale = scale * 1.5f;
             }
             BaseFrame = null;

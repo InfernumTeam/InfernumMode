@@ -19,6 +19,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
         public static Asset<Texture2D> BinaryLine { get; private set; }
 
+        public static Asset<Texture2D> BloomCircle { get; private set; }
+
         public static Asset<Texture2D> BloomFlare { get; private set; }
 
         public static Asset<Texture2D> BloomLine { get; private set; }
@@ -179,6 +181,8 @@ namespace InfernumMode.Assets.ExtraTextures
 
             BinaryLine = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Trails/BinaryLine", AssetRequestMode.ImmediateLoad);
 
+            BloomCircle = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle", AssetRequestMode.ImmediateLoad);
+
             BloomFlare = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/BloomFlare", AssetRequestMode.ImmediateLoad);
 
             BloomLine = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/Lines/BloomLine", AssetRequestMode.ImmediateLoad);
@@ -337,6 +341,8 @@ namespace InfernumMode.Assets.ExtraTextures
             BigGreyscaleCircle = null;
 
             BinaryLine = null;
+
+            BloomCircle = null;
 
             BloomFlare = null;
 

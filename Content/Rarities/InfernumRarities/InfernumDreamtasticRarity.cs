@@ -12,8 +12,6 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
 
         internal static List<RaritySparkle> BookSymbols = new();
 
-        public static Texture2D SymbolTexture => ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/Book").Value;
-
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {
             // Draw the base tooltip text and glow.

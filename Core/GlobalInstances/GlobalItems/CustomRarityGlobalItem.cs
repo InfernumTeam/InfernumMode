@@ -90,6 +90,16 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                     InfernumDreamtasticRarity.DrawCustomTooltipLine(line);
                     return false;
                 }
+                else if (item.rare == ModContent.RarityType<InfernumTransRarity>())
+                {
+                    InfernumTransRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
+                else if (item.rare == ModContent.RarityType<InfernumCreditRarity>())
+                {
+                    InfernumCreditRarity.DrawCustomTooltipLine(line);
+                    return false;
+                }
             }
             return true;
         }

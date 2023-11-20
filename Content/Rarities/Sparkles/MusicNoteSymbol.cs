@@ -1,5 +1,4 @@
-﻿using InfernumMode.Content.Rarities.InfernumRarities;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -24,7 +23,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Position = position;
             Velocity = velocity;
             DrawColor = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.56f);
-            Texture = InfernumSoulDrivenHeadphonesRarity.SymbolTexture;
+            Texture = RarityTextureRegistry.MusicNoteTextures;
             BaseFrame = new(0, 30, 30, 30);
             FrameOffset = Main.rand.Next(50);
         }

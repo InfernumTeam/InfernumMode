@@ -1,5 +1,6 @@
 ﻿using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -26,7 +27,7 @@ namespace InfernumMode.Content.Items.Pets
             Item.height = 30;
 
             Item.value = Item.sellPrice(copper: 69);
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ModContent.RarityType<InfernumTransRarity>();
             Item.shoot = ModContent.ProjectileType<BlahajProj>();
             Item.buffType = ModContent.BuffType<BlahajBuff>();
             Item.Infernum_Tooltips().DeveloperItem = true;

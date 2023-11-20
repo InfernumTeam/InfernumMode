@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Rarities.Sparkles
 {
@@ -25,8 +24,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
             DrawColor = Color.Lerp(new Color(164, 51, 43), new Color(206, 101, 45), Main.rand.NextFloat(0, 1f));
             DrawColor.A = 0;
             SandColor = new(248, 216, 104) { A = 0 };
-            Texture = ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/Hourglass").Value;
-            SandTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/HourglassSand").Value;
+            Texture = RarityTextureRegistry.HourglassTexture;
+            SandTexture = RarityTextureRegistry.HourglassSandTexture;
             BaseFrame = null;
             DirectionMultiplier = Main.rand.NextBool().ToDirectionInt();
         }

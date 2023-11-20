@@ -1,5 +1,4 @@
-﻿using InfernumMode.Content.Rarities.InfernumRarities;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace InfernumMode.Content.Rarities.Sparkles
@@ -16,7 +15,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             Position = position;
             Velocity = velocity;
             DrawColor = Color.Lerp(Color.CadetBlue, Color.LightBlue, Main.rand.NextFloat(0, 1f));
-            Texture = InfernumVassalRarity.DropletTexture;
+            Texture = RarityTextureRegistry.DropletTexture;
 
             BaseFrame = null;
         }

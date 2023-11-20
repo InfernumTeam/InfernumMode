@@ -1,6 +1,5 @@
 ﻿using InfernumMode.Content.Rarities.Sparkles;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -11,9 +10,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
     {
         public override Color RarityColor => new(245, 151, 208);
 
-        internal static List<RaritySparkle> CodeSymbols = new();
-
-        public static Texture2D SymbolTexture => ModContent.Request<Texture2D>("InfernumMode/Content/Rarities/Textures/MusicNoteTextures").Value;
+        internal static List<RaritySparkle> MusicSymbols = new();
 
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {
@@ -23,7 +20,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
             InfernumRarityHelper.DrawBaseTooltipTextAndGlow(tooltipLine, glowColor: Color.MediumPurple, textOuterColor: outerColor, Color.Lerp(Color.Black, outerColor, 0.2f));
 
             // Draw base sparkles.
-            InfernumRarityHelper.SpawnAndUpdateTooltipParticles(tooltipLine, ref CodeSymbols, 8, SparkleType.MusicNotes);
+            InfernumRarityHelper.SpawnAndUpdateTooltipParticles(tooltipLine, ref MusicSymbols, 8, SparkleType.MusicNotes);
         }
     }
 }

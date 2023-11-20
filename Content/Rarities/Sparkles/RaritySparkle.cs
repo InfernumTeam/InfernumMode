@@ -22,6 +22,8 @@ namespace InfernumMode.Content.Rarities.Sparkles
 
         public float TimeLeft => Lifetime - Time;
 
+        public float LifetimeRatio => (float)Time / Lifetime;
+
         public void Update()
         {
             Position += Velocity;

@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Rarities.Sparkles
             }
             else
             {
-                Texture = InfernumRarityHelper.SparkleTexure;
+                Texture = RarityTextureRegistry.BaseRaritySparkleTexture;
                 BaseFrame = null;
             }
         }

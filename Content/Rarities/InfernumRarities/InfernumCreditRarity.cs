@@ -14,8 +14,8 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {
             // Draw the base tooltip text and glow.
-            Color outerColor = Color.CadetBlue;
-            InfernumRarityHelper.DrawBaseTooltipTextAndGlow(tooltipLine, glowColor: Color.OrangeRed, textOuterColor: outerColor, Color.Lerp(Color.Black, outerColor, 0.1f));
+            Color outerColor = Color.Lerp(Color.Black, Color.Gold, 0.05f);
+            InfernumRarityHelper.DrawBaseTooltipTextAndGlow(tooltipLine, glowColor: Color.DarkOrange, textOuterColor: outerColor, Color.Lerp(Color.OrangeRed, Color.Goldenrod, 0.5f));
 
             // Draw base sparkles.
             InfernumRarityHelper.SpawnAndUpdateTooltipParticles(tooltipLine, ref CreditSparkles, 16, SparkleType.CreditSparkle);

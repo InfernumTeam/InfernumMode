@@ -29,6 +29,12 @@ namespace InfernumMode.Assets.Fonts
             private set;
         }
 
+        public static DynamicSpriteFont ProfanedTextFontChinese
+        {
+            get;
+            private set;
+        }
+
         public override void Load()
         {
             if (Main.netMode == NetmodeID.Server)
@@ -37,6 +43,7 @@ namespace InfernumMode.Assets.Fonts
             BossIntroScreensFontChinese = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFont", AssetRequestMode.ImmediateLoad).Value;
             HPBarFont = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/HPBarFont", AssetRequestMode.ImmediateLoad).Value;
             ProfanedTextFont = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedText", AssetRequestMode.ImmediateLoad).Value;
+            ProfanedTextFontChinese = ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedTextChinese", AssetRequestMode.ImmediateLoad).Value;
         }
 
         public override void Unload()

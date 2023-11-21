@@ -1,10 +1,11 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
+using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using SubworldLibrary;
@@ -18,7 +19,7 @@ namespace InfernumMode.Core.GlobalInstances
     {
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>())
+            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>() || CutsceneManager.ActiveCutscene != null)
             {
                 spawnRate *= 40000;
                 maxSpawns = 0;

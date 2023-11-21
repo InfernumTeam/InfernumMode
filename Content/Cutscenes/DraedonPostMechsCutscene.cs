@@ -31,6 +31,10 @@ namespace InfernumMode.Content.Cutscenes
             private set;
         }
 
+        private int FrameCounter;
+
+        private Rectangle Frame = new(0, 0, 100, 120);
+
         public static int InitialWait => 150;
 
         public static int CRTFadeInLength => 120;
@@ -58,6 +62,8 @@ namespace InfernumMode.Content.Cutscenes
         {
             if (!WorldSaveSystem.HasSeenPostMechsCutscene)
                 WorldSaveSystem.HasSeenPostMechsCutscene = true;
+
+            SortoutDraedonFrame();
         }
 
         public override RenderTarget2D DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen)
@@ -67,7 +73,8 @@ namespace InfernumMode.Content.Cutscenes
             spriteBatch.Draw(screen, Vector2.Zero, Color.White);
             spriteBatch.End();
 
-            Texture2D draedon = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/HologramDraedon").Value;
+            Texture2D draedon = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Draedon").Value;
+            Texture2D draedonGlowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/DraedonGlowmask").Value;
 
             Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
             Vector2 labSize = LabTexture.Size();
@@ -77,7 +84,6 @@ namespace InfernumMode.Content.Cutscenes
 
             // The middle of the screen on the lab texture.
             Vector2 originScalar = new Vector2(1274f, 585f) / new Vector2(2559f, 1374f);
-            Vector2 middleOfScreenDrawPosition = screenSize * originScalar;
 
             float zoomoutRatio = Utils.GetLerpValue(InitialWait, ZoomOutLength + InitialWait, Timer, true);
 
@@ -87,8 +93,10 @@ namespace InfernumMode.Content.Cutscenes
             Vector2 initialLabScale = labSizeCorrection * (labSize / labScreenSize);
             Vector2 labScale = initialLabScale * Lerp(1f, 0.745f, CalamityUtils.SineOutEasing(zoomoutRatio, 1));
 
+            bool drawDraedon = true;
             if (Timer >= CutsceneLength - ScreenFlashLength / 2)
             {
+                drawDraedon = false;
                 screenScale = 1f;
                 labScale = Vector2.One * 100f;
             }
@@ -110,11 +118,51 @@ namespace InfernumMode.Content.Cutscenes
             spriteBatch.Draw(ScreenTarget, screenSize * 0.5f, null, Color.White, 0f, 0.5f * screen.Size(), screenScale, SpriteEffects.None, 0f);
             spriteBatch.End();
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.DepthRead, null);
             spriteBatch.Draw(LabTexture, screenSize * 0.5f, null, Color.Lerp(Color.White, Color.Black, 0.75f), 0f, originScalar * LabTexture.Size(), labScale, SpriteEffects.None, 0f);
+
+            // Draw Draedon.
+            if (drawDraedon)
+            {
+                Vector2 draedonPosition = new(Main.screenWidth * 1.2f, Main.screenHeight * 0.875f);
+                draedonPosition += -Vector2.UnitX * Main.screenWidth * 0.3f * CalamityUtils.SineOutEasing(Utils.GetLerpValue(ZoomOutLength - 40, ZoomOutLength + ZoomHoldLength / 2f, Timer, true), 1);
+
+                Vector2 dropshadowPosition = draedonPosition + Vector2.One * 20f;
+                spriteBatch.Draw(draedon, dropshadowPosition, Frame, Color.Black * 0.7f, 0f, Frame.Size() * 0.5f, 5.5f, SpriteEffects.None, 0f);
+
+                spriteBatch.Draw(draedon, draedonPosition, Frame, Color.Lerp(Color.White, Color.Black, 0.85f), 0f, Frame.Size() * 0.5f, 5.5f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(draedonGlowmask, draedonPosition, Frame, Color.White, 0f, Frame.Size() * 0.5f, 5.5f, SpriteEffects.None, 0f);
+            }
             spriteBatch.End();
 
             return screen;
+        }
+
+        public void SortoutDraedonFrame()
+        {
+            Frame.Width = 100;
+            int frameHeight = 120;
+            int frameCount = 12;
+            int xFrame = Frame.X / Frame.Width;
+            int yFrame = Frame.Y / frameHeight;
+            int frame = xFrame * frameCount + yFrame;
+
+
+            int frameChangeDelay = 7;
+
+            FrameCounter++;
+            if (FrameCounter >= frameChangeDelay)
+            {
+                frame++;
+
+                if (frame < 23 || frame > 47)
+                    frame = 23;
+
+                FrameCounter = 0;
+            }
+
+            Frame.X = frame / frameCount * Frame.Width;
+            Frame.Y = frame % frameCount * frameHeight;
         }
 
         public override void PostDraw(SpriteBatch spriteBatch)

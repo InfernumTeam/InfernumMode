@@ -1,7 +1,7 @@
 ﻿using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.Content.Cutscenes.Textures
+namespace InfernumMode.Content.Cutscenes
 {
     public class DraedonCutsceneMusicScene : ModSceneEffect
     {
@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Cutscenes.Textures
         public override bool IsSceneEffectActive(Player player)
         {
             if (CutsceneManager.IsCutsceneActive(ModContent.GetInstance<DraedonPostMechsCutscene>()))
-                return true;// CutsceneManager.ActiveCutscene.Timer >= DraedonPostMechsCutscene.InitialWait / 2;
+                return true;
 
             return false;
         }

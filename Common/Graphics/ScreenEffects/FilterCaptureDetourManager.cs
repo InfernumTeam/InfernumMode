@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.ScreenEffects
 {
-    public class FilterCaputureDetourManager : ModSystem
+    public class FilterCaptureDetourManager : ModSystem
     {
         public ManagedRenderTarget ScreenTarget
         {

@@ -40,8 +40,10 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public static void Start(bool blockInput, bool blockUi, Func<bool> condition)
         {
-            blockerConditions.Add(new(blockInput, blockUi, condition));
+            Start(new(blockInput, blockUi, condition));
         }
+
+        public static void Start(BlockCondition condition) => blockerConditions.Add(condition);
 
         public override void UpdateUI(GameTime gameTime)
         {

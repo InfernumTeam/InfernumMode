@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Common.BaseEntities;
+using InfernumMode.Content.Cutscenes;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,6 +44,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             // Draw the screen effects.
             if (!InfernumConfig.Instance.ReducedGraphicsConfig)
                 screenTarget1 = ScreenEffectSystem.DrawBlurEffect(screenTarget1);
+
+            CutsceneManager.DrawWorld(screenTarget1);
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }

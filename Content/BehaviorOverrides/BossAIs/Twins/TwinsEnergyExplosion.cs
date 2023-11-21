@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,6 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                 SoundEngine.PlaySound(InfernumSoundRegistry.TwinsForcefieldExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
+
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Sin(Pi * Projectile.timeLeft / Lifetime) * 14f + 2f;
 
             Radius = Lerp(Radius, 1516f, 0.15f);

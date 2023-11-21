@@ -5,6 +5,8 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.Particles;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -82,6 +84,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public const int HasPerformedLaserRayAttackIndex = 7;
 
+        public const int ShudderAmountIndex = 8;
+
         public const int BaseCollectiveCannonHP = 22000;
 
         public const int BaseCollectiveCannonHPBossRush = 346000;
@@ -123,6 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             ref float frameType = ref npc.localAI[0];
             ref float cannonsShouldNotFire = ref npc.Infernum().ExtraAI[CannonsShouldNotFireIndex];
             ref float hasCreatedShield = ref npc.Infernum().ExtraAI[HasCreatedShieldIndex];
+            ref float shudderAmount = ref npc.Infernum().ExtraAI[ShudderAmountIndex];
 
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
@@ -134,6 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             npc.defense = npc.defDefense;
             npc.damage = npc.defDamage + 24;
             npc.timeLeft = 3600;
+            shudderAmount = 0f;
 
             // Someone is going to get hurt.
             if (target.HasBuff(BuffID.Electrified))
@@ -215,6 +221,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             int animationTime = 210;
             bool canHover = attackTimer < hoverTime;
 
+            bool phaseTwo = npc.ai[3] > 0;
+
+            ref float shudderAmount = ref npc.Infernum().ExtraAI[ShudderAmountIndex];
+
             // Focus on the boss as it spawns.
             if (npc.WithinRange(Main.LocalPlayer.Center, 3700f) && CanPerformCameraEffects)
             {
@@ -249,12 +259,52 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
                 npc.velocity *= 0.85f;
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
+
+                if (phaseTwo)
+                {
+                    // Shudder around angrily.
+                    float interpolant = Utils.GetLerpValue(hoverTime, animationTime, attackTimer, true);
+                    shudderAmount = Lerp(1f, 5f, interpolant);
+
+                    if (Main.rand.NextBool((int)Lerp(15f, 7f, interpolant)))
+                    {
+                        Vector2 angerParticleSpawnPosition = npc.Center - Vector2.UnitY.RotatedBy(npc.spriteDirection * npc.rotation) * 50f + Main.rand.NextVector2Circular(50f, 30f);
+                        int angerParticleLifetime = Main.rand.Next(65, 90);
+                        float angerParticleScale = Main.rand.NextFloat(0.27f, 0.4f);
+                        CartoonAngerParticle angy = new(angerParticleSpawnPosition, Color.Red, Color.DarkRed, angerParticleLifetime, Main.rand.NextFloat(TwoPi), angerParticleScale);
+                        GeneralParticleHandler.SpawnParticle(angy);
+                    }
+                }
+
                 if (attackTimer > animationTime)
                 {
                     SoundEngine.PlaySound(SoundID.Roar, target.Center);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[3] == 0f)
-                        SpawnArms(npc);
+                    if (phaseTwo)
+                    {
+                        SoundEngine.PlaySound(InfernumSoundRegistry.DestroyerChargeImpactSound, target.Center);
+                        SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechImpendingDeathSound with { Pitch = 0.2f }, target.Center);
+
+                        SoundEngine.PlaySound(SoundID.DD2_LightningBugZap, target.Center);
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 11f);
+                            Color sparkColor = Color.Lerp(Color.Orange, Color.IndianRed, Main.rand.NextFloat(0.4f, 1f));
+                            GeneralParticleHandler.SpawnParticle(new SparkParticle(npc.Center, sparkVelocity, false, 60, 2f, sparkColor));
+
+                            sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 10f);
+                            Color arcColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.3f, 1f));
+                            GeneralParticleHandler.SpawnParticle(new ElectricArc(npc.Center, sparkVelocity, arcColor, 0.84f, 30));
+                        }
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        if (!phaseTwo)
+                            SpawnArms(npc);
+                        else
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                    }
 
                     SelectNextAttack(npc);
                 }
@@ -893,12 +943,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         #region Frames and Drawcode
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            ref float shudderAmount = ref npc.Infernum().ExtraAI[ShudderAmountIndex];
+
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Texture2D eyes = ModContent.Request<Texture2D>("InfernumMode/Content/BehaviorOverrides/BossAIs/Prime/PrimeEyes").Value;
             Rectangle frame = texture.Frame(1, Main.npcFrameCount[npc.type], 0, (int)npc.localAI[0]);
-            Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
+            Vector2 baseDrawPosition = npc.Center - Main.screenPosition + Main.rand.NextVector2Circular(shudderAmount, shudderAmount);
             for (int i = 9; i >= 0; i -= 2)
             {
                 Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;

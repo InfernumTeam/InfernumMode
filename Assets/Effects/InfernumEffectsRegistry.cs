@@ -74,6 +74,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
+        public static Filter CRTShader => Filters.Scene["InfernumMode:CRTShader"];
         public static Filter CrystalCrackShader => Filters.Scene["InfernumMode:CrystalCrackShader"];
         public static Filter DeusScreenShader => Filters.Scene["InfernumMode:Deus"];
         public static Filter DeusGasShader => Filters.Scene["InfernumMode:DeusGasShader"];
@@ -273,6 +274,10 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            // CRT shader
+            Ref<Effect> crtShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/CRTShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:CRTShader"] = new Filter(new(crtShader, "CRTPass"), EffectPriority.VeryHigh);
+
             // Sandstorm shader
             Ref<Effect> sandstormShader = new(assets.Request<Effect>("Assets/Effects/Overlays/SandstormShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:SandstormShader"] = new Filter(new(sandstormShader, "SandstormPass"), EffectPriority.VeryHigh);

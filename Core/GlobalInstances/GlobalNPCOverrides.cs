@@ -18,9 +18,11 @@ using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
+using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -127,14 +129,8 @@ namespace InfernumMode.Core.GlobalInstances
             infernum.OptionalPrimitiveDrawer = null;
             infernum.Optional3DStripDrawer = null;
 
-            if (InfernumMode.CanUseCustomAIs)
-            {
-                //if (OverridingListManager.InfernumSetDefaultsOverrideList.TryGetValue(npc.type, out Delegate value))
-                //    value.DynamicInvoke(npc);
-
-                if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
-                    value.SetDefaults(npc);
-            }
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
+                value.SetDefaults(npc);
         }
 
         public override void SetStaticDefaults()
@@ -231,6 +227,20 @@ namespace InfernumMode.Core.GlobalInstances
                 Player player = Main.player[i];
                 if (npc.boss || KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
                     AchievementPlayer.ExtraUpdateHandler(player, AchievementUpdateCheck.NPCKill, npc.whoAmI);
+            }
+
+            // Check for whether to play the post mechs cutscene.
+            if (!WorldSaveSystem.HasSeenPostMechsCutscene)
+            {
+                // If Prime was just killed, and the other two are also dead.
+                if (npc.type == NPCID.SkeletronPrime && NPC.downedMechBoss1 && NPC.downedMechBoss2)
+                    CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
+                // If Destroyer was just killed, and the other two are dead.
+                else if (npc.type == NPCID.TheDestroyer && NPC.downedMechBoss2 && NPC.downedMechBoss3)
+                    CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
+                // If Twins were just killed, and the other two are dead.
+                else if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && NPC.downedMechBoss1 && NPC.downedMechBoss3)
+                    CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
             }
         }
 

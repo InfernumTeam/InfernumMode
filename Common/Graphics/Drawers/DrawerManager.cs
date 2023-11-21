@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using InfernumMode.Common.Graphics.Drawers.NPCDrawers;
 using InfernumMode.Common.Graphics.Drawers.SceneDrawers;
+using InfernumMode.Content.Cutscenes;
 
 namespace InfernumMode.Common.Graphics.Drawers
 {
@@ -80,6 +81,9 @@ namespace InfernumMode.Common.Graphics.Drawers
                 if (drawer.ShouldDrawThisFrame && NPC.AnyNPCs(drawer.AssosiatedNPCType) && InfernumMode.CanUseCustomAIs)
                     drawer.DrawMainTargetContents(Main.spriteBatch);
             }
+
+            // Draw Cutscenes.
+            CutsceneManager.DrawToWorld();
         }
 
         public static T GetNPCDrawer<T>() where T : BaseNPCDrawerSystem

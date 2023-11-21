@@ -44,13 +44,27 @@ namespace InfernumMode.Content.Cutscenes
 
         }
 
+        /// <summary>
+        /// Happens after NPC drawing.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public virtual void DrawToWorld(SpriteBatch spriteBatch)
         {
 
         }
 
+        /// <summary>
+        /// Happens in a EndCapture detour. Draw to screen last and return it.
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="screen"></param>
+        /// <returns></returns>
         public virtual RenderTarget2D DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen) => screen;
 
+        /// <summary>
+        /// Happens on PostDraw
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public virtual void PostDraw(SpriteBatch spriteBatch)
         {
 

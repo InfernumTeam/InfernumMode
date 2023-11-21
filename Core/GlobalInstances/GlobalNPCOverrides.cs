@@ -129,14 +129,8 @@ namespace InfernumMode.Core.GlobalInstances
             infernum.OptionalPrimitiveDrawer = null;
             infernum.Optional3DStripDrawer = null;
 
-            if (InfernumMode.CanUseCustomAIs)
-            {
-                //if (OverridingListManager.InfernumSetDefaultsOverrideList.TryGetValue(npc.type, out Delegate value))
-                //    value.DynamicInvoke(npc);
-
-                if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
-                    value.SetDefaults(npc);
-            }
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
+                value.SetDefaults(npc);
         }
 
         public override void SetStaticDefaults()
@@ -238,10 +232,13 @@ namespace InfernumMode.Core.GlobalInstances
             // Check for whether to play the post mechs cutscene.
             if (!WorldSaveSystem.HasSeenPostMechsCutscene)
             {
+                // If Prime was just killed, and the other two are also dead.
                 if (npc.type == NPCID.SkeletronPrime && NPC.downedMechBoss1 && NPC.downedMechBoss2)
                     CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
+                // If Destroyer was just killed, and the other two are dead.
                 else if (npc.type == NPCID.TheDestroyer && NPC.downedMechBoss2 && NPC.downedMechBoss3)
                     CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
+                // If Twins were just killed, and the other two are dead.
                 else if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && NPC.downedMechBoss1 && NPC.downedMechBoss3)
                     CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
             }

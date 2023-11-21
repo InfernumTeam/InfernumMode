@@ -13,19 +13,31 @@ namespace InfernumMode.Content.Cutscenes
     {
         internal static Queue<Cutscene> CutscenesQueue = new();
 
+        /// <summary>
+        /// The cutscene that is currently active.
+        /// </summary>
         internal static Cutscene ActiveCutscene
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Queues a cutscene to be played.
+        /// </summary>
+        /// <param name="cutscene"></param>
         public static void QueueCutscene(Cutscene cutscene)
         {
             if (Main.netMode != NetmodeID.Server)
                 CutscenesQueue.Enqueue(cutscene);
         }
 
-        public static bool IsCutsceneActive(Cutscene cutscene)
+        /// <summary>
+        /// Returns whether the provided cutscene is active, via checking its name.
+        /// </summary>
+        /// <param name="cutscene"></param>
+        /// <returns></returns>
+        public static bool IsActive(Cutscene cutscene)
         {
             if (ActiveCutscene == null)
                 return false;
@@ -33,10 +45,9 @@ namespace InfernumMode.Content.Cutscenes
             return ActiveCutscene.Name == cutscene.Name;
         }
 
-        public override void Load()
-        {
-            Main.OnPostDraw += PostDraw;
-        }
+        public override void Load() => Main.OnPostDraw += PostDraw;
+
+        public override void Unload() => Main.OnPostDraw -= PostDraw;
 
         public override void PostUpdateEverything()
         {

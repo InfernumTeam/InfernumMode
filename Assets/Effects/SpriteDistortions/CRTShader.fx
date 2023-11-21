@@ -12,6 +12,8 @@ float vignetteRoundness;
 float vignetteOpacity;
 // How much brightness to multiply the image by
 float brightnessMultiplier;
+// The strength of the chromatic aberration.
+float chromaticStrength;
 
 float2 screenSize;
 
@@ -56,7 +58,14 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
     if (curvedUV.x > 1. || curvedUV.x < 0. || curvedUV.y > 1.0 || curvedUV.y < 0.)
         return float4(0, 0, 0, 0);
     
+    // Get the screen pixel.
     float4 pixel = tex2D(mainImage, curvedUV);
+    
+    // Perform some basic chromatic aberration.
+    float intensity = chromaticStrength * globalIntensity;
+    pixel.r = tex2D(mainImage, curvedUV + float2(-0.707, -0.707) * intensity).r;
+    pixel.g = tex2D(mainImage, curvedUV + float2(0.707, 0.707) * intensity).g;
+    pixel.b = tex2D(mainImage, curvedUV + float2(0, 1) * intensity).b;
     
     // Add scan lines in both axis directions.
     pixel *= CreateScanLine(uv.x, screenSize.y, scanlineOpacity * globalIntensity);

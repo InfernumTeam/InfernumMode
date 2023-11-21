@@ -9,12 +9,6 @@ namespace InfernumMode.Content.Cutscenes
 
         public override SceneEffectPriority Priority => (SceneEffectPriority)10;
 
-        public override bool IsSceneEffectActive(Player player)
-        {
-            if (CutsceneManager.IsCutsceneActive(ModContent.GetInstance<DraedonPostMechsCutscene>()))
-                return true;
-
-            return false;
-        }
+        public override bool IsSceneEffectActive(Player player) => CutsceneManager.IsActive(ModContent.GetInstance<DraedonPostMechsCutscene>());
     }
 }

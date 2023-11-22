@@ -1,6 +1,6 @@
 ﻿using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.BaseEntities;
-using InfernumMode.Content.Projectiles.Cutscene;
+using InfernumMode.Content.Cutscenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,7 +10,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public override int Lifetime => 180;
 
-        public override Color DeterminePulseColor(float lifetimeCompletionRatio) => DoGProviCutsceneProjectile.TimeColor;
+        public override Color DeterminePulseColor(float lifetimeCompletionRatio) => DoGPostProviCutscene.TimeColor;
 
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) => 15;
 

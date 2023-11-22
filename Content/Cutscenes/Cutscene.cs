@@ -19,6 +19,12 @@ namespace InfernumMode.Content.Cutscenes
             internal set;
         }
 
+        public bool EndAbruptly
+        {
+            get;
+            internal set;
+        }
+
         public float LifetimeRatio => (float)Timer / CutsceneLength;
 
         public abstract int CutsceneLength { get; }
@@ -28,6 +34,16 @@ namespace InfernumMode.Content.Cutscenes
         protected sealed override void Register() => ModTypeLookup<Cutscene>.Register(this);
 
         public sealed override void SetupContent() => SetStaticDefaults();
+
+        public virtual void OnBegin()
+        {
+
+        }
+
+        public virtual void OnEnd()
+        {
+
+        }
 
         public virtual void Update()
         {

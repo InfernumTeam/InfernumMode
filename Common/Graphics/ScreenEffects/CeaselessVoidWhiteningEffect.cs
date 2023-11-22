@@ -2,7 +2,7 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
-using InfernumMode.Content.Projectiles.Cutscene;
+using InfernumMode.Content.Cutscenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -73,10 +73,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     WhiteningInterpolant = Clamp(WhiteningInterpolant - 0.007f, 0f, 1f);
             }
-            else if (DoGProviCutsceneProjectile.Myself != null && DoGProviCutsceneProjectile.Myself.ModProjectile is DoGProviCutsceneProjectile proj)
-            {
-                proj.DrawBlackOverlays(WhiteningInterpolant);
-            }
+            else if (CutsceneManager.ActiveCutscene is not null and DoGPostProviCutscene cutscene)
+                cutscene.DrawBlackOverlays(WhiteningInterpolant);
             else
                 WhiteningInterpolant = Clamp(WhiteningInterpolant - 0.1f, 0f, 1f);
         }

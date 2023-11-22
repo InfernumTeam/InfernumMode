@@ -61,6 +61,8 @@ namespace InfernumMode.Content.Cutscenes
                     ActiveCutscene = cutscene;
                     ActiveCutscene.Timer = 0;
                     ActiveCutscene.IsActive = true;
+                    ActiveCutscene.OnBegin();
+
                     if (ActiveCutscene.GetBlockCondition.HasValue)
                         BlockerSystem.Start(ActiveCutscene.GetBlockCondition.Value);
                 }
@@ -68,16 +70,16 @@ namespace InfernumMode.Content.Cutscenes
             
             if (ActiveCutscene != null)
             {
-                if (ActiveCutscene.Timer >= ActiveCutscene.CutsceneLength)
+                ActiveCutscene.Update();
+                ActiveCutscene.Timer++;
+
+                if (ActiveCutscene.EndAbruptly || ActiveCutscene.Timer > ActiveCutscene.CutsceneLength)
                 {
+                    ActiveCutscene.OnEnd();
                     ActiveCutscene.Timer = 0;
                     ActiveCutscene.IsActive = false;
+                    ActiveCutscene.EndAbruptly = false;
                     ActiveCutscene = null;
-                }
-                else
-                {
-                    ActiveCutscene.Update();
-                    ActiveCutscene.Timer++;
                 }
             }
         }

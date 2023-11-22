@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.Providence.ProvidenceBehaviorOverride;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
-using CalamityMod.NPCs.Providence;
+﻿using CalamityMod.NPCs.Providence;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Content.Projectiles.Cutscene;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Content.Cutscenes;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ModLoader;
+using static InfernumMode.Content.BehaviorOverrides.BossAIs.Providence.ProvidenceBehaviorOverride;
 
 namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
@@ -236,7 +236,7 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
                 burn.Parameters["distanceMultiplier"]?.SetValue(1f);
                 burn.Parameters["resolution"]?.SetValue(Utilities.CreatePixelationResolution(MainTarget.Target.Size()));
                 burn.Parameters["focalPointUV"]?.SetValue((AssosiatedNPC.Center + Vector2.UnitY * 55f - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight));
-                burn.Parameters["burnColor"]?.SetValue(DoGProviCutsceneProjectile.TimeColor.ToVector3());
+                burn.Parameters["burnColor"]?.SetValue(DoGPostProviCutscene.TimeColor.ToVector3());
 
                 InfernumTextureRegistry.HarshNoise.Value.SetTexture1();
                 InfernumTextureRegistry.HarshNoise.Value.SetTexture2();

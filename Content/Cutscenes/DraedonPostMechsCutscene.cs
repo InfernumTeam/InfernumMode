@@ -15,6 +15,7 @@ namespace InfernumMode.Content.Cutscenes
     // revealing that it is on a large monitor in a lab with draedon watching. Then, with a quick black flash, it will go back to normal.
     public class DraedonPostMechsCutscene : Cutscene
     {
+        #region Instance Fields/Properties
         public ManagedRenderTarget ScreenTarget
         {
             get;
@@ -30,7 +31,9 @@ namespace InfernumMode.Content.Cutscenes
         private int FrameCounter;
 
         private Rectangle Frame = new(0, 0, 100, 120);
+        #endregion
 
+        #region Static Properties
         public static int InitialWait => 150;
 
         public static int CRTFadeInLength => 120;
@@ -42,7 +45,9 @@ namespace InfernumMode.Content.Cutscenes
         public static int ScreenFlashLength => 20;
 
         public static int ScreenFlashHoldLength => ScreenFlashLength / 3;
+        #endregion
 
+        #region Overrides
         public override int CutsceneLength => InitialWait + ZoomOutLength + ZoomHoldLength;
 
         public override BlockerSystem.BlockCondition? GetBlockCondition => new(false, true, () => IsActive && Timer < CutsceneLength - ScreenFlashLength / 2);
@@ -58,12 +63,33 @@ namespace InfernumMode.Content.Cutscenes
             LabTexture = null;
         }
 
+        public override void OnEnd() => WorldSaveSystem.HasSeenPostMechsCutscene = true;
+
         public override void Update()
         {
-            if (!WorldSaveSystem.HasSeenPostMechsCutscene)
-                WorldSaveSystem.HasSeenPostMechsCutscene = true;
+            // Framing for him that matches his actual npc framing.
+            Frame.Width = 100;
+            int frameHeight = 120;
+            int frameCount = 12;
+            int xFrame = Frame.X / Frame.Width;
+            int yFrame = Frame.Y / frameHeight;
+            int frame = xFrame * frameCount + yFrame;
 
-            SortoutDraedonFrame();
+            int frameChangeDelay = 7;
+
+            FrameCounter++;
+            if (FrameCounter >= frameChangeDelay)
+            {
+                frame++;
+
+                if (frame < 23 || frame > 47)
+                    frame = 23;
+
+                FrameCounter = 0;
+            }
+
+            Frame.X = frame / frameCount * Frame.Width;
+            Frame.Y = frame % frameCount * frameHeight;
         }
 
         public override RenderTarget2D DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen)
@@ -150,33 +176,6 @@ namespace InfernumMode.Content.Cutscenes
             return screen;
         }
 
-        public void SortoutDraedonFrame()
-        {
-            // Framing for him that matches his actual npc framing.
-            Frame.Width = 100;
-            int frameHeight = 120;
-            int frameCount = 12;
-            int xFrame = Frame.X / Frame.Width;
-            int yFrame = Frame.Y / frameHeight;
-            int frame = xFrame * frameCount + yFrame;
-
-            int frameChangeDelay = 7;
-
-            FrameCounter++;
-            if (FrameCounter >= frameChangeDelay)
-            {
-                frame++;
-
-                if (frame < 23 || frame > 47)
-                    frame = 23;
-
-                FrameCounter = 0;
-            }
-
-            Frame.X = frame / frameCount * Frame.Width;
-            Frame.Y = frame % frameCount * frameHeight;
-        }
-
         public override void PostDraw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
@@ -190,5 +189,6 @@ namespace InfernumMode.Content.Cutscenes
 
             spriteBatch.End();
         }
+        #endregion
     }
 }

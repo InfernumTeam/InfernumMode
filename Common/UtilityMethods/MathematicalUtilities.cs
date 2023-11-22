@@ -253,6 +253,8 @@ namespace InfernumMode
             return firstTerm + secondTerm + thirdTerm;
         }
 
+        public static int Saturate(this int value) => (int)Clamp(value, 0f, 1f);
+
         public static float Saturate(this float value) => Clamp(value, 0f, 1f);
     }
 }

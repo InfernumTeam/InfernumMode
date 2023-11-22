@@ -15,7 +15,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.Credits;
-using InfernumMode.Content.Projectiles.Cutscene;
+using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances;
@@ -713,7 +713,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 if (deathEffectTimer >= 340f && deathEffectTimer % 10f == 1f)
                 {
-                    GeneralParticleHandler.SpawnParticle(new BurstParticle(npc.Center, Vector2.Zero, DoGProviCutsceneProjectile.TimeColor, 36, true));
+                    GeneralParticleHandler.SpawnParticle(new BurstParticle(npc.Center, Vector2.Zero, DoGPostProviCutscene.TimeColor, 36, true));
                     ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 30);
                     ScreenEffectSystem.SetFlashEffect(npc.Center, 1.3f, 30);
                     target.Infernum_Camera().CurrentScreenShakePower = 10f;
@@ -760,7 +760,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_CrystalForm(NPC npc, Player target, ref float deathEffectsTimer)
         {
-            int dieTime = DoGProviCutsceneProjectile.TotalLifetime;
+            int dieTime = ModContent.GetInstance<DoGPostProviCutscene>().CutsceneLength;
 
             int dogHeadType = ModContent.NPCType<DevourerofGodsHead>();
 
@@ -779,7 +779,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 target.Infernum_Camera().ScreenFocusInterpolant = 1f;
             }
 
-            if (deathEffectsTimer < DoGProviCutsceneProjectile.StartTime + DoGProviCutsceneProjectile.SlowddownTime + (int)(DoGProviCutsceneProjectile.ChompTime * 0.5f))
+            if (deathEffectsTimer < DoGPostProviCutscene.StartTime + DoGPostProviCutscene.SlowddownTime + (int)(DoGPostProviCutscene.ChompTime * 0.5f))
             {
                 // Periodically emit shockwaves, similar to the crystal hearts in Celeste.
                 if (deathEffectsTimer % 120f == 67f)
@@ -792,12 +792,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             }
 
             if (deathEffectsTimer == 1)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 55f, Vector2.UnitX * -30f, ModContent.ProjectileType<DoGProviCutsceneProjectile>(), 0, 0f);
-
-                WorldSaveSystem.HasSeenDoGCutscene = true;
-            }
+                CutsceneManager.QueueCutscene(ModContent.GetInstance<DoGPostProviCutscene>());
 
             if (deathEffectsTimer >= dieTime)
                 DoBehavior_DropLootAndDie(npc, target);

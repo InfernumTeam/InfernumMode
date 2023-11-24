@@ -190,9 +190,6 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                             updatedList = true;
                         }
                     }
-
-
-
                     else if (BossList.Contains(npcID) && (!BossesCompleted.ContainsKey(Utilities.GetNPCNameFromID(npcID)) || !BossesCompleted[Utilities.GetNPCNameFromID(npcID)]))
                     {
                         BossesCompleted[Utilities.GetNPCNameFromID(npcID)] = true;

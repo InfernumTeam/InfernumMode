@@ -34,6 +34,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using CalamityMod.NPCs.TownNPCs;
 
 namespace InfernumMode.Content.Achievements.InfernumAchievements
 {
@@ -160,6 +161,11 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 default:
                     int leviathanID = ModContent.NPCType<Leviathan>();
                     int draedonID = ModContent.NPCType<Draedon>();
+
+                    // I don't know why it transforms into the town npc mid frame, but I don't care.
+                    if (npcID == ModContent.NPCType<WITCH>())
+                        npcID = ModContent.NPCType<SupremeCalamitas>();
+
                     if (npcID == leviathanID)
                     {
                         if (!NPC.AnyNPCs(ModContent.NPCType<Anahita>()) && !BossesCompleted[Utilities.GetNPCNameFromID(leviathanID)])
@@ -184,6 +190,9 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                             updatedList = true;
                         }
                     }
+
+
+
                     else if (BossList.Contains(npcID) && (!BossesCompleted.ContainsKey(Utilities.GetNPCNameFromID(npcID)) || !BossesCompleted[Utilities.GetNPCNameFromID(npcID)]))
                     {
                         BossesCompleted[Utilities.GetNPCNameFromID(npcID)] = true;

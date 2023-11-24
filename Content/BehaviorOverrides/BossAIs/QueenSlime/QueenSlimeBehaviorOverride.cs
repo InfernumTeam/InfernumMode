@@ -1087,18 +1087,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 for (int i = 0; i < 8; i++)
                 {
                     float laserRotation = -TwoPi * i / 8f;
-                    BloomLineDrawInfo lineInfo = new()
-                    {
-                        LineRotation = laserRotation,
-                        WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                        BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
-                        Scale = Vector2.One * telegraphInterpolant * 3600f,
-                        MainColor = Color.Lerp(Color.HotPink, Color.SkyBlue, telegraphInterpolant * 0.3f),
-                        DarkerColor = Color.Purple,
-                        Opacity = Sqrt(telegraphInterpolant),
-                        BloomOpacity = 0.45f,
-                        LightStrength = 6.67f
-                    };
+                    BloomLineDrawInfo lineInfo = new(rotation: laserRotation,
+                        width: 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                        bloom: Lerp(0.3f, 0.4f, telegraphInterpolant),
+                        scale: Vector2.One * telegraphInterpolant * 3600f,
+                        main: Color.Lerp(Color.HotPink, Color.SkyBlue, telegraphInterpolant * 0.3f),
+                        darker: Color.Purple,
+                        opacity: Sqrt(telegraphInterpolant),
+                        bloomOpacity: 0.45f,
+                        lightStrength: 6.67f);
+
                     Utilities.DrawBloomLineTelegraph(npc.Center - Main.screenPosition, lineInfo, true, Vector2.One * 750f);
                 }
             }

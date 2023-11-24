@@ -14,7 +14,7 @@ namespace InfernumMode.Core.OverridingSystem
         {
             BehaviorOverrides = new();
 
-            static void getMethodBasedOnContext(Type type, ProjectileBehaviorOverride instance, ProjectileOverrideContext context)
+            static void getMethodBasedOnContext( ProjectileBehaviorOverride instance, ProjectileOverrideContext context)
             {
                 string methodName = string.Empty;
 
@@ -41,9 +41,9 @@ namespace InfernumMode.Core.OverridingSystem
             {
                 ProjectileBehaviorOverride instance = (ProjectileBehaviorOverride)Activator.CreateInstance(type);
                 if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectileAI))
-                    getMethodBasedOnContext(type, instance, ProjectileOverrideContext.ProjectileAI);
+                    getMethodBasedOnContext(instance, ProjectileOverrideContext.ProjectileAI);
                 if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectilePreDraw))
-                    getMethodBasedOnContext(type, instance, ProjectileOverrideContext.ProjectilePreDraw);
+                    getMethodBasedOnContext(instance, ProjectileOverrideContext.ProjectilePreDraw);
 
                 BehaviorOverrides[instance.ProjectileOverrideType] = instance;
             }

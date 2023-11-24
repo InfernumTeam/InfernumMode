@@ -145,18 +145,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void DrawTelegraphEffects(NPC npc, float telegraphInterpolant, float telegraphDirection)
         {
             // Draw the bloom light line telegraph.
-            BloomLineDrawInfo lineInfo = new()
-            {
-                LineRotation = -telegraphDirection,
-                WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
-                Scale = Vector2.One * telegraphInterpolant * 2500f,
-                MainColor = Color.Lerp(Color.Yellow, Color.HotPink, telegraphInterpolant * 0.5f + 0.5f),
-                DarkerColor = Color.Orange,
-                Opacity = Sqrt(telegraphInterpolant),
-                BloomOpacity = 0.3f,
-                LightStrength = 5f
-            };
+            BloomLineDrawInfo lineInfo = new(rotation: -telegraphDirection,
+                width: 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                bloom: Lerp(0.3f, 0.4f, telegraphInterpolant),
+                scale: Vector2.One * telegraphInterpolant * 2500f,
+                main: Color.Lerp(Color.Yellow, Color.HotPink, telegraphInterpolant * 0.5f + 0.5f),
+                darker: Color.Orange,
+                opacity: Sqrt(telegraphInterpolant),
+                bloomOpacity: 0.3f,
+                lightStrength: 5f);
+
             Vector2 crystalCenter = GetCrystalPosition(npc) - Main.screenPosition;
             Utilities.DrawBloomLineTelegraph(crystalCenter, lineInfo);
         }

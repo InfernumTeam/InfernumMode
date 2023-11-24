@@ -1,9 +1,10 @@
-namespace InfernumMode.Core.Balancing
+﻿namespace InfernumMode.Core.Balancing
 {
-    public struct NPCBalancingChange
+    public readonly struct NPCBalancingChange
     {
-        public int NPCType;
-        public IBalancingRule[] BalancingRules;
+        public readonly int NPCType;
+        public readonly IBalancingRule[] BalancingRules;
+
         public NPCBalancingChange(int npcType, params IBalancingRule[] balancingRules)
         {
             NPCType = npcType;

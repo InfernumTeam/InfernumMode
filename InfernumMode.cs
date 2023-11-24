@@ -159,10 +159,7 @@ namespace InfernumMode
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
 
-        public override object Call(params object[] args)
-        {
-            return InfernumModCalls.Call(args);
-        }
+        public override object Call(params object[] args) => InfernumModCalls.Call(args);
 
         public override void Unload()
         {
@@ -174,6 +171,7 @@ namespace InfernumMode
                 PrimitiveTrailCopy.Dispose();
                 Primitive3DStrip.Dispose();
             });
+
             Instance = null;
             CalamityMod = null;
         }

@@ -141,18 +141,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
                 if (npc.spriteDirection == -1)
                     laserRotation += Pi;
 
-                BloomLineDrawInfo lineInfo = new()
-                {
-                    LineRotation = laserRotation,
-                    WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                    BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
-                    Scale = Vector2.One * telegraphInterpolant * Clamp(npc.Distance(Main.player[npc.target].Center) * 2.4f, 10f, 1600f),
-                    MainColor = Color.Lerp(Color.Orange, Color.Red, telegraphInterpolant * 0.6f + 0.4f),
-                    DarkerColor = Color.Orange,
-                    Opacity = Sqrt(telegraphInterpolant),
-                    BloomOpacity = 0.35f,
-                    LightStrength = 5f
-                };
+                BloomLineDrawInfo lineInfo = new(rotation: laserRotation,
+                    width: 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    bloom: Lerp(0.3f, 0.4f, telegraphInterpolant),
+                    scale: Vector2.One * telegraphInterpolant * Clamp(npc.Distance(Main.player[npc.target].Center) * 2.4f, 10f, 1600f),
+                    main: Color.Lerp(Color.Orange, Color.Red, telegraphInterpolant * 0.6f + 0.4f),
+                    darker: Color.Orange,
+                    opacity: Sqrt(telegraphInterpolant),
+                    bloomOpacity: 0.35f,
+                    lightStrength: 5f);
+
                 Utilities.DrawBloomLineTelegraph(drawPosition, lineInfo);
 
                 // Draw the backglow.

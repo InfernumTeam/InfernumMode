@@ -29,10 +29,10 @@ namespace InfernumMode.Core.CrossCompatibility
 
         public override void PostAddRecipes()
         {
-            if (ModLoader.TryGetMod("ToastyQoL", out var result))
-                ToastyQoLMod = result;
-            else
+            if (!ModLoader.TryGetMod("ToastyQoL", out var result))
                 return;
+
+            ToastyQoLMod = result;
 
             if (Main.netMode is NetmodeID.Server)
                 return;

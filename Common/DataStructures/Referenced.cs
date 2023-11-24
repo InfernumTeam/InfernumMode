@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace InfernumMode.Common.DataStructures
 {
     /// <summary>
-    /// A wrapper class for a generic struct
+    /// A wrapper class for a generic value
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [DebuggerDisplay("{Value}")]

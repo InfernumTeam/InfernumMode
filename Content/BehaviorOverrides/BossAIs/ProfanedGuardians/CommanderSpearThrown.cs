@@ -128,18 +128,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (Timer <= TelegraphTime)
             {
                 float opacity = CalamityUtils.Convert01To010(Timer / TelegraphTime);
-                BloomLineDrawInfo lineInfo = new()
-                {
-                    LineRotation = -Projectile.velocity.ToRotation(),
-                    WidthFactor = 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                    BloomIntensity = Lerp(0.06f, 0.16f, opacity),
-                    Scale = Vector2.One * 1950f,
-                    MainColor = WayfinderSymbol.Colors[1],
-                    DarkerColor = WayfinderSymbol.Colors[2],
-                    Opacity = opacity,
-                    BloomOpacity = 0.4f,
-                    LightStrength = 5f
-                };
+                BloomLineDrawInfo lineInfo = new(rotation: -Projectile.velocity.ToRotation(),
+                    width: 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                    bloom: Lerp(0.06f, 0.16f, opacity),
+                    scale: Vector2.One * 1950f,
+                    main: WayfinderSymbol.Colors[1],
+                    darker: WayfinderSymbol.Colors[2],
+                    opacity: opacity,
+                    bloomOpacity: 0.4f,
+                    lightStrength: 5f);
+
                 Utilities.DrawBloomLineTelegraph(Projectile.Center - Main.screenPosition, lineInfo);
                 return false;
             }

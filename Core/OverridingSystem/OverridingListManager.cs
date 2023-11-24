@@ -8,9 +8,9 @@ namespace InfernumMode.Core.OverridingSystem
 {
     public class OverridingListManager : ILoadable
     {
-#pragma warning disable IDE0051 // Remove unused private members
+        #pragma warning disable IDE0051 // Remove unused private members
         private const string Message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
-#pragma warning restore IDE0051 // Remove unused private members
+        #pragma warning restore IDE0051 // Remove unused private members
 
         internal static List<int> InfernumNPCPreAIOverrideList = new();
         internal static List<int> InfernumSetDefaultsOverrideList = new();

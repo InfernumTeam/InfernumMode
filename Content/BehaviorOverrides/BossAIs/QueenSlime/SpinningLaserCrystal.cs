@@ -106,18 +106,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public override bool PreDraw(ref Color lightColor)
         {
             float telegraphInterpolant = Utils.GetLerpValue(2f, 6f, Time, true) * Utils.GetLerpValue(54f, 48f, Time, true);
-            BloomLineDrawInfo lineInfo = new()
-            {
-                LineRotation = -AimDirection,
-                WidthFactor = 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
-                BloomIntensity = Lerp(0.3f, 0.4f, telegraphInterpolant),
-                Scale = Vector2.One * telegraphInterpolant * 1900f,
-                MainColor = Color.Lerp(Color.Cyan, Color.SkyBlue, telegraphInterpolant * 0.6f + 0.4f),
-                DarkerColor = Color.Blue,
-                Opacity = Sqrt(telegraphInterpolant),
-                BloomOpacity = 0.35f,
-                LightStrength = 5f
-            };
+            BloomLineDrawInfo lineInfo = new(rotation: -AimDirection,
+                width: 0.002f + Pow(telegraphInterpolant, 4f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
+                bloom: Lerp(0.3f, 0.4f, telegraphInterpolant),
+                scale: Vector2.One * telegraphInterpolant * 1900f,
+                main: Color.Lerp(Color.Cyan, Color.SkyBlue, telegraphInterpolant * 0.6f + 0.4f),
+                darker: Color.Blue,
+                opacity: Sqrt(telegraphInterpolant),
+                bloomOpacity: 0.35f,
+                lightStrength: 5f);
+
             Utilities.DrawBloomLineTelegraph(Projectile.Center - Main.screenPosition, lineInfo);
 
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 4f);

@@ -4,21 +4,32 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Core.Balancing
 {
-    public struct NPCHitContext
+    public readonly struct NPCHitContext
     {
-        public int Pierce;
+        public readonly int Pierce;
 
-        public int Damage;
+        public readonly int Damage;
 
-        public int? ProjectileIndex;
+        public readonly int? ProjectileIndex;
 
-        public int? ProjectileType;
+        public readonly int? ProjectileType;
 
-        public bool IsStealthStrike;
+        public readonly bool IsStealthStrike;
 
-        public ClassType? Class;
+        public readonly ClassType? Class;
 
-        public DamageSourceType DamageSource;
+        public readonly DamageSourceType DamageSource;
+
+        public NPCHitContext(int pierce, int damage, int? projectileIndex, int? projectileType, bool isStealthStrike, ClassType? classType,  DamageSourceType damageSource)
+        {
+            Pierce = pierce;
+            Damage = damage;
+            ProjectileIndex = projectileIndex;
+            ProjectileType = projectileType;
+            IsStealthStrike = isStealthStrike;
+            Class = classType;
+            DamageSource = damageSource;
+        }
 
         public static NPCHitContext ConstructFromProjectile(Projectile proj)
         {
@@ -37,16 +48,7 @@ namespace InfernumMode.Core.Balancing
                     classType = ClassType.Rogue;
             }
 
-            return new NPCHitContext()
-            {
-                Pierce = proj.penetrate,
-                Damage = proj.damage,
-                ProjectileType = proj.type,
-                ProjectileIndex = proj.whoAmI,
-                Class = classType,
-                IsStealthStrike = proj.active && proj.Calamity().stealthStrike,
-                DamageSource = DamageSourceType.FriendlyProjectile
-            };
+            return new NPCHitContext(proj.penetrate, proj.damage, proj.whoAmI, proj.type, proj.active && proj.Calamity().stealthStrike, classType, DamageSourceType.FriendlyProjectile);
         }
     }
 }

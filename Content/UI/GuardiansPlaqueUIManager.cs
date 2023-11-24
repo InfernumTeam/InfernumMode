@@ -53,8 +53,6 @@ namespace InfernumMode.Content.UI
 
         public static bool ShouldDraw => Player.Infernum().GetValue<bool>(FieldName);
 
-        public static DynamicSpriteFont FontToUse => Utilities.LanguageIsActive(GameCulture.CultureName.Chinese) ? InfernumFontRegistry.ProfanedTextFontChinese : InfernumFontRegistry.ProfanedTextFont;
-
         public static void Draw(SpriteBatch spriteBatch)
         {
             if (!ShouldDraw)
@@ -86,7 +84,7 @@ namespace InfernumMode.Content.UI
 
             string specialTextValue = SpecialText.Value;
 
-            foreach (string line in Utils.WordwrapString(TextToDraw.Value, FontToUse, maxTextLength, 100, out _))
+            foreach (string line in Utils.WordwrapString(TextToDraw.Value, InfernumFontRegistry.ProfanedTextFont, maxTextLength, 100, out _))
             {
                 // If the line is undefined that means that the text has been exhausted, and we can safely leave this loop.
                 if (string.IsNullOrEmpty(line))
@@ -102,7 +100,7 @@ namespace InfernumMode.Content.UI
                     foreach (string line2 in splitLines)
                     {
                         DrawTextLine(line2, textLeftDrawPosition, spriteBatch);
-                        textLeftDrawPosition.X += FontToUse.MeasureString(line2).X * TextScale;
+                        textLeftDrawPosition.X += InfernumFontRegistry.ProfanedTextFont.MeasureString(line2).X * TextScale;
                     }
                 }
                 else
@@ -117,7 +115,7 @@ namespace InfernumMode.Content.UI
         public static void DrawTextLine(string line, Vector2 textLeftDrawPosition, SpriteBatch spriteBatch)
         {
             Color textColor = WayfinderSymbol.Colors[0];
-            Vector2 textArea = FontToUse.MeasureString(line) * TextScale;
+            Vector2 textArea = InfernumFontRegistry.ProfanedTextFont.MeasureString(line) * TextScale;
             Rectangle textRectangle = new((int)textLeftDrawPosition.X, (int)textLeftDrawPosition.Y + 5, (int)textArea.X, (int)(0.667f * textArea.Y));
 
             if (line == SpecialText.Value)
@@ -133,7 +131,7 @@ namespace InfernumMode.Content.UI
                 }
             }
 
-            Utils.DrawBorderStringFourWay(spriteBatch, FontToUse, line, textLeftDrawPosition.X, textLeftDrawPosition.Y, textColor * Opacity, textColor * Opacity * 0.16f, Vector2.Zero, TextScale);
+            Utils.DrawBorderStringFourWay(spriteBatch, InfernumFontRegistry.ProfanedTextFont, line, textLeftDrawPosition.X, textLeftDrawPosition.Y, textColor * Opacity, textColor * Opacity * 0.16f, Vector2.Zero, TextScale);
         }
 
         public static void CloseUI()

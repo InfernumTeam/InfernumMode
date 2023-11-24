@@ -46,17 +46,6 @@ namespace InfernumMode.Content.BossIntroScreens
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
-        public static DynamicSpriteFont FontToUse
-        {
-            get
-            {
-                if (Utilities.LanguageIsActive(GameCulture.CultureName.Chinese))
-                    return InfernumFontRegistry.BossIntroScreensFontChinese;
-                
-                return InfernumFontRegistry.BossIntroScreensFont;
-            }
-        }
-
         public Vector2 DrawPosition => BaseDrawPosition;
 
         public virtual float TextScale => MinorBossTextScale;
@@ -176,7 +165,7 @@ namespace InfernumMode.Content.BossIntroScreens
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
             float extraOffset = character.ToLower(CultureInfo.InvariantCulture) == "i" ? 9f : 0f;
-            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + 10f) * AspectRatioFactor * TextScale;
+            return Vector2.UnitX * (InfernumFontRegistry.BossIntroScreensFont.MeasureString(character).X + extraOffset + 10f) * AspectRatioFactor * TextScale;
         }
 
         public virtual void DrawText(SpriteBatch sb)
@@ -237,7 +226,7 @@ namespace InfernumMode.Content.BossIntroScreens
                     offset += CalculateOffsetOfCharacter(character) * (useBigText ? BottomTextScale : 1f);
 
                     Color textColor = TextColor.Calculate(individualLineLetterCompletionRatio) * opacity;
-                    Vector2 origin = Vector2.UnitX * FontToUse.MeasureString(character);
+                    Vector2 origin = Vector2.UnitX * InfernumFontRegistry.BossIntroScreensFont.MeasureString(character);
 
                     // Draw afterimage instances of the the text.
                     for (int k = 0; k < 4; k++)
@@ -246,13 +235,13 @@ namespace InfernumMode.Content.BossIntroScreens
                         float afterimageOpacity = Pow(afterimageOpacityInterpolant, 2f) * 0.3f;
                         Color afterimageColor = textColor * afterimageOpacity;
                         Vector2 drawOffset = (TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;
-                        ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + drawOffset + offset, Color.Black * afterimageOpacity * opacity, 0f, origin, textScale, -1, 1.5f);
-                        ChatManager.DrawColorCodedString(sb, FontToUse, character, DrawPosition + drawOffset + offset, afterimageColor, 0f, origin, textScale);
+                        ChatManager.DrawColorCodedStringShadow(sb, InfernumFontRegistry.BossIntroScreensFont, character, DrawPosition + drawOffset + offset, Color.Black * afterimageOpacity * opacity, 0f, origin, textScale, -1, 1.5f);
+                        ChatManager.DrawColorCodedString(sb, InfernumFontRegistry.BossIntroScreensFont, character, DrawPosition + drawOffset + offset, afterimageColor, 0f, origin, textScale);
                     }
 
                     // Draw the base text.
-                    ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + offset, Color.Black * opacity, 0f, origin, textScale, -1, 1.5f);
-                    ChatManager.DrawColorCodedString(sb, FontToUse, character, DrawPosition + offset, textColor, 0f, origin, textScale);
+                    ChatManager.DrawColorCodedStringShadow(sb, InfernumFontRegistry.BossIntroScreensFont, character, DrawPosition + offset, Color.Black * opacity, 0f, origin, textScale, -1, 1.5f);
+                    ChatManager.DrawColorCodedString(sb, InfernumFontRegistry.BossIntroScreensFont, character, DrawPosition + offset, textColor, 0f, origin, textScale);
 
                     // Increment the absolute letter counter.
                     absoluteLetterCounter++;

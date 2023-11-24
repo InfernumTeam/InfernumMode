@@ -1502,7 +1502,6 @@ Mods: {
 		Keybinds: {
 			"Wayfinder Create Key.DisplayName": 魔法门创建键
 			"Wayfinder Destroy Key.DisplayName": 魔法门删除键
-			// ToggleRecordingRarity.DisplayName: Toggle Recording Rarity
 		}
 
 		MusicDisplay: {
@@ -1523,7 +1522,10 @@ Mods: {
 		}
 
 		// Will use the CalamitasShadowClone.DisplayName field
-		NameOverrides.CalamitasShadowClone.EntryName: "{0}"
+		NameOverrides: {
+			CalamitasShadowClone.EntryName: "{0}"
+			GreatSandShark.EntryName: 托勒斯
+		}
 
 		NPCs: {
 			ColossalSquidTentacle.DisplayName: 触手

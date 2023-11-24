@@ -136,6 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Die
                 NPC.active = false;
+                NPC.netUpdate = true;
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedFlappyBirdEndTip");
 
                 Vector2 wallBottom = NPC.Center + new Vector2(21f, 989f);

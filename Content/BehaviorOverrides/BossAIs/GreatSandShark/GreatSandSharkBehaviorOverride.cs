@@ -17,7 +17,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
     {
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
 
-        public static LocalizedText NewName => Utilities.GetLocalization("NPCs.GreatSandShark.DisplayName");
+        public static LocalizedText NewName => Utilities.GetLocalization("NameOverrides.GreatSandShark.EntryName");
 
         public override void Load()
         {

@@ -1502,7 +1502,6 @@ Mods: {
 		Keybinds: {
 			"Wayfinder Create Key.DisplayName": Wayfinder  Create  Key
 			"Wayfinder Destroy Key.DisplayName": Wayfinder  Destroy  Key
-			ToggleRecordingRarity.DisplayName: Toggle Recording Rarity
 		}
 
 		MusicDisplay: {
@@ -1523,7 +1522,10 @@ Mods: {
 		}
 
 		// Will use the CalamitasShadowClone.DisplayName field
-		NameOverrides.CalamitasShadowClone.EntryName: The {0}
+		NameOverrides: {
+			CalamitasShadowClone.EntryName: The {0}
+			GreatSandShark.EntryName: Taurus
+		}
 
 		NPCs: {
 			ColossalSquidTentacle.DisplayName: Tentacle

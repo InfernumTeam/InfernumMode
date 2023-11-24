@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Terraria;
 
 namespace InfernumMode.Core.GlobalInstances
@@ -6,7 +6,9 @@ namespace InfernumMode.Core.GlobalInstances
     public partial class GlobalNPCOverrides
     {
         internal bool[] HasAssociatedAIBeenUsed = new bool[TotalExtraAISlots];
+
         internal int TotalAISlotsInUse => HasAssociatedAIBeenUsed.Count(slot => slot);
+
         public override void PostAI(NPC npc)
         {
             for (int i = 0; i < ExtraAI.Length; i++)

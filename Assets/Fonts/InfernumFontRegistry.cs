@@ -29,14 +29,11 @@ namespace InfernumMode.Assets.Fonts
             private set;
         }
 
-
         public override void Load()
         {
-            if (Main.netMode == NetmodeID.Server)
-                return;
-
             BossIntroScreensFont = new LocalizedSpriteFont(BossHealthBarManager.HPBarFont)
-                .WithLanguage(GameCulture.CultureName.Chinese, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFont", AssetRequestMode.ImmediateLoad).Value);
+                .WithLanguage(GameCulture.CultureName.Chinese, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFont", AssetRequestMode.ImmediateLoad).Value)
+                .WithLanguage(GameCulture.CultureName.Russian, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFontRussian", AssetRequestMode.ImmediateLoad).Value);
 
             HPBarFont = new LocalizedSpriteFont(ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/HPBarFont", AssetRequestMode.ImmediateLoad).Value);
 
@@ -46,9 +43,6 @@ namespace InfernumMode.Assets.Fonts
 
         public override void Unload()
         {
-            if (Main.netMode == NetmodeID.Server)
-                return;
-
             BossIntroScreensFont = null;
             HPBarFont = null;
             ProfanedTextFont = null;

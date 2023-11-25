@@ -5,7 +5,6 @@ using InfernumMode.Content.BossIntroScreens.InfernumScreens;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Graphics;
 using System.Globalization;
 using System.Linq;
 using Terraria;

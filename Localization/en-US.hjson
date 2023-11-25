@@ -274,6 +274,11 @@ Mods: {
 				DisplayName: Hex of Zeal
 				Description: Your opponent's magic accelerates wildly
 			}
+
+			PerditusTagBuff: {
+				DisplayName: Perditus Tag Buff
+				Description: Mods.InfernumMode.Buffs.PerditusTagBuff.Description
+			}
 		}
 
 		Configs: {
@@ -1497,6 +1502,11 @@ Mods: {
 					You can right click to revert the position to the previous one.
 					'''
 			}
+
+			Perditus: {
+				DisplayName: Perditus
+				Tooltip: ""
+			}
 		}
 
 		Keybinds: {
@@ -2396,6 +2406,7 @@ Mods: {
 			DoGProviCutsceneInitialPortal.DisplayName: Do G Provi Cutscene Initial Portal
 			DoGProviCutsceneProjectile.DisplayName: Do G Provi Cutscene Projectile
 			ProviBurnPulseRing.DisplayName: Provi Burn Pulse Ring
+			PerditusProjectile.DisplayName: Perditus Projectile
 		}
 
 		Status: {

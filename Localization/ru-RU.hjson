@@ -274,6 +274,11 @@ Mods: {
 				DisplayName: Проклятье Усердия
 				Description: Магия твоего соперника дико ускоряется
 			}
+
+			PerditusTagBuff: {
+				// DisplayName: Perditus Tag Buff
+				// Description: Mods.InfernumMode.Buffs.PerditusTagBuff.Description
+			}
 		}
 
 		Configs: {
@@ -1498,6 +1503,11 @@ Mods: {
 					Вы можете нажать ПКМ чтобы вернуть позицию к прошлой.
 					'''
 			}
+
+			Perditus: {
+				// DisplayName: Perditus
+				// Tooltip: ""
+			}
 		}
 
 		Keybinds: {
@@ -2397,6 +2407,7 @@ Mods: {
 			DoGProviCutsceneInitialPortal.DisplayName: До Г Прови Катсцена Иниц Портал
 			DoGProviCutsceneProjectile.DisplayName: Снар До Г Прови Катсцена
 			ProviBurnPulseRing.DisplayName: Горящее Пульсируещее Кольцо
+			// PerditusProjectile.DisplayName: Perditus Projectile
 		}
 
 		Status: {

@@ -274,6 +274,11 @@ Mods: {
 				DisplayName: 狂化巫咒
 				Description: 你对手的魔法将会大幅度加速
 			}
+
+			PerditusTagBuff: {
+				// DisplayName: Perditus Tag Buff
+				// Description: Mods.InfernumMode.Buffs.PerditusTagBuff.Description
+			}
 		}
 
 		Configs: {
@@ -1497,6 +1502,11 @@ Mods: {
 					你可以右键单击将位置恢复到上一次设置的位置。
 					'''
 			}
+
+			Perditus: {
+				// DisplayName: Perditus
+				// Tooltip: ""
+			}
 		}
 
 		Keybinds: {
@@ -2396,6 +2406,7 @@ Mods: {
 			DoGProviCutsceneInitialPortal.DisplayName: 神吞和亵渎过场动画初始传送门
 			DoGProviCutsceneProjectile.DisplayName: 神吞和亵渎过场动画弹幕
 			ProviBurnPulseRing.DisplayName: 亵渎之火脉冲环
+			// PerditusProjectile.DisplayName: Perditus Projectile
 		}
 
 		Status: {

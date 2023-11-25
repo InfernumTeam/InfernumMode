@@ -1,4 +1,4 @@
-namespace InfernumMode
+﻿namespace InfernumMode
 {
     public static partial class Utilities
     {
@@ -19,5 +19,7 @@ namespace InfernumMode
                 },
             };
         }
+
+        public static string GetPath(this object obj) => obj.GetType().Namespace.Replace('.', '/') + '/' + obj.GetType().Name;
     }
 }

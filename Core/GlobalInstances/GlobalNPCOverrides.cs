@@ -25,7 +25,6 @@ using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -289,16 +288,17 @@ namespace InfernumMode.Core.GlobalInstances
             // The reason the loop is necessary is because simply invoking the event and returning the result will only give back the result for the
             // last subscriber called, effectively ignoring whatever all the other subscribers say should happen.
             bool result = true;
-            foreach (Delegate d in StrikeNPCEvent.GetInvocationList())
-                result &= ((StrikeNPCDelegate)d).Invoke(npc, ref modifiers);
+            foreach (StrikeNPCDelegate d in StrikeNPCEvent.GetInvocationList().Cast<StrikeNPCDelegate>())
+                result &= d.Invoke(npc, ref modifiers);
         }
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
+            if (InfernumMode.CanUseCustomAIs)
+                BalancingChangesManager.ApplyFromProjectile(npc, ref modifiers, projectile);
 
-            BalancingChangesManager.ApplyFromProjectile(npc, ref modifiers, projectile);
+            foreach (ModifyHitByProjectileDelegate subscription in ModifyHitByProjectileEvent.GetInvocationList().Cast<ModifyHitByProjectileDelegate>())
+                subscription.Invoke(npc, projectile, ref modifiers);
         }
 
         public override bool CheckDead(NPC npc)

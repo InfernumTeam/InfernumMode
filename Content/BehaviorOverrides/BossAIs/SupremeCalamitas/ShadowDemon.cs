@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
-using CalamityMod.Particles.Metaballs;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Metaballs;
@@ -13,7 +12,6 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -383,12 +381,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 // Summon a base particle.
                 Vector2 spawnPosition = NPC.Center + Main.rand.NextVector2Circular(1f, 1f) * particleSize / 26f;
-                FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.SpawnParticle(spawnPosition, particleSize);
+                ModContent.GetInstance<ShadowMetaball>().SpawnParticle(spawnPosition, Vector2.Zero, new(particleSize));
 
                 // And an "ahead" particle that spawns based on current movement.
                 // This causes the "head" of the overall thing to have bumps when moving.
                 spawnPosition += NPC.velocity.RotatedByRandom(1.38f) * particleSize / 105f;
-                FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.SpawnParticle(spawnPosition, particleSize * 0.4f);
+                ModContent.GetInstance<ShadowMetaball>().SpawnParticle(spawnPosition, Vector2.Zero, new(particleSize * 0.4f));
             }
         }
 
@@ -405,8 +403,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 int maxFrame = 6;
                 Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregation").Value;
-                Texture2D backTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregationBack").Value;
-                Texture2D auraTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregationAura").Value;
 
                 float offsetFactor = NPC.scale * ((CongregationDiameter - 54f) / 90f + 1.5f);
                 offsetFactor *= texture.Width / 90f;
@@ -416,11 +412,35 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 origin = frame.Size() * 0.5f;
                 SpriteEffects direction = Math.Cos(Heads[i].Rotation) > 0f ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
-                // Draw the neck.
-                Texture2D neckTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/SmallGreyscaleCircle").Value;
+                Main.EntitySpriteDraw(texture, drawPosition + teethOffset, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
+            }
+            return false;
+        }
 
+        public void DrawMetaballStuff()
+        {
+            if (Heads is null || Heads.Length <= 0)
+                return;
+
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregation").Value;
+            Texture2D backTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregationBack").Value;
+            Texture2D auraTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/SpiritCongregationAura").Value;
+            Texture2D neckTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/BasicCircle").Value;
+
+            float headScale = NPC.scale * 1.6f;
+
+            for (int i = 0; i < Heads.Length; i++)
+            {
+                if (Heads[i] == null)
+                    continue;
+
+                Vector2 drawPosition = Heads[i].Center - Main.screenPosition;
+
+                Rectangle frame = texture.Frame(1, 6, 0, Heads[i].Frame);
+                Vector2 origin = frame.Size() * 0.5f;
                 Vector2 start = drawPosition;
                 Vector2 end = NPC.Center - Main.screenPosition;
+
                 List<Vector2> controlPoints = new()
                 {
                     start
@@ -448,17 +468,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Vector2.Distance(positionAtPoint, end) < 10f)
                         continue;
 
-                    DrawData neckDraw = new(neckTexture, positionAtPoint, null, Color.White, 0f, neckTexture.Size() / 2f, NPC.scale * 1.6f, 0, 0);
-                    FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.PrepareSpecialDrawingForNextFrame(neckDraw);
+                    Main.spriteBatch.Draw(neckTexture, positionAtPoint, null, Color.White, 0f, neckTexture.Size() / 2f, NPC.scale * 1.6f, SpriteEffects.None, 0);
                 }
 
-                // Draw the head.
-                DrawData backTextureDraw = new(backTexture, drawPosition + NPC.position - NPC.oldPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
-                DrawData auraTextureDraw = new(auraTexture, drawPosition + NPC.position - NPC.oldPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
-                FusableParticleManager.GetParticleSetByType<ShadowDemonParticleSet>()?.PrepareSpecialDrawingForNextFrame(backTextureDraw, auraTextureDraw);
-                Main.EntitySpriteDraw(texture, drawPosition + teethOffset, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
+                SpriteEffects direction = Math.Cos(Heads[i].Rotation) > 0f ? SpriteEffects.None : SpriteEffects.FlipVertically;
+
+                Main.spriteBatch.Draw(backTexture, drawPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
+                Main.spriteBatch.Draw(auraTexture, drawPosition , frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
             }
-            return false;
         }
 
         public override bool CheckActive() => false;

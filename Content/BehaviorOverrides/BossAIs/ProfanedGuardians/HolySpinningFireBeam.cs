@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -137,7 +136,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public void CreateTileHitEffects()
         {
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * (CurrentLaserLength);
-            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(15f, 15f), 135f);
+            //ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(15f, 15f), Vector2.Zero, new(95f));
+            
+            for (int i = 0; i < 30; i++)
+            {
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(35f, 35f), Main.rand.NextVector2Unit() * 2f, new(25f), 0.98f);
+            }
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

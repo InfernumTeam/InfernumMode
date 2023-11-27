@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
@@ -70,8 +69,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Bias towards lower values. 
                 float size = Pow(Main.rand.NextFloat(), 2f);
-                FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center - (Projectile.velocity * 0.5f) + (Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f) * size),
-                    Main.rand.NextFloat(10f, 15f));
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center - (Projectile.velocity * 0.5f) + (Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f) * size),
+                    Vector2.Zero, new(Main.rand.NextFloat(10f, 15f)));
             }
 
             Lighting.AddLight(Projectile.Center, Vector3.One);
@@ -96,8 +95,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.65f, Volume = 1.6f }, Projectile.Center);
 
             GuardianComboAttackManager.CreateFireExplosion(Projectile.Center, true);
+
             for (int i = 0; i < 100; i++)
-                FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f), Main.rand.NextFloat(52f, 85f));
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f), Vector2.Zero, new(Main.rand.NextFloat(52f, 85f)));
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;

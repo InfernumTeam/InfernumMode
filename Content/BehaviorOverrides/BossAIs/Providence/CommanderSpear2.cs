@@ -1,5 +1,4 @@
 ﻿using CalamityMod.NPCs;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.ScreenEffects;
@@ -103,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Burst into lava metaballs on death.
             if (Main.netMode != NetmodeID.Server)
-                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center, Projectile.rotation, Projectile.scale, 20f, 30);
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center, Projectile.rotation, Projectile.scale, 20f, 30));
 
             // Release accelerating spears outward.
             if (Main.netMode != NetmodeID.MultiplayerClient)

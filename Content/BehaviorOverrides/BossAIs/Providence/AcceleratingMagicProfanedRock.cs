@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Particles;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -124,7 +123,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.rand.NextBool() && Main.netMode != NetmodeID.Server)
             {
                 Vector2 lavaSpawnPosition = Projectile.Center + Projectile.velocity * 0.5f;
-                ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, lavaSpawnPosition, 0f, Projectile.scale * 0.8f, 12f, 190);
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(lavaSpawnPosition, 0f, Projectile.scale * 0.8f, 12f, 190));
             }
 
             // Spin.

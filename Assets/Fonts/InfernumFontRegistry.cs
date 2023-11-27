@@ -2,8 +2,6 @@
 using InfernumMode.Common.DataStructures;
 using ReLogic.Content;
 using ReLogic.Graphics;
-using Terraria;
-using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 

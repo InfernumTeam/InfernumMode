@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Core.OverridingSystem;
@@ -73,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Vector2 particleSpawnOffset = Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * Pow(Main.rand.NextFloat(), 2f);
                 float particleScale = Main.rand.NextFloat(20f, 35f);
-                FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(npc.Center + particleSpawnOffset, particleScale);
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(npc.Center + particleSpawnOffset, Vector2.Zero, new(particleScale));
 
                 previousAngularOffset = offsetAngle + proviSpinAngularOffset;
             }

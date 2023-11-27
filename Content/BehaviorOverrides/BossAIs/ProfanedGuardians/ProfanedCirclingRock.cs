@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Particles;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Metaballs;
@@ -97,9 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 GeneralParticleHandler.SpawnParticle(rockParticle);
                 Projectile.rotation -= 0.1f;
                 if (Main.rand.NextBool() && Main.netMode != NetmodeID.Server)
-                {
-                    ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(ref FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>().Particles, Projectile.Center - Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 15f, 170);
-                }
+                    ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center - Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 15f, 170));
             }
         }
 

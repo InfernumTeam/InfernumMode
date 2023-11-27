@@ -15,7 +15,6 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.Particles.Metaballs.FusableParticleManager;
 using InfernumMode.Core.ModCalls;
 
 namespace InfernumMode
@@ -135,13 +134,6 @@ namespace InfernumMode
                 Main.QueueMainThreadAction(() =>
                 {
                     CalamityMod.Call("LoadParticleInstances", this);
-                    ParticleSets = new();
-                    ParticleSetTypes = new();
-                    HasBeenFormallyDefined = true;
-
-                    FindParticleSetTypesInMod(CalamityMod, Main.screenWidth, Main.screenHeight);
-                    foreach (Mod m in ExtraModsToLoadSetsFrom)
-                        FindParticleSetTypesInMod(m, Main.screenWidth, Main.screenHeight);
                 });
             }
 

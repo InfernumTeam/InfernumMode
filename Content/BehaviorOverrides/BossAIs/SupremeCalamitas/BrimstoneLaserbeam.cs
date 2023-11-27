@@ -1,6 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
+using CalamityMod.Graphics.Metaballs;
 using CalamityMod.NPCs;
-using CalamityMod.Particles.Metaballs;
 using CalamityMod.Projectiles.Magic;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Create arms on surfaces.
             if (Main.myPlayer == Projectile.owner)
-                CreateArmsOnSurfaces();
+                CreateLavaOnSurfaces();
 
             // Create hit effects at the end of the beam.
             if (Main.myPlayer == Projectile.owner)
@@ -82,13 +82,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
         }
 
-        public void CreateArmsOnSurfaces()
+        public void CreateLavaOnSurfaces()
         {
             if (Main.netMode == NetmodeID.Server)
                 return;
 
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength;
-            FusableParticleManager.GetParticleSetByType<RancorGroundLavaParticleSet>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f, 320f);
+            RancorLavaMetaball.SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f, 320f);
         }
 
         public void CreateTileHitEffects()

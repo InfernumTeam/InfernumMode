@@ -1,5 +1,4 @@
-﻿using CalamityMod.Particles.Metaballs;
-using InfernumMode.Common.Graphics.Metaballs;
+﻿using InfernumMode.Common.Graphics.Metaballs;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -35,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            FusableParticleManager.GetParticleSetByType<ProfanedLavaParticleSet>()?.SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(BlobSize, BlobSize) / 6f, BlobSize);
+            ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(BlobSize, BlobSize) / 6f, Vector2.Zero, new(BlobSize));
             if (Projectile.timeLeft <= 3600f - Lifetime)
                 Projectile.Kill();
 

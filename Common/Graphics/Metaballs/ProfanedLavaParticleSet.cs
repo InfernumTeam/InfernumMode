@@ -1,24 +1,41 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod.Effects;
+using CalamityMod.Graphics.Metaballs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
-using CalamityMod.Particles.Metaballs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Metaballs
 {
-    public class ProfanedLavaParticleSet : BaseFusableParticleSet
+    public class ProfanedLavaMetaball : Metaball
     {
-        public override Color BorderColor
+        public List<InfernumMetaballParticle> Particles
+        {
+            get;
+            private set;
+        } = new();
+
+        public override bool AnythingToDraw => Particles.Any();
+
+        public override IEnumerable<Texture2D> Layers
+        {
+            get
+            {
+                yield return ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? InfernumTextureRegistry.HolyFirePixelLayerNight.Value : InfernumTextureRegistry.HolyFirePixelLayer.Value;
+            }
+        }
+
+        public override MetaballDrawLayer DrawContext => MetaballDrawLayer.BeforeProjectiles;
+
+        public override Color EdgeColor
         {
             get
             {
@@ -30,65 +47,67 @@ namespace InfernumMode.Common.Graphics.Metaballs
             }
         }
 
-        public override bool BorderShouldBeSolid => true;
-
-        public override float BorderSize => 2f;
-
-        public override List<Effect> BackgroundShaders => new()
+    public void SpawnParticle(Vector2 center, Vector2 velocity, Vector2 size, float decayRate = 0.985f)
         {
-            GameShaders.Misc["CalamityMod:BaseFusableParticleEdge"].Shader,
-            GameShaders.Misc["CalamityMod:BaseFusableParticleEdge"].Shader,
-        };
+            if (Main.netMode != NetmodeID.Server)
+                Particles.Add(new(center, velocity, size, decayRate));
+        }
 
-        public override List<Texture2D> BackgroundTextures => new()
+        public void SpawnParticles(IEnumerable<InfernumMetaballParticle> particles)
         {
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : PreferredBackground.Value,
-            Main.gameMenu ? TextureAssets.MagicPixel.Value : PreferredBackground.Value,
-        };
+            if (Main.netMode != NetmodeID.Server)
+                Particles.AddRange(particles);
+        }
 
-        public static Asset<Texture2D> PreferredBackground => ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ?
-            InfernumTextureRegistry.HolyFirePixelLayerNight : InfernumTextureRegistry.HolyFirePixelLayer;
-
-        public override void DrawParticles()
+        public override void Update()
         {
-            Texture2D fusableParticleBase = ModContent.Request<Texture2D>("CalamityMod/Particles/Metaballs/FusableParticleBase").Value;
-            foreach (FusableParticle particle in Particles)
+            foreach (var particle in Particles)
+                particle.Update();
+
+            Particles.RemoveAll(particle => particle.Size.Length() < 2f);
+        }
+
+        public override void ClearInstances() => Particles.Clear();
+
+        public override void PrepareSpriteBatch(SpriteBatch spriteBatch)
+        {
+            // Draw with additive blending.
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, Main.Rasterizer, null, Matrix.Identity);
+        }
+
+        public override void PrepareShaderForTarget(int layerIndex)
+        {
+            base.PrepareShaderForTarget(layerIndex);
+            //// Store the shader in an easy to use local variable.
+            //var metaballShader = CalamityShaders.MetaballEdgeShader;
+
+            //// Calculate the layer scroll offset. This is used to ensure that the texture contents of the given metaball have parallax, rather than being static over the screen
+            //// regardless of world position.
+            //Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
+
+            //// Supply shader parameter values.
+            //metaballShader.Parameters["screenArea"]?.SetValue(screenSize);
+            //metaballShader.Parameters["layerOffset"]?.SetValue(Vector2.Zero);
+            //metaballShader.Parameters["edgeColor"]?.SetValue(EdgeColor.ToVector4());
+            //metaballShader.Parameters["singleFrameScreenOffset"]?.SetValue(Vector2.Zero);
+
+            //// Apply the metaball shader.
+            //metaballShader.CurrentTechnique.Passes[0].Apply();
+        }
+
+        public override void DrawInstances()
+        {
+            Texture2D tex = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/BasicCircle").Value;
+
+            // Draw all particles.
+            foreach (var particle in Particles)
             {
                 Vector2 drawPosition = particle.Center - Main.screenPosition;
-                Color drawColor = Color.Lerp(BorderColor, WayfinderSymbol.Colors[1], 0.5f);
-                Vector2 origin = fusableParticleBase.Size() * 0.5f;
-                Vector2 scale = Vector2.One * particle.Size / fusableParticleBase.Size();
-                Main.spriteBatch.Draw(fusableParticleBase, drawPosition, null, drawColor, 0f, origin, scale, SpriteEffects.None, 0f);
-            }
-        }
+                Vector2 origin = tex.Size() * 0.5f;
+                Vector2 scale = Vector2.One * particle.Size / tex.Size();
 
-        public override FusableParticle SpawnParticle(Vector2 center, float sizeStrength)
-        {
-            Particles.Add(new FusableParticle(center, sizeStrength));
-            return Particles.Last();
-        }
-
-        public override void UpdateBehavior(FusableParticle particle)
-        {
-            particle.Size = Clamp(particle.Size - 0.5f, 0f, 400f) * 0.978f;
-        }
-
-        public override void PrepareOptionalShaderData(Effect effect, int index)
-        {
-            effect.Parameters["upscaleFactor"].SetValue(Vector2.One * 0.2f);
-            switch (index)
-            {
-                // Background 1.
-                case 0:
-                    Vector2 offset = Vector2.UnitX * Main.GlobalTimeWrappedHourly * 0.12f;
-                    effect.Parameters["generalBackgroundOffset"].SetValue(offset);
-                    break;
-
-                // Background 2.
-                case 1:
-                    offset = -Vector2.UnitY * Main.GlobalTimeWrappedHourly * 0.13f;
-                    effect.Parameters["generalBackgroundOffset"].SetValue(offset);
-                    break;
+                Main.spriteBatch.Draw(tex, drawPosition, null, EdgeColor, 0f, origin, scale, SpriteEffects.None, 0f);
             }
         }
     }

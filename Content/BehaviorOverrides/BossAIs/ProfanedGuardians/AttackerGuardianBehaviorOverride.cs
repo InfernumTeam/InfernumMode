@@ -546,8 +546,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float totalPoints = 50;
             float width = 300f;
             Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
-            Vector2 startPos = new(WorldSaveSystem.ProvidenceDoorXPosition, CenterOfGarden.Y - 600f);
-            Vector2 endPos = startPos + new Vector2(0f, 1570f);
+            Vector2 startPos = new(WorldSaveSystem.ProvidenceDoorXPosition, CenterOfGarden.Y - 1200f);
+            Vector2 endPos = startPos + new Vector2(0f, 2670f);
             float fadeDistance = 500f;
             float distanceFromBorder = new Vector2(Main.player[npc.target].Center.X, startPos.Y).Distance(startPos);
             float alpha = Clamp(1f - distanceFromBorder / (fadeDistance * 1.5f), 0f, 1f);

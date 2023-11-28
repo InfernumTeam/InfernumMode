@@ -18,6 +18,7 @@ namespace InfernumMode.Content.Projectiles.Summoner
 
         public override Color LineColor => Color.Aqua;
 
+        public ref float HitTarget => ref Projectile.ai[2];
 
         public override void ModifyDefaults()
         {
@@ -30,11 +31,15 @@ namespace InfernumMode.Content.Projectiles.Summoner
 
         public override void OnHitEffects(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            SoundEngine.PlaySound(SoundID.SplashWeak with { PitchVariance = 0.2f });
+            if (HitTarget > 0)
+                return;
+
+            HitTarget = 1;
+            SoundEngine.PlaySound(SoundID.SplashWeak with { PitchVariance = 0.5f, Volume = 1.5f });
 
             NPC.HitInfo info = new()
             {
-                Damage = (int)(damageDone * 1.2f),
+                Damage = (int)(damageDone * 1.5f),
                 Crit = true,
                 HitDirection = hit.HitDirection,
                 Knockback = hit.Knockback
@@ -67,7 +72,7 @@ namespace InfernumMode.Content.Projectiles.Summoner
                 {
                     Gore bubble = Gore.NewGorePerfect(Projectile.GetSource_FromAI(), position, Main.rand.NextVector2Circular(1f, 1f) * Projectile.velocity.Length() * 0.2f, 411);
                     bubble.timeLeft = 4 + Main.rand.Next(6);
-                    bubble.scale = Main.rand.NextFloat(0.3f, 0.6f);
+                    bubble.scale = Main.rand.NextFloat(0.4f, 0.6f);
                     bubble.type = Main.rand.NextBool(3) ? 412 : 411;
                 }
             }

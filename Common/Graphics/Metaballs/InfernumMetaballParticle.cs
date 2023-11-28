@@ -25,9 +25,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public void Update()
         {
-            Size = Vector2.Clamp(Size - Vector2.One * 0.1f, Vector2.Zero, Vector2.One * 200f) * DecayRate;
-            if (Size.Length() < 20f)
-                Size = Size * DecayRate * 0.8f - Vector2.One;
+            Size *= DecayRate;
 
             Center += Velocity;
         }

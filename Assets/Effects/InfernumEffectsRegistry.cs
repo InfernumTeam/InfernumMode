@@ -17,6 +17,7 @@ namespace InfernumMode.Assets.Effects
             get;
             internal set;
         }
+
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
         public static MiscShaderData AreaBorderVertexShader => GameShaders.Misc["Infernum:AreaBorder"];
         public static MiscShaderData AresEnergySlashShader => GameShaders.Misc["Infernum:AresEnergySlash"];
@@ -102,6 +103,7 @@ namespace InfernumMode.Assets.Effects
         public static Filter SpriteBurnShader => Filters.Scene["InfernumMode:SpriteBurn"];
         public static Filter ShadowShader => Filters.Scene["InfernumMode:ShadowShader"];
         public static Filter TwinsScreenShader => Filters.Scene["InfernumMode:Twins"];
+        public static Filter WaterOverlayShader => Filters.Scene["InfernumMode:WaterOverlayShader"];
         #endregion
 
         #region Methods
@@ -274,6 +276,9 @@ namespace InfernumMode.Assets.Effects
 
         public static void LoadScreenShaders(AssetRepository assets)
         {
+            Ref<Effect> waterShader = new(assets.Request<Effect>("Assets/Effects/Overlays/WaterShader", AssetRequestMode.ImmediateLoad).Value);
+            Filters.Scene["InfernumMode:WaterOverlayShader"] = new Filter(new(waterShader, "WaterPass"), EffectPriority.VeryHigh);
+
             // CRT shader
             Ref<Effect> crtShader = new(assets.Request<Effect>("Assets/Effects/SpriteDistortions/CRTShader", AssetRequestMode.ImmediateLoad).Value);
             Filters.Scene["InfernumMode:CRTShader"] = new Filter(new(crtShader, "CRTPass"), EffectPriority.VeryHigh);

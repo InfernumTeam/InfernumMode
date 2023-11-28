@@ -671,5 +671,11 @@ namespace InfernumMode
 
         public static void SetTexture3(this Texture2D texture) => Main.instance.GraphicsDevice.Textures[3] = texture;
 
+        /// <summary>
+        /// Converts a color to its greyscale brightness value.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static float ToGreyscale(this Color color) => Vector3.Dot(color.ToVector3(), new Vector3(0.299f, 0.587f, 0.114f));
     }
 }

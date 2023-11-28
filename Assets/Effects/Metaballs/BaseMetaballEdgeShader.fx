@@ -1,9 +1,13 @@
 ﻿sampler mainImage : register(s0);
-sampler lightingImage : register(s1);
+sampler overlayImage : register(s1);
 float threshold;
 float2 rtSize;
-float3 mainColor;
-float3 edgeColor;
+float2 screenPosition;
+float2 singleFrameScreenOffset;
+float2 layerOffset;
+float4 mainColor;
+float4 edgeColor;
+bool useOverlayImage;
 
 float2 convertToScreenCoords(float2 coords)
 {
@@ -19,35 +23,34 @@ float2 convertFromScreenCoords(float2 coords)
 float4 Edge(float4 sampleColor : COLOR0, float2 uv : TEXCOORD0) : COLOR0
 {
     float4 pixelOnRT = tex2D(mainImage, uv);
-    float4 lighting = tex2D(lightingImage, uv);
+    float metaballOpacity = pixelOnRT.a;
+    //return tex2D(overlayImage, uv + layerOffset + singleFrameScreenOffset);
+    // Read the brightness from the R channel.
+    float metaballBrightness = pixelOnRT.r;
     
-    float lightingModifier = (lighting.r + lighting.g + lighting.b) / 3;
-    
-    if (lightingModifier == 0)
-        lightingModifier = 1;
-    
-    if (pixelOnRT.a <= threshold && pixelOnRT.a > 0.)
+    if (metaballOpacity > 0.)
     {
+        if (metaballOpacity > threshold)
+            return useOverlayImage ? tex2D(overlayImage, uv + layerOffset + singleFrameScreenOffset) : mainColor;
+
         float left = tex2D(mainImage, convertFromScreenCoords(convertToScreenCoords(uv) + float2(-2, 0))).a;
-        if (left <= 0)
-            return float4(edgeColor * lightingModifier, 1);
+        if (left <= threshold)
+            return edgeColor;
         
         float right = tex2D(mainImage, convertFromScreenCoords(convertToScreenCoords(uv) + float2(2, 0))).a;
-        if (right <= 0)
-            return float4(edgeColor * lightingModifier, 1);
+        if (right <= threshold)
+            return edgeColor;
         
         float top = tex2D(mainImage, convertFromScreenCoords(convertToScreenCoords(uv) + float2(0, -2))).a;
-        if (top <= 0)
-            return float4(edgeColor * lightingModifier, 1);
+        if (top <= threshold)
+            return edgeColor;
         
         float bottom = tex2D(mainImage, convertFromScreenCoords(convertToScreenCoords(uv) + float2(0, 2))).a;
-        if (bottom <= 0)
-            return float4(edgeColor * lightingModifier, 1);
+        if (bottom <= threshold)
+            return edgeColor;
+        
+        return float4(0, 0, 0, 0);
     }
-    
-    if (pixelOnRT.a > 0.)
-        return float4(mainColor * lightingModifier, 1.);
-    
     return tex2D(mainImage, uv);
 }
 

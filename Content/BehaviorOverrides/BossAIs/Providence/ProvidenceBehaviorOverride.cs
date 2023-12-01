@@ -411,10 +411,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (Main.netMode != NetmodeID.Server && InfernumMode.CalMusicModIsActive)
                 Main.musicFade[MusicID.Boss1] = 0f;
 
-            // This screen shader kind of sucks. Please turn it off.
-            if (Main.netMode != NetmodeID.Server)
-                Filters.Scene["CalamityMod:Providence"].Deactivate();
-
             // Despawn if the nearest target is incredibly far away.
             if (!npc.WithinRange(target.Center, 9600f))
                 npc.active = false;

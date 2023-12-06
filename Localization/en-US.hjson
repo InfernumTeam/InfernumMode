@@ -686,7 +686,7 @@ Mods: {
 				'''
 
 			ProfanedShard: {
-				SummoningText: Summons the Profaned Guardians when used on the cliff in the profaned garden at the far right of the underworld during day
+				SummoningText: Summons the Profaned Guardians when used on the cliff in the profaned garden at the far right of the underworld
 				GardenWarning:
 					'''
 					Your world does not currently have a Profaned Garden. Kill the Moon Lord again to generate it

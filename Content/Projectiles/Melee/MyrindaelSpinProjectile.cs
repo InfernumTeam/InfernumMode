@@ -157,6 +157,9 @@ namespace InfernumMode.Content.Projectiles.Melee
         // Release sparks at nearby targets.
         public override void OnKill(int timeLeft)
         {
+            if (Time < Myrindael.SpinTime)
+                return;
+
             NPC potentialTarget = Projectile.Center.ClosestNPCAt(Myrindael.TargetHomeDistance);
             if (Main.myPlayer != Projectile.owner || potentialTarget is null)
                 return;

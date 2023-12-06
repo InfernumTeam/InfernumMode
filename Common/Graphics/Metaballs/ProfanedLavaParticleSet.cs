@@ -47,7 +47,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
             }
         }
 
-    public void SpawnParticle(Vector2 center, Vector2 velocity, Vector2 size, float decayRate = 0.985f)
+        public void SpawnParticle(Vector2 center, Vector2 velocity, Vector2 size, float decayRate = 0.965f)
         {
             if (Main.netMode != NetmodeID.Server)
                 Particles.Add(new(center, velocity, size, decayRate));

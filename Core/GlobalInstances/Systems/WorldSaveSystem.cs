@@ -205,9 +205,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void SaveWorldData(TagCompound tag)
         {
-            if (WorldGen.generatingWorld)
-                return;
-
             var downed = new List<string>();
             if (InfernumModeEnabled)
                 downed.Add("InfernumModeActive");

@@ -15,7 +15,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public float DecayRate;
 
-        public InfernumMetaballParticle(Vector2 center, Vector2 velocity, Vector2 size, float decayRate = 0.997f)
+        public InfernumMetaballParticle(Vector2 center, Vector2 velocity, Vector2 size, float decayRate = 0.985f)
         {
             Center = center;
             Velocity = velocity;

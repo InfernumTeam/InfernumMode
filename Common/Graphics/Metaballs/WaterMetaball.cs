@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CalamityMod.Graphics.Metaballs;
+﻿using CalamityMod.Graphics.Metaballs;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.Drawers.SceneDrawers;
+using InfernumMode.Content.Projectiles.Summoner;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Linq;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
-using InfernumMode.Assets.Effects;
-using InfernumMode.Common.Graphics.Drawers.SceneDrawers;
 
 namespace InfernumMode.Common.Graphics.Metaballs
 {
@@ -20,7 +21,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
             private set;
         } = new();
 
-        public override bool AnythingToDraw => Particles.Any();
+        public override bool AnythingToDraw => Particles.Any() || CalamityMod.CalamityUtils.AnyProjectiles(ModContent.ProjectileType<PerditusProjectile>());
 
         public override IEnumerable<Texture2D> Layers
         {
@@ -53,10 +54,18 @@ namespace InfernumMode.Common.Graphics.Metaballs
                 particle.Velocity.Y += 0.15f;
 
                 if (Collision.SolidCollision(particle.Center, (int)particle.Size.X, (int)particle.Size.Y / 2, true))
-                    particle.Velocity = Vector2.Zero;
+                    particle.Velocity = Vector2.Zero;        
 
-                particle.Velocity *= 0.99f;
-                particle.Update();
+                if (particle.Timer > 4f)
+                {
+                    particle.Size *= particle.DecayRate;
+                    particle.Velocity *= 0.99f;
+                    particle.Velocity.X *= 0.98f;
+                    particle.Velocity.Y *= 1.01f;
+
+                    particle.Center += particle.Velocity;
+                }
+                particle.Timer++;
             }
 
             Particles.RemoveAll(particle => particle.Size.Length() < 5f || particle.Size.X < 0 || particle.Size.Y < 0);
@@ -92,22 +101,38 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override void DrawInstances()
         {
-            Texture2D tex = InfernumTextureRegistry.BigGreyscaleCircle.Value;/*ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/BasicCircle").Value;*/
+            Texture2D tex = InfernumTextureRegistry.BigGreyscaleCircle.Value;
 
             // Draw all particles.
             foreach (var particle in Particles)
             {
                 Vector2 drawPosition = particle.Center - Main.screenPosition;
                 Vector2 origin = tex.Size() * 0.5f;
-                Vector2 scale = Vector2.One * particle.Size / tex.Size();
+
+                float scaleInterpolant = Utils.GetLerpValue(0f, 5f, particle.Timer, true);
+                Vector2 scale = Vector2.One * particle.Size / tex.Size() * scaleInterpolant;
 
                 // Angle the metaball towards its direction.
                 float rotation = 0f;//particle.Velocity.ToRotation() + PiOver2;
 
                 // Store the brightness of the metaball in the R value.
                 float lightingStrength = Lighting.GetColor(particle.Center.ToTileCoordinates()).ToGreyscale();
-                Color color = new(lightingStrength, 0f, 0f, 1f);
-                Main.spriteBatch.Draw(tex, drawPosition, null, color, rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tex, drawPosition, null, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
+            }
+
+            // Draw perditus' whip line as a metaball.
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (!Main.projectile[i].active)
+                    continue;
+
+                if (Main.projectile[i].ModProjectile is PerditusProjectile perditus)
+                {
+                    List<Vector2> points = new();
+                    Projectile.FillWhipControlPoints(perditus.Projectile, points);
+                    PerditusProjectile.DrawWaterLine(points);
+                    break;
+                }
             }
         }
     }

@@ -1505,7 +1505,12 @@ Mods: {
 
 			Perditus: {
 				DisplayName: Perditus
-				Tooltip: ""
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					{1}% summon tag critical strike chance
+					{$CommonItemTooltip.Whips}
+					'''
 			}
 		}
 

@@ -1505,8 +1505,13 @@ Mods: {
 			}
 
 			Perditus: {
-				// DisplayName: Perditus
-				// Tooltip: ""
+				DisplayName: Потерянный
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					Увеличивает шанс критического удара для призванных существ на {1}%
+					{$CommonItemTooltip.Whips}
+					'''
 			}
 		}
 

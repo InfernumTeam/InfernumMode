@@ -686,7 +686,7 @@ Mods: {
 				'''
 
 			ProfanedShard: {
-				SummoningText: 在白天地狱最右侧亵渎花园的悬崖上使用，召唤亵渎守卫
+				SummoningText: 在地狱最右侧亵渎花园的悬崖上使用，召唤亵渎守卫
 				GardenWarning:
 					'''
 					你的世界目前没有亵渎神庙，击杀一次月亮领主以生成它
@@ -1504,8 +1504,13 @@ Mods: {
 			}
 
 			Perditus: {
-				// DisplayName: Perditus
-				// Tooltip: ""
+				DisplayName: 丢失的
+				Tooltip:
+					'''
+					{$CommonItemTooltip.SummonTagDamage}
+					使召唤的仆从增加{1}%的暴击率
+					{$CommonItemTooltip.Whips}
+					'''
 			}
 		}
 

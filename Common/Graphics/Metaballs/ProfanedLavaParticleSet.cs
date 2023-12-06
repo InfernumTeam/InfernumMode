@@ -1,5 +1,4 @@
-﻿using CalamityMod.Effects;
-using CalamityMod.Graphics.Metaballs;
+﻿using CalamityMod.Graphics.Metaballs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
 using InfernumMode.Assets.ExtraTextures;

@@ -15,6 +15,8 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public float DecayRate;
 
+        public float Timer;
+
         public InfernumMetaballParticle(Vector2 center, Vector2 velocity, Vector2 size, float decayRate = 0.985f)
         {
             Center = center;
@@ -28,6 +30,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
             Size *= DecayRate;
 
             Center += Velocity;
+            Timer++;
         }
     }
 }

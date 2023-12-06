@@ -97,7 +97,6 @@ namespace InfernumMode.Assets.Effects
         public static Filter SCalScreenShader => Filters.Scene["InfernumMode:SCal"];
         public static Filter ScreenDistortionScreenShader => Filters.Scene["InfernumMode:ScreenDistortion"];
         public static Filter ScreenBorderShader => Filters.Scene["InfernumMode:ScreenBorder"];
-        public static Filter ScreenSaturationBlurScreenShader => Filters.Scene["InfernumMode:ScreenSaturationBlur"];
         public static Filter ScreenShakeScreenShader => Filters.Scene["InfernumMode:ScreenShake"];
         public static Filter ScreenShakeScreenShader2 => Filters.Scene["InfernumMode:ScreenShake2"];
         public static Filter SpriteBurnShader => Filters.Scene["InfernumMode:SpriteBurn"];

@@ -1,16 +1,20 @@
 ﻿using CalamityMod.Items;
+using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Summoner;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Weapons.Summoner
 {
     public class Perditus : ModItem
     {
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PerditusTagBuff.TagDamage, PerditusTagBuff.CritChance);
+
         // 23 whip tag, 10% crit.
         public override void SetDefaults()
         {
@@ -36,8 +40,6 @@ namespace InfernumMode.Content.Items.Weapons.Summoner
         public override bool MeleePrefix() => true;
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-        {
-            return player.ownedProjectileCounts[type] < 1;
-        }
+            => player.ownedProjectileCounts[type] < 1;
     }
 }

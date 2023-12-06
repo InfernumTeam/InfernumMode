@@ -246,7 +246,7 @@ namespace InfernumMode.Common.BaseEntities
         #endregion
 
         #region Methods
-        protected void DrawLine(List<Vector2> points)
+        public void DrawLine(List<Vector2> points)
         {
             Texture2D texture = TextureAssets.FishingLine.Value;
             Rectangle frame = texture.Frame();

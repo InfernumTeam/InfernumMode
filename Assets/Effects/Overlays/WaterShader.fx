@@ -27,8 +27,10 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
     uv.y -= uv.y % (1 / screenSize.y);
     float noiseScale = 13.;
     float noiseSpeed = 0.1;
-    float3 color = colors[0]; //float3(0, 0, 0); // noise = 0.;
+    float3 color = colors[0];
     float gain = 1.;
+    
+    // FBM.
     for (int i = 1; i < 3; i++)
     {
         float noise = tex2D(noiseSample, uv * noiseScale + frac(float2(time * noiseSpeed, -time * noiseSpeed))).r * gain;
@@ -36,11 +38,8 @@ float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0
         noiseScale *= 0.75;
         noiseSpeed *= 0.6;
         gain *= 0.75;
-
     }
     
-    //float3 color = colors[2] * noise;//multicolorLerp(noise);
-
     return float4(color, 1);
 }
 

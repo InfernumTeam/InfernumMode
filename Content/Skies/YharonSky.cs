@@ -122,13 +122,13 @@ namespace InfernumMode.Content.Skies
         {
             SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceLavaEruptionSmallSound with { Volume = 0.67f });
 
-            for (int i = 0; i < 85; i++)
+            for (int i = 0; i < 45; i++)
             {
                 SmokeParticles.Add(new()
                 {
                     DrawPosition = new Vector2(Main.rand.NextFloat(-400f, Main.screenWidth + 400f), Main.screenHeight + 250f),
                     Velocity = -Vector2.UnitY * Main.rand.NextFloat(9f, 25f) + Main.rand.NextVector2Circular(4f, 4f),
-                    SmokeColor = Color.LightGray,
+                    SmokeColor = Color.LightGray * 0.6f,
                     Rotation = Main.rand.NextFloat(TwoPi),
                     Lifetime = Main.rand.Next(90, 240)
                 });
@@ -151,10 +151,11 @@ namespace InfernumMode.Content.Skies
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Utilities.GetCustomSkyBackgroundMatrix());
 
                 DrawVibrantSun();
-                DrawSmoke();
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Utilities.GetCustomSkyBackgroundMatrix());
+
+                DrawSmoke();
             }
         }
 
@@ -202,7 +203,10 @@ namespace InfernumMode.Content.Skies
             // Draw all active smoke particles in the background.
             Texture2D smokeTexture = InfernumTextureRegistry.Smoke.Value;
             foreach (BackgroundSmoke smoke in SmokeParticles)
-                Main.spriteBatch.Draw(smokeTexture, smoke.DrawPosition, null, smoke.SmokeColor * 0.7f, smoke.Rotation, smokeTexture.Size() * 0.5f, 1f, 0, 0f);
+            {
+                float opacity = Utils.GetLerpValue(1f, 0.67f, smoke.Time / (float)smoke.Lifetime) * 0.5f;
+                Main.spriteBatch.Draw(smokeTexture, smoke.DrawPosition, null, (smoke.SmokeColor with { A = 0 }) * opacity, smoke.Rotation, smokeTexture.Size() * 0.5f, 1f, 0, 0f);
+            }
         }
     }
 }

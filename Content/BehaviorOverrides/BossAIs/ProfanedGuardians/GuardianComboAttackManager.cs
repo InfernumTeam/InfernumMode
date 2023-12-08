@@ -981,7 +981,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // The commander recoils backwards before launching.
                     case 3:
 
-                        npc.velocity = CalamityUtils.MoveTowards(Vector2.UnitX * -2.3f, npc.DirectionTo(target.Center) * -2.3f, 4.5f);
+                        npc.velocity = Utils.MoveTowards(Vector2.UnitX * -2.3f, npc.DirectionTo(target.Center) * -2.3f, 4.5f);
 
                         // Make the spear rotation point to the player.
                         idealRotation = npc.SafeDirectionTo(target.Center).ToRotation();

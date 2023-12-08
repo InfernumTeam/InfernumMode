@@ -1512,6 +1512,16 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					'''
 			}
+
+			Profanus: {
+				DisplayName: Punctus
+				Tooltip:
+                '''
+                Left clicks fires a spear that shatters whe hitting a target. It will reform into an orbiting rock, for a maximum of 6 at once.
+                Right clicks will launch all of the rocks alongside the spear. At 3, both spears will home. At 6, the rocks will home.
+                [c/ffbf49:An unholy spear found only among the most devout and powerful of her followers.]
+                '''
+			}
 		}
 
 		Keybinds: {
@@ -2412,6 +2422,8 @@ Mods: {
 			DoGProviCutsceneProjectile.DisplayName: Do G Provi Cutscene Projectile
 			ProviBurnPulseRing.DisplayName: Provi Burn Pulse Ring
 			PerditusProjectile.DisplayName: Perditus Projectile
+			ProfanusProjectile.DisplayName: Profanus Projectile
+			ProfanusRocks.DisplayName: Profanus Rocks
 		}
 
 		Status: {

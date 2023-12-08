@@ -1512,6 +1512,11 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					'''
 			}
+
+			Profanus: {
+				// DisplayName: Profanus
+				// Tooltip: ""
+			}
 		}
 
 		Keybinds: {
@@ -2412,6 +2417,8 @@ Mods: {
 			DoGProviCutsceneProjectile.DisplayName: 神吞和亵渎过场动画弹幕
 			ProviBurnPulseRing.DisplayName: 亵渎之火脉冲环
 			// PerditusProjectile.DisplayName: Perditus Projectile
+			// ProfanusProjectile.DisplayName: Profanus Projectile
+			// ProfanusRocks.DisplayName: Profanus Rocks
 		}
 
 		Status: {

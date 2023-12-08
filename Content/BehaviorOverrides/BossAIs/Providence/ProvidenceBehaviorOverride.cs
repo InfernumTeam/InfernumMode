@@ -160,7 +160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             if (npc.type == ModContent.NPCType<ProvidenceBoss>() && npc.defense >= 60)
                 modifiers.FinalDamage.Base = (int)Math.Max(modifiers.FinalDamage.Base - npc.defense / 2, 1D);
-            return true;
+             return true;
         }
 
         private void DetermineNightDefeatStatus(NPC npc)
@@ -849,6 +849,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             npc.Opacity = 1f;
             burnIntensity = Pow(Utils.GetLerpValue(90f, 0f, localAttackTimer, true), 0.12f) * 0.96f;
 
+            npc.Calamity().DR = 0.90f;
+
             if (localAttackTimer <= 5f)
                 performedEndEffects = 0f;
 
@@ -1526,6 +1528,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             float circleShootSpeed = spiralShootSpeed * 1.36f;
             bool canShootCircle = attackCompletion >= 0.5f;
 
+            npc.Calamity().DR = 0.90f;
+
             // Make the attack faster according to life ratio.
             // This may seem unintuitive since it's a "quiet" attack but there's always the possibility that the player won't kill Providence within one
             // music cycle, meaning that she could have significantly weakened HP by the time this happens a second or third time.
@@ -1653,6 +1657,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Stay in the cocoon.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            npc.Calamity().DR = 0.80f;
 
             if (!doneAttacking)
                 bombCreationTimer++;
@@ -1832,6 +1838,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 drawState = (int)ProvidenceFrameDrawingType.CocoonState;
                 npc.velocity *= 0.85f;
+                npc.Calamity().DR = 0.90f;
             }
             else
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(arenaTopCenter) * 26f, 0.3f);
@@ -1910,6 +1917,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Stay in the cocoon during this attack.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            npc.Calamity().DR = 0.90f;
 
             // Slow down.
             npc.velocity.X *= 0.85f;
@@ -2335,6 +2344,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
             // Stay in the cocoon during this attack by default.
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
+
+            npc.Calamity().DR = 0.90f;
 
             // Play a rock reform sound once the shell is about to come back.
             if (localAttackTimer == rockReformDelay)

@@ -2,25 +2,16 @@
 using CalamityMod.Items;
 using InfernumMode.Content.Projectiles.Melee;
 using InfernumMode.Content.Rarities.InfernumRarities;
-using Microsoft.Xna.Framework;
-using System.Linq;
-using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria;
 using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Content.Items.Weapons.Melee
 {
-    public class Myrindael : ModItem
+    public class Profanus : ModItem
     {
-        public const int LungeTime = 20;
-
-        public const int SpinTime = 45;
-
-        public const float LungeSpeed = 50f;
-
-        public const float TargetHomeDistance = 720f;
-
         public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 1;
@@ -30,19 +21,20 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 
         public override void SetDefaults()
         {
-            Item.damage = 110;
+            Item.damage = 1000;
             Item.knockBack = 4.5f;
             Item.DamageType = DamageClass.Melee;
             Item.useAnimation = Item.useTime = 32;
             Item.autoReuse = true;
             Item.channel = true;
-            Item.shoot = ModContent.ProjectileType<MyrindaelBonkProjectile>();
-            Item.shootSpeed = 12f;
+            Item.shoot = ModContent.ProjectileType<ProfanusProjectile>();
+            Item.shootSpeed = 45f;
 
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
-            Item.rare = ModContent.RarityType<InfernumVassalRarity>();
+            Item.rare = ModContent.RarityType<InfernumProfanedRarity>();
+            Item.Infernum_Tooltips().DeveloperItem = true;
 
-            Item.width = Item.height = 68;
+            Item.width = Item.height = 90;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.UseSound = SoundID.Item1;
             Item.noMelee = true;
@@ -58,27 +50,27 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 
         public override bool AltFunctionUse(Player player) => true;
 
-        public override bool CanShoot(Player player)
+        public override bool CanUseItem(Player player)
         {
-            int spinID = ModContent.ProjectileType<MyrindaelSpinProjectile>();
-            if (player.ownedProjectileCounts[Item.shoot] > 0)
-                return false;
+            // Don't create more spears if one is being aimed.
+            foreach (Projectile spear in Utilities.AllProjectilesByID(Item.shoot))
+            {
+                if (spear.owner != player.whoAmI || spear.ModProjectile<ProfanusProjectile>().CurrentState != ProfanusProjectile.UseState.Aiming)
+                    continue;
 
-            if (Main.projectile.Take(Main.maxProjectiles).Any(p => p.owner == player.whoAmI && p.active && p.type == spinID && p.ModProjectile<MyrindaelSpinProjectile>().SpinCompletion < 1f))
                 return false;
+            }
 
             return true;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (player.altFunctionUse != 2)
-            {
-                Projectile.NewProjectile(source, position, velocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<MyrindaelSpinProjectile>(), damage, knockback, player.whoAmI);
-                return false;
-            }
+            int useType = 0;
+            if (player.altFunctionUse == 2)
+                useType = 1;
 
-            Projectile.NewProjectile(source, position, velocity.SafeNormalize(Vector2.UnitY), type, (int)(damage * 1.1f), knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity.SafeNormalize(Vector2.UnitY), type, damage, knockback, player.whoAmI, useType);
             return false;
         }
 

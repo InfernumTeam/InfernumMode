@@ -1513,6 +1513,11 @@ Mods: {
 					{$CommonItemTooltip.Whips}
 					'''
 			}
+
+			Profanus: {
+				// DisplayName: Profanus
+				// Tooltip: ""
+			}
 		}
 
 		Keybinds: {
@@ -2413,6 +2418,8 @@ Mods: {
 			DoGProviCutsceneProjectile.DisplayName: Снар До Г Прови Катсцена
 			ProviBurnPulseRing.DisplayName: Горящее Пульсируещее Кольцо
 			// PerditusProjectile.DisplayName: Perditus Projectile
+			// ProfanusProjectile.DisplayName: Profanus Projectile
+			// ProfanusRocks.DisplayName: Profanus Rocks
 		}
 
 		Status: {

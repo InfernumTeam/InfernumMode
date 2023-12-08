@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
 {
     public class InfernumProfanedRarity : ModRarity
     {
-        public override Color RarityColor => Color.Red;
+        public override Color RarityColor => Color.Gold;
 
         internal static List<RaritySparkle> ProfanedRaritySparkleList = new();
 

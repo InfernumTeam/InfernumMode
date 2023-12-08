@@ -23,14 +23,8 @@ float4 uShaderSpecificData;
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    // Get the color of the pixel at the current coords.
-    float4 color = tex2D(uImage0, coords);
-    // Calcuate the brightness of each pixel,
-    float luminosity = (color.r + color.g + color.b) / 3;
-    // This needs to be on one line due to alpha fuckery.
-    // It's basically multiplying the original color by the new one made by the shader, while also multiplying
-    // it by the passed through color, which is being multiplied by the passed through opacity.
-    return lerp(color, float4(uColor * luminosity, 1) * color.a, uOpacity);
+    float4 currentPixel = tex2D(uImage0, coords);
+    return float4(lerp(currentPixel.rgb, uColor, uSaturation) * uOpacity, currentPixel.a) * currentPixel.a;
 }
 
 technique Technique1

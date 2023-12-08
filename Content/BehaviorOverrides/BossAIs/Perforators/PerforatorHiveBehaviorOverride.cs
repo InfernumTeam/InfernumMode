@@ -1556,7 +1556,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                 // Get the opacity interpolent.
                 float opacityInterpolent = deathTimer / DeathAnimationLength;
                 // Set the opacity of the shader.
-                InfernumEffectsRegistry.BasicTintShader.UseOpacity(opacityInterpolent);
+                InfernumEffectsRegistry.BasicTintShader.UseSaturation(opacityInterpolent);
+                InfernumEffectsRegistry.BasicTintShader.UseOpacity(lightColor.ToGreyscale());
                 // Set the color of the shader.
                 InfernumEffectsRegistry.BasicTintShader.UseColor(Color.Red);
                 // Apply the shader.

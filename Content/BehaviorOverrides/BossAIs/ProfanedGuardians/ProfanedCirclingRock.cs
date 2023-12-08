@@ -119,7 +119,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 laserScopeEffect.Parameters["Resolution"].SetValue(new Vector2(340f));
                 Player target = Main.player[Owner.target];
                 laserScopeEffect.Parameters["laserAngle"].SetValue((target.Center - Projectile.Center).ToRotation() * -1f);
-                laserScopeEffect.Parameters["laserWidth"].SetValue(0.0025f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.002f + 0.002f));
+                laserScopeEffect.Parameters["laserWidth"].SetValue(0.0025f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.002f));
                 laserScopeEffect.Parameters["laserLightStrenght"].SetValue(3f);
                 laserScopeEffect.Parameters["color"].SetValue(Color.Lerp(WayfinderSymbol.Colors[1], Color.OrangeRed, 0.5f).ToVector3());
                 laserScopeEffect.Parameters["darkerColor"].SetValue(WayfinderSymbol.Colors[2].ToVector3());

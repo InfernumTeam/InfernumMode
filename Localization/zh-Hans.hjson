@@ -276,8 +276,8 @@ Mods: {
 			}
 
 			PerditusTagBuff: {
-				// DisplayName: Perditus Tag
-				// Description: Tagged and wet
+				DisplayName: 失落长汐标记
+				Description: 标记且潮湿
 			}
 		}
 
@@ -1511,7 +1511,7 @@ Mods: {
 			}
 
 			Perditus: {
-				DisplayName: 丢失的
+				DisplayName: 标记且潮湿
 				Tooltip:
 					'''
 					{$CommonItemTooltip.SummonTagDamage}
@@ -2428,7 +2428,7 @@ Mods: {
 			DoGProviCutsceneInitialPortal.DisplayName: 神吞和亵渎过场动画初始传送门
 			DoGProviCutsceneProjectile.DisplayName: 神吞和亵渎过场动画弹幕
 			ProviBurnPulseRing.DisplayName: 亵渎之火脉冲环
-			PerditusProjectile.DisplayName: Perditus
+			PerditusProjectile.DisplayName: 失落长汐
 			PunctusProjectile.DisplayName: 焱
 			PunctusRock.DisplayName: 焱石
 		}

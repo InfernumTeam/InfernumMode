@@ -276,8 +276,8 @@ Mods: {
 			}
 
 			PerditusTagBuff: {
-				DisplayName: Perditus Tag Buff
-				Description: Mods.InfernumMode.Buffs.PerditusTagBuff.Description
+				DisplayName: Perditus Tag
+				Description: Tagged and wet
 			}
 		}
 
@@ -1553,7 +1553,7 @@ Mods: {
 			}
 		}
 
-		// Will use the CalamitasShadowClone.DisplayName field
+		// Will use the CalamitasShadowClone.DisplayName field. If you only have {0} here, then it must be wrapped in "".
 		NameOverrides: {
 			CalamitasShadowClone.EntryName: The {0}
 			GreatSandShark.EntryName: Taurus

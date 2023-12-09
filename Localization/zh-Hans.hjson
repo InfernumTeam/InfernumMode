@@ -276,8 +276,8 @@ Mods: {
 			}
 
 			PerditusTagBuff: {
-				// DisplayName: Perditus Tag Buff
-				// Description: Mods.InfernumMode.Buffs.PerditusTagBuff.Description
+				// DisplayName: Perditus Tag
+				// Description: Tagged and wet
 			}
 		}
 
@@ -1403,12 +1403,12 @@ Mods: {
 			CallUponTheEggs: {
 				DisplayName: 呼唤之蛋
 				Tooltip:
-                '''
-                左键从光标处降下蛋蛋们
-                右键将你包裹在一个守护之蛋中，它会增加你100防御，但是减少你50%的攻击伤害
-                蛋在被击中3次后就会破碎，需要重新充能才可以再次使用
-                [c/f0ad56:这把武器只能由那些肩负着保护弱者使命的人使用]
-                '''
+					'''
+					左键从光标处降下蛋蛋们
+					右键将你包裹在一个守护之蛋中，它会增加你100防御，但是减少你50%的攻击伤害
+					蛋在被击中3次后就会破碎，需要重新充能才可以再次使用
+					[c/f0ad56:这把武器只能由那些肩负着保护弱者使命的人使用]
+					'''
 			}
 
 			Myrindael: {
@@ -1523,11 +1523,11 @@ Mods: {
 			Punctus: {
 				DisplayName: 焱
 				Tooltip:
-				'''
-				左键发射一支长矛，当击中目标时碎裂。它将会变为一块环绕着你的岩石，一次最多储存6块
-                右键发射长矛周围所有的岩石。岩石数量为3块时，左键攻击将会追踪敌人。数量为6块时，所有岩石都会追踪敌人
-				[c/ffbf49:一把秽色之矛，仅能从她那最为虔诚、最为强大的追随者身上找到]
-				''' 
+					'''
+					左键发射一支长矛，当击中目标时碎裂。它将会变为一块环绕着你的岩石，一次最多储存6块
+					            右键发射长矛周围所有的岩石。岩石数量为3块时，左键攻击将会追踪敌人。数量为6块时，所有岩石都会追踪敌人
+					[c/ffbf49:一把秽色之矛，仅能从她那最为虔诚、最为强大的追随者身上找到]
+					'''
 			}
 		}
 
@@ -2430,7 +2430,7 @@ Mods: {
 			ProviBurnPulseRing.DisplayName: 亵渎之火脉冲环
 			PerditusProjectile.DisplayName: Perditus
 			PunctusProjectile.DisplayName: 焱
-			PunctusRock.DisplayName: Punctus Rock
+			PunctusRock.DisplayName: 焱石
 		}
 
 		Status: {

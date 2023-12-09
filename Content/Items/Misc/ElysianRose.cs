@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Misc
 {
+    // Dedicated to: LGL
     public class ElysianRose : ModItem
     {
         public override void SetStaticDefaults()

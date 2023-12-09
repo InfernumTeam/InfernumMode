@@ -4,6 +4,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Misc
 {
+    // Dedicated to: Pengolin, Fire Devourer
     public class LunarCoin : ModItem
     {
         public override void SetStaticDefaults()

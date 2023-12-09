@@ -17,6 +17,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Weapons.Melee
 {
+    // Dedicated to: Jareto15
     public class CallUponTheEggs : ModItem
     {
         public const int EggShieldCooldown = 1200;
@@ -77,7 +78,18 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                     }
                 }
             };
+
+            InfernumPlayer.PostUpdateEvent += (InfernumPlayer player) =>
+            {
+                Referenced<bool> shieldActive = player.GetRefValue<bool>("EggShieldActive");
+                if (shieldActive.Value && player.Player.ActiveItem() == null || player.Player.ActiveItem().type != Type)
+                {
+                    ToggleEggShield(player, false);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.EggCrack3 with { PitchVariance = 0.2f }, player.Player.Center); 
+                }
+            };
         }
+
 
         public override void SetDefaults()
         {

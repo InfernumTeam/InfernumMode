@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Content.Items.Weapons.Melee
 {
+    // Dedicated to: Toasty
     public class Punctus : ModItem
     {
         public override void SetStaticDefaults()

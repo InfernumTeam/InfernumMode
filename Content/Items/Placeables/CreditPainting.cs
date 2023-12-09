@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Placeables
 {
+    // Dedicated to: Toasty
     public class CreditPainting : ModItem
     {
         public override void SetDefaults()

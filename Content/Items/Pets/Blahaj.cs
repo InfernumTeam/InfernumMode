@@ -8,14 +8,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Pets
 {
+    // Dedicated to: Teiull
     public class Blahaj : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Blahaj");
-            // Tooltip.SetDefault("Summons a pet ikea plushie");
-        }
         public override void SetDefaults()
         {
             Item.damage = 0;

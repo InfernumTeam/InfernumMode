@@ -14,6 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Weapons.Rogue
 {
+    // Dedicated to: Arixanew
     public class StormMaidensRetribution : RogueWeapon
     {
         public const float StealthStrikeTargetingDistance = 2400f;

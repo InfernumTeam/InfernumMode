@@ -10,6 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Pets
 {
+    // Dedicated to: PurpleMattik
     public class RisingWarriorsSoulstone : ModItem
     {
         public static readonly Color TextColor = new(233, 124, 249);

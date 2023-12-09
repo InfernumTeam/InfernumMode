@@ -16,6 +16,7 @@ using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Items.Misc
 {
+    // Dedicated to: Dominic Karma
     public class HyperplaneMatrix : ModItem
     {
         public static bool CanBeUsed => (DownedBossSystem.downedCalamitas && DownedBossSystem.downedExoMechs) || Main.LocalPlayer.name == "Dominic";

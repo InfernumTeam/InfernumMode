@@ -13,6 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Accessories
 {
+    // Dedicated to: Pengolin, Fire Devourer
     public class Purity : ModItem
     {
         public const string FieldName = "Purity";

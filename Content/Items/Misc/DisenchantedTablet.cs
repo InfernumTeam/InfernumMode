@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Misc
 {
+    // Dedicated to: PurpleMattik
     public class DisenchantedTablet : ModItem
     {
         public override void SetDefaults()

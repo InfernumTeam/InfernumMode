@@ -15,6 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Weapons.Rogue
 {
+    // Dedicated to: Piky
     public class Dreamtastic : RogueWeapon
     {
         public const int BeamNoHomeTime = 20;

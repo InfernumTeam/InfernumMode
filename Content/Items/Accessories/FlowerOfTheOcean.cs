@@ -8,7 +8,8 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Accessories
 {
-    internal class FlowerOfTheOcean : ModItem
+    // Dedicated to: LGL
+    public class FlowerOfTheOcean : ModItem
     {
         public override void SetStaticDefaults()
         {

@@ -9,19 +9,12 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Weapons.Magic
 {
+    // Dedicated to: smhmyhead
     public class Kevin : ModItem
     {
         public const float TargetingDistance = 884f;
 
         public const int LightningArea = 1800;
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("kevin");
-            /* Tooltip.SetDefault("A part of a greater whole, incomprehensible to the layperson\n" +
-                "It stands for 'Kinetic Electroplasma Voltage Infuser'"); */
-            Item.ResearchUnlockCount = 1;
-        }
 
         public override void SetDefaults()
         {

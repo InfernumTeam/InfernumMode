@@ -14,6 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Pets
 {
+    // Dedicated to: Shade__Storm
     public class NightmareCatcher : ModItem
     {
         public const int AchievementSleepTime = 15;

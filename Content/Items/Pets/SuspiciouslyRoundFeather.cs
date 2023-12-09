@@ -8,14 +8,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Pets
 {
+    // Dedicated to: BronzeCkn
     public class SuspiciouslyRoundFeather : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Suspiciously Round Feather");
-            // Tooltip.SetDefault("Summons an old friend");
-        }
         public override void SetDefaults()
         {
             Item.damage = 0;

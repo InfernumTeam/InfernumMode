@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Misc
 {
+    // Dedicated to: Myra
     public class BrimstoneCrescentStaff : ModItem
     {
         public static int SpinTime => 54;

@@ -12,6 +12,7 @@ using Terraria.UI.Chat;
 
 namespace InfernumMode.Content.Items.Accessories
 {
+    // Dedicated to: Nyastra (Joey)
     public class SakuraBloom : ModItem
     {
         private readonly List<RaritySparkle> LoveSparkles = new();

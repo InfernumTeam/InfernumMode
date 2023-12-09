@@ -13,6 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Misc
 {
+    // Dedicated to: Nyastra (Joey)
     public class SakuraBud : ModItem
     {
         private readonly List<RaritySparkle> SpiritSparkles = new();

@@ -8,14 +8,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Pets
 {
+    // Dedicated to: Blastile
     public class BlastedTophat : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-            // DisplayName.SetDefault("Blasted Tophat");
-            // Tooltip.SetDefault("Summons a small hat girl that gives you advice about bosses that you fight");
-        }
         public override void SetDefaults()
         {
             Item.damage = 0;

@@ -241,7 +241,13 @@ namespace InfernumMode.Content.Projectiles.Melee
         }
 
         // Fade out once it's hit something.
-        public void DoBehavior_Hit() => Projectile.Opacity = Utils.GetLerpValue(FadeOutLength, 0f, Timer, true);
+        public void DoBehavior_Hit()
+        {
+            Projectile.Opacity = Utils.GetLerpValue(FadeOutLength, 0f, Timer, true);
+
+            if (Projectile.Opacity == 0f)
+                Projectile.Kill();
+        }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

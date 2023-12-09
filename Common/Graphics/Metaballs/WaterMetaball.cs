@@ -31,7 +31,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
             }
         }
 
-        public override MetaballDrawLayer DrawContext => MetaballDrawLayer.BeforeNPCs;
+        public override MetaballDrawLayer DrawContext => MetaballDrawLayer.AfterProjectiles;
 
         public override Color EdgeColor => Color.AliceBlue;//new(28, 175, 189, 0);
 

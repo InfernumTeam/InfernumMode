@@ -1,11 +1,16 @@
-﻿using CalamityMod.Items;
+﻿using CalamityMod;
+using CalamityMod.Items;
 using CalamityMod.Items.Materials;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.DataStructures;
+using InfernumMode.Content.Cooldowns;
+using InfernumMode.Content.Dusts;
 using InfernumMode.Content.Projectiles.Melee;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,7 +19,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 {
     public class CallUponTheEggs : ModItem
     {
-        public const int EggShieldMaxCooldown = 1200;
+        public const int EggShieldCooldown = 1200;
 
         public const int MaxEggShieldHits = 3;
 
@@ -26,16 +31,8 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 
             InfernumPlayer.PreUpdateEvent += (InfernumPlayer player) =>
             {
-                Referenced<int> eggShieldCooldown = player.GetRefValue<int>("EggShieldCooldown");
                 Referenced<float> eggShieldOpacity = player.GetRefValue<float>("EggShieldOpacity");
                 bool eggShieldActive = player.GetValue<bool>("EggShieldActive");
-
-                if (eggShieldCooldown.Value > 0)
-                    eggShieldCooldown.Value--;
-
-                // Deactivate the shield if half the cooldown has been reached.
-                if (eggShieldActive && eggShieldCooldown.Value == EggShieldMaxCooldown / 2)
-                    ToggleEggShield(player, false);
 
                 // If the max hits have been taken, disable the shield and reset the current hits taken.
                 if (player.GetValue<int>("CurrentEggShieldHits") >= MaxEggShieldHits)
@@ -62,7 +59,23 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 Referenced<int> currentEggShieldHits = player.GetRefValue<int>("CurrentEggShieldHits");
 
                 if (player.GetValue<bool>("EggShieldActive"))
+                {
+                    SoundStyle crackSound = currentEggShieldHits.Value switch
+                    {
+                        0 => InfernumSoundRegistry.EggCrack1,
+                        1 => InfernumSoundRegistry.EggCrack2,
+                        _ => InfernumSoundRegistry.EggCrack3,
+                    };
+                    
+                    SoundEngine.PlaySound(crackSound with {PitchVariance = 0.2f}, player.Player.Center);
                     currentEggShieldHits.Value++;
+
+                    for (int i = 0; i < 20; i++)
+                    {
+                        Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 5f);
+                        Dust.NewDust(Main.rand.NextVector2FromRectangle(player.Player.Hitbox), 4, 4, ModContent.DustType<EggDust>(), velocity.X, velocity.Y * 0.3f, Scale: 2f);
+                    }
+                }
             };
         }
 
@@ -87,20 +100,22 @@ namespace InfernumMode.Content.Items.Weapons.Melee
 
         public override bool AltFunctionUse(Player player) => true;
 
-        public override bool? UseItem(Player player)
+        public override bool CanUseItem(Player player)
         {
             if (player.whoAmI == Main.myPlayer)
             {
                 if (player.altFunctionUse == 0)
-                    return null;
+                    return true;
 
                 InfernumPlayer eggPlayer = player.Infernum();
-                if (eggPlayer.GetValue<bool>("EggShieldActive") || eggPlayer.GetValue<int>("EggShieldCooldown") > 0)
+                if (eggPlayer.GetValue<bool>("EggShieldActive") || player.HasCooldown(EggShieldRecharge.ID))
                     return false;
 
                 ToggleEggShield(eggPlayer, true);
+
+                return false;
             }
-            return null;
+            return true;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -140,8 +155,15 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             player.SetValue<bool>("EggShieldActive", status);
             player.SetValue<int>("CurrentEggShieldHits",  0);
 
-            if (status)
-                player.SetValue<int>("EggShieldCooldown", EggShieldMaxCooldown);
+            if (!status)
+            {
+                if (Main.myPlayer == player.Player.whoAmI)
+                {
+                    for (int i = 1; i < 4; i++)
+                        Gore.NewGore(player.Player.GetSource_FromThis(), player.Player.Center, player.Player.velocity, InfernumMode.Instance.Find<ModGore>("EggGore" + i).Type);
+                }
+                player.Player.AddCooldown(EggShieldRecharge.ID, EggShieldCooldown);
+            }
         }
     }
 }

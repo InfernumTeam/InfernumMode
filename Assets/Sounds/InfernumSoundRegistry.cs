@@ -1,4 +1,4 @@
-using Terraria.Audio;
+﻿using Terraria.Audio;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Assets.Sounds
@@ -270,6 +270,11 @@ namespace InfernumMode.Assets.Sounds
         #endregion Bosses and Enemies
 
         #region Items
+        public static readonly SoundStyle EggCrack1 = new("InfernumMode/Assets/Sounds/Item/EggCrack1");
+
+        public static readonly SoundStyle EggCrack2 = new("InfernumMode/Assets/Sounds/Item/EggCrack2");
+
+        public static readonly SoundStyle EggCrack3 = new("InfernumMode/Assets/Sounds/Item/EggCrack3");
 
         public static readonly SoundStyle GlassmakerFireStartSound = new("InfernumMode/Assets/Sounds/Item/GlassmakerIntro");
 

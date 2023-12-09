@@ -315,6 +315,7 @@ Mods: {
 		Cooldowns: {
 			SealocketForcefieldCooldown: Forcefield Cooldown
 			InfiniteFlightCooldown: Infinite Flight
+			EggShieldRecharge: Egg Shield Cooldown
 		}
 
 		DifficultyUI: {
@@ -1401,7 +1402,13 @@ Mods: {
 
 			CallUponTheEggs: {
 				DisplayName: Call Upon The Eggs
-				Tooltip: "[c/f0ad56:This weapon is to be wielded by only those who shall take upon the task of watching over the weak ones]"
+				Tooltip:
+					'''
+					Left click rains down eggs from the sky towards the cursor
+					Right click encases you in a protective egg that increases your defense by 100, but reduces your damage by 50%
+					The egg will break after 3 hits and must recharge before it can be created again.
+					[c/f0ad56:This weapon is to be wielded by only those who shall take upon the task of watching over the weak ones]
+					'''
 			}
 
 			Myrindael: {

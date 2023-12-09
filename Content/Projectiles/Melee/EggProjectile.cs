@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InfernumMode.Content.Dusts;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -38,6 +39,21 @@ namespace InfernumMode.Content.Projectiles.Melee
             }
             Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.5f);
+
+            if (Main.rand.NextBool(2))
+                Dust.NewDust(Projectile.Center, 4, 4, ModContent.DustType<EggDust>(), Projectile.velocity.X * 0.3f, Projectile.velocity.Y * 0.3f, Scale: 1f);
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(1f, 3f);
+                Dust.NewDust(Projectile.Center, 4, 4, ModContent.DustType<EggDust>(), velocity.X, velocity.Y * 0.3f, Scale: 1f);
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)

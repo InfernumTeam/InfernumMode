@@ -315,6 +315,7 @@ Mods: {
 		Cooldowns: {
 			SealocketForcefieldCooldown: 力场冷却
 			InfiniteFlightCooldown: 无限飞行
+			// EggShieldRecharge: Egg Shield Cooldown
 		}
 
 		DifficultyUI: {
@@ -1515,7 +1516,12 @@ Mods: {
 
 			Punctus: {
 				// DisplayName: Punctus
-				// Tooltip: ""
+				/* Tooltip:
+					'''
+					Left clicks fires a spear that shatters when hitting a target. It will reform into an orbiting rock, for a maximum of 6 at once.
+					Right clicks launch all of the rocks alongside the spear. At 3, left click will home. At 6, the rocks will home.
+					[c/ffbf49:An unholy spear found only among the most devout and powerful of her followers.]
+					''' */
 			}
 		}
 

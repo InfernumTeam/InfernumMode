@@ -1406,7 +1406,7 @@ Mods: {
 					'''
 					Left click rains down eggs from the sky towards the cursor
 					Right click encases you in a protective egg that increases your defense by 100, but reduces your damage by 50%
-					The egg will break after 3 hits and must recharge before it can be created again.
+					The egg will break after 3 hits and must recharge before it can be created again
 					[c/f0ad56:This weapon is to be wielded by only those who shall take upon the task of watching over the weak ones]
 					'''
 			}
@@ -1488,10 +1488,10 @@ Mods: {
 				DisplayName: Profaned Garden Location Setter
 				Tooltip:
 					'''
-					Use this to fix the profaned garden not functioning properly.
-					Left click the bottom-center of the Profaned Plaque tile in the middle of the garden.
-					This will center the garden position around that point correctly.
-					You can right click to revert the position to the previous one.
+					Use this to fix the profaned garden not functioning properly
+					Left click the bottom-center of the Profaned Plaque tile in the middle of the garden
+					This will center the garden position around that point correctly
+					You can right click to revert the position to the previous one
 					'''
 			}
 
@@ -1504,9 +1504,9 @@ Mods: {
 				DisplayName: Forbidden Archives Location Setter
 				Tooltip:
 					'''
-					Use this if your archives were destroyed by the abyss.
-					Left click the center of your dungeon arena to allow Ceaseless Void to naturally spawn.
-					You can right click to revert the position to the previous one.
+					Use this if your archives were destroyed by the abyss
+					Left click the center of your dungeon arena to allow Ceaseless Void to naturally spawn
+					You can right click to revert the position to the previous one
 					'''
 			}
 
@@ -1524,9 +1524,9 @@ Mods: {
 				DisplayName: Punctus
 				Tooltip:
 					'''
-					Left clicks fires a spear that shatters when hitting a target. It will reform into an orbiting rock, for a maximum of 6 at once.
-					Right clicks launch all of the rocks alongside the spear. At 3, left click will home. At 6, the rocks will home.
-					[c/ffbf49:An unholy spear found only among the most devout and powerful of her followers.]
+					Left clicks fires a spear that shatters when hitting a target. It will reform into an orbiting rock, for a maximum of 6 at once
+					Right clicks launch all of the rocks alongside the spear. At 3, left click will home. At 6, the rocks will home
+					[c/ffbf49:An unholy spear found only among the most devout and powerful of her followers]
 					'''
 			}
 		}

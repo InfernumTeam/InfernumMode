@@ -315,7 +315,7 @@ Mods: {
 		Cooldowns: {
 			SealocketForcefieldCooldown: 力场冷却
 			InfiniteFlightCooldown: 无限飞行
-			// EggShieldRecharge: Egg Shield Cooldown
+			EggShieldRecharge: 蛋之护盾冷却
 		}
 
 		DifficultyUI: {
@@ -1402,7 +1402,13 @@ Mods: {
 
 			CallUponTheEggs: {
 				DisplayName: 呼唤之蛋
-				Tooltip: "[c/f0ad56:这把武器只能由那些肩负着保护弱者使命的人使用]"
+				Tooltip:
+                '''
+                左键从光标处降下蛋蛋们
+                右键将你包裹在一个守护之蛋中，它会增加你100防御，但是减少你50%的攻击伤害
+                蛋在被击中3次后就会破碎，需要重新充能才可以再次使用
+                [c/f0ad56:这把武器只能由那些肩负着保护弱者使命的人使用]
+                '''
 			}
 
 			Myrindael: {
@@ -1498,9 +1504,9 @@ Mods: {
 				DisplayName: 废弃档案室位置设置器
 				Tooltip:
 					'''
-					如果你的档案室被深渊摧毁了的话，请使用这个。
-					左键单击你的地牢场地中心，让无尽虚空自然生成。
-					你可以右键单击将位置恢复到上一次设置的位置。
+					如果你的档案室被深渊摧毁了的话，请使用这个
+					左键单击你的地牢场地中心，让无尽虚空自然生成
+					你可以右键单击将位置恢复到上一次设置的位置
 					'''
 			}
 
@@ -1515,13 +1521,13 @@ Mods: {
 			}
 
 			Punctus: {
-				// DisplayName: Punctus
-				/* Tooltip:
-					'''
-					Left clicks fires a spear that shatters when hitting a target. It will reform into an orbiting rock, for a maximum of 6 at once.
-					Right clicks launch all of the rocks alongside the spear. At 3, left click will home. At 6, the rocks will home.
-					[c/ffbf49:An unholy spear found only among the most devout and powerful of her followers.]
-					''' */
+				DisplayName: 焱
+				Tooltip:
+				'''
+				左键发射一支长矛，当击中目标时碎裂。它将会变为一块环绕着你的岩石，一次最多储存6块
+                右键发射长矛周围所有的岩石。岩石数量为3块时，左键攻击将会追踪敌人。数量为6块时，所有岩石都会追踪敌人
+				[c/ffbf49:一把秽色之矛，仅能从她那最为虔诚、最为强大的追随者身上找到]
+				''' 
 			}
 		}
 
@@ -2423,7 +2429,7 @@ Mods: {
 			DoGProviCutsceneProjectile.DisplayName: 神吞和亵渎过场动画弹幕
 			ProviBurnPulseRing.DisplayName: 亵渎之火脉冲环
 			PerditusProjectile.DisplayName: Perditus
-			PunctusProjectile.DisplayName: Punctus
+			PunctusProjectile.DisplayName: 焱
 			PunctusRock.DisplayName: Punctus Rock
 		}
 

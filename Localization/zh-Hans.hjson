@@ -1513,8 +1513,8 @@ Mods: {
 					'''
 			}
 
-			Profanus: {
-				// DisplayName: Profanus
+			Punctus: {
+				// DisplayName: Punctus
 				// Tooltip: ""
 			}
 		}
@@ -2416,9 +2416,9 @@ Mods: {
 			DoGProviCutsceneInitialPortal.DisplayName: 神吞和亵渎过场动画初始传送门
 			DoGProviCutsceneProjectile.DisplayName: 神吞和亵渎过场动画弹幕
 			ProviBurnPulseRing.DisplayName: 亵渎之火脉冲环
-			// PerditusProjectile.DisplayName: Perditus Projectile
-			// ProfanusProjectile.DisplayName: Profanus Projectile
-			// ProfanusRocks.DisplayName: Profanus Rocks
+			PerditusProjectile.DisplayName: Perditus
+			PunctusProjectile.DisplayName: Punctus
+			PunctusRock.DisplayName: Punctus Rock
 		}
 
 		Status: {

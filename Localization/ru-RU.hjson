@@ -1514,8 +1514,8 @@ Mods: {
 					'''
 			}
 
-			Profanus: {
-				// DisplayName: Profanus
+			Punctus: {
+				// DisplayName: Punctus
 				// Tooltip: ""
 			}
 		}
@@ -2417,9 +2417,9 @@ Mods: {
 			DoGProviCutsceneInitialPortal.DisplayName: До Г Прови Катсцена Иниц Портал
 			DoGProviCutsceneProjectile.DisplayName: Снар До Г Прови Катсцена
 			ProviBurnPulseRing.DisplayName: Горящее Пульсируещее Кольцо
-			// PerditusProjectile.DisplayName: Perditus Projectile
-			// ProfanusProjectile.DisplayName: Profanus Projectile
-			// ProfanusRocks.DisplayName: Profanus Rocks
+			PerditusProjectile.DisplayName: Perditus
+			PunctusProjectile.DisplayName: Punctus
+			PunctusRock.DisplayName: Punctus Rock
 		}
 
 		Status: {

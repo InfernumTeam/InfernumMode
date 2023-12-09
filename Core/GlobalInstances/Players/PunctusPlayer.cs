@@ -4,9 +4,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Players
 {
-    public class ProfanusPlayer : ModPlayer
+    public class PunctusPlayer : ModPlayer
     {
-        public int[] RockSlots = new int[ProfanusProjectile.MaxRocks];
+        public int[] RockSlots = new int[PunctusProjectile.MaxCirclingRocks];
 
         public bool PauseTimer;
 
@@ -33,10 +33,10 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     if (!Main.projectile[i].active)
                         continue;
 
-                    if (Main.projectile[i].ModProjectile is not ProfanusRocks rocks)
+                    if (Main.projectile[i].ModProjectile is not PunctusRock rocks)
                         continue;
 
-                    if (rocks.CurrentState is ProfanusRocks.State.Circling or ProfanusRocks.State.Firing)
+                    if (rocks.CurrentState is PunctusRock.State.Circling or PunctusRock.State.Firing)
                         break;
 
                     result = true;
@@ -47,7 +47,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     RockTimer = 0;
             }
 
-            int type = ModContent.ProjectileType<ProfanusRocks>();
+            int type = ModContent.ProjectileType<PunctusRock>();
 
             for (int i = 0; i < RockSlots.Length; i++)
             {
@@ -61,9 +61,9 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     else if (Main.projectile[index].type != type)
                         index = -1;
 
-                    else if (Main.projectile[index].ModProjectile is  ProfanusRocks rocks)
+                    else if (Main.projectile[index].ModProjectile is  PunctusRock rocks)
                     {
-                        if (rocks.CurrentState is ProfanusRocks.State.Firing)
+                        if (rocks.CurrentState is PunctusRock.State.Firing)
                             index = -1;
                     }
                 }

@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Content.Items.Weapons.Melee
 {
-    public class Profanus : ModItem
+    public class Punctus : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -27,7 +27,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.useAnimation = Item.useTime = 32;
             Item.autoReuse = true;
             Item.channel = true;
-            Item.shoot = ModContent.ProjectileType<ProfanusProjectile>();
+            Item.shoot = ModContent.ProjectileType<PunctusProjectile>();
             Item.shootSpeed = 45f;
 
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             // Don't create more spears if one is being aimed.
             foreach (Projectile spear in Utilities.AllProjectilesByID(Item.shoot))
             {
-                if (spear.owner != player.whoAmI || spear.ModProjectile<ProfanusProjectile>().CurrentState != ProfanusProjectile.UseState.Aiming)
+                if (spear.owner != player.whoAmI || spear.ModProjectile<PunctusProjectile>().CurrentState != PunctusProjectile.UseState.Aiming)
                     continue;
 
                 return false;

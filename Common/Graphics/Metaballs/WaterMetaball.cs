@@ -112,12 +112,8 @@ namespace InfernumMode.Common.Graphics.Metaballs
                 float scaleInterpolant = Utils.GetLerpValue(0f, 5f, particle.Timer, true);
                 Vector2 scale = Vector2.One * particle.Size / tex.Size() * scaleInterpolant;
 
-                // Angle the metaball towards its direction.
-                float rotation = 0f;//particle.Velocity.ToRotation() + PiOver2;
-
                 // Store the brightness of the metaball in the R value.
-                float lightingStrength = Lighting.GetColor(particle.Center.ToTileCoordinates()).ToGreyscale();
-                Main.spriteBatch.Draw(tex, drawPosition, null, Color.White, rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tex, drawPosition, null, Color.White, 0f, origin, scale, SpriteEffects.None, 0f);
             }
 
             // Draw perditus' whip line as a metaball.

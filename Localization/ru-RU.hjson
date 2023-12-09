@@ -276,8 +276,8 @@ Mods: {
 			}
 
 			PerditusTagBuff: {
-				// DisplayName: Perditus Tag
-				// Description: Tagged and wet
+				DisplayName: Метка Потерянного
+				Description: Помеченный и мокрый
 			}
 		}
 
@@ -1555,7 +1555,7 @@ Mods: {
 			}
 		}
 
-		// Will use the CalamitasShadowClone.DisplayName field
+		// Will use the CalamitasShadowClone.DisplayName field. If you only have {0} here, then it must be wrapped in "".
 		NameOverrides: {
 			CalamitasShadowClone.EntryName: "{0}"
 			GreatSandShark.EntryName: Тавр
@@ -2432,7 +2432,7 @@ Mods: {
 			ProviBurnPulseRing.DisplayName: Горящее Пульсируещее Кольцо
 			PerditusProjectile.DisplayName: Perditus
 			PunctusProjectile.DisplayName: Пунктус
-			PunctusRock.DisplayName: Punctus Rock
+			PunctusRock.DisplayName: Камень пунктуса
 		}
 
 		Status: {

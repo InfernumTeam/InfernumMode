@@ -1553,7 +1553,7 @@ Mods: {
 			}
 		}
 
-		// Will use the CalamitasShadowClone.DisplayName field
+		// Will use the CalamitasShadowClone.DisplayName field. If you only have {0} here, then it must be wrapped in "".
 		NameOverrides: {
 			CalamitasShadowClone.EntryName: "{0}"
 			GreatSandShark.EntryName: 托勒斯
@@ -1809,7 +1809,7 @@ Mods: {
 			SCalTip1: 当她拔出弩的时候靠近她，你可以看见她在瞄准哪里！
 			SCalSkullTip: 好多头骨，但它们似乎没有直接瞄准你！试着从中间穿过去！
 			SCalDesperationTip: 即使一切都失控了，你也要专心躲避！
-			// SCalFireSpinTip: Dont feel overwhelmed by all the projectiles, keep your cool during this flaming match!
+			SCalFireSpinTip: 别被一大堆弹幕淹没，在这场热火朝天的战斗中保持冷静！
 			SCalFireChargeTip: 那些爆弹占据了很大的空间！试着诱导她在你容易躲开的地方发射它们！
 			TwinsTip1: 靠旋转来躲避很困难吗？三个人可以玩那个游戏，一起旋转！
 			TwinsFinalOptionTip: 双子魔眼中的每一个都有独特的最终程序，如果它们中的一个给你带来困扰，可以试着专注于另一个！

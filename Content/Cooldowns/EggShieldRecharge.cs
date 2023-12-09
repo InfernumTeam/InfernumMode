@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Cooldowns
 
         public override LocalizedText DisplayName => Language.GetText("Mods.InfernumMode.Cooldowns.EggShieldRecharge");
 
-        public override string Texture => "InfernumMode/Content/Cooldowns/InfiniteFlight";
+        public override string Texture => "InfernumMode/Content/Cooldowns/EggShieldRecharge";
 
         public override Color OutlineColor => Color.Gold;
 

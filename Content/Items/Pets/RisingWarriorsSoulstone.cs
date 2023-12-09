@@ -15,11 +15,6 @@ namespace InfernumMode.Content.Items.Pets
     {
         public static readonly Color TextColor = new(233, 124, 249);
 
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void SetDefaults()
         {
             Item.damage = 0;

@@ -95,6 +95,7 @@ namespace InfernumMode.Content.Projectiles.Melee
         {
             Projectile.width = Projectile.height = 90;
             Projectile.friendly = true;
+            Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
@@ -261,7 +262,7 @@ namespace InfernumMode.Content.Projectiles.Melee
         }
 
         // Only hit stuff if it hasn't already lost a pierce from hitting.
-        public override bool? CanHitNPC(NPC target) => Projectile.penetrate > 1;
+        public override bool? CanHitNPC(NPC target) => Projectile.penetrate > 1 ? null : false;
 
         // Only hit stuff if it hasn't already lost a pierce from hitting.
         public override bool CanHitPlayer(Player target) => Projectile.penetrate > 1;

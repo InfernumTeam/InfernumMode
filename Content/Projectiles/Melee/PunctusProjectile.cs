@@ -6,6 +6,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
+using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
@@ -236,9 +237,10 @@ namespace InfernumMode.Content.Projectiles.Melee
             if (target == null)
                 return;
 
-            Vector2 directionToTarget = Projectile.SafeDirectionTo(target.Center);
+            float newSpeed = Clamp(Projectile.velocity.Length() * 1.032f, 6f, 42f);
 
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, directionToTarget * 45f, 0.05f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(target.Center) * newSpeed, 0.24f).RotateTowards(Projectile.AngleTo(target.Center), 0.1f);
+            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
         }
 
         // Fade out once it's hit something.

@@ -16,6 +16,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using InfernumMode.Core.ModCalls;
+using CalamityMod.ILEditing;
+using InfernumMode.Content.WorldGeneration;
 
 namespace InfernumMode
 {
@@ -141,6 +143,9 @@ namespace InfernumMode
             InfernumDifficulty difficulty = new();
             DifficultyModeSystem.Difficulties.Add(difficulty);
             DifficultyModeSystem.CalculateDifficultyData();
+
+            // Ensure the dungeon IL edit uses infernum's larger size.
+            ILChanges.DungeonHallXLimitOverride = CustomAbyss.MaxAbyssWidth;
         }
 
         public override void PostSetupContent()
@@ -155,6 +160,9 @@ namespace InfernumMode
 
         public override void Unload()
         {
+            // Restore the dungeon override.
+            if (ILChanges.DungeonHallXLimitOverride.HasValue && ILChanges.DungeonHallXLimitOverride == CustomAbyss.MaxAbyssWidth)
+                ILChanges.DungeonHallXLimitOverride = null;
             BalancingChangesManager.Unload();
             HookManager.Unload();
 

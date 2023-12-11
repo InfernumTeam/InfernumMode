@@ -118,12 +118,12 @@ namespace InfernumMode.Core.GlobalInstances.Players
 
         public override void ResetEffects()
         {
-            // Disable block placement and destruction in the profaned temple and lost colosseum.
-            if (InProfanedArenaAntiCheeseZone || SubworldSystem.IsActive<LostColosseum>())
-            {
-                Player.AddBuff(BuffID.NoBuilding, 10);
-                Player.noBuilding = true;
-            }
+            //// Disable block placement and destruction in the profaned temple and lost colosseum.
+            //if (InProfanedArenaAntiCheeseZone || SubworldSystem.IsActive<LostColosseum>())
+            //{
+            //    Player.AddBuff(BuffID.NoBuilding, 10);
+            //    Player.noBuilding = true;
+            //}
         }
 
         public override void PreUpdate()

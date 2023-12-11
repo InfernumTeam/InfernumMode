@@ -94,6 +94,22 @@ namespace InfernumMode.Core.GlobalInstances
             return base.CanKillTile(i, j, type, ref blockDamaged);
         }
 
+        public override bool CanPlace(int i, int j, int type)
+        {
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
+                return false;
+
+            return base.CanPlace(i, j, type);
+        }
+
+        public override bool CanReplace(int i, int j, int type, int tileTypeBeingPlaced)
+        {
+            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
+                return false;
+
+            return base.CanPlace(i, j, type);
+        }
+
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
             // Trigger achievement checks.

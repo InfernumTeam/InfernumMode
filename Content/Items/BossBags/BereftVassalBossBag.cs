@@ -7,6 +7,7 @@ using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
+using InfernumMode.Content.Items.Weapons.Summoner;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -20,8 +21,6 @@ namespace InfernumMode.Content.Items.BossBags
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Treasure Bag (Bereft Vassal)");
-            // Tooltip.SetDefault("{$CommonItemTooltip.RightClickToOpen}");
             Item.ResearchUnlockCount = 3;
             ItemID.Sets.BossBag[Item.type] = true;
         }
@@ -65,11 +64,22 @@ namespace InfernumMode.Content.Items.BossBags
 
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
 
-            // Fine. Have all of the weapon drops.
-            itemLoot.Add(ModContent.ItemType<Myrindael>());
-            itemLoot.Add(ModContent.ItemType<TheGlassmaker>());
-            itemLoot.Add(ModContent.ItemType<AridBattlecry>());
-            itemLoot.Add(ModContent.ItemType<WanderersShell>());
+            int[] weapons = new int[]
+{
+                ModContent.ItemType<AridBattlecry>(),
+                ModContent.ItemType<Myrindael>(),
+                ModContent.ItemType<TheGlassmaker>(),
+                ModContent.ItemType<WanderersShell>(),
+                ModContent.ItemType<Perditus>()
+            };
+
+            itemLoot.Add(DropHelper.CalamityStyle(new Fraction(1, 2), weapons));
+
+            //itemLoot.Add(ModContent.ItemType<Myrindael>(), new Fraction(1, 2));
+            //itemLoot.Add(ModContent.ItemType<TheGlassmaker>(), new Fraction(1, 2));
+            //itemLoot.Add(ModContent.ItemType<AridBattlecry>(), new Fraction(1, 2));
+            //itemLoot.Add(ModContent.ItemType<WanderersShell>(), new Fraction(1, 2));
+            //itemLoot.Add(ModContent.ItemType<Perditus>(), new Fraction(1, 2));
 
             itemLoot.AddRevBagAccessories();
 

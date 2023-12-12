@@ -15,6 +15,7 @@ using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
+using InfernumMode.Content.Items.Weapons.Summoner;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Players;
@@ -1907,7 +1908,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 ModContent.ItemType<AridBattlecry>(),
                 ModContent.ItemType<Myrindael>(),
                 ModContent.ItemType<TheGlassmaker>(),
-                ModContent.ItemType<WanderersShell>()
+                ModContent.ItemType<WanderersShell>(),
+                ModContent.ItemType<Perditus>()
             };
 
             normalOnly.Add(ModContent.ItemType<CherishedSealocket>());

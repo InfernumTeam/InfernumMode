@@ -999,8 +999,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 }
 
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                if (portalSpawnPosition.Y <= 200f)
-                    portalSpawnPosition.Y = 200f;
+
+                portalSpawnPosition = new(Clamp(portalSpawnPosition.X, 200f, Main.maxTilesX * 16f - 200f), Clamp(portalSpawnPosition.Y, 200f, Main.maxTilesY * 16f - 200f));
 
                 ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
                 {
@@ -1056,6 +1056,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         }
 
                         Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
+                        portalSpawnPosition = new(Clamp(portalSpawnPosition.X, 200f, Main.maxTilesX * 16f - 200f), Clamp(portalSpawnPosition.Y, 200f, Main.maxTilesY * 16f - 200f));
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(portal =>
                         {

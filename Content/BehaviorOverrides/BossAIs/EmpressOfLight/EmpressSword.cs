@@ -160,6 +160,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             else
                 PerformAttackBehaviors();
 
+            // Do not let the sword go out of bounds
+            Projectile.Center = new(Clamp(Projectile.Center.X, 50f, Main.maxTilesX * 16f - 50f), Clamp(Projectile.Center.Y, 50f, Main.maxTilesY * 16f - 50f));
+
+
             // Constantly reset whether this blade should attack, in expectation that the empress will update this value herself.
             ShouldAttack = false;
         }

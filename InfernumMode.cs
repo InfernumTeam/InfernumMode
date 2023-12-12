@@ -145,7 +145,8 @@ namespace InfernumMode
             DifficultyModeSystem.CalculateDifficultyData();
 
             // Ensure the dungeon IL edit uses infernum's larger size.
-            ILChanges.DungeonHallXLimitOverride = CustomAbyss.MaxAbyssWidth;
+            ILChanges.DungeonHallXLimitOverride = CustomAbyss.MaxAbyssWidth + 100;
+            ILChanges.DungeonBaseXLimitOverride = CustomAbyss.MaxAbyssWidth + 200;
         }
 
         public override void PostSetupContent()
@@ -161,8 +162,12 @@ namespace InfernumMode
         public override void Unload()
         {
             // Restore the dungeon override.
-            if (ILChanges.DungeonHallXLimitOverride.HasValue && ILChanges.DungeonHallXLimitOverride == CustomAbyss.MaxAbyssWidth)
+            if (ILChanges.DungeonHallXLimitOverride.HasValue && ILChanges.DungeonHallXLimitOverride == CustomAbyss.MaxAbyssWidth + 100)
                 ILChanges.DungeonHallXLimitOverride = null;
+
+            if (ILChanges.DungeonBaseXLimitOverride.HasValue && ILChanges.DungeonBaseXLimitOverride == CustomAbyss.MaxAbyssWidth + 200)
+                ILChanges.DungeonBaseXLimitOverride = null;
+
             BalancingChangesManager.Unload();
             HookManager.Unload();
 

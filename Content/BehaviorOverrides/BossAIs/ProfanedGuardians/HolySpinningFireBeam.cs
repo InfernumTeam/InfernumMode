@@ -138,8 +138,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * (CurrentLaserLength);
             //ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(15f, 15f), Vector2.Zero, new(95f));
             
-            for (int i = 0; i < 30; i++)
-                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(35f, 35f), Main.rand.NextVector2Unit() * 2f, new(25f));
+            for (int i = 0; i < 10; i++)
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(35f, 35f), Main.rand.NextVector2Unit() * 2f, new(25f), 0.94f);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

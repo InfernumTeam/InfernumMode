@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Bias towards lower values. 
                 float size = Pow(Main.rand.NextFloat(), 2f);
                 ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center - (Projectile.velocity * 0.5f) + (Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f) * size),
-                    Vector2.Zero, new(Main.rand.NextFloat(10f, 15f)));
+                    Vector2.Zero, new(Main.rand.NextFloat(10f, 15f)), 0.9f);
             }
 
             Lighting.AddLight(Projectile.Center, Vector3.One);

@@ -1362,7 +1362,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             // Bias towards lower values. 
                             float size = Pow(Main.rand.NextFloat(), 2f);
                             ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
-                                Vector2.Zero, new(Main.rand.NextFloat(15f, 20f)));
+                                Vector2.Zero, new(Main.rand.NextFloat(15f, 20f)), 0.93f);
                         }
 
                         if (npc.WithinRange(defender.Center, 230f) || universalAttackTimer >= 240f)
@@ -1522,7 +1522,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         {
                             float size = Pow(Main.rand.NextFloat(), 2f);
                             ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(npc.Center - (npc.velocity * 0.5f) + (Main.rand.NextVector2Circular(npc.width * 0.5f, npc.height * 0.5f) * size),
-                                Vector2.Zero, new(Main.rand.NextFloat(15f, 20f)));
+                                Vector2.Zero, new(Main.rand.NextFloat(15f, 20f)), 0.93f);
                         }
                         break;
                 }

@@ -563,7 +563,7 @@ namespace InfernumMode
         /// <param name="metaballSize">The base size of the metaballs</param>
         /// <param name="spawnChance">The chance that a pixel will create a metaball</param>
         /// <returns></returns>
-        public static IEnumerable<InfernumMetaballParticle> CreateMetaballsFromTexture(this Texture2D texture, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35)
+        public static IEnumerable<InfernumMetaballParticle> CreateMetaballsFromTexture(this Texture2D texture, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35, float decayRate = 0.985f)
         {
             List<InfernumMetaballParticle> metaballs = new();
             // Leave if this is null, or this is called on the server.
@@ -579,7 +579,7 @@ namespace InfernumMode
                 {
                     if (Main.rand.NextBool(spawnChance))
                     {
-                        InfernumMetaballParticle particle = new(Main.rand.NextVector2FromRectangle(new((int)texturePosition.X, (int)texturePosition.Y, (int)actualSize.X, (int)actualSize.Y)), Vector2.Zero, new(Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f)));
+                        InfernumMetaballParticle particle = new(Main.rand.NextVector2FromRectangle(new((int)texturePosition.X, (int)texturePosition.Y, (int)actualSize.X, (int)actualSize.Y)), Vector2.Zero, new(Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f)), decayRate);
                         metaballs.Add(particle);
                     }
                 }
@@ -606,7 +606,7 @@ namespace InfernumMode
                     {
                         Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f).RotatedBy(textureRotation);
                         Vector2 metaballSpawnPosition = texturePosition - positionOffset + new Vector2(w, h).RotatedBy(textureRotation);
-                        InfernumMetaballParticle particle = new(metaballSpawnPosition, Vector2.Zero, new Vector2(Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f)) * color.A / 255);
+                        InfernumMetaballParticle particle = new(metaballSpawnPosition, Vector2.Zero, new Vector2(Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f)) * color.A / 255, decayRate);
                         metaballs.Add(particle);
                     }
                 }

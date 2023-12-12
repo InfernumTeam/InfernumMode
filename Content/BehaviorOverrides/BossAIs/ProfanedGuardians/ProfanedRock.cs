@@ -157,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             if (Main.rand.NextBool() && Main.netMode != NetmodeID.Server)
             {
-                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center + Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 12f, 190));
+                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center + Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 12f, 190, 0.9f));
             }
 
             Projectile.rotation -= 0.1f;

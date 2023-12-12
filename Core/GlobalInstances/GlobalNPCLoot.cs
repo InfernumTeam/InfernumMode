@@ -45,6 +45,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
+using InfernumMode.Content.Items.Weapons.Melee;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -183,7 +184,10 @@ namespace InfernumMode.Core.GlobalInstances
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<MoonLordRelic>());
 
             if (npc.type == ModContent.NPCType<ProfanedGuardianCommander>())
+            {
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<Punctus>());
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ProfanedGuardiansRelic>());
+            }
 
             if (npc.type == ModContent.NPCType<Bumblefuck>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<DragonfollyRelic>());

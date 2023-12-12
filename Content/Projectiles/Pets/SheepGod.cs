@@ -199,7 +199,15 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (Main.gameMenu)
+            {
+                Main.instance.LoadProjectile(Type);
+                Texture2D sheepTexture = TextureAssets.Projectile[Type].Value;
+                SpriteEffects direction = Projectile.spriteDirection > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
+                Main.spriteBatch.Draw(sheepTexture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, sheepTexture.Size() * 0.5f, Projectile.scale, direction, 0);
+                return false;
+            }
             Main.spriteBatch.Draw(PreviousMainTarget, Projectile.Center - new Vector2(98f, 128f) - Main.screenPosition, Color.White);
             return false;
         }

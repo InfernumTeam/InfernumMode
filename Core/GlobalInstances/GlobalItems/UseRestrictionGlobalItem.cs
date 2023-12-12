@@ -9,6 +9,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Subworlds;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using System.Linq;
@@ -62,6 +63,12 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
 
             bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
             if (inAbyss && (item.type is ItemID.RecallPotion or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch))
+                return false;
+
+            // Don't let tiles be placed in the profaned garden.
+            var noPlaceRect = WorldSaveSystem.ProvidenceArena.ToWorldCoords();
+            noPlaceRect.Inflate(2, 2);
+            if ((item.createTile != -1 || item.createWall != -1) && noPlaceRect.Contains(player.Calamity().mouseWorld.ToPoint()))
                 return false;
 
             return base.CanUseItem(item, player);

@@ -85,21 +85,14 @@ namespace InfernumMode.Core.GlobalInstances
             if (ShouldNotBreakDueToAboveTile(i, j))
                 return false;
 
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
+            bool wofBlock = type is TileID.CrimtaneBrick or TileID.DemoniteBrick;
+            if ((WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) && !wofBlock) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
 
             if (CalamityUtils.ParanoidTileRetrieval(i, j - 1).TileType == ModContent.TileType<AbyssalKelp>())
                 WorldGen.KillTile(i, j - 1);
 
             return base.CanKillTile(i, j, type, ref blockDamaged);
-        }
-
-        public override bool CanPlace(int i, int j, int type)
-        {
-            if (WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) || SubworldSystem.IsActive<LostColosseum>())
-                return false;
-
-            return base.CanPlace(i, j, type);
         }
 
         public override bool CanReplace(int i, int j, int type, int tileTypeBeingPlaced)
@@ -115,9 +108,6 @@ namespace InfernumMode.Core.GlobalInstances
             // Trigger achievement checks.
             if (Main.netMode != NetmodeID.Server)
                 AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.TileBreak, type);
-
-            //if (type == TileID.VanityTreeSakura) //&& SakuraTreeSystem.HasSakura(new(i, j)))
-            //    AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.Sakura);
         }
 
         public override bool PreDraw(int i, int j, int type, SpriteBatch spriteBatch)
@@ -134,15 +124,5 @@ namespace InfernumMode.Core.GlobalInstances
             if (tombstonesShouldSpontaneouslyCombust && type is TileID.Tombstones)
                 WorldGen.KillTile(i, j);
         }
-
-        // Don't even try, this does not work anymore and i have not the faintest how to fix it.
-        //public override void RandomUpdate(int i, int j, int type)
-        //{
-        //    if (type == TileID.VanityTreeSakura && Main.rand.NextBool(500))
-        //    {
-        //        Main.tile[i, j].Get<SakuraTreeSystem.BlossomData>().HasBlossom = true;
-        //        Main.NewText("Spawned Blossom");
-        //    }
-        //}
     }
 }

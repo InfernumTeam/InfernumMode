@@ -28,7 +28,14 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 if (player.GetValue<bool>(FieldName))
                 {
-                    player.Player.GetDamage<GenericDamageClass>() += 0.3f;
+                    // Everything but summoner.
+                    player.Player.GetDamage<MeleeDamageClass>() *= 1.3f;
+                    player.Player.GetDamage<MeleeNoSpeedDamageClass>() *= 1.3f;
+                    player.Player.GetDamage<RangedDamageClass>() *= 1.3f;
+                    player.Player.GetDamage<MagicDamageClass>() *= 1.3f;
+                    player.Player.GetDamage<MagicSummonHybridDamageClass>() *= 1.3f;
+                    player.Player.GetDamage<SummonMeleeSpeedDamageClass>() *= 1.3f;
+
                     player.Player.GetAttackSpeed<GenericDamageClass>() += 0.3f;
                     player.Player.buffImmune[ModContent.BuffType<Nightwither>()] = true;
                 }

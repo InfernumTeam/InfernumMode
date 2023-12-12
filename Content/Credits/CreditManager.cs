@@ -96,11 +96,11 @@ namespace InfernumMode.Content.Credits
 
         public const string Testers1 = "Blast\nBronze\nCata\nEin\nGamerXD";
 
-        public const string Testers2 = "Gonk\nIan\nJareto\nJoey\nLGL";
+        public const string Testers2 = "Gonk\nHabble\nIan\nJareto\nJoey";
 
-        public const string Testers3 = "Nutella\nMatthionine\nMyra\nPiky\nPurpleMattik";
+        public const string Testers3 = "LGL\nNutella\nMatthionine\nMyra\nPiky";
 
-        public const string Testers4 = "Smh\nShade\nShadine\nTeiull";
+        public const string Testers4 = "PurpleMattikSmh\nShade\nShadine\nTeiull";
 
         public override void Load()
         {

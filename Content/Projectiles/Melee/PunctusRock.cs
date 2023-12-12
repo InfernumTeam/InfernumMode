@@ -92,6 +92,8 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public bool RockIsBuffed;
 
+        public bool HasDoneInitialGlow;
+
         public ref float RotationOffset => ref Projectile.ai[0];
 
         public ref float Timer => ref Projectile.ai[1];
@@ -115,6 +117,10 @@ namespace InfernumMode.Content.Projectiles.Melee
         public const int MaxCreationParticles = 15;
 
         public const int CreationParticleLifetime = 90;
+
+        public const int GlowStartTime = CreationParticleLifetime - 20;
+
+        public const int GlowEndTime = CreationParticleLifetime + 20;
 
         public const float MinDamageMultiplier = 0.5f;
 
@@ -253,6 +259,9 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Update any particles.
             if (FormingRocks.Any())
                 UpdateFormingRocks();
+
+            if (Timer == GlowEndTime + 1f)
+                HasDoneInitialGlow = true;
 
             // Shudder around if close to running out of time, and it has not been fired.
             // TODO: Add sfx for this.
@@ -637,10 +646,11 @@ namespace InfernumMode.Content.Projectiles.Melee
             Main.EntitySpriteDraw(texture, drawPosition, null, Projectile.GetAlpha(lightColor) * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
 
             // Draw additional stuff if either the rock is buffed, or has just been created.
-            bool drawInitialGlowyShit = (CurrentState is State.Circling && Timer >= CreationParticleLifetime - 20 && Timer <= CreationParticleLifetime + 20) || RockIsBuffed;
+            bool drawInitialGlowyShit = (CurrentState is State.Circling && Timer >= GlowStartTime && Timer <= GlowEndTime && !HasDoneInitialGlow) || RockIsBuffed;
             if (drawInitialGlowyShit)
             {
                 float opacity = RockIsBuffed ? Utils.GetLerpValue(0f, 10f, Timer, true) : Utils.GetLerpValue(CreationParticleLifetime + 20, CreationParticleLifetime, Timer, true);
+                
                 // Draw the rock over itself 2 times.
                 Color backglowColor = WayfinderSymbol.Colors[1];
                 for (int i = 0; i < 2; i++)

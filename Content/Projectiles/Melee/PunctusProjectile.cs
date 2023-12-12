@@ -17,6 +17,8 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Humanizer.In;
+using static InfernumMode.Content.Projectiles.Melee.PunctusRock;
 
 namespace InfernumMode.Content.Projectiles.Melee
 {
@@ -286,7 +288,20 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Spawn the rock(s). These handle their own rock particle visuals.
             if (Main.myPlayer == Owner.whoAmI)
             {
-                int numberOfExistingRocks = PunctusRock.PassiveRocks(Owner);
+                int numberOfExistingRocks = 0;
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (!Main.projectile[i].active || Main.projectile[i].owner != Owner.whoAmI || Main.projectile[i].type != ModContent.ProjectileType<PunctusRock>() || Main.projectile[i].ModProjectile is not PunctusRock rock)
+                        continue;
+
+                    if (rock.CurrentState is State.Circling or State.Aiming && rock.HasDoneInitialGlow)
+                    {
+                        rock.Timer = 0;
+                        rock.Projectile.timeLeft = CircleLength;
+                        numberOfExistingRocks++;
+                    }
+                }
+
                 bool anyRocksCreated = false;
                 // If there isnt already 6 rocks, and is a left click throw, spawn a rock and update the amount of existing ones.
                 if (numberOfExistingRocks < MaxCirclingRocks && CurrentMode is not UseMode.RockThrow)

@@ -294,10 +294,13 @@ namespace InfernumMode.Content.Projectiles.Melee
                     if (!Main.projectile[i].active || Main.projectile[i].owner != Owner.whoAmI || Main.projectile[i].type != ModContent.ProjectileType<PunctusRock>() || Main.projectile[i].ModProjectile is not PunctusRock rock)
                         continue;
 
-                    if (rock.CurrentState is State.Circling or State.Aiming && rock.HasDoneInitialGlow)
+                    if (rock.CurrentState is State.Circling or State.Aiming)
                     {
-                        rock.Timer = 0;
-                        rock.Projectile.timeLeft = CircleLength;
+                        if (rock.HasDoneInitialGlow)
+                        {
+                            rock.Timer = 0;
+                            rock.Projectile.timeLeft = CircleLength;
+                        }
                         numberOfExistingRocks++;
                     }
                 }

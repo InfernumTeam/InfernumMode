@@ -41,9 +41,9 @@ namespace InfernumMode.Content.Credits
 
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
-        private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4 };
+        private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators };
 
-        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers" };
+        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators" };
 
         private static readonly Color[] HeaderColors =
         {
@@ -53,7 +53,8 @@ namespace InfernumMode.Content.Credits
             new(0, 148, 75),
             new(0, 148, 75),
             new(0, 148, 75),
-            new(0, 148, 75)
+            new(0, 148, 75),
+            new(246, 188, 49)
         };
 
         private static readonly ScreenCapturer.RecordingBoss[] Bosses =
@@ -62,6 +63,7 @@ namespace InfernumMode.Content.Credits
             ScreenCapturer.RecordingBoss.WoF,
             ScreenCapturer.RecordingBoss.Calamitas,
             ScreenCapturer.RecordingBoss.Vassal,
+            ScreenCapturer.RecordingBoss.Moonlord,
             ScreenCapturer.RecordingBoss.Provi,
             ScreenCapturer.RecordingBoss.Draedon,
             ScreenCapturer.RecordingBoss.SCal
@@ -86,7 +88,7 @@ namespace InfernumMode.Content.Credits
             }
         }
 
-        public const int TotalGIFs = 7;
+        public const int TotalGIFs = 8;
 
         public const string Artists = "Arix\nFreeman\nIbanPlay\nPengolin\nReika\nSpicySpaceSnake";
 
@@ -101,6 +103,8 @@ namespace InfernumMode.Content.Credits
         public const string Testers3 = "LGL\nNutella\nMatthionine\nMyra\nPiky";
 
         public const string Testers4 = "PurpleMattikSmh\nShade\nShadine\nTeiull";
+
+        public const string Translators = "Dimension Translate Group\nMyawk\nZavthenovakid";
 
         public override void Load()
         {
@@ -142,7 +146,7 @@ namespace InfernumMode.Content.Credits
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
-            if (CreditsPlaying || Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed"))
+            if (CreditsPlaying)// || Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed"))
                 return;
 
             // Else, mark them as playing.

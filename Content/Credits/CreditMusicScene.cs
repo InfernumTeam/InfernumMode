@@ -6,7 +6,7 @@ namespace InfernumMode.Content.Credits
 {
     public class CreditMusicScene : ModSceneEffect
     {
-        public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
+        public override SceneEffectPriority Priority => (SceneEffectPriority)25;
 
         public override int Music => SetMusic();
 

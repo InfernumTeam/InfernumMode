@@ -20,6 +20,8 @@ using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
+using InfernumMode.Content.Credits;
+using InfernumMode.Common.Graphics.AttemptRecording;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -519,6 +521,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             if (npc.Infernum().ExtraAI[8] == 0f && lifeRatio < Phase3LifeRatio)
             {
                 npc.ai[0] = (int)MoonLordAttackState.VoidAccretionDisk;
+                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Moonlord);
                 npc.Infernum().ExtraAI[8] = 1f;
                 npc.Infernum().ExtraAI[7] = 0f;
             }

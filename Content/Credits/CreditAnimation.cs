@@ -112,17 +112,17 @@ namespace InfernumMode.Content.Credits
         {
             // Split up the names into new lines per name.
             IEnumerable<string> cutUpString = Names.Split("\n").Prepend(Header);
+
             // Get the height. This is done for the first one only, so the gap inbetween each name is the same.
             float stringHeight = FontAssets.DeathText.Value.MeasureString(cutUpString.ElementAt(0)).Y;
 
             for (int i = 0; i < cutUpString.Count(); i++)
             {
-                float stringWidth = FontAssets.DeathText.Value.MeasureString(cutUpString.ElementAt(i)).X * 0.5f;
-
                 // Get the draw position using the text center, and offseting the Y position based on the number of names to center it. The latter half calculates the distance travelled by velocity.
                 Vector2 drawPos = new(TextCenter.X, Main.screenHeight * (0.5f - 0.02f * cutUpString.Count()) - (Main.screenHeight * 0.5f - TextCenter.Y));
-                // Center the text and lower it based on its position in the name list.
-                drawPos += new Vector2(-stringWidth * 0.5f, stringHeight * 0.9f * i);
+                // Lower the text based on its position in the name list.
+                drawPos.Y += stringHeight * 0.9f * i;
+
                 Color textColor = Color.White;
 
                 // The backglow alternates throughout every color.
@@ -132,8 +132,9 @@ namespace InfernumMode.Content.Credits
 
                 Color backglowColor = Main.hslToRgb(hue, 1f, 0.5f);
                 Vector2 scale = Vector2.One * 0.8f;
+
                 // Properly center the text.
-                Vector2 origin = new(stringWidth * 0.5f, stringHeight * 0.5f);
+                Vector2 origin = FontAssets.DeathText.Value.MeasureString(cutUpString.ElementAt(i)) * 0.5f;
 
                 // The header has some attributes changed to make it stand out from the names.
                 if (i is 0)

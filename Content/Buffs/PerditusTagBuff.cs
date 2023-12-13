@@ -28,8 +28,10 @@ namespace InfernumMode.Content.Buffs
 
             // SummonTagDamageMultiplier scales down tag damage for some specific minion and sentry projectiles for balance purposes.
             var projTagMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
-            if (npc.HasBuff<PerditusTagBuff>())
-                modifiers.FlatBonusDamage += TagDamage * projTagMultiplier;
+            if (!npc.HasBuff<PerditusTagBuff>())
+                return;
+
+            modifiers.FlatBonusDamage += TagDamage * projTagMultiplier;
 
             if (Main.rand.Next(0, 101) < CritChance)
                 modifiers.SetCrit();

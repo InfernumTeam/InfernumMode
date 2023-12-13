@@ -298,8 +298,8 @@ namespace InfernumMode.Content.Projectiles.Melee
                     {
                         if (rock.HasDoneInitialGlow)
                         {
-                            rock.Timer = 0;
-                            rock.Projectile.timeLeft = CircleLength;
+                            rock.Timer = rock.CurrentState is State.Circling ? 300 : CircleLength - 300f;
+                            rock.Projectile.timeLeft = rock.CurrentState is State.Circling ? CircleLength : 300;
                         }
                         numberOfExistingRocks++;
                     }

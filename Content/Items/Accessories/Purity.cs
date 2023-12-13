@@ -89,7 +89,7 @@ namespace InfernumMode.Content.Items.Accessories
             Item.Infernum_Tooltips().DeveloperItem = true;
         }
 
-        public override void UpdateAccessory(Player player, bool hideVisual) => player.Infernum().SetValue<bool>("Purity", true);
+        public override void UpdateAccessory(Player player, bool hideVisual) => player.Infernum().SetValue<bool>(FieldName, true);
 
         public override void AddRecipes()
         {

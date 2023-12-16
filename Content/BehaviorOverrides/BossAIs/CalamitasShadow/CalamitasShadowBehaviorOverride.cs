@@ -2188,7 +2188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override bool CheckDead(NPC npc)
         {
-            if (npc.ai[0] != (int)CalShadowAttackType.DeathAnimation)
+            if ((npc.ai[0] != (int)CalShadowAttackType.DeathAnimation))
             {
                 // Delete all old projectiles.
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<ArcingBrimstoneDart>(), ModContent.ProjectileType<DarkMagicFlame>());
@@ -2200,6 +2200,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 npc.active = true;
                 npc.netUpdate = true;
             }
+
+            // Account for MP latency. This is 100% a problem for more things than just this but I really do not give a shit.
+            if (npc.ai[0] == (int)CalShadowAttackType.DeathAnimation && npc.ai[1] < 10)
+            {
+                npc.life = 1;
+                npc.dontTakeDamage = true;
+                npc.active = true;
+                npc.netUpdate = true;
+            }
+
             return false;
         }
         #endregion Death Effects

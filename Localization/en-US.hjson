@@ -1529,6 +1529,11 @@ Mods: {
 					[c/ffbf49:An unholy spear found only among the most devout and powerful of her followers]
 					'''
 			}
+
+			ProfanedTempleBackgroundWall: {
+				DisplayName: Profaned Temple Background Wall
+				Tooltip: ""
+			}
 		}
 
 		Keybinds: {

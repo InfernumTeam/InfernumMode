@@ -1529,6 +1529,11 @@ Mods: {
 					[c/ffbf49:一把秽色之矛，仅能从她那最为虔诚、最为强大的追随者身上找到]
 					'''
 			}
+
+			ProfanedTempleBackgroundWall: {
+				// DisplayName: Profaned Temple Background Wall
+				// Tooltip: ""
+			}
 		}
 
 		Keybinds: {

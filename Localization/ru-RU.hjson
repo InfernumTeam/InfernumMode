@@ -1531,6 +1531,11 @@ Mods: {
 					   
 					'''
 			}
+
+			ProfanedTempleBackgroundWall: {
+				// DisplayName: Profaned Temple Background Wall
+				// Tooltip: ""
+			}
 		}
 
 		Keybinds: {

@@ -51,6 +51,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             // Despawn if Apollo is not present.
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
             {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    npc.timeLeft -= 100;
+                    if (npc.timeLeft < 100)
+                    {
+                        npc.life = 0;
+                        npc.HitEffect();
+                        npc.active = false;
+                    }
+                    return false;
+                }
+
                 npc.life = 0;
                 npc.active = false;
                 return false;

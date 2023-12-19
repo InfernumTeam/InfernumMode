@@ -1,5 +1,4 @@
-﻿using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Core.GlobalInstances;
+﻿using InfernumMode.Core.GlobalInstances;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,8 +10,6 @@ namespace InfernumMode.Content.Buffs
         public const int TagDamage = 23;
 
         public const int CritChance = 10;
-
-        public override string Texture => InfernumTextureRegistry.InvisPath;
 
         public override void SetStaticDefaults() => BuffID.Sets.IsATagBuff[Type] = true;
 

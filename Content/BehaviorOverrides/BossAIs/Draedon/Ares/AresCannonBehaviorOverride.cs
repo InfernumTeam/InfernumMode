@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public abstract Color TelegraphBackglowColor { get; }
 
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<AresBody>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<AresBody>();
 
         #region AI
         public override bool PreAI(NPC npc)

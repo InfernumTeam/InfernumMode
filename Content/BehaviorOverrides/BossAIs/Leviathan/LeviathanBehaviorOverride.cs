@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
 
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<Anahita>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<Anahita>();
 
         public override void SetDefaults(NPC npc)
         {

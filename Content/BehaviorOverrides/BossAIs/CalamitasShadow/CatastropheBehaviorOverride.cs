@@ -11,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 {
     public class CatastropheBehaviorOverride : NPCBehaviorOverride
     {
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
 
         public override int NPCOverrideType => ModContent.NPCType<Catastrophe>();
 

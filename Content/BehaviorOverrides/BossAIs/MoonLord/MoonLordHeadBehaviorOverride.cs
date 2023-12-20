@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     {
         public override int NPCOverrideType => NPCID.MoonLordHead;
 
-        public override int? NPCIDToDeferToForTips => NPCID.MoonLordCore;
+        public override int? NPCTypeToDeferToForTips => NPCID.MoonLordCore;
 
         public override bool PreAI(NPC npc)
         {

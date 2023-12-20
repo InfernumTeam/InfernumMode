@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class SupremeCatastropheBehaviorOverride : NPCBehaviorOverride
     {
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<SCalNPC>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<SCalNPC>();
 
         public override int NPCOverrideType => ModContent.NPCType<SupremeCatastrophe>();
 

@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             AttackAnimation
         }
 
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<SCalNPC>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<SCalNPC>();
 
         public override int NPCOverrideType => ModContent.NPCType<SupremeCataclysm>();
 

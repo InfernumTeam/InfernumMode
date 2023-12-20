@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             set;
         } = new(-1, 12, 85f, Color.DeepSkyBlue);
 
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<CalCloneNPC>();
 
         public override int NPCOverrideType => ModContent.NPCType<Cataclysm>();
 

@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
     {
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianDefender>();
 
-        public override int? NPCIDToDeferToForTips => ModContent.NPCType<ProfanedGuardianCommander>();
+        public override int? NPCTypeToDeferToForTips => ModContent.NPCType<ProfanedGuardianCommander>();
 
         internal PrimitiveTrailCopy FireDrawer;
 

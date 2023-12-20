@@ -70,29 +70,31 @@ namespace InfernumMode.Core.OverridingSystem
         #endregion
 
         #region Abstracts/Virtuals
-        public virtual void Load() { }
-
-        public virtual void SendExtraData(NPC npc, ModPacket writer) { }
-
-        public virtual void ReceiveExtraData(NPC npc, BinaryReader reader) { }
+        public abstract int NPCOverrideType { get; }
 
         public virtual int? NPCIDToDeferToForTips => null;
 
         public virtual float[] PhaseLifeRatioThresholds => Array.Empty<float>();
 
-        public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
+        public virtual bool UseBossImmunityCooldownID => true;
 
-        public abstract int NPCOverrideType { get; }
+        public virtual void Load() { }
 
         public virtual void SetDefaults(NPC npc) { }
 
         public virtual bool PreAI(NPC npc) => true;
 
-        public virtual bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => true;
+        public virtual void SendExtraData(NPC npc, ModPacket writer) { }
+
+        public virtual void ReceiveExtraData(NPC npc, BinaryReader reader) { }
 
         public virtual void FindFrame(NPC npc, int frameHeight) { }
 
+        public virtual bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => true;
+
         public virtual bool CheckDead(NPC npc) => true;
+
+        public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
         #endregion
     }
 }

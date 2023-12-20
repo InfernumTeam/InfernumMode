@@ -249,8 +249,12 @@ namespace InfernumMode.Core.GlobalInstances
                 return base.CanHitPlayer(npc, target, ref cooldownSlot);
 
             bool isSepulcher = npc.type == ModContent.NPCType<SepulcherHead>() || npc.type == ModContent.NPCType<SepulcherBody>() || npc.type == ModContent.NPCType<SepulcherBodyEnergyBall>() || npc.type == ModContent.NPCType<SepulcherTail>();
-            if (npc.type == NPCID.KingSlime || npc.type == NPCID.Plantera || npc.type == ModContent.NPCType<PlaguebringerGoliath>() || npc.type == ModContent.NPCType<DarkEnergy>() || isSepulcher)
-                cooldownSlot = ImmunityCooldownID.Bosses;
+
+            if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
+            {
+                if (value.UseBossImmunityCooldownID)
+                    cooldownSlot = ImmunityCooldownID.Bosses;
+            }
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())
             {

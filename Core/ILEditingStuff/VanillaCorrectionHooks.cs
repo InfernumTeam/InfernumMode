@@ -1332,4 +1332,56 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
     }
+
+    public class VanillaProjectileImmunitySlotHook : IHookEdit
+    {
+        public static readonly List<int> VanillaBossProjectiles = new()
+        {
+            ProjectileID.QueenBeeStinger,
+            ProjectileID.DeathLaser,
+            ProjectileID.EyeLaser,
+            ProjectileID.Skull,
+            ProjectileID.SeedPlantera,
+            ProjectileID.PoisonSeedPlantera,
+            ProjectileID.MartianTurretBolt
+        };
+
+        public static bool ConvertNextNonPVPHurtImmuneSlot
+        {
+            get;
+            private set;
+        }
+
+        public void Load()
+        {
+            On_Projectile.Damage += CheckProjectile;
+            On_Player.Hurt_PlayerDeathReason_int_int_refHurtInfo_bool_bool_int_bool_float_float_float += HurtDetour;
+        }
+
+        public void Unload()
+        {
+            On_Projectile.Damage -= CheckProjectile;
+            On_Player.Hurt_PlayerDeathReason_int_int_refHurtInfo_bool_bool_int_bool_float_float_float -= HurtDetour;
+        }
+
+        private double HurtDetour(On_Player.orig_Hurt_PlayerDeathReason_int_int_refHurtInfo_bool_bool_int_bool_float_float_float orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, out Player.HurtInfo info, bool pvp, bool quiet, int cooldownCounter, bool dodgeable, float armorPenetration, float scalingArmorPenetration, float knockback)
+        {
+            // If marked as ready, convert the cooldown slot to be the correct one.
+            if (!pvp && ConvertNextNonPVPHurtImmuneSlot)
+                cooldownCounter = ImmunityCooldownID.Bosses;
+
+            return orig(self, damageSource, Damage, hitDirection, out info, pvp, quiet, cooldownCounter, dodgeable, armorPenetration, scalingArmorPenetration, knockback);
+        }
+
+        private void CheckProjectile(On_Projectile.orig_Damage orig, Projectile self)
+        {
+            // If the current projectile is in the list, mark the conversion as ready.
+            if (VanillaBossProjectiles.Contains(self.type))
+                ConvertNextNonPVPHurtImmuneSlot = true;
+
+            // The hurt detour is ran in orig, so restore it to false after it has ran.
+            orig(self);
+            ConvertNextNonPVPHurtImmuneSlot = false;
+        }
+    }
 }

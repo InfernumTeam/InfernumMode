@@ -52,7 +52,7 @@ namespace InfernumMode.Content.Walls
 
             // Do some gamma correction stuff to give the lighting WAY more depth.
             Vector3 lightColorVec = Lighting.GetColor(i, j).ToVector3();
-            lightColorVec = lightColorVec.Pow3(2.5f);
+            lightColorVec = lightColorVec.Pow3(3f);
             Color lightColor = new(lightColorVec);
 
             // Draw the wall.

@@ -146,14 +146,6 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle MoonLordIntroSound = new("InfernumMode/Assets/Sounds/Custom/MoonLord/MoonLordIntro");
 
-        public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelHit") with { Volume = 1.8f };
-
-        public static readonly SoundStyle MyrindaelLightningSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelLightning") with { Volume = 0.4f, MaxInstances = 4 };
-
-        public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelSpin") with { Volume = 1.7f };
-
-        public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelThrow") with { Volume = 1.8f };
-
         public static readonly SoundStyle NuclearTerrorGroundSlamSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorGroundSlam");
 
         public static readonly SoundStyle NuclearTerrorJumpSound = new("InfernumMode/Assets/Sounds/Custom/NuclearTerror/NuclearTerrorJump");
@@ -287,6 +279,16 @@ namespace InfernumMode.Assets.Sounds
         public static readonly SoundStyle HyperplaneMatrixActivateSound = new("InfernumMode/Assets/Sounds/Item/HyperplaneMatrixActivate");
 
         public static readonly SoundStyle KevinElectricitySound = new("InfernumMode/Assets/Sounds/Item/KevinElectricity");
+
+        public static readonly SoundStyle MyrindaelHitSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelHit") with { Volume = 1.8f };
+
+        public static readonly SoundStyle MyrindaelLightningSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelLightning") with { Volume = 0.4f, MaxInstances = 4 };
+
+        public static readonly SoundStyle MyrindaelSpinSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelSpin") with { Volume = 1.7f };
+
+        public static readonly SoundStyle MyrindaelThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Custom/BereftVassal/MyrindaelThrow") with { Volume = 1.8f };
+
+        public static readonly SoundStyle PunctusThrowSound = new SoundStyle("InfernumMode/Assets/Sounds/Item/PunctusThrow") with { Volume = 1.5f };
 
         public static readonly SoundStyle WayfinderCreateSound = new("InfernumMode/Assets/Sounds/Item/WayfinderCreate");
 

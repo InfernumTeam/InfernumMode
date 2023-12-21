@@ -48,9 +48,9 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
                 Objects.Add(new DeusRockObject(
                     position: position,
                     velocity: velocity,
-                    scale: new(Main.rand.NextFloat(0.5f, 0.7f)),
+                    scale: new(Main.rand.NextFloat(0.55f, 0.8f)),
                     lifetime: Main.rand.Next(340, 550),
-                    depth: Main.rand.NextFloat(1.5f, 4f),
+                    depth: Main.rand.NextFloat(1.5f, 2.2f),
                     rotation: 0f,
                     rotationSpeed: Main.rand.NextFloat(-0.01f, 0.01f)));
             }

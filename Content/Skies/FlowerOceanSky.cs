@@ -1,5 +1,6 @@
 ﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
@@ -139,6 +140,10 @@ namespace InfernumMode.Content.Skies
         {
             // Only draw at night time.
             if (Main.dayTime)
+                return;
+
+            // If either of these are drawing, don't.
+            if (AstralDimensionSystem.MonolithIntensity >= 1f || CosmicBackgroundSystem.MonolithIntensity >= 1f)
                 return;
 
             // Draw the sky and moon.

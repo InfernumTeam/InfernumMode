@@ -45,7 +45,7 @@ namespace InfernumMode.Content.Walls
             // Offset the frame position.
             Vector2 frameOffset = AdditionalOffset(i, j) + Main.screenPosition;
             // Get a 16x16 frame from the texture using the offset and parallax depth to make it move with the player.
-            Rectangle frame = new((i * 16 + (int)(frameOffset.X / ParallaxDepth)) % (width * 16), (j * 16 + (int)(frameOffset.Y / ParallaxDepth)) % (height * 16), 16, 16);
+            Rectangle frame = new((int)((i * 16 + (frameOffset.X / ParallaxDepth)) % (width * 16)), (int)((j * 16 + (frameOffset.Y / ParallaxDepth)) % (height * 16)), 16, 16);
 
             // Do some gamma correction stuff to give the lighting WAY more depth.
             Vector3 lightColorVec = Lighting.GetColor(i, j).ToVector3();

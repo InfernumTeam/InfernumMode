@@ -3,6 +3,7 @@ using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
@@ -159,8 +160,8 @@ namespace InfernumMode.Content.Projectiles.Melee
 
                 // Don't bother playing this for other players, it's only useful for the owner.
                 // Also, don't play it if neither mouse button is being held.
-                if (Timer == PullbackLength && (Owner.channel || Owner.Calamity().mouseRight))
-                    SoundEngine.PlaySound(SoundID.Item29 with { Pitch = -0.1f }, Owner.Center);
+                //if (Timer == PullbackLength && (Owner.channel || Owner.Calamity().mouseRight))
+                //    SoundEngine.PlaySound(SoundID.Item29 with { Pitch = -0.1f }, Owner.Center);
             }
 
             // Calculate rotation, and set the player's arm to look as if its holding the spear.
@@ -204,9 +205,12 @@ namespace InfernumMode.Content.Projectiles.Melee
 
                     // Restore the players arm.
                     Owner.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0f);
-                    
+
+                    SoundEngine.PlaySound(InfernumSoundRegistry.PunctusThrowSound with { Volume = 0.5f, Pitch = 0.2f }, Owner.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with { Volume = 1f, Pitch = -0.2f }, Owner.Center);
+
                     // Determine whether the spear should home. 3 rocks must be circling, and it must be a normal throw.
-                    int circlingRocks = PunctusRock.PassiveRocks(Owner);
+                    int circlingRocks = PassiveRocks(Owner);
                     if (circlingRocks >= MinRocksForHoming && CurrentMode is UseMode.NormalThrow)
                         ShouldHome = true;
 
@@ -228,6 +232,17 @@ namespace InfernumMode.Content.Projectiles.Melee
             // Check whether the timer can be reset, to handle it overflowing (VERY unlikely to happen ever regardless but yeah).
             if (Timer == 3f)
                 Owner.GetModPlayer<PunctusPlayer>().CheckToResetTimer = true;
+
+            Lighting.AddLight(Projectile.Center, WayfinderSymbol.Colors[1].ToVector3());
+
+            // Release anime-like streak particle effects at the side of the spear to indicate motion.
+            if (Timer % 3 == 2 || Main.rand.NextBool(3))
+            {
+                Vector2 energySpawnPosition = Projectile.Center + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 2f;
+                Vector2 energyVelocity = -Projectile.velocity.SafeNormalize(Vector2.UnitX * Projectile.direction) * Main.rand.NextFloat(4f, 6.75f);
+                Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.35f, 0.5f), Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[2], Main.rand.NextFloat()), 30, 0.5f, 4.5f, 3f);
+                GeneralParticleHandler.SpawnParticle(energyLeak);
+            }
 
             // Only home if it should.
             if (!ShouldHome)
@@ -379,7 +394,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             {
                 Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(1f, 5f);
                 Color sparkColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat(0.4f, 1f));
-                GeneralParticleHandler.SpawnParticle(new SparkParticle(spearTip, sparkVelocity, false, 60, 2f * scaleModifier, sparkColor));
+                GeneralParticleHandler.SpawnParticle(new SparkParticle(spearTip, sparkVelocity, false, 40, 2f * scaleModifier, sparkColor));
             }
         }
 
@@ -427,17 +442,18 @@ namespace InfernumMode.Content.Projectiles.Melee
             SpriteEffects direction = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             // Draw some backglow if the next shot can be homing, or will create extra rocks.
-            int rockTotal = PunctusRock.PassiveRocks(Owner);
+            int rockTotal = PassiveRocks(Owner);
+            float glowDistance = 2f;
             if ((CurrentMode is UseMode.NormalThrow && rockTotal >= MinRocksForHoming && CurrentState is not UseState.Aiming) || (CurrentMode is UseMode.RockThrow && rockTotal == MaxCirclingRocks))
+                glowDistance = 4f;
+
+            float backglowAmount = 12f;
+            for (int i = 0; i < backglowAmount; i++)
             {
-                float backglowAmount = 12f;
-                for (int i = 0; i < backglowAmount; i++)
-                {
-                    Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * 4f * Utilities.Saturate(Timer / 10f);
-                    Color backglowColor = WayfinderSymbol.Colors[1];
-                    backglowColor.A = 0;
-                    Main.spriteBatch.Draw(spear, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, spear.Size() * 0.5f, Projectile.scale, direction, 0);
-                }
+                Vector2 backglowOffset = (TwoPi * i / backglowAmount).ToRotationVector2() * glowDistance * Utilities.Saturate(Timer / 10f);
+                Color backglowColor = WayfinderSymbol.Colors[1];
+                backglowColor.A = 0;
+                Main.spriteBatch.Draw(spear, drawPosition + backglowOffset, null, backglowColor * Projectile.Opacity, Projectile.rotation, spear.Size() * 0.5f, Projectile.scale, direction, 0);
             }
 
             // Apply a tint to the spear to indicate it can be fired, along with the sound played.
@@ -447,8 +463,8 @@ namespace InfernumMode.Content.Projectiles.Melee
                 Main.spriteBatch.EnterShaderRegion();
 
                 float shiftAmount = Utils.GetLerpValue(PullbackLength, PullbackLength + TintLength * 0.75f, Timer, true) * Utils.GetLerpValue(PullbackLength + TintLength * 2f, PullbackLength + TintLength * 1.25f, Timer, true);
-                InfernumEffectsRegistry.BasicTintShader.UseSaturation(shiftAmount);
-                InfernumEffectsRegistry.BasicTintShader.UseOpacity(lightColor.ToGreyscale());
+                InfernumEffectsRegistry.BasicTintShader.UseSaturation(Lerp(0f, 0.55f, CalamityUtils.CircInEasing(shiftAmount, 1)));
+                InfernumEffectsRegistry.BasicTintShader.UseOpacity(1f);
                 InfernumEffectsRegistry.BasicTintShader.UseColor(WayfinderSymbol.Colors[0]);
                 InfernumEffectsRegistry.BasicTintShader.Apply();
             }

@@ -1346,6 +1346,12 @@ namespace InfernumMode.Core.ILEditingStuff
             ProjectileID.MartianTurretBolt
         };
 
+        // IDK why she uses normal stingers for some atttacks but I'd rather do this than change it now.
+        public static readonly Dictionary<int, Func<bool>> VanillaProjectilesWithConditions = new()
+        {
+            [ProjectileID.Stinger] = () => { return NPC.AnyNPCs(NPCID.QueenBee); }
+        };
+
         public static bool ConvertNextNonPVPHurtImmuneSlot
         {
             get;
@@ -1376,7 +1382,7 @@ namespace InfernumMode.Core.ILEditingStuff
         private void CheckProjectile(On_Projectile.orig_Damage orig, Projectile self)
         {
             // If the current projectile is in the list, mark the conversion as ready.
-            if (VanillaBossProjectiles.Contains(self.type))
+            if (VanillaBossProjectiles.Contains(self.type) || (VanillaProjectilesWithConditions.TryGetValue(self.type, out var condition) && condition()))
                 ConvertNextNonPVPHurtImmuneSlot = true;
 
             // The hurt detour is ran in orig, so restore it to false after it has ran.

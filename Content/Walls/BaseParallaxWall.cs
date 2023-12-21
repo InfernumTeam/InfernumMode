@@ -1,5 +1,4 @@
-﻿using InfernumMode.Core.GlobalInstances.Systems;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
@@ -31,6 +30,10 @@ namespace InfernumMode.Content.Walls
 
             WallTexture = ModContent.Request<Texture2D>(Texture, AssetRequestMode.ImmediateLoad);
         }
+
+        public override bool CanExplode(int i, int j) => false;
+
+        public override void KillWall(int i, int j, ref bool fail) => fail = true;
 
         public sealed override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {

@@ -7,7 +7,6 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
-using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
@@ -18,7 +17,6 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Humanizer.In;
 using static InfernumMode.Content.Projectiles.Melee.PunctusRock;
 
 namespace InfernumMode.Content.Projectiles.Melee

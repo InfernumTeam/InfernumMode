@@ -124,6 +124,10 @@ namespace InfernumMode.Content.Tiles.Profaned
                 }
                 WorldSaveSystem.HasProvidenceDoorShattered = true;
 
+                // Stop the loop sound.
+                if (SoundEngine.TryGetActiveSound(ShimmerID, out var sound))
+                    sound.Stop();
+
                 if (Main.netMode != NetmodeID.SinglePlayer)
                     PacketManager.SendPacket<ProfanedTempleDoorOpenPacket>();
                 shatterTimer = 0;

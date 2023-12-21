@@ -158,8 +158,6 @@ namespace InfernumMode.Content.Tiles.Misc
             Vector2 origin = frame.Size() / 2f;
             Vector2 worldPos = p.ToWorldCoordinates(16, 5);
 
-            Color color = Lighting.GetColor(p.X, p.Y);
-
             bool direction = tile.TileFrameY / FrameHeight != 0; // This is related to the alternate tile data we registered before
 
             SpriteEffects effects = direction ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -167,15 +165,15 @@ namespace InfernumMode.Content.Tiles.Misc
             Vector2 drawPos = worldPos + offScreen - Main.screenPosition;
 
             // Draw the main texture
-            spriteBatch.Draw(texture, drawPos, frame, color, 0f, origin, 1f, effects, 0f);
+            spriteBatch.Draw(texture, drawPos, frame, Color.White, 0f, origin, 1f, effects, 0f);
 
-            // Draw the periodic glow effect
-            //float scale = Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f + 0.7f;
-            //Color effectColor = color;
-            //effectColor.A = 0;
-            //effectColor = effectColor * 0.1f * scale;
-            //for (float interpolant = 0f; interpolant < 1f; interpolant += 1f / 16f)
-            //    spriteBatch.Draw(texture, drawPos + (TwoPi * interpolant).ToRotationVector2() * (6f + offset * 2f), frame, effectColor, 0f, origin, 1f, effects, 0f);
+            //Draw the periodic glow effect
+            float scale = Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f + 0.7f;
+            Color effectColor = Color.White;
+            effectColor.A = 0;
+            effectColor = effectColor * 0.05f * scale;
+            for (float interpolant = 0f; interpolant < 1f; interpolant += 1f / 16f)
+                spriteBatch.Draw(texture, drawPos + (TwoPi * interpolant).ToRotationVector2() * 1f, frame, effectColor, 0f, origin, 1f, effects, 0f);
         }
     }
 }

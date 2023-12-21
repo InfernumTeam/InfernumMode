@@ -249,8 +249,9 @@ namespace InfernumMode.Core.GlobalInstances
             // Exceptions that do not have behavior overrides but exist in the fight still.
             bool isSepulcher = npc.type == ModContent.NPCType<SepulcherHead>() || npc.type == ModContent.NPCType<SepulcherBody>() || npc.type == ModContent.NPCType<SepulcherBodyEnergyBall>() || npc.type == ModContent.NPCType<SepulcherTail>();
             bool isWofNPC = npc.type is NPCID.LeechHead or NPCID.LeechBody or NPCID.LeechTail or NPCID.TheHungry or NPCID.TheHungryII;
+            bool isBee = (npc.type is NPCID.Bee or NPCID.BeeSmall) && NPC.AnyNPCs(NPCID.QueenBee);
 
-            if ((NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value) && value.UseBossImmunityCooldownID) || isSepulcher || isWofNPC)
+            if ((NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value) && value.UseBossImmunityCooldownID) || isSepulcher || isWofNPC || isBee)
                 cooldownSlot = ImmunityCooldownID.Bosses;
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())

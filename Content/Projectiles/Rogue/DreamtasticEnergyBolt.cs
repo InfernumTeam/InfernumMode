@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Items.Weapons.Rogue;
@@ -101,6 +102,63 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 Time++;
         }
 
+        public override bool? CanHitNPC(NPC target) => !HasHitTarget;
+
+        public override bool CanHitPlayer(Player target) => !HasHitTarget;
+
+        public override bool CanHitPvp(Player target) => !HasHitTarget;
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (!HasHitTarget)
+            {
+                Projectile.velocity *= 0.8f;
+                HasHitTarget = true;
+                Projectile.netUpdate = true;
+
+                if (Main.netMode is NetmodeID.Server)
+                    return;
+
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 position = Main.rand.NextVector2FromRectangle(target.Hitbox);
+                    Vector2 velocity = target.SafeDirectionTo(position) * Main.rand.NextFloat(1f, 3f);
+                    Color color = MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
+
+                    if (Main.rand.NextBool())
+                       GeneralParticleHandler.SpawnParticle(new SparkleParticle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
+                    else
+                       GeneralParticleHandler.SpawnParticle(new GenericSparkle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
+
+                    if (Main.rand.NextBool())
+                        GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(position, velocity * 1.3f, Main.rand.NextFloat(0.3f, 0.55f), color, 40, 1.5f, 2f, 3f, 0.04f));
+
+                }
+
+                Color color2 = MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
+                GeneralParticleHandler.SpawnParticle(new StrongBloom(Main.rand.NextVector2FromRectangle(target.Hitbox), Vector2.Zero, color2 * 0.6f, Main.rand.NextFloat(0.7f, 1.1f), 30));
+            }
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 position = Projectile.Center + Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f);
+                Color color = Color.Lerp(Color.Cyan, Color.Fuchsia, Main.rand.NextFloat(1f));
+                Color bloomColor = Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.5f));
+                CritSpark spark = new(position, Projectile.Center.DirectionTo(position) * Main.rand.NextFloat(3f, 5f), color, bloomColor, Main.rand.NextFloat(0.5f, 0.7f), Main.rand.Next(25, 35));
+                GeneralParticleHandler.SpawnParticle(spark);
+            }
+
+            //Vector2 scale = Vector2.One * Main.rand.NextFloat(2.7f, 3f);
+            //Color color2 = Color.HotPink;
+            //Color bloomColor2 = Color.Lerp(color2, Color.White, Main.rand.NextFloat(0.3f, 0.5f));
+            ////GeneralParticleHandler.SpawnParticle(new FlareShine(Projectile.Center, Vector2.Zero, color2, bloomColor2, 0f, scale, Vector2.Zero, 50, bloomScale: 5f));
+            //GeneralParticleHandler.SpawnParticle(new StrongBloom(Projectile.Center, Vector2.Zero, color2 * 0.6f, Main.rand.NextFloat(0.3f, 0.6f), 30));
+
+        }
+
         public float TrailWidth(float completionRatio)
         {
             float tipInterpolant = Sqrt(1f - Pow(Utils.GetLerpValue(0.3f, 0f, completionRatio, true), 2f));
@@ -112,16 +170,6 @@ namespace InfernumMode.Content.Projectiles.Rogue
         {
             float colorInterpolant = completionRatio;
             return Color.Lerp(Color.Fuchsia, Color.Cyan, colorInterpolant) * Utils.GetLerpValue(1.2f, 5f, Projectile.velocity.Length(), true);
-        }
-
-        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
-        {
-            if (!HasHitTarget)
-            {
-                Projectile.velocity *= 0.8f;
-                HasHitTarget = true;
-                Projectile.netUpdate = true;
-            }
         }
 
         public override bool PreDraw(ref Color lightColor)

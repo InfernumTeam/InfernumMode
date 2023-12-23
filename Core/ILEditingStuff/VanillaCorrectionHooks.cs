@@ -11,6 +11,7 @@ using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.Systems;
@@ -1335,7 +1336,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class VanillaProjectileImmunitySlotHook : IHookEdit
     {
-        public static readonly List<int> VanillaBossProjectiles = new()
+        public static List<int> VanillaBossProjectiles => new()
         {
             ProjectileID.QueenBeeStinger,
             ProjectileID.DeathLaser,
@@ -1343,7 +1344,9 @@ namespace InfernumMode.Core.ILEditingStuff
             ProjectileID.Skull,
             ProjectileID.SeedPlantera,
             ProjectileID.PoisonSeedPlantera,
-            ProjectileID.MartianTurretBolt
+            ProjectileID.MartianTurretBolt,
+            // It shouldn't really be using this but Giant Clam has a lot worse issues than this.
+            ModContent.ProjectileType<PearlRain>()
         };
 
         // IDK why she uses normal stingers for some atttacks but I'd rather do this than change it now.

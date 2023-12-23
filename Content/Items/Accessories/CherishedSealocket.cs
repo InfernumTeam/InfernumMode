@@ -1,8 +1,10 @@
 ﻿using CalamityMod;
 using CalamityMod.Items;
 using InfernumMode.Common.DataStructures;
+using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Content.Cooldowns;
 using InfernumMode.Content.Rarities.InfernumRarities;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -65,7 +67,7 @@ namespace InfernumMode.Content.Items.Accessories
                 // Apply the recharge cooldown if all hits have been exhausted.
                 if (remainingHits.Value <= 0 && !hasCooldown)
                 {
-                    player.Player.AddCooldown(SealocketForcefieldRecharge.ID, CalamityUtils.SecondsToFrames(ForcefieldRechargeSeconds));
+                    player.Player.AddCooldown(SealocketForcefieldRecharge.ID, CalamityUtils.SecondsToFrames(2));//ForcefieldRechargeSeconds));
                     remainingHits.Value = MaxHighDRHits;
                 }
 
@@ -97,6 +99,25 @@ namespace InfernumMode.Content.Items.Accessories
                     remainingHits.Value--;
                     // Play a custom water wobble effect.
                     SoundEngine.PlaySound(SoundID.Item130, player.Player.Center);
+                    SoundEngine.PlaySound(SoundID.SplashWeak with { PitchVariance = 0.5f, Volume = 1.75f }, player.Player.Center);
+
+                    bool finalHit = remainingHits.Value == 0;
+
+                    int amount = 75;
+                    if (InfernumConfig.Instance.ReducedGraphicsConfig)
+                        amount /= 2;
+
+                    float velocityCap = 3f;
+                    float sizeModifier = 0.75f;
+
+                    Vector2 position = player.Player.Center;
+                    for (int i = 0; i < amount; i++)
+                    {
+                        Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0f, velocityCap);
+                        velocity.Y -= 3;
+                        Vector2 size = new Vector2(Main.rand.NextFloat(0.9f, 1.1f), Main.rand.NextFloat(0.9f, 1.1f)) * Main.rand.NextFloat(36f, 45f) * sizeModifier;
+                        ModContent.GetInstance<WaterMetaball>().SpawnParticle(position, velocity, size, Main.rand.NextFloat(0.93f, 0.94f));
+                    }
                 }
             };
         }

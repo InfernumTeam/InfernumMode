@@ -102,12 +102,6 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 Time++;
         }
 
-        public override bool? CanHitNPC(NPC target) => !HasHitTarget;
-
-        public override bool CanHitPlayer(Player target) => !HasHitTarget;
-
-        public override bool CanHitPvp(Player target) => !HasHitTarget;
-
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!HasHitTarget)

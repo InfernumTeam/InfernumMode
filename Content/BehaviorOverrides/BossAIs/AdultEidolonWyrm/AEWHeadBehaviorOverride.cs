@@ -250,9 +250,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             bool targetNeedsDeath = superEnrageTimer >= 1f || target.chaosState;
 
-            // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
-            target.breath = target.breathMax;
-            target.ignoreWater = true;
+
 
             // Give targets infinite flight time.
             for (int i = 0; i < Main.maxPlayers; i++)
@@ -261,6 +259,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
                     continue;
 
+                // Disable obnoxious water mechanics so that the player can fight the boss without interruption.
+                player.breath = player.breathMax;
+                player.ignoreWater = true;
                 player.DoInfiniteFlightCheck(Color.DeepSkyBlue);
             }
 

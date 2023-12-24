@@ -89,6 +89,9 @@ namespace InfernumMode.Core.GlobalInstances
                 if (projectile.type == ModContent.ProjectileType<TrilobiteSpike>())
                     projectile.ModProjectile.CooldownSlot = 1;
 
+                // Why the FUCK does this exist. No one cares or does the "stealth" system in the abyss.
+                projectile.Calamity().overridesMinionDamagePrevention = true;
+
                 if (ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
                     return value.PreAI(projectile);
             }

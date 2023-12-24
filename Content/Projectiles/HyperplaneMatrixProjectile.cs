@@ -423,8 +423,7 @@ namespace InfernumMode.Content.Projectiles
 
         public static Color RayColorFunction(float completionRatio)
         {
-            float opacity = Filters.Scene["InfernumMode:ScreenSaturationBlur"].IsActive() ? 0.1f : 0.3f;
-            return Color.Cyan * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * opacity;
+            return Color.Cyan * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * 0.3f;
         }
 
         public override bool PreDraw(ref Color lightColor)

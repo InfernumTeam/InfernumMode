@@ -101,11 +101,12 @@ namespace InfernumMode.Core.ILEditingStuff
             GoreID.CultistBoss1,
             GoreID.CultistBoss2,
 
-            // Deerclops,
+            // Deerclops.
             GoreID.DeerclopsHead,
             GoreID.DeerclopsAntler,
             GoreID.DeerclopsBody,
             GoreID.DeerclopsLeg,
+            GoreID.DeerclopsArm,
 
             // Empress of Light.
             GoreID.HallowBoss1,
@@ -115,6 +116,44 @@ namespace InfernumMode.Core.ILEditingStuff
             GoreID.HallowBoss5,
             GoreID.HallowBoss6,
             GoreID.HallowBoss7,
+
+            // King Slime.
+            GoreID.KingSlimeCrown,
+
+            // Skeletron. Yes these do not have gore IDs. I do not know why the IDs are incomplete.
+            54,
+            55,
+
+            // Retinazer.
+            143,
+            146,
+            
+            // Spazmatism.
+            144,
+            145,
+
+            // Brimstone Elemental.
+            InfernumMode.CalamityMod.Find<ModGore>("BrimstoneGore1").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("BrimstoneGore2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("BrimstoneGore3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("BrimstoneGore4").Type,
+
+            // Guardian healer.
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossH").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossH2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossH3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossH4").Type,
+
+            // Guardian defender.
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossT").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossT2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossT3").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("ProfanedGuardianBossT4").Type,
+
+            // Ceaseless void.
+            InfernumMode.CalamityMod.Find<ModGore>("CeaselessVoid").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("CeaselessVoid2").Type,
+            InfernumMode.CalamityMod.Find<ModGore>("CeaselessVoid3").Type,
         };
 
         internal static Dictionary<int, int> ReplacementTable = new()

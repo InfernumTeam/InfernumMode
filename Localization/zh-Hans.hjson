@@ -97,7 +97,7 @@ Mods: {
 					Description:
 						'''
 						女巫的罪孽永远无法偿还
-						[c/777777:在地狱击败遗落灾影]
+						[c/777777:在地狱击败灾厄遗影]
 						'''
 				}
 
@@ -277,7 +277,7 @@ Mods: {
 
 			PerditusTagBuff: {
 				DisplayName: 失落长汐标记
-				Description: 标记且潮湿
+				Description: 被标记且潮湿
 			}
 		}
 
@@ -766,7 +766,7 @@ Mods: {
 			}
 
 			BrimstoneCrescentStaff: {
-				DisplayName: 硫火新月法杖
+				DisplayName: 硫火新月杖
 				Tooltip:
 					'''
 					使用法杖可生成一个强大的立场，其会提供独立的60%伤害减免
@@ -856,7 +856,7 @@ Mods: {
 			}
 
 			SuspiciouslyRoundFeather: {
-				DisplayName: 可疑的圆羽毛
+				DisplayName: 可疑的圆羽
 				Tooltip: 召唤一个老朋友
 			}
 
@@ -1041,7 +1041,7 @@ Mods: {
 			}
 
 			ForgottenShadowOfCalamitasRelic: {
-				DisplayName: 遗落灾影炼狱圣物
+				DisplayName: 灾厄遗影炼狱圣物
 				Tooltip: GetsChanged
 			}
 
@@ -1268,8 +1268,8 @@ Mods: {
 				DisplayName: 唤海符石
 				Tooltip:
 					'''
-					在深渊底层召唤成年幻海妖龙
-					此乃原初之神创造的远古神器，其可用于召唤一个幽灵守卫
+					在深渊底层召唤始源妖龙
+					据说这是原初之神所创造的远古神器，其可用于召唤一个幽灵守卫
 					不消耗
 					'''
 			}
@@ -1354,8 +1354,8 @@ Mods: {
 				TooltipEffect:
 					'''
 					长按鼠标左键来传送到魔法门
-					长按鼠标左键的同时按{0}在你的位置创造一个魔法门
-					长按鼠标左键的同时按{1}来移除魔法门
+					长按鼠标左键的同时按住{0}在你的位置创造一个魔法门
+					长按鼠标左键的同时按住{1}来移除魔法门
 					'''
 			}
 
@@ -1387,7 +1387,7 @@ Mods: {
 				TooltipEffect: {
 					FirstText: 一本
 					SecondText: 令人费解的
-					ThirdText: 古老巨著。不知何故，尽管它的年代久远，但它似乎仍然完好无损
+					ThirdText: 古老巨著。不知为何，尽管它年代久远，但似乎仍然完好无损
 				}
 			}
 
@@ -1531,8 +1531,8 @@ Mods: {
 			}
 
 			ProfanedTempleBackgroundWall: {
-				// DisplayName: Profaned Temple Background Wall
-				// Tooltip: ""
+				DisplayName: 亵渎神庙背景墙
+				Tooltip: ""
 			}
 		}
 
@@ -1543,7 +1543,7 @@ Mods: {
 
 		MusicDisplay: {
 			ForgottenWinds: {
-				DisplayName: 遗忘之风
+				DisplayName: 失落之风
 				Author: 作者：Toasty
 			}
 
@@ -1605,9 +1605,9 @@ Mods: {
 			SplitBigSlimeAnimation.DisplayName: 不稳定的史莱姆子代
 			ShadowDemon.DisplayName: 暗影巨蛇
 			GolemArenaPlatform.DisplayName: 石巨人战斗平台
-			CalamitasShadowClone.DisplayName: 遗落灾影
-			CataclysmShadow.DisplayName: 遗落灾祸之影
-			CatastropheShadow.DisplayName: 遗落灾难之影
+			CalamitasShadowClone.DisplayName: 灾厄遗影
+			CataclysmShadow.DisplayName: 灾祸遗影
+			CatastropheShadow.DisplayName: 灾难遗影
 		}
 
 		PetDialog: {
@@ -1713,7 +1713,7 @@ Mods: {
 			DragonfollyTip2: 那些巨大的红色闪电柱可以靠从下面飞过去来无视它们！
 			Dragonfollytip3: 注意它变红的时候—如果它无法接近你，它会直接从你背后跳过来！
 			DragonfollyBoltTip: 静电球似乎朝你飞过来了！小心它们并且不要被那些闪电预警线困住！
-			DreadnautilusSummonItemTip: 我听说在某个地方，恐惧鹦鹉螺可以被一种特殊的“赤饵”召唤，它们无法抗拒这玩意！你有吗？
+			DreadnautilusSummonItemTip: 我听说在某个地方，恐惧鹦鹉螺可以被一种特殊的“赤饵”召唤，它们对这玩意毫无抗拒力！你有这东西吗？
 			DreadnautilusTip1: 那些蝙蝠真的很想干掉你，但它们不是很敏捷。试着跟它们绕圈子！
 			DreadnautilusJokeTip1: 考虑到你现在已经死了很多次，我很恐惧你的未来……
 			DreadnautilusJokeTip2: 看起来你又失败了，但是不要害怕！你终将战胜这个恐惧！
@@ -1770,7 +1770,7 @@ Mods: {
 			PlanteraTip1: 在触手伸长的时候寻找盲区！
 			PlanteraPlanteraTip: 小心那些云。只有穿过它们你才能找到她触手的缺口！
 			PlanteraFinalPhaseTip: 世纪之花将不留余力地攻击你，小心！
-			PlanteraJokeTip1: 死于一棵植物还是挺尴尬的。
+			PlanteraJokeTip1: 死于一株植物也太厄厄了。
 			PlanteraJokeTip2: 我可以告诉你的是，世纪之花赢了——但是谁在培养孢子？
 			PolterghastTip1: 冲刺对于转环攻击很有帮助，因为它可以帮你快速到达开口！
 			PolterghastTip2: 如果噬魂幽花的一条腿变红了，赶紧后退；它会扫你并释放加速弹幕！

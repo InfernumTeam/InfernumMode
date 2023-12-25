@@ -46,6 +46,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using InfernumMode.Content.Items.Weapons.Melee;
+using CalamityMod.Items.Placeables.Furniture.Trophies;
+using CalamityMod.Items.Weapons.Rogue;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -136,6 +138,13 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (npc.type == ModContent.NPCType<BrimstoneElemental>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<BrimstoneElementalRelic>());
+
+            // Just give him these drops if in Infernum Mode.
+            if (npc.type == ModContent.NPCType<Cataclysm>())
+            {
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CatastropheTrophy>(), 10);
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<CrushsawCrasher>(), 4);
+            }
 
             if (npc.type == ModContent.NPCType<CalamitasClone>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<ForgottenShadowOfCalamitasRelic>());

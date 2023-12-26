@@ -63,8 +63,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             Main.QueueMainThreadAction(() =>
             {
-                Main.OnPreDraw -= PrepareAEWTargets;
-
                 if (AEWDrawTarget is not null && !AEWDrawTarget.IsDisposed)
                     AEWDrawTarget.Dispose();
 
@@ -80,8 +78,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
                 TemporaryAuxillaryTarget = null;
 
-                Filters.Scene.OnPostDraw -= WhatTheFuck;
             });
+            Main.OnPreDraw -= PrepareAEWTargets;
+            Filters.Scene.OnPostDraw -= WhatTheFuck;
 
             LightAndDarkEffectsCache.Clear();
             AEWEyesDrawCache.Clear();
@@ -159,6 +158,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
 
             AEWHeadBehaviorOverride.TryToDrawAbyssalBlackHole();
+            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
 
             if (Main.GameUpdateCount % 10 == 0)
                 LargeLumenylCrystal.DefineCrystalDrawers();
@@ -178,7 +178,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 
-            ThingsToDrawOnTopOfBlur.EmptyDrawCache();
             DrawAdditiveCache();
             DrawEntityTargets();
             DrawAboveWaterProjectiles();

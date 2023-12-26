@@ -456,35 +456,35 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => FuckYou();
         }
 
-        private static readonly MethodInfo SetDefaultMethod = typeof(NPCLoader).GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
+        private static MethodInfo SetDefaultMethod => typeof(NPCLoader).GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_SetDefaultDelegate(NPC npc, bool createModNPC);
 
-        private static readonly MethodInfo FindFrameMethod = typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags);
+        private static MethodInfo FindFrameMethod => typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_FindFrameDelegate(NPC npc, int frameHeight);
 
-        private static readonly MethodInfo CalPreAIMethod = typeof(CalamityGlobalNPC).GetMethod("PreAI", Utilities.UniversalBindingFlags);
+        private static MethodInfo CalPreAIMethod => typeof(CalamityGlobalNPC).GetMethod("PreAI", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalPreAIDelegate(CalamityGlobalNPC self, NPC npc);
 
-        private static readonly MethodInfo CalGetAdrenalineDamageMethod = typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags);
+        private static MethodInfo CalGetAdrenalineDamageMethod => typeof(CalamityUtils).GetMethod("GetAdrenalineDamage", Utilities.UniversalBindingFlags);
 
         public delegate float Orig_CalGetAdrenalineDamageMethod(CalamityPlayer mp);
 
-        private static readonly MethodInfo CalApplyRippersToDamageMethod = typeof(CalamityUtils).GetMethod("ApplyRippersToDamage", Utilities.UniversalBindingFlags);
+        private static MethodInfo CalApplyRippersToDamageMethod => typeof(CalamityUtils).GetMethod("ApplyRippersToDamage", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalApplyRippersToDamageMethod(CalamityPlayer mp, bool trueMelee, ref float damageMult);
 
-        private static readonly MethodInfo CalModifyHitNPCWithProjMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithProj", Utilities.UniversalBindingFlags);
+        private static MethodInfo CalModifyHitNPCWithProjMethod => typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithProj", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalModifyHitNPCWithProjMethod(CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers);
 
-        private static readonly MethodInfo CalModifyHitNPCWithItemMethod = typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithItem", Utilities.UniversalBindingFlags);
+        private static MethodInfo CalModifyHitNPCWithItemMethod => typeof(CalamityPlayer).GetMethod("ModifyHitNPCWithItem", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalModifyHitNPCWithItemMethod(CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers);
 
-        private static readonly MethodInfo CalGlobalNPCPredrawMethod = typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
+        private static MethodInfo CalGlobalNPCPredrawMethod => typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalGlobalNPCPredrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
 

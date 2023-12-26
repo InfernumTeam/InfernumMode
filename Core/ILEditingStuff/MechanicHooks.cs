@@ -101,14 +101,21 @@ namespace InfernumMode.Core.ILEditingStuff
 
         internal static void ModifyHitNPCWithProjDetour(Orig_CalModifyHitNPCWithProjMethod orig, CalamityPlayer self, Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (!InfernumMode.CanUseCustomAIs)
+            try
             {
-                orig(self, proj, target, ref modifiers);
-                return;
-            }
+                if (!InfernumMode.CanUseCustomAIs)
+                {
+                    orig(self, proj, target, ref modifiers);
+                    return;
+                }
 
-            ShouldGetRipperDamageModifiers = false;
-            orig(self, proj, target, ref modifiers);
+                ShouldGetRipperDamageModifiers = false;
+                orig(self, proj, target, ref modifiers);
+            }
+            catch (Exception)
+            {
+
+            }
             ShouldGetRipperDamageModifiers = true;
             float damageMult = 0f;
             CalamityUtils.ApplyRippersToDamage(self, proj.IsTrueMelee(), ref damageMult);

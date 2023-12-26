@@ -102,7 +102,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Testers3 = "LGL\nNutella\nMatthionine\nMyra\nPiky";
 
-        public const string Testers4 = "PurpleMattikSmh\nShade\nShadine\nTeiull";
+        public const string Testers4 = "PurpleMattik\nSmh\nShade\nShadine\nTeiull";
 
         public const string Translators = "Dimension Translate Group\nMyawk\nZavthenovakid";
 

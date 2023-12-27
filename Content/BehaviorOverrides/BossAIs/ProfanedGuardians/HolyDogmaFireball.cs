@@ -136,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                     laser.ModProjectile<HolyMagicLaserbeam>().LaserShootTime = InitialLaserShootTime;
                                     laser.ModProjectile<HolyMagicLaserbeam>().FromGuardians = true;
                                 });
-                                Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<HolyMagicLaserbeam>(), ProvidenceBehaviorOverride.MagicLaserbeamDamage, 0f, -1, angularVelocity);
+                                Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<HolyMagicLaserbeam>(), GuardianComboAttackManager.HolySpinningFireBeamDamage, 0f, -1, angularVelocity);
                             }
                         }
                     }
@@ -197,7 +197,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                     laser.ModProjectile<HolyMagicLaserbeam>().FromGuardians = true;
                                     laser.ModProjectile<HolyMagicLaserbeam>().SetAngleToMoveTo = TwoPi * i / BeamAmount;
                                 });
-                                Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<HolyMagicLaserbeam>(), ProvidenceBehaviorOverride.MagicLaserbeamDamage, 0f, -1, angularVelocity);
+                                Utilities.NewProjectileBetter(Projectile.Center, laserDirection, ModContent.ProjectileType<HolyMagicLaserbeam>(), GuardianComboAttackManager.HolySpinningFireBeamDamage, 0f, -1, angularVelocity);
                             }
                         }
                     }

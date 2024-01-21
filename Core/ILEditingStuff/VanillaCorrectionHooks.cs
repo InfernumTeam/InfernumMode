@@ -1375,18 +1375,11 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class VanillaProjectileImmunitySlotHook : IHookEdit
     {
-        public static List<int> VanillaBossProjectiles => new()
+        public static List<int> VanillaBossProjectiles
         {
-            ProjectileID.QueenBeeStinger,
-            ProjectileID.DeathLaser,
-            ProjectileID.EyeLaser,
-            ProjectileID.Skull,
-            ProjectileID.SeedPlantera,
-            ProjectileID.PoisonSeedPlantera,
-            ProjectileID.MartianTurretBolt,
-            // It shouldn't really be using this but Giant Clam has a lot worse issues than this.
-            ModContent.ProjectileType<PearlRain>()
-        };
+            get;
+            private set;
+        }
 
         // IDK why she uses normal stingers for some atttacks but I'd rather do this than change it now.
         public static readonly Dictionary<int, Func<bool>> VanillaProjectilesWithConditions = new()
@@ -1423,6 +1416,20 @@ namespace InfernumMode.Core.ILEditingStuff
 
         private void CheckProjectile(On_Projectile.orig_Damage orig, Projectile self)
         {
+            // Initialize the list. Can't be done in the initializer due to the mod projectile.
+            VanillaBossProjectiles ??= new()
+            {
+                ProjectileID.QueenBeeStinger,
+                ProjectileID.DeathLaser,
+                ProjectileID.EyeLaser,
+                ProjectileID.Skull,
+                ProjectileID.SeedPlantera,
+                ProjectileID.PoisonSeedPlantera,
+                ProjectileID.MartianTurretBolt,
+                // It shouldn't really be using this but Giant Clam has a lot worse issues than this.
+                ModContent.ProjectileType<PearlRain>()
+            };
+
             // If the current projectile is in the list, mark the conversion as ready.
             if (VanillaBossProjectiles.Contains(self.type) || (VanillaProjectilesWithConditions.TryGetValue(self.type, out var condition) && condition()))
                 ConvertNextNonPVPHurtImmuneSlot = true;

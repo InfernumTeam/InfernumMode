@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Items.Pets;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
@@ -30,6 +32,8 @@ namespace InfernumMode.Content.Tiles.Abyss
             g = 0.36f;
             b = 0.46f;
         }
+
+        public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<StrangeOrb>());
 
         public override bool CanExplode(int i, int j) => false;
 

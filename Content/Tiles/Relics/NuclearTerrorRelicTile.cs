@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Tiles.Relics
 {
-    internal class NuclearTerrorRelicTile : BaseInfernumBossRelic
+    public class NuclearTerrorRelicTile : BaseInfernumBossRelic
     {
         public override int DropItemID => ModContent.ItemType<NuclearTerrorRelic>();
 

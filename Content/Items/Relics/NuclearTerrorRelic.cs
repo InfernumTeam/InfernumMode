@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Relics
 {
-    internal class NuclearTerrorRelic :  BaseRelicItem
+    public class NuclearTerrorRelic :  BaseRelicItem
     {
         public override string DisplayNameToUse => "Infernal Nuclear Terror Relic";
 

@@ -48,6 +48,7 @@ using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using InfernumMode.Content.Items.Weapons.Melee;
 using CalamityMod.Items.Placeables.Furniture.Trophies;
 using CalamityMod.Items.Weapons.Rogue;
+using CalamityMod.NPCs.AcidRain;
 
 namespace InfernumMode.Core.GlobalInstances
 {
@@ -219,6 +220,9 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (npc.type == ModContent.NPCType<Polterghast>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<PolterghastRelic>());
+
+            if (npc.type == ModContent.NPCType<NuclearTerror>())
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<NuclearTerrorRelic>());
 
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<OldDukeRelic>());

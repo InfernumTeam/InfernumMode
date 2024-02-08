@@ -67,7 +67,7 @@ namespace InfernumMode.Content.Items.Accessories
                 // Apply the recharge cooldown if all hits have been exhausted.
                 if (remainingHits.Value <= 0 && !hasCooldown)
                 {
-                    player.Player.AddCooldown(SealocketForcefieldRecharge.ID, CalamityUtils.SecondsToFrames(2));//ForcefieldRechargeSeconds));
+                    player.Player.AddCooldown(SealocketForcefieldRecharge.ID, CalamityUtils.SecondsToFrames(ForcefieldRechargeSeconds));
                     remainingHits.Value = MaxHighDRHits;
                 }
 

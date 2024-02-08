@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace InfernumMode.Core.ModCalls
 {
-    // Check the wiki for documentation on these. https://infernummod.wiki.gg
+    // Check the wiki for documentation on these. https://infernummod.wiki.gg/wiki/Mod_Calls
     public class InfernumModCalls
     {
         internal static List<ModCall> ModCalls = new();

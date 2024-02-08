@@ -39,7 +39,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 MonolithIntensity = Clamp(MonolithIntensity + 0.01f, 0f, 1f);
             float intensity = MonolithIntensity;
 
-            Texture2D texture = DrawerManager.GetSceneDrawer<DeusMonolithSceneDrawSystem>().MainTarget;
+            Texture2D texture = ModContent.GetInstance<DeusMonolithSceneDrawSystem>().MainTarget;
             Main.spriteBatch.Draw(texture, Vector2.Zero, Color.White * intensity);
         }
     }

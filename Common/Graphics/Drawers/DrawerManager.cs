@@ -85,21 +85,5 @@ namespace InfernumMode.Common.Graphics.Drawers
             // Draw Cutscenes.
             CutsceneManager.DrawToWorld();
         }
-
-        public static T GetNPCDrawer<T>() where T : BaseNPCDrawerSystem
-        {
-            if (Main.netMode is NetmodeID.Server || !NPCDrawers.Any())
-                return null;
-
-            return (T)NPCDrawers.First(mc => mc.GetType() == typeof(T));
-        }
-
-        public static T GetSceneDrawer<T>() where T : BaseSceneDrawSystem
-        {
-            if (Main.netMode is NetmodeID.Server || !SceneDrawers.Any())
-                return null;
-
-            return (T)SceneDrawers.First(mc => mc.GetType() == typeof(T));
-        }
     }
 }

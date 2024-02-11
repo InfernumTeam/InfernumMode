@@ -1533,7 +1533,7 @@ Mods: {
 			}
 
 			ProfanedTempleBackgroundWall: {
-				// DisplayName: Profaned Temple Background Wall Стена Заднего Фона Осквернённого Храма
+				// DisplayName: Profaned Temple Background Wall
 				// Tooltip: ""
 			}
 		}

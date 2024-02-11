@@ -597,7 +597,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
                     npc.rotation = npc.velocity.X * 0.02f;
 
                     // Transition to the next attack after a small delay.
-                    if (attackTimer == telegraphTime + blackTime + finalDelay)
+                    if (attackTimer >= telegraphTime + blackTime + finalDelay)
                         SelectNextAttack(npc);
                     break;
             }

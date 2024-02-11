@@ -277,7 +277,7 @@ Mods: {
 
 			PerditusTagBuff: {
 				DisplayName: 失落长汐标记
-				Description: 被标记且潮湿
+				Description: 被标记，且潮湿
 			}
 		}
 
@@ -575,12 +575,12 @@ Mods: {
 				TextToDisplay:
 					'''
 					圣洁之焰
-					亵渎天神 普罗维登斯
+					普罗维登斯
 					'''
 				EnragedTextToDisplay:
 					'''
 					赦罪之焰
-					亵渎天神 普罗维登斯
+					普罗维登斯
 					'''
 			}
 
@@ -602,12 +602,12 @@ Mods: {
 			SCalIntroScreen.TextToDisplay:
 				'''
 				硫火女巫
-				至尊灾厄
+				灾厄
 				'''
 			SignusIntroScreen.TextToDisplay:
 				'''
 				鬼魅刺客
-				神之使徒西格纳斯
+				西格纳斯
 				'''
 			SkeletronIntroScreen.TextToDisplay:
 				'''
@@ -650,12 +650,12 @@ Mods: {
 				TextToDisplay:
 					'''
 					忠诚护卫
-					重生之龙 亚戎
+					犽戎
 					'''
 				JokeTextToDisplay:
 					'''
 					超级无敌大大大的
-					重生之龙 亚戎
+					犽戎
 					'''
 			}
 		}
@@ -1439,7 +1439,7 @@ Mods: {
 			}
 
 			NuclearTerrorRelic: {
-				DisplayName: 辐核骇兽孽狱圣物
+				DisplayName: 辐核骇兽炼狱圣物
 				Tooltip: ""
 			}
 
@@ -1647,36 +1647,36 @@ Mods: {
 			AquaticScourgeTyphoonTip: 看起来这条海蛇还没法将那东西完成，我们得赶紧逃走！
 			AquaticScourgeBonkJokeTip: 砰！
 			AstrumAureusTip1: 保持一定的距离，否则你可能会被打个措手不及！
-			AstrumAureusTip2: 当心那些冲击波！你最好待在地面上来躲避那些攻击。
+			AstrumAureusTip2: 当心那些冲击波！你最好待在地面的上方来躲避那些攻击。
 			AstrumDeusTip1: 那条巨蛇也太快了！良好的机动性对于击败它来说很有必要！
 			AstrumDeusShellTip: 那东西似乎已经褪壳了。打起精神来，它现在会变得快很多！
-			AstrumDeusDarkBurstTip: 在试图躲避子弹时不要慌张！
+			AstrumDeusDarkBurstTip: 在试图躲避弹幕时不要慌张！
 			AstrumDeusRubbleTip: 别忘了那些石块！它们会从天而降！
 			BrimstoneElementalLaserTip: 激光会预判你的位置，试着诱导它远离你！
 			BrimstoneElementalRoseCircleTip: 如果可以的话尽量靠近场地中心，那些刺真的很容易把你逼到角落！
 			BoCTip1: 克苏鲁之脑使用了大量的预判和伪装攻击，所以你要把脑袋放灵光点！
-			BoCTip2: 克苏鲁之脑喜欢并善用诡计，密切关注那堆大脑中真正有威胁的大脑！
+			BoCTip2: 克苏鲁之脑喜欢并善于使用伪装，密切关注那堆大脑中真正有威胁的大脑！
 			BoCTip3: 当那些飞眼怪开始用灵液给你洗澡时，试着经常改变方向，这也许会给你一些回旋余地！
-			CalShadowTip1: 那个浮在你身边的魔法戒指在干什么？注意它可能造成的影响！
+			CalShadowTip1: 那个浮在你身边的法环在干什么？注意它可能造成的影响！
 			CalShadowBrosTip: 缓慢移动会有助于你躲避灾厄之影的兄弟们的攻击！
 			CalShadowFinalPhaseTip: 她正在使出全力......但她的巫术已经消失了！现在你可以把注意力集中在她身上了！
-			CalShadowJokeTip1: 我都要生气了但是，看看她！像是个小豆子。
+			CalShadowJokeTip1: 我都要生气了，但是，看看她！像个小豆子一样。
 			CVTip1: 战斗开始时尽量不要随意移动，找到安定点才是关键！
 			CVTip2: 无尽虚空的大部分攻击都需要高机动性才能躲避，务必注意屏幕上的任何射弹！
 			CVPortalTip: 那些传送门在准备些什么！快靠近无尽虚空！快！
 			CVEnergyBurstTip: 那些东西释放了大量能量！尝试靠近边缘并上下移动来穿过它！
 			CVEnergyBurstTip2: 那些小东西好像在盘旋！跟它们一起转起来！
-			CVEnergyBurstTip3: 保持冷静！兜圈子！抓住重点！
-			CVEnergyChainsTip: 那些锁链撑不了多久了！振作起来！
+			CVEnergyBurstTip3: 保持冷静！兜圈子！别失去注意力！
+			CVEnergyChainsTip: 那些锁链撑不了多久了！做好准备！
 			CrabulonTip1: 菌生蟹只会在每第三次跳跃时发射孢子。最好数着点！
 			CrabulonTip2: 试着把注意力集中在真菌孢子上。如果你不管它们，它们有可能把你压到！
 			CrabulonTip3: 与菌生蟹的距离保持一种微妙的平衡可能会对你有所帮助，这总比在天上碰到一大堆孢子要好……
-			CrabulonTip4: 那只螃蟹可不傻。你的位置越高，他就跳得越高来够到你！
+			CrabulonTip4: 那只螃蟹可不傻。你的位置越高，他就跳得越高以便够到你！
 			CrabulonClawTip: 菌生蟹暴露它的内部时将会保护自己——也许你可以往后撤，如果你需要更多的空间的话！
 			CrabulonJokeTip1: 我们三个中有一个身上有蘑菇，我没有，你也没有。
 			CryogenTip1: 当它在你上方时移动幅度尽量小些，这应该能够平息它那多动症般的晃动！
 			CryogenTip2: 冰柱同样会分裂成寒冰匕首，当心侧面！
-			CryogenJokeTip1: 老兄，那太不“冷”酷了！
+			CryogenJokeTip1: 老兄，那东西也太“冷酷”了，又冷又酷！
 			CryogenJokeTip2: 这东西可毫无寒意！
 			CryogenBlizzardTip: 极光之灵正在从暴风雪中夹击你，往侧面跑的时候要小心！
 			CultistTip1: 那家伙可真是个疯子，你也许需要额外的机动性！
@@ -1685,7 +1685,7 @@ Mods: {
 			DeerclopsTip1: 独眼巨鹿是个大近视，因此它会不断逼近你，不要让它把你逼入绝境！
 			DeerclopsTip2: 独眼巨鹿有固定的攻击模式，研究它们的行为，然后用放风筝打法！
 			DeerclopsTip3: 空间规划至关重要！
-			DeerclopsCharlieTip: 如果你让这些暗影聚集在独眼巨鹿的眼睛周围，它发出的光线将不足以抵挡黑暗！
+			DeerclopsCharlieTip: 如果你让这些暗影聚集在独眼巨鹿的眼睛周围，它发出的光线将无法抵挡黑暗！
 			DeerclopsJokeTip1: 我敬皑的上帝啊……
 			DeerclopsDefeatTip: 看起来演出要结束了！
 			DestroyerTip1: 为它的最后一次向上冲刺做好准备！注意红色激光预判线并准备好冲向安全地带！
@@ -1710,9 +1710,9 @@ Mods: {
 			ExoTwinsTip1: 星流双子的攻击十分的协调，试着靠找到一个节奏来击败它们？
 			ThanatosChargeTip: 别担心，面对这双恐惧的眼睛并直接冲向塔纳托斯的脸！
 			DragonfollyTip1: 痴愚金龙想让你认为它的攻击杂乱无章，但事实并非如此！慢一些并分析一下战斗！
-			DragonfollyTip2: 那些巨大的红色闪电柱可以靠从下面飞过去来无视它们！
-			Dragonfollytip3: 注意它变红的时候—如果它无法接近你，它会直接从你背后跳过来！
-			DragonfollyBoltTip: 静电球似乎朝你飞过来了！小心它们并且不要被那些闪电预警线困住！
+			DragonfollyTip2: 那些巨大的红色闪电柱可以靠从下面绕过来无视它们！
+			Dragonfollytip3: 注意它变红的时候—如果它无法靠近你，它就会直接从你背后来个跳杀！
+			DragonfollyBoltTip: 静电球似乎朝你飞过来了！小心它们，并且不要被那些闪电预警线困住！
 			DreadnautilusSummonItemTip: 我听说在某个地方，恐惧鹦鹉螺可以被一种特殊的“赤饵”召唤，它们对这玩意毫无抗拒力！你有这东西吗？
 			DreadnautilusTip1: 那些蝙蝠真的很想干掉你，但它们不是很敏捷。试着跟它们绕圈子！
 			DreadnautilusJokeTip1: 考虑到你现在已经死了很多次，我很恐惧你的未来……
@@ -1763,14 +1763,14 @@ Mods: {
 			PBGDroneJailTip: 那些无人机正在你的身边建造一个囚笼，摧毁一架以打开它！
 			PBGDroneBuildTip: 在整座丛林被核爆之前摧毁那些建构无人机！
 			PerforatorsTip1: 宿主会喷射大量的滞留灵液，空间管理至关重要！
-			PerforatorsWorm1Tip: 小型血肉寄生者的弹幕在下落时会加速，当心意外！
+			PerforatorsWorm1Tip: 小型血肉寄生者的弹幕在下落时会加速，当心发生意外！
 			PerforatorsWorm2Tip: 这条血肉寄生者似乎不像它的朋友那样令人反感，也许就让它在你周围绕圈吧？
 			PerforatorsProjectilesTip: 保持冷静与静止在原地有助于你躲避慢速弹幕！
 			PerforatorsFinalPhaseTip: 还没完吗？！
 			PlanteraTip1: 在触手伸长的时候寻找盲区！
-			PlanteraPlanteraTip: 小心那些云。只有穿过它们你才能找到她触手的缺口！
-			PlanteraFinalPhaseTip: 世纪之花将不留余力地攻击你，小心！
-			PlanteraJokeTip1: 死于一株植物也太厄厄了。
+			PlanteraPlanteraTip: 小心那些云。只有穿过它们，你才能找到她触手的缺口！
+			PlanteraFinalPhaseTip: 世纪之花将不做任何保留地攻击你，小心！
+			PlanteraJokeTip1: 死于一株植物？这也太厄厄了。
 			PlanteraJokeTip2: 我可以告诉你的是，世纪之花赢了——但是谁在培养孢子？
 			PolterghastTip1: 冲刺对于转环攻击很有帮助，因为它可以帮你快速到达开口！
 			PolterghastTip2: 如果噬魂幽花的一条腿变红了，赶紧后退；它会扫你并释放加速弹幕！
@@ -1821,8 +1821,8 @@ Mods: {
 			TwinsFinalPhaseTip: 当心，最后的魔眼会不顾一切攻击你！不要松懈！
 			WoFTip1: 你一定要朝反方向跑！
 			WoFTip2: 那些眼睛太吓人了，好在它们只会在特定的位置射击！
-			WoFTip3: 哎呀，那些奇怪的嘴折断并且飞起来了？！我真希望我能用自己的狱火把它们烧掉......
-			WoFJokeTip1: 哇，你的巫毒娃娃浪费了！没有什么比有更多的机会欺负向导更好了！
+			WoFTip3: 哎呀，那些奇怪的嘴折断并且飞起来了？！我真希望我能用自己的狱火把它们烧死......
+			WoFJokeTip1: 哇，你的巫毒娃娃浪费了！但是，没有什么比有更多的机会欺负向导更好了！
 			YharonPreHealTip: 你快做到了！犽戎现在肯定已是穷途末路了！
 			YharonPostHealTip: 啊？
 			YharonSpeedTip: 试着记住犽戎什么时候会疯狂冲刺，否则它会打你个措手不及！
@@ -2450,7 +2450,7 @@ Mods: {
 			InfernumNeededToEnterColosseum: 必须启用炼狱模式才能进入失落竞技场！
 			InfiniteFlight: 准许无限飞行！
 			AquaticScourgeFinalPhaseAcid: 一股强酸正迅速从下方喷涌而上!
-			CalShadowBrothersSummon: 摧毁他，我的兄弟们。
+			CalShadowBrothersSummon: 兄弟们，请助我一臂之力，将其碾碎。
 			CalShadowFinalPhase: 我才刚刚使出全力！
 			CalShadowFinalHexWarning: 还没完呢！准备迎接我的最强法术吧！
 			CalShadowFinalHexSurprise: 呃啊。
@@ -2498,7 +2498,7 @@ Mods: {
 			DraedonDefeat9: 但现在，我得把注意力放回到我的机械上了。如果你想再次面对我的造物，就使用密码破译器吧。
 			DraedonDefeat10: 至此，我向你道别，祝你的未来一路顺风。
 			SCalCongratulations: ……恭喜你。
-			MultiplayerWarning: 炼狱模式：不支持多人模式，预期中有些东西可能会损坏，并且mod不能完全运行。不要去上报多人bug。
+			MultiplayerWarning: 炼狱模式：不支持多人模式，根据预期，某些东西可能会损坏，并且mod不能完全运行。不要去上报多人bug。
 
 			Death: {
 				RedElectrified: "{0}无法承受住红色闪电的洗礼。"

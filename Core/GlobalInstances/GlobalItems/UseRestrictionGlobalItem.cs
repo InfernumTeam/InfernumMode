@@ -68,7 +68,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             // Don't let tiles be placed in the profaned garden.
             var noPlaceRect = WorldSaveSystem.ProvidenceArena.ToWorldCoords();
             noPlaceRect.Inflate(2, 2);
-            if ((item.createTile != -1 || item.createWall != -1) && noPlaceRect.Contains(player.Calamity().mouseWorld.ToPoint()))
+            if ((item.createTile != -1 || item.createWall != -1) && (noPlaceRect.Contains(player.Calamity().mouseWorld.ToPoint()) || SubworldSystem.IsActive<LostColosseum>()))
                 return false;
 
             return base.CanUseItem(item, player);

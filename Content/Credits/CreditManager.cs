@@ -43,7 +43,7 @@ namespace InfernumMode.Content.Credits
 
         private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators };
 
-        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators" };
+        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators", "Supporters" };
 
         private static readonly Color[] HeaderColors =
         {
@@ -88,7 +88,7 @@ namespace InfernumMode.Content.Credits
             }
         }
 
-        public const int TotalGIFs = 8;
+        public const int TotalGIFs = 9;
 
         public const string Artists = "Arix\nFreeman\nIbanPlay\nPengolin\nReika\nSpicySpaceSnake";
 
@@ -96,7 +96,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Programmers = "Dominic\nNycro\nToasty";
 
-        public const string Testers1 = "Blast\nBronze\nCata\nEin\nGamerXD";
+        public const string Testers1 = "Blast\nBronze\nCataclysmic\nEin\nGamerXD";
 
         public const string Testers2 = "Gonk\nHabble\nIan\nJareto\nJoey";
 
@@ -105,6 +105,8 @@ namespace InfernumMode.Content.Credits
         public const string Testers4 = "PurpleMattik\nSmh\nShade\nShadine\nTeiull";
 
         public const string Translators = "Dimension Translate Group\nMyawk\nZavthenovakid";
+
+        public const string Supporters = "Borb9834\nOptrix\n-Runaway-\nyoshi";
 
         public override void Load()
         {
@@ -146,7 +148,7 @@ namespace InfernumMode.Content.Credits
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
-            if (CreditsPlaying)// || Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed"))
+            if (CreditsPlaying /*|| Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed")*/)
                 return;
 
             // Else, mark them as playing.
@@ -310,7 +312,7 @@ namespace InfernumMode.Content.Credits
 
             new Thread(() =>
             {
-                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses[index], out bool baseCreditsUsed);
+                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses.IndexInRange(index) ? Bosses[index] : (ScreenCapturer.RecordingBoss)999, out bool baseCreditsUsed);
                 CreditGIFs[index] = new CreditAnimationObject(-Vector2.UnitY * 0.075f, textures, Headers[index], Names[index], HeaderColors[index], index % 2 == 1, baseCreditsUsed);
             }).Start();
         }

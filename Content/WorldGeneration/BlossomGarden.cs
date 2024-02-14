@@ -17,25 +17,17 @@ namespace InfernumMode.Content.WorldGeneration
         {
             progress.Message = "Growing a garden...";
 
-            SchematicMetaTile[,] schematic = TileMaps["BlossomGarden"];
-            Point placementPoint = default;
-            Rectangle protectionArea = default;
-            SchematicAnchor schematicAnchor = SchematicAnchor.Center;
-            for (int i = 0; i < 20000; i++)
-            {
-                int placementPositionX = WorldGen.genRand.Next(450, Main.maxTilesX - 450);
-                int placementPositionY = (int)Main.rockLayer + WorldGen.genRand.Next(100, 1000);
-                placementPoint = new(placementPositionX, placementPositionY);
-                Rectangle area = CalamityUtils.GetSchematicProtectionArea(schematic, placementPoint, schematicAnchor);
-
-                // Check if the spot is valid.
-                if (CalamityUtils.ParanoidTileRetrieval(area.Center.X, area.Center.Y).WallType == WallID.HiveUnsafe && GenVars.structures.CanPlace(area, 10))
-                {
-                    protectionArea = area;
-                    break;
-                }
-            }
+            var schematic = TileMaps["BlossomGarden"];
+            var schematicAnchor = SchematicAnchor.Center;
+            // This is the same code the vernal pass uses to generate, with a little more horizontal variation.
+            int placementPositionX = WorldGen.genRand.Next(GenVars.tLeft - 30, GenVars.tRight + 30);
+            int placementPositionY = GenVars.tTop < Main.rockLayer - 10 ? GenVars.tBottom + 120 : GenVars.tTop - 120;
+            // Shove it upwards from the pass.
+            placementPositionY -= 200;
+            var placementPoint = new Point(placementPositionX, placementPositionY);
+            var protectionArea = CalamityUtils.GetSchematicProtectionArea(schematic, placementPoint, schematicAnchor);
             WorldSaveSystem.BlossomGardenCenter = placementPoint;
+
             bool _ = false;
             PlaceSchematic<Action<Chest>>("BlossomGarden", placementPoint, schematicAnchor, ref _, chest =>
             {

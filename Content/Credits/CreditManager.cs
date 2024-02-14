@@ -41,7 +41,7 @@ namespace InfernumMode.Content.Credits
 
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
-        private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators };
+        private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators, Supporters };
 
         private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators", "Supporters" };
 
@@ -54,7 +54,8 @@ namespace InfernumMode.Content.Credits
             new(0, 148, 75),
             new(0, 148, 75),
             new(0, 148, 75),
-            new(246, 188, 49)
+            new(246, 188, 49),
+            new(243, 165, 5)
         };
 
         private static readonly ScreenCapturer.RecordingBoss[] Bosses =

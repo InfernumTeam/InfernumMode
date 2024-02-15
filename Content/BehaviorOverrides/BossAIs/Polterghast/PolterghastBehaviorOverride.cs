@@ -194,6 +194,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             ref float currentPhase = ref npc.Infernum().ExtraAI[CurrentPhaseIndex];
             ref float roarSlotF = ref npc.Infernum().ExtraAI[RoarSlotIndex];
             ref float shortRoarSlotF = ref npc.Infernum().ExtraAI[ShortRoarSlotIndex];
+            ref float phaseCycleIndex = ref npc.Infernum().ExtraAI[PhaseCycleIndexIndex];
             ref float telegraphOpacity = ref npc.localAI[1];
             ref float telegraphDirection = ref npc.localAI[2];
 
@@ -222,6 +223,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Play phase transition sounds.
             if (currentPhase == 0f && phase2)
             {
+                phaseCycleIndex = 0f;
                 if (attackState == PolterghastAttackType.LegSwipes)
                     SelectNextAttack(npc);
 
@@ -232,6 +234,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             }
             if (currentPhase == 1f && phase3)
             {
+                phaseCycleIndex = 0f;
                 if (attackState == PolterghastAttackType.LegSwipes)
                     SelectNextAttack(npc);
 

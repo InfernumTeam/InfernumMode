@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.AcidRain;
+﻿using CalamityMod.NPCs.Abyss;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.SunkenSea;
 using System.Collections.Generic;
@@ -12,43 +13,47 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 {
     public class KillAllMinibossesAchievement : Achievement
     {
-        #region Fields
-        private Dictionary<int, bool> MinibossesCompleted;
-
-        // Should have ordered them previously, seeing as the above dict is based on the list order changing it now will
-        // change peoples progress :).
-        private Dictionary<int, bool> OrderedMinibossesComplete => new()
+        public struct MinibossData
         {
-            [ModContent.NPCType<GiantClam>()] = MinibossesCompleted[8],
-            [NPCID.DD2DarkMageT1] = MinibossesCompleted[4],
-            [NPCID.SandElemental] = MinibossesCompleted[6],
-            [ModContent.NPCType<ThiccWaifu>()] = MinibossesCompleted[7],
-            [NPCID.BigMimicCorruption] = MinibossesCompleted[1],
-            [NPCID.BigMimicCrimson] = MinibossesCompleted[2],
-            [NPCID.BigMimicHallow] = MinibossesCompleted[3],
-            [NPCID.DD2OgreT2] = MinibossesCompleted[5],
-            [NPCID.DD2Betsy] = MinibossesCompleted[0],
-            [ModContent.NPCType<NuclearTerror>()] = MinibossesCompleted[9],
-        };
+            public Minibosses Miniboss;
+
+            public int ID;
+
+            public string DisplayName;
+
+            public bool Downed;
+
+            public MinibossData(Minibosses miniboss, int id)
+            {
+                Miniboss = miniboss;
+                ID = id;
+                DisplayName = Utilities.GetNPCFullNameFromID(id);
+                Downed = false;
+            }
+        }
+
+        #region Enumerations
+        public enum Minibosses
+        {
+            GiantClam,
+            DarkMageTier1,
+            SandElemental,
+            CloudElemental,
+            CorruptionMimic,
+            CrimsonMimic,
+            HallowMimic,
+            OgreTier2,
+            Betsy,
+            Eidolist,
+            NuclearTerror,
+            ColossalSquid,
+            ReaperShark,
+            EidolonWyrm,
+        }
         #endregion
 
-        #region Statics
-        public static List<int> MinibossIDs => new()
-        {
-            NPCID.DD2Betsy,
-            NPCID.BigMimicCorruption,
-            NPCID.BigMimicCrimson,
-            NPCID.BigMimicHallow,
-            NPCID.DD2DarkMageT1,
-            NPCID.DD2OgreT2,
-            NPCID.SandElemental,
-            ModContent.NPCType<ThiccWaifu>(),
-            ModContent.NPCType<GiantClam>(),
-            ModContent.NPCType<NuclearTerror>(),
-            // These must be at the end.
-            NPCID.DD2DarkMageT3,
-            NPCID.DD2OgreT3
-        };
+        #region Fields/Properties
+        private List<MinibossData> Data;
         #endregion
 
         #region Overrides
@@ -62,24 +67,25 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 
         public override void LoadProgress(TagCompound tag)
         {
-            if (!tag.ContainsKey("MinibossesDictInt") || !tag.ContainsKey("MinibossesDictBool"))
-                CreateDict();
-            else
+            CreateDict();
+            if (tag.ContainsKey("MinibossesDictInt") && tag.ContainsKey("MinibossesDictBool"))
             {
                 List<int> keys = tag.Get<List<int>>("MinibossesDictInt");
                 List<bool> values = tag.Get<List<bool>>("MinibossesDictBool");
-                MinibossesCompleted = keys.Zip(values, (k, v) => new
+                var dict = keys.Zip(values, (k, v) => new
                 {
                     Key = k,
                     Value = v
                 }).ToDictionary(k => k.Key, v => v.Value);
+
+                for (int i = 0; i < Data.Count; i++)
+                {
+                    var entry = Data[i];
+
+                    if (dict.TryGetValue((int)entry.Miniboss, out var downed))
+                        entry.Downed = downed;
+                }
             }
-            // Add the extra one if it doesn't exist already, I do not like how scuffed this feels. If we add another miniboss in future,
-            // but someone hasnt run this code we'd need to check for that too and ugh.
-            if (MinibossesCompleted.Count is 8 && !MinibossesCompleted.ContainsKey(8))
-                MinibossesCompleted.Add(8, false);
-            if (MinibossesCompleted.Count is 9 && !MinibossesCompleted.ContainsKey(9))
-                MinibossesCompleted.Add(9, false);
 
             CurrentCompletion = tag.Get<int>("MinibossesCurrentCompletion");
             DoneCompletionEffects = tag.Get<bool>("MinibossesDoneCompletionEffects");
@@ -87,47 +93,46 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 
         public override void SaveProgress(TagCompound tag)
         {
-            tag["MinibossesDictInt"] = MinibossesCompleted.Keys.ToList();
-            tag["MinibossesDictBool"] = MinibossesCompleted.Values.ToList();
+            var intList = new List<int>();
+            var boolList = new List<bool>();
+            foreach  (var entry in Data)
+            {
+                intList.Add((int)entry.Miniboss);
+                boolList.Add(entry.Downed);
+            }
+            tag["MinibossesDictInt"] = intList;
+            tag["MinibossesDictBool"] = boolList;
             tag["MinibossesCurrentCompletion"] = CurrentCompletion;
             tag["MinibossesDoneCompletionEffects"] = DoneCompletionEffects;
         }
 
         public override void Update()
         {
-            int currentCompletion = 0;
-            for (int i = 0; i < MinibossesCompleted.Count; i++)
-            {
-                if (MinibossesCompleted[i])
-                    currentCompletion++;
-            }
-            CurrentCompletion = currentCompletion;
+            CurrentCompletion = Data.Where(entry => entry.Downed).Count();
         }
 
         public override void ExtraUpdate(Player player, int npcIndex)
         {
             bool updatedList = false;
             int npcID = Main.npc[npcIndex].type;
-            if (MinibossIDs.Contains(npcID))
+
+            // Why are these seperate IDs?
+            if (npcID == NPCID.DD2DarkMageT3)
+                npcID = NPCID.DD2DarkMageT1;
+            else if (npcID == NPCID.DD2OgreT3)
+                npcID = NPCID.DD2OgreT2;
+
+            if (Data.Any(entry => entry.ID == npcID))
             {
-                int darkMageIndex = MinibossIDs.IndexOf(NPCID.DD2DarkMageT1);
-                if (npcID == NPCID.DD2DarkMageT3 && !MinibossesCompleted[darkMageIndex])
+                var entry = Data.First(entry => entry.ID == npcID);
+                if (!entry.Downed)
                 {
-                    MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2DarkMageT1)] = true;
-                    updatedList = true;
-                }
-                else if (npcID == NPCID.DD2OgreT3 && !MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2OgreT2)])
-                {
-                    MinibossesCompleted[MinibossIDs.IndexOf(NPCID.DD2OgreT2)] = true;
-                    updatedList = true;
-                }
-                else if (MinibossesCompleted.TryGetValue(MinibossIDs.IndexOf(npcID), out bool completed) && !completed)
-                {
-                    MinibossesCompleted[MinibossIDs.IndexOf(npcID)] = true;
+                    entry.Downed = true;
                     updatedList = true;
                 }
             }
-            if (updatedList && MinibossesCompleted.Count(kv => kv.Value) != TotalCompletion)
+
+            if (updatedList && Data.Where(entry => entry.Downed).Count() != TotalCompletion)
                 AchievementsNotificationTracker.AddAchievementAsUpdated(this);
         }
         #endregion
@@ -135,22 +140,34 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Methods
         private void CreateDict()
         {
-            MinibossesCompleted = new Dictionary<int, bool>();
-            for (int i = 0; i < TotalCompletion; i++)
-                MinibossesCompleted[i] = false;
-
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
+
+            Data = new()
+            {
+                new MinibossData(Minibosses.GiantClam, ModContent.NPCType<GiantClam>()),
+                new MinibossData(Minibosses.DarkMageTier1, NPCID.DD2DarkMageT1),
+                new MinibossData(Minibosses.SandElemental, NPCID.SandElemental),
+                new MinibossData(Minibosses.CloudElemental, ModContent.NPCType<ThiccWaifu>()),
+                new MinibossData(Minibosses.CorruptionMimic, NPCID.BigMimicCorruption),
+                new MinibossData(Minibosses.CrimsonMimic, NPCID.BigMimicCrimson),
+                new MinibossData(Minibosses.HallowMimic, NPCID.BigMimicHallow),
+                new MinibossData(Minibosses.OgreTier2, NPCID.DD2OgreT2),
+                new MinibossData(Minibosses.Betsy, NPCID.DD2Betsy),
+                new MinibossData(Minibosses.Eidolist, ModContent.NPCType<Eidolist>()),
+                new MinibossData(Minibosses.NuclearTerror, ModContent.NPCType<NuclearTerror>()),
+                new MinibossData(Minibosses.ColossalSquid, ModContent.NPCType<ColossalSquid>()),
+                new MinibossData(Minibosses.ReaperShark, ModContent.NPCType<ReaperShark>()),
+                new MinibossData(Minibosses.EidolonWyrm, ModContent.NPCType<EidolonWyrmHead>())
+            };
         }
 
         public string GetFirstUncompletedMiniBoss()
         {
-            foreach (var item in OrderedMinibossesComplete)
+            foreach (var entry in Data)
             {
-                if (!item.Value)
-                {
-                    return Utilities.GetNPCFullNameFromID(item.Key);
-                }
+                if (!entry.Downed)
+                    return entry.DisplayName;
             }
             return string.Empty;
         }

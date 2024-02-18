@@ -60,6 +60,7 @@ namespace InfernumMode.Content.Achievements
         {
 
         }
+
         /// <summary>
         /// Override to update the completion total. Called every frame.
         /// </summary>

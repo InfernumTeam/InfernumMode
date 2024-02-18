@@ -13,7 +13,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 {
     public class KillAllMinibossesAchievement : Achievement
     {
-        public struct MinibossData
+        public class MinibossData
         {
             public Minibosses Miniboss;
 

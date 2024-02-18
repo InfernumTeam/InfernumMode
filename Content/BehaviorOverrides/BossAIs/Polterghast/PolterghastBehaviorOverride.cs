@@ -223,24 +223,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             // Play phase transition sounds.
             if (currentPhase == 0f && phase2)
             {
-                phaseCycleIndex = 0f;
-                if (attackState == PolterghastAttackType.LegSwipes)
-                    SelectNextAttack(npc);
-
                 SoundEngine.PlaySound(PolterghastBoss.P2Sound with { Volume = 3f }, target.Center);
+                phaseCycleIndex = 0f;
                 currentPhase = 1f;
-                legToManuallyControlIndex = 0f;
                 npc.netUpdate = true;
             }
             if (currentPhase == 1f && phase3)
             {
-                phaseCycleIndex = 0f;
-                if (attackState == PolterghastAttackType.LegSwipes)
-                    SelectNextAttack(npc);
-
                 SoundEngine.PlaySound(PolterghastBoss.P3Sound with { Volume = 3f }, target.Center);
+                phaseCycleIndex = 0f;
                 currentPhase = 2f;
-                legToManuallyControlIndex = 0f;
                 npc.netUpdate = true;
             }
 

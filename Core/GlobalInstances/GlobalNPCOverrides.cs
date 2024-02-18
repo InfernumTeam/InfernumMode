@@ -222,8 +222,7 @@ namespace InfernumMode.Core.GlobalInstances
                     continue;
 
                 Player player = Main.player[i];
-                if (npc.boss || KillAllMinibossesAchievement.MinibossIDs.Contains(npc.type))
-                    AchievementPlayer.ExtraUpdateHandler(player, AchievementUpdateCheck.NPCKill, npc.whoAmI);
+                AchievementPlayer.ExtraUpdateHandler(player, AchievementUpdateCheck.NPCKill, npc.whoAmI);
             }
 
             // Check for whether to play the post mechs cutscene.

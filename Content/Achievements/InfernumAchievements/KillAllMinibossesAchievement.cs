@@ -59,7 +59,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Overrides
         public override void Initialize()
         {
-            TotalCompletion = 10;
+            TotalCompletion = 14;
             PositionInMainList = 7;
             UpdateCheck = AchievementUpdateCheck.NPCKill;
             CreateDict();

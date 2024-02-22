@@ -494,9 +494,9 @@ namespace InfernumMode.Core.ILEditingStuff
             // Draw the Brimstone Crescent forcefield.
             if (player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant") > 0f)
             {
-                float scale = Lerp(0.55f, 1.5f, 1f - player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant"));
+                float scale = Lerp(0.6f, 1.5f, 1f - player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant"));
                 Color forcefieldColor = CalamityUtils.ColorSwap(Color.Lerp(Color.Red, Color.Yellow, 0.06f), Color.OrangeRed, 5f) * player.Infernum().GetValue<float>("BrimstoneCrescentForcefieldStrengthInterpolant");
-                CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.FireNoise.Value, true, scale);
+                CultistBehaviorOverride.DrawForcefield(forcefieldDrawPosition, 1.35f, forcefieldColor, InfernumTextureRegistry.HarshNoise.Value, true, scale, fresnelScaleFactor: 0.68f, noiseScaleFactor: 0.5f);
             }
         }
 

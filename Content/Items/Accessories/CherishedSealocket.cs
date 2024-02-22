@@ -14,6 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Accessories
 {
+    [AutoloadEquip(EquipType.Neck)]
     public class CherishedSealocket : ModItem
     {
         public const int MaxHighDRHits = 2;

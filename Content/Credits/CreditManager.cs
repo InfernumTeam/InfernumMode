@@ -105,7 +105,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Testers4 = "PurpleMattik\nSmh\nShade\nShadine\nTeiull";
 
-        public const string Translators = "Dimension Translate Group\nMyawk\nZavthenovakid";
+        public const string Translators = "Dimension Translate Group\nIndeperevod";
 
         public const string Supporters = "Borb9834\nOptrix\n-Runaway-\nyoshi";
 

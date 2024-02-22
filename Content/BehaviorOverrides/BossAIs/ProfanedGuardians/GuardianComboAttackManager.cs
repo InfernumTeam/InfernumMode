@@ -886,6 +886,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Die once the animation is complete.
                     HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedHealerDeathTip");
                     npc.life = 0;
+                    npc.NPCLoot();
                     npc.active = false;
                     DoPhaseTransitionEffects(commander, 2);
                 }

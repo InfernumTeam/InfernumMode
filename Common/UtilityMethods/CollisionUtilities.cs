@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -77,7 +77,7 @@ namespace InfernumMode
                     if (!t.HasUnactuatedTile)
                         continue;
 
-                    if (t.TileType == TileID.Platforms || TileID.Sets.Platforms[t.TileType])
+                    if (t.TileType == TileID.Platforms || TileID.Sets.Platforms[t.TileType] || t.TileType == TileID.PlanterBox)
                         return true;
                 }
             }

@@ -133,7 +133,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         #endregion Fields, Properties, and Enumerations
 
         #region AI and Behaviors
-
         public override bool PreAI(NPC npc)
         {
             npc.TargetClosestIfTargetIsInvalid();
@@ -1007,7 +1006,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         #endregion AI and Behaviors
 
         #region Drawing and Frames
-
         public static Vector2 CrownPosition(NPC npc)
         {
             Vector2 crownPosition = new(npc.Center.X, npc.Top.Y - 12f);

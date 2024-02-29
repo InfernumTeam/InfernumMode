@@ -13,13 +13,14 @@ namespace InfernumMode.Content.Items.Pets
     {
         public override void SetDefaults()
         {
+            Item.width = 42;
+            Item.height = 44;
+
             Item.damage = 0;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 20;
             Item.useTime = 20;
             Item.noMelee = true;
-            Item.width = 30;
-            Item.height = 30;
 
             Item.value = Item.sellPrice(copper: 69);
             Item.rare = ModContent.RarityType<InfernumHatgirlRarity>();

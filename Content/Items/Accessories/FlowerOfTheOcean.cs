@@ -31,8 +31,8 @@ namespace InfernumMode.Content.Items.Accessories
 
         public override void SetDefaults()
         {
-            Item.width = 36;
-            Item.height = 36;
+            Item.width = 48;
+            Item.height = 30;
             Item.value = CalamityGlobalItem.Rarity9BuyPrice;
             Item.rare = ModContent.RarityType<InfernumOceanFlowerRarity>();
             Item.accessory = true;

@@ -71,8 +71,8 @@ namespace InfernumMode.Content.Items.Misc
 
         public override void SetDefaults()
         {
-            Item.width = 56;
-            Item.height = 56;
+            Item.width = 58;
+            Item.height = 58;
             Item.useTime = Item.useAnimation = 20;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;

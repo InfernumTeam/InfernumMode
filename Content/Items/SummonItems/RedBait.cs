@@ -11,14 +11,13 @@ namespace InfernumMode.Content.Items.SummonItems
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 6; // Queen Slime
         }
 
         public override void SetDefaults()
         {
-            Item.width = 20;
-            Item.height = 20;
+            Item.width = 42;
+            Item.height = 56;
             Item.rare = ItemRarityID.Pink;
             Item.useAnimation = 45;
             Item.useTime = 45;

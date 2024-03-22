@@ -10,20 +10,19 @@ namespace InfernumMode.Content.Items.SummonItems
 {
     public class LeviathanDetector : ModItem
     {
-        public int frameCounter;
+        public int FrameCounter;
 
-        public int frame;
+        public int Frame;
 
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
         }
 
         public override void SetDefaults()
         {
-            Item.width = 42;
-            Item.height = 50;
+            Item.width = 58;
+            Item.height = 58;
             Item.rare = ItemRarityID.Lime;
             Item.useAnimation = 45;
             Item.useTime = 45;
@@ -46,7 +45,7 @@ namespace InfernumMode.Content.Items.SummonItems
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frameI, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SummonItems/LeviathanDetector_Animated").Value;
-            Rectangle f = Item.GetCurrentFrame(ref frame, ref frameCounter, 5, 8);
+            Rectangle f = Item.GetCurrentFrame(ref Frame, ref FrameCounter, 5, 14);
             Main.spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * 0.5f, scale, SpriteEffects.None, 0);
             return false;
         }
@@ -54,7 +53,7 @@ namespace InfernumMode.Content.Items.SummonItems
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SummonItems/LeviathanDetector_Animated").Value;
-            Main.spriteBatch.Draw(texture, Item.position - Main.screenPosition, Item.GetCurrentFrame(ref frame, ref frameCounter, 5, 8), lightColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, Item.position - Main.screenPosition, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 5, 8), lightColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             return false;
         }
 

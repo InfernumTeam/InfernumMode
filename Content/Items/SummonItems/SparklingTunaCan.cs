@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Items.SummonItems
 
         public override void SetDefaults()
         {
-            Item.width = 28;
+            Item.width = 30;
             Item.height = 34;
             Item.rare = ItemRarityID.Green;
             Item.useAnimation = 45;

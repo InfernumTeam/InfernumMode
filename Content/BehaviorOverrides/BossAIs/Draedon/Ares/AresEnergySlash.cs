@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -11,12 +12,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
     public class AresEnergySlash : ModProjectile
     {
         public Vector2[] ControlPoints;
-
-        public PrimitiveTrail SlashDrawer
-        {
-            get;
-            set;
-        }
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -53,9 +48,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(ref Color lightColor)
         {
-            // Initialize the drawer.
-            SlashDrawer ??= new(SlashWidthFunction, SlashColorFunction, null, InfernumEffectsRegistry.AresEnergySlashShader);
-
             // Draw the slash effect.
             Main.spriteBatch.EnterShaderRegion();
 
@@ -72,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture2(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
 
             for (Projectile.localAI[1] = 1f; Projectile.localAI[1] > 0f; Projectile.localAI[1] -= 0.33f)
-                SlashDrawer.Draw(points, direction * -60f - Main.screenPosition, 43);
+                PrimitiveRenderer.RenderTrail(points, new(SlashWidthFunction, SlashColorFunction, _ => direction * -60f, Shader: InfernumEffectsRegistry.AresEnergySlashShader), 43);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

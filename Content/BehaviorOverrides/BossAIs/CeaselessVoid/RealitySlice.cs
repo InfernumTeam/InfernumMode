@@ -1,8 +1,9 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -14,8 +15,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class RealitySlice : ModProjectile
     {
-        internal PrimitiveTrail LightningDrawer;
-
         public bool Cosmilite;
 
         public Vector2 Start;
@@ -118,17 +117,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
-
             InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
 
             Projectile.localAI[0] = 0f;
-            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
+            PrimitiveSettings settings = new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: InfernumEffectsRegistry.RealityTearVertexShader);
+            PrimitiveRenderer.RenderTrail(TrailCache, settings, 50);
             if (Cosmilite)
             {
                 Projectile.localAI[0] = 1f;
-                LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
+                PrimitiveRenderer.RenderTrail(TrailCache, settings, 50);
             }
             return false;
         }

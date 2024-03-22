@@ -1,4 +1,5 @@
-using CalamityMod;
+﻿using CalamityMod;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System.IO;
 using Terraria;
@@ -13,8 +14,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public Vector2[] ChargePositions = new Vector2[1];
 
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
-
-        public PrimitiveTrail TelegraphDrawer;
 
         public const int Lifetime = 36;
 
@@ -93,8 +92,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override bool PreDraw(ref Color lightColor)
         {
-            TelegraphDrawer ??= new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
-
             GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.36f);
 
@@ -110,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // It is not used anywhere else.
                 Projectile.ai[0] = i;
 
-                TelegraphDrawer.Draw(positions, Projectile.Size * 0.5f - Main.screenPosition, 55);
+                PrimitiveRenderer.RenderTrail(positions, new(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, _ => Projectile.Size * 0.5f, false, Shader: GameShaders.Misc["CalamityMod:Flame"]), 55);
             }
             return false;
         }

@@ -17,6 +17,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -893,7 +894,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                         // Swoop down slightly and release lasers.
                         case 1:
-                            npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
+                            npc.velocity.Y = LumUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 475f))
@@ -1939,7 +1940,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public static float RibbonTrailWidthFunction(float completionRatio)
         {
             float baseWidth = Utils.GetLerpValue(1f, 0.54f, completionRatio, true) * 5f;
-            float endTipWidth = CalamityUtils.Convert01To010(Utils.GetLerpValue(0.96f, 0.89f, completionRatio, true)) * 2.4f;
+            float endTipWidth = LumUtils.Convert01To010(Utils.GetLerpValue(0.96f, 0.89f, completionRatio, true)) * 2.4f;
             return baseWidth + endTipWidth;
         }
 
@@ -1949,7 +1950,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.27f);
             Color middleColor = Color.Lerp(Color.Orange, Color.ForestGreen, 0.74f);
             Color endColor = Color.Lime;
-            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * npc.ModNPC<Apollo>().ChargeComboFlash * trailOpacity;
+            return LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * npc.ModNPC<Apollo>().ChargeComboFlash * trailOpacity;
         }
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
@@ -1958,7 +1959,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.25f);
             Color middleColor = Color.Lerp(Color.Blue, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.DarkBlue, Color.White, 0.47f);
-            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * npc.ModNPC<Apollo>().ChargeComboFlash * trailOpacity;
+            Color color = LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * npc.ModNPC<Apollo>().ChargeComboFlash * trailOpacity;
             color.A = 0;
             return color;
         }
@@ -1972,19 +1973,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            // Declare the trail drawers if they have yet to be defined.
-            if (npc.ModNPC<Apollo>().ChargeFlameTrail is null)
-                npc.ModNPC<Apollo>().ChargeFlameTrail = new PrimitiveTrail(c => FlameTrailWidthFunction(npc, c), c => FlameTrailColorFunction(npc, c), null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
-
-            if (npc.ModNPC<Apollo>().ChargeFlameTrailBig is null)
-                npc.ModNPC<Apollo>().ChargeFlameTrailBig = new PrimitiveTrail(c => FlameTrailWidthFunctionBig(npc, c), c => FlameTrailColorFunctionBig(npc, c), null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
-
-            if (npc.ModNPC<Apollo>().RibbonTrail is null)
-                npc.ModNPC<Apollo>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
-
             // Prepare the flame trail shader with its map texture.
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
-            DrawExoTwin(npc, lightColor, npc.ModNPC<Apollo>().ChargeComboFlash, npc.ModNPC<Apollo>().RibbonTrail, npc.ModNPC<Apollo>().ChargeFlameTrail, npc.ModNPC<Apollo>().ChargeFlameTrailBig);
+            DrawExoTwin(npc, lightColor, npc.ModNPC<Apollo>().ChargeComboFlash, new PrimitiveSettings(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c), null),
+                new PrimitiveSettings(c => FlameTrailWidthFunction(npc, c), c => FlameTrailColorFunction(npc, c), null, Shader: GameShaders.Misc["CalamityMod:ImpFlameTrail"]));
             return false;
         }
 
@@ -1998,7 +1990,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             return Color.Orange * endFadeOpacity * telegraphOpacity * 0.2f;
         }
 
-        public static void DrawExoTwin(NPC npc, Color lightColor, float flashInterpolant, PrimitiveTrail ribbonTrail, PrimitiveTrail chargeFlameTrail, PrimitiveTrail chargeFlameTrailBig)
+        public static void DrawExoTwin(NPC npc, Color lightColor, float flashInterpolant, PrimitiveSettings ribbonTrail, PrimitiveSettings chargeFlameTrail)
         {
             int numAfterimages = flashInterpolant > 0f ? 0 : 5;
             bool isArtemis = npc.type == ModContent.NPCType<Artemis>();
@@ -2092,7 +2084,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     currentSegmentRotation += segmentRotationOffset;
                 }
-                ribbonTrail.Draw(ribbonDrawPositions, -Main.screenPosition, 66);
+                PrimitiveRenderer.RenderTrail(ribbonDrawPositions, ribbonTrail, 66);
             }
 
             int instanceCount = (int)Lerp(1f, 15f, flashInterpolant);
@@ -2138,11 +2130,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         for (int i = 0; i < 4; i++)
                         {
                             Vector2 drawOffset = (TwoPi * i / 4f).ToRotationVector2() * 8f;
-                            chargeFlameTrailBig.Draw(drawPositions, drawOffset - Main.screenPosition, 70);
+                            PrimitiveRenderer.RenderTrail(drawPositions,
+                                new PrimitiveSettings(c => FlameTrailWidthFunctionBig(npc, c), c => FlameTrailColorFunctionBig(npc, c), _ => drawOffset, Shader: GameShaders.Misc["CalamityMod:ImpFlameTrail"]),
+                                70);
                         }
                     }
                     else
-                        chargeFlameTrail.Draw(drawPositions, -Main.screenPosition, 70);
+                        PrimitiveRenderer.RenderTrail(drawPositions, chargeFlameTrail, 70);
                 }
             }
 

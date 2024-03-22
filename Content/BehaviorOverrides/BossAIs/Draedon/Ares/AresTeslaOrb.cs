@@ -1,5 +1,6 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -11,10 +12,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresTeslaOrb : ModProjectile
     {
-        public PrimitiveTrail LightningDrawer;
-
-        public PrimitiveTrail LightningBackgroundDrawer;
-
         public ref float Identity => ref Projectile.ai[0];
 
         public static float DetatchmentDistance => 900f;
@@ -150,21 +147,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-            LightningBackgroundDrawer ??= new PrimitiveTrail(BackgroundWidthFunction, BackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-
             Projectile orbToAttachTo = GetOrbToAttachTo();
             if (orbToAttachTo != null)
             {
                 List<Vector2> arcPoints = DetermineElectricArcPoints(Projectile.Center, orbToAttachTo.Center, 117);
-                LightningBackgroundDrawer.Draw(arcPoints, -Main.screenPosition, 90);
-                LightningDrawer.Draw(arcPoints, -Main.screenPosition, 90);
+                PrimitiveRenderer.RenderTrail(arcPoints, new(WidthFunction, ColorFunction, null, false), 90);
+                PrimitiveRenderer.RenderTrail(arcPoints, new(BackgroundWidthFunction, BackgroundColorFunction, null, false), 90);
             }
 
             lightColor.R = (byte)(255 * Projectile.Opacity);
             lightColor.G = (byte)(255 * Projectile.Opacity);
             lightColor.B = (byte)(255 * Projectile.Opacity);
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
             return false;
         }
 

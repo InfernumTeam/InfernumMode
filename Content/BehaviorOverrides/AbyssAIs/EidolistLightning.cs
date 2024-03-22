@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 {
     public class EidolistLightning : ModProjectile
     {
-        internal PrimitiveTrail LightningDrawer;
-
         public bool HasPlayedSound;
 
         public const int Lifetime = 45;
@@ -132,12 +131,12 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
+        public float PrimitiveWidthFunction(float completionRatio) => LumUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
             float colorInterpolant = Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
-            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
+            Color color = LumUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
             return color;
         }
 
@@ -159,12 +158,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]);
-
+            // TODO: Update shader to managed shader.
             GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
-
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 10);
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]), 10);
             return false;
         }
     }

@@ -413,7 +413,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             Vector2? teleportPosition = null;
 
             // Teleport the player to the garden for the guardians fight in boss rush.
-            if (BossRushStage < Bosses.Count - 1 && !CalamityUtils.AnyBossNPCS())
+            if (BossRushStage < Bosses.Count - 1 && !CalamityPlayer.areThereAnyDamnBosses)
             {
                 if (CurrentlyFoughtBoss == NPCID.WallofFlesh && !player.ZoneUnderworldHeight)
                     teleportPosition = CalamityPlayer.GetUnderworldPosition(player);

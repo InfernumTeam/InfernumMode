@@ -26,7 +26,6 @@ using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 using CeaselessVoidBoss = CalamityMod.NPCs.CeaselessVoid.CeaselessVoid;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
@@ -544,7 +543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 for (int i = 0; i < totalRings; i++)
                 {
                     float spinMovementSpeed = Lerp(7f, 1f, i / (float)(totalRings - 1f));
-                    float offsetRadius = Lerp(180f, DarkEnergyOffsetRadius, Convert01To010(i / (float)(energyCountPerRing - 1f)));
+                    float offsetRadius = Lerp(180f, DarkEnergyOffsetRadius, LumUtils.Convert01To010(i / (float)(energyCountPerRing - 1f)));
                     for (int j = 0; j < energyCountPerRing; j++)
                     {
                         float offsetAngle = TwoPi * j / energyCountPerRing;
@@ -888,7 +887,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 7; i++)
                     {
-                        Vector2 baseSpawnOffset = new Vector2(Lerp(-775f, 775f, i / 6f), -200f - Convert01To010(i / 6f) * 100f) + Main.rand.NextVector2Circular(30f, 30f);
+                        Vector2 baseSpawnOffset = new Vector2(Lerp(-775f, 775f, i / 6f), -200f - LumUtils.Convert01To010(i / 6f) * 100f) + Main.rand.NextVector2Circular(30f, 30f);
                         for (int j = 0; j < 8; j++)
                         {
                             Vector2 microSpawnOffset = (TwoPi * j / 8f).ToRotationVector2() * 66f;
@@ -1859,7 +1858,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             int sideCount = 512;
             Utilities.GetCircleVertices(sideCount, radius, npc.Center, out var triangleIndices, out var vertices);
 
-            CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
             InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
             InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);

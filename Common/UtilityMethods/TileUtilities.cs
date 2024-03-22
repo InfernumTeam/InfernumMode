@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using static CalamityMod.CalamityUtils;
+using Terraria;
 
 namespace InfernumMode
 {
@@ -10,22 +10,22 @@ namespace InfernumMode
         public static bool IsTileExposedToAir(int x, int y, out float? angleToOpenAir)
         {
             angleToOpenAir = null;
-            if (!ParanoidTileRetrieval(x - 1, y).HasTile)
+            if (!Framing.GetTileSafely(x - 1, y).HasTile)
             {
                 angleToOpenAir = Pi;
                 return true;
             }
-            if (!ParanoidTileRetrieval(x + 1, y).HasTile)
+            if (!Framing.GetTileSafely(x + 1, y).HasTile)
             {
                 angleToOpenAir = 0f;
                 return true;
             }
-            if (!ParanoidTileRetrieval(x, y - 1).HasTile)
+            if (!Framing.GetTileSafely(x, y - 1).HasTile)
             {
                 angleToOpenAir = PiOver2;
                 return true;
             }
-            if (!ParanoidTileRetrieval(x, y + 1).HasTile)
+            if (!Framing.GetTileSafely(x, y + 1).HasTile)
             {
                 angleToOpenAir = -PiOver2;
                 return true;

@@ -1,5 +1,6 @@
 ﻿global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
+global using LumUtils = Luminance.Common.Utilities.Utilities;
 using CalamityMod.Cooldowns;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;

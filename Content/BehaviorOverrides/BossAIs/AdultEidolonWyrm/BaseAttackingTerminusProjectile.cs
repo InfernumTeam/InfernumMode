@@ -80,11 +80,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         // Negative rotations = downward flaps.
         public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, -0.4f, 0.65f, 3);
 
-        public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight(), -1.88f, 4);
+        public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight, -1.88f, 4);
 
-        public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight(), 0.59f, 3);
+        public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight, 0.59f, 3);
 
-        public static CurveSegment Recovery => new(EasingType.PolyIn, 0.9f, Rest.EndingHeight(), -0.4f - Rest.EndingHeight(), 2);
+        public static CurveSegment Recovery => new(EasingType.PolyIn, 0.9f, Rest.EndingHeight, -0.4f - Rest.EndingHeight, 2);
 
         public override string Texture => "CalamityMod/Items/SummonItems/Terminus";
 

@@ -206,8 +206,6 @@ namespace InfernumMode
                 1f - Pow(-2f * value + 2f, 3f) / 2f;
         }
 
-        public static float EndingHeight(this CalamityUtils.CurveSegment segment) => segment.startingHeight + segment.elevationShift;
-
         public static float AccelerationToReachSpeed(float startingSpeed, float idealSpeed, int accelerationTime)
         {
             // Writing exponential acceleration as an algebraic equation can allow us to determine how fast each frame must be to reach

@@ -98,11 +98,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Negative rotations = downward flaps.
             public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, -0.4f, 0.78f, 3);
 
-            public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight(), -1.85f, 4);
+            public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight, -1.85f, 4);
 
-            public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight(), 0.59f, 3);
+            public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight, 0.59f, 3);
 
-            public static CurveSegment Recovery => new(EasingType.PolyIn, 0.9f, Rest.EndingHeight(), -0.4f - Rest.EndingHeight(), 2);
+            public static CurveSegment Recovery => new(EasingType.PolyIn, 0.9f, Rest.EndingHeight, -0.4f - Rest.EndingHeight, 2);
 
             public void Update(WingMotionState motionState, float animationCompletion, float instanceRatio)
             {

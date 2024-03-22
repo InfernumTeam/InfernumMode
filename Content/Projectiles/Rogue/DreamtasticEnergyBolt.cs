@@ -9,7 +9,6 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.Projectiles.Rogue
 {
@@ -117,7 +116,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                 {
                     Vector2 position = Main.rand.NextVector2FromRectangle(target.Hitbox);
                     Vector2 velocity = target.SafeDirectionTo(position) * Main.rand.NextFloat(1f, 3f);
-                    Color color = MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
+                    Color color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
 
                     if (Main.rand.NextBool())
                        GeneralParticleHandler.SpawnParticle(new SparkleParticle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
@@ -129,7 +128,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
 
                 }
 
-                Color color2 = MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
+                Color color2 = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
                 GeneralParticleHandler.SpawnParticle(new StrongBloom(Main.rand.NextVector2FromRectangle(target.Hitbox), Vector2.Zero, color2 * 0.6f, Main.rand.NextFloat(0.7f, 1.1f), 30));
             }
         }
@@ -170,7 +169,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
         {
             float bloomScale = Utils.GetLerpValue(0.8f, 2.4f, Projectile.velocity.Length(), true) * Projectile.scale;
             Texture2D bloomTexture = ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
-            Color mainColor = MulticolorLerp((Main.GlobalTimeWrappedHourly * 0.5f + Projectile.whoAmI * 0.12f) % 1, Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
+            Color mainColor = LumUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 0.5f + Projectile.whoAmI * 0.12f) % 1, Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
 
             // Draw the bloom under the trail.
             Main.EntitySpriteDraw(bloomTexture, Projectile.oldPos[2] + Projectile.Size * 0.5f - Main.screenPosition, null, (mainColor * 0.1f) with { A = 0 }, 0, bloomTexture.Size() * 0.5f, bloomScale * 1.3f, 0, 0);

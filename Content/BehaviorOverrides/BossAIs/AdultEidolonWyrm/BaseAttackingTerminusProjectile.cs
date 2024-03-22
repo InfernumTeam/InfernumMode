@@ -1,10 +1,10 @@
-﻿using InfernumMode.Common.Graphics.Primitives;
+﻿using System;
+using InfernumMode.Common.Graphics.Primitives;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                         WingRotation = (-0.6f).AngleLerp(0.36f - instanceRatio * 0.15f, animationCompletion);
                         break;
                     case WingMotionState.Flap:
-                        WingRotation = PiecewiseAnimation((animationCompletion + Lerp(instanceRatio, 0f, 0.5f)) % 1f, Anticipation, Flap, Rest, Recovery);
+                        WingRotation = WingFlapAngleFunction.Evaluate((animationCompletion + Lerp(instanceRatio, 0f, 0.5f)) % 1f);
                         break;
                 }
 
@@ -75,16 +75,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public ref float WingsFadeInInterpolant => ref Projectile.localAI[1];
 
-        // Piecewise function variables for determining the angular offset of wings when flapping.
+        // Piecewise function for determining the angular offset of wings when flapping.
         // Positive rotations = upward flaps.
         // Negative rotations = downward flaps.
-        public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, -0.4f, 0.65f, 3);
-
-        public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight, -1.88f, 4);
-
-        public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight, 0.59f, 3);
-
-        public static CurveSegment Recovery => new(EasingType.PolyIn, 0.9f, Rest.EndingHeight, -0.4f - Rest.EndingHeight, 2);
+        public static readonly PiecewiseCurve WingFlapAngleFunction = new PiecewiseCurve().
+            Add(EasingCurves.Cubic, EasingType.Out, 0.25f, 0.5f, -0.4f). // Anticipation
+            Add(EasingCurves.Quartic, EasingType.In, -1.63f, 0.71f). // Flap.
+            Add(EasingCurves.Cubic, EasingType.In, -1.04f, 0.9f). // Rest
+            Add(EasingCurves.Quadratic, EasingType.In, -0.4f, 1f); // Recovery.
 
         public override string Texture => "CalamityMod/Items/SummonItems/Terminus";
 

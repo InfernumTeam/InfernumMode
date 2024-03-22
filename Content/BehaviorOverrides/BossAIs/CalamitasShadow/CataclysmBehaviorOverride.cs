@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
@@ -7,13 +7,13 @@ using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow.CalamitasShadowBehaviorOverride;
 using CalCloneNPC = CalamityMod.NPCs.CalClone.CalamitasClone;
 using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
@@ -318,11 +318,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
 
                 // Make catastrophe swing his blade.
-                CurveSegment anticipation = new(EasingType.PolyOut, 0f, 0f, -2.4f, 4);
-                CurveSegment slash = new(EasingType.PolyInOut, 0.34f, anticipation.EndingHeight, 5.8f, 3);
-                CurveSegment recovery = new(EasingType.PolyIn, 0.8f, slash.EndingHeight, -slash.EndingHeight, 8);
+                PiecewiseCurve armAngleSwingFunction = new PiecewiseCurve().
+                    Add(EasingCurves.Quartic, EasingType.Out, -2.4f, 0.3f). // Anticipation.
+                    Add(EasingCurves.Cubic, EasingType.InOut, 3.4f, 0.8f). // Slash.
+                    Add(EasingCurves.MakePoly(8f), EasingType.In, 0f, 1f); // Recovery.
+
                 float swingCompletion = Utils.GetLerpValue(0f, fireReleaseRate, wrappedTimer % fireReleaseRate, true);
-                catastropheArmRotation = PiecewiseAnimation(swingCompletion, anticipation, slash, recovery);
+                catastropheArmRotation = armAngleSwingFunction.Evaluate(swingCompletion);
 
                 if (wrappedTimer % fireReleaseRate == fireReleaseRate - 42f)
                 {

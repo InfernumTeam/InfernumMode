@@ -1,12 +1,12 @@
-using CalamityMod.NPCs.Abyss;
+﻿using CalamityMod.NPCs.Abyss;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 {
@@ -21,12 +21,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public override int NPCOverrideType => ModContent.NPCType<ColossalSquid>();
 
-        // Piecewise function variables for determining the offset of tentacles when swiping at the target.
-        public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, 0f, -0.53f, 2);
-
-        public static CurveSegment Slash => new(EasingType.PolyIn, 0.17f, -0.53f, 2.5f, 3);
-
-        public static CurveSegment Recovery => new(EasingType.SineOut, 0.4f, -0.36f, -1.97f);
+        // Piecewise function for determining the offset of tentacles when swiping at the target.
+        public static readonly PiecewiseCurve TentacleOffsetAngleFunction = new PiecewiseCurve().
+            Add(EasingCurves.Quadratic, EasingType.Out, -0.53f, 0.17f). // Anticipation.
+            Add(EasingCurves.Cubic, EasingType.In, 2.5f, 0.4f). // Swing
+            Add(EasingCurves.Quadratic, EasingType.Out, 0f, 1f); // Recovery.
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)
@@ -118,8 +117,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Move the tentacles in a swiping motion.
             NPC tentacleToMove = swingFromRight == 1f ? rightTentacle : leftTentacle;
             NPC otherTentacle = swingFromRight == 1f ? leftTentacle : rightTentacle;
-            Vector2 tentacleDirection = PiecewiseAnimation(swingCompletion, Anticipation, Slash, Recovery).ToRotationVector2() * new Vector2((swingFromRight == 1f).ToDirectionInt(), 1f);
-            Vector2 legDestination = npc.Center + tentacleDirection * (Convert01To010(swingCompletion) * 210f + 200f);
+            Vector2 tentacleDirection = TentacleOffsetAngleFunction.Evaluate(swingCompletion).ToRotationVector2() * new Vector2((swingFromRight == 1f).ToDirectionInt(), 1f);
+            Vector2 legDestination = npc.Center + tentacleDirection * (LumUtils.Convert01To010(swingCompletion) * 210f + 200f);
             tentacleToMove.Center = tentacleToMove.Center.MoveTowards(legDestination, 54f);
             otherTentacle.Center = Vector2.Lerp(otherTentacle.Center, npc.Center + new Vector2((swingFromRight == 1f).ToDirectionInt() * -120f, 145f), 0.1f);
 

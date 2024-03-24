@@ -1,12 +1,12 @@
+﻿using System.IO;
 using CalamityMod.Particles;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -54,10 +54,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             get => (DarkEnergyAttackState)Projectile.ai[0];
             set => Projectile.ai[0] = (int)value;
         }
-
-        public CurveSegment SpinRise => new(EasingType.PolyIn, 0f, CenterPoint.Distance(RestingPosition), 60f, 2);
-
-        public CurveSegment SpinFall => new(EasingType.PolyOut, 0.35f, SpinRise.EndingHeight, -SpinRise.EndingHeight, 4);
 
         public Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
@@ -166,7 +162,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public void DoBehavior_SpinInPlace()
         {
             float spinCompletion = Utils.GetLerpValue(0f, SpinTime, Time, true);
-            float radius = PiecewiseAnimation(spinCompletion, SpinRise, SpinFall);
+            float distanceFromCenter = CenterPoint.Distance(RestingPosition);
+
+            PiecewiseCurve spinRadiusFunction = new PiecewiseCurve().
+                Add(EasingCurves.Quadratic, EasingType.In, distanceFromCenter, 0.35f).
+                Add(EasingCurves.Quartic, EasingType.Out, 0f, 1f);
 
             if (Time <= 0f)
                 SpinOffsetAngle = CenterPoint.AngleTo(Projectile.Center);
@@ -182,6 +182,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             }
 
             // SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN!!
+            float radius = spinRadiusFunction.Evaluate(spinCompletion);
             SpinOffsetAngle += TwoPi / SpinTime;
             Projectile.Center = CenterPoint + SpinOffsetAngle.ToRotationVector2() * radius;
 

@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
@@ -8,10 +10,9 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -19,8 +20,6 @@ using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 {
@@ -96,13 +95,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             // Piecewise function variables for determining the angular offset of wings when flapping.
             // Positive rotations = upward flaps.
             // Negative rotations = downward flaps.
-            public static CurveSegment Anticipation => new(EasingType.PolyOut, 0f, -0.4f, 0.78f, 3);
-
-            public static CurveSegment Flap => new(EasingType.PolyIn, 0.5f, Anticipation.EndingHeight, -1.85f, 4);
-
-            public static CurveSegment Rest => new(EasingType.PolyIn, 0.71f, Flap.EndingHeight, 0.59f, 3);
-
-            public static CurveSegment Recovery => new(EasingType.PolyIn, 0.9f, Rest.EndingHeight, -0.4f - Rest.EndingHeight, 2);
+            public static readonly PiecewiseCurve WingFlapAngleFunction = new PiecewiseCurve().
+                Add(EasingCurves.Cubic, EasingType.Out, 0.25f, 0.38f, -0.4f). // Anticipation
+                Add(EasingCurves.Quartic, EasingType.In, -2.23f, 0.71f). // Flap.
+                Add(EasingCurves.Cubic, EasingType.In, -1.64f, 0.9f). // Rest
+                Add(EasingCurves.Quadratic, EasingType.In, -0.4f, 1f); // Recovery.
 
             public void Update(WingMotionState motionState, float animationCompletion, float instanceRatio)
             {
@@ -114,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                         WingRotation = (-0.6f).AngleLerp(0.36f - instanceRatio * 0.15f, animationCompletion);
                         break;
                     case WingMotionState.Flap:
-                        WingRotation = PiecewiseAnimation((animationCompletion + Lerp(instanceRatio, 0f, 0.5f)) % 1f, Anticipation, Flap, Rest, Recovery);
+                        WingRotation = WingFlapAngleFunction.Evaluate((animationCompletion + Lerp(instanceRatio, 0f, 0.5f)) % 1f);
                         break;
                 }
 
@@ -205,9 +202,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 float animationCompletion = wingAnimationTimer / WingUpdateCycleTime % 1f;
                 UpdateWings(npc, animationCompletion);
-                if (wingAnimationTimer % WingUpdateCycleTime == (int)(QueenSlimeWing.Flap.startingX * WingUpdateCycleTime) + 4)
-                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Pitch = 0.2f, Volume = 0.1f }, npc.Center);
-
                 wingAnimationTimer++;
             }
             else
@@ -228,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 Wings[i].Update((WingMotionState)npc.localAI[1], animationCompletion, instanceRatio);
 
                 // Release feather dust particles.
-                if (animationCompletion >= QueenSlimeWing.Flap.startingX && animationCompletion < QueenSlimeWing.Recovery.startingX)
+                if (animationCompletion >= 0.5f && animationCompletion < 0.71f)
                 {
                     Vector2 featherSpawnPosition = npc.Center - Vector2.UnitX.RotatedBy(npc.rotation + Wings[i].WingRotation + 0.55f).RotatedByRandom(0.12f) * Main.rand.NextFloat(110f);
                     Dust feather = Dust.NewDustPerfect(featherSpawnPosition, 267);
@@ -1231,7 +1225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             bool solidGround = false;
             for (int i = -8; i < 8; i++)
             {
-                Tile ground = ParanoidTileRetrieval((int)(npc.Bottom.X / 16f) + i, (int)(npc.Bottom.Y / 16f) + 1);
+                Tile ground = LumUtils.ParanoidTileRetrieval((int)(npc.Bottom.X / 16f) + i, (int)(npc.Bottom.Y / 16f) + 1);
                 bool notAFuckingTree = ground.TileType is not TileID.Trees and not TileID.PineTree and not TileID.PalmTree;
                 if (ground.HasUnactuatedTile && notAFuckingTree && (Main.tileSolid[ground.TileType] || Main.tileSolidTop[ground.TileType]))
                 {

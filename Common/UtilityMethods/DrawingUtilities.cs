@@ -528,30 +528,28 @@ namespace InfernumMode
             get
             {
                 float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
-                Color c = CalamityUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
+                Color c = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
                 return CalamityUtils.ColorMessage(GetLocalization("Items.InfernalRelicText").Value, c);
             }
         }
 
-        public static void SwapToRenderTarget(this ManagedRenderTarget renderTarget, Color? flushColor = null) => SwapToRenderTarget(renderTarget.Target, flushColor);
+        //public static void SwapToRenderTarget(this RenderTarget2D renderTarget, Color? flushColor = null)
+        //{
+        //    // Local variables for convinience.
+        //    GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
+        //    SpriteBatch spriteBatch = Main.spriteBatch;
 
-        public static void SwapToRenderTarget(this RenderTarget2D renderTarget, Color? flushColor = null)
-        {
-            // Local variables for convinience.
-            GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
-            SpriteBatch spriteBatch = Main.spriteBatch;
+        //    // If we are in the menu, a server, or any of these are null, return.
+        //    if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
+        //        return;
 
-            // If we are in the menu, a server, or any of these are null, return.
-            if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
-                return;
+        //    // Otherwise set the render target.
+        //    graphicsDevice.SetRenderTarget(renderTarget);
 
-            // Otherwise set the render target.
-            graphicsDevice.SetRenderTarget(renderTarget);
-
-            // "Flush" the screen, removing any previous things drawn to it.
-            flushColor ??= Color.Transparent;
-            graphicsDevice.Clear(flushColor.Value);
-        }
+        //    // "Flush" the screen, removing any previous things drawn to it.
+        //    flushColor ??= Color.Transparent;
+        //    graphicsDevice.Clear(flushColor.Value);
+        //}
 
         /// <summary>
         /// Creates a list of <see cref="InfernumMetaballParticle"/> from a given texture shape and color information.

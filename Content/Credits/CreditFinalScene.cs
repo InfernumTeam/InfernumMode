@@ -2,6 +2,7 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -95,7 +96,7 @@ namespace InfernumMode.Content.Credits
             CreditDevelopers.Add(toasty);
 
             // Initialize the portrait render target.
-            PortraitTarget ??= new ManagedRenderTarget(true, RenderTargetManager.CreateScreenSizedTarget);
+            PortraitTarget ??= new ManagedRenderTarget(true, ManagedRenderTarget.CreateScreenSizedTarget);
         }
 
         public static void Update(float time)

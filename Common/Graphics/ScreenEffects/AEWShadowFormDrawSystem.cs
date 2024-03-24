@@ -6,6 +6,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Content.Tiles.Colosseum;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -53,9 +54,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         public override void OnModLoad()
         {
             Main.OnPreDraw += PrepareAEWTargets;
-            AEWDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            AEWShadowWispTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            AEWDrawTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            AEWShadowWispTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            TemporaryAuxillaryTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
             Filters.Scene.OnPostDraw += WhatTheFuck;
         }
 

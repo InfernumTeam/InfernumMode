@@ -32,6 +32,7 @@ using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -511,7 +512,7 @@ namespace InfernumMode.Core.ILEditingStuff
             On_Main.CheckMonoliths += PrepareSealocketTarget;
             On_Main.DrawInfernoRings += DrawForcefields;
             DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
-            PlayerForcefieldTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            PlayerForcefieldTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
         }
 
         public void Unload()

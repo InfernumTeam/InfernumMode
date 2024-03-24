@@ -2,6 +2,7 @@
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Core.GlobalInstances;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -38,9 +39,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         public override void OnModLoad()
         {
             Main.OnPreDraw += PrepareShadowTargets;
-            ShadowDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            ShadowWispTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            ShadowDrawTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            ShadowWispTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            TemporaryAuxillaryTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
         }
 
         public override void OnModUnload()

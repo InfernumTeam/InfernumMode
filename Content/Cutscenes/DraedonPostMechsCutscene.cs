@@ -1,8 +1,8 @@
 ﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.Cutscenes
 
         public override void Load()
         {
-            ScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            ScreenTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
             LabTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Cutscenes/Textures/DraedonLab", AssetRequestMode.ImmediateLoad).Value;
         }
 

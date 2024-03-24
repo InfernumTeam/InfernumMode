@@ -6,6 +6,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Core.GlobalInstances.Players;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -74,8 +75,8 @@ namespace InfernumMode.Content.Projectiles.Pets
 
         public override void OnSpawn(IEntitySource source)
         {
-            MainTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            PreviousMainTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            MainTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            PreviousMainTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
             RenderTargetManager.RenderTargetUpdateLoopEvent += UpdateEffect;
         }
 

@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Common.Graphics.Interfaces;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;

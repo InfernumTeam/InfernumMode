@@ -207,14 +207,15 @@ namespace InfernumMode.Content.Tiles.Colosseum
             float radius = Utils.GetLerpValue(0.5f, 0.95f, AnimationCompletion, true) * 90f;
             Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 60f), out var triangleIndices, out var vertices);
 
-            CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uTimeFactor"].SetValue(3.2f);
-            InfernumEffectsRegistry.RealityTearVertexShader.UseSaturation(0.3f);
-            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Water.Value;
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.TrySetParameter("useOutline", false);
+            tear.TrySetParameter("uCoordinateZoom", 3.2f);
+            tear.TrySetParameter("uTimeFactor", 3.2f);
+            tear.TrySetParameter("uSaturation", 0.3f);
+            tear.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

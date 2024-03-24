@@ -15,6 +15,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -1442,14 +1443,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DrawArm(NPC npc, Vector2 handPosition, Vector2 screenOffset, Color glowmaskColor, int direction, bool backArm, Color? colorToInterpolateTo = null, float colorInterpolant = 0f)
         {
+
+            PrimitiveSettings foregroundSettings = new(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, null, false);
+            PrimitiveSettings backgroundSettings = new(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.ModNPC<AresBody>().BackgroundColorFunction, null, false);
+
             float scale = npc.scale;
-            ref PrimitiveTrail lightningDrawer = ref npc.ModNPC<AresBody>().LightningDrawer;
-            ref PrimitiveTrail lightningBackgroundDrawer = ref npc.ModNPC<AresBody>().LightningBackgroundDrawer;
-
-            // Initialize lightning drawers.
-            lightningDrawer ??= new PrimitiveTrail(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-            lightningBackgroundDrawer ??= new PrimitiveTrail(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.ModNPC<AresBody>().BackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-
             SpriteEffects spriteDirection = direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             float distanceFromHand = npc.Distance(handPosition);
             float frameTime = Main.GlobalTimeWrappedHourly * 0.9f % 1f;
@@ -1509,13 +1507,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(armSegmentDrawPosition, arm2DrawPosition + arm2Rotation.ToRotationVector2() * -direction * scale * 20f, 250290787);
-                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, backgroundSettings, 90);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, foregroundSettings, 90);
 
                     // Draw electricity between the final arm and the hand.
                     List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 100f, handPosition, 27182);
-                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, backgroundSettings, 90);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, foregroundSettings, 90);
                 }
 
                 shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
@@ -1577,13 +1575,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
-                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
-                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, backgroundSettings, 44);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, foregroundSettings, 44);
 
                     // Draw electricity between the final arm and the hand.
                     List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 20f, handPosition, 27182);
-                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
-                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, backgroundSettings, 44);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, foregroundSettings, 44);
                 }
 
                 shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;

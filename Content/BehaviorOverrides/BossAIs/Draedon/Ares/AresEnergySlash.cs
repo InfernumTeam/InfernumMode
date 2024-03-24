@@ -59,8 +59,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i < 15; i++)
                 points.Add(Utilities.QuadraticBezier(left, middle, right, i / 14f));
 
-            InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes"));
-            InfernumEffectsRegistry.AresEnergySlashShader.SetShaderTexture2(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture"));
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/GreyscaleGradients/VoronoiShapes").Value;
+            Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Trails/SwordSlashTexture").Value;
 
             for (Projectile.localAI[1] = 1f; Projectile.localAI[1] > 0f; Projectile.localAI[1] -= 0.33f)
                 PrimitiveRenderer.RenderTrail(points, new(SlashWidthFunction, SlashColorFunction, _ => direction * -60f, Shader: InfernumEffectsRegistry.AresEnergySlashShader), 43);

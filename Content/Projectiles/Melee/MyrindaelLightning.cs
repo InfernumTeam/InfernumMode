@@ -1,6 +1,9 @@
 ﻿using CalamityMod;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +19,6 @@ namespace InfernumMode.Content.Projectiles.Melee
 {
     public class MyrindaelLightning : ModProjectile
     {
-        internal PrimitiveTrail LightningDrawer;
-
         public bool HasPlayedSound;
 
         public const int Lifetime = 30;
@@ -33,7 +34,6 @@ namespace InfernumMode.Content.Projectiles.Melee
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Myrndael Lightning Bolt");
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 10000;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 50;
@@ -140,7 +140,7 @@ namespace InfernumMode.Content.Projectiles.Melee
         public Color PrimitiveColorFunction(float completionRatio)
         {
             float colorInterpolant = Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
-            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
+            Color color = LumUtils.MulticolorLerp(colorInterpolant, Color.Blue, Color.SkyBlue, Color.Cyan);
             return color;
         }
 
@@ -162,12 +162,9 @@ namespace InfernumMode.Content.Projectiles.Melee
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]);
-
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
-
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 9);
+            var lightning = InfernumEffectsRegistry.GaleLightningShader;
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: lightning), 9);
             return false;
         }
     }

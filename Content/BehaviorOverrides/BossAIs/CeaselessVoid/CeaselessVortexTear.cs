@@ -104,9 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
-            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: InfernumEffectsRegistry.RealityTearVertexShader), 16);
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Stars.Value;
+            tear.TrySetParameter("useOutline", true);
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: tear), 16);
             return false;
         }
     }

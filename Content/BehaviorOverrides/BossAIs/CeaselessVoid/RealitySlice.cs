@@ -117,8 +117,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Stars.Value;
+            InfernumEffectsRegistry.RealityTearVertexShader.TrySetParameter("useOutline", true);
 
             Projectile.localAI[0] = 0f;
             PrimitiveSettings settings = new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: InfernumEffectsRegistry.RealityTearVertexShader);

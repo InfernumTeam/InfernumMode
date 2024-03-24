@@ -9,6 +9,7 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
 using CalamityMod.Sounds;
 using InfernumMode;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
@@ -1974,9 +1975,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.StreakFaded.Value;
             DrawExoTwin(npc, lightColor, npc.ModNPC<Apollo>().ChargeComboFlash, new PrimitiveSettings(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c), null),
-                new PrimitiveSettings(c => FlameTrailWidthFunction(npc, c), c => FlameTrailColorFunction(npc, c), null, Shader: GameShaders.Misc["CalamityMod:ImpFlameTrail"]));
+                new PrimitiveSettings(c => FlameTrailWidthFunction(npc, c), c => FlameTrailColorFunction(npc, c), null, Shader: InfernumEffectsRegistry.ImpFlameTrailShader),
+                (offset) => new PrimitiveSettings(c => FlameTrailWidthFunctionBig(npc, c), c => FlameTrailColorFunctionBig(npc, c), _ => offset, Shader: InfernumEffectsRegistry.ImpFlameTrailShader));
             return false;
         }
 
@@ -1990,7 +1992,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             return Color.Orange * endFadeOpacity * telegraphOpacity * 0.2f;
         }
 
-        public static void DrawExoTwin(NPC npc, Color lightColor, float flashInterpolant, PrimitiveSettings ribbonTrail, PrimitiveSettings chargeFlameTrail)
+        public static void DrawExoTwin(NPC npc, Color lightColor, float flashInterpolant, PrimitiveSettings ribbonTrail, PrimitiveSettings chargeFlameTrail, Func<Vector2, PrimitiveSettings> chargeFlameTrailBigFunc)
         {
             int numAfterimages = flashInterpolant > 0f ? 0 : 5;
             bool isArtemis = npc.type == ModContent.NPCType<Artemis>();
@@ -2130,9 +2132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         for (int i = 0; i < 4; i++)
                         {
                             Vector2 drawOffset = (TwoPi * i / 4f).ToRotationVector2() * 8f;
-                            PrimitiveRenderer.RenderTrail(drawPositions,
-                                new PrimitiveSettings(c => FlameTrailWidthFunctionBig(npc, c), c => FlameTrailColorFunctionBig(npc, c), _ => drawOffset, Shader: GameShaders.Misc["CalamityMod:ImpFlameTrail"]),
-                                70);
+                            PrimitiveRenderer.RenderTrail(drawPositions, chargeFlameTrailBigFunc(drawOffset), 70);
                         }
                     }
                     else

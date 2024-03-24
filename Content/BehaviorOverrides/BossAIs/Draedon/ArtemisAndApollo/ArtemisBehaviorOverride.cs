@@ -1,8 +1,11 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -241,7 +244,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         {
             // Prepare the flame trail shader with its map texture.
             GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(InfernumTextureRegistry.StreakFaded);
-            DrawExoTwin(npc, lightColor, npc.ModNPC<Artemis>().ChargeFlash, npc.ModNPC<Artemis>().RibbonTrail, npc.ModNPC<Artemis>().ChargeFlameTrail, npc.ModNPC<Artemis>().ChargeFlameTrailBig);
+            DrawExoTwin(npc, lightColor, npc.ModNPC<Artemis>().ChargeFlash, new PrimitiveSettings(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c), null),
+                new PrimitiveSettings(c => FlameTrailWidthFunction(npc, c), c => FlameTrailColorFunction(npc, c), null, Shader: InfernumEffectsRegistry.ImpFlameTrailShader),
+                (offset) => new(c => FlameTrailWidthFunctionBig(npc, c), c => FlameTrailColorFunctionBig(npc, c), _ => offset, Shader: InfernumEffectsRegistry.ImpFlameTrailShader));
             return false;
         }
         #endregion Frames and Drawcode

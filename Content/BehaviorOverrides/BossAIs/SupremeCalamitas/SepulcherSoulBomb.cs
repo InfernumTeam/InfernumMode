@@ -1,8 +1,9 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
@@ -141,14 +142,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             int sideCount = 512;
             Utilities.GetCircleVertices(sideCount, Radius, Projectile.Center, out var triangleIndices, out var vertices);
 
-            CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/BrimstoneSoulLayer"));
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uTimeFactor"].SetValue(3.2f);
-            InfernumEffectsRegistry.RealityTearVertexShader.UseSaturation(10f);
-            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/BrimstoneSoulLayer").Value;
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.TrySetParameter("useOutline", false);
+            tear.TrySetParameter("uCoordinateZoom", 3.2f);
+            tear.TrySetParameter("uTimeFactor", 3.2f);
+            tear.TrySetParameter("uSaturation", 10f);
+            tear.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

@@ -1,8 +1,10 @@
 ﻿using CalamityMod.Particles;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -196,10 +198,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override bool PreDraw(ref Color lightColor)
         {
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
+            var lightning = InfernumEffectsRegistry.GaleLightningShader;
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
-            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]), 18);
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: lightning), 18);
             return false;
         }
     }

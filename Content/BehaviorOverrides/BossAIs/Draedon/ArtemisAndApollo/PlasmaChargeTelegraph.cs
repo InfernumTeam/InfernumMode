@@ -1,6 +1,8 @@
 ﻿using CalamityMod;
+using InfernumMode.Assets.Effects;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -92,8 +94,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override bool PreDraw(ref Color lightColor)
         {
-            GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.36f);
+            var flame = InfernumEffectsRegistry.FlameVertexShader;
+            flame.TrySetParameter("uSaturation", 0.36f);
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)
             {
@@ -107,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 // It is not used anywhere else.
                 Projectile.ai[0] = i;
 
-                PrimitiveRenderer.RenderTrail(positions, new(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, _ => Projectile.Size * 0.5f, false, Shader: GameShaders.Misc["CalamityMod:Flame"]), 55);
+                PrimitiveRenderer.RenderTrail(positions, new(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, _ => Projectile.Size * 0.5f, false, Shader: flame), 55);
             }
             return false;
         }

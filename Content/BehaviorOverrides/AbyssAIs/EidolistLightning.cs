@@ -1,6 +1,8 @@
 ﻿using CalamityMod.Items.Weapons.Ranged;
+using InfernumMode.Assets.Effects;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -158,9 +160,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override bool PreDraw(ref Color lightColor)
         {
             // TODO: Update shader to managed shader.
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
-            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]), 10);
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: InfernumEffectsRegistry.GaleLightningShader), 10);
             return false;
         }
     }

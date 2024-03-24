@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Luminance.Core.Graphics;

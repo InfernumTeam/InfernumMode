@@ -312,7 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         skullSpawnPositionY = target.Center.Y + Main.rand.NextFloat() * 200f;
                     Vector2 skullSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 800f, skullSpawnPositionY);
 
-                    Tile t = CalamityUtils.ParanoidTileRetrieval((int)(skullSpawnPosition.X / 16f), (int)(skullSpawnPosition.Y / 16f));
+                    Tile t = Framing.GetTileSafely((int)(skullSpawnPosition.X / 16f), (int)(skullSpawnPosition.Y / 16f));
                     if (!t.HasTile && t.LiquidAmount > 0)
                     {
                         DesertProwlerSkullParticle skull = new(skullSpawnPosition, -Vector2.UnitY * 2f, new(70, 204, 80), Color.Purple, Main.rand.NextFloat(0.3f, 0.64f), 350f);
@@ -332,7 +332,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Vector2 acidSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 1100f, acidSpawnPositionY);
                     Color acidColor = Color.Lerp(Color.LightSeaGreen, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.6f));
 
-                    Tile t = CalamityUtils.ParanoidTileRetrieval((int)(acidSpawnPosition.X / 16f), (int)(acidSpawnPosition.Y / 16f));
+                    Tile t = Framing.GetTileSafely((int)(acidSpawnPosition.X / 16f), (int)(acidSpawnPosition.Y / 16f));
+
                     if (t.HasTile || t.LiquidAmount <= 0)
                         continue;
 

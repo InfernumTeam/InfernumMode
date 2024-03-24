@@ -13,7 +13,6 @@ using CalamityMod.UI;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
-using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Cutscenes;

@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Items.Weapons.Ranged;
+﻿using CalamityMod.Items.Weapons.Ranged;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System;

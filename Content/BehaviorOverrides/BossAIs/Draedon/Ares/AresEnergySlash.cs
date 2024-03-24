@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

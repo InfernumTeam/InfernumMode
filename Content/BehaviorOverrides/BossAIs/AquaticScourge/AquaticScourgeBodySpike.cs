@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
-    public class AquaticScourgeBodySpike : ModProjectile, IAdditiveDrawer
+    public class AquaticScourgeBodySpike : ModProjectile
     {
         public ref float AuraRadius => ref Projectile.ai[0];
 
@@ -107,11 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             lightColor = Color.Lerp(lightColor, Color.White, 0.8f);
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 } * 0.75f, lightColor, Projectile.Opacity * 5f);
-            return false;
-        }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
             float telegraphInterpolant = Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 45f, Time, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, telegraphInterpolant, true);
             float colorPulse = Cos(Main.GlobalTimeWrappedHourly * 6.1f + Projectile.identity) * 0.5f + 0.5f;
@@ -124,9 +120,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 Color telegraphColor = Color.Lerp(Color.Lime, Color.Olive, colorPulse) * circleFadeinInterpolant * 0.3f;
                 telegraphColor *= Utils.GetLerpValue(0f, 0.08f, fadePulse, true) * Utils.GetLerpValue(1f, 0.3f, fadePulse, true);
 
-                spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor, telegraphRotation, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
-                spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor * 1.5f, -telegraphRotation, explosionTelegraphTexture.Size() * 0.5f, scale * 0.95f, 0, 0f);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor, telegraphRotation, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, telegraphColor * 1.5f, -telegraphRotation, explosionTelegraphTexture.Size() * 0.5f, scale * 0.95f, 0, 0f);
+                Main.spriteBatch.ResetBlendState();
             }
+            return false;
         }
     }
 }

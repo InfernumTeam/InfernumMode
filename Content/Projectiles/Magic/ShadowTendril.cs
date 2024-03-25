@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Content.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Magic
 {
+    // This needs the interface due to how these things are drawn. CBA to make that not crap.
     public class ShadowTendril : ModProjectile, IAdditiveDrawer
     {
         public bool ReachedTarget

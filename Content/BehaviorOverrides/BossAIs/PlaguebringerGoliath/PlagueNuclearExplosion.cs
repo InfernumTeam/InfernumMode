@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
@@ -10,11 +10,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
-    public class PlagueNuclearExplosion : ModProjectile, IAdditiveDrawer
+    public class PlagueNuclearExplosion : ModProjectile
     {
         public override string Texture => "CalamityMod/Skies/XerocLight";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()
         {
@@ -41,17 +39,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             int drawCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 1 : 3;
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.LawnGreen * Projectile.Opacity * 0.65f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < drawCount; i++)
                 Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -15,7 +15,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
-    public class AcidBubble : ModProjectile, IPixelPrimitiveDrawer, IAdditiveDrawer
+    public class AcidBubble : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy WaterDrawer;
 
@@ -26,8 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public static float Radius => 60f;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Acid Bubble");
 
         public override void SetDefaults()
         {
@@ -77,7 +75,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             SoundEngine.PlaySound(InfernumSoundRegistry.BubblePop, Projectile.Center);
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.YellowGreen, Color.Wheat, 0.75f)) * 0.7f;
+            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.3f + Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.025f);
+
+            // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.
+            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * TwoPi);
+            bubbleScale += scalingDirection * (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 3.1f + Projectile.identity) * 0.5f + 0.5f) * 0.07f;
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.EntitySpriteDraw(bubble, drawPosition, null, bubbleColor, Projectile.rotation, bubble.Size() * 0.5f, bubbleScale, 0, 0);
+            Main.spriteBatch.ResetBlendState();
+            return false;
+        }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
@@ -100,21 +112,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 15, adjustedAngle);
             }
-        }
-
-        // Draw an additive bubble overlay over the prims.
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
-            Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.YellowGreen, Color.Wheat, 0.75f)) * 0.7f;
-            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.3f + Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.025f);
-
-            // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.
-            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * TwoPi);
-            bubbleScale += scalingDirection * (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 3.1f + Projectile.identity) * 0.5f + 0.5f) * 0.07f;
-
-            Main.EntitySpriteDraw(bubble, drawPosition, null, bubbleColor, Projectile.rotation, bubble.Size() * 0.5f, bubbleScale, 0, 0);
         }
     }
 }

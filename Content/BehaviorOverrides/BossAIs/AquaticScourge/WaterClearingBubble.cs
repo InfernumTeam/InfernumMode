@@ -16,7 +16,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
-    public class WaterClearingBubble : ModProjectile, IPixelPrimitiveDrawer, IAdditiveDrawer
+    public class WaterClearingBubble : ModProjectile, IPixelPrimitiveDrawer
     {
         public PrimitiveTrailCopy WaterDrawer;
 
@@ -122,7 +122,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             SoundEngine.PlaySound(InfernumSoundRegistry.BubblePop with { Pitch = -0.3f, Volume = 1.3f }, Projectile.Center);
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.DeepSkyBlue, Color.Wheat, 0.4f)) * 0.9f;
+            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.8f + Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.04f);
+
+            // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.
+            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * TwoPi);
+            bubbleScale += scalingDirection * (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 3.1f + Projectile.identity) * 0.5f + 0.5f) * 0.16f;
+
+            Main.EntitySpriteDraw(bubble, drawPosition, null, bubbleColor with { A = 0 }, Projectile.rotation, bubble.Size() * 0.5f, bubbleScale, 0, 0);
+            return false;
+        }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)
         {
@@ -147,21 +160,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
                 WaterDrawer.DrawPixelated(drawPoints, -Main.screenPosition, 12, adjustedAngle);
             }
-        }
-
-        // Draw an additive bubble overlay over the prims.
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
-            Texture2D bubble = InfernumTextureRegistry.Bubble.Value;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Color bubbleColor = Projectile.GetAlpha(Color.Lerp(Color.DeepSkyBlue, Color.Wheat, 0.4f)) * 0.9f;
-            Vector2 bubbleScale = Vector2.One * (Projectile.scale * 0.8f + Cos(Main.GlobalTimeWrappedHourly * 1.1f + Projectile.identity) * 0.04f);
-
-            // Make the bubble scale squish a bit in one of the four cardinal directions for more a fluid aesthetic.
-            Vector2 scalingDirection = -Vector2.UnitY.RotatedBy(Projectile.identity % 4 / 4f * TwoPi);
-            bubbleScale += scalingDirection * (float)(Math.Cos(Main.GlobalTimeWrappedHourly * 3.1f + Projectile.identity) * 0.5f + 0.5f) * 0.16f;
-
-            Main.EntitySpriteDraw(bubble, drawPosition, null, bubbleColor, Projectile.rotation, bubble.Size() * 0.5f, bubbleScale, 0, 0);
         }
     }
 }

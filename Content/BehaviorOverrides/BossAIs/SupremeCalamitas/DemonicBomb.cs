@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.ExtraTextures;
@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class DemonicBomb : ModProjectile, IAdditiveDrawer
+    public class DemonicBomb : ModProjectile
     {
         public bool ExplodeIntoDarts;
 
@@ -73,22 +73,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             lightColor = Color.Lerp(lightColor, Color.White, 0.4f);
             lightColor.A = 128;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
-            return false;
-        }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
             float explosionInterpolant = Utils.GetLerpValue(200f, 35f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 45f, Projectile.frameCounter, true);
             float circleFadeinInterpolant = Utils.GetLerpValue(0f, 0.15f, explosionInterpolant, true);
             float pulseInterpolant = Utils.GetLerpValue(0.75f, 0.85f, explosionInterpolant, true);
             float colorPulse = (Sin(Main.GlobalTimeWrappedHourly * 6.3f + Projectile.identity) * 0.5f + 0.5f) * pulseInterpolant;
             if (explosionInterpolant > 0f)
             {
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
                 Texture2D explosionTelegraphTexture = InfernumTextureRegistry.HollowCircleSoftEdge.Value;
                 Vector2 scale = Vector2.One * ExplosionRadius / explosionTelegraphTexture.Size() * 1.2f;
                 Color explosionTelegraphColor = Color.Lerp(Color.Purple, Color.Red, colorPulse) * circleFadeinInterpolant;
-                spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, explosionTelegraphColor, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.Draw(explosionTelegraphTexture, Projectile.Center - Main.screenPosition, null, explosionTelegraphColor, 0f, explosionTelegraphTexture.Size() * 0.5f, scale, 0, 0f);
+                Main.spriteBatch.ResetBlendState();
             }
+            return false;
         }
 
         public override void OnKill(int timeLeft)

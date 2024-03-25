@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
-    public class DraconicBlossomPetal : ModProjectile, IAdditiveDrawer
+    public class DraconicBlossomPetal : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
@@ -89,23 +89,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, 0, 0f);
-            return false;
-        }
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
             Texture2D circle = InfernumTextureRegistry.LaserCircle.Value;
 
             float backglowOpacity = Projectile.Opacity * 0.3f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float backglowScale = Lerp(0.85f, 1.15f, Cos(Projectile.identity * 7f + Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f) * Projectile.scale * Projectile.Opacity * 0.45f;
             Color backglowColor = Color.Lerp(Color.Red, Color.Pink, Projectile.Opacity) * backglowOpacity;
-            spriteBatch.Draw(circle, drawPosition, null, backglowColor, 0f, circle.Size() * 0.5f, backglowScale, 0, 0f);
-            spriteBatch.Draw(circle, drawPosition, null, Color.Magenta * backglowOpacity * 1.1f, 0f, circle.Size() * 0.5f, backglowScale * 0.75f, 0, 0f);
+
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(circle, drawPosition, null, backglowColor, 0f, circle.Size() * 0.5f, backglowScale, 0, 0f);
+            Main.spriteBatch.Draw(circle, drawPosition, null, Color.Magenta * backglowOpacity * 1.1f, 0f, circle.Size() * 0.5f, backglowScale * 0.75f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
+            Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
+            Main.spriteBatch.Draw(texture, drawPosition2, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, 0, 0f);
+            return false;
         }
     }
 }

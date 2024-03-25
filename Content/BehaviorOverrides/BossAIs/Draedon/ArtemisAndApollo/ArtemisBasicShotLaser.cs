@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class ArtemisBasicShotLaser : ModProjectile, IAdditiveDrawer
+    public class ArtemisBasicShotLaser : ModProjectile
     {
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[0]) ? Main.npc[(int)Projectile.ai[0]] : null;
 
@@ -19,11 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Exo Flame Laser");
-            Main.projFrames[Projectile.type] = 4;
-        }
+        public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 4;
 
         public override void SetDefaults()
         {
@@ -58,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, ref _);
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             // Draw the telegraph line.
             Vector2 start = Projectile.Center - Main.screenPosition;
@@ -73,7 +69,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             // Draw the energy focus at the start.
             Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -7,15 +7,13 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 {
-    public class LingeringBrimstoneFlames : ModProjectile, IAdditiveDrawer
+    public class LingeringBrimstoneFlames : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
         public ref float LaserLength => ref Projectile.ai[1];
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Smoke";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Fire Cloud");
 
         public override void SetDefaults()
         {
@@ -53,13 +51,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             return color * Projectile.Opacity * 0.7f;
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Color color = Projectile.GetAlpha(Color.White);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
-            spriteBatch.Draw(texture, drawPosition, null, Color.White * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return true;
         }
 
         public override Color? GetAlpha(Color lightColor)

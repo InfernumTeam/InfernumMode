@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using InfernumMode.Assets.ExtraTextures;
@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresPrecisionBlast : ModProjectile, IAdditiveDrawer
+    public class AresPrecisionBlast : ModProjectile
     {
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[0]) ? Main.npc[(int)Projectile.ai[0]] : null;
 
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool ShouldUpdatePosition() => false;
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
@@ -81,14 +81,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
             Vector2 beamOrigin = new(line.Width / 2f, line.Height);
             Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Main.spriteBatch.Draw(line, start, null, Color.Lerp(BlastColor, Color.DarkGray, 0.27f), Projectile.rotation, beamOrigin, beamScale, 0, 0f);
             Main.spriteBatch.Draw(line, start, null, BlastColor, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.7f, 1f), 0, 0f);
             Main.spriteBatch.Draw(line, start, null, Color.White, Projectile.rotation, beamOrigin, beamScale * new Vector2(0.3f, 1f), 0, 0f);
-
             // Draw the energy focus at the start.
             Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
+            Main.spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

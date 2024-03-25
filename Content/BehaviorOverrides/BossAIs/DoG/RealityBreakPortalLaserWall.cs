@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -12,10 +12,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 {
-    public class RealityBreakPortalLaserWall : ModProjectile, IAdditiveDrawer
+    public class RealityBreakPortalLaserWall : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Portal");
 
         public override void SetDefaults()
         {
@@ -63,7 +62,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             Projectile.rotation += Projectile.Opacity * 0.15f;
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D portalTexture = TextureAssets.Projectile[Projectile.type].Value;
             Texture2D lightTexture = InfernumTextureRegistry.LaserCircle.Value;
@@ -74,14 +73,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             // Black portal.
             Color portalColor = baseColor * Projectile.Opacity;
 
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 2; i++)
             {
-                spriteBatch.Draw(portalTexture, drawPosition, null, portalColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
-                spriteBatch.Draw(portalTexture, drawPosition, null, portalColor, -Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(portalTexture, drawPosition, null, portalColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(portalTexture, drawPosition, null, portalColor, -Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
 
             // Point of light.
-            spriteBatch.Draw(lightTexture, drawPosition, null, baseColor * 0.8f, -Projectile.rotation, lightTexture.Size() * 0.5f, Projectile.scale * Projectile.Opacity * 0.85f, 0, 0f);
+            Main.spriteBatch.Draw(lightTexture, drawPosition, null, baseColor * 0.8f, -Projectile.rotation, lightTexture.Size() * 0.5f, Projectile.scale * Projectile.Opacity * 0.85f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

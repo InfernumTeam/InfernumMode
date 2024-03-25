@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Generic
 {
-    public class HydrothermalSmoke : ModProjectile, IAdditiveDrawer
+    public class HydrothermalSmoke : ModProjectile
     {
         public const int Lifetime = 180;
 
@@ -16,8 +16,6 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Steam");
-
             // This prevents the smoke from creating a water distortion wherever it lands, thus making the vents look weird.
             ProjectileID.Sets.NoLiquidDistortion[Type] = true;
         }
@@ -61,10 +59,10 @@ namespace InfernumMode.Content.Projectiles.Generic
             return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 92f, targetHitbox);
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.localAI[0] == 1f)
-                return;
+                return false;
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
@@ -75,7 +73,10 @@ namespace InfernumMode.Content.Projectiles.Generic
             Color smokeColor = new(179, 207, 184);
             Color drawColor = Color.Lerp(fireColor, smokeColor, Utils.GetLerpValue(Lifetime, Lifetime - 42f, Projectile.timeLeft, true)) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
-            spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, 0, 0f);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, 0, 0f);
+            Main.spriteBatch.ResetToDefault();
+            return false;
         }
     }
 }

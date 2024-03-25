@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,11 +8,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 {
-    public class YharonFlameExplosion : ModProjectile, IAdditiveDrawer
+    public class YharonFlameExplosion : ModProjectile
     {
         public override string Texture => "CalamityMod/Skies/XerocLight";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Hyperthermal Explosion");
 
         public override void SetDefaults()
         {
@@ -37,9 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Lighting.AddLight(Projectile.Center, Color.Orange.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Color explosionColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
@@ -47,8 +43,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             explosionColor *= Projectile.Opacity * 0.25f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < (int)Lerp(3f, 6f, Projectile.Opacity); i++)
-                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

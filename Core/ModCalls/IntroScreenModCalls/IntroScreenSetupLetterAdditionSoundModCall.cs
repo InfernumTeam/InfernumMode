@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using InfernumMode.Content.BossIntroScreens;
+using Luminance.Core.ModCalls;
 using Terraria.Audio;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
-    public class IntroScreenSetupMainSoundModCall : ReturnValueModCall<ModCallIntroScreen>
+    public class IntroScreenSetupLetterAdditionSoundModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
             get
             {
-                yield return "IntroScreenSetupMainSound";
-                yield return "SetupMainSound";
+                yield return "IntroScreenSetupLetterAdditionSound";
+                yield return "SetupLetterAdditionSound";
             }
         }
 
@@ -21,16 +22,14 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
             get
             {
                 yield return typeof(ModCallIntroScreen);
-                yield return typeof(Func<int, int, float, float, bool>);
                 yield return typeof(Func<SoundStyle>);
             }
-
         }
 
-        protected override ModCallIntroScreen ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             var screen = (ModCallIntroScreen)argsWithoutCommand[0];
-            return screen.SetupMainSound((Func<int, int, float, float, bool>)argsWithoutCommand[1], (Func<SoundStyle>)argsWithoutCommand[2]);
+            return screen.SetupLetterAdditionSound((Func<SoundStyle>)argsWithoutCommand[1]);
         }
     }
 }

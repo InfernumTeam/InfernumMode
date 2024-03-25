@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using InfernumMode.Content.BossIntroScreens;
+using Luminance.Core.ModCalls;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
@@ -9,7 +10,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
     /// <summary>
     /// Initializes up a <see cref="ModCallIntroScreen"/> for setting up.
     /// </summary>
-    public class InitializeIntroScreenModCall : ReturnValueModCall<ModCallIntroScreen>
+    public class InitializeIntroScreenModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -31,7 +32,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
             }
         }
 
-        protected override ModCallIntroScreen ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             return ModCallIntroScreen.InitializeNewModCallIntroScreen(
                 textToDisplay: (LocalizedText)argsWithoutCommand[0],

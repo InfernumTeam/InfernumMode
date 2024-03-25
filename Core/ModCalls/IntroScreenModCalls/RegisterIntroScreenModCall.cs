@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using InfernumMode.Content.BossIntroScreens;
-using Microsoft.Xna.Framework.Graphics;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
-    public class IntroScreenSetupLetterShaderModCall : ReturnValueModCall<ModCallIntroScreen>
+    public class RegisterIntroScreenModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
             get
             {
-                yield return "IntroScreenSetupLetterShader";
-                yield return "SetupLetterShader";
+                yield return "RegisterIntroScreen";
             }
         }
 
@@ -21,15 +20,14 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
             get
             {
                 yield return typeof(ModCallIntroScreen);
-                yield return typeof(Effect);
-                yield return typeof(Action<Effect>);
             }
         }
 
-        protected override ModCallIntroScreen ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             var screen = (ModCallIntroScreen)argsWithoutCommand[0];
-            return screen.SetupLetterShader((Effect)argsWithoutCommand[1], (Action<Effect>)argsWithoutCommand[2]);
+            screen.RegisterIntroScreen();
+            return ModCallManager.DefaultObject;
         }
     }
 }

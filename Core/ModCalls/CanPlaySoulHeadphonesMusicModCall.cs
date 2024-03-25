@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using CalamityMod;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
-    public class CanPlaySoulHeadphonesMusicModCall : ReturnValueModCall<bool>
+    public class CanPlaySoulHeadphonesMusicModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -23,7 +24,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
             }
         }
 
-        protected override bool ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             return (string)argsWithoutCommand[0] switch
             {

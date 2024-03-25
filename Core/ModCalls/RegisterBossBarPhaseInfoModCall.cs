@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using InfernumMode.Content.BossBars;
+using Luminance.Core.ModCalls;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
-    public class RegisterBossBarPhaseInfoModCall : GenericModCall
+    public class RegisterBossBarPhaseInfoModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -25,7 +26,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
             }
         }
 
-        protected override void ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             int npcType = (int)argsWithoutCommand[0];
             List<float> phaseThresholds = (List<float>)argsWithoutCommand[1];
@@ -38,8 +39,9 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
                 BossBarManager.ModCallNPCsThatCanHaveAHPBar.Add(npcType);
             }
             else
-                Mod.Logger.Warn($"Phase info for npc type {npcType} has already been registered!");
+                InfernumMode.Instance.Logger.Warn($"Phase info for npc type {npcType} has already been registered!");
 
+            return ModCallManager.DefaultObject;
         }
     }
 }

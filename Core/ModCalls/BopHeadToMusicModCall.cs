@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using InfernumMode.Core.TrackedMusic;
+using Luminance.Core.ModCalls;
 using Terraria;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
     // This doesn't really do anything with the tracked music disabled but, oh well.
-    public class BopHeadToMusicModCall : ReturnValueModCall<float>
+    public class BopHeadToMusicModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -26,7 +27,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
             }
         }
 
-        protected override float ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             Player player = (Player)argsWithoutCommand[0];
             float headRotationTime = (float)argsWithoutCommand[1];

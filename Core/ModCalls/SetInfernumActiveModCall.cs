@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
-    public class SetInfernumActiveModCall : GenericModCall
+    public class SetInfernumActiveModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -22,6 +23,10 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
             }
         }
 
-        protected override void ProcessGeneric(params object[] argsWithoutCommand) => WorldSaveSystem.InfernumModeEnabled = (bool)argsWithoutCommand[0];
+        protected override object SafeProcess(params object[] argsWithoutCommand)
+        {
+            WorldSaveSystem.InfernumModeEnabled = (bool)argsWithoutCommand[0];
+            return ModCallManager.DefaultObject;
+        }
     }
 }

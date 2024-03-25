@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using InfernumMode.Content.BossIntroScreens;
+using Luminance.Core.ModCalls;
 using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
-    public class IntroScreenSetupScreenCoveringModCall : ReturnValueModCall<ModCallIntroScreen>
+    public class IntroScreenSetupScreenCoveringModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -25,7 +26,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
             }
         }
 
-        protected override ModCallIntroScreen ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             ModCallIntroScreen screen = (ModCallIntroScreen)argsWithoutCommand[0];
             return screen.SetupScreenCovering((Color)argsWithoutCommand[1]);

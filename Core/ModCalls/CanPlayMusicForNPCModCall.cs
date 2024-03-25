@@ -9,10 +9,11 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
-    public class CanPlayMusicForNPCModCall : ReturnValueModCall<bool>
+    public class CanPlayMusicForNPCModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -30,7 +31,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
             }
         }
 
-        protected override bool ProcessGeneric(params object[] argsWithoutCommand)
+        protected override object SafeProcess(params object[] argsWithoutCommand)
         {
             int npcID = (int)argsWithoutCommand[0];
             if (BossRushEvent.BossRushActive)

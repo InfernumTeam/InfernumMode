@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
-    internal class GetInfernumActiveModCall : ReturnValueModCall<bool>
+    internal class GetInfernumActiveModCall : ModCall
     {
         public override IEnumerable<string> CallCommands
         {
@@ -15,6 +16,6 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
 
         public override IEnumerable<Type> InputTypes => null;
 
-        protected override bool ProcessGeneric(params object[] argsWithoutCommand) => InfernumMode.CanUseCustomAIs;
+        protected override object SafeProcess(params object[] argsWithoutCommand) => InfernumMode.CanUseCustomAIs;
     }
 }

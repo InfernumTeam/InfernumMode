@@ -20,6 +20,7 @@ using Terraria.ModLoader;
 using InfernumMode.Core.ModCalls;
 using CalamityMod.ILEditing;
 using InfernumMode.Content.WorldGeneration;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode
 {
@@ -159,7 +160,7 @@ namespace InfernumMode
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
 
-        public override object Call(params object[] args) => InfernumModCalls.Call(args);
+        public override object Call(params object[] args) => ModCallManager.ProcessAllModCalls(this, args);
 
         public override void Unload()
         {

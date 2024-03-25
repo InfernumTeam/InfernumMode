@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.Projectiles.Wayfinder;
+﻿using InfernumMode.Content.Projectiles.Wayfinder;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;

@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs.Perforator;
 using Microsoft.Xna.Framework;
 using Terraria;

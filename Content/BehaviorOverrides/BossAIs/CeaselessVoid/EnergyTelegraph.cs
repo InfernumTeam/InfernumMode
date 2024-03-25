@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using System.IO;

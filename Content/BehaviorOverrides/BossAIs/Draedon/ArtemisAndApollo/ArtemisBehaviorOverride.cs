@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;

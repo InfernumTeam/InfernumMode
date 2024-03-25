@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.PrimordialWyrm;
+﻿using CalamityMod.NPCs.PrimordialWyrm;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

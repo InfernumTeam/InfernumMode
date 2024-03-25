@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.World;
+﻿using CalamityMod.World;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;

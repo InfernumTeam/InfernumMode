@@ -3,7 +3,6 @@ using CalamityMod.Particles;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Content.Buffs;
 using InfernumMode.Core.GlobalInstances.Players;
 using Luminance.Core.Graphics;

@@ -381,12 +381,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 // Summon a base particle.
                 Vector2 spawnPosition = NPC.Center + Main.rand.NextVector2Circular(1f, 1f) * particleSize / 26f;
-                ModContent.GetInstance<ShadowMetaball>().SpawnParticle(spawnPosition, Vector2.Zero, new(particleSize));
+                ModContent.GetInstance<ShadowMetaball>().CreateParticle(spawnPosition, Vector2.Zero, particleSize);
 
                 // And an "ahead" particle that spawns based on current movement.
                 // This causes the "head" of the overall thing to have bumps when moving.
                 spawnPosition += NPC.velocity.RotatedByRandom(1.38f) * particleSize / 105f;
-                ModContent.GetInstance<ShadowMetaball>().SpawnParticle(spawnPosition, Vector2.Zero, new(particleSize * 0.4f));
+                ModContent.GetInstance<ShadowMetaball>().CreateParticle(spawnPosition, Vector2.Zero, particleSize * 0.4f);
             }
         }
 

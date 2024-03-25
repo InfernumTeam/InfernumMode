@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.Projectiles.Generic;
+﻿using InfernumMode.Content.Projectiles.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;

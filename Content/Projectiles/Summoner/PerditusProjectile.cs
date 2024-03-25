@@ -45,8 +45,8 @@ namespace InfernumMode.Content.Projectiles.Summoner
                 Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0f, 4f);
                 velocity.Y -= 3f;
                 float npcScaleModifier = Lerp(1f, 1.75f, Utils.GetLerpValue(720, 10000f, target.Hitbox.Width * target.Hitbox.Height, true));
-                Vector2 size = new Vector2(Main.rand.NextFloat(0.9f, 1.1f), Main.rand.NextFloat(0.9f, 1.1f)) * Main.rand.NextFloat(26f, 35f) * npcScaleModifier;
-                ModContent.GetInstance<WaterMetaball>().SpawnParticle(position, velocity, size, Main.rand.NextFloat(0.94f, 0.95f));
+                float size = Main.rand.NextFloat(0.9f, 1.1f) * Main.rand.NextFloat(26f, 35f) * npcScaleModifier;
+                ModContent.GetInstance<WaterMetaball>().CreateParticle(position, velocity, size, Main.rand.NextFloat(0.94f, 0.95f));
             }
 
             for (int i = 0; i < 10; i++)

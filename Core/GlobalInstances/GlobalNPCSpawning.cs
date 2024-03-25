@@ -8,6 +8,7 @@ using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Cutscenes;
 using SubworldLibrary;
 using System.Collections.Generic;
 using Terraria;
@@ -19,7 +20,7 @@ namespace InfernumMode.Core.GlobalInstances
     {
         public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
         {
-            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>() || CutsceneManager.ActiveCutscene != null)
+            if (player.Infernum_Biome().ZoneProfaned || SubworldSystem.IsActive<LostColosseum>() || CutsceneManager.AnyActive)
             {
                 spawnRate *= 40000;
                 maxSpawns = 0;

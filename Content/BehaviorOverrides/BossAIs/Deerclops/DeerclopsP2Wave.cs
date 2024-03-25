@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
 using Terraria;

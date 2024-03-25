@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Schematics;
+﻿using CalamityMod.Schematics;
 using CalamityMod.World;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

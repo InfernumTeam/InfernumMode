@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.PrimordialWyrm;
+﻿using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;

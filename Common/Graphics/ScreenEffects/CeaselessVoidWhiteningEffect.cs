@@ -3,6 +3,7 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.Cutscenes;
+using Luminance.Core.Cutscenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -53,6 +54,8 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             Vector2 scale = screenArea / pixel.Size() * 2f;
             Main.spriteBatch.Draw(pixel, screenArea * 0.5f, null, Color.White * WhiteningInterpolant, 0f, pixel.Size() * 0.5f, scale, 0, 0f);
 
+            var cutscene = ModContent.GetInstance<DoGPostProviCutscene>();
+
             // Draw the Ceaseless Void's mask above the effect.
             if (CalamityGlobalNPC.voidBoss != -1 && Main.npc[CalamityGlobalNPC.voidBoss].ai[0] != 0f)
             {
@@ -73,7 +76,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     WhiteningInterpolant = Clamp(WhiteningInterpolant - 0.007f, 0f, 1f);
             }
-            else if (CutsceneManager.ActiveCutscene is not null and DoGPostProviCutscene cutscene)
+            else if (CutsceneManager.IsActive(cutscene))
                 cutscene.DrawBlackOverlays(WhiteningInterpolant);
             else
                 WhiteningInterpolant = Clamp(WhiteningInterpolant - 0.1f, 0f, 1f);

@@ -182,7 +182,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             // Burst into lava metaballs on death.
             if (Main.netMode != NetmodeID.Server)
-                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center, Projectile.rotation, Projectile.scale, 20f, 30));
+                ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center, Projectile.rotation, Projectile.scale, 20f, 30));
         }
 
         public override bool PreDraw(ref Color lightColor)

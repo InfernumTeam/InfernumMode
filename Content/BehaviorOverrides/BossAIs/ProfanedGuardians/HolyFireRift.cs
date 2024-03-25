@@ -84,8 +84,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (SpearRift)
             {
                 for (int i = 0; i < 3; i++)
-                    ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center +
-                        Main.rand.NextVector2Circular(RiftSize.X, RiftSize.Y), Vector2.Zero, new(Main.rand.NextFloat(BallSize * 0.75f, BallSize)), 0.92f);
+                    ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(Projectile.Center +
+                        Main.rand.NextVector2Circular(RiftSize.X, RiftSize.Y), Vector2.Zero, Main.rand.NextFloat(BallSize * 0.75f, BallSize), 0.92f);
             }
         }
 

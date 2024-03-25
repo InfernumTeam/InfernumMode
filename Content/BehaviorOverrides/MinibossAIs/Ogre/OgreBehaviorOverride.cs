@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

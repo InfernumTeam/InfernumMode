@@ -46,8 +46,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             if (!InfernumConfig.Instance.ReducedGraphicsConfig)
                 screenTarget1 = ScreenEffectSystem.DrawBlurEffect(screenTarget1);
 
-            CutsceneManager.DrawWorld(screenTarget1);
-
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }
     }

@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Worldgen;

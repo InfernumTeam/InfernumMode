@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Common.Worldgen;
+﻿using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

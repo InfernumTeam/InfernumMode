@@ -1,8 +1,8 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Luminance.Common.Easings;
+using Luminance.Core.Cutscenes;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.Cutscenes
         #region Overrides
         public override int CutsceneLength => InitialWait + ZoomOutLength + ZoomHoldLength;
 
-        public override BlockerSystem.BlockCondition? GetBlockCondition => new(false, true, () => IsActive && Timer < CutsceneLength - ScreenFlashLength / 2);
+        public override BlockerSystem.BlockCondition GetBlockCondition => new(false, true, () => IsActive && Timer < CutsceneLength - ScreenFlashLength / 2);
 
         public override void Load()
         {
@@ -93,7 +93,7 @@ namespace InfernumMode.Content.Cutscenes
             Frame.Y = frame % frameCount * frameHeight;
         }
 
-        public override RenderTarget2D DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen)
+        public override void DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen)
         {
             // Store the screen before swapping targets.
             ScreenTarget.SwapToRenderTarget();
@@ -133,7 +133,7 @@ namespace InfernumMode.Content.Cutscenes
                 labScale = Vector2.One * 100f;
             }
 
-            // Swap to the sscreen target and begin drawing.
+            // Swap to the screen target and begin drawing.
             screen.SwapToRenderTarget();
 
             // Get and prepare a CRT effect shader, to make the screen appear like its on a monitor.
@@ -173,8 +173,6 @@ namespace InfernumMode.Content.Cutscenes
                 spriteBatch.Draw(draedonGlowmask, draedonPosition, Frame, Color.White, 0f, Frame.Size() * 0.5f, 5.5f, SpriteEffects.None, 0f);
             }
             spriteBatch.End();
-
-            return screen;
         }
 
         public override void PostDraw(SpriteBatch spriteBatch)

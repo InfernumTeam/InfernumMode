@@ -23,6 +23,8 @@ using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using InfernumMode.Core.TrackedMusic;
+using Luminance.Core.Cutscenes;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -42,57 +44,44 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     public class ProvidenceBehaviorOverride : NPCBehaviorOverride
     {
         #region Structures
-        public struct ProvidenceAttackSection
+        public struct ProvidenceAttackSection(SongSection section, ProvidenceBehaviorOverride.ProvidenceAttackType attackType)
         {
             public SongSection Section
             {
                 get;
                 set;
-            }
+            } = section;
 
             public ProvidenceAttackType AttackToUse
             {
                 get;
                 set;
-            }
+            } = attackType;
 
             public readonly int StartingTime => Section.StartInFrames;
 
             public readonly int EndingTime => Section.EndInFrames;
-
-            public ProvidenceAttackSection(SongSection section, ProvidenceAttackType attackType)
-            {
-                Section = section;
-                AttackToUse = attackType;
-            }
         }
 
-        public struct ProvidenceAttackInformation
+        public struct ProvidenceAttackInformation(int localTimer, int localDuration, ProvidenceBehaviorOverride.ProvidenceAttackType attack)
         {
             public int LocalAttackTimer
             {
                 get;
                 set;
-            }
+            } = localTimer;
 
             public int LocalAttackDuration
             {
                 get;
                 set;
-            }
+            } = localDuration;
 
             public ProvidenceAttackType CurrentAttack
             {
                 get;
                 set;
-            }
-
-            public ProvidenceAttackInformation(int localTimer, int localDuration, ProvidenceAttackType attack)
-            {
-                LocalAttackTimer = localTimer;
-                LocalAttackDuration = localDuration;
-                CurrentAttack = attack;
-            }
+            } = attack;
         }
         #endregion Structures
 
@@ -1211,7 +1200,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         Vector2 ashSpawnPosition = guardianSpawnPosition + Main.rand.NextVector2Circular(100f, 100f);
                         Vector2 ashVelocity = npc.SafeDirectionTo(ashSpawnPosition) * Main.rand.NextFloat(1.5f, 2f);
-                        Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, ashColor, Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
+                        var ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, ashColor, Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
                         GeneralParticleHandler.SpawnParticle(ash);
                     }
 
@@ -1280,7 +1269,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                                     Vector2 position = n.Center + n.SafeDirectionTo(target.Center) * 50f + Main.rand.NextVector2Circular(120f, 120f);
                                     Vector2 velocity = -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(0.1f, 0.4f)) * Main.rand.NextFloat(1.5f, 2f);
                                     Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], Main.rand.NextFloat());
-                                    Particle jojo = new ProfanedSymbolParticle(position, velocity, color, 0.8f, 60);
+                                    var jojo = new ProfanedSymbolParticle(position, velocity, color, 0.8f, 60);
                                     GeneralParticleHandler.SpawnParticle(jojo);
                                 }
                             }
@@ -1403,7 +1392,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     {
                         Vector2 ashSpawnPosition = guardianSpawnPosition + Main.rand.NextVector2Circular(100f, 100f);
                         Vector2 ashVelocity = npc.SafeDirectionTo(ashSpawnPosition) * Main.rand.NextFloat(1.5f, 2f);
-                        Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, ashColor, Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
+                        var ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, ashColor, Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
                         GeneralParticleHandler.SpawnParticle(ash);
                     }
 
@@ -1493,7 +1482,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                         {
                             Vector2 ashSpawnPosition = n.Center + Main.rand.NextVector2Circular(100f, 100f);
                             Vector2 ashVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(1.5f, 2f);
-                            Particle ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
+                            var ash = new MediumMistParticle(ashSpawnPosition, ashVelocity, new Color(255, 191, 73), Color.Gray, Main.rand.NextFloat(0.7f, 0.9f), 200f, Main.rand.NextFloat(-0.04f, 0.04f));
                             GeneralParticleHandler.SpawnParticle(ash);
                         }
                         n.active = false;

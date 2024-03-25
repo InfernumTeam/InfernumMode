@@ -71,7 +71,6 @@ namespace InfernumMode.Assets.Effects
         #region Screen Shaders
         public static Filter AfterimageShader => Filters.Scene["InfernumMode:AfterimageShader"];
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
-        public static Filter BaseMetaballEdgeShader => Filters.Scene["InfernumMode:BaseMetaballEdgeShader"];
         public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
@@ -444,6 +443,7 @@ namespace InfernumMode.Assets.Effects
         public static ManagedShader FlameVertexShader => ShaderManager.GetShader("InfernumMode.Flame");
         public static ManagedShader GaleLightningShader => ShaderManager.GetShader("InfernumMode.HeavenlyGaleLightningArc");
         public static ManagedShader ImpFlameTrailShader => ShaderManager.GetShader("InfernumMode.ImpFlameTrail");
+        public static ManagedShader BaseMetaballEdgeShader => ShaderManager.GetShader("InfernumMode.BaseMetaballEdgeShader");
         public static ManagedShader RealityTearVertexShader => ShaderManager.GetShader("InfernumMode.RealityTearShader");
         #endregion
         #region Filters

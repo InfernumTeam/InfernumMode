@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.Assets.ExtraTextures;

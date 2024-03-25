@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Tiles.Abyss;
+﻿using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Abyss;

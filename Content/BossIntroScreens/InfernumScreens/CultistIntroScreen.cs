@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
+﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

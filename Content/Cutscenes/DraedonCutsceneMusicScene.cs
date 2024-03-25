@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Luminance.Core.Cutscenes;
+using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Cutscenes

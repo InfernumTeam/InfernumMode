@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.OverridingSystem;

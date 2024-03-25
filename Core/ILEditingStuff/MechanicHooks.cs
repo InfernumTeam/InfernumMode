@@ -16,7 +16,6 @@ using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.DataStructures;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;

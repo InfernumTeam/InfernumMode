@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.Polterghast;
+﻿using CalamityMod.NPCs.Polterghast;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

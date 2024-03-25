@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

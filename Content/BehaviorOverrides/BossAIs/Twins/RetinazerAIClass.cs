@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;

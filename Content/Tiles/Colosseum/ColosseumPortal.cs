@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Items.SummonItems;
+﻿using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;

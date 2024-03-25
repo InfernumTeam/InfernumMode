@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
@@ -21,6 +22,7 @@ using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Cutscenes;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -225,7 +227,7 @@ namespace InfernumMode.Core.GlobalInstances
             }
 
             // Check for whether to play the post mechs cutscene.
-            if (!WorldSaveSystem.HasSeenPostMechsCutscene)
+            if (!WorldSaveSystem.HasSeenPostMechsCutscene && !BossRushEvent.BossRushActive)
             {
                 // If Prime was just killed, and the other two are also dead.
                 if (npc.type == NPCID.SkeletronPrime && NPC.downedMechBoss1 && NPC.downedMechBoss2)

@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Common.Graphics.Interfaces;
+﻿using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

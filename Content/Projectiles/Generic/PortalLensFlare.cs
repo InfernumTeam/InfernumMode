@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

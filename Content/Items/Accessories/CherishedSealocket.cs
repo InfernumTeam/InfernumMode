@@ -116,8 +116,8 @@ namespace InfernumMode.Content.Items.Accessories
                     {
                         Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0f, velocityCap);
                         velocity.Y -= 3;
-                        Vector2 size = new Vector2(Main.rand.NextFloat(0.9f, 1.1f), Main.rand.NextFloat(0.9f, 1.1f)) * Main.rand.NextFloat(36f, 45f) * sizeModifier;
-                        ModContent.GetInstance<WaterMetaball>().SpawnParticle(position, velocity, size, Main.rand.NextFloat(0.93f, 0.94f));
+                        float size = Main.rand.NextFloat(0.9f, 1.1f) * Main.rand.NextFloat(36f, 45f) * sizeModifier;
+                        ModContent.GetInstance<WaterMetaball>().CreateParticle(position, velocity, size, Main.rand.NextFloat(0.93f, 0.94f));
                     }
                 }
             };

@@ -79,9 +79,6 @@ namespace InfernumMode.Common.Graphics.Drawers
                 if (drawer.ShouldDrawThisFrame && NPC.AnyNPCs(drawer.AssosiatedNPCType) && InfernumMode.CanUseCustomAIs)
                     drawer.DrawMainTargetContents(Main.spriteBatch);
             }
-
-            // Draw Cutscenes.
-            CutsceneManager.DrawToWorld();
         }
     }
 }

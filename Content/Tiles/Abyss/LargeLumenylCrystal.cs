@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
+﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;

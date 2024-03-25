@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs.Crabulon;
+﻿using CalamityMod.NPCs.Crabulon;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;

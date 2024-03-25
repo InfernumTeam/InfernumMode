@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BossIntroScreens.InfernumScreens
 
         public override void PrepareShader(Effect shader)
         {
-            Color color = CalamityUtils.MulticolorLerp(Cos(Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
+            Color color = LumUtils.MulticolorLerp(Cos(Main.GlobalTimeWrappedHourly * 1.6f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
             shader.Parameters["uColor"].SetValue(color.ToVector3());
             shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }

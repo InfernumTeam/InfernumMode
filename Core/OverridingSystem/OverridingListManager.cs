@@ -12,14 +12,14 @@ namespace InfernumMode.Core.OverridingSystem
         private const string Message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
         #pragma warning restore IDE0051 // Remove unused private members
 
-        internal static List<int> InfernumNPCPreAIOverrideList = new();
-        internal static List<int> InfernumSetDefaultsOverrideList = new();
-        internal static List<int> InfernumPreDrawOverrideList = new();
-        internal static List<int> InfernumFrameOverrideList = new();
-        internal static List<int> InfernumCheckDeadOverrideList = new();
+        internal static List<int> InfernumNPCPreAIOverrideList = [];
+        internal static List<int> InfernumSetDefaultsOverrideList = [];
+        internal static List<int> InfernumPreDrawOverrideList = [];
+        internal static List<int> InfernumFrameOverrideList = [];
+        internal static List<int> InfernumCheckDeadOverrideList = [];
 
-        internal static List<int> InfernumProjectilePreAIOverrideList = new();
-        internal static List<int> InfernumProjectilePreDrawOverrideList = new();
+        internal static List<int> InfernumProjectilePreAIOverrideList = [];
+        internal static List<int> InfernumProjectilePreDrawOverrideList = [];
 
         public delegate bool NPCPreAIDelegate(NPC npc);
         public delegate bool NPCPreDrawDelegate(NPC npc, SpriteBatch spriteBatch, Color lightColor);
@@ -32,14 +32,14 @@ namespace InfernumMode.Core.OverridingSystem
 
         public void Load(Mod mod)
         {
-            InfernumNPCPreAIOverrideList = new();
-            InfernumSetDefaultsOverrideList = new();
-            InfernumPreDrawOverrideList = new();
-            InfernumFrameOverrideList = new();
-            InfernumCheckDeadOverrideList = new();
+            InfernumNPCPreAIOverrideList = [];
+            InfernumSetDefaultsOverrideList = [];
+            InfernumPreDrawOverrideList = [];
+            InfernumFrameOverrideList = [];
+            InfernumCheckDeadOverrideList = [];
 
-            InfernumProjectilePreAIOverrideList = new();
-            InfernumProjectilePreDrawOverrideList = new();
+            InfernumProjectilePreAIOverrideList = [];
+            InfernumProjectilePreDrawOverrideList = [];
         }
 
         public void Unload()

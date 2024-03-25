@@ -192,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             frame = 3f;
 
             // Wobble around in place erratically while approaching the resting position.
-            float wobbleRotation = CalamityUtils.AperiodicSin(attackTimer / 30f) * 0.98f;
+            float wobbleRotation = LumUtils.AperiodicSin(attackTimer / 30f) * 0.98f;
             Vector2 restingPosition = new(npc.Infernum().ExtraAI[1], npc.Infernum().ExtraAI[2]);
             npc.Center = npc.Center.MoveTowards(restingPosition + (npc.Center - restingPosition).SafeNormalize(Vector2.Zero) * 90f, 18f);
 

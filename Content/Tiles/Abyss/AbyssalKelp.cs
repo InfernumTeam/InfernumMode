@@ -61,7 +61,7 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             if (t.TileFrameX == 0 && t.TileFrameY == 72)
                 Main.instance.TilesRenderer.AddSpecialLegacyPoint(i, j);
         }
@@ -121,7 +121,7 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             return t.TileFrameX == 0 && t.TileFrameY == 72;
         }
     }

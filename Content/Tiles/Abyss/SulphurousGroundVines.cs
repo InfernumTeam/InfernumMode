@@ -126,8 +126,8 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
-            Tile above = CalamityUtils.ParanoidTileRetrieval(i, j - 1);
+            Tile t = Framing.GetTileSafely(i, j);
+            Tile above = Framing.GetTileSafely(i, j - 1);
             if (above.TileType == Type && t.TileFrameY == 0)
                 WorldGen.KillTile(i, j - 1);
         }

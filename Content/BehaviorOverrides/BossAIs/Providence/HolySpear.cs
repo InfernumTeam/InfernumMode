@@ -24,13 +24,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 float bestOrthogonality = -100000f;
                 Vector2 aimDirection = (Projectile.rotation - PiOver4).ToRotationVector2();
                 Vector2 edge = Vector2.Zero;
-                Vector2[] edges = new Vector2[]
-                {
+                Vector2[] edges =
+                [
                     Vector2.UnitX,
                     -Vector2.UnitX,
                     Vector2.UnitY,
                     -Vector2.UnitY
-                };
+                ];
 
                 // Determine which edge the current direction aligns with most based on dot products.
                 for (int i = 0; i < edges.Length; i++)

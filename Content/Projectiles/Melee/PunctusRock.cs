@@ -9,6 +9,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Players;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -158,7 +159,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Projectile.Opacity = 0;
             Projectile.timeLeft = CircleLength;
 
-            FormingRocks = new();
+            FormingRocks = [];
         }
 
         public override void AI()
@@ -291,15 +292,15 @@ namespace InfernumMode.Content.Projectiles.Melee
                 // Rotate a bit.
                 rock.Rotation += rock.RotationSpeed * (rock.Velocity.X > 0 ? 1f : -1f);
 
-                int[] driftDelays = new int[6]
-                {
+                int[] driftDelays =
+                [
                     1,
                     3,
                     6,
                     2,
                     0,
                     4
-                };
+                ];
 
                 // Drift outwards from the impact for a specified amount of time, adding an offset to add visual variation.
                 int driftTime = ProfanusRockParticle.BaseDriftTime + driftDelays[i % (driftDelays.Length - 1)] * 3;
@@ -313,7 +314,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                     // Rapidly fly towards the chosen point, as if they're forming the rocks. For balancing reasons this happens very fast, else the rocks take too long to be created
                     // and the weapon feels a bit clunky.
                     Vector2 targetPosition = Projectile.Center + RockOffsets[i % (RockOffsets.Length - 1)];
-                    float interpolant = CalamityUtils.SineInEasing(Utils.GetLerpValue(driftTime, rock.Lifetime - ProfanusRockParticle.StopAndGlowLength, rock.Time, true), 1);
+                    float interpolant = EasingCurves.Sine.InFunction(Utils.GetLerpValue(driftTime, rock.Lifetime - ProfanusRockParticle.StopAndGlowLength, rock.Time, true));
                     rock.Position = Vector2.Lerp(rock.StartingPosition, targetPosition, interpolant);
                 }
 
@@ -561,7 +562,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                     // Draw a bloom flare, to cover up the main rock forming underneath it.
                     Texture2D bloom = InfernumTextureRegistry.BloomFlare.Value;
                     // Rapidly grow then shrink.
-                    float scale = CalamityUtils.Convert01To010(interpolantGlow);
+                    float scale = LumUtils.Convert01To010(interpolantGlow);
                     Main.spriteBatch.Draw(bloom, rock.Position - Main.screenPosition, null, glowColor with { A = 0 } * interpolantGlow * rock.Opacity * 0.5f, (Main.GlobalTimeWrappedHourly + i * 10f) * (i % 2 == 0 ? -3 : 3f), bloom.Size() * 0.5f, rock.Scale * 0.15f * scale, SpriteEffects.None, 0f);
                 }
             }

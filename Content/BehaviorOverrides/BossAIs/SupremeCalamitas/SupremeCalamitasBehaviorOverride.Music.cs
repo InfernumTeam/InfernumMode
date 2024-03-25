@@ -6,8 +6,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public partial class SupremeCalamitasBehaviorOverride : NPCBehaviorOverride
     {
-        public static List<TimeSpan> Grief_HighPoints => new()
-        {
+        public static List<TimeSpan> Grief_HighPoints =>
+        [
             // No more holding back
             TimeFormat(0, 15, 980),
             TimeFormat(0, 20, 130),
@@ -23,10 +23,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Are you sure you'd want to lose your mind from a legend who's power could salvage mandkind?
             TimeFormat(2, 24, 370),
             TimeFormat(2, 37, 928),
-        };
+        ];
 
-        public static List<TimeSpan> Lament_HighPoints => new()
-        {
+        public static List<TimeSpan> Lament_HighPoints =>
+        [
             // You have known for certain
             TimeFormat(0, 10, 702),
             TimeFormat(0, 15, 632),
@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Strife...
             TimeFormat(2, 18, 512),
             TimeFormat(2, 22, 490),
-        };
+        ];
 
         public static Dictionary<TimeSpan, float> Epiphany_HighPoints => new()
         {

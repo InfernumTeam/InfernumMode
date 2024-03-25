@@ -13,8 +13,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
 
         public const int Lifetime = 300;
 
-        public static readonly string[] AlchemicalNames = new string[]
-        {
+        public static readonly string[] AlchemicalNames =
+        [
             "Brimstone",
             "Elements",
             "Fire",
@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             "PhilosophersStone",
             "Platinum",
             "Salt"
-        };
+        ];
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 

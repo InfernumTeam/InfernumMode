@@ -441,10 +441,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 start = drawPosition;
                 Vector2 end = NPC.Center - Main.screenPosition;
 
-                List<Vector2> controlPoints = new()
-                {
+                List<Vector2> controlPoints =
+                [
                     start
-                };
+                ];
                 for (int j = 0; j < Heads[i].OldVelocities.Length; j++)
                 {
                     // Incorporate the past movement into neck turns, giving it rubber band-like movment.
@@ -459,7 +459,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 int chainPointCount = (int)(Vector2.Distance(controlPoints.First(), controlPoints.Last()) / 12f);
                 if (chainPointCount < 12)
                     chainPointCount = 12;
-                BezierCurve bezierCurve = new(controlPoints.ToArray());
+                BezierCurve bezierCurve = new([.. controlPoints]);
                 List<Vector2> chainPoints = bezierCurve.GetPoints(chainPointCount);
 
                 for (int j = 0; j < chainPoints.Count; j++)

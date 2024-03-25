@@ -106,7 +106,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             Color firstThirdColor = Color.Lerp(Color.Orange, Color.Yellow, 0.3f);
             Color secondThirdColor = Color.Lerp(Color.Orange, Color.Red, 0.67f);
             Color endColor = Color.LightSlateGray;
-            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, firstThirdColor, secondThirdColor, endColor) * trailOpacity;
+            return LumUtils.MulticolorLerp(completionRatio, startingColor, firstThirdColor, secondThirdColor, endColor) * trailOpacity;
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)

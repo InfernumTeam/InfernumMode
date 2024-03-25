@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
         public float WidthFunction(float completionRatio)
         {
             float tipFadeoffInterpolant = SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
-            float baseFadeoffInterpolant = SmoothStep(2.4f, 1f, 1f - CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, 0.19f, completionRatio, true)));
+            float baseFadeoffInterpolant = SmoothStep(2.4f, 1f, 1f - LumUtils.Convert01To010(Utils.GetLerpValue(0f, 0.19f, completionRatio, true)));
             float widthAdditionFactor = Sin(Main.GlobalTimeWrappedHourly * -13f + Projectile.identity + completionRatio * Pi * 4f) * 0.2f;
             return Width * tipFadeoffInterpolant * baseFadeoffInterpolant * (1f + widthAdditionFactor);
         }
@@ -113,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Vector2 start = Projectile.Top;
             Vector2 end = start - Vector2.UnitY.RotatedBy(Projectile.rotation) * Height;
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 64; i++)
                 points.Add(Vector2.Lerp(start, end, i / 64f) + Vector2.UnitY * 20f);
 

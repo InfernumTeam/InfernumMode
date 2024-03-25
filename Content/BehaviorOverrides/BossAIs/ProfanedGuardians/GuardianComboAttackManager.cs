@@ -10,6 +10,7 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -335,14 +336,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (universalAttackTimer % rockSpawnDelay == 0 && spawnedRockRing == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     spawnedRockRing = 1;
-                    List<int> waitTimes = new()
-                    {
+                    List<int> waitTimes =
+                    [
                         60,
                         150,
                         240,
                         330,
                         420
-                    };
+                    ];
 
                     for (int i = 0; i < rockAmount; i++)
                     {
@@ -807,7 +808,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (universalAttackTimer >= angerDelay && universalAttackTimer < angerDelay + angerTime)
                 {
                     float interlopant = Sin(PI * ((universalAttackTimer - angerDelay) / angerTime));
-                    glowAmount = CalamityUtils.SineInOutEasing(interlopant, 0);
+                    glowAmount = EasingCurves.Sine.InOutFunction(interlopant);
                 }
 
                 // Do not deal contact damage.
@@ -869,7 +870,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.Calamity().ShouldCloseHPBar = true;
 
                 if (universalAttackTimer <= whiteGlowTime)
-                    whiteGlowOpacity = CalamityUtils.ExpInEasing(Lerp(0f, 1f, universalAttackTimer / whiteGlowTime), 0);
+                    whiteGlowOpacity = EasingCurves.Exp.InFunction(Lerp(0f, 1f, universalAttackTimer / whiteGlowTime));
 
                 else if (universalAttackTimer == whiteGlowTime + ashesTime - 5)
                 {
@@ -962,10 +963,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (localAttackTimer < spinLength)
                         {
-                            spearRotation = Tau * CalamityUtils.SineInOutEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
+                            spearRotation = Tau * EasingCurves.Sine.InOutFunction(localAttackTimer / spinLength) + spearRotationStartingOffset;
                             if (localAttackTimer % spearReleasePoint == spearReleasePoint - 1f && Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                float positionRotation = Tau * CalamityUtils.LinearEasing(localAttackTimer / spinLength, 0) + spearRotationStartingOffset;
+                                float positionRotation = Tau * EasingCurves.Linear.InOutFunction(localAttackTimer / spinLength) + spearRotationStartingOffset;
                                 Vector2 position = npc.Center + positionRotation.ToRotationVector2() * 75f;
                                 Vector2 velocity = npc.SafeDirectionTo(position) * 5f;
                                 Utilities.NewProjectileBetter(position, velocity, ModContent.ProjectileType<ProfanedSpearInfernum>(), HolySpearDamage, 0f);
@@ -1062,11 +1063,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            List<int> waitTimes = new()
-                            {
+                            List<int> waitTimes =
+                            [
                                 90,
                                 180,
-                            };
+                            ];
 
                             for (int i = 0; i < rockAmount; i++)
                             {
@@ -2079,7 +2080,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     // Stick to the hand. The hands reel back.
                     case 4:
                         float rightHandMoveInterpolant = Utilities.EaseInOutCubic(localAttackTimer / reelbackTime);
-                        float leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / reelbackTime, 0);
+                        float leftHandMoveInterpolant = EasingCurves.Sine.InOutFunction(localAttackTimer / reelbackTime);
                         moveHands = 1f;
 
                         npc.velocity = Vector2.Zero;
@@ -2107,8 +2108,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Continue to stick to the hands. They will stop at the correct position.
                     case 5:
-                        rightHandMoveInterpolant = CalamityUtils.ExpInEasing(localAttackTimer / launchTime, 0);
-                        leftHandMoveInterpolant = CalamityUtils.SineInOutEasing(localAttackTimer / launchTime, 0);
+                        rightHandMoveInterpolant = EasingCurves.Exp.InFunction(localAttackTimer / launchTime);
+                        leftHandMoveInterpolant = EasingCurves.Sine.InOutFunction(localAttackTimer / launchTime);
                         moveHands = 1f;
 
                         RightHandPosition = originalRightHandPos.RotatedBy(-4f * rightHandMoveInterpolant);
@@ -2702,18 +2703,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                     npc.velocity *= 0.9f;
                     if (universalAttackTimer <= spearSpinTime)
                     {
-                        spearRotation = angleToStab * CalamityUtils.SineInOutEasing(universalAttackTimer / spearSpinTime, 0) + spearRotationStartingOffset;
+                        spearRotation = angleToStab * EasingCurves.Sine.InOutFunction(universalAttackTimer / spearSpinTime) + spearRotationStartingOffset;
                     }
                     else if (universalAttackTimer <= spearReelbackTime)
                     {
                         // Move the spear backwards.
                         float interpolant = (universalAttackTimer - spearSpinTime) / (spearReelbackTime - spearSpinTime);
-                        spearPosOffset = Lerp(0f, -50f, CalamityUtils.SineInOutEasing(interpolant, 0));
+                        spearPosOffset = Lerp(0f, -50f, EasingCurves.Sine.InOutFunction(interpolant));
                     }
                     else if (universalAttackTimer <= spearStabTime)
                     {
                         float interpolant = (universalAttackTimer - spearReelbackTime) / (spearStabTime - spearReelbackTime);
-                        spearPosOffset = Lerp(-50f, 30f, CalamityUtils.SineInOutEasing(interpolant, 0));
+                        spearPosOffset = Lerp(-50f, 30f, EasingCurves.Sine.InOutFunction(interpolant));
                     }
                     else
                     {

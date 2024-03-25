@@ -54,20 +54,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
 
         #region AI
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
-        public static readonly List<Vector2> LaserbeamSpawnOffsets = new()
-        {
+        public static readonly List<Vector2> LaserbeamSpawnOffsets =
+        [
             new Vector2(0f, -52f),
             new Vector2(110f, 24f),
             new Vector2(-110f, -24f),
             new Vector2(184f, -20f),
             new Vector2(-184f, -20f),
-        };
+        ];
 
         public static int AstralLaserDamage => 170;
 
@@ -806,7 +806,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             bool onPlatforms = false;
             for (int i = (int)(npc.BottomLeft.X / 16f); i < (int)(npc.BottomRight.X / 16f); i++)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(i, (int)(npc.Bottom.Y / 16f) + 1);
+                Tile tile = Framing.GetTileSafely(i, (int)(npc.Bottom.Y / 16f) + 1);
                 if (tile.IsTileSolidGround())
                 {
                     onPlatforms = true;
@@ -1038,13 +1038,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             // Draw the downward telegraph trail as needed.
             if (currentAttack == AureusAttackType.LeapAtTarget && npc.Infernum().ExtraAI[2] > 0f)
             {
-                Vector2[] telegraphPoints = new Vector2[4]
-                {
+                Vector2[] telegraphPoints =
+                [
                     npc.Center,
                     npc.Center + Vector2.UnitY * 1000f,
                     npc.Center + Vector2.UnitY * 2000f,
                     npc.Center + Vector2.UnitY * 4000f
-                };
+                ];
                 GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 51);
             }

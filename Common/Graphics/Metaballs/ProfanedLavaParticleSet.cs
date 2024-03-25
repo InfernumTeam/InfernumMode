@@ -20,7 +20,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public override bool AnythingToDraw => Particles.Any();
 

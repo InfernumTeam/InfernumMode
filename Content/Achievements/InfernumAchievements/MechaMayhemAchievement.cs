@@ -10,13 +10,13 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Fields
         private bool MayhemIsOccuring;
         private bool MayhemShouldEnd;
-        private static List<int> Mechs => new()
-        {
+        private static List<int> Mechs =>
+        [
             NPCID.TheDestroyer,
             NPCID.SkeletronPrime,
             NPCID.Retinazer,
             NPCID.Spazmatism
-        };
+        ];
         #endregion
 
         #region Overrides

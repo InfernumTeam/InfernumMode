@@ -21,13 +21,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public Vector2 OrbitCenter;
 
-        public static readonly Color[] ColorSet = new Color[]
-        {
+        public static readonly Color[] ColorSet =
+        [
             Color.Pink,
             Color.Cyan
-        };
+        ];
 
-        public Color StreakBaseColor => Color.Lerp(CalamityUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet), Color.White, 0.2f);
+        public Color StreakBaseColor => Color.Lerp(LumUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet), Color.White, 0.2f);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 

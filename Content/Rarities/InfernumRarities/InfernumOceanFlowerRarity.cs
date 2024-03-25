@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
     {
         public override Color RarityColor => Color.Cyan;
 
-        internal static List<RaritySparkle> FlowerRaritySparkles = new();
+        internal static List<RaritySparkle> FlowerRaritySparkles = [];
 
         public static Texture2D BubbleTexture => ModContent.Request<Texture2D>("CalamityMod/Particles/Bubble").Value;
 

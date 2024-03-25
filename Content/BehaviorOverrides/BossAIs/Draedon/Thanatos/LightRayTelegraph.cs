@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - PiOver2 + CurrentSpread).ToRotationVector2() * Projectile.Opacity * 275f;
 
-        public Color RayColor => CalamityUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);
+        public Color RayColor => LumUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);
 
         public Color HueDownscaledRayColor => RayColor * 0.66f;
 

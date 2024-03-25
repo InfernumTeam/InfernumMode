@@ -75,24 +75,24 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
         public const int AttackCycleIndexIndex = 5;
 
-        public override float[] PhaseLifeRatioThresholds => new[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
-        public static NuclearTerrorAttackType[] Phase1AttackCycle => new[]
-        {
+        public static NuclearTerrorAttackType[] Phase1AttackCycle =>
+        [
             NuclearTerrorAttackType.DownwardSlams,
             NuclearTerrorAttackType.GammaRain
-        };
+        ];
 
-        public static NuclearTerrorAttackType[] Phase2AttackCycle => new[]
-        {
+        public static NuclearTerrorAttackType[] Phase2AttackCycle =>
+        [
             NuclearTerrorAttackType.InwardGammaBursts,
             NuclearTerrorAttackType.DownwardSlams,
             NuclearTerrorAttackType.NuclearSuperDeathray,
             NuclearTerrorAttackType.DownwardSlams
-        };
+        ];
 
         public static int GammaEnergyDamage => 300;
 
@@ -850,7 +850,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             {
                 for (int dy = 1; dy < 20; dy++)
                 {
-                    Tile t = CalamityUtils.ParanoidTileRetrieval(p.X + dx, p.Y + dy);
+                    Tile t = Framing.GetTileSafely(p.X + dx, p.Y + dy);
                     if (t.LiquidAmount <= 192)
                         return false;
                 }
@@ -879,8 +879,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             }
 
             // Kill all projectiles.
-            int[] projectileTypes = new[]
-            {
+            int[] projectileTypes =
+            [
                 ModContent.ProjectileType<CragmawBeam>(),
                 ModContent.ProjectileType<CragmawSpike>(),
                 ModContent.ProjectileType<CragmawVibeCheckChain>(),
@@ -892,7 +892,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
                 ModContent.ProjectileType<NuclearToadGoo>(),
                 ModContent.ProjectileType<OrthoceraStream>(),
                 ModContent.ProjectileType<TrilobiteSpike>()
-            };
+            ];
             for (int i = 0; i < 3; i++)
                 Utilities.DeleteAllProjectiles(false, projectileTypes);
         }

@@ -167,7 +167,7 @@ namespace InfernumMode.Content.Projectiles.Pets
             Projectile.velocity.X = Lerp(Projectile.velocity.X, Projectile.SafeDirectionTo(Owner.Center).X * 10f, 0.1f);
 
             // Jump if there's an obstacle.
-            float? distanceToObstacle = CalamityUtils.DistanceToTileCollisionHit(Projectile.Center, Vector2.UnitX * Sign(Projectile.velocity.X));
+            float? distanceToObstacle = LumUtils.DistanceToTileCollisionHit(Projectile.Center, Vector2.UnitX * Sign(Projectile.velocity.X));
             if ((distanceToObstacle ?? 100f) <= 10f || (Projectile.oldPosition.X == Projectile.position.X && Projectile.velocity.Y == 0f))
             {
                 Projectile.velocity.Y = -8f;

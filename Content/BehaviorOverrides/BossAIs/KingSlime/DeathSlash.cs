@@ -12,7 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 {
     public class DeathSlash : ModProjectile
     {
-        private readonly List<Vector2> TrailCache = new();
+        private readonly List<Vector2> TrailCache = [];
 
         public float ScaleFactorDelta => Projectile.localAI[0];
 

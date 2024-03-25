@@ -107,11 +107,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             float chargeInterpolant = chargeCompletion % 1f;
             for (int i = ChargePositions.Length - 2; i >= chargeCount; i--)
             {
-                Vector2[] positions = new Vector2[2]
-                {
+                Vector2[] positions =
+                [
                     ChargePositions[i],
                     ChargePositions[i + 1]
-                };
+                ];
                 if (i == chargeCount)
                     positions[0] = Vector2.Lerp(positions[0], positions[1], chargeInterpolant);
 

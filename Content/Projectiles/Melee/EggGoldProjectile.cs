@@ -10,13 +10,13 @@ namespace InfernumMode.Content.Projectiles.Melee
 {
     public class EggGoldProjectile : ModProjectile
     {
-        private readonly List<int> PossibleDebuffs = new()
-        {
+        private readonly List<int> PossibleDebuffs =
+        [
             ModContent.BuffType<Nightwither>(),
             ModContent.BuffType<HolyFlames>(),
             ModContent.BuffType<GodSlayerInferno>(),
             BuffID.CursedInferno
-        };
+        ];
 
         public override void SetStaticDefaults()
         {

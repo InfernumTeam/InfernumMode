@@ -153,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Projectile.velocity = (Projectile.velocity * (flyInertia - 1f) + Projectile.SafeDirectionTo(target.Center) * attackFlySpeed) / flyInertia;
 
                 Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
-                Projectile.rotation = CalamityUtils.WrapAngle90Degrees(Projectile.velocity.ToRotation());
+                Projectile.rotation = LumUtils.WrapAngle90Degrees(Projectile.velocity.ToRotation());
                 if (target is null)
                 {
                     Projectile.spriteDirection = 1;
@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Color startingColor = Color.Lerp(Color.Cyan, Color.White, 0.4f);
             Color middleColor = Color.Lerp(Color.Orange, Color.Yellow, 0.3f);
             Color endColor = Color.Lerp(Color.Orange, Color.Red, 0.67f);
-            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
+            return LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
         }
 
         public override bool PreDraw(ref Color lightColor)

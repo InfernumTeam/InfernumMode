@@ -36,7 +36,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
         public override void AI()
         {
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 4f;
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 4f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             Projectile.Opacity = Projectile.scale;
@@ -61,12 +61,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             Vector2 telegraphDirection = Projectile.velocity.SafeNormalize(-Vector2.UnitY);
             Vector2 telegraphStart = Projectile.Center;
             Vector2 telegraphEnd = Projectile.Center + telegraphDirection * 5000f;
-            Vector2[] telegraphPoints = new Vector2[]
-            {
+            Vector2[] telegraphPoints =
+            [
                 telegraphStart,
                 (telegraphStart + telegraphEnd) * 0.5f,
                 telegraphEnd
-            };
+            ];
             TelegraphDrawer.Draw(telegraphPoints, -Main.screenPosition, 44);
             return false;
         }

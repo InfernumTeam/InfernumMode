@@ -186,17 +186,17 @@ namespace InfernumMode.Core.ILEditingStuff
         
         public void Unload() => On_ActiveSound.Update -= ActiveSound_Update;
 
-        private static List<string> SoundStylesToEdit => new()
-        {
+        private static List<string> SoundStylesToEdit =>
+        [
             "InfernumMode/Assets/Sounds/Custom/WayfinderGateLoop",
             "InfernumMode/Assets/Sounds/Custom/ProvidenceDoorSoundLoop"
-        };
+        ];
 
         // Ideally this would be an IL but I dont have a copy of the correct source version to look at the IL.
         private void ActiveSound_Update(On_ActiveSound.orig_Update orig, ActiveSound self)
         {
             if (!Program.IsMainThread)
-                typeof(ActiveSound).GetMethod("RunOnMainThreadAndWait", BindingFlags.Static | BindingFlags.NonPublic).Invoke(self, new object[] { (Action)self.Update });
+                typeof(ActiveSound).GetMethod("RunOnMainThreadAndWait", BindingFlags.Static | BindingFlags.NonPublic).Invoke(self, [(Action)self.Update]);
             else
             {
                 if (self.Sound == null || self.Sound.IsDisposed)

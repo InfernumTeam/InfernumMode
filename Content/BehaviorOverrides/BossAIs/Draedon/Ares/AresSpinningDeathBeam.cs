@@ -168,7 +168,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(Lerp(0.23f, 0.29f, Projectile.identity / 9f % 1f));
             GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
 

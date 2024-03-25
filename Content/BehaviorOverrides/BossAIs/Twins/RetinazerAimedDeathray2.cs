@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public Color LaserColorFunction(float completionRatio)
         {
-            float colorInterpolant = CalamityUtils.Convert01To010(Time / Lifetime) * 0.45f + 0.15f;
+            float colorInterpolant = LumUtils.Convert01To010(Time / Lifetime) * 0.45f + 0.15f;
             colorInterpolant = Lerp(colorInterpolant, 1f, 1f - 1f / Projectile.localAI[1]);
 
             return Color.Lerp(Color.Red, Color.White, colorInterpolant) * (1f / Projectile.localAI[1]);
@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Projectile.localAI[1] = oldLocalAI;
         }
 
-        public override void DetermineScale() => Projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime);
+        public override void DetermineScale() => Projectile.scale = LumUtils.Convert01To010(Time / Lifetime);
 
         public override bool ShouldUpdatePosition() => false;
     }

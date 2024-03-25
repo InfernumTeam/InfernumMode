@@ -44,11 +44,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
         public override int NPCOverrideType => ModContent.NPCType<DesertScourgeHead>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         #region Loading
         public override void Load()
@@ -164,7 +164,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                         continue;
 
                     Vector2 particleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 1200f, -560f));
-                    bool sandBelow = CalamityUtils.ParanoidTileRetrieval((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
+                    bool sandBelow = Framing.GetTileSafely((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
                     if (sandBelow)
                         Dust.NewDustPerfect(particleSpawnPosition + new Vector2(Main.rand.NextFloatDirection() * 8f, -8f), 32, Main.rand.NextVector2Circular(1.5f, 1.5f) - Vector2.UnitY * 1.5f);
                 }
@@ -192,7 +192,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 npc.velocity.Y = Clamp(npc.velocity.Y - 0.6f, -25f, 10f);
 
                 // Check if the scourge has reached the surface. If it has, create some particle effects and go to the next substate.
-                bool inTiles = WorldGen.SolidTile(CalamityUtils.ParanoidTileRetrieval((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f)));
+                bool inTiles = WorldGen.SolidTile(Framing.GetTileSafely((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f)));
                 if (hasReachedSurface == 0f && !inTiles && npc.Center.Y <= target.Bottom.Y + 80f)
                 {
                     hasReachedSurface = 1f;
@@ -209,7 +209,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                     for (int i = 0; i < 32; i++)
                     {
                         Vector2 particleSpawnPosition = Utilities.GetGroundPositionFrom(target.Center + new Vector2(Main.rand.NextFloatDirection() * 1200f, -560f));
-                        bool sandBelow = CalamityUtils.ParanoidTileRetrieval((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
+                        bool sandBelow = Framing.GetTileSafely((int)(particleSpawnPosition.X / 16f), (int)(particleSpawnPosition.Y / 16f)).TileType == TileID.Sand;
                         if (sandBelow)
                         {
                             Color sandColor = Color.Lerp(Color.SaddleBrown, Color.SandyBrown, Main.rand.NextFloat(0.7f)) * 0.4f;
@@ -356,7 +356,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                     bool inGround = npc.Center.Y > target.Center.Y;
                     for (int i = 0; i < inGroundDepthDefinition; i++)
                     {
-                        Tile tile = CalamityUtils.ParanoidTileRetrieval((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f) - i);
+                        Tile tile = Framing.GetTileSafely((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f) - i);
                         if (!tile.HasTile)
                         {
                             inGround = false;
@@ -639,12 +639,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             DesertScourgeAttackType oldAttack = (DesertScourgeAttackType)(int)npc.ai[0];
-            List<DesertScourgeAttackType> potentialAttacks = new()
-            {
+            List<DesertScourgeAttackType> potentialAttacks =
+            [
                 DesertScourgeAttackType.SandSpit,
                 DesertScourgeAttackType.SandRushCharge,
                 DesertScourgeAttackType.SandstormParticles,
-            };
+            ];
 
             if (lifeRatio < Phase2LifeRatio)
                 potentialAttacks.Add(DesertScourgeAttackType.GroundSlam);

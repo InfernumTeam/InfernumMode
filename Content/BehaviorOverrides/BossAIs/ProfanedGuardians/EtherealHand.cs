@@ -160,7 +160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             sagLocation.Y += Lerp(0f, 30f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y + 0.1f), true));
 
 
-            Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, NPC.Center).GetPoints(totalPoints).ToArray();
+            Vector2[] drawPoints = [.. new BezierCurve(AttackerGuardian.Center, sagLocation, NPC.Center).GetPoints(totalPoints)];
 
             for (int i = 0; i < 5; i++)
             {

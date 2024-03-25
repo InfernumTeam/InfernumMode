@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             for (int i = 0; i < 36; i++)
             {
                 Vector2 lightDrawPosition = drawPosition + (TwoPi * i / 36f + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * Projectile.scale * 12f;
-                Color lightBurstColor = CalamityUtils.MulticolorLerp(Projectile.timeLeft / 144f, Color.OrangeRed, Color.Yellow);
+                Color lightBurstColor = LumUtils.MulticolorLerp(Projectile.timeLeft / 144f, Color.OrangeRed, Color.Yellow);
                 lightBurstColor = Color.Lerp(lightBurstColor, Color.White, 0.4f) * Projectile.Opacity * 0.184f;
                 Main.spriteBatch.Draw(lightTexture, lightDrawPosition, null, lightBurstColor, 0f, lightTexture.Size() * 0.5f, Projectile.scale * 1.32f, SpriteEffects.None, 0);
             }

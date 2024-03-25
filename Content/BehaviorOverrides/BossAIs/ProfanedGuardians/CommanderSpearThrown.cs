@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             if (Timer <= TelegraphTime)
             {
-                float opacity = CalamityUtils.Convert01To010(Timer / TelegraphTime);
+                float opacity = LumUtils.Convert01To010(Timer / TelegraphTime);
                 BloomLineDrawInfo lineInfo = new(rotation: -Projectile.velocity.ToRotation(),
                     width: 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
                     bloom: Lerp(0.06f, 0.16f, opacity),
@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return false;
             }
             float alpha = 1f - (float)Projectile.alpha / 255;
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
             return false;
         }

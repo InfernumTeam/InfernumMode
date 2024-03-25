@@ -43,14 +43,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public static int JewelBeamDamage => 70;
 
-        public static readonly KingSlimeAttackType[] AttackPattern = new KingSlimeAttackType[]
-        {
+        public static readonly KingSlimeAttackType[] AttackPattern =
+        [
             KingSlimeAttackType.SmallJump,
             KingSlimeAttackType.SmallJump,
             KingSlimeAttackType.LargeJump,
             KingSlimeAttackType.Teleport,
             KingSlimeAttackType.LargeJump,
-        };
+        ];
 
         public const float Phase2LifeRatio = 0.75f;
 
@@ -64,11 +64,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public static Vector2 HitboxScaleFactor => new(128f, 88f);
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override bool PreAI(NPC npc)
         {
@@ -519,10 +519,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 if (Main.netMode != NetmodeID.Server)
                     Gore.NewGore(npc.GetSource_FromAI(), npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
 
-                WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
-                {
+                WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200),
+                [
                     new CustomTileConditions.IsSolidOrSolidTop(), new CustomTileConditions.ActiveAndNotActuated(),
-                }), out Point newBottom);
+                ]), out Point newBottom);
 
                 // Decide the teleport position and prepare the teleport direction for next time by making it go to the other side.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -592,11 +592,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             }
 
             // Also clear any projectiles.
-            Utilities.DeleteAllProjectiles(true, new int[]
-            {
+            Utilities.DeleteAllProjectiles(true,
+            [
                 ModContent.ProjectileType<JewelBeam>(),
                 ModContent.ProjectileType<Shuriken>()
-            });
+            ]);
         }
         #endregion AI
 

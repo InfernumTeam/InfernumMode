@@ -19,7 +19,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void Load()
         {
-            CustomLavaStyles ??= new();
+            CustomLavaStyles ??= [];
             foreach (Type type in typeof(InfernumMode).Assembly.GetTypes())
             {
                 // Ignore abstract types; they cannot have instances.

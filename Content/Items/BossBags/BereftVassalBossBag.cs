@@ -64,14 +64,14 @@ namespace InfernumMode.Content.Items.BossBags
 
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<BereftVassal>()));
 
-            int[] weapons = new int[]
-{
+            int[] weapons =
+[
                 ModContent.ItemType<AridBattlecry>(),
                 ModContent.ItemType<Myrindael>(),
                 ModContent.ItemType<TheGlassmaker>(),
                 ModContent.ItemType<WanderersShell>(),
                 ModContent.ItemType<Perditus>()
-            };
+            ];
 
             itemLoot.Add(DropHelper.CalamityStyle(new Fraction(1, 2), weapons));
 

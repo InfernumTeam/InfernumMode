@@ -243,15 +243,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public static bool SyncAttacksWithMusic => false;//Main.netMode == NetmodeID.SinglePlayer && InfernumMode.CalMusicModIsActive && Main.musicVolume > 0f && !BossRushEvent.BossRushActive;
 
-        public static readonly Color[] NightPalette = new[]
-        {
+        public static readonly Color[] NightPalette =
+        [
             new Color(119, 232, 194),
             new Color(117, 201, 229),
             new Color(117, 93, 229)
-        };
+        ];
 
-        public static List<ProvidenceAttackSection> Phase1AttackStates => new()
-        {
+        public static List<ProvidenceAttackSection> Phase1AttackStates =>
+        [
             // Quiet section.
             new(new(BaseTrackedMusic.TimeFormat(0, 0, 0), BaseTrackedMusic.TimeFormat(0, 21, 0)), ProvidenceAttackType.FireEnergyCharge),
 
@@ -263,10 +263,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             new(new(BaseTrackedMusic.TimeFormat(1, 5, 0), BaseTrackedMusic.TimeFormat(1, 13, 0)), ProvidenceAttackType.CinderAndBombBarrages),
             new(new(BaseTrackedMusic.TimeFormat(1, 13, 0), BaseTrackedMusic.TimeFormat(1, 24, 333)), ProvidenceAttackType.HealerGuardianCrystalBarrage),
             new(new(BaseTrackedMusic.TimeFormat(1, 24, 333), BaseTrackedMusic.TimeFormat(1, 46, 667)), ProvidenceAttackType.AttackGuardiansSpearSlam),
-        };
+        ];
 
-        public static List<ProvidenceAttackSection> Phase2AttackStates => new()
-        {
+        public static List<ProvidenceAttackSection> Phase2AttackStates =>
+        [
             // Quiet section, prelude to fire form.
             new(new(BaseTrackedMusic.TimeFormat(0, 0, 0), BaseTrackedMusic.TimeFormat(0, 20, 0)), ProvidenceAttackType.EnterFireFormBulletHell),
             new(new(BaseTrackedMusic.TimeFormat(0, 20, 0), BaseTrackedMusic.TimeFormat(0, 32, 0)), ProvidenceAttackType.EnvironmentalFireEffects),
@@ -288,12 +288,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Light form and cycle restart.
             new(new(BaseTrackedMusic.TimeFormat(1, 58, 0), BaseTrackedMusic.TimeFormat(2, 1, 0)), ProvidenceAttackType.EnterLightForm),
             new(new(BaseTrackedMusic.TimeFormat(2, 1, 0), BaseTrackedMusic.TimeFormat(2, 23, 0)), ProvidenceAttackType.FinalPhaseRadianceBursts)
-        };
+        ];
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -1558,7 +1558,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ProvidenceLavaRise", IsEnraged ? Color.SkyBlue : Color.Orange);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ProvidenceLavaRise", IsEnraged ? Color.SkyBlue : Color.Orange);
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProfanedLava>(), 350, 0f);
                 }
 
@@ -2586,12 +2586,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public static void ClearEntities()
         {
             // Delete all Guardians and rocks.
-            List<int> guardianIDs = new()
-            {
+            List<int> guardianIDs =
+            [
                 ModContent.NPCType<ProvSpawnHealer>(),
                 ModContent.NPCType<ProvSpawnOffense>(),
                 ModContent.NPCType<ProfanedRocks>(),
-            };
+            ];
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC n = Main.npc[i];

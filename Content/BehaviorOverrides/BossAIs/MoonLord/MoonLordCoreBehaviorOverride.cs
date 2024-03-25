@@ -137,11 +137,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override void Load()
         {
@@ -154,8 +154,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             // Create a profaned temple after the moon lord is killed if it doesn't exist yet, for backwards world compatibility reasons.
             if (npc.type == NPCID.MoonLordCore && !WorldSaveSystem.HasGeneratedProfanedShrine && !WeakReferenceSupport.InAnySubworld())
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PostMLTempleCreation", Color.Orange);
-                ProfanedGarden.Generate(new(), new(new()));
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.PostMLTempleCreation", Color.Orange);
+                ProfanedGarden.Generate(new(), new([]));
                 WorldSaveSystem.HasGeneratedProfanedShrine = true;
             }
         }
@@ -472,37 +472,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            MoonLordAttackState[] attackCycle = new MoonLordAttackState[]
-            {
+            MoonLordAttackState[] attackCycle =
+            [
                 !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
                 MoonLordAttackState.PhantasmalSphereHandWaves,
                 eyeCount == 1 ? MoonLordAttackState.PhantasmalSpin : MoonLordAttackState.PhantasmalFlareBursts,
                 !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalRush : MoonLordAttackState.PhantasmalDeathrays,
-            };
+            ];
             if (CurrentActiveArms <= 0 && npc.ai[0] != (int)MoonLordAttackState.SpawnEffects)
             {
-                attackCycle = new MoonLordAttackState[]
-                {
+                attackCycle =
+                [
                     MoonLordAttackState.PhantasmalDance,
                     MoonLordAttackState.PhantasmalBoltEyeBursts,
                     MoonLordAttackState.PhantasmalDeathrays,
                     MoonLordAttackState.PhantasmalRush,
-                };
+                ];
             }
             if (eyeCount >= 3)
             {
-                attackCycle = new MoonLordAttackState[]
-                {
+                attackCycle =
+                [
                     MoonLordAttackState.PhantasmalDance,
                     MoonLordAttackState.PhantasmalRush,
                     MoonLordAttackState.PhantasmalBarrage,
                     MoonLordAttackState.ExplodingConstellations,
-                };
+                ];
 
                 if (lifeRatio < Phase2LifeRatio)
                 {
-                    attackCycle = new MoonLordAttackState[]
-                    {
+                    attackCycle =
+                    [
                         MoonLordAttackState.PhantasmalDance,
                         MoonLordAttackState.PhantasmalRush,
                         MoonLordAttackState.PhantasmalBarrage,
@@ -511,7 +511,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         MoonLordAttackState.PhantasmalWrath,
                         MoonLordAttackState.PhantasmalBarrage,
                         MoonLordAttackState.PhantasmalWrath,
-                    };
+                    ];
                 }
             }
 
@@ -548,8 +548,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public static void ClearAllProjectiles()
         {
-            int[] projectilesToDelete = new int[]
-            {
+            int[] projectilesToDelete =
+            [
                 ProjectileID.PhantasmalBolt,
                 ProjectileID.PhantasmalSphere,
                 ProjectileID.PhantasmalEye,
@@ -561,7 +561,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 ModContent.ProjectileType<PhantasmalOrb>(),
                 ModContent.ProjectileType<StardustConstellation>(),
                 ModContent.ProjectileType<VoidBlackHole>(),
-            };
+            ];
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (projectilesToDelete.Contains(Main.projectile[i].type))

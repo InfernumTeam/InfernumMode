@@ -145,7 +145,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Cyan, Color.White, CalamityUtils.Convert01To010(Pow(completionRatio, 2f)));
+            Color color = Color.Lerp(Color.Cyan, Color.White, LumUtils.Convert01To010(Pow(completionRatio, 2f)));
             color *= 1f - 0.5f * Pow(completionRatio, 3f);
             color *= Projectile.Opacity * 3f;
             return color;
@@ -177,7 +177,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
             spriteBatch.EnterShaderRegion();
 
-            List<Vector2> drawPoints = new();
+            List<Vector2> drawPoints = [];
 
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= TwoPi; offsetAngle += Pi / 6f)

@@ -75,7 +75,7 @@ namespace InfernumMode.Common.BaseEntities
 
         public sealed override bool PreDraw(ref Color lightColor)
         {
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             Projectile.FillWhipControlPoints(Projectile, points);
 
             DrawConnectionLine(points);

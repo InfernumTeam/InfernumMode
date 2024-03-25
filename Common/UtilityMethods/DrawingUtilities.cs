@@ -202,7 +202,7 @@ namespace InfernumMode
 
         public static List<Vector2> CorrectBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, IEnumerable<float> _ = null)
         {
-            List<Vector2> controlPoints = new();
+            List<Vector2> controlPoints = [];
             for (int i = 0; i < originalPositions.Count(); i++)
             {
                 // Don't incorporate points that are zeroed out.
@@ -215,8 +215,8 @@ namespace InfernumMode
             if (controlPoints.Count <= 1)
                 return controlPoints;
 
-            List<Vector2> points = new();
-            BezierCurve bezierCurve = new(controlPoints.ToArray());
+            List<Vector2> points = [];
+            BezierCurve bezierCurve = new([.. controlPoints]);
 
             // The GetPoints method uses imprecise floating-point looping, which can result in inaccuracies with point generation.
             // Instead, an integer-based loop is used to mitigate such problems.
@@ -400,8 +400,8 @@ namespace InfernumMode
 
         public static void GetCircleVertices(int sideCount, float radius, Vector2 center, out List<short> triangleIndices, out List<PrimitiveTrailCopy.VertexPosition2DColor> vertices)
         {
-            vertices = new();
-            triangleIndices = new();
+            vertices = [];
+            triangleIndices = [];
 
             // Use the law of cosines to determine the side length of the triangles that compose the inscribed shape.
             float sideAngle = TwoPi / sideCount;
@@ -529,7 +529,7 @@ namespace InfernumMode
             {
                 float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
                 Color c = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
-                return CalamityUtils.ColorMessage(GetLocalization("Items.InfernalRelicText").Value, c);
+                return LumUtils.ColorMessage(GetLocalization("Items.InfernalRelicText").Value, c);
             }
         }
 
@@ -563,7 +563,7 @@ namespace InfernumMode
         /// <returns></returns>
         public static IEnumerable<InfernumMetaballParticle> CreateMetaballsFromTexture(this Texture2D texture, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35, float decayRate = 0.985f)
         {
-            List<InfernumMetaballParticle> metaballs = new();
+            List<InfernumMetaballParticle> metaballs = [];
             // Leave if this is null, or this is called on the server.
             if (Main.netMode == NetmodeID.Server)
                 return metaballs;

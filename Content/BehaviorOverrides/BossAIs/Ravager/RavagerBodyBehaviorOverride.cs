@@ -286,13 +286,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             if (attackDelayTimer < telegraphTime)
             {
                 int dustID = ModContent.DustType<RavagerMagicDust>();
-                Vector2[] flamePillarTops = new Vector2[]
-                {
+                Vector2[] flamePillarTops =
+                [
                     npc.Center + new Vector2(-112f, -38f),
                     npc.Center + new Vector2(112f, -38f),
                     npc.Center + new Vector2(-46f, -82f),
                     npc.Center + new Vector2(46f, -82f),
-                };
+                ];
 
                 if (attackDelayTimer < telegraphTime * 0.67f)
                 {
@@ -803,18 +803,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public static void SelectNextAttack(NPC npc, RavagerPhaseInfo phaseInfo)
         {
-            RavagerAttackType[] pattern = new RavagerAttackType[]
-            {
+            RavagerAttackType[] pattern =
+            [
                 RavagerAttackType.DownwardFistSlam,
                 RavagerAttackType.RegularJumps,
                 RavagerAttackType.SingleBurstsOfBlood,
                 RavagerAttackType.RegularJumps,
                 RavagerAttackType.BarrageOfBlood
-            };
+            ];
             if (phaseInfo.InPhase2)
             {
-                pattern = new RavagerAttackType[]
-                {
+                pattern =
+                [
                     RavagerAttackType.DownwardFistSlam,
                     phaseInfo.FreeHeadExists ? RavagerAttackType.DetachedHeadCinderRain : RavagerAttackType.SlamAndCreateMovingFlamePillars,
                     RavagerAttackType.RegularJumps,
@@ -825,7 +825,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                     RavagerAttackType.RegularJumps,
                     RavagerAttackType.BarrageOfBlood,
                     RavagerAttackType.WallSlams,
-                };
+                ];
             }
 
             npc.ai[0] = (int)pattern[(int)++npc.Infernum().ExtraAI[9] % pattern.Length];
@@ -927,7 +927,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             InfernumEffectsRegistry.DarkFlamePillarVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFaded);
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(start, end, i / 8f));
 

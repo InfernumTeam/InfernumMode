@@ -11,7 +11,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             get;
             private set;
-        } = new List<IHookEdit>();
+        } = [];
 
         public static void Load()
         {

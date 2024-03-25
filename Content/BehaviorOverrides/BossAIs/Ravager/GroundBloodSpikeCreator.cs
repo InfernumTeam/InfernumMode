@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 
         public override void AI()
         {
-            Projectile.Opacity = (float)CalamityUtils.Convert01To010(Projectile.timeLeft / 420f) * 8f;
+            Projectile.Opacity = (float)LumUtils.Convert01To010(Projectile.timeLeft / 420f) * 8f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             Time++;

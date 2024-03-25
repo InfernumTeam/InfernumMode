@@ -49,10 +49,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public const float Phase2LifeRatio = 0.625f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
         #region Fields, Properties, and Enumerations
         public enum QueenSlimeAttackType

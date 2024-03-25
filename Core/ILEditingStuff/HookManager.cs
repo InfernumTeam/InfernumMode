@@ -35,13 +35,13 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             get;
             set;
-        } = new();
+        } = [];
 
         internal static List<Hook> OnHooks
         {
             get;
             set;
-        } = new();
+        } = [];
 
         public static event ILContext.Manipulator ModifyPreAINPC
         {
@@ -495,7 +495,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public static void ModifyIl(MethodBase method, ILContext.Manipulator edit)
         {
-            IlHooks ??= new();
+            IlHooks ??= [];
 
             var hook = new ILHook(method, edit);
             hook.Apply();

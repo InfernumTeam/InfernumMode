@@ -4,6 +4,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -38,12 +39,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public float Width => BigVersion ? 700 : 150f;
 
-        public float VariableWidth => Width * (BigVersion ? CalamityUtils.SineInOutEasing(CurrentLength / MaxLength, 0) : Utilities.EaseInOutCubic(CurrentLength / MaxLength));
+        public float VariableWidth => Width * (BigVersion ? EasingCurves.Sine.InOutFunction(CurrentLength / MaxLength) : EasingCurves.Cubic.InOutFunction(CurrentLength / MaxLength));
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lava Geyser");
-        }
 
         public override void SetDefaults()
         {
@@ -102,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 TelegraphDrawer ??= new PrimitiveTrailCopy(TelegraphWidthFunction, TelegraphColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
 
                 InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-                float opacityScalar = Sin(CalamityUtils.SineInOutEasing(Timer / (TelegraphLength + 20), 0) * PI);
+                float opacityScalar = Sin(EasingCurves.Sine.InOutFunction(Timer / (TelegraphLength + 20)) * PI);
                 InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.5f * opacityScalar);
 
                 Vector2 startT = Projectile.Center;

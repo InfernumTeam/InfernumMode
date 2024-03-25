@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
@@ -48,7 +48,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void AI()
         {
-            Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 3f;
+            Projectile.Opacity = LumUtils.Convert01To010(Time / Lifetime) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 
@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public void DrawAboveWater(SpriteBatch spriteBatch)
         {
-            float telegraphWidth = Lerp(0.3f, 5f, CalamityUtils.Convert01To010(Time / Lifetime));
+            float telegraphWidth = Lerp(0.3f, 5f, LumUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
             Vector2 start = Projectile.Center;

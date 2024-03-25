@@ -34,8 +34,8 @@ namespace InfernumMode.Core.TrackedMusic
             }
         }
 
-        public override List<SongSection> HeadphonesHighPoints => new()
-        {
+        public override List<SongSection> HeadphonesHighPoints =>
+        [
             new(TimeFormat(0, 8, 886), TimeFormat(0, 18, 778)),
 
             new(TimeFormat(1, 2, 373), TimeFormat(1, 15, 787)),
@@ -45,8 +45,8 @@ namespace InfernumMode.Core.TrackedMusic
             new(TimeFormat(2, 5, 836), TimeFormat(2, 15, 645)),
 
             new(TimeFormat(2, 30, 316), TimeFormat(3, 10, 808)),
-        };
+        ];
 
-        public override List<SongSection> HighPoints => new();
+        public override List<SongSection> HighPoints => [];
     }
 }

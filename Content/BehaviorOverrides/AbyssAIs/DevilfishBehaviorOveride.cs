@@ -104,13 +104,13 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Vector2 topRight = target.Center + hoverOffset * new Vector2(1f, -1f);
             Vector2 bottomLeft = target.Center + hoverOffset * new Vector2(-1f, 1f);
             Vector2 bottomRight = target.Center + hoverOffset;
-            List<Vector2> validHoverSpots = new List<Vector2>()
+            List<Vector2> validHoverSpots = [.. new List<Vector2>()
             {
                 topLeft,
                 topRight,
                 bottomLeft,
                 bottomRight
-            }.Where(p => !Collision.SolidCollision(p - Vector2.One * 80f, 160, 160)).OrderBy(p => p.DistanceSQ(npc.Center)).ToList();
+            }.Where(p => !Collision.SolidCollision(p - Vector2.One * 80f, 160, 160)).OrderBy(p => p.DistanceSQ(npc.Center))];
 
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 100f;
             if (validHoverSpots.Count >= 1)

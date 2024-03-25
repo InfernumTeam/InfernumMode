@@ -164,7 +164,7 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         internal static NPC[] GetPlatforms(Projectile projectile)
         {
-            return Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center)).ToArray();
+            return [.. Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center))];
         }
 
         internal static bool PlatformRequirement(Projectile projectile)
@@ -580,7 +580,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             orig(self, x, y, out outputColor);
 
-            Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+            Tile tile = Framing.GetTileSafely(x, y);
             if (tile.LiquidAmount <= 0 || tile.HasTile || Main.waterStyle != SulphurWaterIndex)
                 return;
 
@@ -737,7 +737,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
             int xLocalIndex = 0;
             int yLocalIndex = 0;
-            ConstructorInfo pointConstructor = typeof(Point).GetConstructor(new Type[] { typeof(int), typeof(int) });
+            ConstructorInfo pointConstructor = typeof(Point).GetConstructor([typeof(int), typeof(int)]);
             MethodInfo placementMethod = typeof(SchematicManager).GetMethods().First(m => m.Name == "PlaceSchematic");
 
             // Find the first instance of the schematic placement call. There are three, but they all take the same information so it doesn't matter which one is used as a reference.

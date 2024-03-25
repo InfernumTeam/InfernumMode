@@ -14,7 +14,7 @@ namespace InfernumMode.Common.UtilityMethods
         public static void GetOldOnesArmyStatus(out int currentWave, out int requiredKillCount, out int currentKillCount, bool currentlyInCheckProgress = false)
         {
             currentWave = requiredKillCount = currentKillCount = 0;
-            object[] parameters = new object[] { currentWave, requiredKillCount, currentKillCount, currentlyInCheckProgress };
+            object[] parameters = [currentWave, requiredKillCount, currentKillCount, currentlyInCheckProgress];
             oldOnesArmyStatusMethod.Invoke(null, parameters);
             currentWave = (int)parameters[0];
             requiredKillCount = (int)parameters[1];
@@ -50,8 +50,8 @@ namespace InfernumMode.Common.UtilityMethods
 
         public static void ClearPickoffOOAEnemies()
         {
-            int[] pickOffNPCs = new int[]
-            {
+            int[] pickOffNPCs =
+            [
                 NPCID.DD2GoblinT1,
                 NPCID.DD2GoblinT2,
                 NPCID.DD2GoblinT3,
@@ -73,7 +73,7 @@ namespace InfernumMode.Common.UtilityMethods
                 NPCID.DD2LightningBugT3,
                 NPCID.DD2DrakinT2,
                 NPCID.DD2DrakinT3,
-            };
+            ];
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].active && pickOffNPCs.Contains(Main.npc[i].type))

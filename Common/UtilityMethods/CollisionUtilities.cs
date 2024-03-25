@@ -73,7 +73,7 @@ namespace InfernumMode
             {
                 for (int j = y; j < y + height / 16; j++)
                 {
-                    Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+                    Tile t = Framing.GetTileSafely(i, j);
                     if (!t.HasUnactuatedTile)
                         continue;
 

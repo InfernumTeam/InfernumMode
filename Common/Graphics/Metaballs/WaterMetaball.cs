@@ -19,9 +19,9 @@ namespace InfernumMode.Common.Graphics.Metaballs
         {
             get;
             private set;
-        } = new();
+        } = [];
 
-        public override bool AnythingToDraw => Particles.Any() || CalamityMod.CalamityUtils.AnyProjectiles(ModContent.ProjectileType<PerditusProjectile>());
+        public override bool AnythingToDraw => Particles.Any() || LumUtils.AnyProjectiles(ModContent.ProjectileType<PerditusProjectile>());
 
         public override IEnumerable<Texture2D> Layers
         {
@@ -124,7 +124,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
                 if (Main.projectile[i].ModProjectile is PerditusProjectile perditus)
                 {
-                    List<Vector2> points = new();
+                    List<Vector2> points = [];
                     Projectile.FillWhipControlPoints(perditus.Projectile, points);
                     PerditusProjectile.DrawWaterLine(points);
                     break;

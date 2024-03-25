@@ -27,7 +27,7 @@ namespace InfernumMode.Content.Schematics
         {
             SchematicMetaTile[,] ret = null;
             using (Stream st = InfernumMode.Instance.GetFileStream(filename, true))
-                ret = (SchematicMetaTile[,])ImportSchematicMethod.Invoke(null, new object[] { st });
+                ret = (SchematicMetaTile[,])ImportSchematicMethod.Invoke(null, [st]);
 
             return ret;
         }

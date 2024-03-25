@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,17 +11,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 {
     public class EctoplasmShot : ModProjectile
     {
-        public static readonly Color[] ColorSet = new Color[]
-        {
+        public static readonly Color[] ColorSet =
+        [
             Color.Pink,
             Color.Cyan
-        };
+        ];
 
         public bool ShouldFall => Projectile.ai[0] == 1f;
 
         public ref float Lifetime => ref Projectile.ai[1];
 
-        public Color StreakBaseColor => Color.Lerp(CalamityUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet), Color.White, 0.2f);
+        public Color StreakBaseColor => Color.Lerp(LumUtils.MulticolorLerp(Projectile.ai[1] % 0.999f, ColorSet), Color.White, 0.2f);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 

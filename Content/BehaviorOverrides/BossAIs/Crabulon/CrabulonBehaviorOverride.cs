@@ -57,23 +57,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
 
         public const float Phase3LifeRatio = 0.45f;
 
-        public static CrabulonAttackState[] Phase1AttackCycle => new[]
-        {
+        public static CrabulonAttackState[] Phase1AttackCycle =>
+        [
             CrabulonAttackState.WalkToTarget,
             CrabulonAttackState.JumpToTarget
-        };
+        ];
 
-        public static CrabulonAttackState[] Phase2AttackCycle => new[]
-        {
+        public static CrabulonAttackState[] Phase2AttackCycle =>
+        [
             CrabulonAttackState.WalkToTarget,
             CrabulonAttackState.JumpToTarget,
             CrabulonAttackState.WalkToTarget,
             CrabulonAttackState.CreateGroundMushrooms,
             CrabulonAttackState.JumpToTarget,
-        };
+        ];
 
-        public static CrabulonAttackState[] Phase3AttackCycle => new[]
-        {
+        public static CrabulonAttackState[] Phase3AttackCycle =>
+        [
             CrabulonAttackState.WalkToTarget,
             CrabulonAttackState.JumpToTarget,
             CrabulonAttackState.ClawSlamMushroomWaves,
@@ -81,13 +81,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             CrabulonAttackState.CreateGroundMushrooms,
             CrabulonAttackState.JumpToTarget,
             CrabulonAttackState.ClawSlamMushroomWaves,
-        };
+        ];
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -404,12 +404,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                 for (float dx = -1000f; dx < 1000f; dx += enraged ? 250f : 360f)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
-                    WorldUtils.Find(spawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
-                    {
+                    WorldUtils.Find(spawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000),
+                    [
                         new Conditions.IsSolid(),
                         new CustomTileConditions.ActiveAndNotActuated(),
                         new CustomTileConditions.NotPlatform()
-                    }), out Point newBottom);
+                    ]), out Point newBottom);
                     Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), MushroomPillarDamage, 0f);
                 }
 

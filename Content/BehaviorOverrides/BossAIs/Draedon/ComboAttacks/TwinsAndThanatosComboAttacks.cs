@@ -329,11 +329,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 {
                                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                                     {
-                                        telegraph.ModProjectile<PlasmaChargeTelegraph>().ChargePositions = new[]
-                                        {
+                                        telegraph.ModProjectile<PlasmaChargeTelegraph>().ChargePositions =
+                                        [
                                             npc.Center,
                                             npc.Center + npc.SafeDirectionTo(target.Center) * 1600f
-                                        };
+                                        ];
                                     });
 
                                     Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PlasmaChargeTelegraph>(), 0, 0f, npc.target, 0f, npc.whoAmI);

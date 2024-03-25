@@ -51,8 +51,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             RaiseArmsUp
         }
 
-        public static DeerclopsAttackState[] Phase1Pattern => new DeerclopsAttackState[]
-        {
+        public static DeerclopsAttackState[] Phase1Pattern =>
+        [
             DeerclopsAttackState.TallIcicles,
             DeerclopsAttackState.WalkToTarget,
             DeerclopsAttackState.WideIcicles,
@@ -60,20 +60,20 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             DeerclopsAttackState.BidirectionalIcicleSlam,
             DeerclopsAttackState.UpwardDebrisLaunch,
             DeerclopsAttackState.WalkToTarget,
-        };
+        ];
 
-        public static DeerclopsAttackState[] Phase2Pattern => new DeerclopsAttackState[]
-        {
+        public static DeerclopsAttackState[] Phase2Pattern =>
+        [
             DeerclopsAttackState.FeastclopsEyeLaserbeam,
             DeerclopsAttackState.AimedAheadShadowHands,
             DeerclopsAttackState.WideIcicles,
             DeerclopsAttackState.WalkToTarget,
             DeerclopsAttackState.WalkToTarget,
             DeerclopsAttackState.WideIcicles,
-        };
+        ];
 
-        public static DeerclopsAttackState[] Phase3Pattern => new DeerclopsAttackState[]
-        {
+        public static DeerclopsAttackState[] Phase3Pattern =>
+        [
             DeerclopsAttackState.DyingBeaconOfLight,
             DeerclopsAttackState.FeastclopsEyeLaserbeam,
             DeerclopsAttackState.AimedAheadShadowHands,
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             DeerclopsAttackState.UpwardDebrisLaunch,
             DeerclopsAttackState.WalkToTarget,
             DeerclopsAttackState.WideIcicles,
-        };
+        ];
 
         public static int ShadowHandDamage => 95;
 
@@ -127,11 +127,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public override int NPCOverrideType => NPCID.Deerclops;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         #region AI and Behaviors
         public override bool PreAI(NPC npc)

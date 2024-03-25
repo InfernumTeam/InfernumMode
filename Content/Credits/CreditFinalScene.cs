@@ -2,6 +2,7 @@
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics;
+using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -68,7 +69,7 @@ namespace InfernumMode.Content.Credits
             ImagePosition = new(Main.screenWidth * 0.5f, Main.screenHeight * 0.4f);
             PortalPosition = ImagePosition + new Vector2(0f, -150f);
 
-            CreditDevelopers = new();
+            CreditDevelopers = [];
 
             var arix = new CreditDeveloper(ArixTexture, ImagePosition + new Vector2(-90f, -5f), Vector2.Zero, 0f, SpriteEffects.None);
             CreditDevelopers.Add(arix);
@@ -106,7 +107,7 @@ namespace InfernumMode.Content.Credits
 
             // Accelerate while the portal is being created.
             if (time >= PortalAppearDelay)
-                suckSpeed = Pow(1 + CalamityUtils.ExpOutEasing(Utils.GetLerpValue(PortalAppearDelay + portalAppearLength, PortalAppearDelay + portalAppearLength + 90f, time, true), 0), 2f);
+                suckSpeed = Pow(1 + EasingCurves.Exp.OutFunction(Utils.GetLerpValue(PortalAppearDelay + portalAppearLength, PortalAppearDelay + portalAppearLength + 90f, time, true)), 2f);
 
             foreach (var cd in CreditDevelopers)
             {
@@ -169,7 +170,7 @@ namespace InfernumMode.Content.Credits
                 float scale = 1f;
                 float distance = cd.Position.Distance(PortalPosition);
                 if (distance < 100f)
-                    scale = CalamityUtils.SineInOutEasing(Utils.GetLerpValue(0f, 100f, distance, true), 0);
+                    scale = EasingCurves.Sine.InOutFunction(Utils.GetLerpValue(0f, 100f, distance, true));
 
                 // Don't bother drawing if either of these are 0.
                 if (scale == 0 || opacity == 0)
@@ -189,7 +190,7 @@ namespace InfernumMode.Content.Credits
         public static void Draw(float opacity)
         {
             float portalAppearLength = 45f;
-            float portalOpacity = CalamityUtils.SineInOutEasing(Utils.GetLerpValue(PortalAppearDelay, PortalAppearDelay + portalAppearLength, CreditManager.CreditsTimer, true), 0);
+            float portalOpacity = EasingCurves.Sine.InOutFunction(Utils.GetLerpValue(PortalAppearDelay, PortalAppearDelay + portalAppearLength, CreditManager.CreditsTimer, true));
             float distortionIntensity = Utils.GetLerpValue(PortalAppearDelay + 84f, PortalAppearDelay + 256f, CreditManager.CreditsTimer, true);
 
             // Draw the portrait with an optional collapse effect.

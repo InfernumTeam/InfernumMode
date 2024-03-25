@@ -27,7 +27,7 @@ namespace InfernumMode.Content.Tiles.Wishes
             TileObjectData.newTile.Height = Height;
             TileObjectData.newTile.Origin = new Point16(1, 1);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = [16, 16];
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
@@ -43,7 +43,7 @@ namespace InfernumMode.Content.Tiles.Wishes
             if (Main.LocalPlayer.WithinRange(new(i * 16f, j * 16f), 450f) && !IsBreakable)
             {
                 Utilities.CreateShockwave(new Vector2(i * 16f + 8f, j * 16f + 8f), 2, 8, 75f, false);
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.EggSwordShrineBreakFailure", new(240, 174, 86));
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.EggSwordShrineBreakFailure", new(240, 174, 86));
             }
         }
     }

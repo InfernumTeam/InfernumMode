@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -148,11 +148,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DarkStar>());
 
             SoundEngine.PlaySound(InfernumSoundRegistry.WyrmChargeSound, Projectile.Center);
-            Color[] explosionColors = new Color[]
-            {
+            Color[] explosionColors =
+            [
                 new(250, 90, 74, 127),
                 new(76, 255, 194, 127)
-            };
+            ];
             GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(Projectile.Center, Vector2.Zero, explosionColors, 3f, 180, 1.4f));
         }
     }

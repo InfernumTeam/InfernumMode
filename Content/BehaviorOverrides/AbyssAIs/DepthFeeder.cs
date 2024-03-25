@@ -51,17 +51,17 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.9f;
             NPC.chaseable = false;
-            SpawnModBiomes = new int[3] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type, ModContent.GetInstance<AbyssLayer3Biome>().Type };
+            SpawnModBiomes = [ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type, ModContent.GetInstance<AbyssLayer3Biome>().Type];
             NPC.waterMovementSpeed = 0f;
             NPC.Infernum().IsAbyssPrey = true;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
-            {
+            bestiaryEntry.Info.AddRange(
+            [
                 new FlavorTextBestiaryInfoElement("Mods.InfernumMode.Bestiary.DepthFeeder")
-            });
+            ]);
         }
 
         public override void AI()
@@ -119,8 +119,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC closestPredator = NPC.FindClosestAbyssPredator(out _);
             if (shouldTurnAround && (closestPredator is null || !NPC.WithinRange(closestPredator.Center, 400f)))
             {
-                float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(-PiOver2)) ?? 999f;
-                float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(PiOver2)) ?? 999f;
+                float distanceToTileOnLeft = LumUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(-PiOver2)) ?? 999f;
+                float distanceToTileOnRight = LumUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(PiOver2)) ?? 999f;
                 float turnDirection = distanceToTileOnLeft > distanceToTileOnRight ? -1f : 1f;
                 Vector2 idealVelocity = NPC.velocity.RotatedBy(PiOver2 * turnDirection);
                 if (aboutToLeaveWorld)

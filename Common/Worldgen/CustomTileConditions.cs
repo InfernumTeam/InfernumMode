@@ -9,19 +9,19 @@ namespace InfernumMode.Common.Worldgen
     {
         public class ActiveAndNotActuated : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).HasUnactuatedTile;
+            protected override bool CheckValidity(int x, int y) => Framing.GetTileSafely(x, y).HasUnactuatedTile;
         }
 
         public class NotPlatform : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).TileType];
+            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[Framing.GetTileSafely(x, y).TileType];
         }
 
         public class IsSolidOrSolidTop : GenCondition
         {
             protected override bool CheckValidity(int x, int y)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                Tile tile = Framing.GetTileSafely(x, y);
                 return tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]);
             }
         }
@@ -30,7 +30,7 @@ namespace InfernumMode.Common.Worldgen
         {
             protected override bool CheckValidity(int x, int y)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                Tile tile = Framing.GetTileSafely(x, y);
                 return !tile.HasTile && tile.LiquidAmount <= 0;
             }
         }
@@ -39,7 +39,7 @@ namespace InfernumMode.Common.Worldgen
         {
             protected override bool CheckValidity(int x, int y)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                Tile tile = Framing.GetTileSafely(x, y);
                 return tile.LiquidAmount >= 200 && !(tile.LiquidType == LiquidID.Honey) && !(tile.LiquidType == LiquidID.Lava);
             }
         }
@@ -48,7 +48,7 @@ namespace InfernumMode.Common.Worldgen
         {
             protected override bool CheckValidity(int x, int y)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                Tile tile = Framing.GetTileSafely(x, y);
                 return tile.LiquidAmount >= 200 && !(tile.LiquidType == LiquidID.Honey) && !(tile.LiquidType == LiquidID.Lava) || tile.HasUnactuatedTile && Main.tileSolid[tile.TileType];
             }
         }
@@ -57,7 +57,7 @@ namespace InfernumMode.Common.Worldgen
         {
             protected override bool CheckValidity(int x, int y)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                Tile tile = Framing.GetTileSafely(x, y);
                 return tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Lava || tile.HasUnactuatedTile && Main.tileSolid[tile.TileType];
             }
         }

@@ -60,10 +60,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override int NPCOverrideType => ModContent.NPCType<AresBody>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             ExoMechManagement.Phase4LifeRatio
-        };
+        ];
 
         public const int BackArmSwapDelay = 1800;
 
@@ -534,7 +534,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 float particleScale = Main.rand.NextFloat(0.1f, 0.15f);
                 Vector2 particleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 32f);
-                Color particleColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+                Color particleColor = LumUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
 
                 for (int j = 0; j < 4; j++)
                     GeneralParticleHandler.SpawnParticle(new StrongBloom(coreCenter, particleVelocity, particleColor, particleScale, 80));
@@ -551,7 +551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer > 10f && deathAnimationTimer < implosionRingLifetime - 30f && deathAnimationTimer % pulseRingCreationRate == pulseRingCreationRate - 1f)
             {
                 float finalScale = Lerp(3f, 5f, Utils.GetLerpValue(25f, 160f, deathAnimationTimer, true));
-                Color pulseColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+                Color pulseColor = LumUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
 
                 for (int i = 0; i < 3; i++)
                     GeneralParticleHandler.SpawnParticle(new PulseRing(coreCenter, Vector2.Zero, pulseColor, 0.2f, finalScale, pulseRingCreationRate));
@@ -786,7 +786,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Have Draedon comment on the player's attempts to escape.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
 
                 enraged = 1f;
                 npc.netUpdate = true;
@@ -1014,11 +1014,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     cannonAttackTimer = -5f;
 
                     if (attackTimer == textSubstateTime / 2)
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres1", AresTextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres1", AresTextColor);
 
                     if (attackTimer >= textSubstateTime)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres2", AresTextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres2", AresTextColor);
 
                         attackTimer = 0f;
                         attackSubstate = 1f;
@@ -1172,7 +1172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         {
                             Volume = 2f
                         });
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
 
                         NPC draedon = Main.npc[draedonIndex];
                         draedon.Infernum().ExtraAI[1] = 1f;
@@ -1436,7 +1436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Color startingColor = Color.Lerp(Color.White, Color.Yellow, 0.25f);
             Color middleColor = Color.Lerp(Color.Orange, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.Red, Color.White, 0.17f);
-            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
+            Color color = LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
             color.A = 0;
             return color;
         }
@@ -1552,10 +1552,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 arm1Origin = arm1Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
                 Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
 
-                float arm1Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - shoulderDrawPosition).ToRotation()) * 0.5f;
+                float arm1Rotation = LumUtils.WrapAngle90Degrees((handPosition - shoulderDrawPosition).ToRotation()) * 0.5f;
                 connectorDrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * -26f;
                 arm1DrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * (armTexture1.Width - 14f);
-                float arm2Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - arm1DrawPosition).ToRotation());
+                float arm2Rotation = LumUtils.WrapAngle90Degrees((handPosition - arm1DrawPosition).ToRotation());
 
                 Vector2 arm2DrawPosition = arm1DrawPosition + arm2Rotation.ToRotationVector2() * scale * direction * (armTexture2.Width + 16f) - Vector2.UnitY * scale * 16f;
 
@@ -1690,8 +1690,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 A = 0
             }, npc.localAI[3] * 0.48f);
 
-            (int, bool)[] armProperties = new (int, bool)[]
-            {
+            (int, bool)[] armProperties =
+            [
                 // Laser arm.
                 (-1, true),
 
@@ -1703,7 +1703,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Plasma arm.
                 (1, false),
-            };
+            ];
 
             // Swap arms as necessary
             if (npc.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex] == 1f)

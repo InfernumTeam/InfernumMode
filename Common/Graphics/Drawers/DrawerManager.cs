@@ -11,9 +11,9 @@ namespace InfernumMode.Common.Graphics.Drawers
 {
     public class DrawerManager : ModSystem
     {
-        internal static readonly List<BaseNPCDrawerSystem> NPCDrawers = new();
+        internal static readonly List<BaseNPCDrawerSystem> NPCDrawers = [];
 
-        internal static readonly List<BaseSceneDrawSystem> SceneDrawers = new();
+        internal static readonly List<BaseSceneDrawSystem> SceneDrawers = [];
 
         public override void Load()
         {

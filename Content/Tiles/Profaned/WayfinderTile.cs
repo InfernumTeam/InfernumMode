@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Tiles.Profaned
             TileObjectData.newTile.Height = Height;
             TileObjectData.newTile.Origin = new Point16(0, 2);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
@@ -35,7 +35,7 @@ namespace InfernumMode.Content.Tiles.Profaned
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
 
             if (closer && t.TileFrameX == 18 && t.TileFrameY == 18)
             {

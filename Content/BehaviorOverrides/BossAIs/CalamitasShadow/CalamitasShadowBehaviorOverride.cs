@@ -141,14 +141,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             set;
         }
 
-        public static List<string> Hexes => new()
-        {
+        public static List<string> Hexes =>
+        [
             "Zeal",
             "Accentuation",
             "Catharsis",
             "Weakness",
             "Indignation"
-        };
+        ];
 
         public static Dictionary<string, int> HexNameToProj => new()
         {
@@ -159,11 +159,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             ["Indignation"] = ModContent.ProjectileType<IndignationHexProj>(),
         };
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public static int DarkMagicFlameDamage => 160;
 
@@ -286,7 +286,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 // Spawn Peng's cool hex projectile animations.
                 if (Main.netMode != NetmodeID.MultiplayerClient && hexApplicationPauseDelay == 34f)
                 {
-                    List<string> hexesToSpawn = new();
+                    List<string> hexesToSpawn = [];
                     if (!string.IsNullOrEmpty(hexName))
                         hexesToSpawn.Add(hexName);
                     if (!string.IsNullOrEmpty(hexName2))
@@ -306,7 +306,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
                 Vector2 armEnd = armStart + (armRotation + PiOver2).ToRotationVector2() * npc.scale * ArmLength;
                 Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
-                magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                magic.color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                 magic.noGravity = true;
                 magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
                 magic.scale = Main.rand.NextFloat(1f, 1.3f);
@@ -481,7 +481,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
                 // Do an eye gleam effect.
                 float gleamAnimationCompletion = Utils.GetLerpValue(blackFadeoutTime + blackFadeinTime + maximumDarknessTime, blackFadeoutTime + blackFadeinTime + maximumDarknessTime + eyeGleamTime, attackTimer, true);
-                eyeGleamInterpolant = CalamityUtils.Convert01To010(gleamAnimationCompletion);
+                eyeGleamInterpolant = LumUtils.Convert01To010(gleamAnimationCompletion);
                 if (attackTimer == blackFadeoutTime + blackFadeinTime + maximumDarknessTime)
                 {
                     bool feelingLikeABigShot = Main.rand.NextBool(25) || Utilities.IsAprilFirst();
@@ -956,7 +956,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     if (!readyToBlowUpFireOrb)
                     {
                         Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
-                        magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                        magic.color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                         magic.noGravity = true;
                         magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
                         magic.scale = Main.rand.NextFloat(1f, 1.3f);
@@ -1102,7 +1102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 else
                 {
                     // Emit particles off the book.
-                    Color magicColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                    Color magicColor = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                     GlowyLightParticle magic = new(bookCenter + Main.rand.NextVector2Circular(8f, 2f), -Vector2.UnitY.RotatedByRandom(0.54f) * Main.rand.NextFloat(0.4f, 3f), magicColor, 20, Main.rand.NextFloat(0.09f, 0.15f), 0.87f, false);
                     GeneralParticleHandler.SpawnParticle(magic);
 
@@ -1305,8 +1305,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 if (attackTimer <= 1f)
                     SoundEngine.PlaySound(InfernumSoundRegistry.SCalBrothersSpawnSound with { Volume = 0.7f });
 
-                int[] projectilesToDelete = new int[]
-                {
+                int[] projectilesToDelete =
+                [
                     ModContent.ProjectileType<ArcingBrimstoneDart>(),
                     ModContent.ProjectileType<BrimstoneMeteor>(),
                     ModContent.ProjectileType<CatharsisSoul>(),
@@ -1315,7 +1315,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     ModContent.ProjectileType<DarkMagicFlame>(),
                     ModContent.ProjectileType<EntropyBeam>(),
                     ModContent.ProjectileType<LargeDarkFireOrb>(),
-                };
+                ];
                 Utilities.DeleteAllProjectiles(false, projectilesToDelete);
             }
 
@@ -1345,7 +1345,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             }
 
             if (attackTimer == rumbleTime - 5f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowBrothersSummon", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.CalShadowBrothersSummon", TextColor);
 
             // Have the shadow teleport away and summon the brothers.
             if (attackTimer == rumbleTime)
@@ -1416,7 +1416,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             int blackFadeTime = 12;
 
             float blackFadeCompletion = Utils.GetLerpValue(teleportDelay - blackFadeTime, teleportDelay + blackFadeTime, attackTimer, true);
-            float blackFadeSpike = CalamityUtils.Convert01To010(blackFadeCompletion);
+            float blackFadeSpike = LumUtils.Convert01To010(blackFadeCompletion);
             InfernumMode.BlackFade = Sqrt(blackFadeSpike);
 
             // Disable damage.
@@ -1434,11 +1434,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 if (attackTimer <= 0f)
                 {
                     SoundEngine.PlaySound(SCalBoss.SpawnSound with { Pitch = -0.12f, Volume = 0.7f }, target.Center);
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowFinalPhase", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.CalShadowFinalPhase", TextColor);
                 }
 
-                int[] projectilesToDelete = new int[]
-                {
+                int[] projectilesToDelete =
+                [
                     ModContent.ProjectileType<ArcingBrimstoneDart>(),
                     ModContent.ProjectileType<BrimstoneMeteor>(),
                     ModContent.ProjectileType<CatharsisSoul>(),
@@ -1447,7 +1447,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     ModContent.ProjectileType<DarkMagicFlame>(),
                     ModContent.ProjectileType<EntropyBeam>(),
                     ModContent.ProjectileType<LargeDarkFireOrb>(),
-                };
+                ];
                 Utilities.DeleteAllProjectiles(false, projectilesToDelete);
             }
 
@@ -1687,7 +1687,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             if (attackTimer == textDelay)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowFinalHexWarning", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.CalShadowFinalHexWarning", TextColor);
                 SoundEngine.PlaySound(InfernumSoundRegistry.EntropyRayChargeSound);
             }
 
@@ -1700,7 +1700,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
                 Vector2 armEnd = armStart + (armRotation + PiOver2).ToRotationVector2() * npc.scale * ArmLength;
                 Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
-                magic.color = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
+                magic.color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                 magic.noGravity = true;
                 magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
                 magic.scale = Main.rand.NextFloat(1f, 1.3f);
@@ -1743,7 +1743,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             if (attackTimer == textDelay + chargeUpTime + 32f)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.CalShadowFinalHexSurprise", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.CalShadowFinalHexSurprise", TextColor);
                 drawCharredForm = 1f;
                 npc.netUpdate = true;
             }

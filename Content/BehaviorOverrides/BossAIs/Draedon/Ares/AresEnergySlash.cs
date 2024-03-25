@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Draw the slash effect.
             Main.spriteBatch.EnterShaderRegion();
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
             Vector2 perpendicularDirection = direction.RotatedBy(PiOver2);
             Vector2 left = Projectile.Center - perpendicularDirection * Projectile.height * Projectile.scale * 0.5f;

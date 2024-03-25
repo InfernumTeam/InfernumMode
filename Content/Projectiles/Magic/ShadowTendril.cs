@@ -75,7 +75,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
             if (slowDown)
             {
-                float angularOffset = CalamityUtils.AperiodicSin(Time / 15f + Projectile.identity) * 0.4f;
+                float angularOffset = LumUtils.AperiodicSin(Time / 15f + Projectile.identity) * 0.4f;
                 Projectile.velocity = Projectile.velocity.RotatedBy(angularOffset) * 0.99f;
             }
 

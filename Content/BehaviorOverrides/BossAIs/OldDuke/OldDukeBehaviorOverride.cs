@@ -66,8 +66,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
         public const float TeleportPauseTime = 30f;
 
         #region Phase Patterns
-        public static readonly List<OldDukeAttackState> Phase1AttackPattern = new()
-        {
+        public static readonly List<OldDukeAttackState> Phase1AttackPattern =
+        [
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -96,10 +96,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.ChargeIndicatorSound,
-        };
+        ];
 
-        public static readonly List<OldDukeAttackState> Phase2AttackPattern = new()
-        {
+        public static readonly List<OldDukeAttackState> Phase2AttackPattern =
+        [
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -143,10 +143,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
             OldDukeAttackState.ChargeIndicatorSound,
-        };
+        ];
 
-        public static readonly List<OldDukeAttackState> Phase3AttackPattern = new()
-        {
+        public static readonly List<OldDukeAttackState> Phase3AttackPattern =
+        [
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.ChargeIndicatorSound,
             OldDukeAttackState.Charge,
@@ -192,10 +192,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.SharkronSpinSummon,
-        };
+        ];
 
-        public static readonly List<OldDukeAttackState> Phase4AttackPattern = new()
-        {
+        public static readonly List<OldDukeAttackState> Phase4AttackPattern =
+        [
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -204,14 +204,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-        };
+        ];
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         #endregion Phase Patterns
 

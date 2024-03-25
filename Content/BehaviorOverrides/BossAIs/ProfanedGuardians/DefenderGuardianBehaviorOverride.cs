@@ -12,6 +12,7 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -347,11 +348,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 arrowOrigin = arrowTexture.Size() * 0.5f;
                 float arrowRotation = direction.ToRotation() + PiOver2;
                 float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f - i)) / 2f;
-                float finalOpacity = CalamityUtils.SineInOutEasing(sineValue, 1);
+                float finalOpacity = EasingCurves.Sine.InOutFunction(sineValue);
                 spriteBatch.Draw(arrowTexture, drawPosition, null, drawColor * finalOpacity, arrowRotation, arrowOrigin, 0.75f, SpriteEffects.None, 0f);
                 drawPosition += direction * 75f;
             }
-
         }
 
         public static void DrawDefenseOverlay(NPC npc, SpriteBatch spriteBatch, Texture2D npcTexture)

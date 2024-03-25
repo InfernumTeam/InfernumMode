@@ -146,7 +146,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public static List<NPC> GetSegments(NPC npc)
         {
-            List<NPC> segments = new();
+            List<NPC> segments = [];
 
             // Loop to find all previous segments in the worm linked list until the tail is reached.
             int segmentIndex = (int)npc.ai[0];

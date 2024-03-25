@@ -70,7 +70,7 @@ namespace InfernumMode.Content.UI
                 GameShaders.Misc["CalamityMod:BlueStatic"].Apply();
 
                 float readjustedInterpolant = Utils.GetLerpValue(0.42f, 1f, DraedonScreenStaticInterpolant, true);
-                Color staticColor = Color.White * Pow(CalamityUtils.AperiodicSin(readjustedInterpolant * 2.94f) * 0.5f + 0.5f, 0.54f) * Pow(readjustedInterpolant, 0.51f);
+                Color staticColor = Color.White * Pow(LumUtils.AperiodicSin(readjustedInterpolant * 2.94f) * 0.5f + 0.5f, 0.54f) * Pow(readjustedInterpolant, 0.51f);
                 Main.spriteBatch.Draw(panelTexture, panelCenter, null, staticColor, 0f, panelTexture.Size() * 0.5f, panelScale, 0, 0f);
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);

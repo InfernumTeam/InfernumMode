@@ -114,13 +114,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             InfernumEffectsRegistry.WoFTentacleVertexShader.UseSecondaryColor(new Color(184, 78, 113));
             InfernumEffectsRegistry.WoFTentacleVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
-            List<Vector2> points = new()
-            {
-                RestingSpot
-            };
-            points.AddRange(ControlPoints);
-            points.Add(Projectile.Center);
-            TentacleDrawer.DrawPixelated(new BezierCurve(points.ToArray()).GetPoints(20), -Main.screenPosition, 35);
+            List<Vector2> points =
+            [
+                RestingSpot, .. ControlPoints, Projectile.Center
+            ];
+            TentacleDrawer.DrawPixelated(new BezierCurve([.. points]).GetPoints(20), -Main.screenPosition, 35);
             Main.spriteBatch.ExitShaderRegion();
         }
 

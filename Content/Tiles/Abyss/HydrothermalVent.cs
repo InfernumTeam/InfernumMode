@@ -17,7 +17,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             Main.tileNoAttach[Type] = true;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.Height = 3;
-            TileObjectData.newTile.CoordinateHeights = new[] { 16, 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
             TileObjectData.addTile(Type);
             LocalizedText name = CreateMapEntryName();
             // name.SetDefault("Geyser");
@@ -34,7 +34,7 @@ namespace InfernumMode.Content.Tiles.Abyss
         }
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
 
             Vector2 spawnPosition = new(i * 16f + 18f, j * 16f + 10f);
             if (!Main.gamePaused && t.TileFrameX % 36 == 0 && t.TileFrameY % 36 == 0 && Collision.CanHitLine(spawnPosition, 1, 1, spawnPosition - Vector2.UnitY * 100f, 1, 1))

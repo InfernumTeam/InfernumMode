@@ -58,8 +58,8 @@ namespace InfernumMode.Content.MainMenu
 
         public override void Load()
         {
-            RainDroplets = new();
-            Embers = new();
+            RainDroplets = [];
+            Embers = [];
         }
 
         public override void Unload()

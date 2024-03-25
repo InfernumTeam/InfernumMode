@@ -16,9 +16,9 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private static ManagedRenderTarget pixelRenderTargetBeforeNPCs;
 
-        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
+        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = [];
 
-        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersListBeforeNPCs = new();
+        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersListBeforeNPCs = [];
         #endregion
 
         #region Overrides

@@ -111,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Type]);
 
             int backglowStartTime = (int)(Pow(0.1f, 1f / SpinConvergencePower) * Lifetime);
-            float backglowInterpolant = CalamityUtils.Convert01To010(Utils.GetLerpValue(backglowStartTime - 12f, backglowStartTime + 8f, Time, true));
+            float backglowInterpolant = LumUtils.Convert01To010(Utils.GetLerpValue(backglowStartTime - 12f, backglowStartTime + 8f, Time, true));
             Projectile.DrawProjectileWithBackglowTemp(Color.Cyan with { A = 0 } * backglowInterpolant * Projectile.Opacity, Color.White, backglowInterpolant * 6f);
             return false;
         }

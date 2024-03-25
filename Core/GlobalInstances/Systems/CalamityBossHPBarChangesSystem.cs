@@ -22,11 +22,11 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public static void UndoBarChanges()
         {
-            int[] slimeGods = new int[] { NPCType<EbonianPaladin>(), NPCType<SplitEbonianPaladin>(), NPCType<CrimulanPaladin>(), NPCType<SplitCrimulanPaladin>() };
+            int[] slimeGods = [NPCType<EbonianPaladin>(), NPCType<SplitEbonianPaladin>(), NPCType<CrimulanPaladin>(), NPCType<SplitCrimulanPaladin>()];
             OneToMany[NPCType<EbonianPaladin>()] = slimeGods;
             OneToMany[NPCType<CrimulanPaladin>()] = slimeGods;
 
-            int[] ceaselessVoid = new int[] { NPCType<CeaselessVoid>(), NPCType<DarkEnergy>() };
+            int[] ceaselessVoid = [NPCType<CeaselessVoid>(), NPCType<DarkEnergy>()];
             OneToMany[NPCType<CeaselessVoid>()] = ceaselessVoid;
             OneToMany[NPCType<DarkEnergy>()] = ceaselessVoid;
 

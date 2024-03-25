@@ -53,8 +53,8 @@ namespace InfernumMode.Core.ILEditingStuff
 {
     public class ReplaceGoresHook : IHookEdit
     {
-        internal static List<int> InvalidGoreIDs = new()
-        {
+        internal static List<int> InvalidGoreIDs =
+        [
             // Adult Eidolon Wyrm.
             InfernumMode.CalamityMod.Find<ModGore>("PrimordialWyrm").Type,
             InfernumMode.CalamityMod.Find<ModGore>("PrimordialWyrm2").Type,
@@ -154,7 +154,7 @@ namespace InfernumMode.Core.ILEditingStuff
             InfernumMode.CalamityMod.Find<ModGore>("CeaselessVoid").Type,
             InfernumMode.CalamityMod.Find<ModGore>("CeaselessVoid2").Type,
             InfernumMode.CalamityMod.Find<ModGore>("CeaselessVoid3").Type,
-        };
+        ];
 
         internal static Dictionary<int, int> ReplacementTable = new()
         {
@@ -232,7 +232,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     {
                         for (int y = placementPoint.Y; y < placementPoint.Y + schematicSize.Y; y++)
                         {
-                            Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                            Tile tile = Framing.GetTileSafely(x, y);
                             if (DraedonStructures.ShouldAvoidLocation(new Point(x, y), false))
                                 canGenerateInLocation = false;
                         }
@@ -959,8 +959,8 @@ namespace InfernumMode.Core.ILEditingStuff
         internal void CreateMapGlitchEffect(ILContext il)
         {
             ILCursor cursor = new(il);
-            MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", new Type[] { typeof(Color), typeof(float) });
-            ConstructorInfo colorConstructor = typeof(Color).GetConstructor(new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) });
+            MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", [typeof(Color), typeof(float)]);
+            ConstructorInfo colorConstructor = typeof(Color).GetConstructor([typeof(int), typeof(int), typeof(int), typeof(int)]);
 
             // ==== APPLY EFFECT TO FULLSCREEN MAP =====
 
@@ -1417,8 +1417,8 @@ namespace InfernumMode.Core.ILEditingStuff
         private void CheckProjectile(On_Projectile.orig_Damage orig, Projectile self)
         {
             // Initialize the list. Can't be done in the initializer due to the mod projectile.
-            VanillaBossProjectiles ??= new()
-            {
+            VanillaBossProjectiles ??=
+            [
                 ProjectileID.QueenBeeStinger,
                 ProjectileID.DeathLaser,
                 ProjectileID.EyeLaser,
@@ -1428,7 +1428,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 ProjectileID.MartianTurretBolt,
                 // It shouldn't really be using this but Giant Clam has a lot worse issues than this.
                 ModContent.ProjectileType<PearlRain>()
-            };
+            ];
 
             // If the current projectile is in the list, mark the conversion as ready.
             if (VanillaBossProjectiles.Contains(self.type) || (VanillaProjectilesWithConditions.TryGetValue(self.type, out var condition) && condition()))

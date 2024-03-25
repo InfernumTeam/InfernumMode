@@ -146,7 +146,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         public Dictionary<Branch, List<Branch>> GenerateBranches()
         {
-            Dictionary<Branch, List<Branch>> existingBranches = new();
+            Dictionary<Branch, List<Branch>> existingBranches = [];
 
             RNG = new(Seed);
 
@@ -160,7 +160,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                 Vector2 startOfBase = Vector2.UnitY * 10f;
                 Vector2 endOfBase = startOfBase + baseDirection.ToRotationVector2() * baseSize;
                 Branch baseBranch = GenerateBranchCurve(startOfBase, endOfBase, BaseWidth, BaseWidth);
-                existingBranches[baseBranch] = new();
+                existingBranches[baseBranch] = [];
 
                 void extendLengthOfBranch(Branch branch, float lengthToAdd)
                 {
@@ -221,7 +221,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
                     // Create the new branch in the dictionary and make the old branch count count as having one extra branch attached.
                     existingBranches[branchToAttachTo].Add(newBranch);
-                    existingBranches[newBranch] = new();
+                    existingBranches[newBranch] = [];
 
                     // Add to traversed distance.
                     distanceTraversed += lengthOfNextBranch;
@@ -238,8 +238,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public void GetVertexData(Point p, out List<VertexPositionColorTexture> vertices, out List<short> indices, out IEnumerable<Branch> outwardmostBranches)
         {
             // Initialize vertex and index data.
-            vertices = new();
-            indices = new();
+            vertices = [];
+            indices = [];
 
             // Determine branch data.
             var branchData = GenerateBranches();
@@ -338,8 +338,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             if (vertexCache.Length <= 0 || Main.GameUpdateCount % 240 == 239)
             {
                 GetVertexData(p, out var vertices, out var indices, out _);
-                vertexCache = vertices.ToArray();
-                indexCache = indices.ToArray();
+                vertexCache = [.. vertices];
+                indexCache = [.. indices];
                 PreviousPoint = p;
             }
 
@@ -407,7 +407,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public static void ApplyShader()
         {
             // Redefine the perspective matrices of the shader.
-            CalamityUtils.CalculatePerspectiveMatricies(out Matrix effectView, out Matrix effectProjection);
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix effectView, out Matrix effectProjection);
 
             BasicShader.Texture = IcicleTexture;
             BasicShader.View = effectView;

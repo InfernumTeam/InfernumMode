@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
             float length = Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint + initialRayRotation.ToRotationVector2() * length, i / 12f));
 

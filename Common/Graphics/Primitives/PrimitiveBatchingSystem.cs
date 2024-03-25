@@ -27,11 +27,11 @@ namespace InfernumMode.Common.Graphics.Primitives
             }
         }
 
-        internal static Dictionary<Type, PrimitiveBatch> Batches = new();
+        internal static Dictionary<Type, PrimitiveBatch> Batches = [];
 
         public override void OnModLoad()
         {
-            Batches = new();
+            Batches = [];
             On_Main.DrawProjectiles += DrawBatches;
         }
 
@@ -65,8 +65,8 @@ namespace InfernumMode.Common.Graphics.Primitives
             Batches[type] = new()
             {
                 PrimitiveDrawer = trail,
-                Indices = new(),
-                Vertices = new()
+                Indices = [],
+                Vertices = []
             };
         }
 

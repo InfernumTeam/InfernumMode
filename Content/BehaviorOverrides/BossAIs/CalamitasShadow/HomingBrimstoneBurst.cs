@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void AI()
         {
-            Projectile.Opacity = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 9f;
+            Projectile.Opacity = LumUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 9f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
 

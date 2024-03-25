@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void AI()
         {
-            Projectile.Opacity = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3.6f;
+            Projectile.Opacity = LumUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3.6f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             Projectile.scale = Projectile.Opacity * Lerp(0.6f, 1f, Projectile.identity * Pi % 1f);
@@ -65,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Time++;
         }
 
-        public float WidthFunction(float completionRatio) => Radius * Projectile.scale * CalamityUtils.Convert01To010(completionRatio);
+        public float WidthFunction(float completionRatio) => Radius * Projectile.scale * LumUtils.Convert01To010(completionRatio);
 
         public Color ColorFunction(float completionRatio)
         {
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             WaterDrawer ??= new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, InfernumEffectsRegistry.DukeTornadoVertexShader);
 
             InfernumEffectsRegistry.DukeTornadoVertexShader.UseImage1("Images/Misc/Perlin");
-            List<Vector2> drawPoints = new();
+            List<Vector2> drawPoints = [];
 
             for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 6f)
             {

@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.5f;
             NPC.chaseable = false;
-            SpawnModBiomes = new int[] { ModContent.GetInstance<AbyssLayer1Biome>().Type };
+            SpawnModBiomes = [ModContent.GetInstance<AbyssLayer1Biome>().Type];
             NPC.waterMovementSpeed = 0f;
             NPC.Infernum().IsAbyssPrey = true;
         }
@@ -126,8 +126,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC closestPredator = NPC.FindClosestAbyssPredator(out _);
             if (shouldTurnAround && (closestPredator is null || !NPC.WithinRange(closestPredator.Center, 400f)))
             {
-                float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(-PiOver2)) ?? 999f;
-                float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(PiOver2)) ?? 999f;
+                float distanceToTileOnLeft = LumUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(-PiOver2)) ?? 999f;
+                float distanceToTileOnRight = LumUtils.DistanceToTileCollisionHit(NPC.Center, NPC.velocity.RotatedBy(PiOver2)) ?? 999f;
                 float turnDirection = distanceToTileOnLeft > distanceToTileOnRight ? -1f : 1f;
                 Vector2 idealVelocity = NPC.velocity.RotatedBy(PiOver2 * turnDirection);
                 if (aboutToLeaveWorld)

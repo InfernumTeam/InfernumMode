@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3f;
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -145,7 +145,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
             InfernumEffectsRegistry.DukeTornadoVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center - Projectile.velocity * 300f, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
 

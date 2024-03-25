@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 {
     public class WaterSlice : ModProjectile
     {
-        public List<Vector2> TrailCache = new();
+        public List<Vector2> TrailCache = [];
 
         public ref float ScaleFactorDelta => ref Projectile.localAI[0];
 

@@ -57,17 +57,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Add(EasingCurves.Quadratic, Luminance.Common.Easings.EasingType.In, 1f, 0.5f). // Slash.
             Add(EasingCurves.MakePoly(100f), Luminance.Common.Easings.EasingType.In, 0f, 1f); // Recovery.
 
-        public static PolterghastAttackType[] Phase1AttackCycle => new PolterghastAttackType[]
-        {
+        public static PolterghastAttackType[] Phase1AttackCycle =>
+        [
             PolterghastAttackType.EctoplasmUppercutCharges,
             PolterghastAttackType.LegSwipes,
             PolterghastAttackType.WispCircleCharges,
             PolterghastAttackType.EctoplasmUppercutCharges,
             PolterghastAttackType.SpiritPetal,
-        };
+        ];
 
-        public static PolterghastAttackType[] Phase2AttackCycle => new PolterghastAttackType[]
-        {
+        public static PolterghastAttackType[] Phase2AttackCycle =>
+        [
             PolterghastAttackType.AsgoreRingSoulAttack,
             PolterghastAttackType.ArcingSouls,
             PolterghastAttackType.EctoplasmUppercutCharges,
@@ -80,10 +80,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             PolterghastAttackType.VortexCharge,
             PolterghastAttackType.LegSwipes,
             PolterghastAttackType.SpiritPetal,
-        };
+        ];
 
-        public static PolterghastAttackType[] Phase3AttackCycle => new PolterghastAttackType[]
-        {
+        public static PolterghastAttackType[] Phase3AttackCycle =>
+        [
             PolterghastAttackType.CloneSplit,
             PolterghastAttackType.AsgoreRingSoulAttack,
             PolterghastAttackType.VortexCharge,
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             PolterghastAttackType.EctoplasmUppercutCharges,
             PolterghastAttackType.LegSwipes,
             PolterghastAttackType.SpiritPetal,
-        };
+        ];
 
         public static int SoulDamage => 280;
 
@@ -138,11 +138,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
         public const float Phase3LifeRatio = 0.35f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -555,8 +555,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 // Order legs based on their angular difference with Polterghast's direction to the target.
                 // Legs behind Polterghast have a large angular difference while ones in front have a smaller angular difference.
                 // This is ideal because you don't want Polterghast to try to somehow swipe at you with a leg that's on the opposite side.
-                List<NPC> legsOrderedByPlayerAngleOffset = Main.npc.Take(Main.maxNPCs).Where(n => n.type == ModContent.NPCType<PolterghastLeg>() && n.active).
-                    OrderByDescending(l => npc.SafeDirectionTo(target.Center).AngleBetween(l.SafeDirectionTo(npc.Center))).ToList();
+                List<NPC> legsOrderedByPlayerAngleOffset = [.. Main.npc.Take(Main.maxNPCs).Where(n => n.type == ModContent.NPCType<PolterghastLeg>() && n.active).OrderByDescending(l => npc.SafeDirectionTo(target.Center).AngleBetween(l.SafeDirectionTo(npc.Center)))];
 
                 legToManuallyControlIndex = legsOrderedByPlayerAngleOffset[Main.rand.Next(2)].whoAmI;
                 return;
@@ -1484,12 +1483,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Vector2 telegraphDirection = npc.localAI[2].ToRotationVector2();
             Vector2 telegraphStart = npc.Center;
             Vector2 telegraphEnd = npc.Center + telegraphDirection * 5000f;
-            Vector2[] telegraphPoints = new Vector2[]
-            {
+            Vector2[] telegraphPoints =
+            [
                 telegraphStart,
                 (telegraphStart + telegraphEnd) * 0.5f,
                 telegraphEnd
-            };
+            ];
             InfernumEffectsRegistry.SideStreakVertexShader.UseImage1(InfernumTextureRegistry.WavyNoise);
             npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 44);
 

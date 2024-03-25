@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
 
         public void CalculateScale()
         {
-            Projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime) * 1.45f;
+            Projectile.scale = LumUtils.Convert01To010(Time / Lifetime) * 1.45f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
         }
@@ -170,8 +170,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.NuclearTerror
             InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.CrustyNoise);
             InfernumEffectsRegistry.ArtemisLaserVertexShader.Shader.Parameters["uStretchReverseFactor"].SetValue((LaserLength + 1f) / MaxLaserLength);
 
-            List<float> originalRotations = new();
-            List<Vector2> points = new();
+            List<float> originalRotations = [];
+            List<Vector2> points = [];
             for (int i = 0; i <= 16; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 16f));

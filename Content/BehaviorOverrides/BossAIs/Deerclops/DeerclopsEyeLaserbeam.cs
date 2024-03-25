@@ -107,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         {
             // Determine scale.
             Time = Lifetime - Projectile.timeLeft;
-            Projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime) * MaxScale * 3f;
+            Projectile.scale = LumUtils.Convert01To010(Time / Lifetime) * MaxScale * 3f;
             if (Projectile.scale > MaxScale)
                 Projectile.scale = MaxScale;
 

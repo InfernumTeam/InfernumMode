@@ -37,7 +37,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || Main.zenithWorld;
             if (WorldSaveSystem.InfernumModeEnabled && stupidDifficultyIsActive && DisableDifficultyModes)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.InfernumDisallowedInWeirdDifficulties", Color.Red);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.InfernumDisallowedInWeirdDifficulties", Color.Red);
                 if (Main.netMode == NetmodeID.Server)
                     PacketManager.SendPacket<InfernumModeActivityPacket>();
                 WorldSaveSystem.InfernumModeEnabled = false;
@@ -51,7 +51,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Create some warning text about Eternity Mode if the player enables Infernum with it enabled.
             if (Main.netMode != NetmodeID.MultiplayerClient && WorldSaveSystem.InfernumModeEnabled && InfernumMode.EmodeIsActive && !WorldSaveSystem.DisplayedEmodeWarningText)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.EternityModeWarning", Color.Red);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.EternityModeWarning", Color.Red);
                 WorldSaveSystem.DisplayedEmodeWarningText = true;
             }
         }

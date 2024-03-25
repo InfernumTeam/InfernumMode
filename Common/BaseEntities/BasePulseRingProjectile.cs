@@ -45,7 +45,7 @@ namespace InfernumMode.Common.BaseEntities
         #region Statics
         internal static void DrawPulseRings()
         {
-            List<BasePulseRingProjectile> rings = new();
+            List<BasePulseRingProjectile> rings = [];
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

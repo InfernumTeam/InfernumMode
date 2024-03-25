@@ -21,7 +21,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public Vector2 End;
 
-        public List<Vector2> TrailCache = new();
+        public List<Vector2> TrailCache = [];
 
         public int Lifetime => Cosmilite ? 248 : 84;
 
@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         internal float WidthFunction(float completionRatio)
         {
             float width = Cosmilite ? 80f : 40f;
-            return CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * width;
+            return LumUtils.Convert01To010(completionRatio) * Projectile.scale * width;
         }
 
         internal Color ColorFunction(float completionRatio)
@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Cosmilite)
                 baseColor = (Projectile.localAI[0] == 0f ? Color.Cyan : Color.Fuchsia) with { A = 0 };
 
-            float opacity = CalamityUtils.Convert01To010(completionRatio) * 1.4f;
+            float opacity = LumUtils.Convert01To010(completionRatio) * 1.4f;
             if (opacity >= 1f)
                 opacity = 1f;
             opacity *= Projectile.Opacity;

@@ -10,6 +10,7 @@ using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -56,14 +57,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
         public const float TransitionAnimationTime = 90f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
-        };
+        ];
 
-        public static readonly Color[] PillarsPallete = new Color[]
-        {
+        public static readonly Color[] PillarsPallete =
+        [
             // Solar.
             new(255, 93, 30),
 
@@ -75,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             // Stardust.
             new(0, 170, 221)
-        };
+        ];
 
         #region Loading
         public override void Load()
@@ -88,8 +89,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Create a lost colosseum entrance after the cultist is killed if it doesn't exist yet, for backwards world compatibility reasons.
             if (npc.type == NPCID.CultistBoss && !WorldSaveSystem.HasGeneratedColosseumEntrance && !WeakReferenceSupport.InAnySubworld())
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PostCultistColosseumCreation", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
-                LostColosseumEntrance.Generate(new(), new(new()));
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.PostCultistColosseumCreation", Color.Lerp(Color.Orange, Color.Yellow, 0.65f));
+                LostColosseumEntrance.Generate(new(), new([]));
                 WorldSaveSystem.HasGeneratedColosseumEntrance = true;
             }
         }
@@ -267,16 +268,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 return;
 
             // Clear any clones or other things that might remain from other attacks.
-            int[] projectilesToClearAway = new int[]
-            {
+            int[] projectilesToClearAway =
+            [
                 ModContent.ProjectileType<CultistRitual>(),
                 ModContent.ProjectileType<CultistFireBeamTelegraph>(),
                 ModContent.ProjectileType<FireBeam>(),
                 ModContent.ProjectileType<AncientDoom>(),
                 ModContent.ProjectileType<DoomBeam>(),
-            };
-            int[] npcsToClearAway = new int[]
-            {
+            ];
+            int[] npcsToClearAway =
+            [
                 NPCID.AncientLight,
                 NPCID.CultistBossClone,
                 NPCID.CultistDragonHead,
@@ -286,7 +287,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 NPCID.CultistDragonBody4,
                 NPCID.CultistDragonTail,
                 NPCID.AncientCultistSquidhead,
-            };
+            ];
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -478,11 +479,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                         }
                     }
 
-                    Vector2[] armPositions = new Vector2[]
-                    {
+                    Vector2[] armPositions =
+                    [
                         npc.Center + new Vector2(npc.spriteDirection == -1 ? 10f : -6f, 4f),
                         npc.Center + new Vector2(npc.spriteDirection == -1 ? 6f : -10f, 4f),
-                    };
+                    ];
 
                     // Do a magic effect from the arms.
                     foreach (Vector2 armPosition in armPositions)
@@ -718,11 +719,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 npc.velocity *= 0.94f;
 
-                Vector2[] handPositions = new Vector2[]
-                {
+                Vector2[] handPositions =
+                [
                     npc.Top + new Vector2(-12f, 6f),
                     npc.Top + new Vector2(12f, 6f),
-                };
+                ];
 
                 float adjustedTime = attackTimer % (hoverTime + summonLightningTime) - hoverTime;
 
@@ -997,7 +998,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             {
                 if (cultists is null)
                 {
-                    cultists = new List<int>();
+                    cultists = [];
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         if ((Main.npc[i].type == NPCID.CultistBoss || Main.npc[i].type == NPCID.CultistBossClone) && Main.npc[i].active)
@@ -1040,7 +1041,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             // Attempt to begin a ritual.
             if (attackTimer == ritualCreationDelay && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                List<int> cultists = new();
+                List<int> cultists = [];
 
                 // Ensure that the ritual is not started outside of the arena border and not in tiles.
                 float leftEdgeOfBorder = npc.Infernum().ExtraAI[8] - BorderWidth * 0.5f + 300f;
@@ -1437,7 +1438,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                 for (int i = 0; i < 8; i++)
                 {
                     float colorInterpolant = (Main.GlobalTimeWrappedHourly * 0.53f + i / 8f) % 1f;
-                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, PillarsPallete);
+                    Color illusionColor = LumUtils.MulticolorLerp(colorInterpolant, PillarsPallete);
                     float illusionOpacity = Utils.GetLerpValue(0f, 32f, transitionTimer, true) *
                         Utils.GetLerpValue(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
                     illusionColor.A = (byte)Lerp(125f, 0f, 1f - illusionOpacity);
@@ -1553,7 +1554,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
                     Vector2 drawPosition = Vector2.Lerp(npc.oldPos[i] + npc.Size * 0.5f, npc.Center, 0.4f) - Main.screenPosition;
                     float completionRatio = i / (float)(npc.oldPos.Length - 1f);
                     float colorInterpolant = (Main.GlobalTimeWrappedHourly * 0.53f + i / 16f) % 1f;
-                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, PillarsPallete) * npc.Opacity;
+                    Color illusionColor = LumUtils.MulticolorLerp(colorInterpolant, PillarsPallete) * npc.Opacity;
                     illusionColor *= Utils.GetLerpValue(0.9f, 0.5f, completionRatio);
                     illusionColor.A = (byte)Utils.Remap(completionRatio, 0f, 0.54f, 255f, 0f);
                     Main.spriteBatch.Draw(baseTexture, drawPosition, frame, illusionColor, npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);
@@ -1573,7 +1574,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
         {
             Texture2D invis = InfernumTextureRegistry.Invisible.Value;
             float interpolant = (1f + Sin(Main.GlobalTimeWrappedHourly * 2f)) / 2f;
-            float eased = CalamityUtils.PolyInOutEasing(interpolant, 1);
+            float eased = EasingCurves.MakePoly(1f).InOutFunction(interpolant);
             float scale = Lerp(0.95f, 1.05f, eased) * mainScaleFactor;
             float noiseScale = Lerp(1.55f, 1.45f, eased) * noiseScaleFactor;
             float fresnelScale = Lerp(0.85f, 1.15f, eased) * fresnelScaleFactor;

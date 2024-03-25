@@ -18,12 +18,12 @@ namespace InfernumMode.Common.Graphics.Primitives
 
             public readonly VertexDeclaration VertexDeclaration => _vertexDeclaration;
 
-            private static readonly VertexDeclaration _vertexDeclaration = new(new VertexElement[]
-            {
+            private static readonly VertexDeclaration _vertexDeclaration = new(
+            [
                 new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
                 new VertexElement(8, VertexElementFormat.Color, VertexElementUsage.Color, 0),
                 new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-            });
+            ]);
 
             public VertexPosition2DColor(Vector2 position, Color color, Vector2 textureCoordinates)
             {
@@ -121,7 +121,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             if (!UsesSmoothening)
             {
                 List<Vector2> basePoints = originalPositions.Where(originalPosition => originalPosition != Vector2.Zero).ToList();
-                List<Vector2> endPoints = new();
+                List<Vector2> endPoints = [];
 
                 if (basePoints.Count <= 2)
                     return endPoints;
@@ -138,7 +138,7 @@ namespace InfernumMode.Common.Graphics.Primitives
                 return endPoints;
             }
 
-            List<Vector2> controlPoints = new();
+            List<Vector2> controlPoints = [];
             for (int i = 0; i < originalPositions.Count(); i++)
             {
                 // Don't incorporate points that are zeroed out.
@@ -152,7 +152,7 @@ namespace InfernumMode.Common.Graphics.Primitives
                     offset += OffsetFunction(completionRatio);
                 controlPoints.Add(originalPositions.ElementAt(i) + offset);
             }
-            List<Vector2> points = new();
+            List<Vector2> points = [];
 
             // Avoid stupid index errors.
             if (controlPoints.Count <= 4)
@@ -199,7 +199,7 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         public List<VertexPosition2DColor> GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
         {
-            List<VertexPosition2DColor> vertices = new();
+            List<VertexPosition2DColor> vertices = [];
 
             for (int i = 0; i < trailPoints.Count - 1; i++)
             {
@@ -252,7 +252,7 @@ namespace InfernumMode.Common.Graphics.Primitives
                 indices[startingTriangleIndex + 5] = (short)(connectToIndex + 3);
             }
 
-            return indices.ToList();
+            return [.. indices];
         }
 
         public void SpecifyPerspectiveMatrix(Matrix m) => PerspectiveMatrixOverride = m;

@@ -44,8 +44,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Screm
         }
 
-        public static DragonfollyAttackType[] Phase1AttackCycle => new DragonfollyAttackType[]
-        {
+        public static DragonfollyAttackType[] Phase1AttackCycle =>
+        [
             DragonfollyAttackType.FeatherSpreadRelease,
             DragonfollyAttackType.OrdinaryCharge,
 
@@ -57,10 +57,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.ThunderCharge,
-        };
+        ];
 
-        public static DragonfollyAttackType[] Phase2AttackCycle => new DragonfollyAttackType[]
-        {
+        public static DragonfollyAttackType[] Phase2AttackCycle =>
+        [
             DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.FakeoutCharge,
 
@@ -78,10 +78,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             DragonfollyAttackType.RuffleFeathers,
             DragonfollyAttackType.OrdinaryCharge,
-        };
+        ];
 
-        public static DragonfollyAttackType[] Phase3AttackCycle => new DragonfollyAttackType[]
-        {
+        public static DragonfollyAttackType[] Phase3AttackCycle =>
+        [
             DragonfollyAttackType.PlasmaBursts,
             DragonfollyAttackType.FakeoutCharge,
 
@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             DragonfollyAttackType.RuffleFeathers,
             DragonfollyAttackType.OrdinaryCharge,
-        };
+        ];
 
         #endregion
 
@@ -123,11 +123,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
         public const float Phase3LifeRatio = 0.3333f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -1120,11 +1120,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                     {
-                        telegraph.ModProjectile<LightningSuperchargeTelegraph>().ChargePositions = new[]
-                        {
+                        telegraph.ModProjectile<LightningSuperchargeTelegraph>().ChargePositions =
+                        [
                             npc.Center,
                             npc.Center + npc.SafeDirectionTo(target.Center) * 1200f
-                        };
+                        ];
                     });
 
                     Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningSuperchargeTelegraph>(), 0, 0f);

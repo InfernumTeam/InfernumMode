@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             if (Projectile.timeLeft < 36f)
             {
                 float widthInterpolant = Utils.GetLerpValue(0f, 36f, Projectile.timeLeft, true);
-                float lineWidth = CalamityUtils.Convert01To010(widthInterpolant) * 2f;
+                float lineWidth = LumUtils.Convert01To010(widthInterpolant) * 2f;
                 for (int i = 0; i < 9; i++)
                 {
                     Vector2 beamDirection = (TwoPi * i / 9f).ToRotationVector2();

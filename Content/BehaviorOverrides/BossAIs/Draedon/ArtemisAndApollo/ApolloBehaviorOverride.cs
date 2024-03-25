@@ -56,11 +56,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public const int Phase2TransitionTime = 270;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             ExoMechManagement.Phase3LifeRatio,
             ExoMechManagement.Phase4LifeRatio
-        };
+        ];
 
         #region Loading
         public override void Load()
@@ -1552,7 +1552,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                     // Have Draedon comment on the player's attempts to escape.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
                 }
 
                 if (attackTimer >= laserbeamAttackTime + attackTransitionDelay)
@@ -1608,7 +1608,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     // Give some warning text before attacking.
                     // What? What do you MEAN Artemis isn't actually saying this line?? I FEEL CHEATED!!!
                     if (isApollo && attackTimer == textSubstateTime / 2)
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationTwins1", ArtemisTextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationTwins1", ArtemisTextColor);
 
                     // Look at the target.
                     npc.rotation = npc.AngleTo(target.Center) + PiOver2;
@@ -1616,7 +1616,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     if (attackTimer >= textSubstateTime && isApollo)
                     {
                         if (isApollo)
-                            CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationTwins2", ApolloTextColor);
+                            LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationTwins2", ApolloTextColor);
 
                         attackSubstate = 1f;
                         attackTimer = 0f;
@@ -2067,7 +2067,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 ribbonOffset += Vector2.UnitX.RotatedBy(npc.rotation) * direction * 26f;
 
                 float currentSegmentRotation = npc.rotation;
-                List<Vector2> ribbonDrawPositions = new();
+                List<Vector2> ribbonDrawPositions = [];
                 for (int i = 0; i < 12; i++)
                 {
                     float ribbonCompletionRatio = i / 12f;
@@ -2121,11 +2121,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                     float backFlameLength = direction == 0f ? 700f : 190f;
                     Vector2 drawStart = npc.Center + baseDrawOffset;
                     Vector2 drawEnd = drawStart - (npc.rotation - PiOver2).ToRotationVector2() * flashInterpolant * backFlameLength;
-                    Vector2[] drawPositions = new Vector2[]
-                    {
+                    Vector2[] drawPositions =
+                    [
                         drawStart,
                         drawEnd
-                    };
+                    ];
 
                     if (direction == 0)
                     {

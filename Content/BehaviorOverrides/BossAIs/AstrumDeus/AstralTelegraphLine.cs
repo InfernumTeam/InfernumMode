@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void AI()
         {
-            Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 3f;
+            Projectile.Opacity = LumUtils.Convert01To010(Time / Lifetime) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             if (Time >= Lifetime)
@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public void CullDraw(SpriteBatch spriteBatch)
         {
-            float telegraphWidth = Lerp(0.3f, 6f, CalamityUtils.Convert01To010(Time / Lifetime));
+            float telegraphWidth = Lerp(0.3f, 6f, LumUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
             Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitY) * 3000f;

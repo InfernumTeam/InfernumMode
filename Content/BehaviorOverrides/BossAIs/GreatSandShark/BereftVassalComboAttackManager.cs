@@ -641,7 +641,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, sharkShouldAttack ? -20f : hoverVerticalOffset);
             if (!sharkShouldAttack)
             {
-                while (!CalamityUtils.ParanoidTileRetrieval((int)hoverDestination.X / 16, (int)hoverDestination.Y / 16).HasTile)
+                while (!Framing.GetTileSafely((int)hoverDestination.X / 16, (int)hoverDestination.Y / 16).HasTile)
                     hoverDestination.Y += 64f;
             }
 
@@ -749,7 +749,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                 float idealRotation = npc.AngleTo(target.Center) + PiOver4;
 
                 // Pick a dust devil that is near the target (but not too close) and above them to shoot at.
-                Projectile[] dustDevils = Utilities.AllProjectilesByID(dustDevilID).OrderBy(p =>
+                Projectile[] dustDevils = [.. Utilities.AllProjectilesByID(dustDevilID).OrderBy(p =>
                 {
                     float score = p.Distance(target.Center);
                     if (score < 400f)
@@ -758,7 +758,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                         score += 9000f;
 
                     return score;
-                }).ToArray();
+                })];
 
                 // Constantly aim at the best devil.
                 if (dustDevils.Length >= 1)

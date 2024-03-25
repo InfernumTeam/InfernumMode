@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
         public override void AI()
         {
             // Fade in.
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / 32f) * 2f;
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / 32f) * 2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
             Projectile.Opacity = Projectile.scale;

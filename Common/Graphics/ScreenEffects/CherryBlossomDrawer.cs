@@ -65,7 +65,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
             // Find all petals.
             int petalID = ModContent.ProjectileType<CherryBlossomPetal>();
-            List<Projectile> petals = new();
+            List<Projectile> petals = [];
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile p = Main.projectile[i];

@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 dustReleaseRate = 1;
                 dustScaleFactor = 1.6f;
 
-                backglowInterpolant = CalamityUtils.Convert01To010(Utils.GetLerpValue(shootRate * 0.5f, shootRate, attackTimer % shootRate, true));
+                backglowInterpolant = LumUtils.Convert01To010(Utils.GetLerpValue(shootRate * 0.5f, shootRate, attackTimer % shootRate, true));
             }
 
             if (Main.rand.NextBool(dustReleaseRate))

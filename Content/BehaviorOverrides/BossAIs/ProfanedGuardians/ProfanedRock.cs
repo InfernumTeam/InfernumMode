@@ -22,13 +22,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Gravity
         }
 
-        public static string[] Textures => new string[4]
-        {
+        public static string[] Textures =>
+        [
             "ProfanedRock",
             "ProfanedRock2",
             "ProfanedRock3",
             "ProfanedRock4",
-        };
+        ];
 
         public string CurrentVarient = Textures[0];
 

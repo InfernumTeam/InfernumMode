@@ -63,92 +63,92 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override int NPCOverrideType => ModContent.NPCType<PrimordialWyrmHead>();
 
         #region AI
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         public static Dictionary<Color, AEWAttackType[]> Phase1AttackCycles => new()
         {
-            [Color.Cyan] = new AEWAttackType[]
-            {
+            [Color.Cyan] =
+            [
                 AEWAttackType.BurningGaze,
                 AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.BurningGaze,
-            },
-            [Color.Yellow] = new AEWAttackType[]
-            {
+            ],
+            [Color.Yellow] =
+            [
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.HammerheadRams,
-            },
-            [Color.Violet] = new AEWAttackType[]
-            {
+            ],
+            [Color.Violet] =
+            [
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.BurningGaze,
-            },
+            ],
         };
 
         public static Dictionary<Color, AEWAttackType[]> Phase2AttackCycles => new()
         {
-            [Color.Cyan] = new AEWAttackType[]
-            {
+            [Color.Cyan] =
+            [
                 AEWAttackType.BurningGaze,
                 AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.ForbiddenUnleash,
-            },
-            [Color.Yellow] = new AEWAttackType[]
-            {
+            ],
+            [Color.Yellow] =
+            [
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.BurningGaze,
                 AEWAttackType.HammerheadRams,
-            },
-            [Color.Violet] = new AEWAttackType[]
-            {
+            ],
+            [Color.Violet] =
+            [
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.AbyssalNightmareRitual,
                 AEWAttackType.ForbiddenUnleash,
                 AEWAttackType.HammerheadRams,
-            },
+            ],
         };
 
         public static Dictionary<Color, AEWAttackType[]> Phase3AttackCycles => new()
         {
-            [Color.Cyan] = new AEWAttackType[]
-            {
+            [Color.Cyan] =
+            [
                 AEWAttackType.SplitFormCharges,
                 AEWAttackType.DisintegratingBeam,
                 AEWAttackType.ShadowIllusions,
                 AEWAttackType.SplitFormCharges,
-            },
-            [Color.Yellow] = new AEWAttackType[]
-            {
+            ],
+            [Color.Yellow] =
+            [
                 AEWAttackType.SplitFormCharges,
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.DisintegratingBeam,
                 AEWAttackType.AbyssalNightmareRitual,
-            },
-            [Color.Violet] = new AEWAttackType[]
-            {
+            ],
+            [Color.Violet] =
+            [
                 AEWAttackType.ShadowIllusions,
                 AEWAttackType.SplitFormCharges,
                 AEWAttackType.CrystalConstriction,
                 AEWAttackType.SplitFormCharges,
-            },
+            ],
         };
 
         public static Dictionary<Color, AEWAttackType[]> Phase4AttackCycles => new()
         {
-            [Color.Wheat] = new AEWAttackType[]
-            {
+            [Color.Wheat] =
+            [
                 AEWAttackType.TerminusChase,
                 AEWAttackType.DisintegratingBeam,
                 AEWAttackType.TerminusChase,
@@ -157,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 AEWAttackType.SplitFormCharges,
                 AEWAttackType.TerminusChase,
                 AEWAttackType.ShadowIllusions,
-            }
+            ]
         };
 
         // Projectile damage values.
@@ -931,7 +931,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                         Vector2 soulBurstVelocity = (TwoPi * i / soulBurstCount + shootCounter).ToRotationVector2() * 3f;
                         Utilities.NewProjectileBetter(soulSpawnPosition, soulBurstVelocity, ModContent.ProjectileType<AbyssalSoul>(), StrongerNormalShotDamage, 0f, -1, 0f, directionalAngularVelocity);
 
-                        List<Vector2> telegraphPoints = new();
+                        List<Vector2> telegraphPoints = [];
                         Vector2 telegraphVelocity = soulBurstVelocity;
                         Vector2 telegraphPosition = soulSpawnPosition;
                         for (int j = 0; j < 72; j++)
@@ -948,7 +948,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            telegraph.ModProjectile<AbyssalSoulTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
+                            telegraph.ModProjectile<AbyssalSoulTelegraph>().TelegraphPoints = [.. telegraphPoints];
                         });
                         Utilities.NewProjectileBetter(soulSpawnPosition, Vector2.Zero, ModContent.ProjectileType<AbyssalSoulTelegraph>(), 0, 0f, -1, hue);
                     }

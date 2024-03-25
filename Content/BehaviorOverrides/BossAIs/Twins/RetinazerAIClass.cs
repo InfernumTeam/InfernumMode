@@ -19,11 +19,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override int? NPCTypeToDeferToForTips => NPCID.Spazmatism;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatioThreshold,
             Phase3LifeRatioThreshold
-        };
+        ];
 
         #region AI
         public override bool PreAI(NPC npc) => DoAI(npc);
@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             Color startingColor = Color.Lerp(Color.White, Color.IndianRed, 0.25f);
             Color middleColor = Color.Lerp(Color.Red, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.Crimson, Color.White, 0.47f);
-            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * (npc.Infernum().ExtraAI[6] / 15f) * trailOpacity;
+            Color color = LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * (npc.Infernum().ExtraAI[6] / 15f) * trailOpacity;
             color.A = 0;
             return color;
         }
@@ -75,15 +75,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
                 Vector2 drawStart = npc.Center;
                 Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
-                Vector2[] drawPositions = new Vector2[]
-                {
+                Vector2[] drawPositions =
+                [
                     drawStart,
                     Vector2.Lerp(drawStart, drawEnd, 0.2f),
                     Vector2.Lerp(drawStart, drawEnd, 0.4f),
                     Vector2.Lerp(drawStart, drawEnd, 0.6f),
                     Vector2.Lerp(drawStart, drawEnd, 0.8f),
                     drawEnd
-                };
+                ];
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(drawPositions, -Main.screenPosition, 70);
             }
 

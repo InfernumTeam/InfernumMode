@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
     {
         public override Color RarityColor => Color.Lavender;
 
-        internal static List<RaritySparkle> HourglassSparkleList = new();
+        internal static List<RaritySparkle> HourglassSparkleList = [];
 
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {

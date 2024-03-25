@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             NPC.value = Item.buyPrice(0, 0, 5, 0);
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            SpawnModBiomes = new int[] { ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type };
+            SpawnModBiomes = [ModContent.GetInstance<AbyssLayer1Biome>().Type, ModContent.GetInstance<AbyssLayer2Biome>().Type];
             NPC.Infernum().IsAbyssPredator = true;
             NPC.waterMovementSpeed = 0f;
         }
@@ -71,8 +71,8 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 {
                     Vector2 leftVelocity = NPC.velocity.RotatedBy(-0.2f);
                     Vector2 rightVelocity = NPC.velocity.RotatedBy(0.2f);
-                    float leftDistance = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, leftVelocity) ?? 500f;
-                    float rightDistance = CalamityUtils.DistanceToTileCollisionHit(NPC.Center, rightVelocity) ?? 500f;
+                    float leftDistance = LumUtils.DistanceToTileCollisionHit(NPC.Center, leftVelocity) ?? 500f;
+                    float rightDistance = LumUtils.DistanceToTileCollisionHit(NPC.Center, rightVelocity) ?? 500f;
                     NPC.velocity = (leftDistance > rightDistance ? leftVelocity : rightVelocity) * 0.96f;
 
                     if (NPC.collideX || NPC.collideY)

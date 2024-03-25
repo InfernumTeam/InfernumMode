@@ -9,7 +9,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         /// Contains each field that the modplayer should have. These are created when accessed, either from LoadData or simply get/setting the field.
         /// This is done to drastically cut down on boilerplate code.
         /// </summary>
-        private readonly Dictionary<string, Referenced<object>> PlayerFields = new();
+        private readonly Dictionary<string, Referenced<object>> PlayerFields = [];
 
         // If the value does not exist or is not the expected type, set it to default.
         private void LoadValue<T>(string key) where T : struct

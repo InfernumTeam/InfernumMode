@@ -41,12 +41,12 @@ namespace InfernumMode.Content.Credits
 
         private static CreditState CurrentState = CreditState.LoadingTextures;
 
-        private static readonly string[] Names = { Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators, Supporters };
+        private static readonly string[] Names = [Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators, Supporters];
 
-        private static readonly string[] Headers = { "Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators", "Supporters" };
+        private static readonly string[] Headers = ["Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators", "Supporters"];
 
         private static readonly Color[] HeaderColors =
-        {
+        [
             new(212, 56, 34),
             new(143, 11, 139),
             new(80, 105, 185),
@@ -56,10 +56,10 @@ namespace InfernumMode.Content.Credits
             new(0, 148, 75),
             new(246, 188, 49),
             new(243, 165, 5)
-        };
+        ];
 
         private static readonly ScreenCapturer.RecordingBoss[] Bosses =
-        {
+        [
             ScreenCapturer.RecordingBoss.KingSlime,
             ScreenCapturer.RecordingBoss.WoF,
             ScreenCapturer.RecordingBoss.Calamitas,
@@ -68,7 +68,7 @@ namespace InfernumMode.Content.Credits
             ScreenCapturer.RecordingBoss.Provi,
             ScreenCapturer.RecordingBoss.Draedon,
             ScreenCapturer.RecordingBoss.SCal
-        };
+        ];
 
         public static float FinalSceneOpacity
         {

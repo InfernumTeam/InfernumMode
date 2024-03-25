@@ -15,8 +15,8 @@ namespace InfernumMode.Content.Items.Accessories
     // Dedicated to: Nyastra (Joey)
     public class SakuraBloom : ModItem
     {
-        private readonly List<RaritySparkle> LoveSparkles = new();
-        private readonly List<RaritySparkle> memorySparkles = new();
+        private readonly List<RaritySparkle> LoveSparkles = [];
+        private readonly List<RaritySparkle> memorySparkles = [];
 
         public override void SetStaticDefaults()
         {

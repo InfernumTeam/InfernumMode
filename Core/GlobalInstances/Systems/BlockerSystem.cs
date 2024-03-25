@@ -30,7 +30,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             }
         }
 
-        private static readonly List<BlockCondition> blockerConditions = new();
+        private static readonly List<BlockCondition> blockerConditions = [];
 
         public static bool AnythingWasBlockedLastFrame
         {

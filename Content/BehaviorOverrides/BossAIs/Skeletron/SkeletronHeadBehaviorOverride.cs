@@ -44,11 +44,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Skeletron
 
         public const float Phase3LifeRatio = 0.475f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         #region Loading
         public override void Load()

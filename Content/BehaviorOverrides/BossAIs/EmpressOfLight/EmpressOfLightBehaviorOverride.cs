@@ -75,8 +75,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public static int LaserbeamDamage => ShouldBeEnraged ? 800 : 400;
 
-        public static EmpressOfLightAttackType[] Phase1AttackCycle => new EmpressOfLightAttackType[]
-        {
+        public static EmpressOfLightAttackType[] Phase1AttackCycle =>
+        [
             EmpressOfLightAttackType.LanceBarrages,
             EmpressOfLightAttackType.PrismaticBoltCircle,
             EmpressOfLightAttackType.BackstabbingLances,
@@ -87,10 +87,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.LanceBarrages,
             EmpressOfLightAttackType.HorizontalCharge,
             EmpressOfLightAttackType.MesmerizingMagic,
-        };
+        ];
 
-        public static EmpressOfLightAttackType[] Phase2AttackCycle => new EmpressOfLightAttackType[]
-        {
+        public static EmpressOfLightAttackType[] Phase2AttackCycle =>
+        [
             EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.HorizontalCharge,
@@ -101,10 +101,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.BackstabbingLances,
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LanceWallBarrage
-        };
+        ];
 
-        public static EmpressOfLightAttackType[] Phase3AttackCycle => new EmpressOfLightAttackType[]
-        {
+        public static EmpressOfLightAttackType[] Phase3AttackCycle =>
+        [
             EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceWallBarrage,
             EmpressOfLightAttackType.LightPrisms,
@@ -116,10 +116,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.DanceOfSwords,
             EmpressOfLightAttackType.LightPrisms,
             EmpressOfLightAttackType.PrismaticBoltCircle,
-        };
+        ];
 
-        public static EmpressOfLightAttackType[] Phase4AttackCycle => new EmpressOfLightAttackType[]
-        {
+        public static EmpressOfLightAttackType[] Phase4AttackCycle =>
+        [
             EmpressOfLightAttackType.LargeRainbowStar,
             EmpressOfLightAttackType.UltimateRainbow,
             EmpressOfLightAttackType.DanceOfSwords,
@@ -132,14 +132,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.LargeRainbowStar,
             EmpressOfLightAttackType.MajesticPierce,
             EmpressOfLightAttackType.LanceWallBarrage,
-        };
+        ];
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         #endregion Constants and Attack Patterns
 
@@ -1071,7 +1071,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Rotate the telegraphs.
-            telegraphRotation += CalamityUtils.Convert01To010(telegraphInterpolant) * Pi / 75f;
+            telegraphRotation += LumUtils.Convert01To010(telegraphInterpolant) * Pi / 75f;
 
             // Release magic on hands and eventually create bolts.
             int magicDustCount = (int)Math.Round(Lerp(1f, 5f, telegraphInterpolant));
@@ -1730,8 +1730,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 return;
 
             // Clear any clones or other things that might remain from other attacks.
-            int[] projectilesToClearAway = new int[]
-            {
+            int[] projectilesToClearAway =
+            [
                 ModContent.ProjectileType<AcceleratingPrismaticBolt>(),
                 ModContent.ProjectileType<EmpressPrism>(),
                 ModContent.ProjectileType<EmpressSparkle>(),
@@ -1742,7 +1742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 ModContent.ProjectileType<PrismaticBolt>(),
                 ModContent.ProjectileType<PrismLaserbeam>(),
                 ModContent.ProjectileType<SpinningPrismLaserbeam>(),
-            };
+            ];
 
             for (int j = 0; j < 2; j++)
             {
@@ -2075,7 +2075,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 int instanceCount = 6;
                 float wispInterpolant = npc.Infernum().ExtraAI[0];
                 float wispOffset = 20f;
-                List<float> wispOffsetFactors = new() { 1f };
+                List<float> wispOffsetFactors = [1f];
                 if (attackType == EmpressOfLightAttackType.DeathAnimation)
                 {
                     instanceCount = InfernumConfig.Instance.ReducedGraphicsConfig ? 7 : 10;
@@ -2177,7 +2177,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             Color pink = Color.DeepPink;
             Color cyan = Color.Cyan;
-            return Color.Lerp(pink, cyan, CalamityUtils.Convert01To010(colorInterpolant * 3f % 1f));
+            return Color.Lerp(pink, cyan, LumUtils.Convert01To010(colorInterpolant * 3f % 1f));
         }
         #endregion
 

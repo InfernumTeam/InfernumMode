@@ -144,8 +144,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             AfterimageTrail ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, trailShader);
 
             float localIdentityOffset = Projectile.identity * 0.1372f;
-            Color mainColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
-            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset + 0.2f) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
+            Color mainColor = LumUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
+            Color secondaryColor = LumUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + localIdentityOffset + 0.2f) % 1f, Color.Yellow, Color.Pink, Color.HotPink, Color.Goldenrod, Color.Orange);
 
             mainColor = Color.Lerp(Color.White, mainColor, 0.85f);
             secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.85f);
@@ -173,7 +173,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             // Draw the bloom line telegraph.
             if (Timer <= MagicGlowTimer)
             {
-                float opacity = CalamityUtils.Convert01To010(Timer / MagicGlowTimer);
+                float opacity = LumUtils.Convert01To010(Timer / MagicGlowTimer);
                 BloomLineDrawInfo lineInfo = new(rotation: -Projectile.velocity.ToRotation(),
                     width: 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
                     bloom: Lerp(0.06f, 0.16f, opacity),

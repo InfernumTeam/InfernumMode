@@ -115,7 +115,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             c2 = Color.Lerp(c2, new(88, 55, 172), FadeToDarkGodColors);
 
             float hue = Sin(Pi * ColorSpectrumHue + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f;
-            Color sparkleColor = CalamityUtils.MulticolorLerp(hue, c1, c2) * Projectile.Opacity * 0.84f;
+            Color sparkleColor = LumUtils.MulticolorLerp(hue, c1, c2) * Projectile.Opacity * 0.84f;
             sparkleColor *= Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
             Vector2 origin = sparkleTexture.Size() / 2f;
 

@@ -18,16 +18,16 @@ namespace InfernumMode.Core.TrackedMusic
     {
         // internal static bool PausedBecauseOfUI;
 
-        internal static List<int> TracksThatDontUseTerrariasSystem = new();
+        internal static List<int> TracksThatDontUseTerrariasSystem = [];
 
-        internal static Dictionary<int, Song> CustomTracks = new();
+        internal static Dictionary<int, Song> CustomTracks = [];
 
-        internal static Dictionary<int, string> CustomTrackDiskPositions = new();
+        internal static Dictionary<int, string> CustomTrackDiskPositions = [];
 
         internal static ConstructorInfo SongConstructor;
 
-        public static readonly List<string> CustomTrackPaths = new()
-        {
+        public static readonly List<string> CustomTrackPaths =
+        [
             // Grief.
             "CalamityModMusic/Sounds/Music/CalamitasPhase1",
             "CalamityModMusic/Sounds/Music/CalamitasPhase1_FullIntro",
@@ -40,9 +40,9 @@ namespace InfernumMode.Core.TrackedMusic
 
             // Acceptance.
             "CalamityModMusic/Sounds/Music/CalamitasDefeat",
-        };
+        ];
 
-        public static readonly Dictionary<string, BaseTrackedMusic> TrackInformation = new();
+        public static readonly Dictionary<string, BaseTrackedMusic> TrackInformation = [];
 
         // Song instances are expected to be read directly from the disk, not memory.
         // As such, we need to save them separately from the embedded tmod file data.
@@ -65,14 +65,14 @@ namespace InfernumMode.Core.TrackedMusic
         // aren't loaded by the time Infernum is fully loaded.
         public override void PostSetupContent()
         {
-            TracksThatDontUseTerrariasSystem = new();
+            TracksThatDontUseTerrariasSystem = [];
 
             // Initialize the constructor for the Song instance, since that's internal for some reason.
-            SongConstructor = typeof(Song).GetConstructor(Utilities.UniversalBindingFlags, new Type[]
-            {
+            SongConstructor = typeof(Song).GetConstructor(Utilities.UniversalBindingFlags,
+            [
                 typeof(string),
                 typeof(string),
-            });
+            ]);
 
             // Load all tracked music.
             foreach (Type musicType in Utilities.GetEveryTypeDerivedFrom(typeof(BaseTrackedMusic), InfernumMode.Instance.Code))
@@ -113,7 +113,7 @@ namespace InfernumMode.Core.TrackedMusic
                 }
 
                 TracksThatDontUseTerrariasSystem.Add(musicSlotIndex);
-                CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke(new object[] { musicPath, path });
+                CustomTracks[musicSlotIndex] = (Song)SongConstructor.Invoke([musicPath, path]);
             }
 
             //Terraria.Audio.On_LegacyAudioSystem.UpdateCommonTrack += DisableSoundsForCustomTracks;

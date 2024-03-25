@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BossBars
 
         public PhaseNotch()
         {
-            Sparkles = new();
+            Sparkles = [];
             PoppedOff = false;
             PoppingOffTimer = 0;
             Opacity = 0;

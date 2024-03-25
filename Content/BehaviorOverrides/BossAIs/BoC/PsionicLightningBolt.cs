@@ -70,7 +70,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             Projectile.frameCounter++;
             Projectile.oldPos[1] = Projectile.oldPos[0];
 
-            Projectile.scale = (float)CalamityUtils.Convert01To010(Projectile.timeLeft / (float)(Lifetime * Projectile.MaxUpdates)) * 2f;
+            Projectile.scale = (float)LumUtils.Convert01To010(Projectile.timeLeft / (float)(Lifetime * Projectile.MaxUpdates)) * 2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -125,7 +125,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * 10f;
+        public float PrimitiveWidthFunction(float completionRatio) => LumUtils.Convert01To010(completionRatio) * Projectile.scale * 10f;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {

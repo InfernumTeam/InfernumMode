@@ -48,8 +48,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
         public const float Phase4LifeRatio = 0.15f;
 
-        public static EoCAttackType[] Phase1AttackPattern => new EoCAttackType[]
-        {
+        public static EoCAttackType[] Phase1AttackPattern =>
+        [
             EoCAttackType.HoverCharge,
             EoCAttackType.HoverCharge,
             EoCAttackType.ChargingServants,
@@ -57,10 +57,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             EoCAttackType.HorizontalBloodCharge,
             EoCAttackType.HoverCharge,
             EoCAttackType.ChargingServants,
-        };
+        ];
 
-        public static EoCAttackType[] Phase2AttackPattern => new EoCAttackType[]
-        {
+        public static EoCAttackType[] Phase2AttackPattern =>
+        [
             EoCAttackType.HoverCharge,
             EoCAttackType.HoverCharge,
             EoCAttackType.ChargingServants,
@@ -76,10 +76,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             EoCAttackType.HoverCharge,
             EoCAttackType.TeethSpit,
             EoCAttackType.SpinDash,
-        };
+        ];
 
-        public static EoCAttackType[] Phase3AttackPattern => new EoCAttackType[]
-        {
+        public static EoCAttackType[] Phase3AttackPattern =>
+        [
             EoCAttackType.HoverCharge,
             EoCAttackType.HoverCharge,
             EoCAttackType.BloodShots,
@@ -96,14 +96,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             EoCAttackType.HoverCharge,
             EoCAttackType.TeethSpit,
             EoCAttackType.SpinDash,
-        };
+        ];
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         public override bool PreAI(NPC npc)
         {
@@ -293,7 +293,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 Vector2 destination = target.Center - Vector2.UnitY * 275f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
 
-                glowInterpolant = CalamityUtils.Convert01To010(attackTimer / servantSummonDelay);
+                glowInterpolant = LumUtils.Convert01To010(attackTimer / servantSummonDelay);
             }
             else
             {

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -42,11 +42,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                     CalamityUtils.BossAwakenMessage(deus);
                 }
 
-                Color[] explosionColors = new Color[]
-                {
+                Color[] explosionColors =
+                [
                     new(250, 90, 74, 127),
                     new(76, 255, 194, 127)
-                };
+                ];
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(projectile.Center, Vector2.Zero, explosionColors, 3f, 180, 1.9f));
                 ScreenEffectSystem.SetBlurEffect(projectile.Center, 0.5f, 20);
             }

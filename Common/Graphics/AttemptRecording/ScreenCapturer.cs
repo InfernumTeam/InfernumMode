@@ -161,7 +161,7 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
 
             RegenerateHandles();
 
-            frames = new();
+            frames = [];
             Main.OnPostDraw += HandleRecordingFrame;
         }
 
@@ -421,13 +421,13 @@ namespace InfernumMode.Common.Graphics.AttemptRecording
                 catch (IOException)
                 {
                     // Return this if the file is in use.
-                    return new Texture2D[] { ModContent.Request<Texture2D>(InfernumTextureRegistry.InvisPath, AssetRequestMode.ImmediateLoad).Value };
+                    return [ModContent.Request<Texture2D>(InfernumTextureRegistry.InvisPath, AssetRequestMode.ImmediateLoad).Value];
                 }
             }
             else
             {
                 baseCreditsUsed = true;
-                return new Texture2D[] { ModContent.Request<Texture2D>(InfernumTextureRegistry.InvisPath, AssetRequestMode.ImmediateLoad).Value };
+                return [ModContent.Request<Texture2D>(InfernumTextureRegistry.InvisPath, AssetRequestMode.ImmediateLoad).Value];
             }
         }
 

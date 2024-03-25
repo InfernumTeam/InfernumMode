@@ -18,11 +18,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
     {
         public override int NPCOverrideType => NPCID.BrainofCthulhu;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         #region Enumerations
         internal enum BoCAttackState

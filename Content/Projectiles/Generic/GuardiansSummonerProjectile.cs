@@ -11,6 +11,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -143,7 +144,8 @@ namespace InfernumMode.Content.Projectiles.Generic
 
                         // Connect the temple to the guardian positions via dust.
                         float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
-                        float completion = CalamityUtils.SineInOutEasing(sineValue, 1);
+                        
+                        float completion = EasingCurves.Sine.InOutFunction(sineValue);
                         Dust dust = Dust.NewDustPerfect(ProviLightPosition, 264);
                         dust.velocity = Vector2.UnitY.RotatedByRandom(0.17000000178813934) * (0f - Main.rand.NextFloat(2.7f, 4.1f));
                         dust.color = WayfinderSymbol.Colors[2];
@@ -177,7 +179,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             if (Player.WithinRange(MainPosition, 20000))
             {
                 Player.Infernum_Camera().ScreenFocusPosition = MainPosition;
-                Player.Infernum_Camera().ScreenFocusInterpolant = CalamityUtils.SineInOutEasing(Clamp(Time / MoveTime, 0f, 1f), 0);
+                Player.Infernum_Camera().ScreenFocusInterpolant = EasingCurves.Sine.InOutFunction(Clamp(Time / MoveTime, 0f, 1f));
             }
 
             if (Time is >= 210f and <= SpawnTime)
@@ -309,7 +311,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         private void DrawGuardians()
         {
-            float smoothed = CalamityUtils.SineInEasing(GuardsGlowAmount, 0);
+            float smoothed = EasingCurves.Sine.InFunction(GuardsGlowAmount);
             float radius = Lerp(0f, 10f, smoothed);
             if (radius > 0.5f)
             {

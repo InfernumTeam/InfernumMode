@@ -135,7 +135,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
+        public float PrimitiveWidthFunction(float completionRatio) => LumUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {

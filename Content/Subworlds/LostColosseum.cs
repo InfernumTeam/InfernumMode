@@ -127,11 +127,11 @@ namespace InfernumMode.Content.Subworlds
                 // Carve out caves.
                 foreach (Vector2 curvePoint in baseCurvePoints)
                 {
-                    WorldUtils.Gen(curvePoint.ToPoint(), new Shapes.Circle(8, 13), Actions.Chain(new GenAction[]
-                    {
+                    WorldUtils.Gen(curvePoint.ToPoint(), new Shapes.Circle(8, 13), Actions.Chain(
+                    [
                         new Modifiers.Blotches(3, 0.27),
                         new Actions.ClearTile()
-                    }));
+                    ]));
                 }
             }
         }
@@ -177,10 +177,10 @@ namespace InfernumMode.Content.Subworlds
 
         public override bool ShouldSave => true;
 
-        public override List<GenPass> Tasks => new()
-        {
+        public override List<GenPass> Tasks =>
+        [
             new LostColosseumGenPass()
-        };
+        ];
 
         public static Texture2D LoadingBackgroundTexture
         {

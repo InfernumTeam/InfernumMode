@@ -143,8 +143,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
 
-            Data = new()
-            {
+            Data =
+            [
                 new MinibossData(Minibosses.GiantClam, ModContent.NPCType<GiantClam>()),
                 new MinibossData(Minibosses.DarkMageTier1, NPCID.DD2DarkMageT1),
                 new MinibossData(Minibosses.SandElemental, NPCID.SandElemental),
@@ -159,7 +159,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 new MinibossData(Minibosses.ColossalSquid, ModContent.NPCType<ColossalSquid>()),
                 new MinibossData(Minibosses.ReaperShark, ModContent.NPCType<ReaperShark>()),
                 new MinibossData(Minibosses.EidolonWyrm, ModContent.NPCType<EidolonWyrmHead>())
-            };
+            ];
         }
 
         public string GetFirstUncompletedMiniBoss()

@@ -301,11 +301,11 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 if (tipTile.IsTileSolid())
                 {
                     // If its a solid tile, find the closest tile under the player and set the location to that.
-                    WorldUtils.Find(new Vector2(Owner.position.X, Owner.position.Y).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
-                    {
+                    WorldUtils.Find(new Vector2(Owner.position.X, Owner.position.Y).ToTileCoordinates(), Searches.Chain(new Searches.Down(200),
+                    [
                         new CustomTileConditions.IsSolidOrSolidTop(),
                         new CustomTileConditions.ActiveAndNotActuated()
-                    }), out Point playerBottom);
+                    ]), out Point playerBottom);
 
                     if (playerBottom != GenSearch.NOT_FOUND)
                         WorldSaveSystem.WayfinderGateLocation = playerBottom.ToWorldCoordinates(8, 0);
@@ -315,11 +315,11 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
                 else
                 {
                     // Else set the location to the tip.
-                    WorldUtils.Find(new Vector2(tip.X, tip.Y).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
-                    {
+                    WorldUtils.Find(new Vector2(tip.X, tip.Y).ToTileCoordinates(), Searches.Chain(new Searches.Down(200),
+                    [
                         new CustomTileConditions.IsSolidOrSolidTop(),
                         new CustomTileConditions.ActiveAndNotActuated()
-                    }), out Point newBottom);
+                    ]), out Point newBottom);
 
                     if (newBottom != GenSearch.NOT_FOUND)
                         WorldSaveSystem.WayfinderGateLocation = newBottom.ToWorldCoordinates(8, 0);

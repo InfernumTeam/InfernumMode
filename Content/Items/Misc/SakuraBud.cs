@@ -16,8 +16,8 @@ namespace InfernumMode.Content.Items.Misc
     // Dedicated to: Nyastra (Joey)
     public class SakuraBud : ModItem
     {
-        private readonly List<RaritySparkle> SpiritSparkles = new();
-        private readonly List<RaritySparkle> WaterSparkles = new();
+        private readonly List<RaritySparkle> SpiritSparkles = [];
+        private readonly List<RaritySparkle> WaterSparkles = [];
 
         public override void SetDefaults()
         {

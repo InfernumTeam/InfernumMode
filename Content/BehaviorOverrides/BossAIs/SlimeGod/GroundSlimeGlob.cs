@@ -135,7 +135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
         public override bool OnTileCollide(Vector2 oldVelocity) => false;
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(Projectile.Center, 16f, targetHitbox);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => LumUtils.CircularHitboxCollision(Projectile.Center, 16f, targetHitbox);
 
         public override bool CanHitPlayer(Player target) => Projectile.localAI[1] is <= 900f and > 45f;
 
@@ -153,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
                 Vector2 drawOffset = (TwoPi * i / 6f).ToRotationVector2() * 4f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
             return false;
         }
     }

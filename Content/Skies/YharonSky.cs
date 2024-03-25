@@ -69,7 +69,7 @@ namespace InfernumMode.Content.Skies
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public static readonly MethodInfo DrawSunAndMoonMethod = typeof(Main).GetMethod("DrawSunAndMoon", Utilities.UniversalBindingFlags);
 
@@ -188,13 +188,13 @@ namespace InfernumMode.Content.Skies
 
             // Draw the regular sun on top of everything else.
             var sceneArea = ManipulateSunPositionHook.SunSceneArea;
-            DrawSunAndMoonMethod.Invoke(Main.instance, new object[]
-            {
+            DrawSunAndMoonMethod.Invoke(Main.instance,
+            [
                 sceneArea,
                 Color.White * intensity,
                 Color.White * intensity,
                 0f
-            });
+            ]);
             ManipulateSunPositionHook.DisableSunForNextFrame = true;
         }
 

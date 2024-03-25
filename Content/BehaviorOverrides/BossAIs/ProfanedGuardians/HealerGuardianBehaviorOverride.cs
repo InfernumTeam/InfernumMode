@@ -7,6 +7,7 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -228,7 +229,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (commanderTimer > whiteGlowTime)
             {
                 float interlopant = (commanderTimer - whiteGlowTime) / ashesTime;
-                opacityScalar2 = 1 - CalamityUtils.LinearEasing(interlopant, 0);
+                opacityScalar2 = 1 - EasingCurves.Linear.InOutFunction(interlopant);
             }
 
             // Commander glow effect, as if the commander is trying to stop it dying.
@@ -245,7 +246,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (commanderTimer > whiteGlowTime)
             {
                 float interlopant = (commanderTimer - whiteGlowTime) / ashesTime;
-                float smoothed = CalamityUtils.SineInEasing(interlopant, 0);
+                float smoothed = EasingCurves.Sine.InFunction(interlopant);
                 float radius = Lerp(0f, 55f, smoothed);
                 if (radius > 0.5f)
                 {
@@ -280,7 +281,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (commanderTimer >= whiteGlowTime / 2f)
                 shieldOpacity = Utilities.EaseInBounce(opacity0to1);
             else
-                shieldOpacity = CalamityUtils.ExpInEasing(opacity0to1, 0);
+                shieldOpacity = EasingCurves.Exp.InFunction(opacity0to1);
 
             // Draw the shield, as if its trying to protect itself in its last moments instead of the commander.
             AttackerGuardianBehaviorOverride.DrawHealerShield(npc, spriteBatch, 3.3f, shieldOpacity * 1.15f);

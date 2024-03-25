@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -53,7 +53,7 @@ namespace InfernumMode.Common.Graphics.Particles
             for (int i = 0; i < ringCount; i++)
             {
                 float scale = Lerp(1f, innerRingScaleFactor, i / (float)(ringCount - 1f)) * scaleFadeout * Scale;
-                Color color = CalamityUtils.MulticolorLerp((i / (float)(ringCount - 1f) + Main.GlobalTimeWrappedHourly * 0.7f) % 1f, Colors) * opacityFadeout * 0.45f;
+                Color color = LumUtils.MulticolorLerp((i / (float)(ringCount - 1f) + Main.GlobalTimeWrappedHourly * 0.7f) % 1f, Colors) * opacityFadeout * 0.45f;
                 float rotation = Rotation * Lerp(0.5f, 1f, i / (float)(ringCount - 1f)) * (i % 2 == 0).ToDirectionInt();
                 Vector2 drawPosition = Position - Main.screenPosition;
                 Main.spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale, 0, 0f);

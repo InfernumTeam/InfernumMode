@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         public override bool PreDraw(ref Color lightColor)
         {
             // Cast a telegraph line before the acceleration gets super strong.
-            float opacity = CalamityUtils.Convert01To010(Time / TelegraphTime);
+            float opacity = LumUtils.Convert01To010(Time / TelegraphTime);
             if (opacity > 0f)
             {
                 Texture2D invisible = InfernumTextureRegistry.Invisible.Value;

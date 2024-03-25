@@ -212,12 +212,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         }
 
         // Artemis is intentionally not counted in this list due to primarily deferring to Apollo, the "leader" of the two for management.
-        public static List<int> ExoMechIDs => new()
-        {
+        public static List<int> ExoMechIDs =>
+        [
             ModContent.NPCType<AresBody>(),
             ModContent.NPCType<Apollo>(),
             ModContent.NPCType<ThanatosHead>(),
-        };
+        ];
 
         public static int GetComplementMechType(NPC npc)
         {
@@ -300,8 +300,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         public static void ClearAwayTransitionProjectiles()
         {
             // Clear away old projectiles.
-            int[] projectilesToDelete = new int[]
-            {
+            int[] projectilesToDelete =
+            [
                 ModContent.ProjectileType<ApolloAcceleratingPlasmaSpark>(),
                 ModContent.ProjectileType<ApolloFallingPlasmaSpark>(),
                 ModContent.ProjectileType<ApolloFlamethrower>(),
@@ -338,7 +338,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<SmallPlasmaSpark>(),
                 ModContent.ProjectileType<SuperheatedExofireGas>(),
                 ModContent.ProjectileType<ThanatosAresComboLaser>()
-            };
+            ];
             Utilities.DeleteAllProjectiles(true, projectilesToDelete);
         }
 

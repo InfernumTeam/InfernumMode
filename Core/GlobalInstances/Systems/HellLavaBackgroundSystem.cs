@@ -15,16 +15,16 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 {
     public class HellLavaBackgroundSystem : ModSystem
     {
-        internal List<BaseHellLavaBackground> LoadedBackgrounds = new();
+        internal List<BaseHellLavaBackground> LoadedBackgrounds = [];
 
-        internal Dictionary<BaseHellLavaBackground, float> BackgroundIntensities = new();
+        internal Dictionary<BaseHellLavaBackground, float> BackgroundIntensities = [];
 
         internal List<BaseHellLavaBackground> ActiveBackgrounds => LoadedBackgrounds.Where(b => BackgroundIntensities[b] >= 0f).ToList();
 
         public override void OnModLoad()
         {
             // Load all background effects.
-            LoadedBackgrounds = new();
+            LoadedBackgrounds = [];
             foreach (Type backgroundType in Utilities.GetEveryTypeDerivedFrom(typeof(BaseHellLavaBackground), InfernumMode.Instance.Code))
             {
                 var background = (BaseHellLavaBackground)Activator.CreateInstance(backgroundType);

@@ -92,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);
         }
 
         public override bool PreDraw(ref Color lightColor)

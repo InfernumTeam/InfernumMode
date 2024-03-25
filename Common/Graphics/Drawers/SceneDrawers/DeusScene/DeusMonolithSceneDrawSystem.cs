@@ -19,7 +19,7 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public override void ExtraUpdate()
         {
@@ -100,7 +100,7 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
                 drawPosition += (TwoPi * 7f * i / 75f).ToRotationVector2() * MathF.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
                 float rotation = TwoPi * (drawOutwardness + i % 12f / 12f);
                 float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 16f / 16f);
-                Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f + Main.GlobalTimeWrappedHourly * 0.05f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * 0.44f;
+                Color drawColor = LumUtils.MulticolorLerp(i / 29f % 0.999f + Main.GlobalTimeWrappedHourly * 0.05f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * 0.44f;
                 spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.End();

@@ -9,6 +9,7 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Players;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -107,7 +108,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = -1;
 
-            OldPositions = new();
+            OldPositions = [];
         }
 
         public override void AI()
@@ -409,7 +410,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             Color startingColor = new(255, 191, 73);
             Color middleColor = new(89, 43, 49);
             Color endColor = new(25, 8, 8);
-            Color color = CalamityUtils.MulticolorLerp(Utilities.Saturate(completionRatio - 0.1f), startingColor, middleColor, endColor) * trailOpacity;
+            Color color = LumUtils.MulticolorLerp(Utilities.Saturate(completionRatio - 0.1f), startingColor, middleColor, endColor) * trailOpacity;
             color.A = (byte)(trailOpacity * 255);
             return color * Projectile.Opacity;
         }
@@ -461,7 +462,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 Main.spriteBatch.EnterShaderRegion();
 
                 float shiftAmount = Utils.GetLerpValue(PullbackLength, PullbackLength + TintLength * 0.75f, Timer, true) * Utils.GetLerpValue(PullbackLength + TintLength * 2f, PullbackLength + TintLength * 1.25f, Timer, true);
-                InfernumEffectsRegistry.BasicTintShader.UseSaturation(Lerp(0f, 0.55f, CalamityUtils.CircInEasing(shiftAmount, 1)));
+                InfernumEffectsRegistry.BasicTintShader.UseSaturation(Lerp(0f, 0.55f, EasingCurves.Circ.InFunction(shiftAmount)));
                 InfernumEffectsRegistry.BasicTintShader.UseOpacity(1f);
                 InfernumEffectsRegistry.BasicTintShader.UseColor(WayfinderSymbol.Colors[0]);
                 InfernumEffectsRegistry.BasicTintShader.Apply();

@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Tiles.Wishes
             TileObjectData.newTile.Height = Height;
             TileObjectData.newTile.Origin = new Point16(1, 4);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16, 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16, 16];
             TileObjectData.newTile.DrawYOffset = 4;
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
@@ -35,7 +35,7 @@ namespace InfernumMode.Content.Tiles.Wishes
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             if (t.TileFrameX != 0 || t.TileFrameY != 0)
                 return false;
 

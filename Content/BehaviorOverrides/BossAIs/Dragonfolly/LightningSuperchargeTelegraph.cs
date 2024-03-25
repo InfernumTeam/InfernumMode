@@ -100,11 +100,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)
             {
-                Vector2[] positions = new Vector2[2]
-                {
+                Vector2[] positions =
+                [
                     ChargePositions[i],
                     ChargePositions[i + 1]
-                };
+                ];
 
                 // Stand-in variable used to differentiate between the beams.
                 // It is not used anywhere else.

@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.width * 0.44f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.width * 0.44f, targetHitbox);
         }
 
         public float SunWidthFunction(float completionRatio) => Projectile.width * Sin(Pi * completionRatio);

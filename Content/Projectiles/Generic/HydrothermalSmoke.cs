@@ -59,7 +59,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 92f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 92f, targetHitbox);
         }
 
         public void AdditiveDraw(SpriteBatch spriteBatch)

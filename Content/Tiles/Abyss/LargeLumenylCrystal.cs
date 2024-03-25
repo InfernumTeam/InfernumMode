@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Tiles.Abyss
 {
     public class LargeLumenylCrystal : ModTile
     {
-        internal static Dictionary<Point, IcicleDrawer> CrystalCache = new();
+        internal static Dictionary<Point, IcicleDrawer> CrystalCache = [];
 
         public override void SetStaticDefaults()
         {
@@ -61,11 +61,11 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public static void DecideFrame(int i, int j)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
-            Tile left = CalamityUtils.ParanoidTileRetrieval(i - 1, j);
-            Tile right = CalamityUtils.ParanoidTileRetrieval(i + 1, j);
-            Tile top = CalamityUtils.ParanoidTileRetrieval(i, j - 1);
-            Tile bottom = CalamityUtils.ParanoidTileRetrieval(i, j + 1);
+            Tile t = Framing.GetTileSafely(i, j);
+            Tile left = Framing.GetTileSafely(i - 1, j);
+            Tile right = Framing.GetTileSafely(i + 1, j);
+            Tile top = Framing.GetTileSafely(i, j - 1);
+            Tile bottom = Framing.GetTileSafely(i, j + 1);
 
             t.TileFrameX = (short)(WorldGen.genRand.Next(18) * 18);
             if (bottom.HasTile && Main.tileSolid[bottom.TileType] && bottom.Slope == 0 && !bottom.IsHalfBlock)
@@ -111,9 +111,9 @@ namespace InfernumMode.Content.Tiles.Abyss
                 if (!CrystalCache.ContainsKey(p))
                 {
                     float offsetDirection = 0f;
-                    Tile top = CalamityUtils.ParanoidTileRetrieval(p.X, p.Y - 1);
-                    Tile left = CalamityUtils.ParanoidTileRetrieval(p.X - 1, p.Y);
-                    Tile right = CalamityUtils.ParanoidTileRetrieval(p.X + 1, p.Y);
+                    Tile top = Framing.GetTileSafely(p.X, p.Y - 1);
+                    Tile left = Framing.GetTileSafely(p.X - 1, p.Y);
+                    Tile right = Framing.GetTileSafely(p.X + 1, p.Y);
                     if (top.HasTile && top.Slope == SlopeType.Solid && !top.IsHalfBlock && WorldGen.SolidTile(top))
                         offsetDirection = Pi;
                     else if (left.HasTile && left.Slope == SlopeType.Solid && !left.IsHalfBlock && WorldGen.SolidTile(left))

@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
     {
         public override Color RarityColor => Color.Gold;
 
-        internal static List<RaritySparkle> EggSparkleList = new();
+        internal static List<RaritySparkle> EggSparkleList = [];
 
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {

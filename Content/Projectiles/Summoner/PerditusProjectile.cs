@@ -62,7 +62,7 @@ namespace InfernumMode.Content.Projectiles.Summoner
         {
             if (pastCrack)
             {
-                List<Vector2> points = new();
+                List<Vector2> points = [];
                 Projectile.FillWhipControlPoints(Projectile, points);
                 Vector2 position = points[^2];
 

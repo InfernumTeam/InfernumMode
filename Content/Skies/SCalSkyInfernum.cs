@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Skies
 
         private int SCalIndex = -1;
 
-        public List<Cinder> Cinders = new();
+        public List<Cinder> Cinders = [];
 
         public static bool RitualDramaProjectileIsPresent
         {

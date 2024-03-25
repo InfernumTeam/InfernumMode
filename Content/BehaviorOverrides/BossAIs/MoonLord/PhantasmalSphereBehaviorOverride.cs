@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         {
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
-            CalamityUtils.DrawAfterimagesCentered(projectile, 2, lightColor * 0.6f);
+            LumUtils.DrawAfterimagesCentered(projectile, 2, lightColor * 0.6f);
             return false;
         }
     }

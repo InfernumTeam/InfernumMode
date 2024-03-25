@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public Color TelegraphPrimitiveColor(float completionRatio)
         {
             float opacity = Lerp(0.38f, 1.2f, Projectile.Opacity);
-            opacity *= CalamityUtils.Convert01To010(completionRatio);
+            opacity *= LumUtils.Convert01To010(completionRatio);
             opacity *= Lerp(0.9f, 0.2f, Projectile.ai[0] / (ChargePositions.Length - 1f));
             if (completionRatio > 0.95f)
                 opacity = 0.0000001f;
@@ -100,11 +100,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)
             {
-                Vector2[] positions = new Vector2[2]
-                {
+                Vector2[] positions =
+                [
                     ChargePositions[i],
                     ChargePositions[i + 1]
-                };
+                ];
 
                 // Stand-in variable used to differentiate between the beams.
                 // It is not used anywhere else.

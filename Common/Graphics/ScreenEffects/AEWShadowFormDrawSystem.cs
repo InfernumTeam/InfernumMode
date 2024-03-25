@@ -43,13 +43,13 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public static List<DrawData> AEWEyesDrawCache
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public override void OnModLoad()
         {
@@ -175,7 +175,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             if (Main.GameUpdateCount % 120 == 119)
                 LargeLumenylCrystal.CrystalCache.Clear();
 
-            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
+            ColosseumPortal.PortalCache.RemoveAll(p => Framing.GetTileSafely(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 

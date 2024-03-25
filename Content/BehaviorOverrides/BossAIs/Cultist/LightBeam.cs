@@ -46,7 +46,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
             Projectile.velocity = Projectile.velocity.RotatedBy(Pi / 90f * (Projectile.identity % 2f == 0f).ToDirectionInt());
 
             // Fade effects.
-            float cyclicFade = CalamityUtils.Convert01To010(Time / Lifetime);
+            float cyclicFade = LumUtils.Convert01To010(Time / Lifetime);
             Projectile.Opacity = cyclicFade * 1.8f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
@@ -73,7 +73,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             float length = 40f;
             length += Lerp(0f, 16f, Projectile.identity % 7f / 7f);
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * length, i / 12f));
 

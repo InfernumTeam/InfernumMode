@@ -85,7 +85,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public Color LaserColorFunction(float completionRatio)
         {
             float hue = (RayHue * 2.4f + Main.GlobalTimeWrappedHourly * 0.77f) % 1f;
-            Color color = CalamityUtils.MulticolorLerp(hue, CalamityUtils.ExoPalette);
+            Color color = LumUtils.MulticolorLerp(hue, CalamityUtils.ExoPalette);
             color = Color.Lerp(color, Color.Wheat, 0.4f) * Projectile.Opacity;
             color *= Utils.GetLerpValue(0.96f, 0.8f, completionRatio, true);
             return color;
@@ -102,8 +102,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.14f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
-            List<float> rotationPoints = new();
-            List<Vector2> drawPoints = new();
+            List<float> rotationPoints = [];
+            List<Vector2> drawPoints = [];
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;

@@ -41,10 +41,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
         public override int NPCOverrideType => ModContent.NPCType<Anahita>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             LeviathanSummonLifeRatio
-        };
+        ];
 
         public override void Load()
         {
@@ -312,8 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     return;
 
-                List<Entity> entitiesToShoot = new() { npc };
-                entitiesToShoot.AddRange(Utilities.AllProjectilesByID(ModContent.ProjectileType<AnahitaWaterIllusion>()));
+                List<Entity> entitiesToShoot = [npc, .. Utilities.AllProjectilesByID(ModContent.ProjectileType<AnahitaWaterIllusion>())];
 
                 // Yes, npc.spriteDirection is used here. Entities do not have a sprite direction defined, but all illusions
                 // inherit their sprite direction from Anahita herself, so it is safe to do this.
@@ -681,8 +680,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             npc.ai[2]++;
 
             bool enraged = FightState == LeviAnahitaFightState.AloneEnraged;
-            AnahitaAttackType[] patternToUse = new AnahitaAttackType[]
-            {
+            AnahitaAttackType[] patternToUse =
+            [
                 AnahitaAttackType.FloatTowardsPlayer,
                 AnahitaAttackType.CreateWaterIllusions,
                 AnahitaAttackType.FloatTowardsPlayer,
@@ -692,7 +691,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
                 enraged ? AnahitaAttackType.AtlantisCharge : AnahitaAttackType.FloatTowardsPlayer,
                 AnahitaAttackType.FloatTowardsPlayer,
                 AnahitaAttackType.ChargeAndCreateWaterCircle,
-            };
+            ];
             AnahitaAttackType nextAttackType = patternToUse[(int)(npc.ai[2] % patternToUse.Length)];
 
             // Go to the next AI state.

@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static List<Vector2> DetermineElectricArcPoints(Vector2 start, Vector2 end, int seed)
         {
-            List<Vector2> points = new();
+            List<Vector2> points = [];
 
             // Determine the base points based on a linear path from the start the end end point.
             for (int i = 0; i <= 75; i++)
@@ -110,7 +110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 // Give a sense of time for the noise on the vertical axis. This is achieved via a 0-1 constricted sinusoid.
                 float noiseY = Cos(completionRatio * 17.2f + Main.GlobalTimeWrappedHourly * 10.7f) * 0.5f + 0.5f;
 
-                float noise = CalamityUtils.PerlinNoise2D(completionRatio, noiseY, 2, seed);
+                float noise = LumUtils.PerlinNoise2D(completionRatio, noiseY, 2, seed);
 
                 // Now that the noise value has been computed, convert it to a direction by treating the noise as an angle
                 // and then converting it into a unit vector.

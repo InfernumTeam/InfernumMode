@@ -79,7 +79,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Vector2 drawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Main.spriteBatch.Draw(slashTexture, drawPosition, null, drawColor, Projectile.rotation, slashTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], Projectile.GetAlpha(Color.DeepSkyBlue), 1);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], Projectile.GetAlpha(Color.DeepSkyBlue), 1);
             return false;
         }
 

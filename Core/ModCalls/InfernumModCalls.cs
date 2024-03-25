@@ -7,7 +7,7 @@ namespace InfernumMode.Core.ModCalls
     // Check the wiki for documentation on these. https://infernummod.wiki.gg/wiki/Mod_Calls
     public class InfernumModCalls
     {
-        internal static List<ModCall> ModCalls = new();
+        internal static List<ModCall> ModCalls = [];
 
         public static object Call(params object[] args)
         {

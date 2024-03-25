@@ -141,10 +141,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                 if (attackTimer == 2f)
                 {
                     // Clear away old projectiles.
-                    int[] projectilesToDelete = new int[]
-                    {
+                    int[] projectilesToDelete =
+                    [
                         ModContent.ProjectileType<SmallPlasmaSpark>(),
-                    };
+                    ];
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {
                         if (projectilesToDelete.Contains(Main.projectile[i].type))

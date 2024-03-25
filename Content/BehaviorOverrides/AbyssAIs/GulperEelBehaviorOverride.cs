@@ -94,9 +94,9 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Calculate raycast distances
             Vector2 left = npc.velocity.RotatedBy(-0.6f).ClampMagnitude(3f, 16f) * 0.8f;
             Vector2 right = npc.velocity.RotatedBy(0.6f).ClampMagnitude(3f, 16f) * 0.8f;
-            float distanceToCollision = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity) ?? 500f;
-            float distanceToCollisionLeft = CalamityUtils.DistanceToTileCollisionHit(npc.Center, left) ?? 500f;
-            float distanceToCollisionRight = CalamityUtils.DistanceToTileCollisionHit(npc.Center, right) ?? 500f;
+            float distanceToCollision = LumUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity) ?? 500f;
+            float distanceToCollisionLeft = LumUtils.DistanceToTileCollisionHit(npc.Center, left) ?? 500f;
+            float distanceToCollisionRight = LumUtils.DistanceToTileCollisionHit(npc.Center, right) ?? 500f;
 
             if (hostileAimTimer <= 0f && canNoticePlayer)
             {
@@ -241,7 +241,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
         public static Vector2[] GetSegmentPositions(NPC npc)
         {
-            List<Vector2> positions = new();
+            List<Vector2> positions = [];
 
             // Loop to find all previous segments in the worm linked list until the tail is reached.
             int segmentIndex = (int)npc.ai[0];
@@ -251,7 +251,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 segmentIndex = (int)Main.npc[segmentIndex].ai[0];
             }
 
-            return positions.ToArray();
+            return [.. positions];
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

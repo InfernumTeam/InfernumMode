@@ -136,12 +136,12 @@ namespace InfernumMode.Content.Projectiles.Rogue
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
+        public float PrimitiveWidthFunction(float completionRatio) => LumUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
             float colorInterpolant = Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 3.1f) * 0.5f + 0.5f;
-            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Red, Color.Orange, Color.Pink, Color.IndianRed);
+            Color color = LumUtils.MulticolorLerp(colorInterpolant, Color.Red, Color.Orange, Color.Pink, Color.IndianRed);
             return color;
         }
 

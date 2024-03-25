@@ -91,17 +91,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             Vector2 checkPosition = Projectile.Top - Vector2.UnitY * 160f;
             bool exploitAttempted = !Collision.CanHit(Projectile.Bottom, 1, 1, Projectile.Top - Vector2.UnitY * 180f, 1, 1);
 
-            WorldUtils.Find(checkPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
-            {
+            WorldUtils.Find(checkPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000),
+            [
                 new Conditions.IsSolid(),
                 new CustomTileConditions.ActiveAndNotActuated(),
                 new CustomTileConditions.NotPlatform()
-            }), out Point newBottom);
+            ]), out Point newBottom);
 
             if (exploitAttempted)
                 newBottom = Projectile.Bottom.ToTileCoordinates();
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
+            bool isHalfTile = Framing.GetTileSafely(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

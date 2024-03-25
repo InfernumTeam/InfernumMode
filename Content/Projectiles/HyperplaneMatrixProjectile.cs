@@ -69,7 +69,7 @@ namespace InfernumMode.Content.Projectiles
                     iconScale *= Vector2.One * 42f / icon.Size();
 
                 Vector2 drawPosition = Vector2.Lerp(left, right, indexRatio);
-                drawPosition.Y -= CalamityUtils.Convert01To010(indexRatio) * opacity * 40f;
+                drawPosition.Y -= LumUtils.Convert01To010(indexRatio) * opacity * 40f;
                 Vector2 backgroundOrigin = background.Size() * 0.5f;
                 Vector2 iconOrigin = icon.Size() * 0.5f;
                 Rectangle drawArea = Utils.CenteredRectangle(drawPosition, background.Size() * scale);
@@ -152,8 +152,8 @@ namespace InfernumMode.Content.Projectiles
 
         public override void SetStaticDefaults()
         {
-            UIStates = new()
-            {
+            UIStates =
+            [
                 new()
                 {
                     HoverText = Utilities.GetLocalization("UI.HyperplaneMatrixUI.Godmode").Value,
@@ -162,7 +162,7 @@ namespace InfernumMode.Content.Projectiles
                     {
                         Referenced<bool> cyberneticImmortality = player.Infernum().GetRefValue<bool>("CyberneticImmortalityIsActive");
                         cyberneticImmortality.Value = !cyberneticImmortality.Value;
-                        CalamityUtils.DisplayLocalizedText($"Mods.InfernumMode.Status.CyberneticImmortality{(cyberneticImmortality.Value ? "Enabled" : "Disabled")}", Draedon.TextColor);
+                        LumUtils.BroadcastLocalizedText($"Mods.InfernumMode.Status.CyberneticImmortality{(cyberneticImmortality.Value ? "Enabled" : "Disabled")}", Draedon.TextColor);
                     }
                 },
 
@@ -200,7 +200,7 @@ namespace InfernumMode.Content.Projectiles
                     IconTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Projectiles/AtomizeIcon"),
                     ClickBehavior = _ => AtomizeHostileNPCs()
                 }
-            };
+            ];
 
             InfernumPlayer.MovementUpdateEvent += (InfernumPlayer player) =>
             {
@@ -448,7 +448,7 @@ namespace InfernumMode.Content.Projectiles
                 return;
 
             Vector2 rayStartingPoint = Projectile.Center;
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint - Vector2.UnitY * length, i / 12f));
 
@@ -484,8 +484,8 @@ namespace InfernumMode.Content.Projectiles
 
         public static void AtomizeHostileNPCs()
         {
-            List<int> enemiesToNotAtomize = new()
-            {
+            List<int> enemiesToNotAtomize =
+            [
                 NPCID.TargetDummy,
                 NPCID.CultistDevote,
                 NPCID.CultistArcherBlue,
@@ -494,7 +494,7 @@ namespace InfernumMode.Content.Projectiles
                 NPCID.DD2EterniaCrystal,
                 ModContent.NPCType<Draedon>(),
                 ModContent.NPCType<Eidolist>(),
-            };
+            ];
 
             int killedNPCs = 0;
             for (int i = 0; i < Main.maxNPCs; i++)

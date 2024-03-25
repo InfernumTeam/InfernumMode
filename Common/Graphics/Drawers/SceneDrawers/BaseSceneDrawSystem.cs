@@ -34,7 +34,7 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers
             if (!DrawerManager.SceneDrawers.Contains(this))
                 DrawerManager.SceneDrawers.Add(this);
 
-            Objects = new();
+            Objects = [];
 
             if (Main.netMode == NetmodeID.Server)
                 return;

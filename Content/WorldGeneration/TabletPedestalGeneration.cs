@@ -21,7 +21,7 @@ namespace InfernumMode.Content.WorldGeneration
                 if (WorldGen.genRand.NextBool())
                     placementPosition.X = Main.maxTilesX - placementPosition.X;
 
-                Tile t = CalamityUtils.ParanoidTileRetrieval(placementPosition.X, placementPosition.Y);
+                Tile t = Framing.GetTileSafely(placementPosition.X, placementPosition.Y);
                 if (t.TileType != TileID.Grass)
                     continue;
 

@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BossIntroScreens
 {
     public static class IntroScreenManager
     {
-        internal static List<BaseIntroScreen> IntroScreens = new();
+        internal static List<BaseIntroScreen> IntroScreens = [];
 
         public static bool ScreenIsObstructed
         {

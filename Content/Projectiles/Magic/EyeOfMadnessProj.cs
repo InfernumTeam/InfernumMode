@@ -82,7 +82,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             Owner.heldProj = Projectile.whoAmI;
             Owner.itemTime = 2;
             Owner.itemAnimation = 2;
-            Owner.itemRotation = CalamityUtils.WrapAngle90Degrees((Projectile.direction * Projectile.velocity).ToRotation());
+            Owner.itemRotation = LumUtils.WrapAngle90Degrees((Projectile.direction * Projectile.velocity).ToRotation());
         }
 
         public override bool PreDraw(ref Color lightColor)

@@ -61,11 +61,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public const float Phase3LifeRatio = 0.3f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public static int FireCrystalDamage => 185;
 
@@ -1677,12 +1677,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             }
 LeaveLoop:
 
-            List<GolemAttackState> possibleAttacks = new()
-            {
+            List<GolemAttackState> possibleAttacks =
+            [
                 GolemAttackState.FloorFire,
                 GolemAttackState.SpikeTrapWaves,
                 GolemAttackState.HeatRay,
-            };
+            ];
 
             if (inRealTemple)
                 possibleAttacks.Add(GolemAttackState.Slingshot);
@@ -1746,13 +1746,13 @@ LeaveLoop:
             // Draw the downward telegraph trail as needed.
             if (npc.Infernum().ExtraAI[22] > 0f)
             {
-                Vector2[] telegraphPoints = new Vector2[4]
-                {
+                Vector2[] telegraphPoints =
+                [
                     npc.Center,
                     npc.Center + Vector2.UnitY * 1000f,
                     npc.Center + Vector2.UnitY * 2000f,
                     npc.Center + Vector2.UnitY * 4000f
-                };
+                ];
                 GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, -Main.screenPosition, 51);
             }
@@ -1860,7 +1860,7 @@ LeaveLoop:
                     // If the player is fighting Golem outside of the temple it is likely that they have already beaten him anyways.
                     if (inRealTemple && !BossRushEvent.BossRushActive)
                     {
-                        Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+                        Tile tile = Framing.GetTileSafely(i, j);
                         if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                         {
                             if (tile.TileType != TileID.LihzahrdBrick && tile.TileType != TileID.LihzahrdAltar && tile.TileType != TileID.Traps && tile.TileType != TileID.WoodenSpikes && tile.TileType != arenaTileType)

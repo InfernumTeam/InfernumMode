@@ -109,14 +109,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Draw the light ray line. This is done to indicate that the laser rays are from the light being "split".
             Vector2 telegraphStart = Projectile.Center;
             Vector2 telegraphEnd = Projectile.Center - Vector2.UnitY * 1000f;
-            Vector2[] telegraphPoints = new Vector2[]
-            {
+            Vector2[] telegraphPoints =
+            [
                 telegraphStart,
                 Vector2.Lerp(telegraphStart, telegraphEnd, 0.25f),
                 Vector2.Lerp(telegraphStart, telegraphEnd, 0.5f),
                 Vector2.Lerp(telegraphStart, telegraphEnd, 0.75f),
                 telegraphEnd
-            };
+            ];
             LightRayDrawer ??= new(LightRayWidthFunction, LightRayColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
             LightRayDrawer.Draw(telegraphPoints, -Main.screenPosition, 40);
 

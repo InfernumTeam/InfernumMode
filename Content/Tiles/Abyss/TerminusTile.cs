@@ -30,7 +30,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileObjectData.newTile.Height = Height;
             TileObjectData.newTile.Origin = new Point16(1, 1);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = [16, 16];
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
@@ -49,14 +49,14 @@ namespace InfernumMode.Content.Tiles.Abyss
             if (TerminusIsNotAttached)
                 return;
 
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             Vector2 terminusSpawnPosition = new Point(i, j).ToWorldCoordinates() - new Vector2(t.TileFrameX, t.TileFrameY) + Vector2.UnitX * 32f;
             Utilities.NewProjectileBetter(terminusSpawnPosition, Vector2.Zero, ModContent.ProjectileType<TerminusAnimationProj>(), 0, 0f);
         }
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
 
             // Due to tile layering fuckery the Terminus should only be drawn by the final subtile.
             // Doing it earlier could result in incoming tiles having weird layering artifacts, which would be undesirable.

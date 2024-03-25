@@ -9,7 +9,7 @@ namespace InfernumMode.Content.BossIntroScreens.InfernumScreens
 {
     public class CrabulonIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => Color.Lerp(Color.Cyan, Color.DeepSkyBlue, CalamityUtils.Convert01To010(AnimationCompletion));
+        public override TextColorData TextColor => Color.Lerp(Color.Cyan, Color.DeepSkyBlue, LumUtils.Convert01To010(AnimationCompletion));
 
         public override bool TextShouldBeCentered => true;
 

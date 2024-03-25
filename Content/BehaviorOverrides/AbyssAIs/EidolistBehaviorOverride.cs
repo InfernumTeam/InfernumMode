@@ -260,7 +260,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public static void DoBehavior_LightningOrbs(NPC npc, Player target, float groupIndex, int totalEidolists, ref float attackTimer, ref float teleportFadeInterpolant)
         {
             int initalFadeOutTime = 30;
-            List<NPC> eidolists = Main.npc.Take(Main.maxNPCs).Where(n => n.type == npc.type && n.active).OrderBy(n => n.Infernum().ExtraAI[5]).ToList();
+            List<NPC> eidolists = [.. Main.npc.Take(Main.maxNPCs).Where(n => n.type == npc.type && n.active).OrderBy(n => n.Infernum().ExtraAI[5])];
             ref float teleportCounter = ref npc.Infernum().ExtraAI[0];
 
             // Do a teleport fadeout.

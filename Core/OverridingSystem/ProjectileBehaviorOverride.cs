@@ -8,11 +8,11 @@ namespace InfernumMode.Core.OverridingSystem
 {
     public abstract class ProjectileBehaviorOverride
     {
-        internal static Dictionary<int, ProjectileBehaviorOverride> BehaviorOverrides = new();
+        internal static Dictionary<int, ProjectileBehaviorOverride> BehaviorOverrides = [];
 
         internal static void LoadAll()
         {
-            BehaviorOverrides = new();
+            BehaviorOverrides = [];
 
             static void getMethodBasedOnContext( ProjectileBehaviorOverride instance, ProjectileOverrideContext context)
             {

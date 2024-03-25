@@ -211,7 +211,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center), 0.4f).SafeNormalize(Vector2.UnitY) * moveSpeed;
 
                 else if (!npc.WithinRange(target.Center, 200f))
-                    npc.velocity = npc.velocity.RotatedBy(CalamityUtils.AperiodicSin(TwoPi * attackTimer / 100f) * 0.1f);
+                    npc.velocity = npc.velocity.RotatedBy(LumUtils.AperiodicSin(TwoPi * attackTimer / 100f) * 0.1f);
                 return;
             }
 

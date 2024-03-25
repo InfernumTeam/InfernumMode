@@ -1,9 +1,10 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -119,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 TelegraphDrawer ??= new PrimitiveTrailCopy(TelegraphWidthFunction, TelegraphColorFunction, null, true, InfernumEffectsRegistry.SideStreakVertexShader);
 
                 InfernumEffectsRegistry.SideStreakVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
-                float opacityScalar = Sin(CalamityUtils.SineInOutEasing(Timer / (TelegraphTime + 10f), 0) * PI) * 3f;
+                float opacityScalar = Sin(EasingCurves.Sine.InOutFunction(Timer / (TelegraphTime + 10f)) * PI) * 3f;
                 InfernumEffectsRegistry.SideStreakVertexShader.UseOpacity(0.5f * opacityScalar);
 
                 Vector2 startT = Projectile.Center;

@@ -93,7 +93,6 @@ namespace InfernumMode
             CalMusicModIsActive = ModLoader.TryGetMod("CalamityModMusic", out CalamityModMusic);
 
             BalancingChangesManager.Load();
-            Main.RunOnMainThread(HookManager.Load);
 
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
@@ -172,7 +171,6 @@ namespace InfernumMode
                 ILChanges.DungeonBaseXLimitOverride = null;
 
             BalancingChangesManager.Unload();
-            HookManager.Unload();
 
             Main.QueueMainThreadAction(() =>
             {

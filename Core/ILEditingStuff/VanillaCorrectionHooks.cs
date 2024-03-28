@@ -27,6 +27,7 @@ using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -42,6 +43,8 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.Events;
+using Terraria.GameContent.UI.States;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -51,7 +54,7 @@ using InfernumBalancingManager = InfernumMode.Core.Balancing.BalancingChangesMan
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public class ReplaceGoresHook : IHookEdit
+    public class ReplaceGoresHook : IExistingDetourProvider
     {
         internal static List<int> InvalidGoreIDs =
         [
@@ -173,7 +176,11 @@ namespace InfernumMode.Core.ILEditingStuff
             [576] = InfernumMode.Instance.Find<ModGore>("DukeFishronGore4").Type,
         };
 
-        internal static int AlterGores(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        void IExistingDetourProvider.Subscribe() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += AlterGores;
+
+        void IExistingDetourProvider.Unsubscribe() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float -= AlterGores;
+
+        private static int AlterGores(On_Gore.orig_NewGore_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             // Do not spawn gores on the server.
             if (Main.netMode == NetmodeID.Server || Main.gamePaused)
@@ -198,15 +205,15 @@ namespace InfernumMode.Core.ILEditingStuff
 
             return orig(source, Position, Velocity, Type, Scale);
         }
-
-        public void Load() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float += AlterGores;
-
-        public void Unload() => On_Gore.NewGore_IEntitySource_Vector2_Vector2_int_float -= AlterGores;
     }
 
-    public class MoveDraedonHellLabHook : IHookEdit
+    public class MoveDraedonHellLabHook : ILEditProvider
     {
-        internal static void SlideOverHellLab(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => PlaceHellLab += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => PlaceHellLab -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.EmitDelegate(() =>
@@ -253,15 +260,15 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load() => PlaceHellLab += SlideOverHellLab;
-
-        public void Unload() => PlaceHellLab -= SlideOverHellLab;
     }
 
-    public class MakeSulphSeaCavesBiggerHook : IHookEdit
+    public class MakeCheeseSulphSeaCavesBiggerHook : ILEditProvider
     {
-        internal static void MakeCavesBigger1(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => GenerateSulphSeaCheeseCaves += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => GenerateSulphSeaCheeseCaves -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -283,8 +290,15 @@ namespace InfernumMode.Core.ILEditingStuff
                 cursor.EmitDelegate(() => SulphurousSea.CheeseCaveMagnification * 0.3f);
             }
         }
+    }
 
-        internal static void MakeCavesBigger2(ILContext il)
+    public class MakeSpaghettiSulphSeaCavesBiggerHook : ILEditProvider
+    {
+        public override void Subscribe(ManagedILEdit edit) => GenerateSulphSeaSpaghettiCaves += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => GenerateSulphSeaSpaghettiCaves -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -307,21 +321,9 @@ namespace InfernumMode.Core.ILEditingStuff
                 cursor.EmitDelegate(() => SulphurousSea.SpaghettiCaveMagnification * 0.6f);
             }
         }
-
-        public void Load()
-        {
-            GenerateSulphSeaCheeseCaves += MakeCavesBigger1;
-            GenerateSulphSeaSpaghettiCaves += MakeCavesBigger2;
-        }
-
-        public void Unload()
-        {
-            GenerateSulphSeaCheeseCaves -= MakeCavesBigger1;
-            GenerateSulphSeaSpaghettiCaves -= MakeCavesBigger2;
-        }
     }
 
-    public class ManipulateSunPositionHook : IHookEdit
+    public class ManipulateSunPositionHook : ILEditProvider, IExistingDetourProvider
     {
         public static Vector2 SunPosition
         {
@@ -341,45 +343,11 @@ namespace InfernumMode.Core.ILEditingStuff
             set;
         }
 
-        internal void ForceDrawBlack(On_Main.orig_DrawBlack orig, Main self, bool force)
-        {
-            orig(self, force || LostColosseum.WasInColosseumLastFrame || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
-        }
+        public override void Subscribe(ManagedILEdit edit) => IL_Main.DoDraw += edit.SubscriptionWrapper;
 
-        internal void ChangeDrawBlackLimit(ILContext il)
-        {
-            ILCursor c = new(il);
-            if (!c.TryGotoNext(x => x.MatchStloc(13)))
-                return;
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Main.DoDraw -= edit.SubscriptionWrapper;
 
-            c.Emit(OpCodes.Ldloc, 3);
-            c.EmitDelegate<Func<float, float>>(lightThreshold =>
-            {
-                if (CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f)
-                    return 0.00001f;
-
-                if (SubworldSystem.IsActive<LostColosseum>())
-                    return 0.125f;
-
-                return lightThreshold;
-            });
-            c.Emit(OpCodes.Stloc, 3);
-        }
-
-        private void GetRidOfPeskyBlackSpaceFade(On_Main.orig_UpdateAtmosphereTransparencyToSkyColor orig)
-        {
-            Color oldSkyColor = Main.ColorOfTheSkies;
-            orig();
-
-            if (SubworldSystem.IsActive<LostColosseum>())
-            {
-                Main.atmo = 1f;
-                Main.sunModY = 300;
-                Main.ColorOfTheSkies = oldSkyColor;
-            }
-        }
-
-        private void ChangeBackgroundColorSpecifically(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor c = new(il);
 
@@ -402,6 +370,38 @@ namespace InfernumMode.Core.ILEditingStuff
                 return texture;
             });
             c.Emit(OpCodes.Stloc, assetIndex);
+        }
+
+        void IExistingDetourProvider.Subscribe()
+        {
+            On_Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
+            On_Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
+            On_Main.DrawBlack += ForceDrawBlack;
+        }
+
+        void IExistingDetourProvider.Unsubscribe()
+        {
+            On_Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
+            On_Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+            On_Main.DrawBlack -= ForceDrawBlack;
+        }
+
+        internal void ForceDrawBlack(On_Main.orig_DrawBlack orig, Main self, bool force)
+        {
+            orig(self, force || LostColosseum.WasInColosseumLastFrame || CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f);
+        }
+
+        private void GetRidOfPeskyBlackSpaceFade(On_Main.orig_UpdateAtmosphereTransparencyToSkyColor orig)
+        {
+            Color oldSkyColor = Main.ColorOfTheSkies;
+            orig();
+
+            if (SubworldSystem.IsActive<LostColosseum>())
+            {
+                Main.atmo = 1f;
+                Main.sunModY = 300;
+                Main.ColorOfTheSkies = oldSkyColor;
+            }
         }
 
         private void DrawStrongerSunInColosseum(On_Main.orig_DrawSunAndMoon orig, Main self, Main.SceneArea sceneArea, Color moonColor, Color sunColor, float tempMushroomInfluence)
@@ -509,56 +509,60 @@ namespace InfernumMode.Core.ILEditingStuff
             sceneArea.bgTopY -= 180;
             orig(self, sceneArea, moonColor, sunColor, tempMushroomInfluence);
         }
+    }
 
-        public void Load()
-        {
-            Main.QueueMainThreadAction(() =>
-            {
-                On_Main.DrawBlack += ForceDrawBlack;
-                IL_Main.DrawBlack += ChangeDrawBlackLimit;
-                On_Main.UpdateAtmosphereTransparencyToSkyColor += GetRidOfPeskyBlackSpaceFade;
-                IL_Main.DoDraw += ChangeBackgroundColorSpecifically;
-                On_Main.DrawSunAndMoon += DrawStrongerSunInColosseum;
-            });
-        }
+    public class ChangeDrawBlackLimitHook : ILEditProvider
+    {
+        public override void Subscribe(ManagedILEdit edit) => IL_Main.DrawBlack += edit.SubscriptionWrapper;
 
-        public void Unload()
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Main.DrawBlack -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
-            Main.QueueMainThreadAction(() =>
+            ILCursor c = new(il);
+            if (!c.TryGotoNext(x => x.MatchStloc(13)))
+                return;
+
+            c.Emit(OpCodes.Ldloc, 3);
+            c.EmitDelegate<Func<float, float>>(lightThreshold =>
             {
-                On_Main.DrawBlack -= ForceDrawBlack;
-                IL_Main.DrawBlack -= ChangeDrawBlackLimit;
-                On_Main.UpdateAtmosphereTransparencyToSkyColor -= GetRidOfPeskyBlackSpaceFade;
-                IL_Main.DoDraw -= ChangeBackgroundColorSpecifically;
-                On_Main.DrawSunAndMoon -= DrawStrongerSunInColosseum;
+                if (CeaselessDimensionDrawSystem.BackgroundChangeInterpolant > 0f)
+                    return 0.00001f;
+
+                if (SubworldSystem.IsActive<LostColosseum>())
+                    return 0.125f;
+
+                return lightThreshold;
             });
+            c.Emit(OpCodes.Stloc, 3);
         }
     }
 
-    public class GetRidOfOnHitDebuffsHook : IHookEdit
+    public class GetRidOfYharonOnHitDebuffsHook : ILEditProvider
     {
-        internal static void EarlyReturn(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.Emit(OpCodes.Ret);
-        }
+        public override void Subscribe(ManagedILEdit edit) => YharonOnHitPlayer += edit.SubscriptionWrapper;
 
-        public void Load()
-        {
-            YharonOnHitPlayer += EarlyReturn;
-            SCalOnHitPlayer += EarlyReturn;
-        }
+        public override void Unsubscribe(ManagedILEdit edit) => YharonOnHitPlayer -= edit.SubscriptionWrapper;
 
-        public void Unload()
-        {
-            YharonOnHitPlayer -= EarlyReturn;
-            SCalOnHitPlayer -= EarlyReturn;
-        }
+        public override void PerformEdit(ILContext il, ManagedILEdit edit) => HookHelper.EarlyReturnEdit(il, edit);
     }
 
-    public class ChangeBossRushTiersHook : IHookEdit
+    public class GetRidOfSCalOnHitDebuffsHook : ILEditProvider
     {
-        internal void AdjustBossRushTiers(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => SCalOnHitPlayer += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => SCalOnHitPlayer -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit) => HookHelper.EarlyReturnEdit(il, edit);
+    }
+
+    public class ChangeBossRushTiersHook : ILEditProvider
+    {
+        public override void Subscribe(ManagedILEdit edit) => BossRushTier += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => BossRushTier -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -580,15 +584,15 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load() => BossRushTier += AdjustBossRushTiers;
-
-        public void Unload() => BossRushTier -= AdjustBossRushTiers;
     }
 
-    public class ChangeExoMechBackgroundColorHook : IHookEdit
+    public class ChangeExoMechBackgroundColorHook : ILEditProvider
     {
-        internal void MakeExoMechBgMoreCyan(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => ExoMechTileTileColor += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => ExoMechTileTileColor -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.GotoNext(MoveType.Before, i => i.MatchRet());
@@ -602,15 +606,15 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load() => ExoMechTileTileColor += MakeExoMechBgMoreCyan;
-
-        public void Unload() => ExoMechTileTileColor -= MakeExoMechBgMoreCyan;
     }
 
-    public class DisableExoMechsSkyInBRHook : IHookEdit
+    public class DisableExoMechsSkyInBRHook : ILEditProvider
     {
-        internal void DisableSky(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => ExoMechsSkyIsActive += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => ExoMechsSkyIsActive -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -627,28 +631,24 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load() => ExoMechsSkyIsActive += DisableSky;
-
-        public void Unload() => ExoMechsSkyIsActive -= DisableSky;
     }
 
-    public class GetRidOfProvidenceLootBoxHook : IHookEdit
+    public class GetRidOfProvidenceLootBoxHook : ILEditProvider
     {
-        internal static void EarlyReturn(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.Emit(OpCodes.Ret);
-        }
+        public override void Subscribe(ManagedILEdit edit) => SpawnProvLootBox += edit.SubscriptionWrapper;
 
-        public void Load() => SpawnProvLootBox += EarlyReturn;
+        public override void Unsubscribe(ManagedILEdit edit) => SpawnProvLootBox -= edit.SubscriptionWrapper;
 
-        public void Unload() => SpawnProvLootBox -= EarlyReturn;
+        public override void PerformEdit(ILContext il, ManagedILEdit edit) => HookHelper.EarlyReturnEdit(il, edit);
     }
 
-    public class AddWarningAboutNonExpertOnWorldSelectionHook : IHookEdit
+    public class AddWarningAboutNonExpertOnWorldSelectionHook : ILEditProvider
     {
-        internal static void SwapDescriptionKeys(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_UIWorldCreation.AddWorldDifficultyOptions += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_UIWorldCreation.AddWorldDifficultyOptions -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             var c = new ILCursor(il);
 
@@ -666,15 +666,15 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Pop);
             c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionMaster");
         }
-
-        public void Load() => Terraria.GameContent.UI.States.IL_UIWorldCreation.AddWorldDifficultyOptions += SwapDescriptionKeys;
-
-        public void Unload() => Terraria.GameContent.UI.States.IL_UIWorldCreation.AddWorldDifficultyOptions -= SwapDescriptionKeys;
     }
 
-    public class ReducePlayerDashDelay : IHookEdit
+    public class ReducePlayerDashDelay : ILEditProvider
     {
-        internal static void ReduceDashDelays(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => DashMovement += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => DashMovement -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor c = new(il);
             c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalDashCooldown));
@@ -689,15 +689,15 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Pop);
             c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
         }
-
-        public void Load() => DashMovement += ReduceDashDelays;
-
-        public void Unload() => DashMovement -= ReduceDashDelays;
     }
 
-    public class AureusPlatformWalkingHook : IHookEdit
+    public class AureusPlatformWalkingHook : IExistingDetourProvider
     {
-        internal static bool LetAureusWalkOnPlatforms(On_NPC.orig_Collision_DecideFallThroughPlatforms orig, NPC npc)
+        void IExistingDetourProvider.Subscribe() => On_NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
+
+        void IExistingDetourProvider.Unsubscribe() => On_NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
+
+        private static bool LetAureusWalkOnPlatforms(On_NPC.orig_Collision_DecideFallThroughPlatforms orig, NPC npc)
         {
             if (npc.type == ModContent.NPCType<AstrumAureus>())
             {
@@ -707,52 +707,56 @@ namespace InfernumMode.Core.ILEditingStuff
             }
             return orig(npc);
         }
-
-        public void Load() => On_NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
-
-        public void Unload() => On_NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
     }
 
-    public class FishronSkyDistanceLeniancyHook : IHookEdit
+    public class FishronSkyDistanceLeniancyHook : ILEditProvider
     {
-        internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_ScreenDarkness.Update += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_ScreenDarkness.Update -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.GotoNext(i => i.MatchLdcR4(3000f));
             cursor.Remove();
             cursor.Emit(OpCodes.Ldc_R4, 6000f);
         }
-
-        public void Load() => Terraria.GameContent.Events.IL_ScreenDarkness.Update += AdjustFishronScreenDistanceRequirement;
-
-        public void Unload() => Terraria.GameContent.Events.IL_ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
     }
 
-    public class EyeOfCthulhuSpawnHPMinChangeHook : IHookEdit
+    public class EyeOfCthulhuSpawnHPMinChangeHook : ILEditProvider
     {
-        internal static void ChangeEoCHPRequirements(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_Main.UpdateTime_StartNight += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Main.UpdateTime_StartNight -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.GotoNext(i => i.MatchLdcI4(200));
             cursor.Emit(OpCodes.Pop);
             cursor.Emit(OpCodes.Ldc_I4, 400);
         }
-
-        public void Load() => IL_Main.UpdateTime_StartNight += ChangeEoCHPRequirements;
-
-        public void Unload() => IL_Main.UpdateTime_StartNight -= ChangeEoCHPRequirements;
     }
 
-    public class KingSlimeSpawnHPMinChangeHook : IHookEdit
+    public class KingSlimeSpawnHPMinChangeHook : ILEditProvider, IExistingDetourProvider
     {
         private static bool spawningKingSlimeNaturally;
 
-        internal static void ChangeKSHPRequirements(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_NPC.SpawnNPC += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_NPC.SpawnNPC -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.GotoNext(i => i.MatchCall<NPC>("SpawnOnPlayer"));
             cursor.EmitDelegate<Action>(() => spawningKingSlimeNaturally = true);
         }
+
+        void IExistingDetourProvider.Subscribe() => On_NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
+
+        void IExistingDetourProvider.Unsubscribe() => On_NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
 
         private void OptionallyDisableKSSpawn(On_NPC.orig_SpawnOnPlayer orig, int plr, int Type)
         {
@@ -764,23 +768,15 @@ namespace InfernumMode.Core.ILEditingStuff
             }
             orig(plr, Type);
         }
-
-        public void Load()
-        {
-            IL_NPC.SpawnNPC += ChangeKSHPRequirements;
-            On_NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
-        }
-
-        public void Unload()
-        {
-            IL_NPC.SpawnNPC -= ChangeKSHPRequirements;
-            On_NPC.SpawnOnPlayer -= OptionallyDisableKSSpawn;
-        }
     }
 
-    public class UseCustomShineParticlesForInfernumParticlesHook : IHookEdit
+    public class UseCustomShineParticlesForInfernumParticlesHook : IExistingDetourProvider
     {
-        internal static void EmitFireParticles(On_TileDrawing.orig_DrawTiles_EmitParticles orig, TileDrawing self, int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
+        void IExistingDetourProvider.Subscribe() => On_TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;
+
+        void IExistingDetourProvider.Unsubscribe() => On_TileDrawing.DrawTiles_EmitParticles -= EmitFireParticles;
+
+        private static void EmitFireParticles(On_TileDrawing.orig_DrawTiles_EmitParticles orig, TileDrawing self, int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
         {
             ModTile mt = TileLoader.GetTile(tileCache.TileType);
             if ((tileLight.R > 20 || tileLight.B > 20 || tileLight.G > 20) && Main.rand.NextBool(12) && mt is not null and BaseInfernumBossRelic)
@@ -797,24 +793,22 @@ namespace InfernumMode.Core.ILEditingStuff
             if (tileCache.TileType is not TileID.LeafBlock and not TileID.LivingMahoganyLeaves)
                 orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
         }
-
-        public void Load() => On_TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;
-
-        public void Unload() => On_TileDrawing.DrawTiles_EmitParticles -= EmitFireParticles;
     }
 
-    public class ReplaceAbyssWorldgen : IHookEdit
+    public class ReplaceAbyssWorldgen : ICustomDetourProvider
     {
+        void ICustomDetourProvider.ModifyMethods() => HookHelper.ModifyMethodWithDetour(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), ChangeAbyssGen);
+
         internal static void ChangeAbyssGen(Action orig) => CustomAbyss.Generate();
-
-        public void Load() => GenerateAbyss += ChangeAbyssGen;
-
-        public void Unload() => GenerateAbyss -= ChangeAbyssGen;
     }
 
-    public class GetRidOfDesertNuisancesHook : IHookEdit
+    public class GetRidOfDesertNuisancesHook : ILEditProvider
     {
-        internal static void GetRidOfDesertNuisances(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => DesertScourgeItemUseItem += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => DesertScourgeItemUseItem -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
@@ -847,29 +841,34 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load() => DesertScourgeItemUseItem += GetRidOfDesertNuisances;
-
-        public void Unload() => DesertScourgeItemUseItem -= GetRidOfDesertNuisances;
     }
 
-    public class LetAresHitPlayersHook : IHookEdit
+    public class LetAresHitPlayersHook : ILEditProvider
     {
-        internal static void LetAresHitPlayer(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => AresBodyCanHitPlayer += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => AresBodyCanHitPlayer -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load() => AresBodyCanHitPlayer += LetAresHitPlayer;
-
-        public void Unload() => AresBodyCanHitPlayer -= LetAresHitPlayer;
     }
 
-    public class AdjustAbyssDefinitionHook : IHookEdit
+    public class AdjustAbyssDefinitionHook : ICustomDetourProvider
     {
-        internal bool ChangeAbyssRequirement(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords)
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(typeof(AbyssLayer1Biome).GetMethod("MeetsBaseAbyssRequirement", Utilities.UniversalBindingFlags), ChangeAbyssRequirement);
+            HookHelper.ModifyMethodWithDetour(typeof(AbyssLayer1Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), ChangeLayer1Requirement);
+            HookHelper.ModifyMethodWithDetour(typeof(AbyssLayer2Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), ChangeLayer2Requirement);
+            HookHelper.ModifyMethodWithDetour(typeof(AbyssLayer3Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), ChangeLayer3Requirement);
+            HookHelper.ModifyMethodWithDetour(typeof(AbyssLayer4Biome).GetMethod("IsBiomeActive", Utilities.UniversalBindingFlags), ChangeLayer4Requirement);
+
+        }
+        private bool ChangeAbyssRequirement(AbyssRequirementDelegate orig, Player player, out int playerYTileCoords)
         {
             Point point = player.Center.ToTileCoordinates();
             playerYTileCoords = point.Y;
@@ -891,7 +890,7 @@ namespace InfernumMode.Core.ILEditingStuff
             return !player.lavaWet && !player.honeyWet && verticalCheck && horizontalCheck;
         }
 
-        internal bool ChangeLayer1Requirement(Func<AbyssLayer1Biome, Player, bool> orig, AbyssLayer1Biome self, Player player)
+        private bool ChangeLayer1Requirement(Func<AbyssLayer1Biome, Player, bool> orig, AbyssLayer1Biome self, Player player)
         {
             if (WorldSaveSystem.InPostAEWUpdateWorld)
             {
@@ -902,7 +901,7 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(self, player);
         }
 
-        internal bool ChangeLayer2Requirement(Func<AbyssLayer2Biome, Player, bool> orig, AbyssLayer2Biome self, Player player)
+        private bool ChangeLayer2Requirement(Func<AbyssLayer2Biome, Player, bool> orig, AbyssLayer2Biome self, Player player)
         {
             if (WorldSaveSystem.InPostAEWUpdateWorld)
             {
@@ -913,7 +912,7 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(self, player);
         }
 
-        internal bool ChangeLayer3Requirement(Func<AbyssLayer3Biome, Player, bool> orig, AbyssLayer3Biome self, Player player)
+        private bool ChangeLayer3Requirement(Func<AbyssLayer3Biome, Player, bool> orig, AbyssLayer3Biome self, Player player)
         {
             if (WorldSaveSystem.InPostAEWUpdateWorld)
             {
@@ -924,7 +923,7 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(self, player);
         }
 
-        internal bool ChangeLayer4Requirement(Func<AbyssLayer4Biome, Player, bool> orig, AbyssLayer4Biome self, Player player)
+        private bool ChangeLayer4Requirement(Func<AbyssLayer4Biome, Player, bool> orig, AbyssLayer4Biome self, Player player)
         {
             if (WorldSaveSystem.InPostAEWUpdateWorld)
             {
@@ -934,29 +933,15 @@ namespace InfernumMode.Core.ILEditingStuff
 
             return orig(self, player);
         }
-
-        public void Load()
-        {
-            MeetsBaseAbyssRequirement += ChangeAbyssRequirement;
-            IsAbyssLayer1BiomeActive += ChangeLayer1Requirement;
-            IsAbyssLayer2BiomeActive += ChangeLayer2Requirement;
-            IsAbyssLayer3BiomeActive += ChangeLayer3Requirement;
-            IsAbyssLayer4BiomeActive += ChangeLayer4Requirement;
-        }
-
-        public void Unload()
-        {
-            MeetsBaseAbyssRequirement -= ChangeAbyssRequirement;
-            IsAbyssLayer1BiomeActive -= ChangeLayer1Requirement;
-            IsAbyssLayer2BiomeActive -= ChangeLayer2Requirement;
-            IsAbyssLayer3BiomeActive -= ChangeLayer3Requirement;
-            IsAbyssLayer4BiomeActive -= ChangeLayer4Requirement;
-        }
     }
 
-    public class MakeMapGlitchInLayer4AbyssHook : IHookEdit
+    public class MakeMapGlitchInLayer4AbyssHook : ILEditProvider
     {
-        internal void CreateMapGlitchEffect(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_Main.DrawMap += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Main.DrawMap -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             MethodInfo colorFloatMultiply = typeof(Color).GetMethod("op_Multiply", [typeof(Color), typeof(float)]);
@@ -995,15 +980,15 @@ namespace InfernumMode.Core.ILEditingStuff
                 return Color.Lerp(c, Color.Black, obscurityInterpolant);
             });
         }
-
-        public void Load() => IL_Main.DrawMap += CreateMapGlitchEffect;
-
-        public void Unload() => IL_Main.DrawMap -= CreateMapGlitchEffect;
     }
 
-    public class PreventAbyssDungeonInteractionsHook : IHookEdit
+    public class PreventAbyssDungeonInteractionsHook : ILEditProvider
     {
-        internal static void FixAbyssDungeonInteractions(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_WorldGen.DungeonHalls += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_WorldGen.DungeonHalls -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             // Prevent the Dungeon's halls from getting anywhere near the Abyss.
             var cursor = new ILCursor(il);
@@ -1024,19 +1009,15 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             cursor.Emit(OpCodes.Stloc, 6);
         }
-
-        public void Load() => IL_WorldGen.DungeonHalls += FixAbyssDungeonInteractions;
-
-        public void Unload() => IL_WorldGen.DungeonHalls -= FixAbyssDungeonInteractions;
     }
 
-    public class ChangeBRSkyColorHook : IHookEdit
+    public class ChangeBRSkyColorHook : ILEditProvider
     {
-        public void Load() => BRSkyColor += ChangeBRSkyColor;
+        public override void Subscribe(ManagedILEdit edit) => BRSkyColor += edit.SubscriptionWrapper;
 
-        public void Unload() => BRSkyColor -= ChangeBRSkyColor;
+        public override void Unsubscribe(ManagedILEdit edit) => BRSkyColor -= edit.SubscriptionWrapper;
 
-        private void ChangeBRSkyColor(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -1049,13 +1030,13 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class ChangeBREyeTextureHook : IHookEdit
+    public class ChangeBREyeTextureHook : ILEditProvider
     {
-        public void Load() => BRXerocEyeTexure += ChangeBREyeTexture;
+        public override void Subscribe(ManagedILEdit edit) => BRXerocEyeTexure += edit.SubscriptionWrapper;
 
-        public void Unload() => BRXerocEyeTexure -= ChangeBREyeTexture;
+        public override void Unsubscribe(ManagedILEdit edit) => BRXerocEyeTexure -= edit.SubscriptionWrapper;
 
-        private void ChangeBREyeTexture(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             // Better to rewrite the entire thing to get it looking just right.
             ILCursor cursor = new(il);
@@ -1093,21 +1074,36 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DeleteStupidScreenShadersHook : IHookEdit
+    public class DeleteStupidScreenShadersHook : IExistingDetourProvider, ICustomDetourProvider
     {
-        public void Load()
+        // This is unideal, should probably add a better method of adding existing and custom detours together, but its not high priority.
+        // This is the only one thats needed it in our excessive hooks, so it's mostly fine.
+        void ILoadable.Load(Mod mod)
         {
-            Terraria.Graphics.Effects.On_FilterManager.CanCapture += NoScreenShader;
-            SCalSkyDraw += ChangeSCalSkyRequirements;
-            CalCloneSkyDraw += ChangeCalCloneSkyRequirements;
-            YharonSkyDraw += ChangeYharonSkyRequirements;
+            Subscribe();
+            ModifyMethods();
         }
 
-        public void Unload()
+        void ILoadable.Unload() { }
+
+        public void Subscribe() => On_FilterManager.CanCapture += NoScreenShader;
+
+        void IExistingDetourProvider.Unsubscribe() => On_FilterManager.CanCapture -= NoScreenShader;
+
+        private bool NoScreenShader(On_FilterManager.orig_CanCapture orig, FilterManager self)
         {
-            Terraria.Graphics.Effects.On_FilterManager.CanCapture -= NoScreenShader;
-            SCalSkyDraw -= ChangeSCalSkyRequirements;
-            CalCloneSkyDraw -= ChangeCalCloneSkyRequirements;
+            if (CosmicBackgroundSystem.EffectIsActive)
+                return false;
+
+            return orig(self);
+        }
+
+        public void ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(typeof(SCalBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), ChangeSCalSkyRequirements);
+            HookHelper.ModifyMethodWithDetour(typeof(CalamitasCloneBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), ChangeCalCloneSkyRequirements);
+            HookHelper.ModifyMethodWithDetour(typeof(YharonBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), ChangeYharonSkyRequirements);
+
         }
 
         private void ChangeSCalSkyRequirements(Action<SCalBackgroundScene, Player, bool> orig, SCalBackgroundScene instance, Player player, bool isActive)
@@ -1126,14 +1122,6 @@ namespace InfernumMode.Core.ILEditingStuff
             orig(instance, player, isActive);
         }
 
-        private bool NoScreenShader(Terraria.Graphics.Effects.On_FilterManager.orig_CanCapture orig, Terraria.Graphics.Effects.FilterManager self)
-        {
-            if (CosmicBackgroundSystem.EffectIsActive)
-                return false;
-
-            return orig(self);
-        }
-
         private void ChangeYharonSkyRequirements(Action<YharonBackgroundScene, Player, bool> orig, YharonBackgroundScene instance, Player player, bool isActive)
         {
             if (InfernumMode.CanUseCustomAIs && !InfernumConfig.Instance.ReducedGraphicsConfig)
@@ -1143,19 +1131,13 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class AdjustASWaterPoisonTimersHook : IHookEdit
+    public class AdjustASWaterPoisonTimersHook : ILEditProvider
     {
-        public void Load()
-        {
-            UpdateBadLifeRegen += AdjustTimers;
-        }
+        public override void Subscribe(ManagedILEdit edit) => UpdateBadLifeRegen += edit.SubscriptionWrapper;
 
-        public void Unload()
-        {
-            UpdateBadLifeRegen -= AdjustTimers;
-        }
+        public override void Unsubscribe(ManagedILEdit edit) => UpdateBadLifeRegen -= edit.SubscriptionWrapper;
 
-        private void AdjustTimers(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.EmitDelegate(() =>
@@ -1207,18 +1189,19 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class MakeDungeonSpawnAtLeftSideHook : IHookEdit
+    public class MakeDungeonSpawnAtLeftSideHook : IExistingDetourProvider
     {
         // This is so hideous but the alternative is IL editing on anonymous methods.
         internal static bool ReturnZeroInRandomness;
 
-        public void Load()
+        void IExistingDetourProvider.Subscribe()
         {
             On_WorldGen.RandomizeMoonState += PrepareDungeonSide;
             On_UnifiedRandom.Next_int += HijackRNG;
+
         }
 
-        public void Unload()
+        void IExistingDetourProvider.Unsubscribe()
         {
             On_WorldGen.RandomizeMoonState -= PrepareDungeonSide;
             On_UnifiedRandom.Next_int -= HijackRNG;
@@ -1246,52 +1229,11 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class AllowTalkingToDraedonHook : IHookEdit
+    public class DrawNightStarsHook : IExistingDetourProvider
     {
-        public void Load()
-        {
-            if (DraetingSimSystem.ShouldEnableDraedonDialog)
-            {
-                DrawCodebreakerUI += ChangeTalkCondition;
-                DisplayCodebreakerCommunicationPanel += DrawCustomDialogPanel;
-            }
-        }
+        void IExistingDetourProvider.Subscribe() => On_Main.DrawStarsInBackground += DrawStarsHook;
 
-        public void Unload()
-        {
-            if (DraetingSimSystem.ShouldEnableDraedonDialog)
-            {
-                DrawCodebreakerUI -= ChangeTalkCondition;
-                DisplayCodebreakerCommunicationPanel -= DrawCustomDialogPanel;
-            }
-        }
-
-        private void ChangeTalkCondition(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.GotoNext(i => i.MatchCallOrCallvirt<TECodebreaker>("get_ReadyToSummonDraedon"));
-
-            for (int i = 0; i < 2; i++)
-                cursor.GotoNext(j => j.MatchStloc(out _));
-
-            cursor.GotoPrev(MoveType.After, i => i.MatchLdcI4(0));
-            cursor.Emit(OpCodes.Pop);
-            cursor.EmitDelegate(() => DownedBossSystem.downedExoMechs.ToInt());
-        }
-
-        private void DrawCustomDialogPanel(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.EmitDelegate(InfernumDraedonDialog.DisplayCommunicationPanel);
-            cursor.Emit(OpCodes.Ret);
-        }
-    }
-
-    public class DrawNightStarsHook : IHookEdit
-    {
-        public void Load() => On_Main.DrawStarsInBackground += DrawStarsHook;
-
-        public void Unload() => On_Main.DrawStarsInBackground -= DrawStarsHook;
+        void IExistingDetourProvider.Unsubscribe() => On_Main.DrawStarsInBackground -= DrawStarsHook;
 
         private void DrawStarsHook(On_Main.orig_DrawStarsInBackground orig, Main self, Main.SceneArea sceneArea, bool artificial)
         {
@@ -1303,11 +1245,11 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class DisableWaterDrawingDuringAEWHook : IHookEdit
+    public class DisableWaterDrawingDuringAEWHook : IExistingDetourProvider
     {
-        public void Load() => On_Main.DrawWaters += DisableWaterDrawing;
+        void IExistingDetourProvider.Subscribe() => On_Main.DrawWaters += DisableWaterDrawing;
 
-        public void Unload() => On_Main.DrawWaters -= DisableWaterDrawing;
+        void IExistingDetourProvider.Unsubscribe() => On_Main.DrawWaters -= DisableWaterDrawing;
 
         private void DisableWaterDrawing(On_Main.orig_DrawWaters orig, Main self, bool isBackground)
         {
@@ -1318,11 +1260,11 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class ChangeCalCloneNameHook : IHookEdit
+    public class ChangeCalCloneNameHook : IExistingDetourProvider
     {
-        public void Load() => On_NPC.DoDeathEvents_DropBossPotionsAndHearts += ChangeName;
+        void IExistingDetourProvider.Subscribe() => On_NPC.DoDeathEvents_DropBossPotionsAndHearts += ChangeName;
 
-        public void Unload() => On_NPC.DoDeathEvents_DropBossPotionsAndHearts -= ChangeName;
+        void IExistingDetourProvider.Unsubscribe() => On_NPC.DoDeathEvents_DropBossPotionsAndHearts -= ChangeName;
 
         private void ChangeName(On_NPC.orig_DoDeathEvents_DropBossPotionsAndHearts orig, NPC npc, ref string typeName)
         {
@@ -1332,13 +1274,13 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class MakeEternityOPHook : IHookEdit
+    public class MakeEternityOPHook : ILEditProvider
     {
-        public void Load() => EternityHexAI += ChangeDamageValues;
+        public override void Subscribe(ManagedILEdit edit) => EternityHexAI += edit.SubscriptionWrapper;
 
-        public void Unload() => EternityHexAI -= ChangeDamageValues;
+        public override void Unsubscribe(ManagedILEdit edit) => EternityHexAI -= edit.SubscriptionWrapper;
 
-        private void ChangeDamageValues(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -1351,16 +1293,16 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class AntiFlashbangSupportHook : IHookEdit
+    public class AntiFlashbangSupportHook : ILEditProvider
     {
-        public void Load() => IL_MoonlordDeathDrama.DrawWhite += IL_MoonlordDeathDrama_DrawWhite;
+        public override void Subscribe(ManagedILEdit edit) => IL_MoonlordDeathDrama.DrawWhite += edit.SubscriptionWrapper;
 
-        public void Unload() => IL_MoonlordDeathDrama.DrawWhite -= IL_MoonlordDeathDrama_DrawWhite;
+        public override void Unsubscribe(ManagedILEdit edit) => IL_MoonlordDeathDrama.DrawWhite -= edit.SubscriptionWrapper;
 
         // Do NOT remove this method, despite its 0 references it is used by IL.
         public static Color DrawColor() => InfernumConfig.Instance.FlashbangOverlays ? Color.White : Color.Black;
 
-        private void IL_MoonlordDeathDrama_DrawWhite(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -1373,7 +1315,7 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class VanillaProjectileImmunitySlotHook : IHookEdit
+    public class VanillaProjectileImmunitySlotHook : IExistingDetourProvider
     {
         public static List<int> VanillaBossProjectiles
         {
@@ -1393,13 +1335,13 @@ namespace InfernumMode.Core.ILEditingStuff
             private set;
         }
 
-        public void Load()
+        void IExistingDetourProvider.Subscribe()
         {
             On_Projectile.Damage += CheckProjectile;
             On_Player.Hurt_PlayerDeathReason_int_int_refHurtInfo_bool_bool_int_bool_float_float_float += HurtDetour;
         }
 
-        public void Unload()
+        void IExistingDetourProvider.Unsubscribe()
         {
             On_Projectile.Damage -= CheckProjectile;
             On_Player.Hurt_PlayerDeathReason_int_int_refHurtInfo_bool_bool_int_bool_float_float_float -= HurtDetour;

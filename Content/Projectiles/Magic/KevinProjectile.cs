@@ -82,11 +82,11 @@ namespace InfernumMode.Content.Projectiles.Magic
         {
             LightningTarget = new(false, (_, _2) =>
             {
-                return new(Main.instance.GraphicsDevice, Kevin.LightningArea, Kevin.LightningArea, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                return new(Main.instance.GraphicsDevice, Kevin.LightningArea, Kevin.LightningArea);
             });
             TemporaryAuxillaryTarget = new(false, (_, _2) =>
             {
-                return new(Main.instance.GraphicsDevice, Kevin.LightningArea, Kevin.LightningArea, true, SurfaceFormat.Color, DepthFormat.Depth24, 8, RenderTargetUsage.DiscardContents);
+                return new(Main.instance.GraphicsDevice, Kevin.LightningArea, Kevin.LightningArea);
             });
             RenderTargetManager.RenderTargetUpdateLoopEvent += UpdateLightningField;
             LightningCoordinateOffset = Vector2.Zero;

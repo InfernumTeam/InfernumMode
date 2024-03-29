@@ -168,6 +168,8 @@ namespace InfernumMode.Core.GlobalInstances
                         npc.netUpdate = true;
                     }
                 }
+                else
+                    npc.Infernum().HasResetHP = true;
 
                 if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
                 {

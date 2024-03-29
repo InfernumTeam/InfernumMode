@@ -8,6 +8,7 @@ using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Common.Graphics.Primitives
 {
+    // This is old and crap, but i do not want to port all 254 references of it.
     public class PrimitiveTrailCopy
     {
         public readonly struct VertexPosition2DColor : IVertexType

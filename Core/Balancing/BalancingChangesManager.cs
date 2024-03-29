@@ -23,6 +23,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Core.Balancing
 {
+    // This ought to be ported, but at this point I've had enough.
     public static class BalancingChangesManager
     {       
         internal static List<NPCBalancingChange> NPCSpecificBalancingChanges;

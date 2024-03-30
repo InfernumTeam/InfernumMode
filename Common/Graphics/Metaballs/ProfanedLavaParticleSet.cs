@@ -50,14 +50,14 @@ namespace InfernumMode.Common.Graphics.Metaballs
         {
             base.PrepareShaderForTarget(layerIndex);
 
-            var metaballShader = InfernumEffectsRegistry.BaseMetaballEdgeShader;
-            Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
+            //var metaballShader = InfernumEffectsRegistry.BaseMetaballEdgeShader;
+            //Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
 
-            metaballShader.TrySetParameter("rtSize", screenSize);
-            metaballShader.TrySetParameter("layerOffset", Vector2.Zero);
-            metaballShader.TrySetParameter("edgeColor", EdgeColor.ToVector4());
-            metaballShader.TrySetParameter("singleFrameScreenOffset", Vector2.Zero);
-            metaballShader.Apply();
+            //metaballShader.TrySetParameter("rtSize", screenSize);
+            //metaballShader.TrySetParameter("layerOffset", Vector2.Zero);
+            //metaballShader.TrySetParameter("edgeColor", EdgeColor.ToVector4());
+            //metaballShader.TrySetParameter("singleFrameScreenOffset", Vector2.Zero);
+            //metaballShader.Apply();
         }
     }
 }

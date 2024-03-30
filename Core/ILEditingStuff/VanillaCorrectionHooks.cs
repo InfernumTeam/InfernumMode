@@ -46,6 +46,7 @@ using Terraria.GameContent.Events;
 using Terraria.GameContent.UI.States;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
+using Terraria.IO;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using static CalamityMod.Events.BossRushEvent;
@@ -1379,6 +1380,30 @@ namespace InfernumMode.Core.ILEditingStuff
             // The hurt detour is ran in orig, so restore it to false after it has ran.
             orig(self);
             ConvertNextNonPVPHurtImmuneSlot = false;
+        }
+    }
+
+    public class NoGFBSeedHook : IExistingDetourProvider
+    {
+        public static readonly HashSet<string> BannedSeeds =
+        [
+            "get fixed boi",
+            "getfixedboi",
+            "don't dig up",
+            "dont dig up",
+            "dontdigup"
+        ];
+
+        void IExistingDetourProvider.Subscribe() => On_WorldFileData.SetSeed += DisallowGFBSeed;
+
+        void IExistingDetourProvider.Unsubscribe() => On_WorldFileData.SetSeed -= DisallowGFBSeed;
+
+        private void DisallowGFBSeed(On_WorldFileData.orig_SetSeed orig, WorldFileData self, string seedText)
+        {
+            if (BannedSeeds.Contains(seedText.ToLower()))
+                seedText = new UnifiedRandom().Next().ToString();
+
+            orig(self, seedText);
         }
     }
 }

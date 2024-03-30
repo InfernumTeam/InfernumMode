@@ -264,12 +264,12 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Create a list of possible attacks.
-            List<AttackTypes> possibleAttacks = new()
-            {
+            List<AttackTypes> possibleAttacks =
+            [
                 AttackTypes.LightningShotgun,
                 AttackTypes.IceBulletHell,
                 AttackTypes.HailChunks
-            };
+            ];
 
             // Do not directly repeat an attack.
             possibleAttacks.Remove((AttackTypes)npc.ai[1]);

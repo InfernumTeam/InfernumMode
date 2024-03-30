@@ -2,6 +2,7 @@
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void OnModLoad()
         {
-            CherryBlossomTarget ??= new(true, RenderTargetManager.CreateScreenSizedTarget);
+            CherryBlossomTarget ??= new(true, ManagedRenderTarget.CreateScreenSizedTarget);
             DyeFindingSystem.FindDyeEvent += FindCherryBlossomDye;
             Main.OnPreDraw += PrepareCherryBlossomTarget;
             On_Main.DrawProjectiles += DrawCherryBlossoms;
@@ -64,7 +65,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
             // Find all petals.
             int petalID = ModContent.ProjectileType<CherryBlossomPetal>();
-            List<Projectile> petals = new();
+            List<Projectile> petals = [];
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile p = Main.projectile[i];

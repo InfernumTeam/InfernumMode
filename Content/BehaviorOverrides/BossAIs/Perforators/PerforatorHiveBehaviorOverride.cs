@@ -67,12 +67,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHive>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         #region AI
         public override void SetDefaults(NPC npc)
@@ -1379,11 +1379,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
             Vector2 leftMouthPosition = npc.Center + new Vector2(-68f, 6f).RotatedBy(-npc.rotation);
             Vector2 rightMouthPosition = npc.Center + new Vector2(48f, -36f).RotatedBy(npc.rotation);
-            Vector2[] mouthPositions = new[]
-            {
+            Vector2[] mouthPositions =
+            [
                 leftMouthPosition,
                 rightMouthPosition
-            };
+            ];
 
             if (attackTimer <= moveDelay)
             {

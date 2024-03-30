@@ -1,8 +1,9 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Common.Easings;
+using Luminance.Core.Cutscenes;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -50,11 +51,11 @@ namespace InfernumMode.Content.Cutscenes
         #region Overrides
         public override int CutsceneLength => InitialWait + ZoomOutLength + ZoomHoldLength;
 
-        public override BlockerSystem.BlockCondition? GetBlockCondition => new(false, true, () => IsActive && Timer < CutsceneLength - ScreenFlashLength / 2);
+        public override BlockerSystem.BlockCondition GetBlockCondition => new(false, true, () => IsActive && Timer < CutsceneLength - ScreenFlashLength / 2);
 
         public override void Load()
         {
-            ScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            ScreenTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
             LabTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Cutscenes/Textures/DraedonLab", AssetRequestMode.ImmediateLoad).Value;
         }
 
@@ -92,7 +93,7 @@ namespace InfernumMode.Content.Cutscenes
             Frame.Y = frame % frameCount * frameHeight;
         }
 
-        public override RenderTarget2D DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen)
+        public override void DrawWorld(SpriteBatch spriteBatch, RenderTarget2D screen)
         {
             // Store the screen before swapping targets.
             ScreenTarget.SwapToRenderTarget();
@@ -116,11 +117,11 @@ namespace InfernumMode.Content.Cutscenes
             float zoomoutRatio = Utils.GetLerpValue(InitialWait, ZoomOutLength + InitialWait, Timer, true);
 
             // The scale of the screen.
-            float screenScale = Lerp(1f, 0.75f, CalamityUtils.SineOutEasing(zoomoutRatio, 1));
+            float screenScale = Lerp(1f, 0.75f, EasingCurves.Sine.OutFunction(zoomoutRatio));
 
             // The scale of the lab.
             Vector2 initialLabScale = labSizeCorrection * (labSize / labScreenSize);
-            Vector2 labScale = initialLabScale * Lerp(1f, 0.745f, CalamityUtils.SineOutEasing(zoomoutRatio, 1));
+            Vector2 labScale = initialLabScale * Lerp(1f, 0.745f, EasingCurves.Sine.OutFunction(zoomoutRatio));
 
             // Bit hacky, but restore the screen scale, make the lab really zoomed out so the window is more than visible and stop drawing
             // draedon if after the flash.
@@ -132,7 +133,7 @@ namespace InfernumMode.Content.Cutscenes
                 labScale = Vector2.One * 100f;
             }
 
-            // Swap to the sscreen target and begin drawing.
+            // Swap to the screen target and begin drawing.
             screen.SwapToRenderTarget();
 
             // Get and prepare a CRT effect shader, to make the screen appear like its on a monitor.
@@ -161,7 +162,7 @@ namespace InfernumMode.Content.Cutscenes
                 // Make him slide into view at around the same time as the zoom starts happening, to give a weird 3D depth illusion thing that looks like hes been there the entire
                 // time, just closer to the screen than his monitor.
                 Vector2 draedonPosition = new(Main.screenWidth * 1.2f, Main.screenHeight * 0.875f);
-                draedonPosition += -Vector2.UnitX * Main.screenWidth * 0.3f * CalamityUtils.SineOutEasing(Utils.GetLerpValue(InitialWait, ZoomOutLength + 110, Timer, true), 1);
+                draedonPosition += -Vector2.UnitX * Main.screenWidth * 0.3f * EasingCurves.Sine.OutFunction(Utils.GetLerpValue(InitialWait, ZoomOutLength + 110, Timer, true));
 
                 // Draw a dropshadow because I think it looks pretty.
                 Vector2 dropshadowPosition = draedonPosition + Vector2.One * 20f;
@@ -172,8 +173,6 @@ namespace InfernumMode.Content.Cutscenes
                 spriteBatch.Draw(draedonGlowmask, draedonPosition, Frame, Color.White, 0f, Frame.Size() * 0.5f, 5.5f, SpriteEffects.None, 0f);
             }
             spriteBatch.End();
-
-            return screen;
         }
 
         public override void PostDraw(SpriteBatch spriteBatch)

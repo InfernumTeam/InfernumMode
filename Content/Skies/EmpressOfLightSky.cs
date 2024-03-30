@@ -78,8 +78,8 @@ namespace InfernumMode.Content.Skies
 
         public bool isActive;
         public float Intensity;
-        public List<Fairy> Fairies = new();
-        public List<Light> Lights = new();
+        public List<Fairy> Fairies = [];
+        public List<Light> Lights = [];
 
         public override void Update(GameTime gameTime)
         {

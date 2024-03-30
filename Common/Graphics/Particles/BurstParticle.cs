@@ -1,5 +1,5 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -49,7 +49,7 @@ namespace InfernumMode.Common.Graphics.Particles
         }
         public override void Update()
         {
-            Opacity = Lerp(1f, 0f, CalamityUtils.SineInOutEasing(LifetimeCompletion, 1));
+            Opacity = Lerp(1f, 0f, EasingCurves.Sine.InOutFunction(LifetimeCompletion));
             DrawScale += Vector2.One * 0.28f;
         }
 

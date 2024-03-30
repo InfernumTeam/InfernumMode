@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                 // Select the projectile variant based on which dungeon wall is behind the nearest player.
                 Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                ushort playerWall = CalamityUtils.ParanoidTileRetrieval((int)(closestPlayer.Center.X / 16f), (int)(closestPlayer.Center.Y / 16f)).WallType;
+                ushort playerWall = Framing.GetTileSafely((int)(closestPlayer.Center.X / 16f), (int)(closestPlayer.Center.Y / 16f)).WallType;
                 bool pinkWall = playerWall is WallID.PinkDungeonUnsafe or WallID.PinkDungeonTileUnsafe or WallID.PinkDungeonSlabUnsafe;
                 bool greenWall = playerWall is WallID.GreenDungeonUnsafe or WallID.GreenDungeonTileUnsafe or WallID.GreenDungeonSlabUnsafe;
                 bool blueWall = playerWall is WallID.BlueDungeonUnsafe or WallID.BlueDungeonTileUnsafe or WallID.BlueDungeonSlabUnsafe;

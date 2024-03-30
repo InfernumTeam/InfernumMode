@@ -95,10 +95,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             InfernumEffectsRegistry.DukeTornadoVertexShader.SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
             Vector2 upwardAscent = Vector2.UnitY * TornadoHeight;
             Vector2 top = Projectile.Bottom - upwardAscent;
-            List<Vector2> drawPoints = new()
-            {
+            List<Vector2> drawPoints =
+            [
                 top
-            };
+            ];
             for (int i = 0; i < 20; i++)
                 drawPoints.Add(Vector2.Lerp(top, Projectile.Bottom, i / 19f) + Vector2.UnitY * 75f);
 

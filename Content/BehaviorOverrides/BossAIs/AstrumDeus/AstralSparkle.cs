@@ -69,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
         {
             Texture2D sparkleTexture = ModContent.Request<Texture2D>(Texture).Value;
 
-            Color sparkleColor = CalamityUtils.MulticolorLerp(ColorSpectrumHue, new Color(237, 93, 83), new Color(255, 164, 94), new Color(109, 242, 196)) * Projectile.Opacity * 0.75f;
+            Color sparkleColor = LumUtils.MulticolorLerp(ColorSpectrumHue, new Color(237, 93, 83), new Color(255, 164, 94), new Color(109, 242, 196)) * Projectile.Opacity * 0.75f;
             sparkleColor.A = 0;
 
             sparkleColor *= Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));

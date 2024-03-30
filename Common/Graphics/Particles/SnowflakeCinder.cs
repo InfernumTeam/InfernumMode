@@ -11,11 +11,11 @@ namespace InfernumMode.Content.Projectiles
         private Color? DrawColor;
 
         private readonly Color[] PossibleColors =
-        {
+        [
             new(221, 254 ,255),
             new(184, 237, 255),
             new(124, 147, 211)
-        };
+        ];
 
         private float RotationPerFrame;
 

@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.Assets.ExtraTextures;
@@ -122,7 +121,7 @@ namespace InfernumMode.Content.Skies
                     drawPosition += (TwoPi * 7f * i / 75f).ToRotationVector2() * MathF.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
                     float rotation = TwoPi * (drawOutwardness + i % 18f / 18f);
                     float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 15f / 15f) * Utils.GetLerpValue(-40f, 130f, nebulaTimer, true);
-                    Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
+                    Color drawColor = LumUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
 
                     Main.spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 }

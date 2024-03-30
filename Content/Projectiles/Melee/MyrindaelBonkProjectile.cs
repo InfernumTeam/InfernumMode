@@ -76,7 +76,7 @@ namespace InfernumMode.Content.Projectiles.Melee
 
             if (LungeProgression < 1f)
             {
-                float velocityPower = Utils.Remap(CalamityUtils.Convert01To010(LungeProgression), 0f, 1f, 0.25f, 1f);
+                float velocityPower = Utils.Remap(LumUtils.Convert01To010(LungeProgression), 0f, 1f, 0.25f, 1f);
                 Vector2 newVelocity = Projectile.velocity * Myrindael.LungeSpeed * (0.09f + 0.91f * velocityPower);
                 Owner.velocity = newVelocity;
                 Owner.Calamity().LungingDown = true;
@@ -136,8 +136,8 @@ namespace InfernumMode.Content.Projectiles.Melee
 
             // Initialize the trail drawer.
             PierceAfterimageDrawer ??= new(PierceWidthFunction, PierceColorFunction, null, true, GameShaders.Misc["CalamityMod:ExobladePierce"]);
-            Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
-            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+            Color mainColor = LumUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+            Color secondaryColor = LumUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
 
             mainColor = Color.Lerp(Color.White, mainColor, 0.4f + 0.6f * Pow(LungeProgression, 0.5f));
             secondaryColor = Color.Lerp(Color.White, secondaryColor, 0.4f + 0.6f * Pow(LungeProgression, 0.5f));

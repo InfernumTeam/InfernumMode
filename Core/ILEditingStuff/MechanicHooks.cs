@@ -16,7 +16,6 @@ using CalamityMod.Systems;
 using CalamityMod.Tiles.Abyss;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.DataStructures;
-using InfernumMode.Common.Graphics;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
@@ -32,6 +31,8 @@ using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
+using Luminance.Core.Graphics;
+using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -45,6 +46,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -52,7 +54,7 @@ using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public class NerfAdrenalineHook : IHookEdit
+    public sealed class NerfAdrenalineHook : ILEditProvider, ICustomDetourProvider
     {
         internal static bool ShouldGetRipperDamageModifiers
         {
@@ -60,9 +62,21 @@ namespace InfernumMode.Core.ILEditingStuff
             set;
         }
 
-        internal static void NerfAdrenalineRates(ILContext context)
+        void ICustomDetourProvider.ModifyMethods()
         {
-            ILCursor c = new(context);
+            HookHelper.ModifyMethodWithDetour(CalGetAdrenalineDamageMethod, NerfAdrenalineHook.NerfAdrenDamageMethod);
+            HookHelper.ModifyMethodWithDetour(CalApplyRippersToDamageMethod, NerfAdrenalineHook.ApplyRippersToDamageDetour);
+            HookHelper.ModifyMethodWithDetour(CalModifyHitNPCWithItemMethod, NerfAdrenalineHook.ModifyHitNPCWithItemDetour);
+            HookHelper.ModifyMethodWithDetour(CalModifyHitNPCWithProjMethod, NerfAdrenalineHook.ModifyHitNPCWithProjDetour);
+        }
+
+        public override void Subscribe(ManagedILEdit edit) => UpdateRippers += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => UpdateRippers -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        {
+            ILCursor c = new(il);
 
             if (!c.TryGotoNext(MoveType.After, i => i.MatchStfld<CalamityPlayer>("adrenaline")))
                 return;
@@ -70,7 +84,10 @@ namespace InfernumMode.Core.ILEditingStuff
                 return;
 
             // This mechanic is ridiculous.
-            c.EmitDelegate(() => InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f);
+            c.EmitDelegate(() =>
+            {
+                return InfernumMode.CanUseCustomAIs && !Main.LocalPlayer.Calamity().adrenalineModeActive ? BalancingChangesManager.AdrenalineChargeTimeFactor : 1f;
+            });
             c.Emit(OpCodes.Div);
         }
 
@@ -138,32 +155,28 @@ namespace InfernumMode.Core.ILEditingStuff
 
             return adrenalineBoost;
         }
-
-        public void Load() => UpdateRippers += NerfAdrenalineRates;
-
-        public void Unload() => UpdateRippers -= NerfAdrenalineRates;
     }
 
-    public class RenameGreatSandSharkHook : IHookEdit
+    public sealed class RenameGreatSandSharkHook : IExistingDetourProvider
     {
-        internal string RenameGSS(On_Lang.orig_GetNPCNameValue orig, int netID)
+        void IExistingDetourProvider.Subscribe() => On_Lang.GetNPCNameValue += RenameGSS;
+
+        void IExistingDetourProvider.Unsubscribe() => On_Lang.GetNPCNameValue -= RenameGSS;
+
+        private string RenameGSS(On_Lang.orig_GetNPCNameValue orig, int netID)
         {
             if (netID == ModContent.NPCType<GreatSandShark>() && InfernumMode.CanUseCustomAIs)
                 return GreatSandSharkBehaviorOverride.NewName.Value;
 
             return orig(netID);
         }
-
-        public void Load() => On_Lang.GetNPCNameValue += RenameGSS;
-
-        public void Unload() => On_Lang.GetNPCNameValue -= RenameGSS;
     }
 
-    public class MakeHooksInteractWithPlatforms : IHookEdit
+    public sealed class MakeHooksInteractWithPlatforms : ILEditProvider
     {
         internal static NPC[] GetPlatforms(Projectile projectile)
         {
-            return Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center)).ToArray();
+            return [.. Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center))];
         }
 
         internal static bool PlatformRequirement(Projectile projectile)
@@ -204,9 +217,13 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public delegate void PlatformCoordsDelegate(Projectile projectile, ref int x, ref int y);
 
-        internal static void AdjustPlatformCollisionChecks(ILContext context)
+        public override void Subscribe(ManagedILEdit edit) => IL_Projectile.AI_007_GrapplingHooks += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Projectile.AI_007_GrapplingHooks -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
-            ILCursor c = new(context);
+            ILCursor c = new(il);
 
             if (!c.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<WorldGen>("GetTileVisualHitbox")))
                 return;
@@ -308,16 +325,17 @@ namespace InfernumMode.Core.ILEditingStuff
             c.Emit(OpCodes.Ldloca, yLocalIndex);
             c.EmitDelegate<PlatformCoordsDelegate>(AdjustHitPlatformCoords);
         }
-
-        public void Load() => IL_Projectile.AI_007_GrapplingHooks += AdjustPlatformCollisionChecks;
-        public void Unload() => IL_Projectile.AI_007_GrapplingHooks -= AdjustPlatformCollisionChecks;
     }
 
-    public class DisableMoonLordBuildingHook : IHookEdit
+    public sealed class DisableMoonLordBuildingHook : ILEditProvider
     {
-        internal static void DisableMoonLordBuilding(ILContext instructionContext)
+        public override void Subscribe(ManagedILEdit edit) => IL_Player.ItemCheck += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Player.ItemCheck -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
-            var c = new ILCursor(instructionContext);
+            var c = new ILCursor(il);
 
             if (!c.TryGotoNext(MoveType.After, i => i.MatchLdcI4(ItemID.SuperAbsorbantSponge)))
                 return;
@@ -328,41 +346,42 @@ namespace InfernumMode.Core.ILEditingStuff
                     Main.LocalPlayer.noBuilding = true;
             });
         }
-
-        public void Load() => IL_Player.ItemCheck += DisableMoonLordBuilding;
-
-        public void Unload() => IL_Player.ItemCheck -= DisableMoonLordBuilding;
     }
 
-    public class ChangeHowMinibossesSpawnInDD2EventHook : IHookEdit
+    public sealed class ChangeHowMinibossesSpawnInDD2EventHook : IExistingDetourProvider
     {
-        internal static int GiveDD2MinibossesPointPriority(On_DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
+        void IExistingDetourProvider.Subscribe() => On_DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
+
+        void IExistingDetourProvider.Unsubscribe() => On_DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
+
+        private static int GiveDD2MinibossesPointPriority(On_DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
             if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && InfernumMode.CanUseCustomAIs)
                 return slainMonsterID == minibossID ? 99999 : 0;
 
             return orig(slainMonsterID);
         }
-
-        public void Load() => On_DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
-
-        public void Unload() => On_DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
     }
 
-    public class AllowSandstormInColosseumHook : IHookEdit
+    public sealed class AllowSandstormInColosseumHook : IExistingDetourProvider
     {
-        internal static bool LetSandParticlesAppear(On_Sandstorm.orig_ShouldSandstormDustPersist orig)
+        void IExistingDetourProvider.Subscribe() => On_Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
+
+        void IExistingDetourProvider.Unsubscribe() => On_Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
+
+        private static bool LetSandParticlesAppear(On_Sandstorm.orig_ShouldSandstormDustPersist orig)
         {
             return orig() || SubworldSystem.IsActive<LostColosseum>() && Sandstorm.Happening;
         }
 
-        public void Load() => On_Sandstorm.ShouldSandstormDustPersist += LetSandParticlesAppear;
-
-        public void Unload() => On_Sandstorm.ShouldSandstormDustPersist -= LetSandParticlesAppear;
     }
 
-    public class DrawVoidBackgroundDuringMLFightHook : IHookEdit
+    public sealed class DrawVoidBackgroundDuringMLFightHook : IExistingDetourProvider
     {
+        void IExistingDetourProvider.Subscribe() => On_Main.DrawSurfaceBG += PrepareShaderForBG;
+
+        void IExistingDetourProvider.Unsubscribe() => On_Main.DrawSurfaceBG -= PrepareShaderForBG;
+
         public static void PrepareShaderForBG(On_Main.orig_DrawSurfaceBG orig, Main self)
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
@@ -402,13 +421,9 @@ namespace InfernumMode.Core.ILEditingStuff
                     Main.backgroundWidth[Main.desertBG[i]] = 1024;
             }
         }
-
-        public void Load() => On_Main.DrawSurfaceBG += PrepareShaderForBG;
-
-        public void Unload() => On_Main.DrawSurfaceBG -= PrepareShaderForBG;
     }
 
-    public class DrawCherishedSealocketHook : IHookEdit
+    public sealed class DrawCherishedSealocketHook : IExistingDetourProvider
     {
         public static ManagedRenderTarget PlayerForcefieldTarget
         {
@@ -420,6 +435,22 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             get;
             internal set;
+        }
+
+        void IExistingDetourProvider.Subscribe()
+        {
+            On_Main.CheckMonoliths += PrepareSealocketTarget;
+            On_Main.DrawInfernoRings += DrawForcefields;
+            DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
+            if (Main.netMode != NetmodeID.Server)
+                Main.QueueMainThreadAction(() => PlayerForcefieldTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget));
+        }
+
+        void IExistingDetourProvider.Unsubscribe()
+        {
+            On_Main.CheckMonoliths -= PrepareSealocketTarget;
+            On_Main.DrawInfernoRings -= DrawForcefields;
+            DyeFindingSystem.FindDyeEvent -= FindSealocketItemDyeShader;
         }
 
         private void DrawForcefields(On_Main.orig_DrawInfernoRings orig, Main self)
@@ -505,25 +536,15 @@ namespace InfernumMode.Core.ILEditingStuff
             if (armorItem.type == ModContent.ItemType<CherishedSealocket>())
                 ForcefieldShader = GameShaders.Armor.GetShaderFromItemId(dyeItem.type);
         }
-
-        public void Load()
-        {
-            On_Main.CheckMonoliths += PrepareSealocketTarget;
-            On_Main.DrawInfernoRings += DrawForcefields;
-            DyeFindingSystem.FindDyeEvent += FindSealocketItemDyeShader;
-            PlayerForcefieldTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-        }
-
-        public void Unload()
-        {
-            On_Main.CheckMonoliths -= PrepareSealocketTarget;
-            On_Main.DrawInfernoRings -= DrawForcefields;
-        }
     }
 
-    public class DisableWaterEffectsInFightsHook : IHookEdit
+    public sealed class DisableWaterEffectsInFightsHook : ILEditProvider
     {
-        private void DisableWaterEffects(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => IL_Player.Update += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => IL_Player.Update -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor c = new(il);
 
@@ -541,13 +562,9 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             c.Emit(OpCodes.And);
         }
-
-        public void Load() => IL_Player.Update += DisableWaterEffects;
-
-        public void Unload() => IL_Player.Update -= DisableWaterEffects;
     }
 
-    public class MakeSulphSeaWaterEasierToSeeInHook : IHookEdit
+    public sealed class MakeSulphSeaWaterEasierToSeeInHook : ILEditProvider, IExistingDetourProvider
     {
         internal static int SulphurWaterIndex
         {
@@ -558,7 +575,22 @@ namespace InfernumMode.Core.ILEditingStuff
         // WHY IS THIS SO LAGGY WHAT THE ACTUAL FUCK???
         public static bool CanUseHighQualityWater => false;
 
-        private void MakeWaterEasierToSeeIn(ILContext il)
+        void IExistingDetourProvider.Subscribe() => Terraria.Graphics.Light.On_TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
+
+        void IExistingDetourProvider.Unsubscribe() => Terraria.Graphics.Light.On_TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
+
+        public override void Subscribe(ManagedILEdit edit)
+        {
+            if (Main.netMode != NetmodeID.Server)
+                SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
+
+            SelectSulphuricWaterColor += edit.SubscriptionWrapper;
+
+        }
+
+        public override void Unsubscribe(ManagedILEdit edit) => SelectSulphuricWaterColor -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor c = new(il);
             c.EmitDelegate(() =>
@@ -579,7 +611,7 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             orig(self, x, y, out outputColor);
 
-            Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+            Tile tile = Framing.GetTileSafely(x, y);
             if (tile.LiquidAmount <= 0 || tile.HasTile || Main.waterStyle != SulphurWaterIndex)
                 return;
 
@@ -599,26 +631,15 @@ namespace InfernumMode.Core.ILEditingStuff
                 outputColor = Vector3.Lerp(outputColor, idealColor, 0.8f);
             }
         }
-
-        public void Load()
-        {
-            if (Main.netMode != NetmodeID.Server)
-                SulphurWaterIndex = ModContent.Find<ModWaterStyle>("CalamityMod/SulphuricWater").Slot;
-
-            SelectSulphuricWaterColor += MakeWaterEasierToSeeIn;
-            Terraria.Graphics.Light.On_TileLightScanner.GetTileLight += MakeSulphSeaWaterBrighter;
-        }
-
-        public void Unload()
-        {
-            SelectSulphuricWaterColor -= MakeWaterEasierToSeeIn;
-            Terraria.Graphics.Light.On_TileLightScanner.GetTileLight -= MakeSulphSeaWaterBrighter;
-        }
     }
 
-    public class ChangeRuneOfKosUsageHook : IHookEdit
+    public sealed class ChangeRuneOfKosCanUseHook : ILEditProvider
     {
-        private void ChangeUsageCondition(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => RuneOfKosCanUseItem += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => RuneOfKosCanUseItem -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
@@ -630,8 +651,15 @@ namespace InfernumMode.Core.ILEditingStuff
             });
             cursor.Emit(OpCodes.Ret);
         }
+    }
 
-        private void ChangeItemUsage(ILContext il)
+    public sealed class ChangeRuneOfKosUseItemHook : ILEditProvider
+    {
+        public override void Subscribe(ManagedILEdit edit) => RuneOfKosUseItem += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => RuneOfKosUseItem -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
@@ -714,29 +742,21 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }
-
-        public void Load()
-        {
-            RuneOfKosCanUseItem += ChangeUsageCondition;
-            RuneOfKosUseItem += ChangeItemUsage;
-        }
-
-        public void Unload()
-        {
-            RuneOfKosCanUseItem -= ChangeUsageCondition;
-            RuneOfKosUseItem -= ChangeItemUsage;
-        }
     }
 
-    public class StoreForbiddenArchivePositionHook : IHookEdit
+    public sealed class StoreForbiddenArchivePositionHook : ILEditProvider
     {
-        private void StorePosition(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => PlaceForbiddenArchive += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => PlaceForbiddenArchive -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
             int xLocalIndex = 0;
             int yLocalIndex = 0;
-            ConstructorInfo pointConstructor = typeof(Point).GetConstructor(new Type[] { typeof(int), typeof(int) });
+            ConstructorInfo pointConstructor = typeof(Point).GetConstructor([typeof(int), typeof(int)]);
             MethodInfo placementMethod = typeof(SchematicManager).GetMethods().First(m => m.Name == "PlaceSchematic");
 
             // Find the first instance of the schematic placement call. There are three, but they all take the same information so it doesn't matter which one is used as a reference.
@@ -762,27 +782,44 @@ namespace InfernumMode.Core.ILEditingStuff
                 });
             }
         }
-
-        public void Load() => PlaceForbiddenArchive += StorePosition;
-
-        public void Unload() => PlaceForbiddenArchive -= StorePosition;
     }
 
-    public class ChangeProfanedShardUsageHook : IHookEdit
+    public sealed class ChangeProfanedShardCanUseHook : ILEditProvider
     {
-        public void Load()
-        {
-            ProfanedShardUseItem += SummonGuardianSpawnerManager;
-            ProfanedShardCanUseItem += CanUseItemEdit;
-        }
+        public override void Subscribe(ManagedILEdit edit) => ProfanedShardCanUseItem += edit.SubscriptionWrapper;
 
-        public void Unload()
-        {
-            ProfanedShardUseItem -= SummonGuardianSpawnerManager;
-            ProfanedShardCanUseItem -= CanUseItemEdit;
-        }
+        public override void Unsubscribe(ManagedILEdit edit) => ProfanedShardCanUseItem -= edit.SubscriptionWrapper;
 
-        private void SummonGuardianSpawnerManager(ILContext il)
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
+        {
+            ILCursor cursor = new(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate((Player player) =>
+            {
+                bool correctBiome = player.Hitbox.Intersects(GuardianComboAttackManager.ShardUseisAllowedArea) && !WeakReferenceSupport.InAnySubworld();
+                bool bossIsNotPresent = !NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>());
+
+                if (InfernumMode.CanUseCustomAIs)
+                    return correctBiome && bossIsNotPresent && !BossRushEvent.BossRushActive;
+                else
+                {
+                    // Base cals checks, so they still function if you have the mod on but not the mode.
+                    if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) && (Main.dayTime || Main.remixWorld) && (player.ZoneHallow || player.ZoneUnderworldHeight))
+                        return !BossRushEvent.BossRushActive;
+                    return false;
+                }
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+    }
+
+    public sealed class ChangeProfanedShardUseHook : ILEditProvider
+    {
+        public override void Subscribe(ManagedILEdit edit) => ProfanedShardUseItem += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => ProfanedShardUseItem -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
@@ -807,36 +844,15 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }
-
-        private void CanUseItemEdit(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.Emit(OpCodes.Ldarg_1);
-            cursor.EmitDelegate((Player player) =>
-            {
-                bool correctBiome = player.Hitbox.Intersects(GuardianComboAttackManager.ShardUseisAllowedArea) && !WeakReferenceSupport.InAnySubworld();
-                bool bossIsNotPresent = !NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>());
-
-                if (InfernumMode.CanUseCustomAIs)
-                    return correctBiome && bossIsNotPresent && !BossRushEvent.BossRushActive;
-                else
-                {
-                    // Base cals checks, so they still function if you have the mod on but not the mode.
-                    if (!NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()) && (Main.dayTime || Main.remixWorld) && (player.ZoneHallow || player.ZoneUnderworldHeight))
-                        return !BossRushEvent.BossRushActive;
-                    return false;
-                }
-            });
-            cursor.Emit(OpCodes.Ret);
-        }
     }
 
-    public class StopCultistShieldDrawingHook : IHookEdit
+    public sealed class StopCultistShieldDrawingHook : ILEditProvider
     {
-        public void Load() => CalGlobalNPCPostDraw += StopShieldDrawing;
-        public void Unload() => CalGlobalNPCPostDraw -= StopShieldDrawing;
+        public override void Subscribe(ManagedILEdit edit) => CalGlobalNPCPostDraw += edit.SubscriptionWrapper;
 
-        private void StopShieldDrawing(ILContext il)
+        public override void Unsubscribe(ManagedILEdit edit) => CalGlobalNPCPostDraw -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -855,8 +871,12 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class MakeAquaticScourgeSpitOutDropsHook : IHookEdit
+    public sealed class MakeAquaticScourgeSpitOutDropsHook : IExistingDetourProvider
     {
+        void IExistingDetourProvider.Subscribe() => On_CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
+
+        void IExistingDetourProvider.Unsubscribe() => On_CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
+
         private void ThrowItemsOut(Terraria.GameContent.ItemDropRules.On_CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
         {
             orig(npc, itemIndex);
@@ -867,16 +887,6 @@ namespace InfernumMode.Core.ILEditingStuff
 
                 NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemIndex, 1f, 0f, 0f, 0, 0, 0);
             }
-        }
-
-        public void Load()
-        {
-            Terraria.GameContent.ItemDropRules.On_CommonCode.ModifyItemDropFromNPC += ThrowItemsOut;
-        }
-
-        public void Unload()
-        {
-            Terraria.GameContent.ItemDropRules.On_CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
         }
     }
 }

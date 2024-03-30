@@ -188,8 +188,8 @@ namespace InfernumMode.Content.Projectiles.Melee
         {
             Main.spriteBatch.EnterShaderRegion();
 
-            Color mainColor = CalamityUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
-            Color secondaryColor = CalamityUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+            Color mainColor = LumUtils.MulticolorLerp(Main.GlobalTimeWrappedHourly * 2f % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
+            Color secondaryColor = LumUtils.MulticolorLerp((Main.GlobalTimeWrappedHourly * 2f + 0.2f) % 1, Color.Cyan, Color.DeepSkyBlue, Color.Turquoise, Color.Blue);
 
             mainColor = Color.Lerp(Color.White, mainColor, Projectile.Opacity * 0.6f + 0.4f);
             secondaryColor = Color.Lerp(Color.White, secondaryColor, Projectile.Opacity * 0.6f + 0.4f);

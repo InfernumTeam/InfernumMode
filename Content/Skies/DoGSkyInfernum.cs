@@ -43,7 +43,7 @@ namespace InfernumMode.Content.Skies
         public bool isActive;
         public float Intensity;
         public int EdgyWormIndex = -1;
-        public List<Lightning> LightningBolts = new();
+        public List<Lightning> LightningBolts = [];
 
         public static void CreateLightningBolt(Color color, int count = 1, bool playSound = false)
         {

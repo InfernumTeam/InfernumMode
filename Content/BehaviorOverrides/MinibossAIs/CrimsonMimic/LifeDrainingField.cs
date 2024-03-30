@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -68,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Radius, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Radius, targetHitbox);
         }
     }
 }

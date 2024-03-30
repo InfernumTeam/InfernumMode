@@ -95,10 +95,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-            float[] scaleFactors = new float[]
-            {
+            float[] scaleFactors =
+            [
                 1f, 0.8f, 0.7f, 0.57f, 0.44f, 0.32f, 0.22f
-            };
+            ];
 
             for (int i = 0; i < scaleFactors.Length; i++)
             {

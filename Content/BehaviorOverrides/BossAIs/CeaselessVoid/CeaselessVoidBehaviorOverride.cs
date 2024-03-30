@@ -26,7 +26,6 @@ using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 using CeaselessVoidBoss = CalamityMod.NPCs.CeaselessVoid.CeaselessVoid;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
@@ -77,8 +76,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             internal set;
         }
 
-        public static CeaselessVoidAttackType[] Phase1AttackCycle => new CeaselessVoidAttackType[]
-        {
+        public static CeaselessVoidAttackType[] Phase1AttackCycle =>
+        [
             CeaselessVoidAttackType.RedirectingAcceleratingDarkEnergy,
             CeaselessVoidAttackType.DiagonalMirrorBolts,
             CeaselessVoidAttackType.CircularVortexSpawn,
@@ -87,10 +86,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             CeaselessVoidAttackType.DiagonalMirrorBolts,
             CeaselessVoidAttackType.CircularVortexSpawn,
             CeaselessVoidAttackType.SpinningDarkEnergy
-        };
+        ];
 
-        public static CeaselessVoidAttackType[] Phase2AttackCycle => new CeaselessVoidAttackType[]
-        {
+        public static CeaselessVoidAttackType[] Phase2AttackCycle =>
+        [
             CeaselessVoidAttackType.RedirectingAcceleratingDarkEnergy,
             CeaselessVoidAttackType.DiagonalMirrorBolts,
             CeaselessVoidAttackType.EnergySuck,
@@ -103,23 +102,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             CeaselessVoidAttackType.CircularVortexSpawn,
             CeaselessVoidAttackType.SpinningDarkEnergy,
             CeaselessVoidAttackType.EnergySuck
-        };
+        ];
 
-        public static CeaselessVoidAttackType[] Phase3AttackCycle => new CeaselessVoidAttackType[]
-        {
+        public static CeaselessVoidAttackType[] Phase3AttackCycle =>
+        [
             CeaselessVoidAttackType.JevilDarkEnergyBursts,
             CeaselessVoidAttackType.ConvergingEnergyBarrages,
             CeaselessVoidAttackType.MirroredCharges,
             CeaselessVoidAttackType.ConvergingEnergyBarrages
-        };
+        ];
 
         public static readonly Color InfiniteFlightTextColor = Color.Lerp(Color.LightPink, Color.Black, 0.35f);
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public const int PhaseCycleIndexIndex = 5;
 
@@ -456,12 +455,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // Initialize Ceaseless Void's binding chains on the first frame.
             if (attackTimer <= 1f)
             {
-                Chains = new();
+                Chains = [];
 
                 int segmentCount = 21;
                 for (int i = 0; i < 4; i++)
                 {
-                    Chains.Add(new());
+                    Chains.Add([]);
 
                     // Determine how far off the chains should go.
                     Vector2 checkDirection = (TwoPi * i / 4f + PiOver4).ToRotationVector2() * new Vector2(1f, 1.2f);
@@ -544,7 +543,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 for (int i = 0; i < totalRings; i++)
                 {
                     float spinMovementSpeed = Lerp(7f, 1f, i / (float)(totalRings - 1f));
-                    float offsetRadius = Lerp(180f, DarkEnergyOffsetRadius, Convert01To010(i / (float)(energyCountPerRing - 1f)));
+                    float offsetRadius = Lerp(180f, DarkEnergyOffsetRadius, LumUtils.Convert01To010(i / (float)(energyCountPerRing - 1f)));
                     for (int j = 0; j < energyCountPerRing; j++)
                     {
                         float offsetAngle = TwoPi * j / energyCountPerRing;
@@ -562,7 +561,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             // If it is sufficiently low then all remaining dark energy fades away and CV goes to the next attack.
             int darkEnergyTotalLife = 0;
             int darkEnergyTotalMaxLife = 0;
-            List<NPC> darkEnergies = new();
+            List<NPC> darkEnergies = [];
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].active && Main.npc[i].type == darkEnergyID)
@@ -888,7 +887,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                 {
                     for (int i = 0; i < 7; i++)
                     {
-                        Vector2 baseSpawnOffset = new Vector2(Lerp(-775f, 775f, i / 6f), -200f - Convert01To010(i / 6f) * 100f) + Main.rand.NextVector2Circular(30f, 30f);
+                        Vector2 baseSpawnOffset = new Vector2(Lerp(-775f, 775f, i / 6f), -200f - LumUtils.Convert01To010(i / 6f) * 100f) + Main.rand.NextVector2Circular(30f, 30f);
                         for (int j = 0; j < 8; j++)
                         {
                             Vector2 microSpawnOffset = (TwoPi * j / 8f).ToRotationVector2() * 66f;
@@ -1534,7 +1533,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     {
                         float offsetAngle = Lerp(-maxShootOffsetAngle, maxShootOffsetAngle, i / (float)(barrageCount - 1f));
 
-                        List<Vector2> telegraphPoints = new();
+                        List<Vector2> telegraphPoints = [];
                         for (int frames = 1; frames < 84; frames += 12)
                         {
                             Vector2 linePosition = TelegraphedOtherwordlyBolt.SimulateMotion(npc.Center, (offsetAngle + playerShootDirection).ToRotationVector2() * initialBarrageSpeed, playerShootDirection, frames);
@@ -1543,7 +1542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
-                            telegraph.ModProjectile<EnergyTelegraph>().TelegraphPoints = telegraphPoints.ToArray();
+                            telegraph.ModProjectile<EnergyTelegraph>().TelegraphPoints = [.. telegraphPoints];
                         });
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EnergyTelegraph>(), 0, 0f, -1, i / (float)barrageCount);
                     }
@@ -1752,8 +1751,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             for (int i = 0; i < 3; i++)
             {
-                Utilities.DeleteAllProjectiles(false, new int[]
-                {
+                Utilities.DeleteAllProjectiles(false,
+                [
                     ModContent.ProjectileType<AcceleratingDarkEnergy>(),
                     ModContent.ProjectileType<CeaselessEnergyPulse>(),
                     ModContent.ProjectileType<CeaselessVoidLineTelegraph>(),
@@ -1763,7 +1762,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
                     ModContent.ProjectileType<OtherworldlyBolt>(),
                     ModContent.ProjectileType<SpinningDarkEnergy>(),
                     ModContent.ProjectileType<TelegraphedOtherwordlyBolt>()
-                });
+                ]);
             }
         }
 
@@ -1859,11 +1858,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             int sideCount = 512;
             Utilities.GetCircleVertices(sideCount, radius, npc.Center, out var triangleIndices, out var vertices);
 
-            CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
-            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Stars.Value;
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.TrySetParameter("useOutline", false);
+            tear.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

@@ -61,10 +61,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public const float FlatDamageBoostFactor = 1.66f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             ExoMechManagement.Phase4LifeRatio
-        };
+        ];
 
         #region Loading
         public override void Load()
@@ -887,10 +887,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 
             if (attackTimer == chargeDelay / 2 && firstTimeAttacking)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationThanatos1", ThanatosTextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationThanatos1", ThanatosTextColor);
 
             if (attackTimer == chargeDelay - 16f && firstTimeAttacking)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationThanatos2", ThanatosTextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationThanatos2", ThanatosTextColor);
 
             // Play a danger sound before the attack begins.
             if (attackTimer == chargeDelay - (firstTimeAttacking ? 90f : 12f))

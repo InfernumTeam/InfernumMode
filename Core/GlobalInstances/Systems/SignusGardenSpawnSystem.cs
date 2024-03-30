@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;

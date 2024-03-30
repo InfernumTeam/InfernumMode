@@ -1,4 +1,5 @@
 ﻿using InfernumMode.Common.Graphics.Interfaces;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -15,9 +16,9 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private static ManagedRenderTarget pixelRenderTargetBeforeNPCs;
 
-        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = new();
+        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersList = [];
 
-        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersListBeforeNPCs = new();
+        private static readonly List<IPixelPrimitiveDrawer> pixelPrimDrawersListBeforeNPCs = [];
         #endregion
 
         #region Overrides

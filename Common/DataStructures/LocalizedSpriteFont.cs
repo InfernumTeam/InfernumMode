@@ -43,7 +43,7 @@ namespace InfernumMode.Common.DataStructures
         public LocalizedSpriteFont(DynamicSpriteFont defaultFont, params GameCulture.CultureName[] defaultSupportedLanguages)
         {
             EnglishFont = defaultFont;
-            OtherFonts = new();
+            OtherFonts = [];
 
             GameCulture[] langages = new GameCulture[defaultSupportedLanguages.Length];
             for (int i = 0; i < defaultSupportedLanguages.Length; i++)

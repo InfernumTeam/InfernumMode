@@ -461,12 +461,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
             float splitCounter = npc.ai[2];
             EoWAttackState oldAttackState = (EoWAttackState)(int)npc.ai[0];
 
-            List<EoWAttackState> possibleAttacks = new()
-            {
+            List<EoWAttackState> possibleAttacks =
+            [
                 EoWAttackState.CursedBombBurst,
                 EoWAttackState.VineCharge,
                 EoWAttackState.ShadowOrbSummon,
-            };
+            ];
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
             for (int i = 0; i < 2; i++)

@@ -1,6 +1,7 @@
 ﻿using System;
 using CalamityMod;
 using InfernumMode.Assets.Effects;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -117,9 +118,9 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void Load()
         {
-            BlurRenderTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            FlashRenderTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            MovieBarTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            BlurRenderTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            FlashRenderTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            MovieBarTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
         }
 
         public static bool AnyBlurOrFlashActive() => BlurActive || FlashActive;

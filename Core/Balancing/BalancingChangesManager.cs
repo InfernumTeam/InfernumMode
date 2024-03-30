@@ -23,6 +23,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Core.Balancing
 {
+    // This ought to be ported, but at this point I've had enough.
     public static class BalancingChangesManager
     {       
         internal static List<NPCBalancingChange> NPCSpecificBalancingChanges;
@@ -47,8 +48,8 @@ namespace InfernumMode.Core.Balancing
             float thanatosPierceResistFactor = 0.75f;
             float sepulcherPierceResistFactor = 0.375f;
 
-            NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
-            {
+            NPCSpecificBalancingChanges =
+            [
                 // King Slime.
                 new NPCBalancingChange(NPCID.KingSlime, new PierceResistBalancingRule(0.67f)),
 
@@ -126,7 +127,7 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCType<SepulcherBodyEnergyBall>(), Do(new PierceResistBalancingRule(sepulcherPierceResistFactor))),
                 new NPCBalancingChange(NPCType<SoulSeekerSupreme>(), Do(new TrueMeleeBalancingRule(0.45f))),
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),
-            };
+            ];
         }
 
         internal static void Unload() => NPCSpecificBalancingChanges = null;

@@ -6,6 +6,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Content.Tiles.Colosseum;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -42,20 +43,20 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public static List<DrawData> AEWEyesDrawCache
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public override void OnModLoad()
         {
             Main.OnPreDraw += PrepareAEWTargets;
-            AEWDrawTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            AEWShadowWispTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
-            TemporaryAuxillaryTarget = new(true, RenderTargetManager.CreateScreenSizedTarget);
+            AEWDrawTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            AEWShadowWispTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
+            TemporaryAuxillaryTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget);
             Filters.Scene.OnPostDraw += WhatTheFuck;
         }
 
@@ -174,7 +175,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             if (Main.GameUpdateCount % 120 == 119)
                 LargeLumenylCrystal.CrystalCache.Clear();
 
-            ColosseumPortal.PortalCache.RemoveAll(p => CalamityUtils.ParanoidTileRetrieval(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
+            ColosseumPortal.PortalCache.RemoveAll(p => Framing.GetTileSafely(p.X, p.Y).TileType != ModContent.TileType<ColosseumPortal>());
             foreach (Point p in ColosseumPortal.PortalCache)
                 ColosseumPortal.DrawSpecialEffects(p.ToWorldCoordinates());
 

@@ -20,6 +20,7 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
@@ -106,18 +107,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public ref float LineTelegraphIntensity => ref NPC.localAI[3];
 
-        public static BereftVassalAttackType[] Phase1AttackCycle => new BereftVassalAttackType[]
-        {
+        public static BereftVassalAttackType[] Phase1AttackCycle =>
+        [
             BereftVassalAttackType.SandBlobSlam,
             BereftVassalAttackType.SpearWaterTorrent,
             BereftVassalAttackType.WaterWaveSlam,
             BereftVassalAttackType.SandBlobSlam,
             BereftVassalAttackType.FallingWaterCastBarrges,
             BereftVassalAttackType.WaterWaveSlam,
-        };
+        ];
 
-        public static BereftVassalAttackType[] Phase2AttackCycle => new BereftVassalAttackType[]
-        {
+        public static BereftVassalAttackType[] Phase2AttackCycle =>
+        [
             BereftVassalAttackType.SandBlobSlam,
             BereftVassalAttackType.SandnadoPressureCharges,
             BereftVassalAttackType.HypersonicWaterSlashes,
@@ -129,7 +130,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             BereftVassalAttackType.SandBlobSlam,
             BereftVassalAttackType.FallingWaterCastBarrges,
             BereftVassalAttackType.WaterWaveSlam,
-        };
+        ];
 
         public const float Phase2LifeRatio = 0.6f;
 
@@ -139,19 +140,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         // A little bit after Astrum Deus.
         public float ProgressionValue => 17.75f;
 
-        public List<int> CollectibleItems => new()
-        {
+        public List<int> CollectibleItems =>
+        [
             ModContent.ItemType<BereftVassalTrophy>(),
             ModContent.ItemType<KnowledgeBereftVassal>(),
             ModContent.ItemType<WaterglassToken>(),
             ModContent.ItemType<ThankYouPainting>(),
-        };
+        ];
 
         public int? SpawnItem => ModContent.ItemType<SandstormsCore>();
 
         public string SpawnRequirement => $"Use a [i:{SpawnItem.Value}] at the pedestal in the heart of the desert.";
 
-        public string DespawnMessage => CalamityUtils.ColorMessage("Argus returns to quiet solitude at the center of the Colosseum.", new(28, 175, 189));
+        public string DespawnMessage => LumUtils.ColorMessage("Argus returns to quiet solitude at the center of the Colosseum.", new(28, 175, 189));
 
         public bool AvailabilityCondition => NPC.downedAncientCultist;
 
@@ -159,10 +160,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public string HeadIconPath => "InfernumMode/Content/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassal_Head_Boss";
 
-        public List<int> ExtraNPCIDs => new()
-        {
+        public List<int> ExtraNPCIDs =>
+        [
             ModContent.NPCType<GreatSandSharkNPC>()
-        };
+        ];
 
         public override void SetStaticDefaults()
         {
@@ -205,11 +206,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
-            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
-            {
+            bestiaryEntry.Info.AddRange(
+            [
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Desert,
                 new FlavorTextBestiaryInfoElement("Mods.InfernumMode.Bestiary.BereftVassal")
-            });
+            ]);
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -1816,7 +1817,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 Vector2 energySpawnPosition = NPC.Center + Main.rand.NextVector2Circular(30f, 20f) + NPC.velocity * 2f;
                 Vector2 energyVelocity = -NPC.velocity.SafeNormalize(Vector2.UnitX * NPC.spriteDirection) * Main.rand.NextFloat(6f, 8.75f);
-                Particle energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f);
+                var energyLeak = new SquishyLightParticle(energySpawnPosition, energyVelocity, Main.rand.NextFloat(0.55f, 0.9f), Color.Yellow, 30, 3.4f, 4.5f);
                 GeneralParticleHandler.SpawnParticle(energyLeak);
             }
         }
@@ -1903,14 +1904,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             LeadingConditionRule normalOnly = npcLoot.DefineNormalOnlyDropSet();
 
             // Weapons.
-            int[] weapons = new int[]
-            {
+            int[] weapons =
+            [
                 ModContent.ItemType<AridBattlecry>(),
                 ModContent.ItemType<Myrindael>(),
                 ModContent.ItemType<TheGlassmaker>(),
                 ModContent.ItemType<WanderersShell>(),
                 ModContent.ItemType<Perditus>()
-            };
+            ];
 
             normalOnly.Add(ModContent.ItemType<CherishedSealocket>());
             normalOnly.Add(ModContent.ItemType<WaterglassToken>());
@@ -1982,12 +1983,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             // Draw the downward telegraph trail as needed.
             if (LineTelegraphIntensity > 0f)
             {
-                Vector2[] telegraphPoints = new Vector2[3]
-                {
+                Vector2[] telegraphPoints =
+                [
                     spearDrawPosition,
                     spearDrawPosition + LineTelegraphDirection.ToRotationVector2() * 2000f,
                     spearDrawPosition + LineTelegraphDirection.ToRotationVector2() * 4000f
-                };
+                ];
                 GameShaders.Misc["CalamityMod:SideStreakTrail"].UseImage1("Images/Misc/Perlin");
                 NPC.Infernum().OptionalPrimitiveDrawer.Draw(telegraphPoints, Vector2.Zero, 51);
             }

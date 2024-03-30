@@ -45,11 +45,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public const float Phase3LifeRatio = 0.25f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -316,7 +316,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 npc.velocity.Y = Lerp(npc.velocity.Y, -6f, 0.02f);
                 float gleamInterpolant = Utils.GetLerpValue(0f, summonTime, attackTimer - slowdownTime, true);
-                eyeGleamInterpolant = 1f + CalamityUtils.Convert01To010(gleamInterpolant) * 0.6f;
+                eyeGleamInterpolant = 1f + LumUtils.Convert01To010(gleamInterpolant) * 0.6f;
 
                 // Stop the attack early if hit in time.
                 if (npc.justHit)
@@ -752,7 +752,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
             {
                 npc.velocity = Vector2.Zero;
 
-                eyeGleamInterpolant = CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, summonTime - 5f, attackTimer - slowdownTime, true));
+                eyeGleamInterpolant = LumUtils.Convert01To010(Utils.GetLerpValue(0f, summonTime - 5f, attackTimer - slowdownTime, true));
                 if (attackTimer % batSummonRate == batSummonRate - 1f)
                 {
                     SoundEngine.PlaySound(SoundID.Item122, npc.Center);
@@ -966,18 +966,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 Vector2 eyePosition = drawPosition + eyeOffsetRotation.ToRotationVector2() * new Vector2(14f, 18f);
 
                 // Calculate the rotation and scale of each piece of the gleam.
-                float[] eyeRotations = new[]
-                {
+                float[] eyeRotations =
+                [
                     -Main.GlobalTimeWrappedHourly * 3.74f,
                     Main.GlobalTimeWrappedHourly * 3.74f,
                     PiOver2
-                };
-                float[] eyeScales = new[]
-                {
+                ];
+                float[] eyeScales =
+                [
                     npc.Opacity * eyeGleamInterpolant * 1.65f,
                     npc.Opacity * eyeGleamInterpolant* 1.65f,
                     npc.Opacity * eyeGleamInterpolant * Utils.Remap(Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
-                };
+                ];
 
                 for (int i = 0; i < eyeRotations.Length; i++)
                     spriteBatch.Draw(gleamTexture, eyePosition, null, gleamColor, eyeRotations[i], gleamTexture.Size() * 0.5f, eyeScales[i] * 0.4f, 0, 0f);

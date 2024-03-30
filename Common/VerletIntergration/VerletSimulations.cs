@@ -12,7 +12,7 @@ namespace InfernumMode.Common.VerletIntergration
         public static List<VerletSimulatedSegmentInfernum> TileCollisionVerletSimulation(List<VerletSimulatedSegmentInfernum> segments, float segmentDistance, int loops = 10, float gravity = 0.3f)
         {
             // https://youtu.be/PGk0rnyTa1U?t=400 is a good verlet integration chains reference.
-            List<int> groundHitSegments = new();
+            List<int> groundHitSegments = [];
             for (int i = segments.Count - 1; i >= 0; i--)
             {
                 var segment = segments[i];

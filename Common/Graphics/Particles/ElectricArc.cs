@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,7 +29,7 @@ namespace InfernumMode.Common.Graphics.Particles
         public override void Update()
         {
             Vector2 perlinValue = Position * 0.1f;
-            Vector2 perlinOffset = (CalamityUtils.PerlinNoise2D(perlinValue.X, perlinValue.Y, 4, ID) * Pi * 3f).ToRotationVector2() * 2f;
+            Vector2 perlinOffset = (LumUtils.PerlinNoise2D(perlinValue.X, perlinValue.Y, 4, ID) * Pi * 3f).ToRotationVector2() * 2f;
             Velocity = (Velocity + perlinOffset).ClampMagnitude(4f, 9f);
 
             for (int i = TrailPositions.Length - 1; i > 0; i--)

@@ -23,10 +23,10 @@ namespace InfernumMode.Core.CrossCompatibility
                     continue;
 
                 IBossChecklistHandler handler = (IBossChecklistHandler)npc;
-                List<int> extraNPCs = new()
-                {
+                List<int> extraNPCs =
+                [
                     npc.Type
-                };
+                ];
                 if (handler.ExtraNPCIDs is not null)
                     extraNPCs.AddRange(handler.ExtraNPCIDs);
 

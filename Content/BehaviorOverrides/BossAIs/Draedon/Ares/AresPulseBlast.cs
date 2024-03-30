@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -73,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.Size.Length() / 2.6f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.Size.Length() / 2.6f, targetHitbox);
         }
 
         public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)

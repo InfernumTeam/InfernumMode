@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs.Perforator;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -33,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2;
 
             bool shouldDie = Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
-            shouldDie &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).TileType];
+            shouldDie &= !TileID.Sets.Platforms[Framing.GetTileSafely((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).TileType];
             if (shouldDie && Projectile.tileCollide)
                 Projectile.Kill();
 

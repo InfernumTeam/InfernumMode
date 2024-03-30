@@ -1,0 +1,63 @@
+{
+  "frames": {
+    "AdditiveMetaball": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 225,
+        "h": 225
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 225,
+        "h": 225
+      },
+      "sourceSize": {
+        "w": 225,
+        "h": 225
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BaseMetaball": {
+      "frame": {
+        "x": 0,
+        "y": 225,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "Metaballs.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 225,
+      "h": 289
+    },
+    "scale": 1
+  }
+}

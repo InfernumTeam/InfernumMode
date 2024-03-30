@@ -95,7 +95,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
             // Update the player's arm directions to make it look as though they're flipping through the book.
             float frontArmRotation = (PiOver2 - 0.46f) * -Owner.direction;
-            float backArmRotation = frontArmRotation + Lerp(0.23f, 0.97f, CalamityUtils.Convert01To010(Projectile.localAI[0] / Main.projFrames[Projectile.type] / 10f)) * -Owner.direction;
+            float backArmRotation = frontArmRotation + Lerp(0.23f, 0.97f, LumUtils.Convert01To010(Projectile.localAI[0] / Main.projFrames[Projectile.type] / 10f)) * -Owner.direction;
             Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, backArmRotation);
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, frontArmRotation);
         }

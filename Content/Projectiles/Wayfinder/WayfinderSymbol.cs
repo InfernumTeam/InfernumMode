@@ -22,15 +22,15 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
 
         public float Speed;
 
-        public static Color[] Colors => new Color[]
-        {
+        public static Color[] Colors =>
+        [
             // Light yellow
             new Color (255 ,255 ,150),
             // Golden
             new Color(255, 191, 73),
             // Orange
             new Color(206, 116, 59)
-        };
+        ];
 
         public const int Lifetime = 240;
 

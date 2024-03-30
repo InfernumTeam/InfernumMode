@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 {
-    public class SulphuricGas : ModProjectile, IAdditiveDrawer
+    public class SulphuricGas : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
 
@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 // Calculate light power. This checks below the position of the fog to check if this fog is underground.
                 // Without this, it may render over the fullblack that the game renders for obscured tiles.
                 float lightPowerBelow = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16 + 6).ToVector3().Length() / Sqrt(3f);
-                if (CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).LiquidAmount >= 25)
+                if (Framing.GetTileSafely((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).LiquidAmount >= 25)
                     lightPowerBelow = 1f;
 
                 LightPower = Lerp(LightPower, lightPowerBelow, 0.15f);
@@ -66,23 +66,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.velocity *= 0.985f;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.56f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.56f;
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-        {
-            return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 30f);
-        }
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
 
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 20;
             if (!Projectile.Hitbox.Intersects(screenRectangle))
-                return;
+                return false;
 
             // Decide which gas texture to use.
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
@@ -97,7 +90,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int b = 160 + (int)(Math.Sin(Pi * Projectile.identity / 8f + Main.GlobalTimeWrappedHourly * 10f) * 80f);
             Color drawColor = new Color(141, 255, b) * opacity;
             Vector2 scale = Vector2.One * 50f / texture.Size() * Projectile.scale * 1.35f;
-            spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 30f);
     }
 }

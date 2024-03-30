@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
@@ -45,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
 
             // Shake the screen.
             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = Pow(Utils.GetLerpValue(180f, 290f, Time, true), 0.3f) * 20f;
-            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower += CalamityUtils.Convert01To010(Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5f)) * 35f;
+            Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower += LumUtils.Convert01To010(Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5f)) * 35f;
 
             if (Projectile.timeLeft == 45)
             {

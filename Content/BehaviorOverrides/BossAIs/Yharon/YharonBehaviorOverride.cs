@@ -66,8 +66,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         #endregion
 
         #region Pattern Lists
-        public static readonly YharonAttackType[] Subphase1Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase1Pattern =
+        [
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
             YharonAttackType.Charge,
@@ -92,10 +92,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FastCharge,
             YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
             YharonAttackType.FireballBurst,
-        };
+        ];
 
-        public static readonly YharonAttackType[] Subphase2Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase2Pattern =
+        [
             YharonAttackType.FastCharge,
             YharonAttackType.FireTrailCharge,
             YharonAttackType.FastCharge,
@@ -122,10 +122,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
             YharonAttackType.FireballBurst,
-        };
+        ];
 
-        public static readonly YharonAttackType[] Subphase3Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase3Pattern =
+        [
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
             YharonAttackType.TeleportingCharge,
@@ -149,10 +149,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FastCharge,
-        };
+        ];
 
-        public static readonly YharonAttackType[] Subphase4Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase4Pattern =
+        [
             YharonAttackType.CarpetBombing,
             YharonAttackType.FireTrailCharge,
             YharonAttackType.FireTrailCharge,
@@ -173,10 +173,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.TeleportingCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
-        };
+        ];
 
-        public static readonly YharonAttackType[] Subphase5Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase5Pattern =
+        [
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
@@ -195,10 +195,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlashRing,
             YharonAttackType.CarpetBombing,
-        };
+        ];
 
-        public static readonly YharonAttackType[] Subphase6Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase6Pattern =
+        [
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
@@ -228,17 +228,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlashRing,
             YharonAttackType.CarpetBombing,
-        };
+        ];
 
-        public static readonly YharonAttackType[] Subphase7Pattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] Subphase7Pattern =
+        [
             YharonAttackType.PhoenixSupercharge,
-        };
+        ];
 
-        public static readonly YharonAttackType[] LastSubphasePattern = new YharonAttackType[]
-        {
+        public static readonly YharonAttackType[] LastSubphasePattern =
+        [
             YharonAttackType.FinalDyingRoar,
-        };
+        ];
 
         public static bool InSecondPhase
         {
@@ -286,8 +286,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             [LastSubphasePattern] = (npc) => npc.life / (float)npc.lifeMax <= Subphase8LifeRatio && InSecondPhase,
         };
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Subphase2LifeRatio,
             Subphase3LifeRatio,
             Subphase4LifeRatio,
@@ -295,7 +295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Subphase6LifeRatio,
             Subphase7LifeRatio,
             Subphase8LifeRatio
-        };
+        ];
         #endregion
 
         public const int TransitionDRBoostTime = 120;
@@ -377,7 +377,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             if (DownedBossSystem.downedYharon || npc.type != ModContent.NPCType<YharonBoss>())
                 return;
 
-            CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PostYharonWyrmHint", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
+            LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.PostYharonWyrmHint", Color.Lerp(Color.LightCoral, Color.Wheat, 0.6f));
         }
 
         private void DisableMapIconDuringDesperation(NPC npc, ref int index)
@@ -1056,7 +1056,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
                 // Ensure this isnt loaded on the server, as it will throw a null reference error.
                 if (Main.netMode != NetmodeID.Server)
-                    Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + CalamityUtils.Convert01To010(competionRatio) * 3f);
+                    Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + LumUtils.Convert01To010(competionRatio) * 3f);
                 if (Main.netMode != NetmodeID.MultiplayerClient && npc.Infernum().ExtraAI[SubphaseIndexIndex] <= 5f)
                 {
                     for (int i = 0; i < 2; i++)
@@ -1459,7 +1459,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.Infernum().ExtraAI[AttackCycleIndexIndex] = -1f;
                 target.Infernum_Camera().CurrentScreenShakePower = 16f;
 
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.YharonSecondPhase", Color.Orange);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.YharonSecondPhase", Color.Orange);
                 SelectNextAttack(npc, ref attackType);
 
                 SoundEngine.PlaySound(YharonBoss.RoarSound with { Volume = 3f });
@@ -1588,7 +1588,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             // Create a ring of flames at the zenith of the flash.
             if (attackTimer >= heatFlashIdleDelay + heatFlashStartDelay && attackTimer <= heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime)
             {
-                float brightness = CalamityUtils.Convert01To010(Utils.GetLerpValue(heatFlashIdleDelay + heatFlashStartDelay, heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime, attackTimer, true));
+                float brightness = LumUtils.Convert01To010(Utils.GetLerpValue(heatFlashIdleDelay + heatFlashStartDelay, heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime, attackTimer, true));
                 bool atMaximumBrightness = attackTimer == heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime / 2;
 
                 // Immediately create the ring of flames if the brightness is at its maximum.
@@ -1760,7 +1760,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 {
                     npc.life = (int)(npc.lifeMax * 0.025);
 
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.YharonFinalPhase", Color.Orange);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.YharonFinalPhase", Color.Orange);
                     finalAttackCompletionState = 1f;
                 }
 
@@ -2027,8 +2027,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public static void ClearAllEntities()
         {
-            int[] projectilesToDelete = new int[]
-            {
+            int[] projectilesToDelete =
+            [
                 ProjectileID.CultistBossFireBall,
                 ModContent.ProjectileType<DraconicInfernado>(),
                 ModContent.ProjectileType<DragonFireball>(),
@@ -2045,7 +2045,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 ModContent.ProjectileType<YharonHeatFlashFireball>(),
                 ModContent.ProjectileType<VortexOfFlame>(),
                 ModContent.ProjectileType<RedirectingYharonMeteor>(),
-            };
+            ];
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))

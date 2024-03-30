@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Dusts;
+﻿using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -45,7 +44,7 @@ namespace InfernumMode.Content.Tiles.Abyss
 
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
-            int frameX = CalamityUtils.ParanoidTileRetrieval(i, j).TileFrameX / 18;
+            int frameX = Framing.GetTileSafely(i, j).TileFrameX / 18;
             bool emitLight = frameX is not 1 or 3 or 4 or 5 or 19 or 21 or 22;
             if (!emitLight)
                 return;

@@ -7,6 +7,7 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -402,7 +403,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 arrowOrigin = arrowTexture.Size() * 0.5f;
                 float arrowRotation = direction.ToRotation() + PiOver2;
                 float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f - i)) / 2f;
-                float finalOpacity = CalamityUtils.SineInOutEasing(sineValue, 1);
+                float finalOpacity = EasingCurves.Sine.InOutFunction(sineValue);
                 Main.spriteBatch.Draw(arrowTexture, drawPosition, null, drawColor * finalOpacity, arrowRotation, arrowOrigin, 0.75f, SpriteEffects.None, 0f);
                 drawPosition += direction * 75f;
             }
@@ -500,7 +501,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Get variables.
-            List<VertexPosition2DColor> vertices = new();
+            List<VertexPosition2DColor> vertices = [];
             float totalPoints = 200;
             float width = 300f;
             float radius = 1300f;
@@ -521,8 +522,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 vertices.Add(new VertexPosition2DColor(position, color, textureCoords));
                 vertices.Add(new VertexPosition2DColor(position2, color, textureCoords2));
             }
-
-            CalamityUtils.CalculatePerspectiveMatricies(out var view, out var projection);
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out var view, out var projection);
             InfernumEffectsRegistry.AreaBorderVertexShader.UseOpacity(alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex]);
             InfernumEffectsRegistry.AreaBorderVertexShader.UseColor(WayfinderSymbol.Colors[2]);
             InfernumEffectsRegistry.AreaBorderVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
@@ -542,7 +542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             // Get variables.
-            List<VertexPosition2DColor> vertices = new();
+            List<VertexPosition2DColor> vertices = [];
             float totalPoints = 50;
             float width = 300f;
             Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
@@ -564,7 +564,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 vertices.Add(new VertexPosition2DColor(position2 + new Vector2(width, 0f), color, textureCoords2));
             }
 
-            CalamityUtils.CalculatePerspectiveMatricies(out var view, out var projection);
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out var view, out var projection);
             InfernumEffectsRegistry.AreaBorderVertexShader.UseOpacity(alpha);
             InfernumEffectsRegistry.AreaBorderVertexShader.UseColor(WayfinderSymbol.Colors[2]);
             InfernumEffectsRegistry.AreaBorderVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);

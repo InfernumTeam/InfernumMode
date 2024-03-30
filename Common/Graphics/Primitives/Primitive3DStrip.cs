@@ -1,5 +1,4 @@
-using CalamityMod;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -38,7 +37,7 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         public static void UpdateBaseEffect(out Matrix effectProjection, out Matrix effectView)
         {
-            CalamityUtils.CalculatePerspectiveMatricies(out effectView, out effectProjection);
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out effectView, out effectProjection);
             BaseEffect.View = effectView;
             BaseEffect.Projection = effectProjection;
         }

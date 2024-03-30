@@ -31,7 +31,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 {
                     Projectile.NewProjectile(player.GetSource_ItemUse(item), teleportPosition, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
-                    CalamityUtils.DisplayLocalizedText($"Mods.InfernumMode.Status.DoGTeleportDenial{Main.rand.Next(1, 4)}", Color.Cyan);
+                    LumUtils.BroadcastLocalizedText($"Mods.InfernumMode.Status.DoGTeleportDenial{Main.rand.Next(1, 4)}", Color.Cyan);
                     HatGirl.SayThingWhileOwnerIsAlive(player, "Mods.InfernumMode.PetDialog.DoGRoDTip");
                 }
                 else

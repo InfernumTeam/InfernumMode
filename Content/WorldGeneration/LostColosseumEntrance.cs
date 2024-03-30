@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Schematics;
+﻿using CalamityMod.Schematics;
 using CalamityMod.World;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
@@ -33,7 +32,7 @@ namespace InfernumMode.Content.WorldGeneration
                 for (int i = 0; i < 10000; i++)
                 {
                     Point p = new(Main.rand.Next(400, Main.maxTilesX - 400), Main.rand.Next(500, Main.maxTilesY - 560));
-                    Tile t = CalamityUtils.ParanoidTileRetrieval(p.X, p.Y);
+                    Tile t = Framing.GetTileSafely(p.X, p.Y);
                     if (!t.HasTile || t.TileType != TileID.HardenedSand || t.HasActuator)
                         continue;
 
@@ -52,11 +51,11 @@ namespace InfernumMode.Content.WorldGeneration
             for (int i = 0; i < 5; i++)
             {
                 Point lumpCenter = (placementPosition.ToVector2() + WorldGen.genRand.NextVector2Circular(15f, 15f)).ToPoint();
-                WorldUtils.Gen(lumpCenter, new Shapes.Circle(88, 50), Actions.Chain(new GenAction[]
-                {
+                WorldUtils.Gen(lumpCenter, new Shapes.Circle(88, 50), Actions.Chain(
+                [
                     new Modifiers.RadialDither(82f, 88f),
                     new Actions.SetTile(TileID.Sandstone, true)
-                }));
+                ]));
             }
 
             // Carve a cave through the sandstone.
@@ -70,11 +69,11 @@ namespace InfernumMode.Content.WorldGeneration
                 int perlinOffset = (int)(SulphurousSea.FractalBrownianMotion(cavePosition.X * 0.16f, cavePosition.Y * 0.16f, caveSeed, 4) * 6f);
                 cavePosition.Y += perlinOffset;
 
-                WorldUtils.Gen(cavePosition, new Shapes.Rectangle(9, 9), Actions.Chain(new GenAction[]
-                {
+                WorldUtils.Gen(cavePosition, new Shapes.Rectangle(9, 9), Actions.Chain(
+                [
                     new Actions.ClearTile(),
                     new Actions.PlaceWall(WallID.Sandstone)
-                }));
+                ]));
                 cavePosition.X -= 4;
             }
 

@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.ExtraTextures;
+﻿using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
@@ -106,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             Color firstThirdColor = Color.Lerp(Color.Orange, Color.Yellow, 0.3f);
             Color secondThirdColor = Color.Lerp(Color.Orange, Color.Red, 0.67f);
             Color endColor = Color.LightSlateGray;
-            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, firstThirdColor, secondThirdColor, endColor) * trailOpacity;
+            return LumUtils.MulticolorLerp(completionRatio, startingColor, firstThirdColor, secondThirdColor, endColor) * trailOpacity;
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)

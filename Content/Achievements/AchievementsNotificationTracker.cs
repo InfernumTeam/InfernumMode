@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Achievements
 {
     public class AchievementsNotificationTracker
     {
-        private static readonly List<IInGameNotification> Notifications = new();
+        private static readonly List<IInGameNotification> Notifications = [];
 
         public static void AddAchievementAsUpdated(Achievement achievement)
         {

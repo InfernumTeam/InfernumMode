@@ -154,7 +154,7 @@ namespace InfernumMode.Content.Skies
         {
             static List<(TimeSpan, TimeSpan)> splitMusicPointsIntoSections(List<TimeSpan> musicPoints)
             {
-                List<(TimeSpan, TimeSpan)> sections = new();
+                List<(TimeSpan, TimeSpan)> sections = [];
                 for (int i = 0; i < musicPoints.Count - 1; i += 2)
                     sections.Add((musicPoints[i], musicPoints[i + 1]));
 

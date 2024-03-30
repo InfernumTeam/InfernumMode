@@ -50,8 +50,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         #endregion
 
         #region Attack Cycles
-        public static List<GuardiansAttackType> CommanderAttackCycle => new()
-        {
+        public static List<GuardiansAttackType> CommanderAttackCycle =>
+        [
             GuardiansAttackType.LargeGeyserAndCharge,
             GuardiansAttackType.DogmaLaserBall,
             GuardiansAttackType.SpearSpinThrow,
@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             GuardiansAttackType.SpearSpinThrow,
             GuardiansAttackType.DogmaLaserBall,
             GuardiansAttackType.BerdlySpears
-        };
+        ];
         #endregion
 
         #region Fields And Properties

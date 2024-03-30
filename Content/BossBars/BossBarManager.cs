@@ -67,10 +67,10 @@ namespace InfernumMode.Content.BossBars
 
         public override void Load()
         {
-            ActiveBossBars = new();
-            ModCallPhaseInfos = new();
-            ModCallBossIcons = new();
-            ModCallNPCsThatCanHaveAHPBar = new();
+            ActiveBossBars = [];
+            ModCallPhaseInfos = [];
+            ModCallBossIcons = [];
+            ModCallNPCsThatCanHaveAHPBar = [];
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -165,12 +165,12 @@ namespace InfernumMode.Content.BossBars
         // This is seperate to the provided Load hook due to requiring the NPCBehaviorOverrides to be loaded beforehand.
         internal static void LoadPhaseInfo()
         {
-            PhaseInfos = new();
+            PhaseInfos = [];
             // Load every phase info.
             foreach (var behaviorOverridePair in NPCBehaviorOverride.BehaviorOverrides)
             {
                 NPCBehaviorOverride behaviorOverride = behaviorOverridePair.Value;
-                List<float> phaseThresholds = behaviorOverride.PhaseLifeRatioThresholds.ToList();
+                List<float> phaseThresholds = [.. behaviorOverride.PhaseLifeRatioThresholds];
                 // Add 1 (100%) to the start, as none of them include that.
                 phaseThresholds.Insert(0, 1f);
                 PhaseInfos.Add(behaviorOverride.NPCOverrideType, new(behaviorOverride.NPCOverrideType, phaseThresholds));

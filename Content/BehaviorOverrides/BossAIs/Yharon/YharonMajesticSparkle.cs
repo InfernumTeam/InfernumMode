@@ -72,7 +72,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             Texture2D sparkleTexture = ModContent.Request<Texture2D>(Texture).Value;
 
-            Color sparkleColor = CalamityUtils.MulticolorLerp(ColorSpectrumHue, Color.Orange, Color.Purple, Color.Pink, Color.Green) * Projectile.Opacity * 0.5f;
+            Color sparkleColor = LumUtils.MulticolorLerp(ColorSpectrumHue, Color.Orange, Color.Purple, Color.Pink, Color.Green) * Projectile.Opacity * 0.5f;
             sparkleColor.A = 0;
 
             sparkleColor *= Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));

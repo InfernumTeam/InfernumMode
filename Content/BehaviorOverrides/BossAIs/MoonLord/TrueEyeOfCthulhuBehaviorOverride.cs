@@ -564,7 +564,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
             {
                 float sphereCastCompletion = Utils.GetLerpValue(0f, sphereCastTime, wrappedAttackTimer - repositionTime, true);
                 float continuousSphereOffsetAngle = TwoPi * sphereCastCompletion;
-                float idealPupilRotation = npc.AngleTo(target.Center).AngleLerp(continuousSphereOffsetAngle, CalamityUtils.Convert01To010(sphereCastCompletion));
+                float idealPupilRotation = npc.AngleTo(target.Center).AngleLerp(continuousSphereOffsetAngle, LumUtils.Convert01To010(sphereCastCompletion));
                 pupilRotation = pupilRotation.AngleLerp(idealPupilRotation, 0.2f);
                 pupilOutwardness = Lerp(pupilOutwardness, 0.5f, 0.15f);
                 pupilScale = Lerp(pupilScale, 0.5f, 0.15f);

@@ -178,7 +178,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 npc.Opacity = 0f;
                 killReappearDelay--;
                 if (killReappearDelay <= 0f)
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonEndKillAttemptText", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonEndKillAttemptText", TextColor);
                 return false;
             }
 
@@ -203,25 +203,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText1", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText1", TextColor);
                 npc.netUpdate = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay + DelayPerDialogLine)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText2", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText2", TextColor);
                 npc.netUpdate = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay + DelayPerDialogLine * 2f)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText3", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText3", TextColor);
                 npc.netUpdate = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == TalkDelay + DelayPerDialogLine * 3f)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText4", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText4", TextColor);
                 npc.netUpdate = true;
             }
 
@@ -230,12 +230,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             {
                 if (CalamityWorld.TalkedToDraedon)
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonResummonText", TextColorEdgy);
+                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonResummonText", TextColorEdgy);
                     HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "Mods.InfernumMode.PetDialog.DraedonChooseTip2");
                 }
                 else
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText5", TextColorEdgy);
+                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonIntroductionText5", TextColorEdgy);
                     HatGirl.SayThingWhileOwnerIsAlive(playerToFollow, "Mods.InfernumMode.PetDialog.DraedonChooseTip1");
                 }
 
@@ -291,13 +291,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase1Text1", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase1Text1", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase1Text2", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase1Text2", TextColor);
                         npc.netUpdate = true;
                     }
 
@@ -306,14 +306,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 case 3:
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonEffortMock1", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonEffortMock1", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
                         SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonEffortMock2", TextColorEdgy);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonEffortMock2", TextColorEdgy);
                     }
 
                     break;
@@ -321,13 +321,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 case 4:
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase5Text1", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase5Text1", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase5Text2", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase5Text2", TextColor);
                         npc.netUpdate = true;
                     }
 
@@ -337,13 +337,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase6Text1", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase6Text1", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase6Text2", TextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase6Text2", TextColor);
                         npc.netUpdate = true;
                     }
 
@@ -352,7 +352,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                         SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase6Text3", TextColor);
+                            LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonExoPhase6Text3", TextColor);
                             npc.netUpdate = true;
                         }
                     }
@@ -585,23 +585,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
 
             if (defeatTimer == DelayBeforeDefeatStandup + 50f)
             {
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat1", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat1", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay + 50f)
             {
                 if (earnedHyperplaneMatrix)
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat2HyperplaneMatrix", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat2HyperplaneMatrix", TextColor);
                 else
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat2", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat2", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 2f + 50f)
             {
                 if (earnedHyperplaneMatrix)
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat3HyperplaneMatrix", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat3HyperplaneMatrix", TextColor);
                 else
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat3", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat3", TextColor);
             }
 
             // After this point Draedon becomes vulnerable.
@@ -610,9 +610,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 50f)
             {
                 if (earnedHyperplaneMatrix)
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat4HyperplaneMatrix", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat4HyperplaneMatrix", TextColor);
                 else
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat4", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat4", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 3f + 165f)
@@ -620,37 +620,37 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 if (earnedHyperplaneMatrix)
                     AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.NPCKill, npc.whoAmI);
                 else
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat5", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat5", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 4f + 165f)
             {
                 if (earnedHyperplaneMatrix)
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat6HyperplaneMatrix", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat6HyperplaneMatrix", TextColor);
                 else
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat6", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat6", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 5f + 165f)
             {
                 if (earnedHyperplaneMatrix)
                 {
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat7HyperplaneMatrix", TextColorEdgy);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat7HyperplaneMatrix", TextColorEdgy);
                     defeatTimer = DelayBeforeDefeatStandup + TalkDelay * 6f + 166f;
                     npc.netUpdate = true;
                 }
                 else
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat7", TextColor);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat7", TextColor);
             }
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 6f + 165f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat8", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat8", TextColor);
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 7f + 165f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat9", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat9", TextColor);
 
             if (defeatTimer == DelayBeforeDefeatStandup + TalkDelay * 8f + 165f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonDefeat10", TextColor);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonDefeat10", TextColor);
         }
 
         public override void FindFrame(NPC npc, int frameHeight)

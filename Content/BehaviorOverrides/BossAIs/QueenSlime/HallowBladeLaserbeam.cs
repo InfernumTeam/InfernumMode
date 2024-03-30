@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
         public override void AI()
         {
             float lifetimeCompletion = Utils.GetLerpValue(0f, Lifetime, Time, true);
-            Projectile.scale = CalamityUtils.Convert01To010(lifetimeCompletion) * 4.2f;
+            Projectile.scale = LumUtils.Convert01To010(lifetimeCompletion) * 4.2f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 

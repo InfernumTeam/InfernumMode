@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Vector2 middle = (start + end) * 0.5f + (Projectile.rotation + PiOver2).ToRotationVector2() * Projectile.width * Projectile.scale * 0.167f;
 
             // Create a bunch of points that slash across the Bezier curve created from the above three points.
-            List<Vector2> slashPoints = new();
+            List<Vector2> slashPoints = [];
             for (int i = 0; i < 16; i++)
             {
                 float interpolant = i / 15f * Pow(1f - Projectile.Opacity, 0.4f);

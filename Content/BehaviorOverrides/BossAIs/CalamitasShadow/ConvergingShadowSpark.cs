@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -103,7 +102,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 Vector2 drawOffset = (TwoPi * i / 12f).ToRotationVector2() * 2f;
                 Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * Projectile.Opacity * 0.65f, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
             return false;
         }
     }

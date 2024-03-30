@@ -14,11 +14,11 @@ namespace InfernumMode.Core.OverridingSystem
     public abstract class NPCBehaviorOverride
     {
         #region Statics
-        internal static Dictionary<int, NPCBehaviorOverride> BehaviorOverrides = new();
+        internal static Dictionary<int, NPCBehaviorOverride> BehaviorOverrides = [];
 
         internal static void LoadAll()
         {
-            BehaviorOverrides = new();
+            BehaviorOverrides = [];
 
             foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {

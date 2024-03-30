@@ -22,13 +22,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Gravity
         }
 
-        public static string[] Textures => new string[4]
-        {
+        public static string[] Textures =>
+        [
             "ProfanedRock",
             "ProfanedRock2",
             "ProfanedRock3",
             "ProfanedRock4",
-        };
+        ];
 
         public string CurrentVarient = Textures[0];
 
@@ -156,9 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             GeneralParticleHandler.SpawnParticle(rockParticle);
 
             if (Main.rand.NextBool() && Main.netMode != NetmodeID.Server)
-            {
-                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticles(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center + Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 12f, 190, 0.9f));
-            }
+                ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(ModContent.Request<Texture2D>(Texture).Value.CreateMetaballsFromTexture(Projectile.Center + Projectile.velocity * 0.5f, 0f, Projectile.scale * 0.8f, 12f, 190));
 
             Projectile.rotation -= 0.1f;
             Timer++;

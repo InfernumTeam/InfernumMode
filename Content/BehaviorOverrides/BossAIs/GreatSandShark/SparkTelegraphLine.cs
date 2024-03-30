@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -28,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override void AI()
         {
-            Projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 3f;
+            Projectile.Opacity = LumUtils.Convert01To010(Time / Lifetime) * 3f;
             if (Projectile.Opacity > 1f)
                 Projectile.Opacity = 1f;
             if (Time >= Lifetime)
@@ -39,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraphWidth = Lerp(0.3f, 3f, CalamityUtils.Convert01To010(Time / Lifetime));
+            float telegraphWidth = Lerp(0.3f, 3f, LumUtils.Convert01To010(Time / Lifetime));
 
             // Draw a telegraph line outward.
             Vector2 start = Projectile.Center;

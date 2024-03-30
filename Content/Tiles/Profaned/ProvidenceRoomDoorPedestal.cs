@@ -42,7 +42,7 @@ namespace InfernumMode.Content.Tiles.Profaned
             TileObjectData.newTile.Height = Height;
             TileObjectData.newTile.Origin = new Point16(2, 0);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
+            TileObjectData.newTile.CoordinateHeights = [16];
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
@@ -66,7 +66,7 @@ namespace InfernumMode.Content.Tiles.Profaned
                 return;
 
             // Calculate the door position in the world.
-            Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile tile = Framing.GetTileSafely(i, j);
             Vector2 bottom = new Vector2(i, j).ToWorldCoordinates(8f, 0f);
             if ((WorldSaveSystem.ProvidenceDoorXPosition == 0 || WorldSaveSystem.ProvidenceDoorXPosition != bottom.X) && tile.TileFrameX == 18 && tile.TileFrameY == 0)
             {

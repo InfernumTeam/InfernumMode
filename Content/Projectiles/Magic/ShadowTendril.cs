@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Content.Items.Weapons.Magic;
 using Microsoft.Xna.Framework;
@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Magic
 {
+    // This needs the interface due to how these things are drawn. CBA to make that not crap.
     public class ShadowTendril : ModProjectile, IAdditiveDrawer
     {
         public bool ReachedTarget
@@ -75,7 +76,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
             if (slowDown)
             {
-                float angularOffset = CalamityUtils.AperiodicSin(Time / 15f + Projectile.identity) * 0.4f;
+                float angularOffset = LumUtils.AperiodicSin(Time / 15f + Projectile.identity) * 0.4f;
                 Projectile.velocity = Projectile.velocity.RotatedBy(angularOffset) * 0.99f;
             }
 

@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -34,7 +33,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Type], Color.White);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Type], Color.White);
             return false;
         }
     }

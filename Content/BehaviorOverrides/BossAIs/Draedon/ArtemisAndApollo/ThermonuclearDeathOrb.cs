@@ -1,5 +1,4 @@
-using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
@@ -93,7 +92,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
-            List<Vector2> drawPoints = new();
+            List<Vector2> drawPoints = [];
 
             Main.spriteBatch.EnterShaderRegion();
             for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 30f)
@@ -102,7 +101,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 2f;
+                float adjustedAngle = offsetAngle + LumUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 8; i++)
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 7f));

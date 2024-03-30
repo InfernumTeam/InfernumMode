@@ -108,8 +108,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
             InfernumEffectsRegistry.GenericLaserVertexShader.UseColor(Color.OrangeRed);
             InfernumEffectsRegistry.GenericLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakFire);
 
-            List<float> originalRotations = new();
-            List<Vector2> points = new();
+            List<float> originalRotations = [];
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));

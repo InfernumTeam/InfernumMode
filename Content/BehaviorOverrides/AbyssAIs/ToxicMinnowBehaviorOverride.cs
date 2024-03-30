@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.OverridingSystem;
@@ -186,7 +185,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 {
                     for (int j = -25; j < 25; j++)
                     {
-                        Tile t = CalamityUtils.ParanoidTileRetrieval(centerTileCoords.X + i, centerTileCoords.Y + j);
+                        Tile t = Framing.GetTileSafely(centerTileCoords.X + i, centerTileCoords.Y + j);
                         if (!t.HasTile || t.TileType != kelpID)
                             continue;
 

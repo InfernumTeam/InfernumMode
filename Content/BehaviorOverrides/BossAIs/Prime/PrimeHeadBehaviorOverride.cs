@@ -109,10 +109,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             [NPCID.PrimeCannon] = new(350f, 200f),
         };
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
         public override bool PreAI(NPC npc)
         {

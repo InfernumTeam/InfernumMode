@@ -1,5 +1,4 @@
-using CalamityMod;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
@@ -101,7 +100,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
                     break;
             }
             Vector2 origin = texture.Size() / 2f;
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1, texture);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1, texture: texture);
 
             if (glowmask != null)
                 Main.spriteBatch.Draw(glowmask, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);

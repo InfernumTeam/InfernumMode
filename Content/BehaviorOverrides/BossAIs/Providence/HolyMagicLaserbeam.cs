@@ -153,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (telegraphCompletion < 1f)
             {
                 if (SetAngleToMoveTo == 0)
-                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * Pow(CalamityUtils.Convert01To010(telegraphCompletion), 15f));
+                    Projectile.velocity = Projectile.velocity.RotatedBy(RotationalSpeed * Pow(LumUtils.Convert01To010(telegraphCompletion), 15f));
                 else
                     Projectile.velocity = InitialVelocity.ToRotation().AngleLerp(SetAngleToMoveTo, telegraphCompletion).ToRotationVector2();
             }
@@ -167,7 +167,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public override void DetermineScale()
         {
             float lifetimeCompletion = Utils.GetLerpValue(LaserTelegraphTime, Lifetime, Time, true);
-            Projectile.scale = CalamityUtils.Convert01To010(lifetimeCompletion) * MaxScale * 3f;
+            Projectile.scale = LumUtils.Convert01To010(lifetimeCompletion) * MaxScale * 3f;
             if (Projectile.scale > MaxScale)
                 Projectile.scale = MaxScale;
         }

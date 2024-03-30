@@ -1,6 +1,7 @@
 ﻿using CalamityMod.NPCs;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,8 +10,16 @@ using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public class OverrideSystemHooks 
+    public class OverrideSystemHooks : ICustomDetourProvider
     {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(SetDefaultMethod, OverrideSystemHooks.SetDefaultDetourMethod);
+            HookHelper.ModifyMethodWithDetour(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
+            HookHelper.ModifyMethodWithDetour(CalPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
+            HookHelper.ModifyMethodWithDetour(CalGlobalNPCPredrawMethod, OverrideSystemHooks.CalGlobalNPCPredrawDetourMethod);
+        }
+
         // Don't let Calamity's PreAI run on vanilla bosses to avoid ai conflicts.
         internal static bool CalPreAIDetourMethod(Orig_CalPreAIDelegate orig, CalamityGlobalNPC self, NPC npc)
         {

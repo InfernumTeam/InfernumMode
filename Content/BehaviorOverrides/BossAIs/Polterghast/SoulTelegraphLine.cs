@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
@@ -33,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
         public override void AI()
         {
             Time++;
-            Projectile.Opacity = CalamityUtils.Convert01To010(Projectile.timeLeft / 24f);
+            Projectile.Opacity = LumUtils.Convert01To010(Projectile.timeLeft / 24f);
         }
 
         public static float TelegraphWidthFunction(float _) => 70f;
@@ -52,12 +51,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
 
             Vector2 telegraphStart = Projectile.Center;
             Vector2 telegraphEnd = Projectile.Center + Projectile.velocity * 5000f;
-            Vector2[] telegraphPoints = new Vector2[]
-            {
+            Vector2[] telegraphPoints =
+            [
                 telegraphStart,
                 (telegraphStart + telegraphEnd) * 0.5f,
                 telegraphEnd
-            };
+            ];
             TelegraphDrawer.Draw(telegraphPoints, -Main.screenPosition, 72);
             return false;
         }

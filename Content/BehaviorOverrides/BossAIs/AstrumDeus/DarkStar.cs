@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class DarkStar : ModProjectile, IAdditiveDrawer
+    public class DarkStar : ModProjectile
     {
         public Vector2 AnchorPoint;
 
@@ -49,8 +49,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             starOffset.Y *= -1f;
             return origin + starOffset.RotatedBy(spinAngle);
         }
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Dark Star");
 
         public override void SetDefaults()
         {
@@ -100,9 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.scale = Lerp(0.135f, 0.175f, FadeToDarkGodColors) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
 
@@ -115,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             c2 = Color.Lerp(c2, new(88, 55, 172), FadeToDarkGodColors);
 
             float hue = Sin(Pi * ColorSpectrumHue + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f;
-            Color sparkleColor = CalamityUtils.MulticolorLerp(hue, c1, c2) * Projectile.Opacity * 0.84f;
+            Color sparkleColor = LumUtils.MulticolorLerp(hue, c1, c2) * Projectile.Opacity * 0.84f;
             sparkleColor *= Lerp(1f, 1.5f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
             Vector2 origin = sparkleTexture.Size() / 2f;
 
@@ -134,6 +130,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 break;
             }
 
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+
             // Draw connection lines to the next star in the constellation.
             float scaleFactor = Utils.GetLerpValue(0f, 15f, Time, true) + Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true) * 2f;
             if (projectileToConnectTo != null)
@@ -145,15 +143,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 lineOrigin = new(lineTexture.Width * 0.5f, 0f);
                 Color drawColor = Color.White * Utils.GetLerpValue(1f, 25f, projectileToConnectTo.timeLeft, true);
                 float rotation = (end - start).ToRotation() - PiOver2;
-                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, lineOrigin, scale, 0, 0f);
+                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, lineOrigin, scale, 0, 0f);
             }
 
             // Draw the sparkles.
             Vector2 drawCenter = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override bool PreDraw(ref Color lightColor)
         {
             float telegraphInterpolant = Utils.GetLerpValue(0f, 20f, Time, true);
-            float telegraphWidth = Lerp(0.3f, 3f, CalamityUtils.Convert01To010(telegraphInterpolant));
+            float telegraphWidth = Lerp(0.3f, 3f, LumUtils.Convert01To010(telegraphInterpolant));
 
             // Draw a telegraph line outward.
             if (telegraphInterpolant < 1f)

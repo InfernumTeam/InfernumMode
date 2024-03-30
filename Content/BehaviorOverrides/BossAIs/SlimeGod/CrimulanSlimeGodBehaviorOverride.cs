@@ -12,10 +12,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
     {
         public override int NPCOverrideType => ModContent.NPCType<CrimulanPaladin>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             SlimeGodComboAttackManager.SummonSecondSlimeLifeRatio
-        };
+        ];
 
         #region Enumerations
         public enum CrimulanPaladinAttackType

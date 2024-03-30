@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             // Fade in.
             Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3f;
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 3f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
 
@@ -112,7 +112,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             InfernumEffectsRegistry.ArtemisLaserVertexShader.UseImage2("Images/Misc/Perlin");
             InfernumEffectsRegistry.ArtemisLaserVertexShader.Shader.Parameters["uStretchReverseFactor"].SetValue((LaserLength + 1f) / MaxLaserLength * 4f);
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(Projectile.Center - Projectile.velocity * 18f, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
 

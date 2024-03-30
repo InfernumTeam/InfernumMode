@@ -1,5 +1,5 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
+using Luminance.Common.Easings;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -39,7 +39,7 @@ namespace InfernumMode.Common.Graphics.Particles
             if (Time <= 5f)
                 Opacity = Lerp(OriginalOpacity, OriginalOpacity * 1.5f, Time / 5f);
             else
-                Opacity = Lerp(OriginalOpacity * 1.5f, 0f, CalamityUtils.SineInOutEasing((Time - 5f) / (Lifetime - 5f), 0));
+                Opacity = Lerp(OriginalOpacity * 1.5f, 0f, EasingCurves.Sine.InOutFunction((Time - 5f) / (Lifetime - 5f)));
             if (Gravity)
             {
                 Velocity.X *= 0.99f;

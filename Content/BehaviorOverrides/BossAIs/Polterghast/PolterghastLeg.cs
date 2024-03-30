@@ -269,7 +269,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                         end -= NPC.velocity * j * 0.85f;
                     end += directionToNext * Utils.GetLerpValue(15f, 175f, offsetToNext.Length(), true) * 20f;
 
-                    List<Vector2> drawPositions = new();
+                    List<Vector2> drawPositions = [];
                     for (int k = 0; k < 10; k++)
                         drawPositions.Add(Vector2.Lerp(Limbs.Limbs[i].ConnectPoint, end, k / 9f));
 

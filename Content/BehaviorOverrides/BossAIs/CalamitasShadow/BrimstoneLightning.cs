@@ -1,15 +1,16 @@
-﻿using CalamityMod;
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
@@ -18,8 +19,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 {
     public class BrimstoneLightning : ModProjectile
     {
-        internal PrimitiveTrail LightningDrawer;
-
         public bool HasReachedDestination
         {
             get;
@@ -171,12 +170,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
+        public float PrimitiveWidthFunction(float completionRatio) => LumUtils.Convert01To010(completionRatio) * Projectile.scale * Projectile.width;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
             float colorInterpolant = Sin(Projectile.identity / 3f + completionRatio * 20f + Main.GlobalTimeWrappedHourly * 1.1f) * 0.5f + 0.5f;
-            Color color = CalamityUtils.MulticolorLerp(colorInterpolant, Color.Red, Color.Yellow, Color.Pink);
+            Color color = LumUtils.MulticolorLerp(colorInterpolant, Color.Red, Color.Yellow, Color.Pink);
             return color;
         }
 
@@ -198,12 +197,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"]);
+            var lightning = InfernumEffectsRegistry.GaleLightningShader;
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:HeavenlyGaleLightningArc"].Apply();
-
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 18);
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(PrimitiveWidthFunction, PrimitiveColorFunction, _ => Projectile.Size * 0.5f, false, Shader: lightning), 18);
             return false;
         }
     }

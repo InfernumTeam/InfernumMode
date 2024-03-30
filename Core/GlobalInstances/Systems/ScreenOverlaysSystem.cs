@@ -34,13 +34,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         public static List<DrawData> ThingsToDrawOnTopOfBlurAdditive
         {
             get;
             private set;
-        } = new();
+        } = [];
 
         internal static void DrawBlackout(ILContext il)
         {
@@ -180,7 +180,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         {
             Main.QueueMainThreadAction(() =>
             {
-                DrawCacheProjsOverSignusBlackening = new List<int>();
+                DrawCacheProjsOverSignusBlackening = [];
                 IL_Main.DoDraw += DrawBlackout;
             });
         }

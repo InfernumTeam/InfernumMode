@@ -37,21 +37,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         #region AI
 
-        public static readonly DestroyerAttackType[] Phase1AttackPattern = new DestroyerAttackType[]
-        {
+        public static readonly DestroyerAttackType[] Phase1AttackPattern =
+        [
             DestroyerAttackType.RegularCharge,
-        };
+        ];
 
-        public static readonly DestroyerAttackType[] Phase2AttackPattern = new DestroyerAttackType[]
-        {
+        public static readonly DestroyerAttackType[] Phase2AttackPattern =
+        [
             DestroyerAttackType.RegularCharge,
             DestroyerAttackType.LaserWalls,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.UpwardBombLunge,
-        };
+        ];
 
-        public static readonly DestroyerAttackType[] Phase3AttackPattern = new DestroyerAttackType[]
-        {
+        public static readonly DestroyerAttackType[] Phase3AttackPattern =
+        [
             DestroyerAttackType.RegularCharge,
             DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.EnergyBlasts,
@@ -62,10 +62,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
-        };
+        ];
 
-        public static readonly DestroyerAttackType[] Phase4AttackPattern = new DestroyerAttackType[]
-        {
+        public static readonly DestroyerAttackType[] Phase4AttackPattern =
+        [
             DestroyerAttackType.RegularCharge,
             DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.EnergyBlasts,
@@ -76,7 +76,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.UpwardBombLunge,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
-        };
+        ];
 
         public const int EnergySparkDamage = 135;
 
@@ -94,12 +94,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
 
         public const float SegmentScale = 1.5f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         public override bool PreAI(NPC npc)
         {

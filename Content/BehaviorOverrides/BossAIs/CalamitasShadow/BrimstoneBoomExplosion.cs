@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,11 +7,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 {
-    public class BrimstoneBoomExplosion : ModProjectile, IAdditiveDrawer
+    public class BrimstoneBoomExplosion : ModProjectile
     {
         public override string Texture => "CalamityMod/Skies/XerocLight";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
 
         public override void SetDefaults()
         {
@@ -44,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.Opacity = Utils.GetLerpValue(5f, 36f, Projectile.timeLeft, true);
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Melee/TerratomereExplosion").Value;
             Texture2D lightTexture = ModContent.Request<Texture2D>(Texture).Value;
@@ -52,14 +49,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = frame.Size() * 0.5f;
 
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 36; i++)
             {
                 Vector2 lightDrawPosition = drawPosition + (TwoPi * i / 36f + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * Projectile.scale * 12f;
-                Color lightBurstColor = CalamityUtils.MulticolorLerp(Projectile.timeLeft / 144f, Color.OrangeRed, Color.Yellow);
+                Color lightBurstColor = LumUtils.MulticolorLerp(Projectile.timeLeft / 144f, Color.OrangeRed, Color.Yellow);
                 lightBurstColor = Color.Lerp(lightBurstColor, Color.White, 0.4f) * Projectile.Opacity * 0.184f;
                 Main.spriteBatch.Draw(lightTexture, lightDrawPosition, null, lightBurstColor, 0f, lightTexture.Size() * 0.5f, Projectile.scale * 1.32f, SpriteEffects.None, 0);
             }
             Main.spriteBatch.Draw(texture, drawPosition, frame, Color.Yellow, 0f, origin, 1.4f, SpriteEffects.None, 0);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

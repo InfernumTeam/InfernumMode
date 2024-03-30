@@ -347,14 +347,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             npc.ai[3]++;
 
             bool enraged = LeviathanComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
-            LeviathanAttackType[] patternToUse = new LeviathanAttackType[]
-            {
+            LeviathanAttackType[] patternToUse =
+            [
                 LeviathanAttackType.VomitBlasts,
                 LeviathanAttackType.HorizontalCharges,
                 LeviathanAttackType.MeteorBelch,
                 LeviathanAttackType.HorizontalCharges,
                 enraged ? LeviathanAttackType.AberrationCharges : LeviathanAttackType.MeteorBelch,
-            };
+            ];
             LeviathanAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
 
             // Go to the next AI state.

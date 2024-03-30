@@ -11,8 +11,8 @@ namespace InfernumMode.Core.TrackedMusic
 
         public override float BeatsPerMinute => 204f;
 
-        public override List<SongSection> HeadphonesHighPoints => new()
-        {
+        public override List<SongSection> HeadphonesHighPoints =>
+        [
             new(TimeFormat(0, 19, 185), TimeFormat(0, 28, 228)),
 
             new(TimeFormat(0, 43, 747), TimeFormat(0, 52, 545)),
@@ -22,7 +22,7 @@ namespace InfernumMode.Core.TrackedMusic
             new(TimeFormat(2, 24, 929), TimeFormat(2, 45, 213)),
 
             new(TimeFormat(4, 14, 418), TimeFormat(4, 33, 236)),
-        };
+        ];
 
         public override Dictionary<SongSection, int> SongSections => new()
         {
@@ -57,6 +57,6 @@ namespace InfernumMode.Core.TrackedMusic
             [new(TimeFormat(4, 14, 421), TimeFormat(4, 52, 055))] = (int)ExoMechMusicPhases.Draedon
         };
 
-        public override List<SongSection> HighPoints => new();
+        public override List<SongSection> HighPoints => [];
     }
 }

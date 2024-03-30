@@ -43,8 +43,8 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (AchievementInstances is not null)
                 return;
 
-            AchievementInstances = new List<Achievement>();
-            SortedAchievements = new Dictionary<Achievement, int>();
+            AchievementInstances = [];
+            SortedAchievements = [];
             LoadAchievementInstances(InfernumMode.Instance);
 
             foreach (var achievement in AchievementInstances)
@@ -76,7 +76,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             }
         }
 
-        internal static List<Achievement> GetAchievementsList() => Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements.ToList();
+        internal static List<Achievement> GetAchievementsList() => [.. Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements];
 
         public static bool UnlockedAchievement<T>(Player player) where T : Achievement
         {

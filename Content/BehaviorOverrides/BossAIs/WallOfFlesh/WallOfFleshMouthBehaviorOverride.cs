@@ -26,10 +26,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public static int FireBeamDamage => 185;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
         #region AI
 
@@ -308,9 +308,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
                     {
                         int checkArea = 30 + tries / 20;
                         Vector2 potentialSpawnPosition = target.Center + target.velocity * 10f + Main.rand.NextVector2CircularEdge(checkArea, checkArea) * 16f;
-                        Tile spawnTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16);
-                        Tile aboveTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 - 2);
-                        Tile belowTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 + 2);
+                        Tile spawnTile = Framing.GetTileSafely((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16);
+                        Tile aboveTile = Framing.GetTileSafely((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 - 2);
+                        Tile belowTile = Framing.GetTileSafely((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 + 2);
 
                         bool aboveTileInvalid = aboveTile.HasTile && Main.tileSolid[aboveTile.TileType];
                         bool bottomTileInvalid = belowTile.HasTile && Main.tileSolid[belowTile.TileType];

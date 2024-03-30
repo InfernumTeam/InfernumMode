@@ -1,6 +1,6 @@
-using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -12,9 +12,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 {
     public class WaterSlice : ModProjectile
     {
-        internal PrimitiveTrail LightningDrawer;
-
-        public List<Vector2> TrailCache = new();
+        public List<Vector2> TrailCache = [];
 
         public ref float ScaleFactorDelta => ref Projectile.localAI[0];
 
@@ -25,8 +23,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         public const int Lifetime = 300;
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Water Tear");
 
         public override void SetDefaults()
         {
@@ -108,12 +104,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         internal float WidthFunction(float completionRatio)
         {
             float baseWidth = Lerp(32f, 33f, Sin(Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
-            return CalamityUtils.Convert01To010(completionRatio) * baseWidth * (1f + ScaleFactorDelta);
+            return LumUtils.Convert01To010(completionRatio) * baseWidth * (1f + ScaleFactorDelta);
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            float opacity = CalamityUtils.Convert01To010(completionRatio);
+            float opacity = LumUtils.Convert01To010(completionRatio);
             if (opacity >= 1f)
                 opacity = 1f;
             opacity *= Projectile.Opacity * 0.18f;
@@ -122,11 +118,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
-
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
-            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 54);
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            tear.TrySetParameter("useOutline", true);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Water.Value;
+            PrimitiveRenderer.RenderTrail(TrailCache, new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: tear), 54);
             return false;
         }
         #endregion

@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -60,13 +59,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
 
         public override bool OnTileCollide(Vector2 oldVelocity) => true;
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(Projectile.Center, 16f, targetHitbox);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => LumUtils.CircularHitboxCollision(Projectile.Center, 16f, targetHitbox);
 
         public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, Projectile.alpha);
 
         public override bool PreDraw(ref Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
             return false;
         }
     }

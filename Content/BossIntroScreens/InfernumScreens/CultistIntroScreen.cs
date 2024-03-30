@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
+﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -8,7 +7,7 @@ namespace InfernumMode.Content.BossIntroScreens.InfernumScreens
 {
     public class CultistIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => CalamityUtils.MulticolorLerp(CalamityUtils.Convert01To010(AnimationCompletion), CultistBehaviorOverride.PillarsPallete);
+        public override TextColorData TextColor => LumUtils.MulticolorLerp(LumUtils.Convert01To010(AnimationCompletion), CultistBehaviorOverride.PillarsPallete);
 
         public override bool TextShouldBeCentered => true;
 

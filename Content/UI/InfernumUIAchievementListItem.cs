@@ -233,8 +233,7 @@ namespace InfernumMode.Content.UI
             else
                 _iconFrame = _iconFrameLocked;
 
-            if (_achievementIcon != null)
-                _achievementIcon.SetFrame(_iconFrame);
+            _achievementIcon?.SetFrame(_iconFrame);
         }
         public override void MouseOver(UIMouseEvent evt)
         {

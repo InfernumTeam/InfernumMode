@@ -1,6 +1,6 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -11,9 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 {
     public class DeathSlash : ModProjectile
     {
-        internal PrimitiveTrail SlashDrawer;
-
-        private readonly List<Vector2> TrailCache = new();
+        private readonly List<Vector2> TrailCache = [];
 
         public float ScaleFactorDelta => Projectile.localAI[0];
 
@@ -101,12 +99,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
         internal float WidthFunction(float completionRatio)
         {
             float baseWidth = Lerp(32f, 33f, Sin(Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
-            return CalamityUtils.Convert01To010(completionRatio) * baseWidth * (1f + ScaleFactorDelta) * 0.5f;
+            return LumUtils.Convert01To010(completionRatio) * baseWidth * (1f + ScaleFactorDelta) * 0.5f;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            float opacity = CalamityUtils.Convert01To010(completionRatio);
+            float opacity = LumUtils.Convert01To010(completionRatio);
             if (opacity >= 1f)
                 opacity = 1f;
             opacity *= Projectile.Opacity * 0.18f;
@@ -115,11 +113,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public override bool PreDraw(ref Color lightColor)
         {
-            SlashDrawer ??= new(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
-
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.GrayscaleWater);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
-            SlashDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 60);
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            tear.TrySetParameter("useOutline", false);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.GrayscaleWater.Value;
+            PrimitiveRenderer.RenderTrail(TrailCache, new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: tear), 60);
             return false;
         }
     }

@@ -33,9 +33,11 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 Vector2 stickPosition = Owner.Center + new Vector2(RightSide ? -50f : 30f, 52f).RotatedBy(Owner.rotation);
                 Vector2 farLeft = Owner.Center - Vector2.UnitY * 500f;
                 Vector2 farRight = NPC.Center + Owner.SafeDirectionTo(NPC.Center).RotatedBy(RightSide.ToDirectionInt() * -0.4f) * 450f;
-                List<Vector2> segmentPositions = new();
-                segmentPositions.Add(stickPosition);
-                segmentPositions.Add(stickPosition - Vector2.UnitX * RightSide.ToDirectionInt() * 10f);
+                List<Vector2> segmentPositions =
+                [
+                    stickPosition,
+                    stickPosition - Vector2.UnitX * RightSide.ToDirectionInt() * 10f,
+                ];
                 for (int i = 0; i < 20; i++)
                 {
                     float moveOffset = Sin(Owner.Infernum().ExtraAI[9] * 0.113f + i / 7f) * Utils.GetLerpValue(4f, 9f, i, true) * 30f;
@@ -49,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
 
                 for (int i = 0; i < 20; i++)
                     segmentPositions.Add(NPC.Center);
-                return segmentPositions.ToArray();
+                return [.. segmentPositions];
             }
         }
 

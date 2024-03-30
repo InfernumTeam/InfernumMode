@@ -24,7 +24,7 @@ namespace InfernumMode.Content.UI
     {
         private UIList AchivementList;
 
-        private readonly List<InfernumUIAchievementListItem> AchievementElements = new();
+        private readonly List<InfernumUIAchievementListItem> AchievementElements = [];
 
         private UIElement OuterContainer;
 
@@ -58,7 +58,7 @@ namespace InfernumMode.Content.UI
             uIPanel.PaddingTop = 0f;
             uIElement.Append(uIPanel);
 
-            AchivementList = new UIList();
+            AchivementList = [];
             AchivementList.Width.Set(-25f, 1f);
             AchivementList.Height.Set(-50f, 1f);
             AchivementList.Top.Set(50f, 0f);
@@ -180,7 +180,7 @@ namespace InfernumMode.Content.UI
     {
         private UIList AchivementList;
 
-        private readonly List<InfernumUIAchievementListItem> AchievementElements = new();
+        private readonly List<InfernumUIAchievementListItem> AchievementElements = [];
 
         private UIElement OuterContainer;
 
@@ -214,7 +214,7 @@ namespace InfernumMode.Content.UI
             uIPanel.PaddingTop = 0f;
             uIElement.Append(uIPanel);
 
-            AchivementList = new UIList();
+            AchivementList = [];
             AchivementList.Width.Set(-25f, 1f);
             AchivementList.Height.Set(-50f, 1f);
             AchivementList.Top.Set(50f, 0f);

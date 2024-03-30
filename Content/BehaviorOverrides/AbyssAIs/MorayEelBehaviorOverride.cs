@@ -1,5 +1,4 @@
-using CalamityMod;
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -57,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                 {
                     int x = (int)(npc.Center.X / 16f) + Main.rand.Next(-25, 25);
                     int y = (int)(npc.Center.Y / 16f) + Main.rand.Next(-25, 25);
-                    Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                    Tile tile = Framing.GetTileSafely(x, y);
 
                     // Try again if the tile isn't solid or isn't exposed to air.
                     if (!WorldGen.SolidTile(tile) || !Utilities.IsTileExposedToAir(x, y, out float? angleToOpenAir) || tile.Slope != SlopeType.Solid || tile.IsHalfBlock)
@@ -66,7 +65,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
                     // Try again if there's no open water near the tile.
                     Vector2 moveDirection = angleToOpenAir.Value.ToRotationVector2();
                     Vector2 collisionCheckPosition = new Vector2(x * 16f + 8f, y * 16f + 8f) + moveDirection * 16f;
-                    float collisionDistance = CalamityUtils.DistanceToTileCollisionHit(collisionCheckPosition, moveDirection, 20) ?? 20;
+                    float collisionDistance = LumUtils.DistanceToTileCollisionHit(collisionCheckPosition, moveDirection, 20) ?? 20;
                     if (collisionDistance <= 10)
                         continue;
 
@@ -172,7 +171,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // This is important for attacking.
             int snapDirectionTries = 0;
             float targetSnapAngularThreshold = 0.68f;
-            while ((CalamityUtils.DistanceToTileCollisionHit(spotToHideIn, snapDirection, 50) ?? 50f) < 5f)
+            while ((LumUtils.DistanceToTileCollisionHit(spotToHideIn, snapDirection, 50) ?? 50f) < 5f)
             {
                 snapDirectionTries++;
                 snapDirection = snapDirection.RotatedBy(PiOver2);
@@ -238,10 +237,10 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             if (Collision.SolidCollision(idealDrawPosition + backOffset, 4, 4))
                 idealDrawPosition += backOffset;
 
-            List<Vector2> bezierPoints = new()
-            {
+            List<Vector2> bezierPoints =
+            [
                 idealDrawPosition
-            };
+            ];
 
             // Calculate points to create segments at based on a catmull-rom spine.
             float bendFactor = Utils.GetLerpValue(80f, 250f, npc.Distance(idealDrawPosition), true);
@@ -254,7 +253,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             bezierPoints.Add(npc.Center);
 
             // Generalize points with a bezier curve.
-            BezierCurve bezierCurve = new(bezierPoints.ToArray());
+            BezierCurve bezierCurve = new([.. bezierPoints]);
             int totalChains = (int)(npc.Distance(idealDrawPosition) / 16f);
             totalChains = (int)Clamp(totalChains, 2f, 100f);
             for (int i = 0; i < totalChains - 1; i++)

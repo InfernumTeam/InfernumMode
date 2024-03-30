@@ -50,8 +50,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
         #endregion
 
         #region Pattern Lists
-        public static DukeAttackType[] Subphase1Pattern => new DukeAttackType[]
-        {
+        public static DukeAttackType[] Subphase1Pattern =>
+        [
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.ChargeWait,
@@ -72,10 +72,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.BubbleSpit,
             DukeAttackType.SharkTornadoSummon,
             DukeAttackType.StationaryBubbleCharge,
-        };
+        ];
 
-        public static DukeAttackType[] Subphase2Pattern => new DukeAttackType[]
-        {
+        public static DukeAttackType[] Subphase2Pattern =>
+        [
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.ChargeWait,
@@ -102,27 +102,25 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.Charge,
             DukeAttackType.StationaryBubbleCharge,
             DukeAttackType.BubbleSpin,
-        };
+        ];
 
         public static DukeAttackType[] Subphase3Pattern =>
-            DoCharge(3, true).
+            [.. DoCharge(3, true).
             Fuse(DukeAttackType.RazorbladeRazorstorm, DukeAttackType.BubbleSpin).
             Fuse(DoCharge(5, true)).
             Fuse(DukeAttackType.SharkTornadoSummon).
             Fuse(DoCharge(3, true)).
-            Fuse(DukeAttackType.SharkTornadoSummon, DukeAttackType.BubbleSpit).
-            ToArray();
+            Fuse(DukeAttackType.SharkTornadoSummon, DukeAttackType.BubbleSpit)];
 
         public static DukeAttackType[] Subphase4Pattern =>
-            DoCharge(9, true).
+            [.. DoCharge(9, true).
             Fuse(DukeAttackType.TidalWave, DukeAttackType.BubbleSpin).
             Fuse(DoCharge(9, true)).
-            Fuse(DukeAttackType.RazorbladeRazorstorm, DukeAttackType.BubbleSpin).
-            ToArray();
+            Fuse(DukeAttackType.RazorbladeRazorstorm, DukeAttackType.BubbleSpin)];
 
         public static DukeAttackType[] DoCharge(int chargeCount, bool teleportAtStart = false)
         {
-            List<DukeAttackType> result = new();
+            List<DukeAttackType> result = [];
 
             result.AddWithCondition(DukeAttackType.ChargeTeleport, teleportAtStart);
             for (int i = 0; i < chargeCount; i++)
@@ -130,7 +128,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 result.Add(DukeAttackType.ChargeWait);
                 result.Add(DukeAttackType.Charge);
             }
-            return result.ToArray();
+            return [.. result];
         }
 
         public static Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable => new()
@@ -147,12 +145,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         public const float Phase4LifeRatio = 0.2f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
         #endregion
 
         #region AI
@@ -723,11 +721,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
             {
                 // Roar.
                 SoundEngine.PlaySound(SoundID.Zombie20, npc.Center);
-                List<int> xSpawnPositions = new()
-                {
+                List<int> xSpawnPositions =
+                [
                     (int)(target.Center.X - (enraged ? 600f : 800f)) / 16,
                     (int)(target.Center.X + (enraged ? 600f : 800f)) / 16
-                };
+                ];
 
                 // Summon tornadoes on the ground/water.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -900,11 +898,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.DukeFishronRazorbladeTip");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    List<int> horizontalSpawnPositions = new()
-                    {
+                    List<int> horizontalSpawnPositions =
+                    [
                         (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
                         (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
-                    };
+                    ];
 
                     int y = Utils.Clamp((int)target.Center.Y / 16 + 95, 20, Main.maxTilesY - 20);
                     foreach (int x in horizontalSpawnPositions)

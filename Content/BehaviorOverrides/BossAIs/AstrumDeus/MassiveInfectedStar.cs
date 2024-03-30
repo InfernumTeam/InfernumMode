@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
@@ -85,9 +85,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public float SunWidthFunction(float completionRatio) => Radius * CalamityUtils.Convert01To010(completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * LumUtils.Convert01To010(completionRatio);
 
-        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Orange, CalamityUtils.Convert01To010(completionRatio) * 0.45f + 0.25f) * Projectile.Opacity;
+        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Red, Color.Orange, LumUtils.Convert01To010(completionRatio) * 0.45f + 0.25f) * Projectile.Opacity;
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -95,15 +95,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
-            List<float> rotationPoints = new();
-            List<Vector2> drawPoints = new();
+            List<float> rotationPoints = [];
+            List<Vector2> drawPoints = [];
 
             for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 24f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.06f, 3, 185) * 3f;
+                float adjustedAngle = offsetAngle + LumUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.06f, 3, 185) * 3f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 16; i++)
                 {

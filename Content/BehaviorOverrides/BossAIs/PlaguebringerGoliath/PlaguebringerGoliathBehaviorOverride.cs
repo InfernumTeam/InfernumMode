@@ -41,11 +41,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public const float Phase3LifeRatio = 0.3f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         #region Enumerations
         public enum PBGAttackType
@@ -621,7 +621,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             void summonDrones(int droneSummonCount, int moveIncrement, int spinDirection, float angularOffsetPerIncrement)
             {
-                List<int> drones = new();
+                List<int> drones = [];
                 for (int i = 0; i < droneSummonCount; i++)
                 {
                     int drone = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SmallDrone>());
@@ -897,7 +897,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.PBGDroneBuildTip");
 
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.PBGNuclearCoreGeneration", Color.Lime);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.PBGNuclearCoreGeneration", Color.Lime);
                 SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

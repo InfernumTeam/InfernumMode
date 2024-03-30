@@ -149,11 +149,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
         public const float BodySegmentDR = 0.925f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             DoGPhase2HeadBehaviorOverride.FinalPhaseLifeRatio
-        };
+        ];
 
         #region Loading
         public override void Load()

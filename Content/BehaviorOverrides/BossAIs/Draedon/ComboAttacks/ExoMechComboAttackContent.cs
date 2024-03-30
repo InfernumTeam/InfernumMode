@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
         public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new()
         {
-            [ExoMechComboAttackType.ThanatosAres_EnergySlashesAndCharges] = new int[] { ModContent.NPCType<AresEnergyKatana>() },
+            [ExoMechComboAttackType.ThanatosAres_EnergySlashesAndCharges] = [ModContent.NPCType<AresEnergyKatana>()],
         };
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)

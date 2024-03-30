@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         internal PrimitiveTrailCopy BeamDrawer;
 
-        public Projectile Owner => CalamityUtils.FindProjectileByIdentity(OwnerIndex, Projectile.owner);
+        public Projectile Owner => LumUtils.FindProjectileByIdentity(OwnerIndex, Projectile.owner);
 
         public int OwnerIndex
         {
@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public void CalculateScale()
         {
-            Projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime) * 1.55f;
+            Projectile.scale = LumUtils.Convert01To010(Time / Lifetime) * 1.55f;
             if (Projectile.scale > 1f)
                 Projectile.scale = 1f;
         }
@@ -167,8 +167,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             InfernumEffectsRegistry.ArtemisLaserVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
             InfernumEffectsRegistry.ArtemisLaserVertexShader.Shader.Parameters["uStretchReverseFactor"].SetValue((LaserLength + 1f) / MaxLaserLength);
 
-            List<float> originalRotations = new();
-            List<Vector2> points = new();
+            List<float> originalRotations = [];
+            List<Vector2> points = [];
             for (int i = 0; i <= 16; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 16f));

@@ -95,7 +95,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     // Use an exo color in the final phase.
                     if (TotalLasersToFire >= 7f)
                     {
-                        Color exoColor = CalamityUtils.MulticolorLerp((i / TotalLasersToFire + Projectile.identity * 0.318f) % 1f, CalamityUtils.ExoPalette) * 0.7f;
+                        Color exoColor = LumUtils.MulticolorLerp((i / TotalLasersToFire + Projectile.identity * 0.318f) % 1f, CalamityUtils.ExoPalette) * 0.7f;
                         telegraphColor = Color.Lerp(telegraphColor, exoColor, 0.6f);
                     }
                     telegraphColor *= 0.7f;

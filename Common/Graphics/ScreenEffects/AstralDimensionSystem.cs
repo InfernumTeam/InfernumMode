@@ -2,7 +2,6 @@
 using Terraria;
 using Terraria.ModLoader;
 using InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene;
-using InfernumMode.Common.Graphics.Drawers;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 

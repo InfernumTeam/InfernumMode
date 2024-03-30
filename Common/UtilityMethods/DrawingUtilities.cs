@@ -10,6 +10,7 @@ using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.MapLayers;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -202,7 +203,7 @@ namespace InfernumMode
 
         public static List<Vector2> CorrectBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, IEnumerable<float> _ = null)
         {
-            List<Vector2> controlPoints = new();
+            List<Vector2> controlPoints = [];
             for (int i = 0; i < originalPositions.Count(); i++)
             {
                 // Don't incorporate points that are zeroed out.
@@ -215,8 +216,8 @@ namespace InfernumMode
             if (controlPoints.Count <= 1)
                 return controlPoints;
 
-            List<Vector2> points = new();
-            BezierCurve bezierCurve = new(controlPoints.ToArray());
+            List<Vector2> points = [];
+            BezierCurve bezierCurve = new([.. controlPoints]);
 
             // The GetPoints method uses imprecise floating-point looping, which can result in inaccuracies with point generation.
             // Instead, an integer-based loop is used to mitigate such problems.
@@ -400,8 +401,8 @@ namespace InfernumMode
 
         public static void GetCircleVertices(int sideCount, float radius, Vector2 center, out List<short> triangleIndices, out List<PrimitiveTrailCopy.VertexPosition2DColor> vertices)
         {
-            vertices = new();
-            triangleIndices = new();
+            vertices = [];
+            triangleIndices = [];
 
             // Use the law of cosines to determine the side length of the triangles that compose the inscribed shape.
             float sideAngle = TwoPi / sideCount;
@@ -528,30 +529,28 @@ namespace InfernumMode
             get
             {
                 float colorInterpolant = (float)(Math.Sin(Pi * Main.GlobalTimeWrappedHourly + 1f) * 0.5) + 0.5f;
-                Color c = CalamityUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
-                return CalamityUtils.ColorMessage(GetLocalization("Items.InfernalRelicText").Value, c);
+                Color c = LumUtils.MulticolorLerp(colorInterpolant, new Color(170, 0, 0, 255), Color.OrangeRed, new Color(255, 200, 0, 255));
+                return LumUtils.ColorMessage(GetLocalization("Items.InfernalRelicText").Value, c);
             }
         }
 
-        public static void SwapToRenderTarget(this ManagedRenderTarget renderTarget, Color? flushColor = null) => SwapToRenderTarget(renderTarget.Target, flushColor);
+        //public static void SwapToRenderTarget(this RenderTarget2D renderTarget, Color? flushColor = null)
+        //{
+        //    // Local variables for convinience.
+        //    GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
+        //    SpriteBatch spriteBatch = Main.spriteBatch;
 
-        public static void SwapToRenderTarget(this RenderTarget2D renderTarget, Color? flushColor = null)
-        {
-            // Local variables for convinience.
-            GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
-            SpriteBatch spriteBatch = Main.spriteBatch;
+        //    // If we are in the menu, a server, or any of these are null, return.
+        //    if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
+        //        return;
 
-            // If we are in the menu, a server, or any of these are null, return.
-            if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
-                return;
+        //    // Otherwise set the render target.
+        //    graphicsDevice.SetRenderTarget(renderTarget);
 
-            // Otherwise set the render target.
-            graphicsDevice.SetRenderTarget(renderTarget);
-
-            // "Flush" the screen, removing any previous things drawn to it.
-            flushColor ??= Color.Transparent;
-            graphicsDevice.Clear(flushColor.Value);
-        }
+        //    // "Flush" the screen, removing any previous things drawn to it.
+        //    flushColor ??= Color.Transparent;
+        //    graphicsDevice.Clear(flushColor.Value);
+        //}
 
         /// <summary>
         /// Creates a list of <see cref="InfernumMetaballParticle"/> from a given texture shape and color information.
@@ -563,9 +562,9 @@ namespace InfernumMode
         /// <param name="metaballSize">The base size of the metaballs</param>
         /// <param name="spawnChance">The chance that a pixel will create a metaball</param>
         /// <returns></returns>
-        public static IEnumerable<InfernumMetaballParticle> CreateMetaballsFromTexture(this Texture2D texture, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35, float decayRate = 0.985f)
+        public static IEnumerable<MetaballInstance> CreateMetaballsFromTexture(this Texture2D texture, Vector2 texturePosition, float textureRotation, float textureScale, float metaballSize, int spawnChance = 35)
         {
-            List<InfernumMetaballParticle> metaballs = new();
+            List<MetaballInstance> metaballs = [];
             // Leave if this is null, or this is called on the server.
             if (Main.netMode == NetmodeID.Server)
                 return metaballs;
@@ -579,7 +578,7 @@ namespace InfernumMode
                 {
                     if (Main.rand.NextBool(spawnChance))
                     {
-                        InfernumMetaballParticle particle = new(Main.rand.NextVector2FromRectangle(new((int)texturePosition.X, (int)texturePosition.Y, (int)actualSize.X, (int)actualSize.Y)), Vector2.Zero, new(Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f)), decayRate);
+                        MetaballInstance particle = new(Main.rand.NextVector2FromRectangle(new((int)texturePosition.X, (int)texturePosition.Y, (int)actualSize.X, (int)actualSize.Y)), Vector2.Zero, Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f));
                         metaballs.Add(particle);
                     }
                 }
@@ -606,7 +605,7 @@ namespace InfernumMode
                     {
                         Vector2 positionOffset = textureScale * new Vector2(textureWidth * 0.5f, textureHeight * 0.5f).RotatedBy(textureRotation);
                         Vector2 metaballSpawnPosition = texturePosition - positionOffset + new Vector2(w, h).RotatedBy(textureRotation);
-                        InfernumMetaballParticle particle = new(metaballSpawnPosition, Vector2.Zero, new Vector2(Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f)) * color.A / 255, decayRate);
+                        MetaballInstance particle = new(metaballSpawnPosition, Vector2.Zero, Main.rand.NextFloat(metaballSize * 0.8f, metaballSize * 1.2f) * color.A / 255);
                         metaballs.Add(particle);
                     }
                 }

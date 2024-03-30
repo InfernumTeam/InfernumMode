@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Dusts;
+﻿using CalamityMod.Dusts;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
@@ -68,7 +67,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus
             Color startingColor = Color.Lerp(Color.Cyan, Color.White, 0.4f);
             Color middleColor = Color.Lerp(Color.Orange, Color.Yellow, 0.3f);
             Color endColor = Color.Lerp(Color.Orange, Color.Red, 0.67f);
-            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
+            return LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
         }
 
         public override bool PreDraw(ref Color lightColor)

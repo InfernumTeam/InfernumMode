@@ -77,10 +77,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
         public const float MaxSlowdownTime = 60f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             FinalPhaseLifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -180,7 +180,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             {
                 npc.knockBackResist = 0f;
                 npc.life = (int)Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 90f);
-                npc.ai = new float[] { 0f, 0f, 0f, 0f };
+                npc.ai = [0f, 0f, 0f, 0f];
                 npc.Infernum().ExtraAI[0] = (int)HiveMindAttackState.SuspensionStateDrift;
                 npc.Infernum().ExtraAI[1] = npc.Infernum().ExtraAI[2] = npc.Infernum().ExtraAI[3] = 0f;
                 npc.Infernum().ExtraAI[15] = npc.Infernum().ExtraAI[16] = 0f;
@@ -341,7 +341,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
                 nextAttack = HiveMindAttackState.BlobBurst;
 
             // Reset things.
-            npc.ai = new float[] { 0f, 0f, 0f, 0f };
+            npc.ai = [0f, 0f, 0f, 0f];
             npc.Infernum().ExtraAI[0] = -1f;
             npc.Infernum().ExtraAI[1] = npc.Infernum().ExtraAI[2] = npc.Infernum().ExtraAI[3] = 0f;
             npc.Infernum().ExtraAI[5] = (int)nextAttack;

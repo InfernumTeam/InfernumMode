@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -45,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 17f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 17f, targetHitbox);
         }
     }
 }

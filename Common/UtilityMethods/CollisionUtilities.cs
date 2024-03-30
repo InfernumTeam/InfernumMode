@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Common.Worldgen;
+﻿using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -73,7 +72,7 @@ namespace InfernumMode
             {
                 for (int j = y; j < y + height / 16; j++)
                 {
-                    Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+                    Tile t = Framing.GetTileSafely(i, j);
                     if (!t.HasUnactuatedTile)
                         continue;
 

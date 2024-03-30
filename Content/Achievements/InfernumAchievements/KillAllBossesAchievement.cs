@@ -42,8 +42,8 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
     {
         private Dictionary<string, bool> BossesCompleted;
 
-        public static List<int> BossList => new()
-        {
+        public static List<int> BossList =>
+        [
             NPCID.KingSlime,
             ModContent.NPCType<DesertScourgeHead>(),
             NPCID.EyeofCthulhu,
@@ -91,11 +91,11 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             ModContent.NPCType<PrimordialWyrmHead>(),
             ModContent.NPCType<Draedon>(),
             ModContent.NPCType<SupremeCalamitas>(),
-        };
+        ];
 
         private void CreateNewDict()
         {
-            BossesCompleted = new Dictionary<string, bool>();
+            BossesCompleted = [];
             foreach (int bossID in BossList)
                 BossesCompleted[Utilities.GetNPCNameFromID(bossID)] = false;
 
@@ -206,7 +206,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
             foreach (var bossID in BossList)
             {
                 string bossName = Utilities.GetNPCNameFromID(bossID);
-                if (!BossesCompleted.ContainsKey(bossName) || !BossesCompleted[bossName])
+                if (!BossesCompleted.TryGetValue(bossName, out bool value) || !value)
                 {
                     // Due to these originally using the full name, this gets the id, and then gets the name using
                     // a different method to avoid changing the saved names in the dict and fucking with data.

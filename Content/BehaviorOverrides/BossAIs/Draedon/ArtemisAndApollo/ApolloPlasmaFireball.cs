@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
@@ -114,7 +113,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             lightColor.R = (byte)(255 * Projectile.Opacity);
             lightColor.G = (byte)(255 * Projectile.Opacity);
             lightColor.B = (byte)(255 * Projectile.Opacity);
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
             return false;
         }
 

@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool PreDraw(ref Color lightColor)
         {
             float alpha = 1f - (float)Projectile.alpha / 255;
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
             Projectile.DrawProjectileWithBackglowTemp(Projectile.GetAlpha(Color.White) with { A = 0 }, Color.White, 2f);
             return false;
         }

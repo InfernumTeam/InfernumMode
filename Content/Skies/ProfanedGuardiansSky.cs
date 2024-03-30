@@ -54,7 +54,7 @@ namespace InfernumMode.Content.Skies
             }
         }
 
-        private readonly List<Symbol> Symbols = new();
+        private readonly List<Symbol> Symbols = [];
 
         private bool isActive;
 

@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Common.UtilityMethods;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -36,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             groundPosition = npc.Bottom + Vector2.UnitX * 8f;
             for (int x = (int)(npc.Left.X / 16f); x < (int)(npc.Right.X / 16f); x++)
             {
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, (int)(groundPosition.Y / 16f));
+                Tile tile = Framing.GetTileSafely(x, (int)(groundPosition.Y / 16f));
                 if (tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                     onGround = true;
             }
@@ -186,7 +185,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
             for (int i = 0; i < 20; i++)
             {
                 int x = (int)((npc.spriteDirection == 1 ? npc.Right : npc.Left).X / 16f) + (i + 1) * npc.spriteDirection;
-                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, (int)(groundPosition.Y / 16f));
+                Tile tile = Framing.GetTileSafely(x, (int)(groundPosition.Y / 16f));
                 bool isTileSolid = Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType];
                 if (!tile.HasUnactuatedTile || !isTileSolid)
                 {

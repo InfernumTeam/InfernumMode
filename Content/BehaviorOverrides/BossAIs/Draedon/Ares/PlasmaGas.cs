@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class PlasmaGas : ModProjectile, IAdditiveDrawer
+    public class PlasmaGas : ModProjectile
     {
         public ref float LightPower => ref Projectile.ai[0];
 
@@ -54,18 +54,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.velocity *= 0.985f;
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => Projectile.Opacity > 0.6f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.6f;
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
 
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 20;
             if (!Projectile.Hitbox.Intersects(screenRectangle))
-                return;
+                return false;
 
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
@@ -73,7 +71,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity;
             Color drawColor = new Color(141, 255, 105) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
-            spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

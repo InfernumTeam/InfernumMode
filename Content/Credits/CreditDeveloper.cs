@@ -4,24 +4,19 @@ using Terraria;
 
 namespace InfernumMode.Content.Credits
 {
-    public class CreditDeveloper
+    public class CreditDeveloper(Texture2D texture, Vector2 position, Vector2 velocity, float rotation, SpriteEffects direction)
     {
-        public Texture2D Texture;
-        public Vector2 Position;
-        public Vector2 StartingPosition;
-        public Vector2 Velocity;
-        public float Rotation;
-        public readonly SpriteEffects Direction;
+        public Texture2D Texture = texture;
 
-        public CreditDeveloper(Texture2D texture, Vector2 position, Vector2 velocity, float rotation, SpriteEffects direction)
-        {
-            Texture = texture;
-            Position = position;
-            StartingPosition = position;
-            Velocity = velocity;
-            Rotation = rotation;
-            Direction = direction;
-        }
+        public Vector2 Position = position;
+
+        public Vector2 StartingPosition = position;
+
+        public Vector2 Velocity = velocity;
+
+        public float Rotation = rotation;
+
+        public readonly SpriteEffects Direction = direction;
 
         public void Update()
         {

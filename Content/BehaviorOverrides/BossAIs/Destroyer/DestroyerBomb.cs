@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Destroyer
             // Collide with tiles after enough time has passed.
             Projectile.tileCollide = Projectile.timeLeft < 420;
 
-            Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
+            Tile tileAtPosition = Framing.GetTileSafely((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
             Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (((TileID.Sets.Platforms[tileAtPosition.TileType] && tileAtPosition.HasTile && Projectile.tileCollide) || Projectile.WithinRange(closestPlayer.Center, 60f)) && Projectile.timeLeft < 580)
                 Projectile.Kill();

@@ -56,8 +56,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.UseImage1("Images/Misc/Perlin");
 
-            List<float> rotationPoints = new();
-            List<Vector2> drawPoints = new();
+            List<float> rotationPoints = [];
+            List<Vector2> drawPoints = [];
 
             for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 80f)
             {

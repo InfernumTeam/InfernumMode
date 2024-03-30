@@ -10,8 +10,8 @@ namespace InfernumMode.Core.TrackedMusic
 
         public override float BeatsPerMinute => 204f;
 
-        public static List<SongSection> SolariaSections => new()
-        {
+        public static List<SongSection> SolariaSections =>
+        [
             // For in their heart remains their guiding light...
             new(TimeFormat(0, 8, 252), TimeFormat(0, 19, 124)),
 
@@ -53,10 +53,10 @@ namespace InfernumMode.Core.TrackedMusic
             // But if in the end there's no one that can hear the screams of my soul howling in vain
             // Then let the sky after rain become as dark as my own scars...
             new(TimeFormat(3, 52, 239), TimeFormat(5, 8, 604)),
-        };
+        ];
 
-        public static List<SongSection> MaiSections => new()
-        {
+        public static List<SongSection> MaiSections =>
+        [
             // For in their heart remains their guiding light...
             new(TimeFormat(0, 8, 252), TimeFormat(0, 19, 124)),
 
@@ -95,12 +95,12 @@ namespace InfernumMode.Core.TrackedMusic
             // But if in the end there's no one that can hear the screams of my soul howling in vain
             // Then let the sky after rain become as dark as my own scars...
             new(TimeFormat(3, 52, 239), TimeFormat(5, 8, 604)),
-        };
+        ];
 
-        public override List<SongSection> HeadphonesHighPoints => new();
+        public override List<SongSection> HeadphonesHighPoints => [];
 
-        public override Dictionary<SongSection, int> SongSections => new();
+        public override Dictionary<SongSection, int> SongSections => [];
 
-        public override List<SongSection> HighPoints => new();
+        public override List<SongSection> HighPoints => [];
     }
 }

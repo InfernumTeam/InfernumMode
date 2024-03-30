@@ -95,9 +95,9 @@ namespace InfernumMode.Content.Skies
             }
         }
 
-        private readonly List<Godray> Rays = new();
-        private readonly List<Cinder> Cinders = new();
-        public static readonly List<FishBoid> Fishes = new();
+        private readonly List<Godray> Rays = [];
+        private readonly List<Cinder> Cinders = [];
+        public static readonly List<FishBoid> Fishes = [];
         private float intensity;
         private bool isActive;
 

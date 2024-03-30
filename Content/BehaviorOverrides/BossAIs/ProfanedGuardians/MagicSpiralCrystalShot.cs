@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.ExtraTextures;
+﻿using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,8 +11,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class MagicSpiralCrystalShot : ModProjectile, IScreenCullDrawer
     {
-        public static readonly Color[] ColorSet = new Color[]
-        {
+        public static readonly Color[] ColorSet =
+        [
             // Pale pink crystal.
             new Color(181, 136, 177),
 
@@ -22,11 +21,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Yellow-orange crystal.
             new Color(255, 194, 161),
-        };
+        ];
 
         public ref float Timer => ref Projectile.ai[0];
 
-        public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, ColorSet);
+        public Color StreakBaseColor => LumUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, ColorSet);
 
         public ref float Direction => ref Projectile.ai[1];
 

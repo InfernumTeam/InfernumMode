@@ -15,6 +15,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -59,10 +60,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override int NPCOverrideType => ModContent.NPCType<AresBody>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             ExoMechManagement.Phase4LifeRatio
-        };
+        ];
 
         public const int BackArmSwapDelay = 1800;
 
@@ -533,7 +534,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 float particleScale = Main.rand.NextFloat(0.1f, 0.15f);
                 Vector2 particleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 32f);
-                Color particleColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+                Color particleColor = LumUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
 
                 for (int j = 0; j < 4; j++)
                     GeneralParticleHandler.SpawnParticle(new StrongBloom(coreCenter, particleVelocity, particleColor, particleScale, 80));
@@ -550,7 +551,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer > 10f && deathAnimationTimer < implosionRingLifetime - 30f && deathAnimationTimer % pulseRingCreationRate == pulseRingCreationRate - 1f)
             {
                 float finalScale = Lerp(3f, 5f, Utils.GetLerpValue(25f, 160f, deathAnimationTimer, true));
-                Color pulseColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+                Color pulseColor = LumUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
 
                 for (int i = 0; i < 3; i++)
                     GeneralParticleHandler.SpawnParticle(new PulseRing(coreCenter, Vector2.Zero, pulseColor, 0.2f, finalScale, pulseRingCreationRate));
@@ -785,7 +786,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Have Draedon comment on the player's attempts to escape.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
 
                 enraged = 1f;
                 npc.netUpdate = true;
@@ -1013,11 +1014,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     cannonAttackTimer = -5f;
 
                     if (attackTimer == textSubstateTime / 2)
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres1", AresTextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres1", AresTextColor);
 
                     if (attackTimer >= textSubstateTime)
                     {
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres2", AresTextColor);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.ExoMechDesperationAres2", AresTextColor);
 
                         attackTimer = 0f;
                         attackSubstate = 1f;
@@ -1171,7 +1172,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                         {
                             Volume = 2f
                         });
-                        CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
+                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
 
                         NPC draedon = Main.npc[draedonIndex];
                         draedon.Infernum().ExtraAI[1] = 1f;
@@ -1435,21 +1436,18 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Color startingColor = Color.Lerp(Color.White, Color.Yellow, 0.25f);
             Color middleColor = Color.Lerp(Color.Orange, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.Red, Color.White, 0.17f);
-            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
+            Color color = LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
             color.A = 0;
             return color;
         }
 
         public static void DrawArm(NPC npc, Vector2 handPosition, Vector2 screenOffset, Color glowmaskColor, int direction, bool backArm, Color? colorToInterpolateTo = null, float colorInterpolant = 0f)
         {
+
+            PrimitiveSettings foregroundSettings = new(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, null, false);
+            PrimitiveSettings backgroundSettings = new(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.ModNPC<AresBody>().BackgroundColorFunction, null, false);
+
             float scale = npc.scale;
-            ref PrimitiveTrail lightningDrawer = ref npc.ModNPC<AresBody>().LightningDrawer;
-            ref PrimitiveTrail lightningBackgroundDrawer = ref npc.ModNPC<AresBody>().LightningBackgroundDrawer;
-
-            // Initialize lightning drawers.
-            lightningDrawer ??= new PrimitiveTrail(npc.ModNPC<AresBody>().WidthFunction, npc.ModNPC<AresBody>().ColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-            lightningBackgroundDrawer ??= new PrimitiveTrail(npc.ModNPC<AresBody>().BackgroundWidthFunction, npc.ModNPC<AresBody>().BackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-
             SpriteEffects spriteDirection = direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             float distanceFromHand = npc.Distance(handPosition);
             float frameTime = Main.GlobalTimeWrappedHourly * 0.9f % 1f;
@@ -1509,13 +1507,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(armSegmentDrawPosition, arm2DrawPosition + arm2Rotation.ToRotationVector2() * -direction * scale * 20f, 250290787);
-                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 90);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, backgroundSettings, 90);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, foregroundSettings, 90);
 
                     // Draw electricity between the final arm and the hand.
                     List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 100f, handPosition, 27182);
-                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
-                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 90);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, backgroundSettings, 90);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, foregroundSettings, 90);
                 }
 
                 shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
@@ -1554,10 +1552,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 arm1Origin = arm1Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
                 Vector2 arm2Origin = arm2Frame.Size() * new Vector2((direction == 1).ToInt(), 0.5f);
 
-                float arm1Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - shoulderDrawPosition).ToRotation()) * 0.5f;
+                float arm1Rotation = LumUtils.WrapAngle90Degrees((handPosition - shoulderDrawPosition).ToRotation()) * 0.5f;
                 connectorDrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * -26f;
                 arm1DrawPosition += arm1Rotation.ToRotationVector2() * scale * direction * (armTexture1.Width - 14f);
-                float arm2Rotation = CalamityUtils.WrapAngle90Degrees((handPosition - arm1DrawPosition).ToRotation());
+                float arm2Rotation = LumUtils.WrapAngle90Degrees((handPosition - arm1DrawPosition).ToRotation());
 
                 Vector2 arm2DrawPosition = arm1DrawPosition + arm2Rotation.ToRotationVector2() * scale * direction * (armTexture2.Width + 16f) - Vector2.UnitY * scale * 16f;
 
@@ -1577,13 +1575,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (npc.Opacity > 0f && !npc.IsABestiaryIconDummy)
                 {
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm1DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 10f, arm1DrawPosition + arm2Rotation.ToRotationVector2() * direction * 20f, 31416);
-                    lightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
-                    lightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 44);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, backgroundSettings, 44);
+                    PrimitiveRenderer.RenderTrail(arm2ElectricArcPoints, foregroundSettings, 44);
 
                     // Draw electricity between the final arm and the hand.
                     List<Vector2> handElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(arm2DrawPosition - arm2Rotation.ToRotationVector2() * direction * scale * 20f, handPosition, 27182);
-                    lightningBackgroundDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
-                    lightningDrawer.Draw(handElectricArcPoints, -Main.screenPosition, 44);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, backgroundSettings, 44);
+                    PrimitiveRenderer.RenderTrail(handElectricArcPoints, foregroundSettings, 44);
                 }
 
                 shoulderDrawPosition += Vector2.UnitY * npc.gfxOffY - screenOffset;
@@ -1692,8 +1690,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 A = 0
             }, npc.localAI[3] * 0.48f);
 
-            (int, bool)[] armProperties = new (int, bool)[]
-            {
+            (int, bool)[] armProperties =
+            [
                 // Laser arm.
                 (-1, true),
 
@@ -1705,7 +1703,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Plasma arm.
                 (1, false),
-            };
+            ];
 
             // Swap arms as necessary
             if (npc.Infernum().ExtraAI[ExoMechManagement.Ares_BackArmsAreSwappedIndex] == 1f)

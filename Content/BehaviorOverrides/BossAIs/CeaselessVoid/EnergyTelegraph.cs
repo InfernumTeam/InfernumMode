@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using System.IO;
@@ -54,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         public override void AI()
         {
             Projectile.Opacity = Utils.GetLerpValue(32f, 27f, Projectile.timeLeft) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft, true) * 0.5f;
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / 32f);
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / 32f);
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.Cyan, Color.Fuchsia, Projectile.ai[0]) with { A = 100 } * Projectile.Opacity;

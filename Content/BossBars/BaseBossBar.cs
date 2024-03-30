@@ -83,11 +83,11 @@ namespace InfernumMode.Content.BossBars
                 foreach (KeyValuePair<NPCSpecialHPGetRequirement, NPCSpecialHPGetFunction> requirement in SpecialHPRequirements)
                     if (requirement.Key(AssociatedNPC))
                         return requirement.Value(AssociatedNPC, checkingForMaxLife: false);
-                if (!OneToMany.ContainsKey(NPCType))
+                if (!OneToMany.TryGetValue(NPCType, out int[] value))
                     return life;
 
                 for (int i = 0; i < Main.maxNPCs; i++)
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type))
+                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type))
                         life += Main.npc[i].life;
 
                 return life;
@@ -107,11 +107,11 @@ namespace InfernumMode.Content.BossBars
                     if (requirement.Key(AssociatedNPC))
                         return requirement.Value(AssociatedNPC, checkingForMaxLife: true);
 
-                if (!OneToMany.ContainsKey(NPCType))
+                if (!OneToMany.TryGetValue(NPCType, out int[] value))
                     return maxLife;
 
                 for (int i = 0; i < Main.maxNPCs; i++)
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type))
+                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type))
                         maxLife += Main.npc[i].lifeMax;
 
                 return maxLife;
@@ -126,10 +126,10 @@ namespace InfernumMode.Content.BossBars
                     return false;
                 if (AssociatedNPC.Calamity().CurrentlyEnraged)
                     return true;
-                if (!OneToMany.ContainsKey(NPCType))
+                if (!OneToMany.TryGetValue(NPCType, out int[] value))
                     return false;
                 for (int i = 0; i < Main.maxNPCs; i++)
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && Main.npc[i].Calamity().CurrentlyEnraged)
+                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type) && Main.npc[i].Calamity().CurrentlyEnraged)
                         return true;
                 return false;
             }
@@ -147,13 +147,13 @@ namespace InfernumMode.Content.BossBars
                 {
                     return true;
                 }
-                if (!OneToMany.ContainsKey(NPCType))
+                if (!OneToMany.TryGetValue(NPCType, out int[] value))
                 {
                     return false;
                 }
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && (Main.npc[i].Calamity().CurrentlyIncreasingDefenseOrDR || Main.npc[i].Calamity().DR > 0.98f))
+                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type) && (Main.npc[i].Calamity().CurrentlyIncreasingDefenseOrDR || Main.npc[i].Calamity().DR > 0.98f))
                     {
                         return true;
                     }
@@ -174,13 +174,13 @@ namespace InfernumMode.Content.BossBars
                 {
                     return true;
                 }
-                if (!OneToMany.ContainsKey(NPCType))
+                if (!OneToMany.TryGetValue(NPCType, out int[] value))
                 {
                     return false;
                 }
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && Main.npc[i].life > 0 && OneToMany[NPCType].Contains(Main.npc[i].type) && Main.npc[i].dontTakeDamage)
+                    if (Main.npc[i].active && Main.npc[i].life > 0 && value.Contains(Main.npc[i].type) && Main.npc[i].dontTakeDamage)
                     {
                         return true;
                     }
@@ -200,7 +200,7 @@ namespace InfernumMode.Content.BossBars
                 PreviousLife = CombinedNPCLife;
             }
 
-            PhaseNotches = new();
+            PhaseNotches = [];
 
             int length = GetTotalPhaseIndicators();
             for (int i = 0; i < length; i++)
@@ -288,9 +288,9 @@ namespace InfernumMode.Content.BossBars
                     // This is already hardcoded so I dont care.
                     phaseCount = 4;
                     if (!YharonBehaviorOverride.InSecondPhase)
-                        phaseThresholds = new List<float> { phaseThresholds[0], phaseThresholds[1], phaseThresholds[2], phaseThresholds[3] };
+                        phaseThresholds = [phaseThresholds[0], phaseThresholds[1], phaseThresholds[2], phaseThresholds[3]];
                     else
-                        phaseThresholds = new List<float> { 1f, phaseThresholds[4], phaseThresholds[5], phaseThresholds[6], phaseThresholds[7] };
+                        phaseThresholds = [1f, phaseThresholds[4], phaseThresholds[5], phaseThresholds[6], phaseThresholds[7]];
                 }
 
                 for (int i = 0; i < phaseCount; i++)

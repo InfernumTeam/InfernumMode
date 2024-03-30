@@ -1,7 +1,7 @@
-using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -12,8 +12,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class CeaselessVortexTear : ModProjectile
     {
-        internal PrimitiveTrail TentacleDrawer;
-
         public bool CreateShockwave
         {
             get => Projectile.ai[0] == 1f;
@@ -106,12 +104,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            TentacleDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
-
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
-
-            TentacleDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 16);
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Stars.Value;
+            tear.TrySetParameter("useOutline", true);
+            PrimitiveRenderer.RenderTrail(Projectile.oldPos, new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: tear), 16);
             return false;
         }
     }

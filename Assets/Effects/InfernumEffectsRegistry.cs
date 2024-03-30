@@ -1,5 +1,6 @@
 ﻿using InfernumMode.Content.Skies;
 using InfernumMode.Core;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -11,6 +12,7 @@ namespace InfernumMode.Assets.Effects
 {
     public static class InfernumEffectsRegistry
     {
+        #region Old
         #region Texture Shaders
         public static Ref<Effect> FluidSimulatorShader
         {
@@ -20,7 +22,6 @@ namespace InfernumMode.Assets.Effects
 
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
         public static MiscShaderData AreaBorderVertexShader => GameShaders.Misc["Infernum:AreaBorder"];
-        public static MiscShaderData AresEnergySlashShader => GameShaders.Misc["Infernum:AresEnergySlash"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BackgroundDistortionShader => GameShaders.Misc["Infernum:BackgroundDistortion"];
@@ -52,7 +53,6 @@ namespace InfernumMode.Assets.Effects
         public static MiscShaderData ProfanedPortalShader => GameShaders.Misc["Infernum:ProfanedPortal"];
         public static MiscShaderData ProviLaserVertexShader => GameShaders.Misc["Infernum:ProviLaserShader"];
         public static MiscShaderData PulsatingLaserVertexShader => GameShaders.Misc["Infernum:PulsatingLaserShader"];
-        public static MiscShaderData RealityTearVertexShader => GameShaders.Misc["Infernum:RealityTear"];
         public static MiscShaderData RealityTear2Shader => GameShaders.Misc["Infernum:RealityTear2"];
         public static MiscShaderData SCalIntroLetterShader => GameShaders.Misc["Infernum:SCalIntro"];
         public static MiscShaderData SideStreakVertexShader => GameShaders.Misc["Infernum:SideStreak"];
@@ -71,7 +71,6 @@ namespace InfernumMode.Assets.Effects
         #region Screen Shaders
         public static Filter AfterimageShader => Filters.Scene["InfernumMode:AfterimageShader"];
         public static Filter AresScreenShader => Filters.Scene["InfernumMode:Ares"];
-        public static Filter BaseMetaballEdgeShader => Filters.Scene["InfernumMode:BaseMetaballEdgeShader"];
         public static Filter BossBarShader => Filters.Scene["InfernumMode:BossBar"];
         public static Filter CalShadowScreenShader => Filters.Scene["InfernumMode:CalShadow"];
         public static Filter CreditShader => Filters.Scene["InfernumMode:Credits"];
@@ -435,6 +434,20 @@ namespace InfernumMode.Assets.Effects
             Filters.Scene["InfernumMode:Yharon"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(0f, 0f, 0f).UseOpacity(0f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Yharon"] = new YharonSky();
         }
+        #endregion
+        #endregion
+
+        #region New
+        #region Shaders
+        public static ManagedShader AresEnergySlashShader => ShaderManager.GetShader("InfernumMode.AresEnergySlashShader");
+        public static ManagedShader FlameVertexShader => ShaderManager.GetShader("InfernumMode.Flame");
+        public static ManagedShader GaleLightningShader => ShaderManager.GetShader("InfernumMode.HeavenlyGaleLightningArc");
+        public static ManagedShader ImpFlameTrailShader => ShaderManager.GetShader("InfernumMode.ImpFlameTrail");
+        public static ManagedShader BaseMetaballEdgeShader => ShaderManager.GetShader("InfernumMode.BaseMetaballEdgeShader");
+        public static ManagedShader RealityTearVertexShader => ShaderManager.GetShader("InfernumMode.RealityTearShader");
+        #endregion
+        #region Filters
+        #endregion
         #endregion
     }
 }

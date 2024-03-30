@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
         public override bool PreDraw(ref Color lightColor)
         {
             // Cast a telegraph line before the acceleration gets super strong.
-            float opacity = Pow(CalamityUtils.Convert01To010(Time / TelegraphTime), 0.4f);
+            float opacity = Pow(LumUtils.Convert01To010(Time / TelegraphTime), 0.4f);
             Texture2D invisible = InfernumTextureRegistry.Invisible.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 

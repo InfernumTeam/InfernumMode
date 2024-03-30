@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using Microsoft.Xna.Framework;
@@ -11,15 +11,13 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class AstralConstellation : ModProjectile, IAdditiveDrawer
+    public class AstralConstellation : ModProjectile
     {
         public ref float Index => ref Projectile.ai[0];
 
         public ref float Time => ref Projectile.localAI[1];
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/LaserCircle";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Star");
 
         public override void SetDefaults()
         {
@@ -44,13 +42,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Projectile projectileToConnectTo = null;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
+                // My facking eyes jesus.
                 if (Main.projectile[i].type != Projectile.type || !Main.projectile[i].active ||
                     Main.projectile[i].timeLeft < 25f || Main.projectile[i].ai[0] != Index - 1f ||
                     Main.projectile[i].ai[1] != Projectile.ai[1])
@@ -72,13 +69,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Draw stars.
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 16; i++)
             {
                 float drawOffsetFactor = (Cos(Main.GlobalTimeWrappedHourly * 40f) * 0.5f + 0.5f) * scaleFactor * fadeToOrange * 8f + 1f;
                 Vector2 drawOffset = (TwoPi * i / 16f).ToRotationVector2() * drawOffsetFactor;
-                spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
 
             // Draw connection lines to the next star in the constellation.
             if (projectileToConnectTo != null)
@@ -92,8 +90,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
                 Color drawColor = Color.White;
                 float rotation = (end - start).ToRotation() - PiOver2;
 
-                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
             }
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
 
         public override void OnKill(int timeLeft)

@@ -1,8 +1,9 @@
-using CalamityMod;
+﻿using InfernumMode.Assets.Effects;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -13,8 +14,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public Vector2[] ChargePositions = new Vector2[1];
 
         public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
-
-        public PrimitiveTrail TelegraphDrawer;
 
         public const int Lifetime = 36;
 
@@ -79,7 +78,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
         public Color TelegraphPrimitiveColor(float completionRatio)
         {
             float opacity = Lerp(0.38f, 1.2f, Projectile.Opacity);
-            opacity *= CalamityUtils.Convert01To010(completionRatio);
+            opacity *= LumUtils.Convert01To010(completionRatio);
             opacity *= Lerp(0.9f, 0.2f, Projectile.ai[0] / (ChargePositions.Length - 1f));
             if (completionRatio > 0.95f)
                 opacity = 0.0000001f;
@@ -93,24 +92,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
         public override bool PreDraw(ref Color lightColor)
         {
-            TelegraphDrawer ??= new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
-
-            GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
-            GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.36f);
+            var flame = InfernumEffectsRegistry.FlameVertexShader;
+            flame.TrySetParameter("uSaturation", 0.36f);
+            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)
             {
-                Vector2[] positions = new Vector2[2]
-                {
+                Vector2[] positions =
+                [
                     ChargePositions[i],
                     ChargePositions[i + 1]
-                };
+                ];
 
                 // Stand-in variable used to differentiate between the beams.
                 // It is not used anywhere else.
                 Projectile.ai[0] = i;
 
-                TelegraphDrawer.Draw(positions, Projectile.Size * 0.5f - Main.screenPosition, 55);
+                PrimitiveRenderer.RenderTrail(positions, new(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, _ => Projectile.Size * 0.5f, false, Shader: flame), 55);
             }
             return false;
         }

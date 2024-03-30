@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.Assets.ExtraTextures;
+﻿using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class MagicCrystalShot : ModProjectile, IScreenCullDrawer
     {
-        public Color StreakBaseColor => CalamityUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, MagicSpiralCrystalShot.ColorSet);
+        public Color StreakBaseColor => LumUtils.MulticolorLerp(Projectile.localAI[0] % 0.999f, MagicSpiralCrystalShot.ColorSet);
 
         public ref float Timer => ref Projectile.ai[0];
 

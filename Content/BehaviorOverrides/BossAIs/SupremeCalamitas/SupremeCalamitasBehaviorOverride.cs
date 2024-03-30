@@ -186,8 +186,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static bool ShadowDemonCanAttack => SCal?.ai[0] >= 50f;
 
-        public static SCalAttackType[] Phase1AttackCycle => new SCalAttackType[]
-        {
+        public static SCalAttackType[] Phase1AttackCycle =>
+        [
             SCalAttackType.HorizontalDarkSoulRelease,
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ExplosiveCharges,
@@ -196,10 +196,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ExplosiveCharges,
             SCalAttackType.SummonSuicideBomberDemons,
-        };
+        ];
 
-        public static SCalAttackType[] Phase2AttackCycle => new SCalAttackType[]
-        {
+        public static SCalAttackType[] Phase2AttackCycle =>
+        [
             SCalAttackType.CondemnationFanBurst,
             SCalAttackType.ShadowDemon_ReleaseExplodingShadowBlasts,
             SCalAttackType.HellblastBarrage,
@@ -220,10 +220,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.HellblastBarrage,
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.SummonSuicideBomberDemons,
-        };
+        ];
 
-        public static SCalAttackType[] Phase3AttackCycle => new SCalAttackType[]
-        {
+        public static SCalAttackType[] Phase3AttackCycle =>
+        [
             SCalAttackType.ShadowDemon_ShadowGigablastsAndCharges,
             SCalAttackType.FireLaserSpin,
             SCalAttackType.DarkMagicBombWalls,
@@ -239,7 +239,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.BrimstoneJewelBeam,
             SCalAttackType.FireLaserSpin,
             SCalAttackType.ExplosiveCharges
-        };
+        ];
 
         public const float Phase2LifeRatio = 0.75f;
 
@@ -249,12 +249,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio
-        };
+        ];
 
         #region AI
         public override void SetDefaults(NPC npc)
@@ -2341,7 +2341,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Congratulate the player.
                 if (attackTimer == sitTime - 120f)
-                    CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.SCalCongratulations", Color.Orange);
+                    LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.SCalCongratulations", Color.Orange);
 
                 if (attackTimer >= sitTime)
                 {
@@ -2450,7 +2450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     float interpolant = Main.GlobalTimeWrappedHourly % 2f;
                     for (int i = 0; i < instanceCount; i++)
                     {
-                        var color = CalamityUtils.MulticolorLerp(interpolant, Color.Red, Color.Orange, Color.OrangeRed);
+                        var color = LumUtils.MulticolorLerp(interpolant, Color.Red, Color.Orange, Color.OrangeRed);
                         float speedFactor = Main.rand.NextFloat(2f, 10f) * FireDrawer.Width * ForcefieldScale * 0.95f / (i * 0.04f + 1f);
                         Vector2 angularSpawnOffset = (TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2();
                         angularSpawnOffset = Vector2.Lerp(angularSpawnOffset, -Vector2.UnitY, 0.3f) * 2.96f;

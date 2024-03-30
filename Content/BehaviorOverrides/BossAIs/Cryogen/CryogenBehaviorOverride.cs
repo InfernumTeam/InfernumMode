@@ -43,14 +43,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
         public const float Phase6LifeRatio = 0.25f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio,
             Phase4LifeRatio,
             Phase5LifeRatio,
             Phase6LifeRatio,
-        };
+        ];
 
         #region Enumerations
         public enum CryogenAttackState
@@ -69,16 +69,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         #region Attack Cycles
 
         // Why does this boss have so many subphases anyway?
-        public static CryogenAttackState[] Subphase1AttackCycle => new[]
-        {
+        public static CryogenAttackState[] Subphase1AttackCycle =>
+        [
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.PredictiveIcicles,
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.TeleportAndReleaseIceBombs,
-        };
+        ];
 
-        public static CryogenAttackState[] Subphase2AttackCycle => new[]
-        {
+        public static CryogenAttackState[] Subphase2AttackCycle =>
+        [
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.ShatteringIcePillars,
             CryogenAttackState.TeleportAndReleaseIceBombs,
@@ -88,10 +88,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.PredictiveIcicles,
             CryogenAttackState.ShatteringIcePillars,
-        };
+        ];
 
-        public static CryogenAttackState[] Subphase3AttackCycle => new[]
-        {
+        public static CryogenAttackState[] Subphase3AttackCycle =>
+        [
             CryogenAttackState.ShatteringIcePillars,
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.ShatteringIcePillars,
@@ -102,10 +102,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             CryogenAttackState.PredictiveIcicles,
             CryogenAttackState.TeleportAndReleaseIceBombs,
             CryogenAttackState.IcicleTeleportDashes,
-        };
+        ];
 
-        public static CryogenAttackState[] Subphase4AttackCycle => new[]
-        {
+        public static CryogenAttackState[] Subphase4AttackCycle =>
+        [
             CryogenAttackState.HorizontalDash,
             CryogenAttackState.ShatteringIcePillars,
             CryogenAttackState.TeleportAndReleaseIceBombs,
@@ -116,10 +116,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             CryogenAttackState.HorizontalDash,
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.IcicleTeleportDashes,
-        };
+        ];
 
-        public static CryogenAttackState[] Subphase5AttackCycle => new[]
-        {
+        public static CryogenAttackState[] Subphase5AttackCycle =>
+        [
             CryogenAttackState.HorizontalDash,
             CryogenAttackState.IcicleTeleportDashes,
             CryogenAttackState.HorizontalDash,
@@ -127,10 +127,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.IcicleTeleportDashes,
             CryogenAttackState.AuroraBulletHell
-        };
+        ];
 
-        public static CryogenAttackState[] Subphase6AttackCycle => new[]
-        {
+        public static CryogenAttackState[] Subphase6AttackCycle =>
+        [
             CryogenAttackState.IcicleTeleportDashes,
             CryogenAttackState.AuroraBulletHell,
             CryogenAttackState.EternalWinter,
@@ -139,7 +139,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             CryogenAttackState.AuroraBulletHell,
             CryogenAttackState.IcicleCircleBurst,
             CryogenAttackState.EternalWinter,
-        };
+        ];
 
         #endregion Attack Cycles
 

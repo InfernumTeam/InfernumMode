@@ -10,12 +10,12 @@ namespace InfernumMode.Core.TrackedMusic
 
         public override float BeatsPerMinute => BeatsPerMinuteStatic;
 
-        public override List<SongSection> HeadphonesHighPoints => new();
+        public override List<SongSection> HeadphonesHighPoints => [];
 
-        public override List<SongSection> HighPoints => new();
+        public override List<SongSection> HighPoints => [];
 
-        public static List<SongSection> Bells => new()
-        {
+        public static List<SongSection> Bells =>
+        [
             // Section 1.
             WithMSDelay(0, 1, 134, 150),
             WithMSDelay(0, 2, 567, 150),
@@ -45,7 +45,7 @@ namespace InfernumMode.Core.TrackedMusic
             WithMSDelay(1, 57, 235, 150),
             WithMSDelay(1, 57, 895, 150),
             WithMSDelay(1, 58, 549, 150),
-        };
+        ];
 
         public static float BeatsPerMinuteStatic => 180f;
     }

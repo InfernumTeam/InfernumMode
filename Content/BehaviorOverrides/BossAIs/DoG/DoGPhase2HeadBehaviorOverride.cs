@@ -237,7 +237,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                     Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<DoGChargeGate>());
                 }
 
-                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.EdgyBossText6", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.EdgyBossText6", Color.Cyan);
                 npc.netUpdate = true;
             }
 
@@ -354,11 +354,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                         segmentFadeType = (int)BodySegmentFadeType.EnteringPortal;
 
                         // Clear away various misc projectiles.
-                        int[] projectilesToDelete = new int[]
-                        {
+                        int[] projectilesToDelete =
+                        [
                             ProjectileID.CultistBossLightningOrbArc,
                             ModContent.ProjectileType<AcceleratingDoGBurst>()
-                        };
+                        ];
                         for (int i = 0; i < Main.maxProjectiles; i++)
                         {
                             if (projectilesToDelete.Contains(Main.projectile[i].type) && Main.projectile[i].active)
@@ -536,11 +536,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 if (Main.rand.NextBool(5))
                     SoundEngine.PlaySound(DevourerofGodsHead.DeathSegmentSound, npc.Center);
 
-                List<int> segments = new()
-                {
+                List<int> segments =
+                [
                     ModContent.NPCType<DevourerofGodsBody>(),
                     ModContent.NPCType<DevourerofGodsTail>()
-                };
+                ];
 
                 // Start at some number, n, at 0. This number is used as a counter for the nth segment to destroy, from the tail to the head.
                 // This works by looping through all NPCs and identifying if it's a DoG segment with that segment ID
@@ -578,17 +578,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
             // Say edgy things.
             if (deathAnimationTimer == textDelay)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DoGDeath1", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DoGDeath1", Color.Cyan);
             if (deathAnimationTimer == textDelay + 50f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DoGDeath2", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DoGDeath2", Color.Cyan);
             if (deathAnimationTimer == textDelay + 100f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DoGDeath3", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DoGDeath3", Color.Cyan);
 
             if (deathAnimationTimer == textDelay + 200f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DoGDeath4", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DoGDeath4", Color.Cyan);
 
             if (deathAnimationTimer == textDelay + 270f)
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.DoGDeath5", Color.Cyan);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DoGDeath5", Color.Cyan);
 
             // Destroy most of DoG's first segments.
             if (deathAnimationTimer >= textDelay && deathAnimationTimer < deathAnimationTimer + segmentDestructionTime && deathAnimationTimer % 4f == 0f)

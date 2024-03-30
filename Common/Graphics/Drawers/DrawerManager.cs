@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Terraria.ID;
 using Terraria;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -13,9 +11,9 @@ namespace InfernumMode.Common.Graphics.Drawers
 {
     public class DrawerManager : ModSystem
     {
-        internal static readonly List<BaseNPCDrawerSystem> NPCDrawers = new();
+        internal static readonly List<BaseNPCDrawerSystem> NPCDrawers = [];
 
-        internal static readonly List<BaseSceneDrawSystem> SceneDrawers = new();
+        internal static readonly List<BaseSceneDrawSystem> SceneDrawers = [];
 
         public override void Load()
         {
@@ -81,9 +79,6 @@ namespace InfernumMode.Common.Graphics.Drawers
                 if (drawer.ShouldDrawThisFrame && NPC.AnyNPCs(drawer.AssosiatedNPCType) && InfernumMode.CanUseCustomAIs)
                     drawer.DrawMainTargetContents(Main.spriteBatch);
             }
-
-            // Draw Cutscenes.
-            CutsceneManager.DrawToWorld();
         }
     }
 }

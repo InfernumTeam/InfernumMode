@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class StarBolt : ModProjectile, IAdditiveDrawer
+    public class StarBolt : ModProjectile
     {
         public PrimitiveTrailCopy TrailDrawer
         {
@@ -161,13 +161,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 11);
 
-            Main.spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            return false;
-        }
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
             // Draw the gleam.
             Texture2D sparkleTexture = InfernumTextureRegistry.LargeStar.Value;
             Color sparkleColor = Color.Lerp(MyColor, Color.White, 0.4f) with { A = 255 };
@@ -175,10 +170,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = sparkleTexture.Size() * 0.5f;
             Vector2 sparkleScale = new Vector2(0.5f, 1f) * Projectile.Opacity * Projectile.scale * 0.18f;
             Vector2 orthogonalsparkleScale = new Vector2(0.5f, 1.6f) * Projectile.Opacity * Projectile.scale * 0.18f;
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
-            spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, PiOver2 + Projectile.rotation, origin, orthogonalsparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.Draw(sparkleTexture, drawCenter, null, sparkleColor, Projectile.rotation, origin, sparkleScale * 0.6f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Worldgen;
@@ -85,14 +84,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
 
         public void InitializePillarProperties()
         {
-            WorldUtils.Find(Projectile.Top.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
-            {
+            WorldUtils.Find(Projectile.Top.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000),
+            [
                 new Conditions.IsSolid(),
                 new CustomTileConditions.ActiveAndNotActuated(),
                 new CustomTileConditions.NotPlatform()
-            }), out Point newBottom);
+            ]), out Point newBottom);
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
+            bool isHalfTile = Framing.GetTileSafely(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -112,7 +111,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
             if (Time < 60f)
             {
-                float telegraphOpacity = Pow(CalamityUtils.Convert01To010(Time / 60f), 0.6f);
+                float telegraphOpacity = Pow(LumUtils.Convert01To010(Time / 60f), 0.6f);
                 float telegraphLineWidth = telegraphOpacity * 6f;
                 if (telegraphLineWidth > 5f)
                     telegraphLineWidth = 5f;

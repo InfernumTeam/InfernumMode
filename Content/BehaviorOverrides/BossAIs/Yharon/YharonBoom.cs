@@ -29,8 +29,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
 
         public override string Texture => "InfernumMode/Assets/ExtraTextures/GreyscaleObjects/Gleam";
 
-        public static readonly int[] YharonProjectiles = new int[]
-        {
+        public static readonly int[] YharonProjectiles =
+        [
             ProjectileID.CultistBossFireBall, // Not technically a Yharon projectile, but it is used within the fight.
             ModContent.ProjectileType<Flarenado>(),
             ModContent.ProjectileType<Infernado>(),
@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             ModContent.ProjectileType<FlareBomb>(),
             ModContent.ProjectileType<FlareDust>(),
             ModContent.ProjectileType<FlareDust2>()
-        };
+        ];
 
         public override void SetStaticDefaults()
         {

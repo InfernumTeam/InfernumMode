@@ -180,7 +180,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Color startingColor = Color.Lerp(Color.LawnGreen, Color.White, 0.4f);
             Color middleColor = Color.Lerp(Color.DarkGreen, Color.Red, 0.2f);
             Color endColor = Color.Lerp(Color.DarkGreen, Color.Red, 0.67f);
-            return CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
+            return LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
         }
 
         public void DrawPixelPrimitives(SpriteBatch spriteBatch)

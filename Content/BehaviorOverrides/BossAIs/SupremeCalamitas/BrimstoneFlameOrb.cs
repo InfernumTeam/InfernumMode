@@ -1,5 +1,4 @@
-using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -129,8 +128,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
-            List<float> rotationPoints = new();
-            List<Vector2> drawPoints = new();
+            List<float> rotationPoints = [];
+            List<Vector2> drawPoints = [];
 
             for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 30f)
             {
@@ -139,7 +138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 3f;
+                float adjustedAngle = offsetAngle + LumUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.02f, 3, 185) * 3f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 8; i++)
                 {

@@ -21,11 +21,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public const float Phase3LifeRatio = 0.35f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         #region Enumerations
         internal enum PlanteraAttackState
@@ -208,7 +208,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             // They will explode into bursts of petals after some time.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 270f == 269f)
             {
-                List<Vector2> flowerSpawnPositions = new();
+                List<Vector2> flowerSpawnPositions = [];
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -223,7 +223,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     Vector2 potentialSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(480f, 1350f);
                     Point potentialTilePosition = potentialSpawnPosition.ToTileCoordinates();
                     Vector2 ceneteredSpawnPosition = potentialTilePosition.ToWorldCoordinates();
-                    Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
+                    Tile tile = Framing.GetTileSafely(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
                     if (tile.WallType > 0 && !WorldGen.SolidTile(tile) || BossRushEvent.BossRushActive)
@@ -564,7 +564,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             // They will explode into bursts of petals after some time.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 40f)
             {
-                List<Vector2> flowerSpawnPositions = new();
+                List<Vector2> flowerSpawnPositions = [];
 
                 for (int tries = 0; tries < 10000; tries++)
                 {
@@ -574,7 +574,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     Vector2 potentialSpawnPosition = target.Center + Main.rand.NextVector2Unit() * spawnOffset;
                     Point potentialTilePosition = potentialSpawnPosition.ToTileCoordinates();
                     Vector2 ceneteredSpawnPosition = potentialTilePosition.ToWorldCoordinates();
-                    Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
+                    Tile tile = Framing.GetTileSafely(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
                     if (tile.WallType > 0 && !WorldGen.SolidTile(tile) || BossRushEvent.BossRushActive)
@@ -738,13 +738,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
 
         public static void DeleteHostileThings()
         {
-            List<int> projectilesToDelete = new()
-            {
+            List<int> projectilesToDelete =
+            [
                 ProjectileID.PoisonSeedPlantera,
                 ModContent.ProjectileType<ExplodingFlower>(),
                 ModContent.ProjectileType<Petal>(),
                 ModContent.ProjectileType<BouncingPetal>(),
-            };
+            ];
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

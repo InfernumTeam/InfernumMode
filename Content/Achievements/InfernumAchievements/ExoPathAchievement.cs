@@ -15,7 +15,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             get;
             internal set;
-        } = new();
+        } = [];
 
         #endregion
 
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
                 IList<string> primaryList = tag.GetList<string>("ExoMechCompletionsPrimary");
                 IList<string> secondaryList = tag.GetList<string>("ExoMechCompletionsSecondary");
 
-                CompletedExoMechCombinations = new();
+                CompletedExoMechCombinations = [];
                 for (int i = 0; i < primaryList.Count; i++)
                     CompletedExoMechCombinations.Add(new(primaryList[i], secondaryList[i]));
             }
@@ -91,7 +91,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         #region Methods
         private void InitializeCompletionVariables()
         {
-            CompletedExoMechCombinations = new();
+            CompletedExoMechCombinations = [];
             CurrentCompletion = 0;
             DoneCompletionEffects = false;
         }

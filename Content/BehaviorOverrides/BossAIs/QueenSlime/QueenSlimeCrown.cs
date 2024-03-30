@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -137,7 +136,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 17f, targetHitbox);
+            return LumUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 17f, targetHitbox);
         }
     }
 }

@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override void AI()
         {
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 6f;
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / (float)Lifetime) * 6f;
             if (Projectile.scale > 1.5f)
                 Projectile.scale = 1.5f;
         }

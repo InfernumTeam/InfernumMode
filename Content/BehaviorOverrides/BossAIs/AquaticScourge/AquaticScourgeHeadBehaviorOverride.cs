@@ -94,11 +94,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         #endregion Loading
 
         #region AI
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public const float Phase2LifeRatio = 0.67f;
 
@@ -132,7 +132,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
         {
             get;
             set;
-        } = new();
+        } = [];
 
         public static float PoisonChargeUpSpeedFactor => 0.333f;
 
@@ -140,30 +140,30 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static float PoisonFadeOutSpeedFactor => 2.5f;
 
-        public static AquaticScourgeAttackType[] Phase1AttackCycle => new AquaticScourgeAttackType[]
-        {
+        public static AquaticScourgeAttackType[] Phase1AttackCycle =>
+        [
             AquaticScourgeAttackType.BubbleSpin,
             AquaticScourgeAttackType.RadiationPulse,
             AquaticScourgeAttackType.WallHitCharges,
             AquaticScourgeAttackType.GasBreath,
             AquaticScourgeAttackType.WallHitCharges,
-        };
+        ];
 
-        public static AquaticScourgeAttackType[] Phase2AttackCycle => new AquaticScourgeAttackType[]
-        {
+        public static AquaticScourgeAttackType[] Phase2AttackCycle =>
+        [
             AquaticScourgeAttackType.PerpendicularSpikeBarrage,
             AquaticScourgeAttackType.RadiationPulse,
             AquaticScourgeAttackType.GasBreath,
             AquaticScourgeAttackType.PerpendicularSpikeBarrage,
             AquaticScourgeAttackType.WallHitCharges,
-        };
+        ];
 
-        public static AquaticScourgeAttackType[] Phase3AttackCycle => new AquaticScourgeAttackType[]
-        {
+        public static AquaticScourgeAttackType[] Phase3AttackCycle =>
+        [
             AquaticScourgeAttackType.GasBreath,
             AquaticScourgeAttackType.AcidRain,
             AquaticScourgeAttackType.SulphurousTyphoon,
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -312,7 +312,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         skullSpawnPositionY = target.Center.Y + Main.rand.NextFloat() * 200f;
                     Vector2 skullSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 800f, skullSpawnPositionY);
 
-                    Tile t = CalamityUtils.ParanoidTileRetrieval((int)(skullSpawnPosition.X / 16f), (int)(skullSpawnPosition.Y / 16f));
+                    Tile t = Framing.GetTileSafely((int)(skullSpawnPosition.X / 16f), (int)(skullSpawnPosition.Y / 16f));
                     if (!t.HasTile && t.LiquidAmount > 0)
                     {
                         DesertProwlerSkullParticle skull = new(skullSpawnPosition, -Vector2.UnitY * 2f, new(70, 204, 80), Color.Purple, Main.rand.NextFloat(0.3f, 0.64f), 350f);
@@ -332,7 +332,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     Vector2 acidSpawnPosition = new(target.Center.X + Main.rand.NextFloatDirection() * 1100f, acidSpawnPositionY);
                     Color acidColor = Color.Lerp(Color.LightSeaGreen, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.6f));
 
-                    Tile t = CalamityUtils.ParanoidTileRetrieval((int)(acidSpawnPosition.X / 16f), (int)(acidSpawnPosition.Y / 16f));
+                    Tile t = Framing.GetTileSafely((int)(acidSpawnPosition.X / 16f), (int)(acidSpawnPosition.Y / 16f));
+
                     if (t.HasTile || t.LiquidAmount <= 0)
                         continue;
 
@@ -1137,7 +1138,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             if (acidVerticalLine == 0f)
             {
                 acidVerticalLine = MathF.Min(target.Bottom.Y + 2000f, CustomAbyss.AbyssTop * 16f + 900f);
-                CalamityUtils.DisplayLocalizedText("Mods.InfernumMode.Status.AquaticScourgeFinalPhaseAcid", Color.GreenYellow);
+                LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.AquaticScourgeFinalPhaseAcid", Color.GreenYellow);
 
                 SoundEngine.PlaySound(Mauler.RoarSound);
                 SoundEngine.PlaySound(InfernumSoundRegistry.SizzleSound);
@@ -1706,7 +1707,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (!p.active || p.dead)
                     continue;
 
-                if (CalamityUtils.CircularHitboxCollision(center, radius, p.Hitbox))
+                if (LumUtils.CircularHitboxCollision(center, radius, p.Hitbox))
                 {
                     float increment = boostFactor / CalamityPlayer.SulphSeaWaterSafetyTime;
                     if (p.Calamity().sulphurskin)
@@ -1720,11 +1721,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void PopAllBubbles()
         {
-            List<int> bubbles = new()
-            {
+            List<int> bubbles =
+            [
                 ModContent.ProjectileType<AcidBubble>(),
                 ModContent.ProjectileType<WaterClearingBubble>()
-            };
+            ];
 
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

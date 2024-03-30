@@ -57,8 +57,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
         #region AI
 
-        public static int[] PotentialNPCTargetIDs => new int[]
-        {
+        public static int[] PotentialNPCTargetIDs =>
+        [
             NPCID.Harpy,
 
             // The head and tail and not the body are specifically targetted.
@@ -71,7 +71,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
             // Cloud elemental. I did not choose this internal name.
             ModContent.NPCType<ThiccWaifu>(),
-        };
+        ];
 
         public static int SparkDamage => 275;
 
@@ -87,10 +87,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
 
         public const float Phase2LifeRatio = 0.5f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -322,7 +322,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             // Pick a target if necessary.
             if (attackTimer <= 1f || !Main.npc.IndexInRange((int)targetIndex) || !Main.npc[(int)targetIndex].active || !PotentialNPCTargetIDs.Contains(Main.npc[(int)targetIndex].type))
             {
-                List<NPC> potentialTargets = new();
+                List<NPC> potentialTargets = [];
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];

@@ -24,7 +24,7 @@ namespace InfernumMode.Core.Netcode.Packets
 
         public override void Read(BinaryReader reader)
         {
-            WormSegments = new();
+            WormSegments = [];
             int segmentCount = reader.ReadInt32();
             for (int i = 0; i < segmentCount; i++)
             {

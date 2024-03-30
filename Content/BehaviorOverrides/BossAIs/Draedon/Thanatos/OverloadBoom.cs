@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            Color exoColor = CalamityUtils.MulticolorLerp(Sin(lifetimeCompletionRatio * Pi * 3f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
+            Color exoColor = LumUtils.MulticolorLerp(Sin(lifetimeCompletionRatio * Pi * 3f) * 0.5f + 0.5f, CalamityUtils.ExoPalette);
             return Color.Lerp(exoColor, new Color(255, 55, 0, 84), Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f));
         }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -40,7 +40,7 @@ namespace InfernumMode
             List<Type> paramTypes = method.GetParameters().Select(parameter => parameter.ParameterType).ToList();
             paramTypes.Add(method.ReturnType);
 
-            Type delegateType = Expression.GetDelegateType(paramTypes.ToArray());
+            Type delegateType = Expression.GetDelegateType([.. paramTypes]);
             return Delegate.CreateDelegate(delegateType, instance, method);
         }
     }

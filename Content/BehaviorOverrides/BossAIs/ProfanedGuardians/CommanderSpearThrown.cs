@@ -69,8 +69,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 // Bias towards lower values. 
                 float size = Pow(Main.rand.NextFloat(), 2f);
-                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center - (Projectile.velocity * 0.5f) + (Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f) * size),
-                    Vector2.Zero, new(Main.rand.NextFloat(10f, 15f)), 0.9f);
+                ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(Projectile.Center - (Projectile.velocity * 0.5f) + (Main.rand.NextVector2Circular(Projectile.width * 0.5f, Projectile.height * 0.5f) * size),
+                    Vector2.Zero, Main.rand.NextFloat(10f, 15f), 0.9f);
             }
 
             Lighting.AddLight(Projectile.Center, Vector3.One);
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             GuardianComboAttackManager.CreateFireExplosion(Projectile.Center, true);
 
             for (int i = 0; i < 100; i++)
-                ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f), Vector2.Zero, new(Main.rand.NextFloat(52f, 85f)));
+                ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f), Vector2.Zero, Main.rand.NextFloat(52f, 85f));
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             if (Timer <= TelegraphTime)
             {
-                float opacity = CalamityUtils.Convert01To010(Timer / TelegraphTime);
+                float opacity = LumUtils.Convert01To010(Timer / TelegraphTime);
                 BloomLineDrawInfo lineInfo = new(rotation: -Projectile.velocity.ToRotation(),
                     width: 0.003f + Pow(opacity, 5f) * (Sin(Main.GlobalTimeWrappedHourly * 3f) * 0.001f + 0.001f),
                     bloom: Lerp(0.06f, 0.16f, opacity),
@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return false;
             }
             float alpha = 1f - (float)Projectile.alpha / 255;
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
+            LumUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor * alpha, 1);
             Projectile.DrawProjectileWithBackglowTemp(Color.White with { A = 0 }, Color.White, 2f);
             return false;
         }

@@ -1,5 +1,7 @@
 ﻿global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
+global using LumUtils = Luminance.Common.Utilities.Utilities;
+global using Luminance.Common.Utilities;
 using CalamityMod.Cooldowns;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
@@ -18,6 +20,7 @@ using Terraria.ModLoader;
 using InfernumMode.Core.ModCalls;
 using CalamityMod.ILEditing;
 using InfernumMode.Content.WorldGeneration;
+using Luminance.Core.ModCalls;
 
 namespace InfernumMode
 {
@@ -90,7 +93,6 @@ namespace InfernumMode
             CalMusicModIsActive = ModLoader.TryGetMod("CalamityModMusic", out CalamityModMusic);
 
             BalancingChangesManager.Load();
-            Main.RunOnMainThread(HookManager.Load);
 
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
@@ -157,7 +159,7 @@ namespace InfernumMode
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => PacketManager.ReceivePacket(reader);
 
-        public override object Call(params object[] args) => InfernumModCalls.Call(args);
+        public override object Call(params object[] args) => ModCallManager.ProcessAllModCalls(this, args);
 
         public override void Unload()
         {
@@ -169,7 +171,6 @@ namespace InfernumMode
                 ILChanges.DungeonBaseXLimitOverride = null;
 
             BalancingChangesManager.Unload();
-            HookManager.Unload();
 
             Main.QueueMainThreadAction(() =>
             {

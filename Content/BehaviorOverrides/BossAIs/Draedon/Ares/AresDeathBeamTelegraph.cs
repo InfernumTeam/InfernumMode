@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
             Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.6f);
 
-            Color colorOuter = CalamityUtils.MulticolorLerp(Utils.GetLerpValue(-Pi, Pi, OldVelocity.ToRotation(), true), CalamityUtils.ExoPalette);
+            Color colorOuter = LumUtils.MulticolorLerp(Utils.GetLerpValue(-Pi, Pi, OldVelocity.ToRotation(), true), CalamityUtils.ExoPalette);
             colorOuter.A = 36;
             Color colorInner = Color.Lerp(colorOuter, Color.White, 0.4f);
 

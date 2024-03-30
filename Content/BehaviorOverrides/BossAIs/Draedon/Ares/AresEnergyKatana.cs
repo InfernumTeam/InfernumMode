@@ -68,14 +68,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 Vector2 slashMiddle2 = Vector2.Lerp(slashStart, slashEnd, 0.5f);
                 Vector2 slashMiddle3 = Vector2.Lerp(slashStart, slashEnd, 0.75f);
 
-                return new List<Vector2>()
-                {
+                return
+                [
                     slashEnd,
                     slashMiddle3 + aimDirection * 30f,
                     slashMiddle2,
                     slashMiddle1 - aimDirection * 30f,
                     slashStart,
-                };
+                ];
             }
         }
 
@@ -371,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(slash =>
                     {
-                        slash.ModProjectile<AresEnergySlash>().ControlPoints = SlashControlPoints.ToArray();
+                        slash.ModProjectile<AresEnergySlash>().ControlPoints = [.. SlashControlPoints];
                     });
                     Utilities.NewProjectileBetter(NPC.Center, energySlashVelocity, ModContent.ProjectileType<AresEnergySlash>(), AresEnergySlashDamage, 0f);
                 }

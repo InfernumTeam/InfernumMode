@@ -90,14 +90,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public void InitializePillarProperties()
         {
-            WorldUtils.Find(new Vector2(Projectile.Top.X, Projectile.Top.Y - 160).ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
-            {
+            WorldUtils.Find(new Vector2(Projectile.Top.X, Projectile.Top.Y - 160).ToTileCoordinates(), Searches.Chain(new Searches.Down(6000),
+            [
                 new Conditions.IsSolid(),
                 new CustomTileConditions.ActiveAndNotActuated(),
                 new CustomTileConditions.NotPlatform()
-            }), out Point newBottom);
+            ]), out Point newBottom);
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
+            bool isHalfTile = Framing.GetTileSafely(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];

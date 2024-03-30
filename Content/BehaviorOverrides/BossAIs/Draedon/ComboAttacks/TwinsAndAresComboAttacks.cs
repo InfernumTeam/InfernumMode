@@ -156,7 +156,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
 
                         // Swoop down slightly and release lasers.
                         case 1:
-                            npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
+                            npc.velocity.Y = LumUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + PiOver2;
 
                             if (!deathraysHaveBeenFired)
@@ -436,7 +436,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                         for (int i = 0; i < aresLaserbeamCount; i++)
                         {
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
-                            float squishedRatio = Pow(CalamityUtils.Convert01To010(b / 7f), 2f);
+                            float squishedRatio = Pow(LumUtils.Convert01To010(b / 7f), 2f);
                             float smoothenedRatio = SmoothStep(0f, 1f, squishedRatio);
                             float offsetAngle = PiOver2 + TwoPi * i / aresLaserbeamCount;
                             float telegraphStartingAngle = Lerp(-0.55f, 0.55f, smoothenedRatio) + offsetAngle;
@@ -478,7 +478,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     {
                         // Have Draedon comment on the player's attempts to escape.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+                            LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Status.Boss.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
 
                         EnrageTimer = 1500f;
                     }

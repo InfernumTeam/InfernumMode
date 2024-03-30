@@ -2,6 +2,7 @@
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -20,9 +21,13 @@ using static InfernumMode.Core.ILEditingStuff.HookManager;
 
 namespace InfernumMode.Core.ILEditingStuff
 {
-    public class PermitOldDukeRainHook : IHookEdit
+    public class PermitOldDukeRainHook : ILEditProvider
     {
-        internal static void PermitODRain(ILContext il)
+        public override void Subscribe(ManagedILEdit edit) => CalamityWorldPostUpdate += edit.SubscriptionWrapper;
+
+        public override void Unsubscribe(ManagedILEdit edit) => CalamityWorldPostUpdate -= edit.SubscriptionWrapper;
+
+        public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
             ILCursor cursor = new(il);
 
@@ -39,25 +44,15 @@ namespace InfernumMode.Core.ILEditingStuff
             cursor.RemoveRange(end - start);
             cursor.Emit(OpCodes.Nop);
         }
-
-        public void Load() => CalamityWorldPostUpdate += PermitODRain;
-
-        public void Unload() => CalamityWorldPostUpdate -= PermitODRain;
     }
 
-    public class AchievementMenuUIHookEdit : IHookEdit
+    public class AchievementMenuUIHookEdit : IExistingDetourProvider
     {
         private static bool justHovered;
 
-        public void Load()
-        {
-            On_AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
-        }
+        void IExistingDetourProvider.Subscribe() => On_AchievementAdvisor.DrawOneAchievement += AchievementAdvisor_DrawOneAchievement;
 
-        public void Unload()
-        {
-            On_AchievementAdvisor.DrawOneAchievement -= AchievementAdvisor_DrawOneAchievement;
-        }
+        void IExistingDetourProvider.Unsubscribe() => On_AchievementAdvisor.DrawOneAchievement -= AchievementAdvisor_DrawOneAchievement;
 
         private void AchievementAdvisor_DrawOneAchievement(On_AchievementAdvisor.orig_DrawOneAchievement orig, AchievementAdvisor self, SpriteBatch spriteBatch, Vector2 position, bool large)
         {
@@ -180,23 +175,23 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class SoundVolumeFalloffHookEdit : IHookEdit
+    public class SoundVolumeFalloffHookEdit : IExistingDetourProvider
     {
-        public void Load() => On_ActiveSound.Update += ActiveSound_Update;
-        
-        public void Unload() => On_ActiveSound.Update -= ActiveSound_Update;
+        void IExistingDetourProvider.Subscribe() => On_ActiveSound.Update += ActiveSound_Update;
 
-        private static List<string> SoundStylesToEdit => new()
-        {
+        void IExistingDetourProvider.Unsubscribe() => On_ActiveSound.Update -= ActiveSound_Update;
+
+        private static List<string> SoundStylesToEdit =>
+        [
             "InfernumMode/Assets/Sounds/Custom/WayfinderGateLoop",
             "InfernumMode/Assets/Sounds/Custom/ProvidenceDoorSoundLoop"
-        };
+        ];
 
         // Ideally this would be an IL but I dont have a copy of the correct source version to look at the IL.
         private void ActiveSound_Update(On_ActiveSound.orig_Update orig, ActiveSound self)
         {
             if (!Program.IsMainThread)
-                typeof(ActiveSound).GetMethod("RunOnMainThreadAndWait", BindingFlags.Static | BindingFlags.NonPublic).Invoke(self, new object[] { (Action)self.Update });
+                typeof(ActiveSound).GetMethod("RunOnMainThreadAndWait", BindingFlags.Static | BindingFlags.NonPublic).Invoke(self, [(Action)self.Update]);
             else
             {
                 if (self.Sound == null || self.Sound.IsDisposed)

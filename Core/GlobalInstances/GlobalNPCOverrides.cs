@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DevourerofGods;
@@ -13,7 +14,6 @@ using CalamityMod.UI;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.Achievements;
-using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.Content.Cutscenes;
@@ -22,6 +22,7 @@ using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Cutscenes;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -167,6 +168,8 @@ namespace InfernumMode.Core.GlobalInstances
                         npc.netUpdate = true;
                     }
                 }
+                else
+                    npc.Infernum().HasResetHP = true;
 
                 if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
                 {
@@ -226,7 +229,7 @@ namespace InfernumMode.Core.GlobalInstances
             }
 
             // Check for whether to play the post mechs cutscene.
-            if (!WorldSaveSystem.HasSeenPostMechsCutscene)
+            if (!WorldSaveSystem.HasSeenPostMechsCutscene && !BossRushEvent.BossRushActive)
             {
                 // If Prime was just killed, and the other two are also dead.
                 if (npc.type == NPCID.SkeletronPrime && NPC.downedMechBoss1 && NPC.downedMechBoss2)

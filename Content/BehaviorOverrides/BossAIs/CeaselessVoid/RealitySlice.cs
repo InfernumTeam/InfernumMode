@@ -1,8 +1,8 @@
-using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -14,15 +14,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class RealitySlice : ModProjectile
     {
-        internal PrimitiveTrail LightningDrawer;
-
         public bool Cosmilite;
 
         public Vector2 Start;
 
         public Vector2 End;
 
-        public List<Vector2> TrailCache = new();
+        public List<Vector2> TrailCache = [];
 
         public int Lifetime => Cosmilite ? 248 : 84;
 
@@ -100,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
         internal float WidthFunction(float completionRatio)
         {
             float width = Cosmilite ? 80f : 40f;
-            return CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * width;
+            return LumUtils.Convert01To010(completionRatio) * Projectile.scale * width;
         }
 
         internal Color ColorFunction(float completionRatio)
@@ -109,7 +107,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             if (Cosmilite)
                 baseColor = (Projectile.localAI[0] == 0f ? Color.Cyan : Color.Fuchsia) with { A = 0 };
 
-            float opacity = CalamityUtils.Convert01To010(completionRatio) * 1.4f;
+            float opacity = LumUtils.Convert01To010(completionRatio) * 1.4f;
             if (opacity >= 1f)
                 opacity = 1f;
             opacity *= Projectile.Opacity;
@@ -118,17 +116,16 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            LightningDrawer ??= new PrimitiveTrail(WidthFunction, ColorFunction, null, InfernumEffectsRegistry.RealityTearVertexShader);
-
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Stars);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(true);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Stars.Value;
+            InfernumEffectsRegistry.RealityTearVertexShader.TrySetParameter("useOutline", true);
 
             Projectile.localAI[0] = 0f;
-            LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
+            PrimitiveSettings settings = new(WidthFunction, ColorFunction, _ => Projectile.Size * 0.5f, Shader: InfernumEffectsRegistry.RealityTearVertexShader);
+            PrimitiveRenderer.RenderTrail(TrailCache, settings, 50);
             if (Cosmilite)
             {
                 Projectile.localAI[0] = 1f;
-                LightningDrawer.Draw(TrailCache, Projectile.Size * 0.5f - Main.screenPosition, 50);
+                PrimitiveRenderer.RenderTrail(TrailCache, settings, 50);
             }
             return false;
         }

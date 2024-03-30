@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Tiles.Abyss;
+﻿using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Abyss;
@@ -42,7 +41,7 @@ namespace InfernumMode.Core.GlobalInstances
             if (Main.LocalPlayer.GetModPlayer<AchievementPlayer>().achievements.Any(achievement => achievement is SakuraWish && achievement.DoneCompletionEffects))
                 return;
 
-            Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile tile = Framing.GetTileSafely(i, j);
             if (tile.HasTile && tile.TileType == TileID.VanityTreeSakura)
             {
                 AchievementPlayer.ExtraUpdateHandler(Main.LocalPlayer, AchievementUpdateCheck.Sakura);
@@ -51,8 +50,8 @@ namespace InfernumMode.Core.GlobalInstances
 
         public static bool ShouldNotBreakDueToAboveTile(int x, int y)
         {
-            int[] invincibleTiles = new int[]
-            {
+            int[] invincibleTiles =
+            [
                 ModContent.TileType<BrimstoneRose>(),
                 ModContent.TileType<ColosseumPortal>(),
                 ModContent.TileType<EggSwordShrine>(),
@@ -60,10 +59,10 @@ namespace InfernumMode.Core.GlobalInstances
                 ModContent.TileType<ProvidenceSummoner>(),
                 ModContent.TileType<ProvidenceRoomDoorPedestal>(),
                 ModContent.TileType<StrangeOrbTile>(),
-            };
+            ];
 
-            Tile checkTile = CalamityUtils.ParanoidTileRetrieval(x, y);
-            Tile aboveTile = CalamityUtils.ParanoidTileRetrieval(x, y - 1);
+            Tile checkTile = Framing.GetTileSafely(x, y);
+            Tile aboveTile = Framing.GetTileSafely(x, y - 1);
 
             // Prevent tiles below invincible tiles from being destroyed. This is like chests in vanilla.
             return aboveTile.HasTile && checkTile.TileType != aboveTile.TileType && invincibleTiles.Contains(aboveTile.TileType);
@@ -89,7 +88,7 @@ namespace InfernumMode.Core.GlobalInstances
             if ((WorldSaveSystem.ProvidenceArena.Intersects(new(i, j, 1, 1)) && !wofBlock) || SubworldSystem.IsActive<LostColosseum>())
                 return false;
 
-            if (CalamityUtils.ParanoidTileRetrieval(i, j - 1).TileType == ModContent.TileType<AbyssalKelp>())
+            if (Framing.GetTileSafely(i, j - 1).TileType == ModContent.TileType<AbyssalKelp>())
                 WorldGen.KillTile(i, j - 1);
 
             return base.CanKillTile(i, j, type, ref blockDamaged);

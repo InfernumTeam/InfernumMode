@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Utilities;
 
@@ -71,8 +70,8 @@ namespace InfernumMode
 
         public static void TurnAroundBehavior(NPC npc, Vector2 ahead, bool aboutToLeaveWorld)
         {
-            float distanceToTileOnLeft = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(-PiOver2)) ?? 999f;
-            float distanceToTileOnRight = CalamityUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(PiOver2)) ?? 999f;
+            float distanceToTileOnLeft = LumUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(-PiOver2)) ?? 999f;
+            float distanceToTileOnRight = LumUtils.DistanceToTileCollisionHit(npc.Center, npc.velocity.RotatedBy(PiOver2)) ?? 999f;
             float turnDirection = distanceToTileOnLeft > distanceToTileOnRight ? -1f : 1f;
             Vector2 idealVelocity = npc.velocity.RotatedBy(PiOver2 * turnDirection);
             if (aboutToLeaveWorld)

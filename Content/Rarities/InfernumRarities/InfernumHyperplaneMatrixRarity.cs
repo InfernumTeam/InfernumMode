@@ -10,7 +10,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
     {
         public override Color RarityColor => new(17, 17, 23);
 
-        internal static List<RaritySparkle> CodeSymbols = new();
+        internal static List<RaritySparkle> CodeSymbols = [];
 
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {

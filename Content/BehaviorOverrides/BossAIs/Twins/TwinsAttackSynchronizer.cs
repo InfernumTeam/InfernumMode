@@ -335,7 +335,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                     textColor = Color.IndianRed;
                 }
 
-                CalamityUtils.DisplayLocalizedText(localizationKey, textColor);
+                LumUtils.BroadcastLocalizedText(localizationKey, textColor);
                 hasStartedHealFlag = 1f;
             }
 
@@ -353,7 +353,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
                             localizationKey = "Mods.InfernumMode.Status.TwinsFinalPhaseRetinazer";
                             textColor = Color.IndianRed;
                         }
-                        CalamityUtils.DisplayLocalizedText(localizationKey, textColor);
+                        LumUtils.BroadcastLocalizedText(localizationKey, textColor);
 
                         HatGirl.SayThingWhileOwnerIsAlive(Target, "Mods.InfernumMode.PetDialog.TwinsFinalPhaseTip");
                     }
@@ -1131,7 +1131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
             {
                 Color mainExplosionColor = npc.type == NPCID.Spazmatism ? Color.YellowGreen : Color.Red;
                 Utilities.CreateShockwave(npc.Center, 40, 10, 30f);
-                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, new Color[] { Color.Gray, mainExplosionColor * 0.6f }, 2.3f, 75, 0.4f));
+                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, [Color.Gray, mainExplosionColor * 0.6f], 2.3f, 75, 0.4f));
 
                 CurrentAttackState = TwinsAttackState.LazilyObserve;
                 UniversalAttackTimer = 0;

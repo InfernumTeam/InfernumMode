@@ -12,7 +12,6 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
-using static CalamityMod.CalamityUtils;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -158,7 +157,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 {
                     ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(deathray =>
                     {
-                        deathray.ModProjectile<TerminusDeathray>().OwnerIndex = Projectile.identity;
+                        deathray.As<TerminusDeathray>().OwnerIndex = Projectile.identity;
                     });
                     Utilities.NewProjectileBetter(Projectile.Bottom, Vector2.UnitY, ModContent.ProjectileType<TerminusDeathray>(), AEWHeadBehaviorOverride.PowerfulShotDamage, 0f, Projectile.owner, 0f, AttackTime - time);
                     Projectile.netUpdate = true;

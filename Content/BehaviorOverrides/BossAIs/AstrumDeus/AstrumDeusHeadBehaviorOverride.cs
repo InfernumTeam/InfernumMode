@@ -72,11 +72,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
         public const float EnrageStartDistance = 4800f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override bool PreAI(NPC npc)
         {
@@ -633,14 +633,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             if (attackTimer == vortexCreationDelay)
             {
                 Vector2 lemniscateCenter = new(lemniscateCenterX, lemniscateCenterY);
-                Vector2[] lemniscateFoci = new[]
-                {
+                Vector2[] lemniscateFoci =
+                [
                     lemniscateCenter - Vector2.UnitX * flySpeed * 11.5f,
                     lemniscateCenter + Vector2.UnitX * flySpeed * 11.5f
-                };
+                ];
 
                 bool cyan = true;
-                List<int> vortices = new();
+                List<int> vortices = [];
                 foreach (Vector2 focus in lemniscateFoci)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)

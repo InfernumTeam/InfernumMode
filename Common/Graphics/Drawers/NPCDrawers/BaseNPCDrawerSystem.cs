@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Luminance.Core.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -44,7 +45,7 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
         public sealed override void SetupContent() => SetStaticDefaults();
 
         #region Virtuals
-        public virtual ManagedRenderTarget.RenderTargetCreationCondition TargetCreationCondition => RenderTargetManager.CreateScreenSizedTarget;
+        public virtual ManagedRenderTarget.RenderTargetInitializationAction TargetCreationCondition => ManagedRenderTarget.CreateScreenSizedTarget;
 
         public virtual bool ShouldDrawThisFrame => true;
 

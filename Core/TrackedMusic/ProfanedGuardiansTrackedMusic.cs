@@ -10,9 +10,9 @@ namespace InfernumMode.Core.TrackedMusic
 
         public override float BeatsPerMinute => BeatsPerMinuteStatic;
 
-        public override List<SongSection> HeadphonesHighPoints => new();
+        public override List<SongSection> HeadphonesHighPoints => [];
 
-        public override List<SongSection> HighPoints => new();
+        public override List<SongSection> HighPoints => [];
 
         // These two are equivalent.
         public static float BeatsPerMinuteStatic => ProvidenceTrackedMusic.BeatsPerMinuteStatic;

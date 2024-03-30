@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -93,7 +92,7 @@ namespace InfernumMode.Content.UI
                 // If it contains the special line, draw it separately by splitting the surrounding lines.
                 if (line.Contains(specialTextValue))
                 {
-                    List<string> splitLines = line.Split(specialTextValue).ToList();
+                    List<string> splitLines = [.. line.Split(specialTextValue)];
                     splitLines.Insert(1, specialTextValue);
 
                     foreach (string line2 in splitLines)

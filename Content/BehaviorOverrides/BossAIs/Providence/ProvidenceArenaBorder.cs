@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -44,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 bottom = WorldSaveSystem.ProvidenceArena.TopLeft() + Vector2.UnitY * 2f;
             for (int i = 0; i < 200; i++)
             {
-                if (CalamityUtils.ParanoidTileRetrieval((int)bottom.X, (int)bottom.Y).HasTile)
+                if (Framing.GetTileSafely((int)bottom.X, (int)bottom.Y).HasTile)
                     break;
                 bottom.Y++;
             }

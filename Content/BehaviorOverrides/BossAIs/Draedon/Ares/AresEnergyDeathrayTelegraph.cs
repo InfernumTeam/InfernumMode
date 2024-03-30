@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresEnergyDeathrayTelegraph : ModProjectile, IAdditiveDrawer
+    public class AresEnergyDeathrayTelegraph : ModProjectile
     {
         public float LifetimeCompletion => 1f - Projectile.timeLeft / (float)Lifetime;
 
@@ -50,14 +50,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             float opacity = Utils.GetLerpValue(1f, 0.75f, LifetimeCompletion, true) * Projectile.Opacity;
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * 4000f;
-            spriteBatch.DrawBloomLine(start, end, Color.Lerp(Color.Red, Color.Wheat, LifetimeCompletion) * opacity, LifetimeCompletion * 15f + 20f);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.DrawBloomLine(start, end, Color.Lerp(Color.Red, Color.Wheat, LifetimeCompletion) * opacity, LifetimeCompletion * 15f + 20f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

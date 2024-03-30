@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void AI()
         {
-            Projectile.scale = CalamityUtils.Convert01To010(Projectile.timeLeft / 60f);
+            Projectile.scale = LumUtils.Convert01To010(Projectile.timeLeft / 60f);
         }
 
         public override bool PreDraw(ref Color lightColor)

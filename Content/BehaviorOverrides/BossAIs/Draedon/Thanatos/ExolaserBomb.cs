@@ -99,13 +99,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos
             InfernumEffectsRegistry.FireVertexShader.UseSaturation(0.45f);
             InfernumEffectsRegistry.FireVertexShader.SetShaderTexture(InfernumTextureRegistry.CultistRayMap);
 
-            List<Vector2> drawPoints = new();
+            List<Vector2> drawPoints = [];
 
             for (float offsetAngle = -PiOver2; offsetAngle <= PiOver2; offsetAngle += Pi / 24f)
             {
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.06f, 3, 185) * 3f;
+                float adjustedAngle = offsetAngle + LumUtils.PerlinNoise2D(offsetAngle, Main.GlobalTimeWrappedHourly * 0.06f, 3, 185) * 3f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 16; i++)
                     drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 16f));

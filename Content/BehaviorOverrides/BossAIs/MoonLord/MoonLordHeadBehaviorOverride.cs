@@ -240,7 +240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                     SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.85f, Pitch = -0.2f }, target.Center);
 
                 telegraphInterpolant = Utils.GetLerpValue(0f, deathrayTelegraphTime, wrappedAttackTimer, true);
-                angularOffset += CalamityUtils.Convert01To010(telegraphInterpolant) * TwoPi / 300f;
+                angularOffset += LumUtils.Convert01To010(telegraphInterpolant) * TwoPi / 300f;
             }
             else
                 core.velocity *= 0.9f;

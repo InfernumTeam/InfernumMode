@@ -77,10 +77,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public const float Phase2LifeRatio = 0.5f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {
@@ -932,14 +932,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             BrimmyAttackType previousAttack = (BrimmyAttackType)npc.ai[0];
-            List<BrimmyAttackType> possibleAttacks = new()
-            {
+            List<BrimmyAttackType> possibleAttacks =
+            [
                 BrimmyAttackType.FlameChargeSkullBlasts,
                 BrimmyAttackType.BrimstoneRoseBurst,
                 BrimmyAttackType.BrimstoneRoseBurst,
                 BrimmyAttackType.FlameTeleportBombardment,
                 BrimmyAttackType.GrimmBulletHellCopyLmao
-            };
+            ];
             possibleAttacks.AddWithCondition(BrimmyAttackType.EyeLaserbeams, lifeRatio < Phase2LifeRatio);
 
             do

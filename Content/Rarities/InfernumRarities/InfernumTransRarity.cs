@@ -9,7 +9,7 @@ namespace InfernumMode.Content.Rarities.InfernumRarities
     {
         public override Color RarityColor => Color.HotPink;
 
-        internal static List<RaritySparkle> TransParticleList = new();
+        internal static List<RaritySparkle> TransParticleList = [];
 
         public static void DrawCustomTooltipLine(DrawableTooltipLine tooltipLine)
         {

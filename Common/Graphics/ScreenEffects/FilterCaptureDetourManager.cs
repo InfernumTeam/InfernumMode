@@ -1,6 +1,7 @@
 ﻿using InfernumMode.Common.BaseEntities;
 using InfernumMode.Content.Cutscenes;
 using InfernumMode.Core;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -19,7 +20,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
 
         public override void Load()
         {
-            ScreenTarget = new(true, RenderTargetManager.CreateScreenSizedTarget, true);
+            ScreenTarget = new(true, ManagedRenderTarget.CreateScreenSizedTarget, true);
             On_FilterManager.EndCapture += EndCaptureManager;
         }
 
@@ -44,8 +45,6 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
             // Draw the screen effects.
             if (!InfernumConfig.Instance.ReducedGraphicsConfig)
                 screenTarget1 = ScreenEffectSystem.DrawBlurEffect(screenTarget1);
-
-            CutsceneManager.DrawWorld(screenTarget1);
 
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }

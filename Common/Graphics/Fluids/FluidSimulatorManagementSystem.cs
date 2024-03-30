@@ -12,11 +12,11 @@ namespace InfernumMode.Common.Graphics.Fluids
     {
         // For the sake of absolute management all fields must be kept track of to ensure no loose resources are hanging around (Especially on mod reloads, since GPU memory cannot be easily cleared automatically).
         // Furthermore, the updating must be performed in such a way that it happens at a specialized point in the draw loop, to prevent screwing up the vanilla game's backbuffer contents.
-        internal static List<FluidFieldInfernum> CreatedFields = new();
+        internal static List<FluidFieldInfernum> CreatedFields = [];
 
         public override void OnModLoad()
         {
-            CreatedFields = new();
+            CreatedFields = [];
             Main.OnPreDraw += UpdateFields;
         }
 

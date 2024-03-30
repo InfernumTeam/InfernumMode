@@ -34,7 +34,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(BlobSize, BlobSize) / 6f, Vector2.Zero, new(BlobSize));
+            ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(Projectile.Center + Main.rand.NextVector2Circular(BlobSize, BlobSize) / 6f, Vector2.Zero, BlobSize);
             if (Projectile.timeLeft <= 3600f - Lifetime)
                 Projectile.Kill();
 

@@ -48,10 +48,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
 
         public const float FinalPhaseLifeRatio = 0.225f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             FinalPhaseLifeRatio
-        };
+        ];
 
         public override bool PreAI(NPC npc)
         {

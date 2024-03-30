@@ -11,13 +11,13 @@ namespace InfernumMode.Core.Netcode
 {
     public class PacketManager : ModSystem
     {
-        internal static List<InfernumNPCSyncInformation> PendingNPCSyncs = new();
+        internal static List<InfernumNPCSyncInformation> PendingNPCSyncs = [];
 
-        internal static Dictionary<string, BaseInfernumPacket> RegisteredPackets = new();
+        internal static Dictionary<string, BaseInfernumPacket> RegisteredPackets = [];
 
         public override void OnModLoad()
         {
-            RegisteredPackets = new();
+            RegisteredPackets = [];
             foreach (Type t in AssemblyManager.GetLoadableTypes(Mod.Code))
             {
                 if (!t.IsSubclassOf(typeof(BaseInfernumPacket)) || t.IsAbstract)

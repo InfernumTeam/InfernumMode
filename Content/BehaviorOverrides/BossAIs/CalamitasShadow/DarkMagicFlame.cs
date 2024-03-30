@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
@@ -122,7 +121,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Color startingColor = Color.Lerp(Color.White, Color.DarkRed, 0.25f);
             Color middleColor = Color.Lerp(Color.Pink, Color.Red, 0.4f);
             Color endColor = Color.Lerp(Color.Orange, Color.Black, 0.35f);
-            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
+            Color color = LumUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
             color.A = (byte)(trailOpacity * 255);
             return color * Projectile.Opacity;
         }

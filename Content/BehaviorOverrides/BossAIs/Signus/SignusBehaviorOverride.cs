@@ -66,11 +66,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
 
         public const float Phase3LifeRatio = 0.3f;
 
-        public override float[] PhaseLifeRatioThresholds => new float[]
-        {
+        public override float[] PhaseLifeRatioThresholds =>
+        [
             Phase2LifeRatio,
             Phase3LifeRatio
-        };
+        ];
 
         public override void SetDefaults(NPC npc)
         {

@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Time++;
 
             // Create blob particles.
-            ModContent.GetInstance<ShadowMetaball>().SpawnParticle(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), Vector2.Zero, new((20f + Projectile.velocity.Length()) * Projectile.scale));
+            ModContent.GetInstance<ShadowMetaball>().CreateParticle(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), Vector2.Zero, (20f + Projectile.velocity.Length()) * Projectile.scale);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

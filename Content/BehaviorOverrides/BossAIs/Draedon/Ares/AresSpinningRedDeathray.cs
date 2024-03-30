@@ -104,8 +104,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(1.4f);
             GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(InfernumTextureRegistry.VoronoiShapes);
 
-            List<float> originalRotations = new();
-            List<Vector2> points = new();
+            List<float> originalRotations = [];
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
             {
                 points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));

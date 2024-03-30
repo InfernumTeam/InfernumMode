@@ -1,4 +1,3 @@
-using CalamityMod;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -302,7 +301,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 idealFrame = 3;
             }
 
-            float hoverInterpolant = CalamityUtils.Convert01To010(animationCompletionRatio);
+            float hoverInterpolant = LumUtils.Convert01To010(animationCompletionRatio);
             Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, hoverInterpolant);
             idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
 

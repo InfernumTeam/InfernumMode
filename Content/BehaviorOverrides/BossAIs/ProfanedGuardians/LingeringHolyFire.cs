@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
-    public class LingeringHolyFire : ModProjectile, IAdditiveDrawer
+    public class LingeringHolyFire : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
@@ -44,19 +44,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             Time++;
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
-        {
-            Texture2D texture = InfernumTextureRegistry.Cloud2.Value;
-            Color color = Projectile.GetAlpha(Color.White);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale * 0.6f, 0, 0f);
-            spriteBatch.Draw(texture, drawPosition, null, Color.White * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.6f, Projectile.scale * 0.5f, 0, 0f);
-        }
-
         public override Color? GetAlpha(Color lightColor)
         {
             Color c = Color.Lerp(WayfinderSymbol.Colors[1], WayfinderSymbol.Colors[0], Projectile.identity % 10f / 16f);
             return c * 1.15f;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D texture = InfernumTextureRegistry.Cloud2.Value;
+            Color color = Projectile.GetAlpha(Color.White);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale * 0.6f, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.6f, Projectile.scale * 0.5f, 0, 0f);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

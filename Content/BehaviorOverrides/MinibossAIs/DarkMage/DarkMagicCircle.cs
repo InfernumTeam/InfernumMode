@@ -1,4 +1,3 @@
-using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -44,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             for (int i = 0; i < TotalMagicPiecesInCircle; i++)
             {
                 Vector2 drawOffset = (TwoPi * i / TotalMagicPiecesInCircle + Projectile.rotation).ToRotationVector2() * Projectile.Opacity * Projectile.width;
-                if (CalamityUtils.CircularHitboxCollision(Projectile.Center + drawOffset, 8f, targetHitbox))
+                if (LumUtils.CircularHitboxCollision(Projectile.Center + drawOffset, 8f, targetHitbox))
                     return true;
             }
             return false;

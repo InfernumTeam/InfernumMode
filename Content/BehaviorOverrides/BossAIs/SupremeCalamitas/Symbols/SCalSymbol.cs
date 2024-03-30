@@ -1,4 +1,4 @@
-using CalamityMod.DataStructures;
+﻿using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,14 +7,14 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols
 {
-    public class SCalSymbol : ModProjectile, IAdditiveDrawer
+    public class SCalSymbol : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 
         public const int Lifetime = 300;
 
-        public static readonly string[] AlchemicalNames = new string[]
-        {
+        public static readonly string[] AlchemicalNames =
+        [
             "Brimstone",
             "Elements",
             "Fire",
@@ -23,11 +23,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             "PhilosophersStone",
             "Platinum",
             "Salt"
-        };
+        ];
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Alchemical Symbol");
 
         public override void SetDefaults()
         {
@@ -59,7 +57,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             Time++;
         }
 
-        public void AdditiveDraw(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>($"InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/Symbols/{AlchemicalNames[Projectile.identity % 8]}").Value;
             Rectangle frame = tex.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
@@ -67,7 +65,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             Vector2 origin = frame.Size() * 0.5f;
             Color glowColor = Color.Lerp(Color.Pink, Color.Red, Cos(Main.GlobalTimeWrappedHourly * 5f) * 0.5f + 0.5f);
 
-            // Draw an ominous glowing backimage of the book after a bit of time.
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            // Draw an ominous glowing backimage of the symbol after a bit of time.
             float outwardFade = Main.GlobalTimeWrappedHourly * 0.4f % 1f;
             for (int i = 0; i < 8; i++)
             {
@@ -79,7 +78,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbol
             drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 3; i++)
-                spriteBatch.Draw(tex, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0);
+                Main.spriteBatch.Draw(tex, drawPosition, frame, Projectile.GetAlpha(Color.White), Projectile.rotation, origin, Projectile.scale, 0, 0);
+            Main.spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Items.SummonItems;
+﻿using CalamityMod.Items.SummonItems;
 using CalamityMod.Tiles.Astral;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
@@ -46,7 +45,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
             set;
         }
 
-        internal static List<Point> PortalCache = new();
+        internal static List<Point> PortalCache = [];
 
         public override void SetStaticDefaults()
         {
@@ -66,7 +65,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
             TileObjectData.newTile.Height = Height;
             TileObjectData.newTile.Origin = new Point16(3, 1);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
+            TileObjectData.newTile.CoordinateHeights = [16, 16];
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
@@ -79,7 +78,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
         {
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
             if (SubworldSystem.IsActive<LostColosseum>())
@@ -116,7 +115,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
         {
             bool insidePortal = Distance(Main.LocalPlayer.Center.X, i * 16f) <= 108f && Main.LocalPlayer.Center.Y >= j * 16f - 250f;
             ref float teleportInterpolant = ref Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant;
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             if (!insidePortal || !WorldSaveSystem.HasOpenedLostColosseumPortal || t.TileFrameX != 36 || t.TileFrameY != 18)
                 return;
 
@@ -160,7 +159,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
                 PacketManager.SendPacket<ColosseumPortalOpenPacket>();
 
             // Create a lens flare.
-            Tile t = CalamityUtils.ParanoidTileRetrieval(i, j);
+            Tile t = Framing.GetTileSafely(i, j);
             Vector2 lensFlareDrawPosition = new Point(i, j).ToWorldCoordinates() - new Vector2(t.TileFrameX, t.TileFrameY) + Vector2.UnitX * 36f;
             Projectile.NewProjectile(new EntitySource_WorldEvent(), lensFlareDrawPosition, Vector2.Zero, ModContent.ProjectileType<PortalLensFlare>(), 0, 0f);
             return true;
@@ -169,7 +168,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
         public static float PillarWidthFunction(float completionRatio)
         {
             float tipFadeoffInterpolant = SmoothStep(0f, 1f, Utils.GetLerpValue(1f, 0.75f, completionRatio, true));
-            float baseFadeoffInterpolant = SmoothStep(2.4f, 1f, 1f - CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, 0.64f, completionRatio, true)));
+            float baseFadeoffInterpolant = SmoothStep(2.4f, 1f, 1f - LumUtils.Convert01To010(Utils.GetLerpValue(0f, 0.64f, completionRatio, true)));
             float widthAdditionFactor = Sin(Main.GlobalTimeWrappedHourly * -13f + completionRatio * Pi * 4f) * 0.2f;
             float generalSquishFactor = Utils.GetLerpValue(0.8f, 0.96f, AnimationCompletion, true);
 
@@ -196,7 +195,7 @@ namespace InfernumMode.Content.Tiles.Colosseum
             InfernumEffectsRegistry.DarkFlamePillarVertexShader.SetShaderTexture(InfernumTextureRegistry.StreakThinGlow);
             Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakFaded.Value;
 
-            List<Vector2> points = new();
+            List<Vector2> points = [];
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(start, end, i / 8f));
 
@@ -207,14 +206,15 @@ namespace InfernumMode.Content.Tiles.Colosseum
             float radius = Utils.GetLerpValue(0.5f, 0.95f, AnimationCompletion, true) * 90f;
             Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 60f), out var triangleIndices, out var vertices);
 
-            CalamityUtils.CalculatePerspectiveMatricies(out Matrix view, out Matrix projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.SetShaderTexture(InfernumTextureRegistry.Water);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["useOutline"].SetValue(false);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uCoordinateZoom"].SetValue(3.2f);
-            InfernumEffectsRegistry.RealityTearVertexShader.Shader.Parameters["uTimeFactor"].SetValue(3.2f);
-            InfernumEffectsRegistry.RealityTearVertexShader.UseSaturation(0.3f);
-            InfernumEffectsRegistry.RealityTearVertexShader.Apply();
+            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
+            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Water.Value;
+            var tear = InfernumEffectsRegistry.RealityTearVertexShader;
+            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.TrySetParameter("useOutline", false);
+            tear.TrySetParameter("uCoordinateZoom", 3.2f);
+            tear.TrySetParameter("uTimeFactor", 3.2f);
+            tear.TrySetParameter("uSaturation", 0.3f);
+            tear.Apply();
 
             Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();

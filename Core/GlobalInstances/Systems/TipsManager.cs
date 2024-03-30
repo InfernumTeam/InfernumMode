@@ -13,9 +13,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     {
         internal static NPC BossBeingFought;
 
-        internal static Dictionary<int, List<Func<NPC, string>>> TipsRegistry = new();
+        internal static Dictionary<int, List<Func<NPC, string>>> TipsRegistry = [];
 
-        internal static List<string> SaidText = new();
+        internal static List<string> SaidText = [];
 
         public static string PotentialTipToUse
         {

@@ -28,8 +28,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Brimstone Deathray");
-
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 32;

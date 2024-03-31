@@ -22,7 +22,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            Projectile.hide = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 

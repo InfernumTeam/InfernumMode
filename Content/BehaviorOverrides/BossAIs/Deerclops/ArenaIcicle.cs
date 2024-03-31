@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -15,8 +15,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
         public float Direction => Projectile.ai[0];
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Long Icicle");
 
         public override void SetDefaults()
         {

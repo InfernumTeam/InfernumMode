@@ -24,7 +24,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.penetrate = -1;
             Projectile.timeLeft = 32;
             Projectile.Opacity = 0f;
-            Projectile.hide = true;
             Projectile.rotation = Main.rand?.NextFloat(TwoPi) ?? 0f;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }

@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -10,8 +10,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 {
     public class ApolloAcceleratingPlasmaSpark : ModProjectile
     {
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma Spark");
-
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 14;

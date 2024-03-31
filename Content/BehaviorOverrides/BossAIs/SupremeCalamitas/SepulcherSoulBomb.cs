@@ -32,8 +32,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        // public override void SetStaticDefaults() => DisplayName.SetDefault("Wrathful Spirits");
-
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 8;
@@ -43,7 +41,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
             Projectile.scale = 1f;
-            Projectile.hide = true;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }

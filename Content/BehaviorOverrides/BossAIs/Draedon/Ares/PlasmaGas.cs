@@ -24,7 +24,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.tileCollide = false;
             Projectile.timeLeft = 180;
             Projectile.scale = 1.27f;
-            Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.Calamity().DealsDefenseDamage = true;

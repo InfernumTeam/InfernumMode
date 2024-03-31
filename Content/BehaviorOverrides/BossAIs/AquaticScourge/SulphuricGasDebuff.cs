@@ -30,7 +30,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.tileCollide = false;
             Projectile.timeLeft = Lifetime;
             Projectile.scale = 0.03f;
-            Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.Calamity().DealsDefenseDamage = true;

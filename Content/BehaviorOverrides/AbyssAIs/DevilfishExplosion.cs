@@ -20,7 +20,6 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.tileCollide = false;
             Projectile.timeLeft = 105;
             Projectile.scale = 1.27f;
-            Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.Calamity().DealsDefenseDamage = true;

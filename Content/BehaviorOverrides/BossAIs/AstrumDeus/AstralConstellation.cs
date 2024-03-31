@@ -26,7 +26,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.hide = true;
             Projectile.timeLeft = 900;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }

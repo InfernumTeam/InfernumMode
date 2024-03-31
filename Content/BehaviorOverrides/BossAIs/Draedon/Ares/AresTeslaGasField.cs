@@ -22,10 +22,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.tileCollide = false;
             Projectile.timeLeft = 210;
             Projectile.scale = 1.5f;
-            Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
-            Projectile.hide = true;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }

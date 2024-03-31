@@ -1,4 +1,4 @@
-using InfernumMode.Assets.Effects;
+﻿using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
@@ -84,6 +84,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             drawCacheProjsBehindProjectiles.Add(index);
         }
 
-        public override bool? CanDamage()/* tModPorter Suggestion: Return null instead of false */ => false;
+        public override bool? CanDamage() => false;
     }
 }

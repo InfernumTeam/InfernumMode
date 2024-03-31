@@ -24,7 +24,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.penetrate = -1;
             Projectile.timeLeft = 150;
             Projectile.alpha = 255;
-            Projectile.hide = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
         }
 

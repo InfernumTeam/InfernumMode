@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -12,7 +12,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Plasma Spark");
             Main.projFrames[Projectile.type] = 4;
         }
 

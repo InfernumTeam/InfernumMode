@@ -22,7 +22,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
             Projectile.tileCollide = false;
             Projectile.timeLeft = 500;
             Projectile.scale = 1.5f;
-            Projectile.hide = true;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.Calamity().DealsDefenseDamage = true;

@@ -1,4 +1,4 @@
-using InfernumMode.Core.GlobalInstances.Systems;
+﻿using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,11 +11,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 {
     public class ProvidenceArenaBorder : ModProjectile
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Border");
-            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 99999999;
-        }
+        public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Type] = 99999999;
 
         public override void SetDefaults()
         {

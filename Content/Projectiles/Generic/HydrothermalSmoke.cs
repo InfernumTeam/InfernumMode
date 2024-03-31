@@ -28,7 +28,6 @@ namespace InfernumMode.Content.Projectiles.Generic
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = Lifetime;
-            Projectile.hide = true;
             Projectile.localAI[0] = 1f;
         }
 

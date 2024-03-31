@@ -30,7 +30,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            Projectile.hide = true;
             Projectile.MaxUpdates = 5;
             Projectile.Calamity().DealsDefenseDamage = true;
             CooldownSlot = ImmunityCooldownID.Bosses;
@@ -59,6 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             // Draw the telegraph line.
             Vector2 start = Projectile.Center - Main.screenPosition;
             Texture2D line = InfernumTextureRegistry.BloomLine.Value;
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Vector2 beamOrigin = new(line.Width / 2f, line.Height);
             Vector2 beamScale = new(Projectile.scale * Projectile.width / line.Width * 1.5f, LaserLength / line.Height);
@@ -69,7 +69,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
             // Draw the energy focus at the start.
             Texture2D energyFocusTexture = InfernumTextureRegistry.LaserCircle.Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Main.spriteBatch.Draw(energyFocusTexture, drawPosition, null, Color.White * Projectile.scale, Projectile.rotation, energyFocusTexture.Size() * 0.5f, 0.7f, 0, 0f);
             Main.spriteBatch.ResetBlendState();
             return false;

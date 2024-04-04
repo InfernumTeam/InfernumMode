@@ -1,17 +1,14 @@
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 
 namespace InfernumMode.Content.Skies
 {
-    public class EmpressOfLightScreenShaderData : ScreenShaderData
+    public class EmpressOfLightScreenShaderData(Asset<Effect> shader, string pass) : ScreenShaderData(shader, pass)
     {
         public int FairyIndex;
-
-        public EmpressOfLightScreenShaderData(Effect shader, string pass) : base(new Ref<Effect>(shader), pass)
-        {
-        }
 
         private void UpdatePIndex()
         {

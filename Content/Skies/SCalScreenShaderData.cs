@@ -3,6 +3,7 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.TrackedMusic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using static InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Sup
 
 namespace InfernumMode.Content.Skies
 {
-    public class SCalScreenShaderData : ScreenShaderData
+    public class SCalScreenShaderData(Asset<Effect> shader, string passName) : ScreenShaderData(shader, passName)
     {
         public static Color BackgroundColor
         {
@@ -33,8 +34,6 @@ namespace InfernumMode.Content.Skies
         public static Color EpiphanyColor => Color.Lerp(Color.Yellow, Color.Red, 0.56f);
 
         public static Color AcceptanceColor => new(78, 78, 78);
-
-        public SCalScreenShaderData(Ref<Effect> shader, string passName) : base(shader, passName) { }
 
         public override void Apply()
         {

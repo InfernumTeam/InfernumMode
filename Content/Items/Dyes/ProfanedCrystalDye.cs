@@ -18,7 +18,7 @@ namespace InfernumMode.Content.Items.Dyes
         {
             get
             {
-                var shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Assets/Effects/Dyes/ProfanedCrystalDyeShader", AssetRequestMode.ImmediateLoad).Value), "DyePass").UseColor(new Color(223, 155, 233));
+                var shader = new ArmorShaderData(Mod.Assets.Request<Effect>("Assets/Effects/Dyes/ProfanedCrystalDyeShader", AssetRequestMode.ImmediateLoad), "DyePass").UseColor(new Color(223, 155, 233));
                 shader.SetShaderTextureArmor(InfernumTextureRegistry.CrystalNoise);
                 return shader;
             }

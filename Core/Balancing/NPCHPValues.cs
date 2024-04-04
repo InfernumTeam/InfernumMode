@@ -45,7 +45,7 @@ namespace InfernumMode.Core.Balancing
 {
     public class NPCHPValues : ModSystem
     {
-        public static Dictionary<int, int> HPValues
+        public static Dictionary<int, int> DefaultHPValues
         {
             get;
             private set;
@@ -53,7 +53,7 @@ namespace InfernumMode.Core.Balancing
 
         public override void Load()
         {
-            HPValues = new()
+            DefaultHPValues = new()
             {
                 [ModContent.NPCType<KingSlimeJewel>()] = BossRushEvent.BossRushActive ? 1176000 : 2000,
                 [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,

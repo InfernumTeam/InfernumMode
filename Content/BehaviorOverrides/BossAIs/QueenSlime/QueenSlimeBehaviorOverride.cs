@@ -1225,7 +1225,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             bool solidGround = false;
             for (int i = -8; i < 8; i++)
             {
-                Tile ground = LumUtils.ParanoidTileRetrieval((int)(npc.Bottom.X / 16f) + i, (int)(npc.Bottom.Y / 16f) + 1);
+                Tile ground = Framing.GetTileSafely((int)(npc.Bottom.X / 16f) + i, (int)(npc.Bottom.Y / 16f) + 1);
                 bool notAFuckingTree = ground.TileType is not TileID.Trees and not TileID.PineTree and not TileID.PalmTree;
                 if (ground.HasUnactuatedTile && notAFuckingTree && (Main.tileSolid[ground.TileType] || Main.tileSolidTop[ground.TileType]))
                 {

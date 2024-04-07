@@ -83,7 +83,7 @@ namespace InfernumMode.Core.OverridingSystem
         /// <summary>
         /// An array of hp thresholds, for use by the custom boss bar to mark phases.
         /// </summary>
-        public virtual float[] PhaseLifeRatioThresholds => Array.Empty<float>();
+        public virtual float[] PhaseLifeRatioThresholds => [];
 
         /// <summary>
         /// Whether the NPC should use the boss immunity cooldown slot. Defaults to true.
@@ -150,7 +150,7 @@ namespace InfernumMode.Core.OverridingSystem
         /// Use this to provide a list of tips to display on player death with the blasted tophat.
         /// </summary>
         /// <returns></returns>
-        public virtual IEnumerable<Func<NPC, string>> GetTips() => Array.Empty<Func<NPC, string>>();
+        public virtual IEnumerable<Func<NPC, string>> GetTips() => [];
         #endregion
     }
 }

@@ -134,6 +134,13 @@ namespace InfernumMode.Core.GlobalInstances
         public override void SetStaticDefaults()
         {
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
+            Luminance.Core.Globals.LuminanceGlobalNPC.OnHPBalance += OnHPBalance;
+        }
+
+        private void OnHPBalance(NPC npc, int maxHP)
+        {
+            if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
+                BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
         }
 
         public override bool PreAI(NPC npc)
@@ -143,34 +150,15 @@ namespace InfernumMode.Core.GlobalInstances
             {
                 int activePlayerCount = 0;
                 for (int i = 0; i < Main.maxPlayers; i++)
-                {
                     if (Main.player[i].active)
                         activePlayerCount++;
-                }
+
                 npc.Infernum().TotalPlayersAtStart = activePlayerCount;
                 npc.netUpdate = true;
             }
 
             if (InfernumMode.CanUseCustomAIs)
             {
-                // Correct an enemy's life depending on its cached true life value.
-                if (!npc.Infernum().HasResetHP && NPCHPValues.DefaultHPValues.TryGetValue(npc.type, out int maxHP) && maxHP >= 0)
-                {
-                    NPCHPValues.AdjustMaxHP(npc, ref maxHP);
-
-                    if (maxHP != npc.lifeMax)
-                    {
-                        npc.life = npc.lifeMax = maxHP;
-                        if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
-                            BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
-
-                        npc.Infernum().HasResetHP = true;
-                        npc.netUpdate = true;
-                    }
-                }
-                else
-                    npc.Infernum().HasResetHP = true;
-
                 if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
                 {
                     // Disable the effects of timed DR.

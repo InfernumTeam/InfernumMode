@@ -101,10 +101,6 @@ namespace InfernumMode
                     method.GetCustomAttributes(false);
             }
 
-            NPCBehaviorOverride.LoadAll();
-            ProjectileBehaviorOverride.LoadAll();
-            BossBarManager.LoadPhaseInfo();
-
             if (Main.netMode != NetmodeID.Server)
             {
                 // Cryogen.
@@ -153,6 +149,9 @@ namespace InfernumMode
 
         public override void PostSetupContent()
         {
+            NPCBehaviorOverride.LoadAll();
+            ProjectileBehaviorOverride.LoadAll();
+            BossBarManager.LoadPhaseInfo();
             NPCBehaviorOverride.LoadPhaseIndicators();
             Utilities.UpdateMapIconList();
         }

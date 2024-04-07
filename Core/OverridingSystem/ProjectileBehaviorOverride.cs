@@ -15,7 +15,7 @@ namespace InfernumMode.Core.OverridingSystem
         {
             BehaviorOverrideSet = new SetFactory(ContentSamples.ProjectilesByType.Count).CreateCustomSet<ProjectileBehaviorOverride>(null);
 
-            foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
+            foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(ProjectileBehaviorOverride), typeof(InfernumMode).Assembly))
             {
                 ProjectileBehaviorOverride instance = (ProjectileBehaviorOverride)Activator.CreateInstance(type);
 

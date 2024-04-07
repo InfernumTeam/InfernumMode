@@ -1382,28 +1382,4 @@ namespace InfernumMode.Core.ILEditingStuff
             ConvertNextNonPVPHurtImmuneSlot = false;
         }
     }
-
-    public class NoGFBSeedHook : IExistingDetourProvider
-    {
-        public static readonly HashSet<string> BannedSeeds =
-        [
-            "get fixed boi",
-            "getfixedboi",
-            "don't dig up",
-            "dont dig up",
-            "dontdigup"
-        ];
-
-        void IExistingDetourProvider.Subscribe() => On_WorldFileData.SetSeed += DisallowGFBSeed;
-
-        void IExistingDetourProvider.Unsubscribe() => On_WorldFileData.SetSeed -= DisallowGFBSeed;
-
-        private void DisallowGFBSeed(On_WorldFileData.orig_SetSeed orig, WorldFileData self, string seedText)
-        {
-            if (BannedSeeds.Contains(seedText.ToLower()))
-                seedText = new UnifiedRandom().Next().ToString();
-
-            orig(self, seedText);
-        }
-    }
 }

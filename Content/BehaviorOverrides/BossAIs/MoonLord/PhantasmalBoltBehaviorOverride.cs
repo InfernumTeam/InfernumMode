@@ -12,8 +12,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     {
         public override int ProjectileOverrideType => ProjectileID.PhantasmalBolt;
 
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI;
-
         public override bool PreAI(Projectile projectile)
         {
             ref float timer = ref projectile.Infernum().ExtraAI[0];

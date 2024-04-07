@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
         private void MakeSplitSlimesCreateDeathStuff(NPC npc)
         {
             bool bigSlimeGod = npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<CrimulanSGBig>();
-            if (bigSlimeGod && OverridingListManager.Registered(npc.type))
+            if (bigSlimeGod && Registered(npc.type))
             {
                 for (int i = 0; i < 12; i++)
                 {

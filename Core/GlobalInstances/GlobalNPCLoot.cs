@@ -270,10 +270,10 @@ namespace InfernumMode.Core.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.PreKill(npc);
 
-            if (npc.type == NPCID.EaterofWorldsHead && OverridingListManager.Registered(npc.type))
+            if (npc.type == NPCID.EaterofWorldsHead && NPCBehaviorOverride.Registered(npc.type))
                 return EoWHeadBehaviorOverride.PerformDeathEffect(npc);
 
-            if (npc.type == ModContent.NPCType<OldDukeNPC>() && OverridingListManager.Registered(npc.type))
+            if (npc.type == ModContent.NPCType<OldDukeNPC>() && NPCBehaviorOverride.Registered(npc.type))
                 CalamityMod.CalamityMod.StopRain();
 
             int apolloID = ModContent.NPCType<Apollo>();
@@ -289,7 +289,7 @@ namespace InfernumMode.Core.GlobalInstances
 
                 totalExoMechs++;
             }
-            if (totalExoMechs >= 2 && Utilities.IsExoMech(npc) && OverridingListManager.Registered<Apollo>())
+            if (totalExoMechs >= 2 && Utilities.IsExoMech(npc) && NPCBehaviorOverride.Registered<Apollo>())
                 return false;
 
             // Prevent wandering eye fishes from dropping loot if they were spawned by a dreadnautilus.

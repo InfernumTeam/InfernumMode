@@ -1,57 +1,43 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Core.OverridingSystem
 {
     public abstract class ProjectileBehaviorOverride
     {
-        internal static Dictionary<int, ProjectileBehaviorOverride> BehaviorOverrides = [];
+        internal static ProjectileBehaviorOverride[] BehaviorOverrideSet = [];
 
         internal static void LoadAll()
         {
-            BehaviorOverrides = [];
+            BehaviorOverrideSet = new SetFactory(ContentSamples.ProjectilesByType.Count).CreateCustomSet<ProjectileBehaviorOverride>(null);
 
-            static void getMethodBasedOnContext( ProjectileBehaviorOverride instance, ProjectileOverrideContext context)
-            {
-                string methodName = string.Empty;
-
-                methodName = context switch
-                {
-                    ProjectileOverrideContext.ProjectileAI => "PreAI",
-                    ProjectileOverrideContext.ProjectilePreDraw => "PreDraw",
-                    _ => throw new ArgumentException("The given override context is invalid."),
-                };
-
-                // Mark this projectile as having an override for the method.
-                switch (context)
-                {
-                    case ProjectileOverrideContext.ProjectileAI:
-                        OverridingListManager.InfernumProjectilePreAIOverrideList.Add(instance.ProjectileOverrideType);
-                        break;
-                    case ProjectileOverrideContext.ProjectilePreDraw:
-                        OverridingListManager.InfernumProjectilePreDrawOverrideList.Add(instance.ProjectileOverrideType);
-                        break;
-                }
-            }
-
-            foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(ProjectileBehaviorOverride), typeof(InfernumMode).Assembly))
+            foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {
                 ProjectileBehaviorOverride instance = (ProjectileBehaviorOverride)Activator.CreateInstance(type);
-                if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectileAI))
-                    getMethodBasedOnContext(instance, ProjectileOverrideContext.ProjectileAI);
-                if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectilePreDraw))
-                    getMethodBasedOnContext(instance, ProjectileOverrideContext.ProjectilePreDraw);
 
-                BehaviorOverrides[instance.ProjectileOverrideType] = instance;
+                //bool hasPreAI = false;
+                //var preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);
+                //if (preAIMethod is not null && preAIMethod.DeclaringType != typeof(ProjectileBehaviorOverride))
+                //    hasPreAI = true;
+
+                //bool hasFindFrame = false;
+                //var findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
+                //if (findFrameMethod is not null && findFrameMethod.DeclaringType != typeof(ProjectileBehaviorOverride))
+                //    hasFindFrame = true;
+
+                BehaviorOverrideSet[instance.ProjectileOverrideType] = instance;
             }
         }
 
-        public abstract int ProjectileOverrideType { get; }
+        public static bool Registered(int npcID) => BehaviorOverrideSet[npcID] != null;
 
-        public abstract ProjectileOverrideContext ContentToOverride { get; }
+        public static bool Registered<T>() where T : ModProjectile => Registered(ModContent.ProjectileType<T>());
+
+        public abstract int ProjectileOverrideType { get; }
 
         public virtual bool PreAI(Projectile projectile) => true;
 

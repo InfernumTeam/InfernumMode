@@ -1,4 +1,4 @@
-using InfernumMode.Core.OverridingSystem;
+﻿using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -9,8 +9,6 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
     public class OgreStompBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.DD2OgreSmash;
-
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI;
 
         public override bool PreAI(Projectile projectile)
         {

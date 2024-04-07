@@ -44,13 +44,14 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             if (BossBeingFought is null)
                 return string.Empty;
 
-            if (!NPCBehaviorOverride.BehaviorOverrides.TryGetValue(BossBeingFought.type, out var bossInfo))
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[BossBeingFought.type];
+            if (container is null)
                 return string.Empty;
 
-            bossInfo = NPCBehaviorOverride.BehaviorOverrides[bossInfo.NPCTypeToDeferToForTips ?? bossInfo.NPCOverrideType];
+            container = NPCBehaviorOverride.BehaviorOverrideSet[container.BehaviorOverride.NPCTypeToDeferToForTips ?? container.BehaviorOverride.NPCOverrideType];
 
             // This func evaluates the state of the NPC in question, after it died.
-            IEnumerable<Func<NPC, string>> potentialTips = bossInfo.GetTips();
+            IEnumerable<Func<NPC, string>> potentialTips = container.BehaviorOverride.GetTips();
             var possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t) && !SaidText.Contains(t)).ToList();
 
             if (!possibleThingsToSay.Any())

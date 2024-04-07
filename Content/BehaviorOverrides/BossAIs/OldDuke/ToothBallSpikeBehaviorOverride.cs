@@ -1,4 +1,4 @@
-using CalamityMod.CalPlayer;
+﻿using CalamityMod.CalPlayer;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
@@ -10,8 +10,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
     public class ToothBallSpikeBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ModContent.ProjectileType<TrilobiteSpike>();
-
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectilePreDraw | ProjectileOverrideContext.ProjectileAI;
 
         public override bool PreAI(Projectile projectile)
         {

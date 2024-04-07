@@ -23,7 +23,7 @@ namespace InfernumMode.Core.ILEditingStuff
         // Don't let Calamity's PreAI run on vanilla bosses to avoid ai conflicts.
         internal static bool CalPreAIDetourMethod(Orig_CalPreAIDelegate orig, CalamityGlobalNPC self, NPC npc)
         {
-            if (InfernumMode.CanUseCustomAIs && OverridingListManager.InfernumNPCPreAIOverrideList.Contains(npc.type) && npc.ModNPC == null)
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type].HasPreAI && npc.ModNPC == null)
                 return false;
 
             return orig(self, npc);
@@ -37,7 +37,7 @@ namespace InfernumMode.Core.ILEditingStuff
             // This exists to only set them once at the end, as opposed to inside orig as well.
             GlobalNPCOverrides.ShouldSetDefaults = true;
 
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.ContainsKey(npc.type))
+            if (InfernumMode.CanUseCustomAIs)
                 npc.Infernum().SetDefaults(npc);
 
             GlobalNPCOverrides.ShouldSetDefaults = false;
@@ -46,7 +46,7 @@ namespace InfernumMode.Core.ILEditingStuff
         // Only run Infernum's findframe if it exists.
         internal static void FindFrameDetourMethod(Orig_FindFrameDelegate orig, NPC npc, int frameHeight)
         {
-            if (OverridingListManager.InfernumFrameOverrideList.Contains(npc.type) && InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type].HasFindFrame && !npc.IsABestiaryIconDummy)
             {
                 npc.Infernum().FindFrame(npc, frameHeight);
                 return;

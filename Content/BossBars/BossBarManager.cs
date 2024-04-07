@@ -167,9 +167,13 @@ namespace InfernumMode.Content.BossBars
         {
             PhaseInfos = [];
             // Load every phase info.
-            foreach (var behaviorOverridePair in NPCBehaviorOverride.BehaviorOverrides)
+            for (int i = 0; i < NPCBehaviorOverride.BehaviorOverrideSet.Length; i++)
             {
-                NPCBehaviorOverride behaviorOverride = behaviorOverridePair.Value;
+                var container = NPCBehaviorOverride.BehaviorOverrideSet[i];
+                if (container is null)
+                    continue;
+
+                NPCBehaviorOverride behaviorOverride = container.BehaviorOverride;
                 List<float> phaseThresholds = [.. behaviorOverride.PhaseLifeRatioThresholds];
                 // Add 1 (100%) to the start, as none of them include that.
                 phaseThresholds.Insert(0, 1f);

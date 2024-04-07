@@ -92,8 +92,9 @@ namespace InfernumMode.Core.GlobalInstances
                 // Why the FUCK does this exist. No one cares or does the "stealth" system in the abyss.
                 projectile.Calamity().overridesMinionDamagePrevention = true;
 
-                if (ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
-                    return value.PreAI(projectile);
+                var behaviorOverride = ProjectileBehaviorOverride.BehaviorOverrideSet[projectile.type];
+                if (behaviorOverride is not null)
+                    return behaviorOverride.PreAI(projectile);
             }
 
             // No tombs.
@@ -178,8 +179,9 @@ namespace InfernumMode.Core.GlobalInstances
                 return false;
             }
 
-            if (InfernumMode.CanUseCustomAIs && ProjectileBehaviorOverride.BehaviorOverrides.TryGetValue(projectile.type, out var value))
-                return value.PreDraw(projectile, Main.spriteBatch, lightColor);
+            var behaviorOverride = ProjectileBehaviorOverride.BehaviorOverrideSet[projectile.type];
+            if (InfernumMode.CanUseCustomAIs && behaviorOverride is not null)
+                return behaviorOverride.PreDraw(projectile, Main.spriteBatch, lightColor);
 
             return true;
         }

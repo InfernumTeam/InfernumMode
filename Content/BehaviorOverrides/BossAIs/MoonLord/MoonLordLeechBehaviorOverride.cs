@@ -1,4 +1,4 @@
-using InfernumMode.Core.OverridingSystem;
+﻿using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,8 +11,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class MoonLordLeechBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.MoonLeech;
-
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI | ProjectileOverrideContext.ProjectilePreDraw;
 
         public override bool PreAI(Projectile projectile)
         {

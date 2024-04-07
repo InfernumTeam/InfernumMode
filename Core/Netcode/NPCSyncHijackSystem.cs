@@ -14,7 +14,7 @@ namespace InfernumMode.Core.Netcode
             if (msgType == MessageID.SyncNPC)
             {
                 NPC npc = Main.npc[number];
-                if (!npc.active || !OverridingListManager.Registered(npc.type))
+                if (!npc.active || !NPCBehaviorOverride.Registered(npc.type))
                     return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
 
                 // Sync extra general information about the NPC.

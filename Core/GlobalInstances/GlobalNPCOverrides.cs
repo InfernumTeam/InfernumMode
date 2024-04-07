@@ -127,8 +127,8 @@ namespace InfernumMode.Core.GlobalInstances
             infernum.OptionalPrimitiveDrawer = null;
             infernum.Optional3DStripDrawer = null;
 
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
-                value.SetDefaults(npc);
+            if (InfernumMode.CanUseCustomAIs)
+                NPCBehaviorOverride.BehaviorOverrideSet[npc.type].BehaviorOverride.SetDefaults(npc);
         }
 
         public override void SetStaticDefaults()
@@ -159,7 +159,8 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (InfernumMode.CanUseCustomAIs)
             {
-                if (NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
+                var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+                if (container != null)
                 {
                     // Disable the effects of timed DR.
                     if (npc.Calamity().KillTime >= 1 && npc.Calamity().AITimer < npc.Calamity().KillTime)
@@ -182,7 +183,7 @@ namespace InfernumMode.Core.GlobalInstances
                     // Disable netOffset effects.
                     npc.netOffset = Vector2.Zero;
 
-                    bool result = value.PreAI(npc);
+                    bool result = container.BehaviorOverride.PreAI(npc);
 
                     // Disable the effects of certain unpredictable freeze debuffs.
                     // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
@@ -241,10 +242,11 @@ namespace InfernumMode.Core.GlobalInstances
             bool isWofNPC = npc.type is NPCID.LeechHead or NPCID.LeechBody or NPCID.LeechTail or NPCID.TheHungry or NPCID.TheHungryII;
             bool isBee = (npc.type is NPCID.Bee or NPCID.BeeSmall) && NPC.AnyNPCs(NPCID.QueenBee);
 
-            if ((NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value) && value.UseBossImmunityCooldownID) || isSepulcher || isWofNPC || isBee)
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if ((container is not null && container.BehaviorOverride.UseBossImmunityCooldownID) || isSepulcher || isWofNPC || isBee)
                 cooldownSlot = ImmunityCooldownID.Bosses;
 
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && OverridingListManager.Registered<DevourerofGodsHead>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && NPCBehaviorOverride.Registered<DevourerofGodsHead>())
             {
                 cooldownSlot = 0;
                 return npc.alpha == 0;
@@ -258,7 +260,7 @@ namespace InfernumMode.Core.GlobalInstances
                 return;
 
             // Make Cryogen release ice particles when hit.
-            if (npc.type == ModContent.NPCType<CryogenNPC>() && OverridingListManager.Registered(npc.type))
+            if (npc.type == ModContent.NPCType<CryogenNPC>() && NPCBehaviorOverride.Registered(npc.type))
                 CryogenBehaviorOverride.OnHitIceParticles(npc, projectile, hit.Crit);
         }
 
@@ -295,8 +297,9 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override bool CheckDead(NPC npc)
         {
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrides.TryGetValue(npc.type, out var value))
-                return value.CheckDead(npc);
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if (InfernumMode.CanUseCustomAIs && container is not null)
+                return container.BehaviorOverride.CheckDead(npc);
 
             return base.CheckDead(npc);
         }

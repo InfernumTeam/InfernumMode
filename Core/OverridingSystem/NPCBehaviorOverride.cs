@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.OverridingSystem
@@ -14,59 +14,55 @@ namespace InfernumMode.Core.OverridingSystem
     public abstract class NPCBehaviorOverride
     {
         #region Statics
-        internal static Dictionary<int, NPCBehaviorOverride> BehaviorOverrides = [];
+        internal static NPCBehaviorOverrideContainer[] BehaviorOverrideSet;
 
         internal static void LoadAll()
         {
-            BehaviorOverrides = [];
+            BehaviorOverrideSet = new SetFactory(ContentSamples.NpcsByNetId.Count).CreateCustomSet<NPCBehaviorOverrideContainer>(null);
 
             foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {
                 NPCBehaviorOverride instance = (NPCBehaviorOverride)Activator.CreateInstance(type);
 
-                // Check that all the methods exist, and add the npc type to the list if so.
-                MethodInfo preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);
-                if (preAIMethod is not null)
-                    OverridingListManager.InfernumNPCPreAIOverrideList.Add(instance.NPCOverrideType);
+                bool hasPreAI = false;
+                var preAIMethod = type.GetMethod("PreAI", Utilities.UniversalBindingFlags);
+                if (preAIMethod is not null && preAIMethod.DeclaringType != typeof(NPCBehaviorOverride))
+                    hasPreAI = true;
 
-                MethodInfo setDefaultsMethod = type.GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
-                if (setDefaultsMethod is not null && setDefaultsMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumSetDefaultsOverrideList.Add(instance.NPCOverrideType);
-
-                MethodInfo preDrawMethod = type.GetMethod("PreDraw", Utilities.UniversalBindingFlags);
-                if (preDrawMethod is not null && preDrawMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumPreDrawOverrideList.Add(instance.NPCOverrideType);
-
-                MethodInfo findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
+                bool hasFindFrame = false;
+                var findFrameMethod = type.GetMethod("FindFrame", Utilities.UniversalBindingFlags);
                 if (findFrameMethod is not null && findFrameMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumFrameOverrideList.Add(instance.NPCOverrideType);
+                    hasFindFrame = true;
 
-                MethodInfo checkDeadMethod = type.GetMethod("CheckDead", Utilities.UniversalBindingFlags);
-                if (checkDeadMethod is not null && checkDeadMethod.DeclaringType != typeof(NPCBehaviorOverride))
-                    OverridingListManager.InfernumCheckDeadOverrideList.Add(instance.NPCOverrideType);
-
-                // Call the load hook.
+                NPCBehaviorOverrideContainer container = new(instance, hasPreAI, hasFindFrame);
                 instance.Load();
 
-                BehaviorOverrides[instance.NPCOverrideType] = instance;
+                BehaviorOverrideSet[instance.NPCOverrideType] = container;
             }
         }
 
         internal static void LoadPhaseIndicators()
         {
-            foreach (int npcID in BehaviorOverrides.Keys)
+            for (int i = 0; i < BehaviorOverrideSet.Length; i++)
             {
-                NPCBehaviorOverride instance = BehaviorOverrides[npcID];
-                float[] phaseThresholds = instance.PhaseLifeRatioThresholds;
+                var container = BehaviorOverrideSet[i];
+                if (container is null)
+                    continue;
+
+                float[] phaseThresholds = container.BehaviorOverride.PhaseLifeRatioThresholds;
                 if (!Main.dedServ && InfernumMode.PhaseIndicator != null && phaseThresholds.Length >= 1)
                 {
                     foreach (float lifeRatio in phaseThresholds)
-                        InfernumMode.PhaseIndicator.Call(0, npcID, (NPC npc, float difficulty) => lifeRatio);
+                        InfernumMode.PhaseIndicator.Call(0, container.BehaviorOverride.NPCOverrideType, (NPC npc, float difficulty) => lifeRatio);
                 }
 
-                TipsManager.TipsRegistry[instance.NPCOverrideType] = instance.GetTips().ToList();
+                TipsManager.TipsRegistry[container.BehaviorOverride.NPCOverrideType] = container.BehaviorOverride.GetTips().ToList();
             }
         }
+
+        public static bool Registered(int npcID) => BehaviorOverrideSet[npcID] != null;
+
+        public static bool Registered<T>() where T : ModNPC => Registered(ModContent.NPCType<T>());
         #endregion
 
         #region Abstracts/Virtuals

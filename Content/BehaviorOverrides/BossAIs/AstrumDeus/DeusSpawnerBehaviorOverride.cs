@@ -18,7 +18,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
     public class DeusSpawnerBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ModContent.ProjectileType<DeusRitualDrama>();
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI | ProjectileOverrideContext.ProjectilePreDraw;
 
         public override bool PreAI(Projectile projectile)
         {

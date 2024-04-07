@@ -9,7 +9,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
     public class PhantasmalSphereBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.PhantasmalSphere;
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI | ProjectileOverrideContext.ProjectilePreDraw;
 
         public override bool PreAI(Projectile projectile)
         {

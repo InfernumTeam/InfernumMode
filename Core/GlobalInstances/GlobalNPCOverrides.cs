@@ -127,8 +127,9 @@ namespace InfernumMode.Core.GlobalInstances
             infernum.OptionalPrimitiveDrawer = null;
             infernum.Optional3DStripDrawer = null;
 
-            if (InfernumMode.CanUseCustomAIs)
-                NPCBehaviorOverride.BehaviorOverrideSet[npc.type].BehaviorOverride.SetDefaults(npc);
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if (InfernumMode.CanUseCustomAIs && container is not null)
+                container.BehaviorOverride.SetDefaults(npc);
         }
 
         public override void SetStaticDefaults()

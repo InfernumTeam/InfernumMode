@@ -1,7 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.DesertScourge;
+using InfernumMode.Assets.BossTextures;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -49,6 +51,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
             npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
+            return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            spriteBatch.Draw(BossTextureRegistry.DesertScourgeBody.Value, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

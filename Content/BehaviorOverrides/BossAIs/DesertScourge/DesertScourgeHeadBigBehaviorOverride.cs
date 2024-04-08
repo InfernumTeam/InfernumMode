@@ -2,6 +2,7 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Particles;
+using InfernumMode.Assets.BossTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
@@ -10,6 +11,7 @@ using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -74,6 +76,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             npc.defense = 4;
             npc.alpha = 255;
 
+        }
+
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            index = ModContent.GetModBossHeadSlot(BossTextureRegistry.DesertScourgeMapIcon);
         }
 
         public override bool PreAI(NPC npc)
@@ -707,9 +714,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 previousIndex = nextIndex;
             }
         }
-        #endregion
 
-        #region Drawing
         public static void CreateSandParticles(NPC npc, Color color, Vector2? velocity = default, Vector2? spawnPosition = null, int lifeTime = 60, float? scale = null)
         {
             // Allow use of custom velocity for specific movement.
@@ -719,6 +724,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
             Particle sand = new DesertScourgeSandstormParticle(spawnPosition.Value, velocity.Value, color, scale.Value, lifeTime);
             GeneralParticleHandler.SpawnParticle(sand);
+        }
+        #endregion
+
+        #region Drawing
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            spriteBatch.Draw(BossTextureRegistry.DesertScourgeHead.Value, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            return false;
         }
         #endregion
 

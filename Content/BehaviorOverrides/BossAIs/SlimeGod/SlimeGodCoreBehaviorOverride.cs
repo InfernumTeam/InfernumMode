@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.UI;
+using InfernumMode.Assets.BossTextures;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -70,6 +71,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             npc.scale = CoreBaseScale;
             npc.defense = 6;
             npc.Opacity = 0.8f;
+        }
+
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            index = ModContent.GetModBossHeadSlot(BossTextureRegistry.SlimeGodCoreMapIcon);
         }
 
         public override bool PreAI(NPC npc)
@@ -501,7 +507,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
 
             ref float afterimageCount = ref npc.Infernum().ExtraAI[6];
 
-            Texture2D slimeGodTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SlimeGod/SlimeGodCore").Value;
+            Texture2D slimeGodTexture = BossTextureRegistry.SlimeGodCore.Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
             void DrawCoreInstance(Color color, Vector2 drawPosition, int direction, bool backglow)
             {

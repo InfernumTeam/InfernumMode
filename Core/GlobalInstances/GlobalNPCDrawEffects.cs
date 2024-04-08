@@ -53,6 +53,8 @@ namespace InfernumMode.Core.GlobalInstances
                 return;
 
             BossHeadSlotEvent?.Invoke(npc, ref index);
+
+            NPCBehaviorOverride.BehaviorOverrideSet[npc.type]?.BehaviorOverride.BossHeadSlot(npc, ref index);
         }
 
         public override void BossHeadRotation(NPC npc, ref float rotation)

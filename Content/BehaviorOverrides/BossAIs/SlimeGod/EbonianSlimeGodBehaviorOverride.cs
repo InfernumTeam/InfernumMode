@@ -1,7 +1,9 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
+using InfernumMode.Assets.BossTextures;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -36,6 +38,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             npc.scale = SlimeGodComboAttackManager.BigSlimeBaseScale;
             npc.defense = 12;
             npc.Opacity = 0.8f;
+        }
+
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            index = ModContent.GetModBossHeadSlot(BossTextureRegistry.EbonianPaladinMapIcon);
         }
 
         public override bool PreAI(NPC npc)
@@ -112,6 +119,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             return false;
         }
         #endregion AI
+
+        #region Drawing
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            spriteBatch.Draw(BossTextureRegistry.EbonianPaladin.Value, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            return false;
+        }
+        #endregion
 
         #region Tips
         public override int? NPCTypeToDeferToForTips => ModContent.NPCType<SlimeGodCore>();

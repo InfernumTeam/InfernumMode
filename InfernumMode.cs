@@ -21,6 +21,7 @@ using InfernumMode.Core.ModCalls;
 using CalamityMod.ILEditing;
 using InfernumMode.Content.WorldGeneration;
 using Luminance.Core.ModCalls;
+using InfernumMode.Assets.BossTextures;
 
 namespace InfernumMode
 {
@@ -124,6 +125,7 @@ namespace InfernumMode
                 // Calamitas.
                 AddBossHeadTexture("InfernumMode/Content/BehaviorOverrides/BossAIs/SupremeCalamitas/SepulcherMapIcon", -1);
 
+                BossTextureRegistry.LoadBossHeadTextures(this);
                 InfernumEffectsRegistry.LoadEffects();
             }
 

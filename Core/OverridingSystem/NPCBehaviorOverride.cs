@@ -142,6 +142,8 @@ namespace InfernumMode.Core.OverridingSystem
         /// <returns></returns>
         public virtual bool CheckDead(NPC npc) => true;
 
+        public virtual void BossHeadSlot(NPC npc, ref int index) { }
+
         /// <summary>
         /// Use this to provide a list of tips to display on player death with the blasted tophat.
         /// </summary>

@@ -22,13 +22,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PreUpdateWorld()
         {
+            if (WorldSaveSystem.MetCalamitasAtCrags || !InfernumMode.CanUseCustomAIs || !DownedBossSystem.downedBrimstoneElemental)
+                return;
+
             Vector2 calSpawnPosition = CragMiddle.ToWorldCoordinates() + Vector2.UnitX * 1040f;
             calSpawnPosition.Y -= 30f;
             while (calSpawnPosition.X >= 1600f && Utilities.GetGroundPositionFrom(calSpawnPosition).Distance(calSpawnPosition) >= 50f)
                 calSpawnPosition.X -= 16f;
-
-            if (WorldSaveSystem.MetCalamitasAtCrags || !InfernumMode.CanUseCustomAIs || !DownedBossSystem.downedBrimstoneElemental)
-                return;
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {

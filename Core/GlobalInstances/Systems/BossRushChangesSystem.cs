@@ -84,7 +84,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 if (modifiers.FinalDamage.Base <= 0f)
                     return;
 
-                if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+                if (InfernumMode.CanUseCustomAIs && BossRushActive)
                     modifiers.FinalDamage.Base = Clamp(modifiers.FinalDamage.Base, MinBossRushDamage + Main.rand.Next(35), float.MaxValue);
             };
 
@@ -93,7 +93,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 if (modifiers.FinalDamage.Base <= 0f)
                     return;
 
-                if (InfernumMode.CanUseCustomAIs && BossRushEvent.BossRushActive)
+                if (InfernumMode.CanUseCustomAIs && BossRushActive)
                     modifiers.FinalDamage.Base = Clamp(modifiers.FinalDamage.Base, MinBossRushDamage + Main.rand.Next(35), float.MaxValue);
             };
 

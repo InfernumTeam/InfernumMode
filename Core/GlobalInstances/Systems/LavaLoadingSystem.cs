@@ -28,7 +28,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     continue;
 
                 CustomLavaStyles.Add(Activator.CreateInstance(type) as CustomLavaStyle);
-                LoadMethod.Invoke(CustomLavaStyles.Last(), Array.Empty<object>());
+                LoadMethod.Invoke(CustomLavaStyles.Last(), []);
             }
         }
     }

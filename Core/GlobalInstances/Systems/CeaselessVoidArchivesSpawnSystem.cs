@@ -20,12 +20,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public override void PreUpdateWorld()
         {
+            if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero || WaitingForPlayersToLeaveArchives || BossRushEvent.BossRushActive)
+                return;
+
             Vector2 voidSpawnPosition = WorldSaveSystem.ForbiddenArchiveCenter.ToWorldCoordinates() + Vector2.UnitY * 1332f;
             if (WaitingForPlayersToLeaveArchives && !Main.player[Player.FindClosest(voidSpawnPosition, 1, 1)].WithinRange(voidSpawnPosition, 2700f))
                 WaitingForPlayersToLeaveArchives = false;
-
-            if (!InfernumMode.CanUseCustomAIs || WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero || WaitingForPlayersToLeaveArchives || BossRushEvent.BossRushActive)
-                return;
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {

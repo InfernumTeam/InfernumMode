@@ -74,9 +74,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
         internal Point PreviousPoint;
 
-        internal VertexPositionColorTexture[] vertexCache = Array.Empty<VertexPositionColorTexture>();
+        internal VertexPositionColorTexture[] vertexCache = [];
 
-        internal short[] indexCache = Array.Empty<short>();
+        internal short[] indexCache = [];
 
         protected UnifiedRandom RNG = new(0);
 

@@ -88,7 +88,7 @@ namespace InfernumMode.Core.Netcode
             // TODO -- Through this the original context is destroyed. How would this be best addressed? By forcing packets to glue the context back together
             // in the Read hook? That seems a bit stupid, but I don't know what options there are that are actually reasonable.
             if (Main.netMode == NetmodeID.Server && packet.ResendFromServer)
-                PreparePacket(packet, Array.Empty<object>(), sender);
+                PreparePacket(packet, [], sender);
         }
 
         public override void PostUpdateNPCs()

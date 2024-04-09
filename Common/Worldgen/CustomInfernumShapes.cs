@@ -19,7 +19,7 @@ namespace InfernumMode.Common.Worldgen
                     int a = Math.Min(radius, (int)Math.Sqrt((i - origin.Y) * (i - origin.Y)));
                     for (int j = origin.X - a; j <= origin.X + a; j++)
                     {
-                        if (!UnitApply(action, origin, j, i + radius, Array.Empty<object>()) && _quitOnFail)
+                        if (!UnitApply(action, origin, j, i + radius, []) && _quitOnFail)
                             return false;
                     }
                 }

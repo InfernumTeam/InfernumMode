@@ -151,7 +151,7 @@ namespace InfernumMode.Common.BaseEntities
             ////if (Timer >= SwingTime || Owner.itemAnimation <= 0)
             ////    Projectile.Kill();
             ///
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // Without PiOver2, the rotation would be off by 90 degrees counterclockwise.
+            Projectile.rotation = Projectile.velocity.ToRotation() + PiOver2; // Without PiOver2, the rotation would be off by 90 degrees counterclockwise.
 
             Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * Timer;
             // Vanilla uses Vector2.Dot(Projectile.velocity, Vector2.UnitX) here. Dot Product returns the difference between two vectors, 0 meaning they are perpendicular.

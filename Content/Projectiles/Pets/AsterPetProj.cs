@@ -65,7 +65,8 @@ namespace InfernumMode.Content.Projectiles.Pets
             }
 
             // Say stuff when a boss is summoned.
-            if (Utilities.CurrentlyFoughtBoss is not null && !Utilities.CurrentlyFoughtBoss.dontTakeDamage)
+            var currentBoss = Utilities.CurrentlyFoughtBoss;
+            if (currentBoss is not null && !currentBoss.dontTakeDamage)
             {
                 if (!SaidBossText)
                 {
@@ -74,7 +75,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                     SaidBossText = true;
                 }
             }
-            else if (Utilities.CurrentlyFoughtBoss is null)
+            else if (currentBoss is null)
                 SaidBossText = false;
 
             // Bark and say some snarky text on the first frame.

@@ -1,11 +1,11 @@
-﻿using CalamityMod.Items;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.Items;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Rarities.Sparkles;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -42,14 +42,14 @@ namespace InfernumMode.Content.Items.Misc
         }
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
-        { 
+        {
             SpiritSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             WaterSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             Vector2 drawOffset = Vector2.UnitY * yOffset;
 
             // Detecting the line like this is really bad. Not sure how else to do it though.
             if (line.Text.StartsWith("You feel"))
-            {                
+            {
                 drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.FirstText").Value);
                 drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.SecondText").Value, true);
                 drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.ThirdText").Value);

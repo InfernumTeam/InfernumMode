@@ -12,7 +12,7 @@ namespace InfernumMode.Content.Projectiles
 
         private readonly Color[] PossibleColors =
         [
-            new(221, 254 ,255),
+            new(221, 254, 255),
             new(184, 237, 255),
             new(124, 147, 211)
         ];

@@ -1,6 +1,6 @@
-﻿using InfernumMode.Content.Rarities.Sparkles;
+﻿using System.Collections.Generic;
+using InfernumMode.Content.Rarities.Sparkles;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 

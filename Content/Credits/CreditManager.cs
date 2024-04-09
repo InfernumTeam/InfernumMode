@@ -1,10 +1,10 @@
-﻿using InfernumMode.Common.Graphics.AttemptRecording;
+﻿using System.IO;
+using System.Threading;
+using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
-using System.Threading;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;

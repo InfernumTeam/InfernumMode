@@ -1,7 +1,7 @@
+﻿using System.IO;
 using CalamityMod;
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos

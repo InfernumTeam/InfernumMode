@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Terraria.GameContent.Drawing;
 using Terraria.ModLoader;
 

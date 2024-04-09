@@ -126,7 +126,7 @@ namespace InfernumMode.Content.Skies
 
             alignment /= total;
             Velocity += (alignment - Velocity) * AlignCoeffecient;
-            
+
 
             // Swim around idly.
             Velocity = Velocity.RotatedBy(Pi * (posInList % 2f == 0f).ToDirectionInt() * 0.002f);

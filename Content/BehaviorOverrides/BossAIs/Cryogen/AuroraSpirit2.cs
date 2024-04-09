@@ -1,8 +1,8 @@
+﻿using System;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

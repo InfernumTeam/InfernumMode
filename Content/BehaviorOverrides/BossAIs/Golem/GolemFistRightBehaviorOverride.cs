@@ -1,4 +1,4 @@
-using InfernumMode.Core.OverridingSystem;
+﻿using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.ID;
 

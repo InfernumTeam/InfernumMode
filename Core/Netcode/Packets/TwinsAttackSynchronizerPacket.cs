@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Twins.TwinsAttackSynchronizer;
 

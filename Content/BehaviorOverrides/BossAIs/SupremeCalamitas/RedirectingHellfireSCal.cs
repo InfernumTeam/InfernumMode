@@ -1,6 +1,6 @@
+﻿using System;
 using CalamityMod.NPCs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

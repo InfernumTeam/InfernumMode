@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Items;
 using CalamityMod.NPCs.ExoMechs;
 using InfernumMode.Assets.Sounds;
@@ -6,8 +8,6 @@ using InfernumMode.Common.DataStructures;
 using InfernumMode.Content.Projectiles;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Terraria;

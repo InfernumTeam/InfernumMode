@@ -1,27 +1,27 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Common.Graphics.AttemptRecording;
+using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.Netcode;
+using InfernumMode.Core.Netcode.Packets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Content.Credits;
-using InfernumMode.Common.Graphics.AttemptRecording;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -474,7 +474,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
 
             MoonLordAttackState[] attackCycle =
             [
-                !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
+                !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalDance : MoonLordAttackState.PhantasmalBoltEyeBursts,
                 MoonLordAttackState.PhantasmalSphereHandWaves,
                 eyeCount == 1 ? MoonLordAttackState.PhantasmalSpin : MoonLordAttackState.PhantasmalFlareBursts,
                 !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalRush : MoonLordAttackState.PhantasmalDeathrays,

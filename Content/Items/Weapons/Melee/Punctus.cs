@@ -2,11 +2,11 @@
 using CalamityMod.Items;
 using InfernumMode.Content.Projectiles.Melee;
 using InfernumMode.Content.Rarities.InfernumRarities;
+using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Content.Items.Weapons.Melee
 {

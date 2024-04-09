@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
@@ -28,9 +31,6 @@ using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Events;
@@ -149,7 +149,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         {
             if (npc.type == ModContent.NPCType<ProvidenceBoss>() && npc.defense >= 60)
                 modifiers.FinalDamage.Base = (int)Math.Max(modifiers.FinalDamage.Base - npc.defense / 2, 1D);
-             return true;
+            return true;
         }
 
         private void DetermineNightDefeatStatus(NPC npc)
@@ -705,7 +705,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
 
                     ReleaseSparkles(npc.Center, 6, 150);
                     SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
-                    SoundEngine.PlaySound(HolyBlast.ImpactSound with { Pitch = 0.2f}, target.Center);
+                    SoundEngine.PlaySound(HolyBlast.ImpactSound with { Pitch = 0.2f }, target.Center);
                 }
 
                 if (deathEffectTimer <= 360f && deathEffectTimer % 10f == 0f)

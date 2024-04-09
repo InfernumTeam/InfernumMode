@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Linq;
+using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items;
 using CalamityMod.Items.SummonItems;
@@ -12,7 +13,6 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;

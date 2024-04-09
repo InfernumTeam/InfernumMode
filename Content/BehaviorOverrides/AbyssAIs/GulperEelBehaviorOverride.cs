@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Assets.Sounds;
@@ -8,8 +10,6 @@ using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;

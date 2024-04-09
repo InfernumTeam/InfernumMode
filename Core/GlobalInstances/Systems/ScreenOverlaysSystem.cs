@@ -1,12 +1,12 @@
-﻿using CalamityMod.NPCs;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -107,7 +107,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 DrawCulledProjectiles();
                 DrawSpecializedProjectileGroups();
-                
+
                 // Draw the madness effect.
                 if (InfernumMode.CanUseCustomAIs && NPC.AnyNPCs(NPCID.Deerclops))
                 {

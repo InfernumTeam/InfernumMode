@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
@@ -9,8 +11,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

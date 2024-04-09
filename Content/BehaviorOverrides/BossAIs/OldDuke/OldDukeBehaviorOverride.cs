@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
@@ -8,14 +10,11 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke

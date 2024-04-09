@@ -1,3 +1,4 @@
+﻿using System.IO;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
@@ -5,7 +6,6 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;

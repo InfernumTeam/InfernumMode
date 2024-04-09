@@ -1,4 +1,7 @@
-﻿using CalamityMod.Tiles.Abyss;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.Tiles.Abyss;
 using CalamityMod.Tiles.Abyss.AbyssAmbient;
 using CalamityMod.Tiles.Ores;
 using CalamityMod.Walls;
@@ -7,9 +10,6 @@ using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

@@ -1,5 +1,5 @@
-﻿using CalamityMod.Particles;
-using System;
+﻿using System;
+using CalamityMod.Particles;
 using Terraria;
 
 namespace InfernumMode.Common.BaseEntities

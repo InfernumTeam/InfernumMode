@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
     public class CrescentWish : Achievement
     {
         public override string LocalizationCategory => "Achievements.Wishes";
-        
+
         public override void Initialize()
         {
             TotalCompletion = 1;

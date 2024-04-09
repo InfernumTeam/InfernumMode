@@ -1,9 +1,9 @@
-﻿using CalamityMod;
+﻿using System.Linq;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AcidRain;
 using Microsoft.Xna.Framework;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;

@@ -1,11 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
 using CalamityMod.DataStructures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -116,7 +116,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             List<Vector2> points =
             [
-                RestingSpot, .. ControlPoints, Projectile.Center
+                RestingSpot,
+                .. ControlPoints,
+                Projectile.Center
             ];
             TentacleDrawer.DrawPixelated(new BezierCurve([.. points]).GetPoints(20), -Main.screenPosition, 35);
             Main.spriteBatch.ExitShaderRegion();

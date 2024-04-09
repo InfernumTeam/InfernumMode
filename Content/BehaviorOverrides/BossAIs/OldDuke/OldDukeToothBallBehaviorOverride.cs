@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.OldDuke;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

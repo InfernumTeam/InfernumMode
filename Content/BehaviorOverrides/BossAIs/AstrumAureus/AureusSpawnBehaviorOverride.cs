@@ -1,12 +1,11 @@
+﻿using System;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumAureus;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using AureusBoss = CalamityMod.NPCs.AstrumAureus.AstrumAureus;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumAureus

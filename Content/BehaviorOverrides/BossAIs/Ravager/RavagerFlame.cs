@@ -1,4 +1,4 @@
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using InfernumMode.Content.Dusts;
 using Terraria;
 using Terraria.Audio;

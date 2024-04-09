@@ -1,6 +1,6 @@
-using InfernumMode.Core.OverridingSystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using InfernumMode.Core.OverridingSystem;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // They were seen as a threat from the moment the dragon was killed by their hand
             TimeFormat(1, 30, 274),
             TimeFormat(1, 41, 342),
-            
+
             // Are you sure you'd want to lose your mind from a legend who's power could salvage mandkind?
             TimeFormat(2, 24, 370),
             TimeFormat(2, 37, 928),
@@ -42,11 +42,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Sadness...
             TimeFormat(1, 41, 245),
             TimeFormat(1, 44, 725),
-            
+
             // Courage...
             TimeFormat(1, 49, 542),
             TimeFormat(1, 51, 226),
-            
+
             // Madness...
             TimeFormat(1, 54, 892),
             TimeFormat(1, 57, 659),

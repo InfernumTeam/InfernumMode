@@ -1,4 +1,4 @@
-namespace InfernumMode.Common.Graphics.Fluids
+﻿namespace InfernumMode.Common.Graphics.Fluids
 {
     public readonly struct FluidFieldProperties
     {

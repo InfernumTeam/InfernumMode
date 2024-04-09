@@ -1,10 +1,10 @@
-﻿using CalamityMod;
+﻿using System.IO;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

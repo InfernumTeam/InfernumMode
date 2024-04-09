@@ -1,9 +1,9 @@
-﻿using InfernumMode.Content.Buffs;
+﻿using System.Collections.Generic;
+using System.Linq;
+using InfernumMode.Content.Buffs;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

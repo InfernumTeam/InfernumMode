@@ -1,12 +1,12 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using System;
+using System.Collections.Generic;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;

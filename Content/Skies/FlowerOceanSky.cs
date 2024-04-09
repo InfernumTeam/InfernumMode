@@ -1,4 +1,5 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using System.Collections.Generic;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -6,7 +7,6 @@ using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
@@ -289,7 +289,7 @@ namespace InfernumMode.Content.Skies
 
         private void DrawCinders(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            int maxCinders = InfernumConfig.Instance.ReducedGraphicsConfig ?  120 : 240;
+            int maxCinders = InfernumConfig.Instance.ReducedGraphicsConfig ? 120 : 240;
 
             // Randomly spawn cinders.
             if (Main.rand.NextBool(5) && Cinders.Count < maxCinders)

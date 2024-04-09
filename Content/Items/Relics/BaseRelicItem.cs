@@ -1,7 +1,7 @@
-﻿using InfernumMode.Content.Rarities.InfernumRarities;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using InfernumMode.Content.Rarities.InfernumRarities;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 

@@ -1,8 +1,8 @@
-﻿using CalamityMod.Particles;
+﻿using System;
+using System.IO;
+using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
-using System;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

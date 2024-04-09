@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Schematics;
 using CalamityMod.World;
@@ -13,8 +15,6 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ReLogic.Graphics;
 using SubworldLibrary;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
@@ -23,7 +23,6 @@ using Terraria.IO;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
-
 using static CalamityMod.Schematics.SchematicManager;
 
 namespace InfernumMode.Content.Subworlds

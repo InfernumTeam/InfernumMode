@@ -67,8 +67,8 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                         1 => InfernumSoundRegistry.EggCrack2,
                         _ => InfernumSoundRegistry.EggCrack3,
                     };
-                    
-                    SoundEngine.PlaySound(crackSound with {PitchVariance = 0.2f}, player.Player.Center);
+
+                    SoundEngine.PlaySound(crackSound with { PitchVariance = 0.2f }, player.Player.Center);
                     currentEggShieldHits.Value++;
 
                     for (int i = 0; i < 20; i++)
@@ -85,7 +85,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
                 if (shieldActive.Value && (player.Player.ActiveItem() == null || player.Player.ActiveItem().type != Type))
                 {
                     ToggleEggShield(player, false);
-                    SoundEngine.PlaySound(InfernumSoundRegistry.EggCrack3 with { PitchVariance = 0.2f }, player.Player.Center); 
+                    SoundEngine.PlaySound(InfernumSoundRegistry.EggCrack3 with { PitchVariance = 0.2f }, player.Player.Center);
                 }
             };
         }
@@ -165,7 +165,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
         public static void ToggleEggShield(InfernumPlayer player, bool status)
         {
             player.SetValue<bool>("EggShieldActive", status);
-            player.SetValue<int>("CurrentEggShieldHits",  0);
+            player.SetValue<int>("CurrentEggShieldHits", 0);
 
             if (!status)
             {

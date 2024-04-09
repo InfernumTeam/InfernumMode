@@ -1,7 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.Items.Materials;
+using CalamityMod.Items.Placeables.Furniture.Trophies;
 using CalamityMod.Items.SummonItems;
-using CalamityMod.NPCs.PrimordialWyrm;
+using CalamityMod.Items.Weapons.Rogue;
+using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -23,6 +25,7 @@ using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.Polterghast;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.Ravager;
@@ -39,16 +42,13 @@ using InfernumMode.Content.Items.Dyes;
 using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Content.Items.Weapons.Magic;
+using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
-using InfernumMode.Content.Items.Weapons.Melee;
-using CalamityMod.Items.Placeables.Furniture.Trophies;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.NPCs.AcidRain;
 
 namespace InfernumMode.Core.GlobalInstances
 {

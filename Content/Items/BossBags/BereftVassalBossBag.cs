@@ -67,10 +67,10 @@ namespace InfernumMode.Content.Items.BossBags
             int[] weapons =
 [
                 ModContent.ItemType<AridBattlecry>(),
-                ModContent.ItemType<Myrindael>(),
-                ModContent.ItemType<TheGlassmaker>(),
-                ModContent.ItemType<WanderersShell>(),
-                ModContent.ItemType<Perditus>()
+    ModContent.ItemType<Myrindael>(),
+    ModContent.ItemType<TheGlassmaker>(),
+    ModContent.ItemType<WanderersShell>(),
+    ModContent.ItemType<Perditus>()
             ];
 
             itemLoot.Add(DropHelper.CalamityStyle(new Fraction(1, 2), weapons));

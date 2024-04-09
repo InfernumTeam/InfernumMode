@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using CalamityMod;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.BaseProjectiles;
 using InfernumMode.Assets.ExtraTextures;
@@ -7,9 +10,6 @@ using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;

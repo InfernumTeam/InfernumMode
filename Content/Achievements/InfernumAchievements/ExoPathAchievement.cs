@@ -1,7 +1,7 @@
-﻿using CalamityMod.Events;
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CalamityMod.Events;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;

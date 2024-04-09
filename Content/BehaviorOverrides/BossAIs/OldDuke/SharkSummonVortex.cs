@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.OldDuke;
+﻿using CalamityMod.NPCs.OldDuke;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Terraria;

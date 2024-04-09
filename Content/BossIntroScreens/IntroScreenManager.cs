@@ -1,7 +1,7 @@
-﻿using CalamityMod.Events;
-using InfernumMode.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CalamityMod.Events;
+using InfernumMode.Core;
 using Terraria;
 using Terraria.ID;
 

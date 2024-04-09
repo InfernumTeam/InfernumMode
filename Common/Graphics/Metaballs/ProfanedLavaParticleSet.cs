@@ -17,13 +17,13 @@ namespace InfernumMode.Common.Graphics.Metaballs
     {
         public override bool ShouldRender => ActiveParticleCount > 0;
 
-        public override Func<Texture2D>[] LayerTextures => 
+        public override Func<Texture2D>[] LayerTextures =>
         [
             () => ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? InfernumTextureRegistry.HolyFirePixelLayerNight.Value : InfernumTextureRegistry.HolyFirePixelLayer.Value
         ];
 
         public override Color EdgeColor
-{
+        {
             get
             {
                 Color dayColor = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[2], 0.2f);

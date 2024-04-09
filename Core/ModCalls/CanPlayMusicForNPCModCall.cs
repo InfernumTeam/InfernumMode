@@ -6,10 +6,10 @@ using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
+using Luminance.Core.ModCalls;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria;
-using Luminance.Core.ModCalls;
 
 namespace InfernumMode.Core.ModCalls.InfernumCalls
 {

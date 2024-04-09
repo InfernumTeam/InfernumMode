@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Items.Weapons.Ranged;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

@@ -1,3 +1,4 @@
+﻿using System.Linq;
 using CalamityMod;
 using CalamityMod.Items.Accessories;
 using CalamityMod.Items.Materials;
@@ -10,7 +11,6 @@ using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Melee;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

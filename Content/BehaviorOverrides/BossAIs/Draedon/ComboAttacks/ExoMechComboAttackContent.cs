@@ -1,9 +1,9 @@
-﻿using CalamityMod.NPCs.ExoMechs.Apollo;
+﻿using System.Collections.Generic;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.Projectiles.Pets;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;

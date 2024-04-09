@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Reflection;
+using CalamityMod;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
 using CalamityMod.Events;
@@ -22,8 +24,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
-using System;
-using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 

@@ -1,4 +1,6 @@
-﻿using CalamityMod.NPCs;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
@@ -7,8 +9,6 @@ using InfernumMode.Core;
 using InfernumMode.Core.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Effects;

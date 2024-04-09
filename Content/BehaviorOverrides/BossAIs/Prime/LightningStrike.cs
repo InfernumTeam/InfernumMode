@@ -1,4 +1,4 @@
-using InfernumMode.Common.BaseEntities;
+﻿using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

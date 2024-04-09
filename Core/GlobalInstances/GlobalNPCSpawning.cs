@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.AquaticScourge;
@@ -10,7 +11,6 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Luminance.Core.Cutscenes;
 using SubworldLibrary;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 

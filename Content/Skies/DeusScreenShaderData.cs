@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.AstrumDeus;
+﻿using CalamityMod.NPCs.AstrumDeus;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Graphics.Shaders;

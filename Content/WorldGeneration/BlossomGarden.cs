@@ -1,8 +1,8 @@
-﻿using CalamityMod;
+﻿using System;
+using CalamityMod;
 using CalamityMod.Schematics;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -32,7 +32,7 @@ namespace InfernumMode.Content.WorldGeneration
             PlaceSchematic<Action<Chest>>("BlossomGarden", placementPoint, schematicAnchor, ref _, chest =>
             {
                 for (int i = 0; i < 11; i++)
-                {   
+                {
                     int chestItemIndex = WorldGen.genRand.Next(20);
                     int oldStack = chest.item[chestItemIndex].stack;
                     chest.item[chestItemIndex].SetDefaults(ItemID.OrangeTorch);

@@ -1,7 +1,7 @@
-using InfernumMode.Core.Netcode.Packets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using InfernumMode.Core.Netcode.Packets;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

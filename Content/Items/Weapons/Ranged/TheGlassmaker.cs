@@ -10,9 +10,9 @@ namespace InfernumMode.Content.Items.Weapons.Ranged
 {
     public class TheGlassmaker : ModItem
     {
-        #pragma warning disable CS0649
+#pragma warning disable CS0649
         internal static bool TransformsSandIntoGlass;
-        #pragma warning restore CS0649
+#pragma warning restore CS0649
 
         public override void SetDefaults()
         {

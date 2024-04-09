@@ -1,9 +1,9 @@
 ﻿using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.ModLoader;
-using Terraria;
 using ReLogic.Content;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
 {
@@ -25,7 +25,7 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
         public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, Vector2 screenCenter, Vector2 scale)
         {
             Color mainColor = Color.Lerp(Color.Orange, Color.Cyan, 1f - RandomSeed) with { A = 0 };
-            Color bloomColor = Color.Lerp(mainColor, Color.White, 0.5f) with { A = 0 } ;
+            Color bloomColor = Color.Lerp(mainColor, Color.White, 0.5f) with { A = 0 };
             Vector2 scale2 = Scale * Lerp(1f, 1.2f, (1f + Sin(PI * (Main.GlobalTimeWrappedHourly * 12f * RandomSeed))) * 0.5f);
             float opacity = Utils.GetLerpValue(0, 30, Timer, true) * Utils.GetLerpValue(Lifetime, Lifetime - 30, Timer, true);
             opacity *= Pow(scale.X, 0.75f);

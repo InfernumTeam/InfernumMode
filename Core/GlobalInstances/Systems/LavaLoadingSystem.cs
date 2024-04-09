@@ -1,8 +1,8 @@
-using CalamityMod.Waters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CalamityMod.Waters;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Systems

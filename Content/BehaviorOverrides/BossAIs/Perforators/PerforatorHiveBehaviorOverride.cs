@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -13,8 +15,6 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -1257,7 +1257,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
             npc.Calamity().DR = 0.999999f;
 
             // Go invincible if too close to dying.
-            if (((float)npc.life / npc.lifeMax) <= + 0.1f)
+            if (((float)npc.life / npc.lifeMax) <= +0.1f)
                 npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.

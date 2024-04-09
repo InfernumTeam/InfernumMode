@@ -20,7 +20,7 @@ namespace InfernumMode.Content.Tiles.Misc
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
-            Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero: new Vector2(Main.offScreenRange);
+            Vector2 drawOffset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
             Vector2 drawPosition = new Vector2(i + 0.5f, j + 0.25f) * 16f + drawOffset + Vector2.UnitY * 16f - Main.screenPosition;
             Vector2 origin = new(texture.Width * 0.5f, texture.Height);
 

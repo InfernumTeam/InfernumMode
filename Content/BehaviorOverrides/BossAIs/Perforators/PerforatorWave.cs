@@ -1,6 +1,6 @@
+﻿using System.IO;
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators

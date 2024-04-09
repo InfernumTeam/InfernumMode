@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using CalamityMod;
 using CalamityMod.Balancing;
 using CalamityMod.BiomeManagers;
 using CalamityMod.CalPlayer;
@@ -34,9 +37,6 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using ReLogic.Content;
 using SubworldLibrary;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -131,7 +131,7 @@ namespace InfernumMode.Core.ILEditingStuff
             // Retinazer.
             143,
             146,
-            
+
             // Spazmatism.
             144,
             145,

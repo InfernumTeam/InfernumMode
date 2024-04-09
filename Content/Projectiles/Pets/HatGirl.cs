@@ -1,9 +1,9 @@
-﻿using InfernumMode.Assets.Sounds;
+﻿using System;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Localization;

@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using CalamityMod;
 using InfernumMode.Content.Items.Accessories;
 using InfernumMode.Content.Items.Dyes;
 using InfernumMode.Content.Items.Misc;
@@ -9,7 +10,6 @@ using InfernumMode.Content.Items.Weapons.Melee;
 using InfernumMode.Content.Items.Weapons.Ranged;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Core.GlobalInstances.Systems;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

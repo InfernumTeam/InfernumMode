@@ -1,6 +1,6 @@
-﻿using Mono.Cecil.Cil;
+﻿using System;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using System;
 using Terraria;
 using Terraria.ModLoader;
 using static CalamityMod.ILEditing.ILChanges;

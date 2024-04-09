@@ -1,9 +1,9 @@
-﻿using CalamityMod.NPCs.PrimordialWyrm;
+﻿using System;
+using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

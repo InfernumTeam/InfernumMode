@@ -1,7 +1,7 @@
+﻿using System.IO;
 using CalamityMod;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
-using System.IO;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ID;

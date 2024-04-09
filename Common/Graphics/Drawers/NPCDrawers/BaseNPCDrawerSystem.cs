@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
 {
     // This only works for one instance of the NPC. Not the most ideal, but it will suffice for these use cases.
-    public abstract class BaseNPCDrawerSystem: ModType
+    public abstract class BaseNPCDrawerSystem : ModType
     {
         public ManagedRenderTarget MainTarget
         {
@@ -30,7 +30,7 @@ namespace InfernumMode.Common.Graphics.Drawers.NPCDrawers
         {
             ModTypeLookup<BaseNPCDrawerSystem>.Register(this);
 
-            if(!DrawerManager.NPCDrawers.Contains(this))
+            if (!DrawerManager.NPCDrawers.Contains(this))
                 DrawerManager.NPCDrawers.Add(this);
 
             if (Main.netMode == NetmodeID.Server)

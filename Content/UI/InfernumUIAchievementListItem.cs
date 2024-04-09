@@ -1,11 +1,11 @@
-﻿using InfernumMode.Content.Achievements;
+﻿using System.Collections.Generic;
+using CalamityMod;
+using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System.Collections.Generic;
-using CalamityMod;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -165,7 +165,7 @@ namespace InfernumMode.Content.UI
                                 CalamityUtils.GetTextValue("NPCs.ProfanedGuardianCommander.BossChecklistIntegration.EntryName")
                             }
                         };
-                        
+
                         if (bossNameMap.TryGetValue(name, out string value))
                         {
                             name = value;

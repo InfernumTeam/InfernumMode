@@ -1,7 +1,7 @@
+﻿using System.IO;
 using CalamityMod;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Core.GlobalInstances.Systems;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 

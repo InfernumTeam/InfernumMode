@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Interfaces;
@@ -9,8 +11,6 @@ using InfernumMode.Content.Tiles.Colosseum;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;

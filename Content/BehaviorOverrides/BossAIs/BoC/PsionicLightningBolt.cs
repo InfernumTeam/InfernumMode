@@ -1,12 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

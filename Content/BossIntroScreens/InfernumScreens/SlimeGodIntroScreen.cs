@@ -1,6 +1,6 @@
-﻿using CalamityMod.NPCs.SlimeGod;
+﻿using System;
+using CalamityMod.NPCs.SlimeGod;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

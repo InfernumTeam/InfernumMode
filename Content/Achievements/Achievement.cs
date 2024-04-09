@@ -11,7 +11,7 @@ namespace InfernumMode.Content.Achievements
     {
         #region Fields
         internal int PositionInMainList;
-        
+
         public int TotalCompletion = 1;
 
         public int CurrentCompletion;
@@ -108,12 +108,12 @@ namespace InfernumMode.Content.Achievements
             SoundEngine.PlaySound(InfernumSoundRegistry.InfernumAchievementCompletionSound);
             player.QuickSpawnItem(Entity.GetSource_None(), assosiatedItemType, 1);
         }
-        
+
         protected LocalizedText GetLocalizedText(string key)
         {
             string suffix = $"{LocalizationCategory}.{GetType().Name}";
             string localizationKey = $"{suffix}.{key}";
-            
+
             return Utilities.GetLocalization(localizationKey);
         }
         #endregion

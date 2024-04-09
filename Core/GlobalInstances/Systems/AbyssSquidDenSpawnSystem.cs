@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.NPCs.Abyss;
 using InfernumMode.Content.WorldGeneration;
 using Microsoft.Xna.Framework;

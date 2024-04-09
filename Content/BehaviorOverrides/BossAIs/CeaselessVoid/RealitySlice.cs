@@ -1,11 +1,11 @@
-﻿using CalamityMod.NPCs;
+﻿using System.Collections.Generic;
+using System.IO;
+using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.DoG;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

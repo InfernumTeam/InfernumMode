@@ -1,4 +1,4 @@
-using InfernumMode.Content.Tiles.Profaned;
+﻿using InfernumMode.Content.Tiles.Profaned;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

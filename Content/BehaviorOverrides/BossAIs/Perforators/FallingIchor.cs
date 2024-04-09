@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.Perforator;
+﻿using CalamityMod.NPCs.Perforator;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

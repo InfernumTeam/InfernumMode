@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace InfernumMode.Core.TrackedMusic
 {
@@ -18,7 +18,7 @@ namespace InfernumMode.Core.TrackedMusic
             // Have you all known what it's like to feel hatred?
             // To realize that there's room for it in your heart?
             new(TimeFormat(0, 19, 517), TimeFormat(0, 32, 747)),
-            
+
             // [S] See these scars that hide memories before I tried to live with myself?
             // [M] Those scars that hide memories of the times I could not live with myself...
             // [S] They were born of pain from my heart, which had become blackened and broken
@@ -40,7 +40,7 @@ namespace InfernumMode.Core.TrackedMusic
 
             // YOU REALLY THINK THAT WHAT YOU'VE DONE WILL BE ENOUGH FOR THOSE VOICES!?
             new(TimeFormat(3, 35, 341), TimeFormat(3, 43, 463)),
-            
+
             // THEN LET THE ONE INSIDE YOUR HEAD CONTINUE TO MAKE YOUR LIFE HELL!
             new(TimeFormat(3, 43, 463), TimeFormat(3, 51, 453)),
 
@@ -63,7 +63,7 @@ namespace InfernumMode.Core.TrackedMusic
             // Long ago I never thought I would feel it.
             // But it seems that I was just too naive to see the truth.
             new(TimeFormat(0, 32, 747), TimeFormat(0, 51, 347)),
-            
+
             // [S] See these scars that hide memories before I tried to live with myself?
             // [M] Those scars that hide memories of the times I could not live with myself...
             // [S] They were born of pain from my heart, which had become blackened and broken
@@ -79,10 +79,10 @@ namespace InfernumMode.Core.TrackedMusic
             // (By the flames of the world that scarred my heart)
             // Despite these trials of fire, in the end I still see the light...
             new(TimeFormat(2, 13, 344), TimeFormat(2, 57, 486)),
-            
+
             // WHAT YOU'RE DOING IS DELUDING YOURSELF INTO SEEING FALSE HOPES!
             new(TimeFormat(3, 28, 6), TimeFormat(3, 35, 341)),
-            
+
             // THEN LET THE ONE INSIDE YOUR HEAD CONTINUE TO MAKE YOUR LIFE HELL!
             new(TimeFormat(3, 43, 463), TimeFormat(3, 51, 453)),
 

@@ -1,6 +1,6 @@
+﻿using System.Linq;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using Microsoft.Xna.Framework;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Light;
 using Terraria.ModLoader;

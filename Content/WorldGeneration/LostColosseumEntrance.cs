@@ -1,8 +1,8 @@
-﻿using CalamityMod.Schematics;
+﻿using System;
+using CalamityMod.Schematics;
 using CalamityMod.World;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;

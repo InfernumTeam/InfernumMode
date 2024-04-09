@@ -1,4 +1,4 @@
-using InfernumMode.Content.Subworlds;
+﻿using InfernumMode.Content.Subworlds;
 using Microsoft.Xna.Framework;
 using SubworldLibrary;
 using Terraria.ModLoader;

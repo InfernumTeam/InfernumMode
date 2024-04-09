@@ -1,7 +1,7 @@
-﻿using CalamityMod.Particles;
+﻿using System.IO;
+using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

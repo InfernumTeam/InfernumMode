@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.Providence;
+﻿using CalamityMod.NPCs.Providence;
 using CalamityMod.World;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;

@@ -10,7 +10,7 @@ namespace InfernumMode.Assets.Fonts
     public class InfernumFontRegistry : ModSystem
     {
         public static LocalizedSpriteFont BossIntroScreensFont
-        { 
+        {
             get;
             private set;
         }

@@ -1,8 +1,8 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using System.Collections.Generic;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

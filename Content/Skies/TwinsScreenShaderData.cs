@@ -1,4 +1,4 @@
-using Terraria;
+﻿using Terraria;
 using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Content.Skies

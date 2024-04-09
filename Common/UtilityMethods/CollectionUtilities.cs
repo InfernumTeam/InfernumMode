@@ -1,4 +1,4 @@
-namespace InfernumMode
+﻿namespace InfernumMode
 {
     public static partial class Utilities
     {

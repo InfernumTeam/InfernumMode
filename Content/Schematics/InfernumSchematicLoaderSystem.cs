@@ -1,7 +1,7 @@
-using CalamityMod.Schematics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using CalamityMod.Schematics;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Schematics

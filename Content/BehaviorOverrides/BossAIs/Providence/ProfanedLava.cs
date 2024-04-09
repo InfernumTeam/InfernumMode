@@ -1,3 +1,5 @@
+﻿using System;
+using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
@@ -10,8 +12,6 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

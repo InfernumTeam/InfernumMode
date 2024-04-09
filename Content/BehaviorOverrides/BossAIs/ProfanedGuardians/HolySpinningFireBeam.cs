@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System.Linq;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Assets.Effects;
@@ -10,7 +11,6 @@ using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -137,7 +137,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * (CurrentLaserLength);
             //ModContent.GetInstance<ProfanedLavaMetaball>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(15f, 15f), Vector2.Zero, new(95f));
-            
+
             for (int i = 0; i < 10; i++)
                 ModContent.GetInstance<ProfanedLavaMetaball>().CreateParticle(endOfLaser + Main.rand.NextVector2Circular(35f, 35f), Main.rand.NextVector2Unit() * 2f, 25f, 0.94f);
         }

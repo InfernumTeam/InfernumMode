@@ -1,9 +1,9 @@
-﻿using InfernumMode.Core;
+﻿using InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene;
+using InfernumMode.Core;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
-using InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Common.Graphics.ScreenEffects
 {
@@ -33,7 +33,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         {
             if (!EffectIsActive && MonolithIntensity <= 0f)
                 return;
-          
+
             if (EffectIsActive)
                 MonolithIntensity = Clamp(MonolithIntensity + 0.01f, 0f, 1f);
             float intensity = MonolithIntensity;

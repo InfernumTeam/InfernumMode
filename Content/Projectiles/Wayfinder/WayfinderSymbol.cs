@@ -1,7 +1,7 @@
-﻿using InfernumMode.Core.GlobalInstances.Systems;
+﻿using System.IO;
+using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         public static Color[] Colors =>
         [
             // Light yellow
-            new Color (255 ,255 ,150),
+            new Color(255, 255, 150),
             // Golden
             new Color(255, 191, 73),
             // Orange

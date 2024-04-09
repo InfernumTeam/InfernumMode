@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using static InfernumMode.Content.BossBars.BossBarManager;
@@ -104,10 +104,10 @@ namespace InfernumMode.Content.BossBars
                 {
                     Vector2 sparklePosition = Main.rand.NextVector2FromRectangle(new Rectangle((int)(position.X - PhaseIndicatorNotch.Width * 0.5f), (int)(position.Y - PhaseIndicatorNotch.Height * 0.5f),
                         PhaseIndicatorNotch.Width, PhaseIndicatorNotch.Height));
-                    
-                    Vector2 velocity = inverseSparkles ? sparklePosition.DirectionTo(position) * Main.rand.NextFloat(0.2f, 0.5f) : 
+
+                    Vector2 velocity = inverseSparkles ? sparklePosition.DirectionTo(position) * Main.rand.NextFloat(0.2f, 0.5f) :
                         Main.rand.NextFloat(TwoPi).ToRotationVector2() * Main.rand.NextFloat(0.2f, 0.5f);
-                    
+
                     Sparkles.Add(new PhaseNotchSparkle(sparklePosition, velocity));
                 }
             }

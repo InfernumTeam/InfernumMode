@@ -1,10 +1,10 @@
-﻿using InfernumMode.Assets.Sounds;
+﻿using System;
+using System.Linq;
+using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

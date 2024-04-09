@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.CalPlayer;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Content.Projectiles.Wayfinder;
@@ -7,8 +9,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameInput;

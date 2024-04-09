@@ -1,7 +1,7 @@
-﻿using InfernumMode.Core.OverridingSystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;

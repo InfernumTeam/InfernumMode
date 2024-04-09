@@ -1,10 +1,10 @@
-﻿using InfernumMode.Core.GlobalInstances.Systems;
-using Terraria.ID;
+﻿using CalamityMod;
+using InfernumMode.Core.GlobalInstances.Systems;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Microsoft.Xna.Framework;
-using CalamityMod;
 
 namespace InfernumMode.Content.Items.Misc
 {

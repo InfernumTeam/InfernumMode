@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.Bumblebirb;
+﻿using CalamityMod.NPCs.Bumblebirb;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;

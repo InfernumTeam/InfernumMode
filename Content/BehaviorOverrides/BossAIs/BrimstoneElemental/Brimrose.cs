@@ -1,6 +1,6 @@
+﻿using System;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

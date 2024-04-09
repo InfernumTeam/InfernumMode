@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
         {
             if (!Main.npc.IndexInRange((int)OwnerIndex) || !Main.npc[(int)OwnerIndex].active)
                 return false;
-            Cultist.CultistBehaviorOverride.DrawForcefield(Projectile.Center - Main.screenPosition, Projectile.Opacity, Color.Lerp(Color.Orange, Color.Red, 0.84f), InfernumTextureRegistry.HexagonGrid.Value, false, 1f * (Radius / MaxRadius),  fresnelScaleFactor: 1.3f, noiseScaleFactor: 0.75f);
+            Cultist.CultistBehaviorOverride.DrawForcefield(Projectile.Center - Main.screenPosition, Projectile.Opacity, Color.Lerp(Color.Orange, Color.Red, 0.84f), InfernumTextureRegistry.HexagonGrid.Value, false, 1f * (Radius / MaxRadius), fresnelScaleFactor: 1.3f, noiseScaleFactor: 0.75f);
             return false;
         }
     }

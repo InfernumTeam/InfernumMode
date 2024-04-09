@@ -22,7 +22,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
         {
             if (!PauseTimer)
                 RockTimer++;
-            
+
 
             if (CheckToResetTimer)
             {
@@ -61,7 +61,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
                     else if (Main.projectile[index].type != type)
                         index = -1;
 
-                    else if (Main.projectile[index].ModProjectile is  PunctusRock rocks)
+                    else if (Main.projectile[index].ModProjectile is PunctusRock rocks)
                     {
                         if (rocks.CurrentState is PunctusRock.State.Firing)
                             index = -1;

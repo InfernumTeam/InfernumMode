@@ -1,4 +1,4 @@
-using InfernumMode.Content.Items.Misc;
+﻿using InfernumMode.Content.Items.Misc;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

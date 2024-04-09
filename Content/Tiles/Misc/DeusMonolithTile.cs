@@ -1,17 +1,17 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod;
+﻿using CalamityMod;
+using CalamityMod.Dusts;
 using InfernumMode.Content.Items.Placeables;
-using Terraria.DataStructures;
-using Terraria.GameContent.ObjectInteractions;
-using Terraria.ModLoader;
-using Terraria.ObjectData;
-using Terraria;
 using Microsoft.Xna.Framework;
-using Terraria.Enums;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.Enums;
+using Terraria.GameContent.ObjectInteractions;
 using Terraria.ID;
+using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace InfernumMode.Content.Tiles.Misc
 {

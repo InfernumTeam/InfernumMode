@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework.Audio;
-using System.Reflection;
+﻿using System.Reflection;
+using Microsoft.Xna.Framework.Audio;
 
 namespace InfernumMode
 {

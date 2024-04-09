@@ -1,4 +1,4 @@
-namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
+﻿namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 {
     public class WeaknessHexProj : BaseHexProj
     {

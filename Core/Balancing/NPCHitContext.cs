@@ -20,7 +20,7 @@ namespace InfernumMode.Core.Balancing
 
         public readonly DamageSourceType DamageSource;
 
-        public NPCHitContext(int pierce, int damage, int? projectileIndex, int? projectileType, bool isStealthStrike, ClassType? classType,  DamageSourceType damageSource)
+        public NPCHitContext(int pierce, int damage, int? projectileIndex, int? projectileType, bool isStealthStrike, ClassType? classType, DamageSourceType damageSource)
         {
             Pierce = pierce;
             Damage = damage;

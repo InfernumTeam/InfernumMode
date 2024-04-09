@@ -1,4 +1,6 @@
-﻿using CalamityMod.Buffs.StatDebuffs;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
@@ -12,8 +14,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -521,7 +521,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
                 WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200),
                 [
-                    new CustomTileConditions.IsSolidOrSolidTop(), new CustomTileConditions.ActiveAndNotActuated(),
+                    new CustomTileConditions.IsSolidOrSolidTop(),
+                    new CustomTileConditions.ActiveAndNotActuated(),
                 ]), out Point newBottom);
 
                 // Decide the teleport position and prepare the teleport direction for next time by making it go to the other side.

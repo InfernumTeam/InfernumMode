@@ -1,11 +1,11 @@
-﻿using CalamityMod.Items;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod.Items;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Content.Rarities.Sparkles;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI.Chat;

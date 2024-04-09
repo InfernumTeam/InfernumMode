@@ -1,7 +1,7 @@
+﻿using System.IO;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

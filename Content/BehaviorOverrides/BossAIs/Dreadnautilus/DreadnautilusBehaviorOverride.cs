@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
@@ -7,8 +9,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -975,7 +975,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
                 float[] eyeScales =
                 [
                     npc.Opacity * eyeGleamInterpolant * 1.65f,
-                    npc.Opacity * eyeGleamInterpolant* 1.65f,
+                    npc.Opacity * eyeGleamInterpolant * 1.65f,
                     npc.Opacity * eyeGleamInterpolant * Utils.Remap(Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
                 ];
 

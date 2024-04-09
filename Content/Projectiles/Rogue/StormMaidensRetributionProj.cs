@@ -1,11 +1,11 @@
-﻿using CalamityMod;
+﻿using System.IO;
+using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.Items.Weapons.Rogue;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

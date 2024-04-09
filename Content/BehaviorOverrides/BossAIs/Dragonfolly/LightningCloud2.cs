@@ -1,12 +1,11 @@
+﻿using System.IO;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using TwinsRedLightning = InfernumMode.Content.BehaviorOverrides.BossAIs.Twins.RedLightning;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly

@@ -1,5 +1,5 @@
-﻿using InfernumMode.Content.WorldGeneration;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using InfernumMode.Content.WorldGeneration;
 using Terraria.GameContent.Generation;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;

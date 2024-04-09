@@ -1,4 +1,4 @@
-using CalamityMod.Items.Weapons.DraedonsArsenal;
+﻿using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;

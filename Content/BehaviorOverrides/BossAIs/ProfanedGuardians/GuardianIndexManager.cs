@@ -1,7 +1,7 @@
-﻿using CalamityMod.NPCs.ProfanedGuardians;
+﻿using System.Collections.Generic;
+using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 

@@ -1,5 +1,7 @@
-﻿using CalamityMod.Tiles.Abyss;
+﻿using System.Linq;
+using CalamityMod.Tiles.Abyss;
 using InfernumMode.Content.Achievements;
+using InfernumMode.Content.Achievements.DevWishes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Abyss;
 using InfernumMode.Content.Tiles.Colosseum;
@@ -10,11 +12,9 @@ using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Content.Achievements.DevWishes;
 
 namespace InfernumMode.Core.GlobalInstances
 {

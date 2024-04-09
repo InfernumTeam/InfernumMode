@@ -1,12 +1,12 @@
-﻿using InfernumMode.Assets.Effects;
-using InfernumMode.Assets.ExtraTextures;
-using System;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
+﻿using System;
 using System.Collections.Generic;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.ScreenEffects;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
 {
@@ -62,7 +62,7 @@ namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers.DeusScene
         }
 
         public override void DrawToMainTarget(SpriteBatch spriteBatch)
-        {        
+        {
             spriteBatch.Draw(InfernumTextureRegistry.Pixel.Value, new Rectangle(0, 0, MainTarget.Width, MainTarget.Height), Color.Black);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);

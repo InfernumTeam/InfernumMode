@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.NPCs.Yharon;
@@ -9,9 +12,6 @@ using InfernumMode.Assets.Fonts;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;

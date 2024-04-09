@@ -1,12 +1,12 @@
-﻿using InfernumMode.Assets.Effects;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

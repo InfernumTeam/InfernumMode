@@ -1,7 +1,7 @@
-﻿using CalamityMod.NPCs.Abyss;
+﻿using System.Linq;
+using CalamityMod.NPCs.Abyss;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;

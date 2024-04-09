@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;

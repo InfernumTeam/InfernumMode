@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace InfernumMode.Core.TrackedMusic
 {
@@ -25,7 +25,7 @@ namespace InfernumMode.Core.TrackedMusic
             WithMSDelay(0, 7, 879, 150),
             WithMSDelay(0, 9, 252, 150),
             WithMSDelay(0, 10, 566, 150),
-            
+
             // Section 2.
             WithMSDelay(1, 41, 178, 150),
             WithMSDelay(1, 41, 835, 150),

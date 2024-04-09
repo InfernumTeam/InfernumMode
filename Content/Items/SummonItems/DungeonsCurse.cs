@@ -24,7 +24,7 @@ namespace InfernumMode.Content.Items.SummonItems
             {
                 var flagData = tag.GetList<string>("FlagData");
 
-                player.SetValue<bool>("WasGivenDungeonsCurse",flagData.Contains("WasGivenDungeonsCurse"));
+                player.SetValue<bool>("WasGivenDungeonsCurse", flagData.Contains("WasGivenDungeonsCurse"));
             };
 
             InfernumPlayer.SaveDataEvent += (InfernumPlayer player, TagCompound tag) =>

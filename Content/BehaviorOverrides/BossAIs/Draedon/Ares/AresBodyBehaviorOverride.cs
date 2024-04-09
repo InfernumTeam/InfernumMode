@@ -1,4 +1,8 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.InverseKinematics;
 using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Melee;
@@ -19,10 +23,6 @@ using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -1196,7 +1196,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Explode violently.
                 case 4:
-                     MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
+                    MoonlordDeathDrama.RequestLight(attackTimer * 0.04f, npc.Center);
 
                     if (attackTimer == 60f)
                     {

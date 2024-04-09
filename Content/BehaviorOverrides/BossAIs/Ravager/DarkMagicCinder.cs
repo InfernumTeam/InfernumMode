@@ -1,4 +1,4 @@
-using InfernumMode.Content.Dusts;
+﻿using InfernumMode.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

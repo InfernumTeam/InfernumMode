@@ -1,3 +1,5 @@
+﻿using System;
+using System.IO;
 using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Effects;
@@ -6,8 +8,6 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -97,7 +97,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             float[] scaleFactors =
             [
-                1f, 0.8f, 0.7f, 0.57f, 0.44f, 0.32f, 0.22f
+                1f,
+                0.8f,
+                0.7f,
+                0.57f,
+                0.44f,
+                0.32f,
+                0.22f
             ];
 
             for (int i = 0; i < scaleFactors.Length; i++)

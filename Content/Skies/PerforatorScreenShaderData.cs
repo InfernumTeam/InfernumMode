@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.Perforator;
+﻿using CalamityMod.NPCs.Perforator;
 using InfernumMode.Assets.Effects;
 using Terraria;
 using Terraria.Graphics.Shaders;

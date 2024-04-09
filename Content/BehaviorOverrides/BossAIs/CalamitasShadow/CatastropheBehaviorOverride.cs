@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.CalClone;
+﻿using CalamityMod.NPCs.CalClone;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

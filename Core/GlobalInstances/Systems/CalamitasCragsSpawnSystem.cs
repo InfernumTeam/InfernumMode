@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.CalPlayer;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.CragsCutscene;
 using Microsoft.Xna.Framework;

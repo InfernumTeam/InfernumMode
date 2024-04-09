@@ -1,8 +1,8 @@
+﻿using System.IO;
 using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

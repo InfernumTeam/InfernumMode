@@ -1,9 +1,9 @@
 ﻿using InfernumMode.Common.Graphics.ScreenEffects;
-using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Effects;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {

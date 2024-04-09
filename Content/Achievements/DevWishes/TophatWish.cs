@@ -15,9 +15,9 @@ namespace InfernumMode.Content.Achievements.DevWishes
         private const int DeathsNeeded = 3;
         #endregion
         #region Overrides
-        
+
         public override string LocalizationCategory => "Achievements.Wishes";
-        
+
         public override void Initialize()
         {
             TotalCompletion = 1;

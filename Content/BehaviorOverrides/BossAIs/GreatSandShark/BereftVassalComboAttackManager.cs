@@ -1,11 +1,11 @@
-﻿using CalamityMod;
+﻿using System.Linq;
+using CalamityMod;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

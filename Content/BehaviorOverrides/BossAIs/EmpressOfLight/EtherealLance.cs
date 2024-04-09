@@ -1,8 +1,8 @@
-﻿using InfernumMode.Assets.ExtraTextures;
+﻿using System.IO;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;

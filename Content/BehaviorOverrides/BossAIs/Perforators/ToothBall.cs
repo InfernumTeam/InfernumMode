@@ -1,4 +1,4 @@
-using CalamityMod;
+﻿using CalamityMod;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.BoC;
 using Microsoft.Xna.Framework;
 using Terraria;

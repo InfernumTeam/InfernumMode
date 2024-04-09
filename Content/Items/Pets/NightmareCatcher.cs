@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using InfernumMode.Common.DataStructures;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.Buffs;
@@ -6,8 +8,6 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

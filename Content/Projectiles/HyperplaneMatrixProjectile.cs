@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using CalamityMod;
 using CalamityMod.Items.DraedonMisc;
 using CalamityMod.Items.Mounts;
 using CalamityMod.NPCs.ExoMechs;
@@ -16,9 +19,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;

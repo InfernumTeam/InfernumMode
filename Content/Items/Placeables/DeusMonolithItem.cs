@@ -1,9 +1,9 @@
 ﻿using CalamityMod.Items.Materials;
-using InfernumMode.Content.Tiles.Misc;
-using Terraria.ID;
-using Terraria;
-using Terraria.ModLoader;
 using CalamityMod.Items.Placeables;
+using InfernumMode.Content.Tiles.Misc;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Placeables
 {

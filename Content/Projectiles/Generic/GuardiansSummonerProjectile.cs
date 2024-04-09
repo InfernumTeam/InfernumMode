@@ -145,7 +145,7 @@ namespace InfernumMode.Content.Projectiles.Generic
 
                         // Connect the temple to the guardian positions via dust.
                         float sineValue = (1f + Sin(Main.GlobalTimeWrappedHourly * 10.5f)) / 2f;
-                        
+
                         float completion = EasingCurves.Sine.InOutFunction(sineValue);
                         Dust dust = Dust.NewDustPerfect(ProviLightPosition, 264);
                         dust.velocity = Vector2.UnitY.RotatedByRandom(0.17000000178813934) * (0f - Main.rand.NextFloat(2.7f, 4.1f));

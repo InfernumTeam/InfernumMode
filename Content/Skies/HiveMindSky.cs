@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.HiveMind;
+﻿using CalamityMod.NPCs.HiveMind;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

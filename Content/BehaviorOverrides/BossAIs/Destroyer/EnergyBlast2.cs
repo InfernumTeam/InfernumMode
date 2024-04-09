@@ -1,4 +1,4 @@
-using CalamityMod.Particles;
+﻿using CalamityMod.Particles;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using Microsoft.Xna.Framework;

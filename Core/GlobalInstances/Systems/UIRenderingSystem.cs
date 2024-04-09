@@ -1,7 +1,7 @@
+﻿using System.Collections.Generic;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Content.BossIntroScreens;
 using InfernumMode.Content.UI;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;

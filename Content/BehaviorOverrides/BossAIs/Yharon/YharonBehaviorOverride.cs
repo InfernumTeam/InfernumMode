@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
@@ -17,9 +20,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Events;
@@ -708,10 +708,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.life = (int)Lerp(npc.lifeMax * 0.1f, npc.lifeMax, 1f - invincibilityTime / Phase2InvincibilityTime);
 
                 // Say the post heal joke tip.
-                if (invincibilityTime == 1f)          
+                if (invincibilityTime == 1f)
                     HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonPostHealTip");
             }
-            
+
             // Create blossoms from the sky if in the last subphase.
             if (currentSubphase == 6f && Main.rand.NextBool(3) && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -1633,7 +1633,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     }
                     SoundEngine.PlaySound(BigFlare.FlareSound, target.Center);
                 }
-                
+
                 MoonlordDeathDrama.RequestLight(brightness, target.Center);
             }
         }

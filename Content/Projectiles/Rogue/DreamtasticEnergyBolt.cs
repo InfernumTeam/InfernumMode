@@ -119,9 +119,9 @@ namespace InfernumMode.Content.Projectiles.Rogue
                     Color color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Magenta, Color.Violet, Color.DeepSkyBlue);
 
                     if (Main.rand.NextBool())
-                       GeneralParticleHandler.SpawnParticle(new SparkleParticle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
+                        GeneralParticleHandler.SpawnParticle(new SparkleParticle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
                     else
-                       GeneralParticleHandler.SpawnParticle(new GenericSparkle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
+                        GeneralParticleHandler.SpawnParticle(new GenericSparkle(position, velocity, color, Color.Lerp(color, Color.White, Main.rand.NextFloat(0.3f, 0.7f)), Main.rand.NextFloat(0.3f, 0.5f), 40, Main.rand.NextFloat(-0.05f, 0.05f), 5f));
 
                     if (Main.rand.NextBool())
                         GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(position, velocity * 1.3f, Main.rand.NextFloat(0.3f, 0.55f), color, 40, 1.5f, 2f, 3f, 0.04f));

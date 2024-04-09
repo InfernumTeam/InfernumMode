@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Graphics.Metaballs;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Magic;
@@ -6,9 +9,6 @@ using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;

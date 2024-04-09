@@ -1,12 +1,12 @@
-﻿using CalamityMod;
+﻿using System.Globalization;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using InfernumMode.Assets.Fonts;
 using InfernumMode.Content.BossIntroScreens.InfernumScreens;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Globalization;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

@@ -1,5 +1,5 @@
+﻿using System.IO;
 using InfernumMode.Core.GlobalInstances.Systems;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 

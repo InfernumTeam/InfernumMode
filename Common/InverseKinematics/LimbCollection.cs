@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Common.InverseKinematics
 {

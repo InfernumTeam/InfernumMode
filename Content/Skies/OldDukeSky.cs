@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.OldDuke;
+﻿using CalamityMod.NPCs.OldDuke;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

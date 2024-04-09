@@ -1,3 +1,4 @@
+﻿using System;
 using CalamityMod;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
@@ -6,7 +7,6 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

@@ -1,6 +1,6 @@
+﻿using System.IO;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 using static InfernumMode.Core.Netcode.PacketManager;

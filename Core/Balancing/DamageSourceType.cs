@@ -1,4 +1,4 @@
-namespace InfernumMode.Core.Balancing
+﻿namespace InfernumMode.Core.Balancing
 {
     public enum DamageSourceType
     {

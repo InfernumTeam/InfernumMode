@@ -1,5 +1,5 @@
-﻿using CalamityMod;
-using System.Linq;
+﻿using System.Linq;
+using CalamityMod;
 using Terraria;
 
 namespace InfernumMode.Core.Balancing

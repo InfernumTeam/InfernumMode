@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using ReLogic.Graphics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
+using ReLogic.Graphics;
 using Terraria.GameContent;
 using Terraria.Localization;
 

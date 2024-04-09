@@ -1,10 +1,10 @@
+﻿using System;
 using CalamityMod;
 using CalamityMod.Sounds;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;

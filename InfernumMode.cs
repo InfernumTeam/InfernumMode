@@ -1,27 +1,27 @@
-﻿global using static System.MathF;
+﻿global using Luminance.Common.Utilities;
+global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 global using LumUtils = Luminance.Common.Utilities.Utilities;
-global using Luminance.Common.Utilities;
+using System.IO;
 using CalamityMod.Cooldowns;
+using CalamityMod.ILEditing;
 using CalamityMod.Systems;
+using InfernumMode.Assets.BossTextures;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Content.BossBars;
 using InfernumMode.Content.UI;
+using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.ILEditingStuff;
+using InfernumMode.Core.ModCalls;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;
-using System.IO;
+using Luminance.Core.ModCalls;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Core.ModCalls;
-using CalamityMod.ILEditing;
-using InfernumMode.Content.WorldGeneration;
-using Luminance.Core.ModCalls;
-using InfernumMode.Assets.BossTextures;
 
 namespace InfernumMode
 {

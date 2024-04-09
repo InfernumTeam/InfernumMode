@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using InfernumMode.Common.Graphics.Drawers.NPCDrawers;
 using InfernumMode.Common.Graphics.Drawers.SceneDrawers;
 using InfernumMode.Content.Cutscenes;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Drawers
 {

@@ -62,7 +62,7 @@ namespace InfernumMode.Core.Balancing
         public static Func<bool> InfernumFirstMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() == 0 && CalamityConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive;
 
         public static Func<bool> InfernumSecondMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() == 1 && CalamityConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive;
-        
+
         public static Func<bool> InfernumFinalMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() >= 2 && !InfernumFirstMechCondition() && !BossRushEvent.BossRushActive;
 
         private static int GetMechsDowned()

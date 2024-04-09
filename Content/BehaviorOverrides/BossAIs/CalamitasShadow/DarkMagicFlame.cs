@@ -1,10 +1,10 @@
-﻿using CalamityMod.NPCs;
+﻿using System.IO;
+using CalamityMod.NPCs;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Interfaces;
 using InfernumMode.Common.Graphics.Primitives;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;

@@ -1,7 +1,7 @@
-﻿using InfernumMode.Core;
+﻿using System;
+using InfernumMode.Core;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

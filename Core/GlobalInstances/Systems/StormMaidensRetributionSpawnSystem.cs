@@ -1,9 +1,9 @@
+﻿using System.Linq;
 using CalamityMod;
+using InfernumMode.Content.Achievements.DevWishes;
 using InfernumMode.Content.Projectiles.Rogue;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
-using System.Linq;
-using InfernumMode.Content.Achievements.DevWishes;
 using Terraria;
 using Terraria.ModLoader;
 

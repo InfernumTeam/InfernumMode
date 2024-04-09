@@ -1,11 +1,11 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using CalamityMod;
 using CalamityMod.Events;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -645,7 +645,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BoC
 
             yield return n =>
             {
-                if (n.life < n.lifeMax * Phase3LifeRatio) 
+                if (n.life < n.lifeMax * Phase3LifeRatio)
                 {
                     return "Mods.InfernumMode.PetDialog.BoCTip3";
                 }

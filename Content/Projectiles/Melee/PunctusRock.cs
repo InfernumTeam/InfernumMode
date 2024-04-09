@@ -428,7 +428,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                         rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
                     GeneralParticleHandler.SpawnParticle(fire);
                 }
-                
+
                 // And ofc some lovely screenshake.
                 if (CalamityConfig.Instance.Screenshake)
                     Owner.Infernum_Camera().CurrentScreenShakePower = 2f;
@@ -549,7 +549,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 }
 
                 // Draw the rock.
-                Main.spriteBatch.Draw(texture, rock.Position - Main.screenPosition, frame, rock.Color * rock.Opacity * (1- interpolant), rock.Rotation, frame.Size() * 0.5f, rock.Scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, rock.Position - Main.screenPosition, frame, rock.Color * rock.Opacity * (1 - interpolant), rock.Rotation, frame.Size() * 0.5f, rock.Scale, SpriteEffects.None, 0f);
 
                 // Glow red hot when dying, to form the actual rock.
                 if (rock.Time >= rock.Lifetime - ProfanusRockParticle.StopAndGlowLength)
@@ -651,11 +651,11 @@ namespace InfernumMode.Content.Projectiles.Melee
             if (drawInitialGlowyShit)
             {
                 float opacity = RockIsBuffed ? Utils.GetLerpValue(0f, 10f, Timer, true) : Utils.GetLerpValue(CreationParticleLifetime + 20, CreationParticleLifetime, Timer, true);
-                
+
                 // Draw the rock over itself 2 times.
                 Color backglowColor = WayfinderSymbol.Colors[1];
                 for (int i = 0; i < 2; i++)
-                    Main.EntitySpriteDraw(texture, drawPosition , null, backglowColor with { A = 0 } * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+                    Main.EntitySpriteDraw(texture, drawPosition, null, backglowColor with { A = 0 } * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             }
 
             // Draw any of the forming rock particles, over the top of this for the bloom effect.

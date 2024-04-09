@@ -1,4 +1,4 @@
-using InfernumMode.Assets.ExtraTextures;
+﻿using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.BaseEntities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

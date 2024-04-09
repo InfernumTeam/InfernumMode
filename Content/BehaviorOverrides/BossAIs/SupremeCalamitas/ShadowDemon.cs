@@ -1,4 +1,8 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using CalamityMod.Sounds;
@@ -6,15 +10,10 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Metaballs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
@@ -474,7 +473,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SpriteEffects direction = Math.Cos(Heads[i].Rotation) > 0f ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
                 Main.spriteBatch.Draw(backTexture, drawPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
-                Main.spriteBatch.Draw(auraTexture, drawPosition , frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
+                Main.spriteBatch.Draw(auraTexture, drawPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
             }
         }
 

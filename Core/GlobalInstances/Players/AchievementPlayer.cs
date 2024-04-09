@@ -1,9 +1,9 @@
-﻿using CalamityMod.Events;
-using InfernumMode.Content.Achievements;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using CalamityMod.Events;
+using InfernumMode.Content.Achievements;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;

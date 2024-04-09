@@ -1,6 +1,6 @@
-﻿using CalamityMod.NPCs.Ravager;
+﻿using System;
+using CalamityMod.NPCs.Ravager;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

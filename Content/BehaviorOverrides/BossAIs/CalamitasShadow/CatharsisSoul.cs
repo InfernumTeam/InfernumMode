@@ -1,5 +1,5 @@
+﻿using System;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -44,9 +44,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                 if (target.dead || !target.active)
-                {    
+                {
                     Projectile.Kill();
-                    return; 
+                    return;
                 }
                 Projectile.velocity = (Projectile.velocity * 37f + Projectile.SafeDirectionTo(target.Center) * 11f) / 38f;
             }

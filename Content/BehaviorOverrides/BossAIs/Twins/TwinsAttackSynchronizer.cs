@@ -1,4 +1,6 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -13,8 +15,6 @@ using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
-using System;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;

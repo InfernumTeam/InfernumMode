@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Microsoft.Xna.Framework;
 
 namespace InfernumMode.Content.Rarities.Sparkles
 {

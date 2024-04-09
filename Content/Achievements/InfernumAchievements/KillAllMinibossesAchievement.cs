@@ -1,9 +1,9 @@
-﻿using CalamityMod.NPCs.Abyss;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.AcidRain;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.SunkenSea;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -95,7 +95,7 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
         {
             var intList = new List<int>();
             var boolList = new List<bool>();
-            foreach  (var entry in Data)
+            foreach (var entry in Data)
             {
                 intList.Add((int)entry.Miniboss);
                 boolList.Add(entry.Downed);

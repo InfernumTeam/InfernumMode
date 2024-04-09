@@ -1,7 +1,7 @@
-﻿using CalamityMod.NPCs.CeaselessVoid;
+﻿using System.Collections.Generic;
+using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;

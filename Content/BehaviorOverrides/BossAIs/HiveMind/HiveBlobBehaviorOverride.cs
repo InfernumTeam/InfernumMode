@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.HiveMind;
+﻿using CalamityMod.NPCs.HiveMind;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.ModLoader;

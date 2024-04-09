@@ -1,5 +1,5 @@
-﻿using CalamityMod.Tiles.FurnitureProfaned;
-using System;
+﻿using System;
+using CalamityMod.Tiles.FurnitureProfaned;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances.Systems

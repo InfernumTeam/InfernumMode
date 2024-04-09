@@ -1,7 +1,7 @@
-﻿using InfernumMode.Common.Graphics.Primitives;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.IO;
+using InfernumMode.Common.Graphics.Primitives;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

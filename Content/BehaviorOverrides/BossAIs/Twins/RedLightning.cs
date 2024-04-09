@@ -1,10 +1,10 @@
-using CalamityMod;
-using InfernumMode.Common.Graphics.Primitives;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CalamityMod;
+using InfernumMode.Common.Graphics.Primitives;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

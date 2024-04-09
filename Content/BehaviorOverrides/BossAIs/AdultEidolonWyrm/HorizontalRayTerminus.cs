@@ -1,4 +1,5 @@
-﻿using CalamityMod.Items.Tools;
+﻿using System;
+using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Particles;
 using CalamityMod.World;
@@ -8,7 +9,6 @@ using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

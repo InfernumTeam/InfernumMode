@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Systems;
 using Terraria;

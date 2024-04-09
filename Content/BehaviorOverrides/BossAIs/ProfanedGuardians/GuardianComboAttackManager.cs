@@ -1,4 +1,7 @@
-﻿using CalamityMod;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
@@ -13,9 +16,6 @@ using InfernumMode.Core.GlobalInstances.Systems;
 using Luminance.Common.Easings;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Events;

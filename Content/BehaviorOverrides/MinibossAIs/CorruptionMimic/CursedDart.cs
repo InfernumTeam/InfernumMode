@@ -1,4 +1,4 @@
-using InfernumMode.Content.BehaviorOverrides.BossAIs.EoW;
+﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.EoW;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

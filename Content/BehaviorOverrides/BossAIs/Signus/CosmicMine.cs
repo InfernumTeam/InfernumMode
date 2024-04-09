@@ -1,4 +1,4 @@
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.Assets.Sounds;
 using Microsoft.Xna.Framework;

@@ -1,4 +1,4 @@
-using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
+﻿using InfernumMode.Content.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

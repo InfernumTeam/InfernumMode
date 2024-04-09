@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
-using ReLogic.Content;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -122,7 +122,7 @@ namespace InfernumMode.Core.TrackedMusic
             //Terraria.Audio.On_LegacyAudioSystem.ResumeAll += ResumeMainTrack;
         } // IDE0051
 
-        #pragma warning disable IDE0051
+#pragma warning disable IDE0051
         private static void PauseMainTrack(Terraria.Audio.On_LegacyAudioSystem.orig_PauseAll orig, Terraria.Audio.LegacyAudioSystem self)
         {
             orig(self);
@@ -191,7 +191,7 @@ namespace InfernumMode.Core.TrackedMusic
             }
             orig(self, i, totalVolume, ref tempFade, isMainTrackAudible);
         }
-        #pragma warning restore IDE0051
+#pragma warning restore IDE0051
 
         public static bool TryGetSongInformation(out BaseTrackedMusic information)
         {

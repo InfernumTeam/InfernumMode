@@ -276,22 +276,25 @@ namespace InfernumMode.Core.GlobalInstances
             if (npc.type == ModContent.NPCType<OldDukeNPC>() && NPCBehaviorOverride.Registered(npc.type))
                 CalamityMod.CalamityMod.StopRain();
 
-            int apolloID = ModContent.NPCType<Apollo>();
-            int thanatosID = ModContent.NPCType<ThanatosHead>();
-            int aresID = ModContent.NPCType<AresBody>();
-            int totalExoMechs = 0;
-            for (int i = 0; i < Main.maxNPCs; i++)
+            if (Utilities.IsExoMech(npc) && NPCBehaviorOverride.Registered<Apollo>())
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
-                    continue;
-                if (!Main.npc[i].active)
-                    continue;
+                int apolloID = ModContent.NPCType<Apollo>();
+                int thanatosID = ModContent.NPCType<ThanatosHead>();
+                int aresID = ModContent.NPCType<AresBody>();
+                int totalExoMechs = 0;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                        continue;
+                    if (!Main.npc[i].active)
+                        continue;
 
-                totalExoMechs++;
+                    totalExoMechs++;
+                }
+
+                if (totalExoMechs >= 2)
+                    return false;
             }
-            if (totalExoMechs >= 2 && Utilities.IsExoMech(npc) && NPCBehaviorOverride.Registered<Apollo>())
-                return false;
-
             // Prevent wandering eye fishes from dropping loot if they were spawned by a dreadnautilus.
             if (npc.type == NPCID.EyeballFlyingFish && NPC.AnyNPCs(NPCID.BloodNautilus))
                 DropHelper.BlockDrops(ItemID.ChumBucket, ItemID.VampireFrogStaff, ItemID.BloodFishingRod, ItemID.BloodRainBow, ItemID.MoneyTrough, ItemID.BloodMoonStarter);

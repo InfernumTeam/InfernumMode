@@ -158,47 +158,46 @@ namespace InfernumMode.Core.GlobalInstances
                 npc.netUpdate = true;
             }
 
-            if (InfernumMode.CanUseCustomAIs)
+            if (!InfernumMode.CanUseCustomAIs)
+                return base.PreAI(npc);
+
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if (container is null)
+                return base.PreAI(npc);
+
+            // Disable the effects of timed DR.
+            if (npc.Calamity().KillTime >= 1 && npc.Calamity().AITimer < npc.Calamity().KillTime)
+                npc.Calamity().AITimer = npc.Calamity().KillTime;
+
+            // If any boss NPC is active, apply Zen to nearby players to reduce the spawn rate.
+            if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
             {
-                var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-                if (container != null)
-                {
-                    // Disable the effects of timed DR.
-                    if (npc.Calamity().KillTime >= 1 && npc.Calamity().AITimer < npc.Calamity().KillTime)
-                        npc.Calamity().AITimer = npc.Calamity().KillTime;
-
-                    // If any boss NPC is active, apply Zen to nearby players to reduce the spawn rate.
-                    if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
-                    {
-                        if (!Main.LocalPlayer.dead && Main.LocalPlayer.active && npc.WithinRange(Main.LocalPlayer.Center, 6400f))
-                            Main.LocalPlayer.AddBuff(ModContent.BuffType<BossEffects>(), 2);
-                    }
-
-                    // Decrement each immune timer if it's greater than 0.
-                    for (int i = 0; i < CalamityGlobalNPC.maxPlayerImmunities; i++)
-                    {
-                        if (npc.Calamity().dashImmunityTime[i] >= 1)
-                            npc.Calamity().dashImmunityTime[i]--;
-                    }
-
-                    // Disable netOffset effects.
-                    npc.netOffset = Vector2.Zero;
-
-                    bool result = container.BehaviorOverride.PreAI(npc);
-
-                    // Disable the effects of certain unpredictable freeze debuffs.
-                    // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
-                    // That said, I don't know a single person who uses Time Bolt so it's probably irrelevant either way lol.
-                    npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
-                    npc.buffImmune[ModContent.BuffType<GalvanicCorrosion>()] = true;
-                    npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
-                    npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
-                    npc.buffImmune[BuffID.Webbed] = true;
-
-                    return result;
-                }
+                if (!Main.LocalPlayer.dead && Main.LocalPlayer.active && npc.WithinRange(Main.LocalPlayer.Center, 6400f))
+                    Main.LocalPlayer.AddBuff(ModContent.BuffType<BossEffects>(), 2);
             }
-            return base.PreAI(npc);
+
+            // Decrement each immune timer if it's greater than 0.
+            for (int i = 0; i < CalamityGlobalNPC.maxPlayerImmunities; i++)
+            {
+                if (npc.Calamity().dashImmunityTime[i] >= 1)
+                    npc.Calamity().dashImmunityTime[i]--;
+            }
+
+            // Disable netOffset effects.
+            npc.netOffset = Vector2.Zero;
+
+            bool result = container.BehaviorOverride.PreAI(npc);
+
+            // Disable the effects of certain unpredictable freeze debuffs.
+            // Time Bolt and a few other weapon-specific debuffs are not counted here since those are more deliberate weapon mechanics.
+            // That said, I don't know a single person who uses Time Bolt so it's probably irrelevant either way lol.
+            npc.buffImmune[ModContent.BuffType<Eutrophication>()] = true;
+            npc.buffImmune[ModContent.BuffType<GalvanicCorrosion>()] = true;
+            npc.buffImmune[ModContent.BuffType<GlacialState>()] = true;
+            npc.buffImmune[ModContent.BuffType<TemporalSadness>()] = true;
+            npc.buffImmune[BuffID.Webbed] = true;
+
+            return result;  
         }
 
         public override void OnKill(NPC npc)

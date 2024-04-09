@@ -24,7 +24,6 @@ namespace InfernumMode.Assets.BossTextures
         public static string SlimeGodCoreMapIcon { get; private set; }
         public static string CrimulanPaladinMapIcon { get; private set; }
         public static string EbonianPaladinMapIcon { get; private set; }
-
         #endregion
         #endregion
 
@@ -50,7 +49,6 @@ namespace InfernumMode.Assets.BossTextures
             CrimulanPaladin = ModContent.Request<Texture2D>($"{BasePath}SlimeGod/CrimulanPaladin");
             EbonianPaladin = ModContent.Request<Texture2D>($"{BasePath}SlimeGod/EbonianPaladin");
         }
-
 
         public override void Unload()
         {

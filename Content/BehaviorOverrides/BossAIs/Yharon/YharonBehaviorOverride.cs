@@ -708,10 +708,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                 npc.life = (int)Lerp(npc.lifeMax * 0.1f, npc.lifeMax, 1f - invincibilityTime / Phase2InvincibilityTime);
 
                 // Say the post heal joke tip.
-                if (invincibilityTime == 1f)
+                if (invincibilityTime == 1f)          
                     HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.YharonPostHealTip");
             }
-
+            
             // Create blossoms from the sky if in the last subphase.
             if (currentSubphase == 6f && Main.rand.NextBool(3) && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -1633,7 +1633,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     }
                     SoundEngine.PlaySound(BigFlare.FlareSound, target.Center);
                 }
-
+                
                 MoonlordDeathDrama.RequestLight(brightness, target.Center);
             }
         }

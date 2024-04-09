@@ -36,10 +36,10 @@ namespace InfernumMode.Content.UI
             CalculatedStyle innerDimensions = GetInnerDimensions();
             if ((bool)typeof(UIScrollbar).GetField("_isDragging", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar))
             {
-                float offset = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y -
+                float offset = UserInterface.ActiveInstance.MousePosition.Y - innerDimensions.Y - 
                     (float)typeof(UIScrollbar).GetField("_dragYOffset", BindingFlags.NonPublic | BindingFlags.Instance).
                     GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar);
-
+                
                 ViewPosition = Clamp(offset / innerDimensions.Height * (float)typeof(UIScrollbar).
                     GetField("_maxViewSize", BindingFlags.NonPublic | BindingFlags.Instance).
                     GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar), 0f, (float)typeof(UIScrollbar).
@@ -50,7 +50,7 @@ namespace InfernumMode.Content.UI
 
             Rectangle handleRectangle = (Rectangle)typeof(UIScrollbar).GetMethod("GetHandleRectangle", BindingFlags.Instance | BindingFlags.NonPublic).
                 Invoke(UIRenderingSystem.CurrentAchievementUI.Scrollbar, null);
-
+           
             Vector2 mousePosition = UserInterface.ActiveInstance.MousePosition;
             bool isHoveringOverHandle = (bool)typeof(UIScrollbar).GetField("_isHoveringOverHandle", BindingFlags.NonPublic | BindingFlags.Instance).
                 GetValue(UIRenderingSystem.CurrentAchievementUI.Scrollbar);

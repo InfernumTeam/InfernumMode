@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using CalamityMod.Graphics.Metaballs;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Drawers.SceneDrawers;
 using InfernumMode.Content.Projectiles.Summoner;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Common.Graphics.Metaballs

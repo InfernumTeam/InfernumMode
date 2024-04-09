@@ -9,7 +9,6 @@ using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.MapLayers;
 using InfernumMode.Content.Projectiles.Generic;

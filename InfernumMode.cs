@@ -14,8 +14,6 @@ using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
-using InfernumMode.Core.ILEditingStuff;
-using InfernumMode.Core.ModCalls;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.OverridingSystem;
 using Luminance.Core.ModCalls;

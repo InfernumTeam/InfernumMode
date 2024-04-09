@@ -23,7 +23,6 @@ using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
-using MonoMod.RuntimeDetour;
 using Terraria;
 using Terraria.ModLoader;
 

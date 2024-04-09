@@ -1,5 +1,4 @@
 ﻿using InfernumMode.Common.BaseEntities;
-using InfernumMode.Content.Cutscenes;
 using InfernumMode.Core;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;

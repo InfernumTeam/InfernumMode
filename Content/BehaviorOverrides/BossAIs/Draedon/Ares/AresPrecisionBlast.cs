@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.DataStructures;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;

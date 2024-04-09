@@ -1,5 +1,4 @@
-﻿using CalamityMod.DataStructures;
-using CalamityMod.NPCs.AstrumDeus;
+﻿using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

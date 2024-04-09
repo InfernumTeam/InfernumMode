@@ -18,7 +18,6 @@ using CalamityMod.Projectiles.Enemy;
 using CalamityMod.Schematics;
 using CalamityMod.Skies;
 using CalamityMod.Systems;
-using CalamityMod.TileEntities;
 using CalamityMod.World;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
@@ -26,7 +25,6 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.Tiles.Relics;
-using InfernumMode.Content.UI;
 using InfernumMode.Content.WorldGeneration;
 using InfernumMode.Core.Balancing;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -46,7 +44,6 @@ using Terraria.GameContent.Events;
 using Terraria.GameContent.UI.States;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
-using Terraria.IO;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 using static CalamityMod.Events.BossRushEvent;
@@ -131,7 +128,7 @@ namespace InfernumMode.Core.ILEditingStuff
             // Retinazer.
             143,
             146,
-
+            
             // Spazmatism.
             144,
             145,

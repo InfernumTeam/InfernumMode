@@ -116,9 +116,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             List<Vector2> points =
             [
-                RestingSpot,
-                .. ControlPoints,
-                Projectile.Center
+                RestingSpot, .. ControlPoints, Projectile.Center
             ];
             TentacleDrawer.DrawPixelated(new BezierCurve([.. points]).GetPoints(20), -Main.screenPosition, 35);
             Main.spriteBatch.ExitShaderRegion();

@@ -6,7 +6,6 @@ using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.StormWeaver;
-using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Luminance.Core.Cutscenes;

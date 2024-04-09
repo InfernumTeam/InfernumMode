@@ -1,7 +1,6 @@
 ﻿using System;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Providence;
-using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.Content.Projectiles.Wayfinder;

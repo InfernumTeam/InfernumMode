@@ -112,15 +112,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     NPC.SpawnWOF(player.position);
                 }, permittedNPCs: [NPCID.WallofFleshEye, NPCID.LeechHead, NPCID.LeechBody, NPCID.LeechTail, NPCID.TheHungry, NPCID.TheHungryII]),
 
-                new Boss(ModContent.NPCType<PerforatorHive>(), permittedNPCs: [ModContent.NPCType<PerforatorHeadLarge>(),
-                    ModContent.NPCType<PerforatorBodyLarge>(),
-                    ModContent.NPCType<PerforatorTailLarge>(),
-                    ModContent.NPCType<PerforatorHeadMedium>(),
-                    ModContent.NPCType<PerforatorBodyMedium>(),
-                    ModContent.NPCType<PerforatorTailMedium>(),
-                    ModContent.NPCType<PerforatorHeadSmall>(),
-                    ModContent.NPCType<PerforatorBodySmall>(),
-                    ModContent.NPCType<PerforatorTailSmall>()]),
+                new Boss(ModContent.NPCType<PerforatorHive>(), permittedNPCs: [ ModContent.NPCType<PerforatorHeadLarge>(), ModContent.NPCType<PerforatorBodyLarge>(), ModContent.NPCType<PerforatorTailLarge>(),
+                    ModContent.NPCType<PerforatorHeadMedium>(), ModContent.NPCType<PerforatorBodyMedium>(), ModContent.NPCType<PerforatorTailMedium>(), ModContent.NPCType<PerforatorHeadSmall>(),
+                    ModContent.NPCType<PerforatorBodySmall>() ,ModContent.NPCType<PerforatorTailSmall>() ]),
 
                 new Boss(NPCID.QueenBee, permittedNPCs: [NPCID.HornetFatty, NPCID.HornetHoney, NPCID.HornetStingy]),
 
@@ -136,9 +130,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     CalamityUtils.BossAwakenMessage(thePefectOne);
                 }, specialSpawnCountdown: 300, permittedNPCs: [ModContent.NPCType<CrabShroom>()]),
 
-                new Boss(ModContent.NPCType<AquaticScourgeHead>(), permittedNPCs: [ModContent.NPCType<AquaticScourgeBody>(),
-                    ModContent.NPCType<AquaticScourgeBodyAlt>(),
-                    ModContent.NPCType<AquaticScourgeTail>()]),
+                new Boss(ModContent.NPCType<AquaticScourgeHead>(), permittedNPCs: [ ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeBodyAlt>(),
+                    ModContent.NPCType<AquaticScourgeTail>() ]),
 
                 new Boss(ModContent.NPCType<DesertScourgeHead>(), spawnContext: type =>
                 {
@@ -147,16 +140,14 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 new Boss(ModContent.NPCType<ProfanedGuardianCommander>(), TimeChangeContext.Day,
                     permittedNPCs: [ModContent.NPCType<ProfanedGuardianDefender>(), ModContent.NPCType<ProfanedGuardianHealer>(), ModContent.NPCType<EtherealHand>(), ModContent.NPCType<HealerShieldCrystal>()]),
-
+                
                 // Tier 2.
                 new Boss(ModContent.NPCType<StormWeaverHead>(), TimeChangeContext.Day, permittedNPCs: [ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>(),]),
 
                 new Boss(ModContent.NPCType<BrimstoneElemental>(), permittedNPCs: ModContent.NPCType<Brimling>()),
 
-                new Boss(ModContent.NPCType<Anahita>(), TimeChangeContext.Day, permittedNPCs: [ModContent.NPCType<Leviathan>(),
-                    ModContent.NPCType<AnahitasIceShield>(),
-                    NPCID.DetonatingBubble,
-                    ModContent.NPCType<RedirectingBubble>()]),
+                new Boss(ModContent.NPCType<Anahita>(), TimeChangeContext.Day, permittedNPCs: [ ModContent.NPCType<Leviathan>(),
+                    ModContent.NPCType<AnahitasIceShield>(), NPCID.DetonatingBubble, ModContent.NPCType<RedirectingBubble>() ]),
 
                 new Boss(ModContent.NPCType<RavagerBody>(), spawnContext: type =>
                 {
@@ -165,12 +156,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     int ravager = NPC.NewNPC(new EntitySource_WorldEvent(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[ravager].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(ravager);
-                }, usesSpecialSound: true, permittedNPCs: [ModContent.NPCType<FlamePillar>(),
-                    ModContent.NPCType<RockPillar>(),
-                    ModContent.NPCType<RavagerLegLeft>(),
-                    ModContent.NPCType<RavagerLegRight>(),
-                    ModContent.NPCType<RavagerClawLeft>(),
-                    ModContent.NPCType<RavagerClawRight>()]),
+                }, usesSpecialSound: true, permittedNPCs: [ ModContent.NPCType<FlamePillar>(), ModContent.NPCType<RockPillar>(), ModContent.NPCType<RavagerLegLeft>(), ModContent.NPCType<RavagerLegRight>(),
+                    ModContent.NPCType<RavagerClawLeft>(), ModContent.NPCType<RavagerClawRight>() ]),
 
                 new Boss(ModContent.NPCType<HiveMind>(), spawnContext: type =>
                 {
@@ -195,13 +182,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 new Boss(ModContent.NPCType<Bumblefuck>(), TimeChangeContext.Day, permittedNPCs: [ModContent.NPCType<Bumblefuck2>(), NPCID.Spazmatism, NPCID.Retinazer]),
 
-                new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: [ModContent.NPCType<SlimeGodCore>(),
-                    ModContent.NPCType<EbonianPaladin>(),
-                    ModContent.NPCType<CrimulanPaladin>(),
-                    ModContent.NPCType<SplitCrimulanPaladin>(),
-                    ModContent.NPCType<SplitEbonianPaladin>(),
-                    ModContent.NPCType<SplitBigSlime>()]),
-
+                new Boss(ModContent.NPCType<SlimeGodCore>(), permittedNPCs: [ ModContent.NPCType<SlimeGodCore>(), ModContent.NPCType<EbonianPaladin>(), ModContent.NPCType<CrimulanPaladin>(), ModContent.NPCType<SplitCrimulanPaladin>(),
+                    ModContent.NPCType<SplitEbonianPaladin>(), ModContent.NPCType<SplitBigSlime>() ]),
+                
                 // Tier 3.
                 new Boss(NPCID.SkeletronHead, TimeChangeContext.Night, type =>
                 {
@@ -215,11 +198,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
                 new Boss(NPCID.TheDestroyer, TimeChangeContext.Night, specialSpawnCountdown: 300, permittedNPCs: [NPCID.TheDestroyerBody, NPCID.TheDestroyerTail, NPCID.Probe]),
 
-                new Boss(ModContent.NPCType<PlaguebringerGoliath>(), permittedNPCs: [ModContent.NPCType<BuilderDroneSmall>(),
-                    ModContent.NPCType<BuilderDroneBig>(),
-                    ModContent.NPCType<SmallDrone>(),
-                    ModContent.NPCType<PlagueMine>(),
-                    ModContent.NPCType<ExplosivePlagueCharger>()]),
+                new Boss(ModContent.NPCType<PlaguebringerGoliath>(), permittedNPCs: [ ModContent.NPCType<BuilderDroneSmall>(), ModContent.NPCType<BuilderDroneBig>(), ModContent.NPCType<SmallDrone>(),
+                    ModContent.NPCType<PlagueMine>(), ModContent.NPCType<ExplosivePlagueCharger>() ]),
 
                 new Boss(ModContent.NPCType<AstrumDeusHead>(), TimeChangeContext.Night, type =>
                 {
@@ -239,16 +219,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     Main.npc[doctorLooneyTunes].direction = Main.npc[doctorLooneyTunes].spriteDirection = Math.Sign(player.Center.X - player.Center.X - 90f);
                     Main.npc[doctorLooneyTunes].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(doctorLooneyTunes);
-                }, permittedNPCs: [NPCID.CultistBossClone,
-                    NPCID.CultistDragonHead,
-                    NPCID.CultistDragonBody1,
-                    NPCID.CultistDragonBody2,
-                    NPCID.CultistDragonBody3,
-                    NPCID.CultistDragonBody4,
-                    NPCID.CultistDragonTail,
-                    NPCID.AncientCultistSquidhead,
-                    NPCID.AncientLight,
-                    NPCID.AncientDoom]),
+                }, permittedNPCs: [ NPCID.CultistBossClone, NPCID.CultistDragonHead, NPCID.CultistDragonBody1, NPCID.CultistDragonBody2, NPCID.CultistDragonBody3, NPCID.CultistDragonBody4,
+                    NPCID.CultistDragonTail, NPCID.AncientCultistSquidhead, NPCID.AncientLight, NPCID.AncientDoom ]),
 
                 new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: [NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe]),
 
@@ -266,7 +238,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     Main.npc[sans].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(sans);
                 }, permittedNPCs: [NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead, NPCID.GolemHeadFree]),
-
+                
                 // Tier 4.
                 new Boss(NPCID.HallowBoss, spawnContext: type =>
                 {
@@ -296,10 +268,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     CalamityUtils.BossAwakenMessage(ceaselessVoid);
                 }, permittedNPCs: [ModContent.NPCType<DarkEnergy>()]),
 
-                new Boss(ModContent.NPCType<CalamitasClone>(), TimeChangeContext.Night, specialSpawnCountdown: 420, dimnessFactor: 0.6f, permittedNPCs: [ModContent.NPCType<Cataclysm>(),
-                    ModContent.NPCType<Catastrophe>(),
-                    ModContent.NPCType<SoulSeeker>()]),
-
+                new Boss(ModContent.NPCType<CalamitasClone>(), TimeChangeContext.Night, specialSpawnCountdown: 420, dimnessFactor: 0.6f, permittedNPCs: [ ModContent.NPCType<Cataclysm>(), ModContent.NPCType<Catastrophe>(),
+                         ModContent.NPCType<SoulSeeker>() ]),
+                
                 // Tier 5.
                 new Boss(ModContent.NPCType<DevourerofGodsHead>(), TimeChangeContext.Day, type =>
                 {
@@ -337,34 +308,18 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     int apollo = NPC.NewNPC(new EntitySource_WorldEvent(), (int)player.Center.X, (int)player.Center.Y - 2400, type, 1);
                     Main.npc[apollo].Infernum().ExtraAI[ExoMechManagement.SecondaryMechNPCTypeIndex] = ModContent.NPCType<ThanatosHead>();
 
-                }, permittedNPCs: [ModContent.NPCType<Artemis>(),
-                    ModContent.NPCType<Apollo>(),
-                    ModContent.NPCType<AresBody>(),
-                    ModContent.NPCType<AresLaserCannon>(),
-                    ModContent.NPCType<AresTeslaCannon>(),
-                    ModContent.NPCType<AresPlasmaFlamethrower>(),
-                    ModContent.NPCType<AresGaussNuke>(),
-                    ModContent.NPCType<AresPulseCannon>(),
-                    ModContent.NPCType<AresEnergyKatana>(),
-                    ModContent.NPCType<ThanatosHead>(),
-                    ModContent.NPCType<ThanatosBody1>(),
-                    ModContent.NPCType<ThanatosBody2>(),
-                    ModContent.NPCType<ThanatosTail>()]),
+                }, permittedNPCs: [ ModContent.NPCType<Artemis>(), ModContent.NPCType<Apollo>(), ModContent.NPCType<AresBody>(),
+                    ModContent.NPCType<AresLaserCannon>(), ModContent.NPCType<AresTeslaCannon>(), ModContent.NPCType<AresPlasmaFlamethrower>(), ModContent.NPCType<AresGaussNuke>(), ModContent.NPCType<AresPulseCannon>(), ModContent.NPCType<AresEnergyKatana>(),
+                    ModContent.NPCType<ThanatosHead>(), ModContent.NPCType<ThanatosBody1>(), ModContent.NPCType<ThanatosBody2>(), ModContent.NPCType<ThanatosTail>() ]),
 
                 new Boss(ModContent.NPCType<SupremeCalamitas>(), spawnContext: type =>
                 {
                     SoundEngine.PlaySound(SupremeCalamitas.SpawnSound, Main.player[ClosestPlayerToWorldCenter].Center);
                     CalamityUtils.SpawnBossBetter(Main.player[ClosestPlayerToWorldCenter].Top - new Vector2(42f, 84f), type);
-                }, dimnessFactor: 0.5f, permittedNPCs: [ModContent.NPCType<SepulcherArm>(),
-                    ModContent.NPCType<SepulcherHead>(),
-                    ModContent.NPCType<SepulcherBody>(),
-                    ModContent.NPCType<SepulcherBodyEnergyBall>(),
-                    ModContent.NPCType<SepulcherTail>(),
-                    ModContent.NPCType<SoulSeekerSupreme>(),
-                    ModContent.NPCType<BrimstoneHeart>(),
-                    ModContent.NPCType<SupremeCataclysm>(),
-                    ModContent.NPCType<SupremeCatastrophe>(),
-                    ModContent.NPCType<ShadowDemon>()]),
+                }, dimnessFactor: 0.5f, permittedNPCs: [ ModContent.NPCType<SepulcherArm>(), ModContent.NPCType<SepulcherHead>(), ModContent.NPCType<SepulcherBody>(),
+                    ModContent.NPCType<SepulcherBodyEnergyBall>(), ModContent.NPCType<SepulcherTail>(),
+                    ModContent.NPCType<SoulSeekerSupreme>(), ModContent.NPCType<BrimstoneHeart>(), ModContent.NPCType<SupremeCataclysm>(),
+                    ModContent.NPCType<SupremeCatastrophe>(), ModContent.NPCType<ShadowDemon>() ]),
             ];
 
             // Cache our own boss death effects.

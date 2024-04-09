@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using CalamityMod.DataStructures;
 using InfernumMode.Assets.ExtraTextures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

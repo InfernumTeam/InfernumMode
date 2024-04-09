@@ -42,14 +42,14 @@ namespace InfernumMode.Content.Items.Misc
         }
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
-        {
+        { 
             SpiritSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             WaterSparkles.RemoveAll(s => s.Time >= s.Lifetime);
             Vector2 drawOffset = Vector2.UnitY * yOffset;
 
             // Detecting the line like this is really bad. Not sure how else to do it though.
             if (line.Text.StartsWith("You feel"))
-            {
+            {                
                 drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.FirstText").Value);
                 drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.SecondText").Value, true);
                 drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, SpiritSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.ThirdText").Value);

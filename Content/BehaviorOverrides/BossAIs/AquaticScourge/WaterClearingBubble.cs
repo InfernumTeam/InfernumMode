@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CalamityMod.DataStructures;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;

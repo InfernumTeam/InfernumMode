@@ -1,5 +1,4 @@
-﻿using CalamityMod.DataStructures;
-using CalamityMod.Sounds;
+﻿using CalamityMod.Sounds;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;

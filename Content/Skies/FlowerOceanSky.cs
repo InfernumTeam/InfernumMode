@@ -289,7 +289,7 @@ namespace InfernumMode.Content.Skies
 
         private void DrawCinders(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
-            int maxCinders = InfernumConfig.Instance.ReducedGraphicsConfig ? 120 : 240;
+            int maxCinders = InfernumConfig.Instance.ReducedGraphicsConfig ?  120 : 240;
 
             // Randomly spawn cinders.
             if (Main.rand.NextBool(5) && Cinders.Count < maxCinders)

@@ -25,7 +25,7 @@ namespace InfernumMode.Core.Balancing
 {
     // This ought to be ported, but at this point I've had enough.
     public static class BalancingChangesManager
-    {
+    {       
         internal static List<NPCBalancingChange> NPCSpecificBalancingChanges;
 
         public const float AdrenalineChargeTimeFactor = 1.6f;
@@ -96,7 +96,7 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCType<ProfanedGuardianDefender>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
                 new NPCBalancingChange(NPCType<ProfanedGuardianHealer>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
                 new NPCBalancingChange(NPCType<HealerShieldCrystal>(), Do(new ClassResistBalancingRule(0.654424808f, ClassType.Summon))),
-
+                
                 // Storm weaver.
                 new NPCBalancingChange(NPCType<StormWeaverBody>(), Do(new PierceResistBalancingRule(0.4f))),
 

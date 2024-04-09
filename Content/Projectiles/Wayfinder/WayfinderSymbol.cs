@@ -25,7 +25,7 @@ namespace InfernumMode.Content.Projectiles.Wayfinder
         public static Color[] Colors =>
         [
             // Light yellow
-            new Color(255, 255, 150),
+            new Color (255 ,255 ,150),
             // Golden
             new Color(255, 191, 73),
             // Orange

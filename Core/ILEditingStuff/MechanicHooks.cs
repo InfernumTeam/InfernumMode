@@ -145,7 +145,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 return orig(mp);
 
             float adrenalineBoost = BalancingChangesManager.AdrenalineDamageBoost;
-
+            
             if (mp.adrenalineBoostOne)
                 adrenalineBoost += BalancingChangesManager.AdrenalineDamagePerBooster;
             if (mp.adrenalineBoostTwo)
@@ -474,7 +474,7 @@ namespace InfernumMode.Core.ILEditingStuff
             float shieldScale = sealocketForcefieldOpacity.Value * 0.3f;
             Vector2 shieldSize = Vector2.One * shieldScale * 512f;
             Rectangle shaderArea = Utils.CenteredRectangle(PlayerForcefieldTarget.Target.Size(), shieldSize);
-
+            
             if (sealocketForcefieldOpacity.Value >= 0.01f && forcefieldDissipationInterpolant.Value < 0.99f)
                 ForcefieldShader?.Apply(null, new(PlayerForcefieldTarget.Target, Vector2.Zero, shaderArea, Color.White));
             Main.spriteBatch.Draw(PlayerForcefieldTarget.Target, Main.LocalPlayer.Center - Main.screenPosition, null, Color.White, 0f, PlayerForcefieldTarget.Target.Size() * 0.5f, 1f, 0, 0f);

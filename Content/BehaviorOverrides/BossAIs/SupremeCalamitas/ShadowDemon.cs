@@ -473,7 +473,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SpriteEffects direction = Math.Cos(Heads[i].Rotation) > 0f ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
                 Main.spriteBatch.Draw(backTexture, drawPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
-                Main.spriteBatch.Draw(auraTexture, drawPosition, frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
+                Main.spriteBatch.Draw(auraTexture, drawPosition , frame, Color.White, Heads[i].Rotation, origin, headScale, direction, 0);
             }
         }
 

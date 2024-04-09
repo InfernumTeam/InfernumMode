@@ -42,12 +42,12 @@ namespace InfernumMode.Assets.BossTextures
 
         public override void Load()
         {
-            DesertScourgeBody = ModContent.Request<Texture2D>($"{BasePath}DesertScourge/DesertScourgeBody");
-            DesertScourgeHead = ModContent.Request<Texture2D>($"{BasePath}DesertScourge/DesertScourgeHead");
-            DesertScourgeTail = ModContent.Request<Texture2D>($"{BasePath}DesertScourge/DesertScourgeTail");
-            SlimeGodCore = ModContent.Request<Texture2D>($"{BasePath}SlimeGod/SlimeGodCore");
-            CrimulanPaladin = ModContent.Request<Texture2D>($"{BasePath}SlimeGod/CrimulanPaladin");
-            EbonianPaladin = ModContent.Request<Texture2D>($"{BasePath}SlimeGod/EbonianPaladin");
+            DesertScourgeBody = ModContent.Request<Texture2D>($"{BasePath}/DesertScourge/DesertScourgeBody");
+            DesertScourgeHead = ModContent.Request<Texture2D>($"{BasePath}/DesertScourge/DesertScourgeHead");
+            DesertScourgeTail = ModContent.Request<Texture2D>($"{BasePath}/DesertScourge/DesertScourgeTail");
+            SlimeGodCore = ModContent.Request<Texture2D>($"{BasePath}/SlimeGod/SlimeGodCore");
+            CrimulanPaladin = ModContent.Request<Texture2D>($"{BasePath}/SlimeGod/CrimulanPaladin");
+            EbonianPaladin = ModContent.Request<Texture2D>($"{BasePath}/SlimeGod/EbonianPaladin");
         }
 
         public override void Unload()

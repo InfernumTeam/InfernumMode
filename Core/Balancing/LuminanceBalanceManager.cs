@@ -77,17 +77,19 @@ namespace InfernumMode.Core.Balancing
             return value;
         }
 
-        private static NPCHPBalancingChange CreateBaseChange(int npcType, int hp) => new(npcType, hp, InfernumModeBasePriority, InfernumModeCondition);
+        private static int AccountForExpertHP(int hp) => (int)(hp - (hp * 0.375f));
 
-        private static NPCHPBalancingChange CreateBossRushChange(int npcType, int hp) => new(npcType, hp, InfernumModeBasePriority, InfernumModeBossRushCondition);
+        private static NPCHPBalancingChange CreateBaseChange(int npcType, int hp) => new(npcType, AccountForExpertHP(hp), InfernumModeBasePriority, InfernumModeCondition);
+
+        private static NPCHPBalancingChange CreateBossRushChange(int npcType, int hp) => new(npcType, AccountForExpertHP(hp), InfernumModeBasePriority, InfernumModeBossRushCondition);
 
         public override IEnumerable<NPCHPBalancingChange> GetNPCHPBalancingChanges()
         {
             #region Base Infernum HP
             yield return CreateBaseChange(ModContent.NPCType<KingSlimeJewel>(), 2000);
             yield return CreateBaseChange(ModContent.NPCType<DesertScourgeHead>(), 7200);
-            yield return new(ModContent.NPCType<GiantClam>(), 4100, InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && !Main.hardMode);
-            yield return new(ModContent.NPCType<GiantClam>(), 16200, InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && Main.hardMode);
+            yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP(4100), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && !Main.hardMode);
+            yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP(16200), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && Main.hardMode);
             yield return CreateBaseChange(NPCID.KingSlime, 4200);
             yield return CreateBaseChange(NPCID.EyeofCthulhu, 6100);
             yield return CreateBaseChange(NPCID.BrainofCthulhu, 9389);
@@ -115,38 +117,38 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBaseChange(NPCID.QueenSlimeBoss, 30000);
 
             #region Mech Bosses
-            yield return new NPCHPBalancingChange(NPCID.Spazmatism, (int)(29950 * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Spazmatism, (int)(29950 * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Spazmatism, 29950, InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP((int)(29950 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.Retinazer, (int)(29950 * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Retinazer, (int)(29950 * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Retinazer, 29950, InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP((int)(29950 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, (int)(28000 * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, (int)(28000 * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, 28000, InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP((int)(28000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP((int)(28000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP(28000), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.PrimeVice, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeVice, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeVice, PrimeHeadBehaviorOverride.BaseCollectiveCannonHP, InfernumModeBasePriority, InfernumFinalMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, PrimeHeadBehaviorOverride.BaseCollectiveCannonHP, InfernumModeBasePriority, InfernumFinalMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, PrimeHeadBehaviorOverride.BaseCollectiveCannonHP, InfernumModeBasePriority, InfernumFinalMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, (int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, PrimeHeadBehaviorOverride.BaseCollectiveCannonHP, InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, (int)(111000 * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, (int)(111000 * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, 111000, InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP((int)(111000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP((int)(111000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP(111000), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.Probe, (int)(700 * 0.8f), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Probe, (int)(700 * 0.9f), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Probe, 700, InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP((int)(700 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP((int)(700 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP(700), InfernumModeBasePriority, InfernumFinalMechCondition);
             #endregion
 
             yield return CreateBaseChange(ModContent.NPCType<BrimstoneElemental>(), 85515);

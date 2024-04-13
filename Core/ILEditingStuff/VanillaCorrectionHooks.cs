@@ -754,7 +754,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         void IExistingDetourProvider.Subscribe() => On_NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
 
-        void IExistingDetourProvider.Unsubscribe() => On_NPC.SpawnOnPlayer += OptionallyDisableKSSpawn;
+        void IExistingDetourProvider.Unsubscribe() => On_NPC.SpawnOnPlayer -= OptionallyDisableKSSpawn;
 
         private void OptionallyDisableKSSpawn(On_NPC.orig_SpawnOnPlayer orig, int plr, int Type)
         {

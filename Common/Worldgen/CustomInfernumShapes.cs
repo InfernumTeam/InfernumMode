@@ -6,11 +6,9 @@ namespace InfernumMode.Common.Worldgen
 {
     public class CustomInfernumShapes
     {
-        public class HalfCircle : GenShape
+        public class HalfCircle(int radius) : GenShape
         {
-            private readonly int radius;
-
-            public HalfCircle(int radius) => this.radius = radius;
+            private readonly int radius = radius;
 
             public override bool Perform(Point origin, GenAction action)
             {

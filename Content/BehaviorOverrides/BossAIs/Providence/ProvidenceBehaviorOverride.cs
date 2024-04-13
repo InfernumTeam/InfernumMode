@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     public class ProvidenceBehaviorOverride : NPCBehaviorOverride
     {
         #region Structures
-        public struct ProvidenceAttackSection(SongSection section, ProvidenceBehaviorOverride.ProvidenceAttackType attackType)
+        public struct ProvidenceAttackSection(SongSection section, ProvidenceAttackType attackType)
         {
             public SongSection Section
             {
@@ -63,7 +63,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             public readonly int EndingTime => Section.EndInFrames;
         }
 
-        public struct ProvidenceAttackInformation(int localTimer, int localDuration, ProvidenceBehaviorOverride.ProvidenceAttackType attack)
+        public struct ProvidenceAttackInformation(int localTimer, int localDuration, ProvidenceAttackType attack)
         {
             public int LocalAttackTimer
             {

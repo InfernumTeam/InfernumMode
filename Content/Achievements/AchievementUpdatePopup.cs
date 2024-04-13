@@ -12,10 +12,10 @@ using Terraria.UI;
 
 namespace InfernumMode.Content.Achievements
 {
-    public class AchievementUpdatePopup : IInGameNotification
+    public class AchievementUpdatePopup(Achievement achievement) : IInGameNotification
     {
         #region Fields
-        private int IngameDisplayTimeLeft;
+        private int IngameDisplayTimeLeft = 300;
 
         private float Scale
         {
@@ -44,27 +44,18 @@ namespace InfernumMode.Content.Achievements
 
         public bool ShouldBeRemoved { get; private set; }
 
-        public Achievement Achievement { get; private set; }
+        public Achievement Achievement { get; private set; } = achievement;
 
-        private Rectangle AchievementIconFrame;
+        private Rectangle AchievementIconFrame = new Rectangle(66, achievement.PositionInMainList * 66, 64, 64);
 
         public object CreationObject { get; private set; }
 
-        private readonly Asset<Texture2D> AchievementTexture;
+        private readonly Asset<Texture2D> AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
 
-        private readonly Asset<Texture2D> AchievementBorderTexture;
+        private readonly Asset<Texture2D> AchievementBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad);
 
         #endregion
-
         #region Methods
-        public AchievementUpdatePopup(Achievement achievement)
-        {
-            Achievement = achievement;
-            IngameDisplayTimeLeft = 300;
-            AchievementIconFrame = new Rectangle(66, achievement.PositionInMainList * 66, 64, 64);
-            AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
-            AchievementBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad);
-        }
 
         public void Update()
         {

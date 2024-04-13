@@ -6,15 +6,15 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
     internal class GetInfernumActiveModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
-        {
-            get
-            {
-                yield return "GetInfernumActive";
-            }
-        }
+        public override IEnumerable<string> GetCallCommands()
+		{
+			yield return "GetInfernumActive";
+		}
 
-        public override IEnumerable<Type> InputTypes => null;
+        public override IEnumerable<Type> GetInputTypes()
+        {
+            return null;
+        }
 
         protected override object SafeProcess(params object[] argsWithoutCommand) => InfernumMode.CanUseCustomAIs;
     }

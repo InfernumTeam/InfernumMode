@@ -6,11 +6,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class DeusScreenShaderData : ScreenShaderData
+    public class DeusScreenShaderData(string passName) : ScreenShaderData(passName)
     {
         private int BossIndex;
-
-        public DeusScreenShaderData(string passName) : base(passName) { }
 
         private void UpdatePIndex()
         {

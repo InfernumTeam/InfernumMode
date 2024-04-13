@@ -4,43 +4,31 @@ using Terraria;
 
 namespace InfernumMode.Common.Graphics.Drawers.SceneDrawers
 {
-    public abstract class BaseSceneObject
+    public abstract class BaseSceneObject(Vector2 position, Vector2 velocity, Vector2 scale, int lifetime, float depth, float rotation, float rotationSpeed)
     {
-        public Vector2 Position;
+        public Vector2 Position = position;
 
-        public Vector2 Velocity;
+        public Vector2 Velocity = velocity;
 
-        public Vector2 Scale;
+        public Vector2 Scale = scale;
 
         public int Variant;
 
         public int Timer;
 
-        public int Lifetime;
+        public int Lifetime = lifetime;
 
-        public float Rotation;
+        public float Rotation = rotation;
 
-        public float RotationSpeed;
+        public float RotationSpeed = rotationSpeed;
 
-        public float RandomSeed;
+        public float RandomSeed = Main.rand.NextFloat();
 
-        public float Depth;
+        public float Depth = depth;
 
         public float LifetimeRatio => (float)Timer / Lifetime;
 
         public virtual bool ShouldKill => LifetimeRatio >= 1f;
-
-        public BaseSceneObject(Vector2 position, Vector2 velocity, Vector2 scale, int lifetime, float depth, float rotation, float rotationSpeed)
-        {
-            Position = position;
-            Velocity = velocity;
-            Scale = scale;
-            Lifetime = lifetime;
-            Rotation = rotation;
-            RotationSpeed = rotationSpeed;
-            RandomSeed = Main.rand.NextFloat();
-            Depth = depth;
-        }
 
         public void Update()
         {

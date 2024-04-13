@@ -14,31 +14,21 @@ namespace InfernumMode.Common.BaseEntities
     public abstract class BasePulseRingProjectile : ModProjectile
     {
         #region Structs
-        public struct PulseParameterData
+        public struct PulseParameterData(float noiseZoom, float noiseSpeed, float noiseFactor, float brightnessFactor, float thickness, float innerNoiseFactor)
         {
-            public float NoiseZoom;
+            public float NoiseZoom = noiseZoom;
 
-            public float NoiseSpeed;
+            public float NoiseSpeed = noiseSpeed;
 
-            public float NoiseFactor;
+            public float NoiseFactor = noiseFactor;
 
-            public float BrightnessFactor;
+            public float BrightnessFactor = brightnessFactor;
 
-            public float Thickness;
+            public float Thickness = thickness;
 
-            public float InnerNoiseFactor;
+            public float InnerNoiseFactor = innerNoiseFactor;
 
             public static PulseParameterData Default => new(10f, 9f, 1.2f, 2.5f, 0.03f, 3.5f);
-
-            public PulseParameterData(float noiseZoom, float noiseSpeed, float noiseFactor, float brightnessFactor, float thickness, float innerNoiseFactor)
-            {
-                NoiseZoom = noiseZoom;
-                NoiseSpeed = noiseSpeed;
-                NoiseFactor = noiseFactor;
-                BrightnessFactor = brightnessFactor;
-                Thickness = thickness;
-                InnerNoiseFactor = innerNoiseFactor;
-            }
         }
         #endregion
 

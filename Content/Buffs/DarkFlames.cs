@@ -49,7 +49,7 @@ namespace InfernumMode.Content.Buffs
                 }
             };
 
-            InfernumPlayer.PreKillEvent += (InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref Terraria.DataStructures.PlayerDeathReason damageSource) =>
+            InfernumPlayer.PreKillEvent += (InfernumPlayer player, double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource) =>
             {
                 if (damage == 10.0 && hitDirection == 0 && damageSource.SourceOtherIndex == 8)
                 {

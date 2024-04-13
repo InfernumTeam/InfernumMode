@@ -5,20 +5,20 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class FishBoid
+    public class FishBoid(int lifetime, float scale, Vector2 position, Vector2 velocity)
     {
         public int Time;
-        public int Lifetime;
-        public float MaxScale;
+        public int Lifetime = lifetime;
+        public float MaxScale = scale;
         public float Scale;
         public float Rotation;
-        public float Depth;
+        public float Depth = Main.rand.Next(1, 4);
         public float Opacity;
         public int CurrentFrame;
-        public Vector2 Position;
-        public Vector2 Velocity;
+        public Vector2 Position = position;
+        public Vector2 Velocity = velocity;
         public Vector2 Acceleration;
-        public Color DrawColor;
+        public Color DrawColor = Color.Lerp(Color.Black, Color.CadetBlue, Main.rand.NextFloat());
 
         public float SeperateCoeffecient = 0.05f;
         public float AlignCoeffecient = 0.05f;
@@ -36,18 +36,6 @@ namespace InfernumMode.Content.Skies
         public const int FrameWidth = 38;
 
         public const int FrameHeight = 28;
-
-        public FishBoid(int lifetime, float scale, Vector2 position, Vector2 velocity)
-        {
-            Lifetime = lifetime;
-            Scale = 0f;
-            MaxScale = scale;
-            Opacity = 0f;
-            Position = position;
-            Velocity = velocity;
-            DrawColor = Color.Lerp(Color.Black, Color.CadetBlue, Main.rand.NextFloat());
-            Depth = Main.rand.Next(1, 4);
-        }
 
         public void Update()
         {

@@ -7,20 +7,14 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
     public class RegisterIntroScreenModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "RegisterIntroScreen";
-            }
+            yield return "RegisterIntroScreen";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(ModCallIntroScreen);
-            }
+            yield return typeof(ModCallIntroScreen);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

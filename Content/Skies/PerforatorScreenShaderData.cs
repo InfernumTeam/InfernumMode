@@ -6,14 +6,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class PerforatorScreenShaderData : ScreenShaderData
+    public class PerforatorScreenShaderData(string passName) : ScreenShaderData(passName)
     {
         private int HiveIndex;
-
-        public PerforatorScreenShaderData(string passName)
-            : base(passName)
-        {
-        }
 
         private void UpdatePIndex()
         {

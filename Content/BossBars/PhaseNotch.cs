@@ -9,31 +9,19 @@ namespace InfernumMode.Content.BossBars
 {
     public class PhaseNotch
     {
-        public class PhaseNotchSparkle
+        public class PhaseNotchSparkle(Vector2 position, Vector2 velocity)
         {
             public int Time;
-            public int Lifetime;
-            public Vector2 Position;
-            public Vector2 Velocity;
+            public int Lifetime = Main.rand.Next(30, 90);
+            public Vector2 Position = position;
+            public Vector2 Velocity = velocity;
             public float Scale;
-            public float MaxScale;
-            public float Rotation;
-            public float RotationSpeed;
-            public Color DrawColor;
+            public float MaxScale = Main.rand.NextFloat(0.4f, 0.7f);
+            public float Rotation = Main.rand.NextFloat(TwoPi);
+            public float RotationSpeed = Main.rand.NextFloat(0.03f, 0.06f);
+            public Color DrawColor = Color.Lerp(Color.Gold, Color.DarkGoldenrod, Main.rand.NextFloat());
 
             public int TimeLeft => Lifetime - Time;
-
-            public PhaseNotchSparkle(Vector2 position, Vector2 velocity)
-            {
-                Position = position;
-                Velocity = velocity;
-                Time = 0;
-                Lifetime = Main.rand.Next(30, 90);
-                MaxScale = Main.rand.NextFloat(0.4f, 0.7f);
-                Rotation = Main.rand.NextFloat(TwoPi);
-                RotationSpeed = Main.rand.NextFloat(0.03f, 0.06f);
-                DrawColor = Color.Lerp(Color.Gold, Color.DarkGoldenrod, Main.rand.NextFloat());
-            }
 
             public void Draw(SpriteBatch spriteBatch)
             {

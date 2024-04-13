@@ -5,14 +5,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class HiveMindScreenShaderData : ScreenShaderData
+    public class HiveMindScreenShaderData(string passName) : ScreenShaderData(passName)
     {
         private int ProvIndex;
-
-        public HiveMindScreenShaderData(string passName)
-            : base(passName)
-        {
-        }
 
         private void UpdatePIndex()
         {

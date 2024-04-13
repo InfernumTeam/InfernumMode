@@ -12,13 +12,13 @@ using Terraria.UI;
 
 namespace InfernumMode.Content.Achievements
 {
-    public class AchievementCompletionPopup : IInGameNotification
+    public class AchievementCompletionPopup(Achievement achievement) : IInGameNotification
     {
         #region Fields
 
-        private readonly string Title;
+        private readonly string Title = achievement.DisplayName.Value;
 
-        private int IngameDisplayTimeLeft;
+        private int IngameDisplayTimeLeft = 300;
 
         private float Scale
         {
@@ -47,26 +47,16 @@ namespace InfernumMode.Content.Achievements
 
         public bool ShouldBeRemoved { get; private set; }
 
-        public object CreationObject { get; private set; }
+        public object CreationObject { get; private set; } = achievement;
 
-        private Rectangle AchievementIconFrame;
+        private Rectangle AchievementIconFrame = new Rectangle(0, achievement.PositionInMainList * 66, 64, 64);
 
-        private readonly Asset<Texture2D> AchievementTexture;
+        private readonly Asset<Texture2D> AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
 
-        private readonly Asset<Texture2D> AchievementBorderTexture;
+        private readonly Asset<Texture2D> AchievementBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad);
 
         #endregion
-
         #region Methods
-        public AchievementCompletionPopup(Achievement achievement)
-        {
-            CreationObject = achievement;
-            IngameDisplayTimeLeft = 300;
-            Title = achievement.DisplayName.Value;
-            AchievementIconFrame = new Rectangle(0, achievement.PositionInMainList * 66, 64, 64);
-            AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
-            AchievementBorderTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/InfernumAchievement_Border", AssetRequestMode.ImmediateLoad);
-        }
 
         public void Update()
         {

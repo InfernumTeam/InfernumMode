@@ -8,22 +8,16 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
     public class RegisterBossBarPhaseInfoModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "RegisterBossBarPhaseInfo";
-            }
+            yield return "RegisterBossBarPhaseInfo";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(int);
-                yield return typeof(List<float>);
-                yield return typeof(Texture2D);
-            }
+            yield return typeof(int);
+            yield return typeof(List<float>);
+            yield return typeof(Texture2D);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

@@ -8,22 +8,16 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
     public class IntroScreenSetupLetterAdditionSoundModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
-        {
-            get
-            {
-                yield return "IntroScreenSetupLetterAdditionSound";
-                yield return "SetupLetterAdditionSound";
-            }
-        }
+        public override IEnumerable<string> GetCallCommands()
+		{
+			yield return "IntroScreenSetupLetterAdditionSound";
+			yield return "SetupLetterAdditionSound";
+		}
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(ModCallIntroScreen);
-                yield return typeof(Func<SoundStyle>);
-            }
+            yield return typeof(ModCallIntroScreen);
+            yield return typeof(Func<SoundStyle>);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

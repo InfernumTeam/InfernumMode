@@ -10,21 +10,15 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
     // This doesn't really do anything with the tracked music disabled but, oh well.
     public class BopHeadToMusicModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "BopHeadToMusic";
-            }
+            yield return "BopHeadToMusic";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(Player);
-                yield return typeof(float);
-            }
+            yield return typeof(Player);
+            yield return typeof(float);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

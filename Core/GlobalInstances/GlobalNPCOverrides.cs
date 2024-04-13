@@ -135,13 +135,6 @@ namespace InfernumMode.Core.GlobalInstances
         public override void SetStaticDefaults()
         {
             NPCID.Sets.BossBestiaryPriority.Add(ModContent.NPCType<GreatSandShark>());
-            Luminance.Core.Globals.LuminanceGlobalNPC.OnHPBalance += OnHPBalance;
-        }
-
-        private void OnHPBalance(NPC npc, int maxHP)
-        {
-            if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
-                BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
         }
 
         public override bool PreAI(NPC npc)

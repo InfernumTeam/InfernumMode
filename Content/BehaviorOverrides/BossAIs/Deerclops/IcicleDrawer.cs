@@ -15,21 +15,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 {
     public class IcicleDrawer
     {
-        public class Branch
+        public class Branch(BezierCurve curve, Vector2 end, float length, float direction, float startWidth, float endWidth, Branch previousBranch = null)
         {
-            public BezierCurve Curve;
+            public BezierCurve Curve = curve;
 
-            public Vector2 EndOfCurve;
+            public Vector2 EndOfCurve = end;
 
-            public float Direction;
+            public float Direction = direction;
 
-            public float CurveLength;
+            public float CurveLength = length;
 
-            public float StartingWidth;
+            public float StartingWidth = startWidth;
 
-            public float EndingWidth;
+            public float EndingWidth = endWidth;
 
-            public Branch PreviousBranch;
+            public Branch PreviousBranch = previousBranch;
 
             public int Generation
             {
@@ -45,17 +45,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
 
                     return generation;
                 }
-            }
-
-            public Branch(BezierCurve curve, Vector2 end, float length, float direction, float startWidth, float endWidth, Branch previousBranch = null)
-            {
-                Curve = curve;
-                EndOfCurve = end;
-                CurveLength = length;
-                Direction = direction;
-                StartingWidth = startWidth;
-                EndingWidth = endWidth;
-                PreviousBranch = previousBranch;
             }
         }
 

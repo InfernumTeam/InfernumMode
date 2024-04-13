@@ -3,17 +3,11 @@ using Terraria;
 
 namespace InfernumMode.Common.InverseKinematics
 {
-    public class ModifiedCyclicCoordinateDescentUpdateRule : IInverseKinematicsUpdateRule
+    public class ModifiedCyclicCoordinateDescentUpdateRule(float angularOffsetAcceleration, float angularDeviationLenience) : IInverseKinematicsUpdateRule
     {
-        public float AngularOffsetAcceleration;
+        public float AngularOffsetAcceleration = angularOffsetAcceleration;
 
-        public float AngularDeviationLenience;
-
-        public ModifiedCyclicCoordinateDescentUpdateRule(float angularOffsetAcceleration, float angularDeviationLenience)
-        {
-            AngularOffsetAcceleration = angularOffsetAcceleration;
-            AngularDeviationLenience = angularDeviationLenience;
-        }
+        public float AngularDeviationLenience = angularDeviationLenience;
 
         public void Update(LimbCollection limbs, Vector2 destination)
         {

@@ -10,37 +10,25 @@ using Terraria.UI.Chat;
 
 namespace InfernumMode.Content.Credits
 {
-    public class CreditAnimationObject
+    public class CreditAnimationObject(Vector2 velocity, Texture2D[] textures, string header, string names, Color headerColor, bool swapSides, bool baseCredits)
     {
-        public Vector2 Center;
+        public Vector2 Center = new(Main.screenWidth * (swapSides ? 0.7f : 0.3f), Main.screenHeight * 0.5f);
 
-        public Vector2 Velocity;
+        public Vector2 Velocity = velocity;
 
-        public Texture2D[] Textures;
+        public Texture2D[] Textures = textures;
 
-        public string Header;
+        public string Header = header;
 
-        public string Names;
+        public string Names = names;
 
-        public Color HeaderColor;
+        public Color HeaderColor = headerColor;
 
-        public bool SwapSides;
+        public bool SwapSides = swapSides;
 
-        private readonly bool BaseCredits;
+        private readonly bool BaseCredits = baseCredits;
 
         public Vector2 TextCenter => new(Main.screenWidth * (SwapSides ? 0.35f : 0.65f), Center.Y);
-
-        public CreditAnimationObject(Vector2 velocity, Texture2D[] textures, string header, string names, Color headerColor, bool swapSides, bool baseCredits)
-        {
-            Center = new(Main.screenWidth * (swapSides ? 0.7f : 0.3f), Main.screenHeight * 0.5f);
-            Velocity = velocity;
-            Textures = textures;
-            Header = header;
-            Names = names;
-            HeaderColor = headerColor;
-            SwapSides = swapSides;
-            BaseCredits = baseCredits;
-        }
 
         public void DisposeTextures()
         {

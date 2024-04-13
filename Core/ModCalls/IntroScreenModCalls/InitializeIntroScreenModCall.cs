@@ -12,25 +12,19 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
     /// </summary>
     public class InitializeIntroScreenModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
-        {
-            get
-            {
-                yield return "InitializeIntroScreen";
-            }
-        }
+        public override IEnumerable<string> GetCallCommands()
+		{
+			yield return "InitializeIntroScreen";
+		}
 
-        public override IEnumerable<Type> InputTypes
-        {
-            get
-            {
-                yield return typeof(LocalizedText);
-                yield return typeof(int);
-                yield return typeof(bool);
-                yield return typeof(Func<bool>);
-                yield return typeof(Func<float, float, Color>);
-            }
-        }
+        public override IEnumerable<Type> GetInputTypes()
+		{
+			yield return typeof(LocalizedText);
+			yield return typeof(int);
+			yield return typeof(bool);
+			yield return typeof(Func<bool>);
+			yield return typeof(Func<float, float, Color>);
+		}
 
         protected override object SafeProcess(params object[] argsWithoutCommand)
         {

@@ -5,22 +5,14 @@ namespace InfernumMode.Common.VerletIntergration
     /// <summary>
     /// Represents a simple verlet point.
     /// </summary>
-    public class VerletSimulatedSegmentInfernum
+    public class VerletSimulatedSegmentInfernum(Vector2 position, Vector2 velocity, bool locked = false)
     {
-        public bool Locked;
+        public bool Locked = locked;
 
-        public Vector2 Position;
+        public Vector2 Position = position;
 
-        public Vector2 OldPosition;
+        public Vector2 OldPosition = position;
 
-        public Vector2 Velocity;
-
-        public VerletSimulatedSegmentInfernum(Vector2 position, Vector2 velocity, bool locked = false)
-        {
-            Locked = locked;
-            Position = position;
-            OldPosition = position;
-            Velocity = velocity;
-        }
+        public Vector2 Velocity = velocity;
     }
 }

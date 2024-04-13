@@ -7,20 +7,14 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
     public class SetInfernumActiveModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "SetInfernumActive";
-            }
+            yield return "SetInfernumActive";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(bool);
-            }
+            yield return typeof(bool);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

@@ -11,39 +11,31 @@ namespace InfernumMode.Core.GlobalInstances.Players
 {
     public class CalShadowHexesPlayer : ModPlayer
     {
-        public class HexStatus
+        public class HexStatus(int buffID, Color hexColor, bool isActive = false, float intensity = 0f)
         {
             public int BuffID
             {
                 get;
                 set;
-            }
+            } = buffID;
 
             public bool IsActive
             {
                 get;
                 set;
-            }
+            } = isActive;
 
             public float Intensity
             {
                 get;
                 set;
-            }
+            } = intensity;
 
             public Color HexColor
             {
                 get;
                 set;
-            }
-
-            public HexStatus(int buffID, Color hexColor, bool isActive = false, float intensity = 0f)
-            {
-                BuffID = buffID;
-                HexColor = hexColor;
-                IsActive = isActive;
-                Intensity = intensity;
-            }
+            } = hexColor;
         }
 
         internal Dictionary<string, HexStatus> HexStatuses = new()

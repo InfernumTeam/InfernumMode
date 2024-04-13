@@ -1074,17 +1074,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
     public class DeleteStupidScreenShadersHook : IExistingDetourProvider, ICustomDetourProvider
     {
-        // This is unideal, should probably add a better method of adding existing and custom detours together, but its not high priority.
-        // This is the only one thats needed it in our excessive hooks, so it's mostly fine.
-        void ILoadable.Load(Mod mod)
-        {
-            Subscribe();
-            ModifyMethods();
-        }
-
-        void ILoadable.Unload() { }
-
-        public void Subscribe() => On_FilterManager.CanCapture += NoScreenShader;
+        void IExistingDetourProvider.Subscribe() => On_FilterManager.CanCapture += NoScreenShader;
 
         void IExistingDetourProvider.Unsubscribe() => On_FilterManager.CanCapture -= NoScreenShader;
 
@@ -1096,7 +1086,7 @@ namespace InfernumMode.Core.ILEditingStuff
             return orig(self);
         }
 
-        public void ModifyMethods()
+        void ICustomDetourProvider.ModifyMethods()
         {
             HookHelper.ModifyMethodWithDetour(typeof(SCalBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), ChangeSCalSkyRequirements);
             HookHelper.ModifyMethodWithDetour(typeof(CalamitasCloneBackgroundScene).GetMethod("SpecialVisuals", Utilities.UniversalBindingFlags), ChangeCalCloneSkyRequirements);

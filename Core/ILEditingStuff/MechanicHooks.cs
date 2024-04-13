@@ -877,7 +877,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
         void IExistingDetourProvider.Unsubscribe() => On_CommonCode.ModifyItemDropFromNPC -= ThrowItemsOut;
 
-        private void ThrowItemsOut(Terraria.GameContent.ItemDropRules.On_CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
+        private void ThrowItemsOut(On_CommonCode.orig_ModifyItemDropFromNPC orig, NPC npc, int itemIndex)
         {
             orig(npc, itemIndex);
             if (npc.type == ModContent.NPCType<AquaticScourgeHead>() && InfernumMode.CanUseCustomAIs)

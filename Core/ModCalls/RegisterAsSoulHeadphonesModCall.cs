@@ -10,20 +10,14 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
     // You really shouldn't be calling this, but go ahead I suppose :3.
     public class RegisterAsSoulHeadphonesModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "RegisterAsSoulHeadphones";
-            }
+            yield return "RegisterAsSoulHeadphones";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(Item);
-            }
+            yield return typeof(Item);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

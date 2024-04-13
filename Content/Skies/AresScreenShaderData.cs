@@ -4,13 +4,8 @@ using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Content.Skies
 {
-    public class AresScreenShaderData : ScreenShaderData
+    public class AresScreenShaderData(string passName) : ScreenShaderData(passName)
     {
-        public AresScreenShaderData(string passName)
-            : base(passName)
-        {
-        }
-
         public override void Apply()
         {
             if (CalamityGlobalNPC.draedonExoMechPrime == -1 || !Main.npc[CalamityGlobalNPC.draedonExoMechPrime].active)

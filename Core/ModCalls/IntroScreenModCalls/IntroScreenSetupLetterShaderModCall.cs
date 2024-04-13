@@ -8,23 +8,17 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
     public class IntroScreenSetupLetterShaderModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "IntroScreenSetupLetterShader";
-                yield return "SetupLetterShader";
-            }
+            yield return "IntroScreenSetupLetterShader";
+            yield return "SetupLetterShader";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(ModCallIntroScreen);
-                yield return typeof(Effect);
-                yield return typeof(Action<Effect>);
-            }
+            yield return typeof(ModCallIntroScreen);
+            yield return typeof(Effect);
+            yield return typeof(Action<Effect>);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

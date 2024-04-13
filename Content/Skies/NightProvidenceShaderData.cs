@@ -4,10 +4,8 @@ using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Content.Skies
 {
-    public class NightProvidenceShaderData : ScreenShaderData
+    public class NightProvidenceShaderData(string passName) : ScreenShaderData(passName)
     {
-        public NightProvidenceShaderData(string passName) : base(passName) { }
-
         public override void Apply()
         {
             UseTargetPosition(Main.LocalPlayer.Center);

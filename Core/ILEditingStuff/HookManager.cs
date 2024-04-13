@@ -389,10 +389,6 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => HookHelper.ILEventRemove();
         }
 
-        internal static MethodInfo SetDefaultMethod => typeof(NPCLoader).GetMethod("SetDefaults", Utilities.UniversalBindingFlags);
-
-        public delegate void Orig_SetDefaultDelegate(NPC npc, bool createModNPC);
-
         internal static MethodInfo FindFrameMethod => typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_FindFrameDelegate(NPC npc, int frameHeight);

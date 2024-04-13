@@ -15,20 +15,14 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
     public class CanPlayMusicForNPCModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "CanPlayMusicForNPC";
-            }
+            yield return "CanPlayMusicForNPC";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(int);
-            }
+            yield return typeof(int);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

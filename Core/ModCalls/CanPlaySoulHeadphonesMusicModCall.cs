@@ -8,21 +8,15 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
 {
     public class CanPlaySoulHeadphonesMusicModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
-        {
-            get
-            {
-                yield return "CanPlaySoulHeadphonesMusic";
-            }
-        }
+        public override IEnumerable<string> GetCallCommands()
+		{
+			yield return "CanPlaySoulHeadphonesMusic";
+		}
 
-        public override IEnumerable<Type> InputTypes
-        {
-            get
-            {
-                yield return typeof(string);
-            }
-        }
+        public override IEnumerable<Type> GetInputTypes()
+		{
+			yield return typeof(string);
+		}
 
         protected override object SafeProcess(params object[] argsWithoutCommand)
         {

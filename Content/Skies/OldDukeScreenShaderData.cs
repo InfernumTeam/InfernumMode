@@ -6,14 +6,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class OldDukeScreenShaderData : ScreenShaderData
+    public class OldDukeScreenShaderData(string passName) : ScreenShaderData(passName)
     {
         private int OldDukeIndex;
-
-        public OldDukeScreenShaderData(string passName)
-            : base(passName)
-        {
-        }
 
         private void UpdatePIndex()
         {

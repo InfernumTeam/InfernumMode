@@ -22,30 +22,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
 {
     public class RavagerBodyBehaviorOverride : NPCBehaviorOverride
     {
-        public struct RavagerPhaseInfo
+        public struct RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
         {
-            public bool HandsAreAlive;
+            public bool HandsAreAlive = hands;
 
-            public bool LegsAreAlive;
+            public bool LegsAreAlive = legs;
 
-            public bool HeadIsAttached;
+            public bool HeadIsAttached = head;
 
-            public bool FreeHeadExists;
+            public bool FreeHeadExists = freeHead;
 
-            public float LifeRatio;
+            public float LifeRatio = lifeRatio;
 
             public readonly bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
 
             public static bool ShouldBeBuffed => false;
-
-            public RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
-            {
-                HandsAreAlive = hands;
-                LegsAreAlive = legs;
-                HeadIsAttached = head;
-                FreeHeadExists = freeHead;
-                LifeRatio = lifeRatio;
-            }
         }
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerBody>();

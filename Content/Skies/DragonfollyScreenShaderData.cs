@@ -5,13 +5,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class DragonfollyScreenShaderData : ScreenShaderData
+    public class DragonfollyScreenShaderData(string passName) : ScreenShaderData(passName)
     {
         public int BirdbrainIndex;
-
-        public DragonfollyScreenShaderData(string passName) : base(passName)
-        {
-        }
 
         private void UpdatePIndex()
         {

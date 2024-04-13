@@ -4,25 +4,19 @@ using Terraria;
 
 namespace InfernumMode.Core.Balancing
 {
-    public class PierceResistBalancingRule : IBalancingRule
+    public class PierceResistBalancingRule(float damageMultiplier) : IBalancingRule
     {
-        public float DamageMultiplier;
-        public PierceResistBalancingRule(float damageMultiplier) => DamageMultiplier = damageMultiplier;
+        public float DamageMultiplier = damageMultiplier;
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext) => hitContext.Pierce is > 1 or (-1);
 
         public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
-    public class ProjectileResistBalancingRule : IBalancingRule
+    public class ProjectileResistBalancingRule(float damageMultiplier, params int[] projTypes) : IBalancingRule
     {
-        public float DamageMultiplier;
-        public int[] ApplicableProjectileTypes;
-        public ProjectileResistBalancingRule(float damageMultiplier, params int[] projTypes)
-        {
-            DamageMultiplier = damageMultiplier;
-            ApplicableProjectileTypes = projTypes;
-        }
+        public float DamageMultiplier = damageMultiplier;
+        public int[] ApplicableProjectileTypes = projTypes;
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext)
         {
@@ -37,17 +31,11 @@ namespace InfernumMode.Core.Balancing
         public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
-    public class ClassResistBalancingRule : IBalancingRule
+    public class ClassResistBalancingRule(float damageMultiplier, ClassType classType) : IBalancingRule
     {
-        public float DamageMultiplier;
+        public float DamageMultiplier = damageMultiplier;
 
-        public ClassType ApplicableClass;
-
-        public ClassResistBalancingRule(float damageMultiplier, ClassType classType)
-        {
-            DamageMultiplier = damageMultiplier;
-            ApplicableClass = classType;
-        }
+        public ClassType ApplicableClass = classType;
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext)
         {
@@ -57,15 +45,10 @@ namespace InfernumMode.Core.Balancing
         public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
-    public class StealthStrikeBalancingRule : IBalancingRule
+    public class StealthStrikeBalancingRule(float damageMultiplier, params int[] projTypes) : IBalancingRule
     {
-        public float DamageMultiplier;
-        public int[] ApplicableProjectileTypes;
-        public StealthStrikeBalancingRule(float damageMultiplier, params int[] projTypes)
-        {
-            DamageMultiplier = damageMultiplier;
-            ApplicableProjectileTypes = projTypes;
-        }
+        public float DamageMultiplier = damageMultiplier;
+        public int[] ApplicableProjectileTypes = projTypes;
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext)
         {
@@ -80,13 +63,9 @@ namespace InfernumMode.Core.Balancing
         public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
-    public class TrueMeleeBalancingRule : IBalancingRule
+    public class TrueMeleeBalancingRule(float damageMultiplier) : IBalancingRule
     {
-        public float DamageMultiplier;
-        public TrueMeleeBalancingRule(float damageMultiplier)
-        {
-            DamageMultiplier = damageMultiplier;
-        }
+        public float DamageMultiplier = damageMultiplier;
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext)
         {
@@ -99,14 +78,10 @@ namespace InfernumMode.Core.Balancing
         public void ApplyBalancingChange(NPC npc, ref NPC.HitModifiers modifiers) => modifiers.SourceDamage *= DamageMultiplier;
     }
 
-    public class NPCSpecificRequirementBalancingRule : IBalancingRule
+    public class NPCSpecificRequirementBalancingRule(NPCSpecificRequirementBalancingRule.NPCApplicationRequirement npcApplicationRequirement) : IBalancingRule
     {
-        public NPCApplicationRequirement Requirement;
+        public NPCApplicationRequirement Requirement = npcApplicationRequirement;
         public delegate bool NPCApplicationRequirement(NPC npc);
-        public NPCSpecificRequirementBalancingRule(NPCApplicationRequirement npcApplicationRequirement)
-        {
-            Requirement = npcApplicationRequirement;
-        }
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext) => Requirement(npc);
 

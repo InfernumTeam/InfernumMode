@@ -3,13 +3,8 @@ using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.Content.Skies
 {
-    public class TwinsScreenShaderData : ScreenShaderData
+    public class TwinsScreenShaderData(string passName) : ScreenShaderData(passName)
     {
-        public TwinsScreenShaderData(string passName)
-            : base(passName)
-        {
-        }
-
         public override void Apply()
         {
             UseTargetPosition(Main.LocalPlayer.Center);

@@ -6,14 +6,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Skies
 {
-    public class CalShadowScreenShaderData : ScreenShaderData
+    public class CalShadowScreenShaderData(string passName) : ScreenShaderData(passName)
     {
         private int CalCloneIndex;
-
-        public CalShadowScreenShaderData(string passName)
-            : base(passName)
-        {
-        }
 
         private void UpdatePIndex()
         {

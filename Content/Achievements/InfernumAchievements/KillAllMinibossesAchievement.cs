@@ -13,23 +13,15 @@ namespace InfernumMode.Content.Achievements.InfernumAchievements
 {
     public class KillAllMinibossesAchievement : Achievement
     {
-        public class MinibossData
+        public class MinibossData(Minibosses miniboss, int id)
         {
-            public Minibosses Miniboss;
+            public Minibosses Miniboss = miniboss;
 
-            public int ID;
+            public int ID = id;
 
-            public string DisplayName;
+            public string DisplayName = Utilities.GetNPCFullNameFromID(id);
 
             public bool Downed;
-
-            public MinibossData(Minibosses miniboss, int id)
-            {
-                Miniboss = miniboss;
-                ID = id;
-                DisplayName = Utilities.GetNPCFullNameFromID(id);
-                Downed = false;
-            }
         }
 
         #region Enumerations

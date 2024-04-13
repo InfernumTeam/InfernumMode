@@ -1,6 +1,9 @@
-﻿using CalamityMod.NPCs;
+﻿using System.Linq;
+using CalamityMod.NPCs;
+using CalamityMod.UI;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Balancing;
 using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,42 +17,49 @@ namespace InfernumMode.Core.ILEditingStuff
     {
         void ICustomDetourProvider.ModifyMethods()
         {
-            HookHelper.ModifyMethodWithDetour(SetDefaultMethod, OverrideSystemHooks.SetDefaultDetourMethod);
             HookHelper.ModifyMethodWithDetour(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
             HookHelper.ModifyMethodWithDetour(CalPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
             HookHelper.ModifyMethodWithDetour(CalGlobalNPCPredrawMethod, OverrideSystemHooks.CalGlobalNPCPredrawDetourMethod);
+            InternalBalancingManager.AfterHPBalancingEvent += InternalBalancingManager_AfterHPBalancingEvent;
+        }
+
+        // This event is called after orig in NPCLoader.SetDefaults(NPC npc, bool createModNPC) and luminances hp balancing, making it the perfect place to run our own non overriden defaults afterwards.
+        private static void InternalBalancingManager_AfterHPBalancingEvent(NPC npc)
+        {
+            // This exists to only set them once at the end, as opposed to inside orig as well.
+            GlobalNPCOverrides.ShouldSetDefaults = true;
+
+            if (InfernumMode.CanUseCustomAIs && npc.TryGetGlobalNPC<GlobalNPCOverrides>(out var global))
+                global.SetDefaults(npc);
+
+            GlobalNPCOverrides.ShouldSetDefaults = false;
+
+            if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
+                BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
         }
 
         // Don't let Calamity's PreAI run on vanilla bosses to avoid ai conflicts.
         internal static bool CalPreAIDetourMethod(Orig_CalPreAIDelegate orig, CalamityGlobalNPC self, NPC npc)
         {
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type].HasPreAI && npc.ModNPC == null)
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+
+            if (InfernumMode.CanUseCustomAIs && container is not null && container.HasPreAI && npc.ModNPC == null)
                 return false;
 
             return orig(self, npc);
         }
 
-        // Sets Infernum's defaults last.
-        internal static void SetDefaultDetourMethod(Orig_SetDefaultDelegate orig, NPC npc, bool createModNPC)
-        {
-            orig(npc, createModNPC);
-
-            // This exists to only set them once at the end, as opposed to inside orig as well.
-            GlobalNPCOverrides.ShouldSetDefaults = true;
-
-            if (InfernumMode.CanUseCustomAIs)
-                npc.Infernum().SetDefaults(npc);
-
-            GlobalNPCOverrides.ShouldSetDefaults = false;
-        }
-
         // Only run Infernum's findframe if it exists.
         internal static void FindFrameDetourMethod(Orig_FindFrameDelegate orig, NPC npc, int frameHeight)
         {
-            if (InfernumMode.CanUseCustomAIs && NPCBehaviorOverride.BehaviorOverrideSet[npc.type].HasFindFrame && !npc.IsABestiaryIconDummy)
+            var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
+            if (InfernumMode.CanUseCustomAIs && container is not null && container.HasFindFrame && !npc.IsABestiaryIconDummy)
             {
-                npc.Infernum().FindFrame(npc, frameHeight);
-                return;
+                if (npc.TryGetGlobalNPC<GlobalNPCOverrides>(out var global))
+                {
+                    global.FindFrame(npc, frameHeight);
+                    return;
+                }
             }
 
             orig(npc, frameHeight);

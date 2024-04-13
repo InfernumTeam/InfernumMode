@@ -5,34 +5,22 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.MainMenu
 {
-    public class GlowingEmber
+    public class GlowingEmber(Vector2 position, Vector2 velocity, Color drawColor, float rotation, float rotationSpeed, float maxScale, int lifetime)
     {
         public int Time;
-        public int Lifetime;
-        public float MaxScale;
+        public int Lifetime = lifetime;
+        public float MaxScale = maxScale;
         public float Scale;
-        public float Rotation;
-        public float RotationSpeed;
-        public Vector2 Position;
-        public Vector2 Velocity;
-        public Vector2 DistortScale;
-        public Color DrawColor;
+        public float Rotation = rotation;
+        public float RotationSpeed = rotationSpeed;
+        public Vector2 Position = position;
+        public Vector2 Velocity = velocity;
+        public Vector2 DistortScale = new(Main.rand.NextFloat(0.8f, 1.6f), Main.rand.NextFloat(0.8f, 1.6f));
+        public Color DrawColor = drawColor;
 
         public static Texture2D BloomTexture => ModContent.Request<Texture2D>("CalamityMod/Particles/BloomCircle").Value;
 
         public float TimeLeft => Lifetime - Time;
-
-        public GlowingEmber(Vector2 position, Vector2 velocity, Color drawColor, float rotation, float rotationSpeed, float maxScale, int lifetime)
-        {
-            Position = position;
-            Velocity = velocity;
-            DrawColor = drawColor;
-            Rotation = rotation;
-            RotationSpeed = rotationSpeed;
-            MaxScale = maxScale;
-            Lifetime = lifetime;
-            DistortScale = new(Main.rand.NextFloat(0.8f, 1.6f), Main.rand.NextFloat(0.8f, 1.6f));
-        }
 
         public void Update()
         {

@@ -22,7 +22,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override Color EdgeColor => Color.AliceBlue;
 
-        public override string MetaballAtlasTextureToUse => throw new System.NotImplementedException();
+        public override string MetaballAtlasTextureToUse => throw new NotImplementedException();
 
         public override void UpdateParticle(MetaballInstance particle)
         {

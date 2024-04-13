@@ -7,22 +7,16 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
     public class IntroScreenSetupLetterDisplayCompletionRatioModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
-        {
-            get
-            {
-                yield return "IntroScreenSetupLetterDisplayCompletionRatio";
-                yield return "SetupLetterDisplayCompletionRatio";
-            }
-        }
+        public override IEnumerable<string> GetCallCommands()
+		{
+			yield return "IntroScreenSetupLetterDisplayCompletionRatio";
+			yield return "SetupLetterDisplayCompletionRatio";
+		}
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(ModCallIntroScreen);
-                yield return typeof(Func<int, float>);
-            }
+            yield return typeof(ModCallIntroScreen);
+            yield return typeof(Func<int, float>);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

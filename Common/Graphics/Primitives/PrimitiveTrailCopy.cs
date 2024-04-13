@@ -11,11 +11,11 @@ namespace InfernumMode.Common.Graphics.Primitives
     // This is old and crap, but i do not want to port all 254 references of it.
     public class PrimitiveTrailCopy
     {
-        public readonly struct VertexPosition2DColor : IVertexType
+        public readonly struct VertexPosition2DColor(Vector2 position, Color color, Vector2 textureCoordinates) : IVertexType
         {
-            public readonly Vector2 Position;
-            public readonly Color Color;
-            public readonly Vector2 TextureCoordinates;
+            public readonly Vector2 Position = position;
+            public readonly Color Color = color;
+            public readonly Vector2 TextureCoordinates = textureCoordinates;
 
             public readonly VertexDeclaration VertexDeclaration => _vertexDeclaration;
 
@@ -25,13 +25,6 @@ namespace InfernumMode.Common.Graphics.Primitives
                 new VertexElement(8, VertexElementFormat.Color, VertexElementUsage.Color, 0),
                 new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
             ]);
-
-            public VertexPosition2DColor(Vector2 position, Color color, Vector2 textureCoordinates)
-            {
-                Position = position;
-                Color = color;
-                TextureCoordinates = textureCoordinates;
-            }
         }
 
         internal Matrix? PerspectiveMatrixOverride;

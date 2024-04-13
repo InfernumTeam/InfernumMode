@@ -31,25 +31,16 @@ namespace InfernumMode.Content.Skies
 
     public class SCalSkyInfernum : CustomSky
     {
-        public class Cinder
+        public class Cinder(int lifetime, int identity, float depth, Color color, Vector2 startingPosition, Vector2 startingVelocity)
         {
             public int Time;
-            public int Lifetime;
-            public int IdentityIndex;
+            public int Lifetime = lifetime;
+            public int IdentityIndex = identity;
             public float Scale;
-            public float Depth;
-            public Color DrawColor;
-            public Vector2 Velocity;
-            public Vector2 Center;
-            public Cinder(int lifetime, int identity, float depth, Color color, Vector2 startingPosition, Vector2 startingVelocity)
-            {
-                Lifetime = lifetime;
-                IdentityIndex = identity;
-                Depth = depth;
-                DrawColor = color;
-                Center = startingPosition;
-                Velocity = startingVelocity;
-            }
+            public float Depth = depth;
+            public Color DrawColor = color;
+            public Vector2 Velocity = startingVelocity;
+            public Vector2 Center = startingPosition;
         }
 
         private bool isActive;

@@ -7,22 +7,16 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls.IntroScreenModCalls
 {
     public class IntroScreenSetupTextScaleModCall : ModCall
     {
-        public override IEnumerable<string> CallCommands
+        public override IEnumerable<string> GetCallCommands()
         {
-            get
-            {
-                yield return "IntroScreenSetupTextScale";
-                yield return "SetupTextScale";
-            }
+            yield return "IntroScreenSetupTextScale";
+            yield return "SetupTextScale";
         }
 
-        public override IEnumerable<Type> InputTypes
+        public override IEnumerable<Type> GetInputTypes()
         {
-            get
-            {
-                yield return typeof(ModCallIntroScreen);
-                yield return typeof(float);
-            }
+            yield return typeof(ModCallIntroScreen);
+            yield return typeof(float);
         }
 
         protected override object SafeProcess(params object[] argsWithoutCommand)

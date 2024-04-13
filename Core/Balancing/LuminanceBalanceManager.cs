@@ -83,7 +83,6 @@ namespace InfernumMode.Core.Balancing
 
         public override IEnumerable<NPCHPBalancingChange> GetNPCHPBalancingChanges()
         {
-            yield return new NPCHPBalancingChange(NPCID.PossessedArmor, 500, InfernumModeHigherPriority, () => true);
             #region Base Infernum HP
             yield return CreateBaseChange(ModContent.NPCType<KingSlimeJewel>(), 2000);
             yield return CreateBaseChange(ModContent.NPCType<DesertScourgeHead>(), 7200);

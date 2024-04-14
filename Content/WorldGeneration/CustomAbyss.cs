@@ -1344,7 +1344,7 @@ namespace InfernumMode.Content.WorldGeneration
         public static bool InsideOfLayer3HydrothermalZone(Point p)
         {
             int x = p.X;
-            if (x >= Main.maxTilesX / 2)
+            if (WorldGen.generatingWorld && x >= Main.maxTilesX / 2)
                 x = Main.maxTilesX - x;
 
             if (x >= MaxAbyssWidth - WallThickness + 1)

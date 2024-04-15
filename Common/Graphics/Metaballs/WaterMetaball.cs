@@ -20,9 +20,9 @@ namespace InfernumMode.Common.Graphics.Metaballs
             () => ModContent.GetInstance<WaterScene>().MainTarget
         ];
 
-        public override Color EdgeColor => Color.AliceBlue;
+        public override Color EdgeColor => Color.Transparent;
 
-        public override string MetaballAtlasTextureToUse => "InfernumMode.AdditiveMetaball";
+        public override string MetaballAtlasTextureToUse => "InfernumMode.BaseMetaball";
 
         public override void UpdateParticle(MetaballInstance particle)
         {
@@ -53,19 +53,20 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override void PrepareShaderForTarget(int layerIndex)
         {
-            var metaballShader = InfernumEffectsRegistry.BaseMetaballEdgeShader;
+            base.PrepareShaderForTarget(layerIndex);
+            //var metaballShader = InfernumEffectsRegistry.BaseMetaballEdgeShader;
 
-            // Supply shader parameter values.
-            metaballShader.TrySetParameter("rtSize", Main.ScreenSize.ToVector2());
-            metaballShader.TrySetParameter("layerOffset", Vector2.Zero);
-            metaballShader.TrySetParameter("mainColor", EdgeColor.ToVector4());
-            metaballShader.TrySetParameter("edgeColor", EdgeColor.ToVector4());
-            metaballShader.TrySetParameter("useOverlayImage", true);
-            metaballShader.TrySetParameter("threshold", 0.1f);
-            metaballShader.TrySetParameter("singleFrameScreenOffset", (Main.screenLastPosition - Main.screenPosition) / Main.ScreenSize.ToVector2());
-            metaballShader.TrySetParameter("layerOffset", Main.screenPosition / Main.ScreenSize.ToVector2() + CalculateManualOffsetForLayer(layerIndex));
-            metaballShader.SetTexture(LayerTargets[0], 1, SamplerState.PointWrap);
-            metaballShader.Apply();
+            //// Supply shader parameter values.
+            //metaballShader.TrySetParameter("rtSize", Main.ScreenSize.ToVector2());
+            //metaballShader.TrySetParameter("layerOffset", Vector2.Zero);
+            //metaballShader.TrySetParameter("mainColor", EdgeColor.ToVector4());
+            //metaballShader.TrySetParameter("edgeColor", EdgeColor.ToVector4());
+            //metaballShader.TrySetParameter("useOverlayImage", true);
+            //metaballShader.TrySetParameter("threshold", 0.1f);
+            //metaballShader.TrySetParameter("singleFrameScreenOffset", (Main.screenLastPosition - Main.screenPosition) / Main.ScreenSize.ToVector2());
+            //metaballShader.TrySetParameter("layerOffset", Main.screenPosition / Main.ScreenSize.ToVector2() + CalculateManualOffsetForLayer(layerIndex));
+            //metaballShader.SetTexture(LayerTargets[0], 1, SamplerState.PointWrap);
+            //metaballShader.Apply();
         }
 
         public override void ExtraDrawing()

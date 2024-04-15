@@ -37,13 +37,13 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override void UpdateParticle(MetaballInstance particle)
         {
-            if (particle.ExtraInfo[0] > 0)
-                particle.Size *= particle.ExtraInfo[0];
-            else
-                particle.Size *= 0.93f;
+            //if (particle.ExtraInfo[0] > 0)
+            //    particle.Size *= particle.ExtraInfo[0];
+            //else
+                particle.Size *= 0.92f;
         }
 
-        public override bool ShouldKillParticle(MetaballInstance particle) => particle.Size <= 2f;
+        public override bool ShouldKillParticle(MetaballInstance particle) => particle.Size <= 1f;
 
         public override void PrepareShaderForTarget(int layerIndex)
         {

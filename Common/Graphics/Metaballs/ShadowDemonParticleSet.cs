@@ -19,9 +19,9 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override Color EdgeColor => Color.Lerp(Color.Fuchsia, Color.Black, 0.7f) * 0.85f;
 
-        public override string MetaballAtlasTextureToUse => "InfernumMode.AdditiveMetaball";
+        public override string MetaballAtlasTextureToUse => "InfernumMode.BaseMetaball";
 
-        public override void UpdateParticle(MetaballInstance particle) => particle.Size *= 0.93f;
+        public override void UpdateParticle(MetaballInstance particle) => particle.Size *= 0.905f;
 
         public override bool ShouldKillParticle(MetaballInstance particle) => particle.Size <= 2f;
 

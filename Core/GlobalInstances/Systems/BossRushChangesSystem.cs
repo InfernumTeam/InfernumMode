@@ -405,6 +405,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public static void HandleTeleports()
         {
+            if (BossRushStage < 0 || BossRushStage > Bosses.Count - 1)
+                return;
+
             Player player = Main.LocalPlayer;
             Vector2? teleportPosition = null;
 

@@ -172,7 +172,7 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBaseChange(ModContent.NPCType<PlaguebringerGoliath>(), 136031);
             yield return CreateBaseChange(ModContent.NPCType<GreatSandShark>(), 107400);
             yield return CreateBaseChange(NPCID.DukeFishron, 100250);
-            yield return CreateBaseChange(NPCID.HallowBoss, 22056);
+            yield return CreateBaseChange(NPCID.HallowBoss, 220056);
             yield return CreateBaseChange(ModContent.NPCType<RavagerHead>(), 18000);
             yield return CreateBaseChange(ModContent.NPCType<DevilFish>(), 5000);
             yield return CreateBaseChange(ModContent.NPCType<Eidolist>(), 20000);

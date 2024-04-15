@@ -5,7 +5,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs.NormalNPCs;
 using CalamityMod.Particles;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Worldgen;
 using InfernumMode.Content.Credits;
@@ -124,7 +123,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
             if (npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
-                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.KingSlime);
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.KingSlimeNinjaTip");
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

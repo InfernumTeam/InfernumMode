@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using CalamityMod;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Worldgen;
-using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -223,7 +221,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                             Utilities.NewProjectileBetter(mouthPosition, sandVelocity, ModContent.ProjectileType<SandBlob>(), SandBlobDamage, 0f);
                         }
                     }
-                    CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Vassal);
 
                     hasLeapedYet = 1f;
                     npc.velocity = new Vector2(npc.spriteDirection * -leapHorizontalSpeed, -leapVerticalSpeed);

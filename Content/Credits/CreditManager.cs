@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Threading;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
@@ -56,18 +55,6 @@ namespace InfernumMode.Content.Credits
             new(0, 148, 75),
             new(246, 188, 49),
             new(243, 165, 5)
-        ];
-
-        private static readonly ScreenCapturer.RecordingBoss[] Bosses =
-        [
-            ScreenCapturer.RecordingBoss.KingSlime,
-            ScreenCapturer.RecordingBoss.WoF,
-            ScreenCapturer.RecordingBoss.Calamitas,
-            ScreenCapturer.RecordingBoss.Vassal,
-            ScreenCapturer.RecordingBoss.Moonlord,
-            ScreenCapturer.RecordingBoss.Provi,
-            ScreenCapturer.RecordingBoss.Draedon,
-            ScreenCapturer.RecordingBoss.SCal
         ];
 
         public static float FinalSceneOpacity
@@ -133,19 +120,6 @@ namespace InfernumMode.Content.Credits
 
         public override void PostUpdateDusts() => UpdateCredits();
 
-        internal static void StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss boss)
-        {
-            if (Main.netMode == NetmodeID.Server || ScreenCapturer.RecordCountdown > 0)
-                return;
-
-            // Only start a recording if one does not exist for this player and boss, to avoid overriding them.
-            if (File.Exists($"{ScreenCapturer.FolderPath}/{ScreenCapturer.GetStringFromBoss(boss)}{ScreenCapturer.FileExtension}"))
-                return;
-
-            ScreenCapturer.CurrentBoss = boss;
-            ScreenCapturer.RecordCountdown = ScreenCapturer.BaseRecordCountdownLength;
-        }
-
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
@@ -173,7 +147,7 @@ namespace InfernumMode.Content.Credits
             if (!CreditsPlaying || ShouldPause())
                 return;
 
-            float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
+            float gifTime = 360f * 3f / 1.5f;
             float disposeTime = 1f;
             float fadeInTime = 60f;
             float fadeOutTime = gifTime - fadeInTime;
@@ -181,7 +155,6 @@ namespace InfernumMode.Content.Credits
             switch (CurrentState)
             {
                 case CreditState.LoadingTextures:
-                    // The textures must be loaded for each gif, however doing them all at once causes major lag. So, it is split up throughout the credits.
                     if (CreditsTimer == 0)
                         Main.RunOnMainThread(() => SetupObjects(0));
 
@@ -198,16 +171,11 @@ namespace InfernumMode.Content.Credits
                         if (CreditGIFs.IndexInRange(ActiveGifIndex))
                             CreditGIFs[ActiveGifIndex]?.Update();
 
-                        // Dispose of the textures partway into the next gif, to ensure that it does not try to do it while they are in use.
                         if (CreditsTimer == disposeTime)
                         {
                             Main.RunOnMainThread(() => SetupObjects(ActiveGifIndex + 1));
                             if (CreditGIFs.IndexInRange(ActiveGifIndex - 1))
-                            {
-                                // Dispose of all the textures.
-                                CreditGIFs[ActiveGifIndex - 1]?.DisposeTextures();
                                 CreditGIFs[ActiveGifIndex - 1] = null;
-                            }
                         }
 
                         if (CreditsTimer >= gifTime)
@@ -248,10 +216,7 @@ namespace InfernumMode.Content.Credits
                     {
                         // Dispose of all the final textures.
                         if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                        {
-                            CreditGIFs[ActiveGifIndex]?.DisposeTextures();
                             CreditGIFs[ActiveGifIndex] = null;
-                        }
                         // Mark the credits as completed.
                         Main.LocalPlayer.Infernum().SetValue<bool>("CreditsHavePlayed", true);
                         CreditsPlaying = false;
@@ -273,7 +238,7 @@ namespace InfernumMode.Content.Credits
 
             if (CurrentState is CreditState.Playing)
             {
-                float gifTime = ScreenCapturer.BaseRecordCountdownLength / 1.5f;
+                float gifTime = 360f * 3f / 1.5f;
                 float fadeInTime = 60f;
                 float fadeOutTime = gifTime - fadeInTime;
 
@@ -287,18 +252,11 @@ namespace InfernumMode.Content.Credits
                         opacity = 1f - Utils.GetLerpValue(fadeOutTime, gifTime, CreditsTimer, true);
 
                     if (CreditGIFs.IndexInRange(ActiveGifIndex))
-                    {
-                        CreditGIFs[ActiveGifIndex]?.DrawGIF(CreditsTimer / 3, opacity);
-                        Main.pixelShader.CurrentTechnique.Passes[0].Apply();
-
                         CreditGIFs[ActiveGifIndex]?.DrawNames(opacity);
-                    }
                 }
             }
             else if (CurrentState is CreditState.FinalScene)
-            {
                 CreditFinalScene.Draw(FinalSceneOpacity);
-            }
             Main.spriteBatch.End();
         }
 
@@ -313,8 +271,7 @@ namespace InfernumMode.Content.Credits
 
             new Thread(() =>
             {
-                Texture2D[] textures = ScreenCapturer.LoadGifAsTexture2Ds(Bosses.IndexInRange(index) ? Bosses[index] : (ScreenCapturer.RecordingBoss)999, out bool baseCreditsUsed);
-                CreditGIFs[index] = new CreditAnimationObject(-Vector2.UnitY * 0.075f, textures, Headers[index], Names[index], HeaderColors[index], index % 2 == 1, baseCreditsUsed);
+                CreditGIFs[index] = new CreditAnimationObject(-Vector2.UnitY * 0.075f, Headers[index], Names[index], HeaderColors[index], index % 2 == 1);
             }).Start();
         }
     }

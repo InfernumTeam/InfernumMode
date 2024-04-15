@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using InfernumMode.Assets.Effects;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -10,13 +9,11 @@ using Terraria.UI.Chat;
 
 namespace InfernumMode.Content.Credits
 {
-    public class CreditAnimationObject(Vector2 velocity, Texture2D[] textures, string header, string names, Color headerColor, bool swapSides, bool baseCredits)
+    public class CreditAnimationObject(Vector2 velocity, string header, string names, Color headerColor, bool swapSides)
     {
         public Vector2 Center = new(Main.screenWidth * (swapSides ? 0.7f : 0.3f), Main.screenHeight * 0.5f);
 
         public Vector2 Velocity = velocity;
-
-        public Texture2D[] Textures = textures;
 
         public string Header = header;
 
@@ -26,74 +23,13 @@ namespace InfernumMode.Content.Credits
 
         public bool SwapSides = swapSides;
 
-        private readonly bool BaseCredits = baseCredits;
-
         public Vector2 TextCenter => new(Main.screenWidth * (SwapSides ? 0.35f : 0.65f), Center.Y);
-
-        public void DisposeTextures()
-        {
-            if (Textures is null || BaseCredits)
-                return;
-
-            foreach (var texture in Textures)
-            {
-                if (!texture?.IsDisposed ?? false)
-                    texture.Dispose();
-            }
-        }
 
         public void Update()
         {
             Center += Velocity;
             Center.X = Clamp(Center.X, 0f, Main.screenWidth);
             Center.Y = Clamp(Center.Y, 0f, Main.screenHeight);
-        }
-
-
-        public void DrawGIF(int textureIndex, float opacity)
-        {
-            // Get out if there are no textures loaded.
-            if (Textures == null)
-                return;
-
-            // Get the noise intensity.
-            float noiseIntensity = 0.1f;
-
-            // If the base credits are in use, a single image is used and the noise intensity is lowered as a result.
-            if (BaseCredits)
-            {
-                textureIndex = 0;
-                noiseIntensity = 0.05f;
-            }
-
-            // Ensure the texture index remains in bounds.
-            else if (textureIndex >= Textures.Length)
-                textureIndex = Textures.Length - 1;
-
-            // Setup the credits shader parameters. This gives them an ol' timey look.
-            Effect creditEffect = InfernumEffectsRegistry.CreditShader.GetShader().Shader;
-            creditEffect.Parameters["lerpColor"].SetValue(Color.SandyBrown.ToVector3());
-            creditEffect.Parameters["lerpColorAmount"].SetValue(0.3f);
-            creditEffect.Parameters["noiseScale"].SetValue(3f);
-            creditEffect.Parameters["noiseIntensity"].SetValue(noiseIntensity);
-            creditEffect.Parameters["overallOpacity"].SetValue(opacity);
-            creditEffect.Parameters["justCrop"].SetValue(false);
-            creditEffect.CurrentTechnique.Passes["CreditPass"].Apply();
-
-            // Get the current frame from the textures.
-            Texture2D texture = Textures[textureIndex];
-
-            // Ensure that is is valid and non disposed before trying to draw to avoid errors. This is because they are disposed after use due to the sheer amount of them.
-            if (texture != null && !texture.IsDisposed)
-            {
-                // Get the scale.
-                Vector2 scale = Vector2.One * ScreenCapturer.DownscaleFactor;
-                if (texture.Height >= 120f)
-                    scale *= 120f / texture.Height;
-
-                // Draw the frame.
-                Main.spriteBatch.Draw(texture, Center, null, Color.White, 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            }
         }
 
         public void DrawNames(float opacity)

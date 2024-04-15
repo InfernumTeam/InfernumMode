@@ -12,7 +12,6 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Fluids;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.Symbols;
 using InfernumMode.Content.Credits;
@@ -1211,10 +1210,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Rise upward.
             if (attackTimer == hoverTime + orbCastDelay + orbGrowDelay + 10f)
-            {
-                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.SCal);
                 npc.velocity = -Vector2.UnitY * 35f;
-            }
 
             // Make the orb grow.
             if (attackTimer >= hoverTime + orbCastDelay + orbGrowDelay)

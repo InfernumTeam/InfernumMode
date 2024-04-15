@@ -431,7 +431,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 BossRushStage++;
                 return;
             }
-            if (CurrentlyFoughtBoss == ModContent.NPCType<CeaselessVoid>() && WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero)
+            if (BossRushStage < Bosses.Count && CurrentlyFoughtBoss == ModContent.NPCType<CeaselessVoid>() && WorldSaveSystem.ForbiddenArchiveCenter == Point.Zero)
             {
                 BossRushStage++;
                 return;
@@ -440,7 +440,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Teleport the player.
             if (teleportPosition.HasValue)
             {
-                if (CurrentlyFoughtBoss != NPCID.SkeletronHead && WorldUtils.Find(teleportPosition.Value.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
+                if (BossRushStage < Bosses.Count && CurrentlyFoughtBoss != NPCID.SkeletronHead && WorldUtils.Find(teleportPosition.Value.ToTileCoordinates(), Searches.Chain(new Searches.Down(100), new Conditions.IsSolid()), out Point p))
                     teleportPosition = p.ToWorldCoordinates(8f, -32f);
 
                 CalamityPlayer.ModTeleport(player, teleportPosition.Value, playSound: false, 7);

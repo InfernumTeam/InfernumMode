@@ -12,7 +12,6 @@ using CalamityMod.Projectiles.Boss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
@@ -2385,7 +2384,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             ref float bombShootTimer = ref npc.Infernum().ExtraAI[0];
             ref float laserShootTimer = ref npc.Infernum().ExtraAI[1];
             ref float vfxDelayCountdown = ref npc.Infernum().ExtraAI[2];
-            ref float recordingStarted = ref npc.Infernum().ExtraAI[3];
 
             int bombShootRate = (int)Lerp(startingBombShootRate, endingBombShootRate, attackCompletion);
             int laserShootRate = (int)Lerp(startingLaserShootRate, endingLaserShootRate, attackCompletion);
@@ -2397,14 +2395,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (attackIsAboutToEnd && hasCompletedCycle == 0f)
             {
                 hasCompletedCycle = 1f;
-                npc.netUpdate = true;
-            }
-
-            // Start recording.
-            if (attackCompletion >= 0.5f && recordingStarted == 0f)
-            {
-                recordingStarted = 1f;
-                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Provi);
                 npc.netUpdate = true;
             }
 

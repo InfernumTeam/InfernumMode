@@ -12,7 +12,6 @@ using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Common.Graphics.Metaballs;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
@@ -1474,11 +1473,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.CalShadowFinalPhaseTip");
 
             if (attackTimer >= teleportDelay + blackFadeTime + 8f)
-            {
-                // Begin recording.
-                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Calamitas);
                 SelectNextAttack(npc);
-            }
         }
 
         public static void DoBehavior_BarrageOfArcingDarts(NPC npc, Player target, ref float attackTimer, ref float armRotation, ref float frameVariant)

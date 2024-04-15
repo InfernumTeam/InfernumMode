@@ -6,7 +6,6 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Projectiles.Boss;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
@@ -378,9 +377,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
         public static void SummonFinalMech(NPC npc)
         {
             MakeDraedonSayThings(3);
-
-            // Start recording.
-            CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.Draedon);
 
             // Don't summon NPCs clientside.
             if (Main.netMode == NetmodeID.MultiplayerClient)

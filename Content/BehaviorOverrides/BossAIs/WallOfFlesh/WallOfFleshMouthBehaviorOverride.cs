@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
-using InfernumMode.Common.Graphics.AttemptRecording;
 using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
@@ -143,10 +142,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
 
             // Start recording for the credits.
             if (lifeRatio <= Phase2LifeRatio && npc.Infernum().ExtraAI[0] == 0f)
-            {
-                CreditManager.StartRecordingFootageForCredits(ScreenCapturer.RecordingBoss.WoF);
                 npc.Infernum().ExtraAI[0] = 1f;
-            }
 
             // Roar before beginning the eye laser bursts.
             if (attackTimer % 1200f == 600f && lifeRatio < Phase2LifeRatio)

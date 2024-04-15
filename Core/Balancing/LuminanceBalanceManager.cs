@@ -77,136 +77,141 @@ namespace InfernumMode.Core.Balancing
             return value;
         }
 
-        private static int AccountForExpertHP(int hp) => (int)(hp - (hp * 0.375f));
+        // I dont know at this point im just fed up with this. Theres probably a way to calcuate this value based on the expert scalar but i cant figure it out.
+        private static int AccountForExpertHP1Point4(int hp) => (int)(hp - (hp * 0.285714286f));
 
-        private static NPCHPBalancingChange CreateBaseChange(int npcType, int hp) => new(npcType, AccountForExpertHP(hp), InfernumModeBasePriority, InfernumModeCondition);
+        private static int AccountForExpertHP1Point6(int hp) => (int)(hp - (hp * 0.375f));
 
-        private static NPCHPBalancingChange CreateBossRushChange(int npcType, int hp) => new(npcType, AccountForExpertHP(hp), InfernumModeBasePriority, InfernumModeBossRushCondition);
+        private static NPCHPBalancingChange CreateBaseChangeVanilla(int npcType, int hp) => new(npcType, AccountForExpertHP1Point4(hp), InfernumModeBasePriority, InfernumModeCondition);
+
+        private static NPCHPBalancingChange CreateBaseChangeModded(int npcType, int hp) => new(npcType, AccountForExpertHP1Point6(hp), InfernumModeBasePriority, InfernumModeCondition);
+
+        private static NPCHPBalancingChange CreateBossRushChange(int npcType, int hp) => new(npcType, AccountForExpertHP1Point6(hp), InfernumModeBasePriority, InfernumModeBossRushCondition);
 
         public override IEnumerable<NPCHPBalancingChange> GetNPCHPBalancingChanges()
         {
             #region Base Infernum HP
-            yield return CreateBaseChange(ModContent.NPCType<KingSlimeJewel>(), 2000);
-            yield return CreateBaseChange(ModContent.NPCType<DesertScourgeHead>(), 7200);
-            yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP(4100), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && !Main.hardMode);
-            yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP(16200), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && Main.hardMode);
-            yield return CreateBaseChange(NPCID.KingSlime, 4200);
-            yield return CreateBaseChange(NPCID.EyeofCthulhu, 6100);
-            yield return CreateBaseChange(NPCID.BrainofCthulhu, 9389);
-            yield return CreateBaseChange(ModContent.NPCType<CrabulonBoss>(), 10600);
-            yield return CreateBaseChange(NPCID.EaterofWorldsHead, EoWHeadBehaviorOverride.TotalLifeAcrossWorm);
-            yield return CreateBaseChange(NPCID.EaterofWorldsBody, EoWHeadBehaviorOverride.TotalLifeAcrossWorm);
-            yield return CreateBaseChange(NPCID.EaterofWorldsTail, EoWHeadBehaviorOverride.TotalLifeAcrossWorm);
-            yield return CreateBaseChange(NPCID.DD2DarkMageT1, 5000);
-            yield return CreateBaseChange(ModContent.NPCType<HiveMindP1Boss>(), 8100);
-            yield return CreateBaseChange(ModContent.NPCType<PerforatorHive>(), 9176);
-            yield return CreateBaseChange(ModContent.NPCType<PerforatorHeadSmall>(), 2000);
-            yield return CreateBaseChange(ModContent.NPCType<PerforatorHeadMedium>(), 2735);
-            yield return CreateBaseChange(ModContent.NPCType<PerforatorHeadLarge>(), 3960);
-            yield return CreateBaseChange(NPCID.QueenBee, 9669);
-            yield return CreateBaseChange(NPCID.Deerclops, 22844);
-            yield return CreateBaseChange(NPCID.SkeletronHead, 13860);
-            yield return CreateBaseChange(ModContent.NPCType<SlimeGodCore>(), 3275);
-            yield return CreateBaseChange(ModContent.NPCType<CrimulanSGBig>(), 7464);
-            yield return CreateBaseChange(ModContent.NPCType<EbonianSGBig>(), 7464);
-            yield return CreateBaseChange(NPCID.WallofFleshEye, 3232);
-            yield return CreateBaseChange(NPCID.WallofFlesh, 10476);
+            yield return CreateBaseChangeModded(ModContent.NPCType<KingSlimeJewel>(), 2000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<DesertScourgeHead>(), 7200);
+            yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP1Point6(4100), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && !Main.hardMode);
+            yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP1Point6(16200), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && Main.hardMode);
+            yield return CreateBaseChangeVanilla(NPCID.KingSlime, 4200);
+            yield return CreateBaseChangeVanilla(NPCID.EyeofCthulhu, 6100);
+            yield return CreateBaseChangeVanilla(NPCID.BrainofCthulhu, 9389);
+            yield return CreateBaseChangeModded(ModContent.NPCType<CrabulonBoss>(), 10600);
+            yield return CreateBaseChangeVanilla(NPCID.EaterofWorldsHead, EoWHeadBehaviorOverride.TotalLifeAcrossWorm);
+            yield return CreateBaseChangeVanilla(NPCID.EaterofWorldsBody, EoWHeadBehaviorOverride.TotalLifeAcrossWorm);
+            yield return CreateBaseChangeVanilla(NPCID.EaterofWorldsTail, EoWHeadBehaviorOverride.TotalLifeAcrossWorm);
+            yield return CreateBaseChangeVanilla(NPCID.DD2DarkMageT1, 5000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<HiveMindP1Boss>(), 8100);
+            yield return CreateBaseChangeModded(ModContent.NPCType<PerforatorHive>(), 9176);
+            yield return CreateBaseChangeModded(ModContent.NPCType<PerforatorHeadSmall>(), 2000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<PerforatorHeadMedium>(), 2735);
+            yield return CreateBaseChangeModded(ModContent.NPCType<PerforatorHeadLarge>(), 3960);
+            yield return CreateBaseChangeVanilla(NPCID.QueenBee, 9669);
+            yield return CreateBaseChangeVanilla(NPCID.Deerclops, 22844);
+            yield return CreateBaseChangeVanilla(NPCID.SkeletronHead, 13860);
+            yield return CreateBaseChangeModded(ModContent.NPCType<SlimeGodCore>(), 3275);
+            yield return CreateBaseChangeModded(ModContent.NPCType<CrimulanSGBig>(), 7464);
+            yield return CreateBaseChangeModded(ModContent.NPCType<EbonianSGBig>(), 7464);
+            yield return CreateBaseChangeVanilla(NPCID.WallofFleshEye, 3232);
+            yield return CreateBaseChangeVanilla(NPCID.WallofFlesh, 10476);
 
-            yield return CreateBaseChange(ModContent.NPCType<ThiccWaifu>(), 18000);
-            yield return CreateBaseChange(NPCID.DD2OgreT2, 15100);
-            yield return CreateBaseChange(NPCID.QueenSlimeBoss, 30000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ThiccWaifu>(), 18000);
+            yield return CreateBaseChangeModded(NPCID.DD2OgreT2, 15100);
+            yield return CreateBaseChangeModded(NPCID.QueenSlimeBoss, 30000);
 
             #region Mech Bosses
-            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP((int)(29950 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP1Point4((int)(29950 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP1Point4((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Spazmatism, AccountForExpertHP1Point4(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP((int)(29950 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP1Point4((int)(29950 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP1Point4((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP1Point4(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP((int)(28000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP((int)(28000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP(28000), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4((int)(28000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4((int)(28000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4(28000), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP1Point4(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeSaw, AccountForExpertHP1Point4(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeCannon, AccountForExpertHP1Point4(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.PrimeLaser, AccountForExpertHP1Point4(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP((int)(111000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP((int)(111000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP(111000), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP1Point4((int)(111000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP1Point4((int)(111000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.TheDestroyer, AccountForExpertHP1Point4(111000), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP((int)(700 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP((int)(700 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP(700), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP1Point4((int)(700 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP1Point4((int)(700 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.Probe, AccountForExpertHP1Point4(700), InfernumModeBasePriority, InfernumFinalMechCondition);
             #endregion
 
-            yield return CreateBaseChange(ModContent.NPCType<BrimstoneElemental>(), 85515);
-            yield return CreateBaseChange(ModContent.NPCType<CalamitasClone>(), 76250);
-            yield return CreateBaseChange(ModContent.NPCType<Cataclysm>(), 20600);
-            yield return CreateBaseChange(ModContent.NPCType<Catastrophe>(), 13000);
-            yield return CreateBaseChange(ModContent.NPCType<SoulSeeker>(), 2100);
-            yield return CreateBaseChange(NPCID.Plantera, 110500);
-            yield return CreateBaseChange(ModContent.NPCType<Leviathan>(), 102097);
-            yield return CreateBaseChange(ModContent.NPCType<AquaticAberration>(), 900);
-            yield return CreateBaseChange(ModContent.NPCType<Anahita>(), 71000);
-            yield return CreateBaseChange(ModContent.NPCType<AureusSpawn>(), 2500);
-            yield return CreateBaseChange(ModContent.NPCType<AstrumAureus>(), 144074);
-            yield return CreateBaseChange(NPCID.DD2DarkMageT3, 24500);
-            yield return CreateBaseChange(NPCID.DD2Betsy, 66500);
-            yield return CreateBaseChange(NPCID.Golem, 198700);
-            yield return CreateBaseChange(NPCID.GolemHead, 198700);
-            yield return CreateBaseChange(NPCID.GolemHeadFree, 198700);
-            yield return CreateBaseChange(NPCID.GolemFistLeft, 198700);
-            yield return CreateBaseChange(NPCID.GolemFistRight, 198700);
-            yield return CreateBaseChange(ModContent.NPCType<PlaguebringerGoliath>(), 136031);
-            yield return CreateBaseChange(ModContent.NPCType<GreatSandShark>(), 107400);
-            yield return CreateBaseChange(NPCID.DukeFishron, 100250);
-            yield return CreateBaseChange(NPCID.HallowBoss, 220056);
-            yield return CreateBaseChange(ModContent.NPCType<RavagerHead>(), 18000);
-            yield return CreateBaseChange(ModContent.NPCType<DevilFish>(), 5000);
-            yield return CreateBaseChange(ModContent.NPCType<Eidolist>(), 20000);
-            yield return CreateBaseChange(NPCID.CultistBoss, 104000);
-            yield return CreateBaseChange(NPCID.AncientCultistSquidhead, 9020);
-            yield return CreateBaseChange(NPCID.CultistDragonHead, 36500);
-            yield return CreateBaseChange(ModContent.NPCType<AstrumDeusHead>(), 287000);
-            yield return CreateBaseChange(NPCID.MoonLordHand, 50000);
-            yield return CreateBaseChange(NPCID.MoonLordHead, 61000);
-            yield return CreateBaseChange(NPCID.MoonLordCore, 135000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<BrimstoneElemental>(), 85515);
+            yield return CreateBaseChangeModded(ModContent.NPCType<CalamitasClone>(), 76250);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Cataclysm>(), 20600);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Catastrophe>(), 13000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<SoulSeeker>(), 2100);
+            yield return CreateBaseChangeVanilla(NPCID.Plantera, 110500);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Leviathan>(), 102097);
+            yield return CreateBaseChangeModded(ModContent.NPCType<AquaticAberration>(), 900);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Anahita>(), 71000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<AureusSpawn>(), 2500);
+            yield return CreateBaseChangeModded(ModContent.NPCType<AstrumAureus>(), 144074);
+            yield return CreateBaseChangeVanilla(NPCID.DD2DarkMageT3, 24500);
+            yield return CreateBaseChangeVanilla(NPCID.DD2Betsy, 66500);
+            yield return CreateBaseChangeVanilla(NPCID.Golem, 198700);
+            yield return CreateBaseChangeVanilla(NPCID.GolemHead, 198700);
+            yield return CreateBaseChangeVanilla(NPCID.GolemHeadFree, 198700);
+            yield return CreateBaseChangeVanilla(NPCID.GolemFistLeft, 198700);
+            yield return CreateBaseChangeVanilla(NPCID.GolemFistRight, 198700);
+            yield return CreateBaseChangeModded(ModContent.NPCType<PlaguebringerGoliath>(), 136031);
+            yield return CreateBaseChangeModded(ModContent.NPCType<GreatSandShark>(), 107400);
+            yield return CreateBaseChangeVanilla(NPCID.DukeFishron, 100250);
+            yield return CreateBaseChangeVanilla(NPCID.HallowBoss, 220056);
+            yield return CreateBaseChangeModded(ModContent.NPCType<RavagerHead>(), 18000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<DevilFish>(), 5000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Eidolist>(), 20000);
+            yield return CreateBaseChangeVanilla(NPCID.CultistBoss, 104000);
+            yield return CreateBaseChangeVanilla(NPCID.AncientCultistSquidhead, 9020);
+            yield return CreateBaseChangeVanilla(NPCID.CultistDragonHead, 36500);
+            yield return CreateBaseChangeModded(ModContent.NPCType<AstrumDeusHead>(), 287000);
+            yield return CreateBaseChangeVanilla(NPCID.MoonLordHand, 50000);
+            yield return CreateBaseChangeVanilla(NPCID.MoonLordHead, 61000);
+            yield return CreateBaseChangeVanilla(NPCID.MoonLordCore, 135000);
 
-            yield return CreateBaseChange(ModContent.NPCType<ProfanedGuardianCommander>(), 132000);
-            yield return CreateBaseChange(ModContent.NPCType<ProfanedGuardianDefender>(), 80000);
-            yield return CreateBaseChange(ModContent.NPCType<ProfanedGuardianHealer>(), 80000);
-            yield return CreateBaseChange(ModContent.NPCType<Bumblefuck>(), 256000);
-            yield return CreateBaseChange(ModContent.NPCType<Bumblefuck2>(), 14300);
-            yield return CreateBaseChange(ModContent.NPCType<ProfanedRocks>(), 2300);
-            yield return CreateBaseChange(ModContent.NPCType<ProvidenceBoss>(), 900000);
-            yield return CreateBaseChange(ModContent.NPCType<StormWeaverHead>(), 646400);
-            yield return CreateBaseChange(ModContent.NPCType<CeaselessVoid>(), 455525);
-            yield return CreateBaseChange(ModContent.NPCType<DarkEnergy>(), 5000);
-            yield return CreateBaseChange(ModContent.NPCType<Signus>(), 546102);
-            yield return CreateBaseChange(ModContent.NPCType<Polterghast>(), 544440);
-            yield return CreateBaseChange(ModContent.NPCType<OldDukeBoss>(), 936000);
-            yield return CreateBaseChange(ModContent.NPCType<DevourerofGodsHead>(), 1776500);
-            yield return CreateBaseChange(ModContent.NPCType<Yharon>(), 968420);
-            yield return CreateBaseChange(ModContent.NPCType<PrimordialWyrmHead>(), 1260750);
-            yield return CreateBaseChange(ModContent.NPCType<ThanatosHead>(), 2400000);
-            yield return CreateBaseChange(ModContent.NPCType<AresBody>(), 2560000);
-            yield return CreateBaseChange(ModContent.NPCType<Artemis>(), 2400000);
-            yield return CreateBaseChange(ModContent.NPCType<Apollo>(), 2400000);
-            yield return CreateBaseChange(ModContent.NPCType<SupremeCataclysm>(), 537200);
-            yield return CreateBaseChange(ModContent.NPCType<SupremeCatastrophe>(), 537200);
-            yield return CreateBaseChange(ModContent.NPCType<SupremeCalamitas>(), 3141592);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedGuardianCommander>(), 132000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedGuardianDefender>(), 80000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedGuardianHealer>(), 80000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Bumblefuck>(), 256000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Bumblefuck2>(), 14300);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ProfanedRocks>(), 2300);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ProvidenceBoss>(), 900000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<StormWeaverHead>(), 646400);
+            yield return CreateBaseChangeModded(ModContent.NPCType<CeaselessVoid>(), 455525);
+            yield return CreateBaseChangeModded(ModContent.NPCType<DarkEnergy>(), 5000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Signus>(), 546102);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Polterghast>(), 544440);
+            yield return CreateBaseChangeModded(ModContent.NPCType<OldDukeBoss>(), 936000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<DevourerofGodsHead>(), 1776500);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Yharon>(), 968420);
+            yield return CreateBaseChangeModded(ModContent.NPCType<PrimordialWyrmHead>(), 1260750);
+            yield return CreateBaseChangeModded(ModContent.NPCType<ThanatosHead>(), 2400000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<AresBody>(), 2560000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Artemis>(), 2400000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<Apollo>(), 2400000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<SupremeCataclysm>(), 537200);
+            yield return CreateBaseChangeModded(ModContent.NPCType<SupremeCatastrophe>(), 537200);
+            yield return CreateBaseChangeModded(ModContent.NPCType<SupremeCalamitas>(), 3141592);
             #endregion
 
             #region Boss Rush HP

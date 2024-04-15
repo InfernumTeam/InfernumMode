@@ -111,7 +111,7 @@ namespace InfernumMode
         public static T BehaviorOverride<T>(this NPC npc) where T : NPCBehaviorOverride
         {
             var container = NPCBehaviorOverride.BehaviorOverrideSet[npc.type];
-            if (container is not null and T t)
+            if (container is not null && container.BehaviorOverride is T t)
                 return t;
 
             return null;

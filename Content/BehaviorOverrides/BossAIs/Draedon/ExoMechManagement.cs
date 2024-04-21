@@ -9,7 +9,6 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using InfernumMode.Content.Credits;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;

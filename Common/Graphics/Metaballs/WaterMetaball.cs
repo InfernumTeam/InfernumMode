@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using InfernumMode.Assets.Effects;
 using InfernumMode.Common.Graphics.Drawers.SceneDrawers;
 using InfernumMode.Content.Projectiles.Summoner;
 using Luminance.Core.Graphics;

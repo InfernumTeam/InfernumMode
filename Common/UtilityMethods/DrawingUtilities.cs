@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using CalamityMod;
-using CalamityMod.DataStructures;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.BaseEntities;
 using InfernumMode.Common.Graphics;
-using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.MapLayers;
 using InfernumMode.Content.Projectiles.Generic;
 using InfernumMode.Core;
@@ -200,32 +197,6 @@ namespace InfernumMode
             }
         }
 
-        public static List<Vector2> CorrectBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, Vector2 generalOffset, int totalTrailPoints, IEnumerable<float> _ = null)
-        {
-            List<Vector2> controlPoints = [];
-            for (int i = 0; i < originalPositions.Count(); i++)
-            {
-                // Don't incorporate points that are zeroed out.
-                // They are almost certainly a result of incomplete oldPos arrays.
-                if (originalPositions.ElementAt(i) == Vector2.Zero)
-                    continue;
-                controlPoints.Add(originalPositions.ElementAt(i) + generalOffset);
-            }
-
-            if (controlPoints.Count <= 1)
-                return controlPoints;
-
-            List<Vector2> points = [];
-            BezierCurve bezierCurve = new([.. controlPoints]);
-
-            // The GetPoints method uses imprecise floating-point looping, which can result in inaccuracies with point generation.
-            // Instead, an integer-based loop is used to mitigate such problems.
-            for (int i = 0; i < totalTrailPoints; i++)
-                points.Add(bezierCurve.Evaluate(i / (float)(totalTrailPoints - 1f)));
-
-            return points;
-        }
-
         public static void CreateFireExplosion(Vector2 topLeft, Vector2 area, Vector2 force)
         {
             // Sparks and such
@@ -398,41 +369,6 @@ namespace InfernumMode
             }
         }
 
-        public static void GetCircleVertices(int sideCount, float radius, Vector2 center, out List<short> triangleIndices, out List<PrimitiveTrailCopy.VertexPosition2DColor> vertices)
-        {
-            vertices = [];
-            triangleIndices = [];
-
-            // Use the law of cosines to determine the side length of the triangles that compose the inscribed shape.
-            float sideAngle = TwoPi / sideCount;
-            float sideLength = Sqrt(2f - Cos(sideAngle) * 2f) * radius;
-
-            // Calculate vertices by approximating a circle with a bunch of triangles.
-            for (int i = 0; i < sideCount; i++)
-            {
-                float completionRatio = i / (float)(sideCount - 1f);
-                float nextCompletionRatio = (i + 1) / (float)(sideCount - 1f);
-                Vector2 orthogonal = (TwoPi * completionRatio + PiOver2).ToRotationVector2();
-                Vector2 radiusOffset = (TwoPi * completionRatio).ToRotationVector2() * radius;
-                Vector2 leftEdgeInner = center;
-                Vector2 rightEdgeInner = center;
-                Vector2 leftEdge = leftEdgeInner + radiusOffset + orthogonal * sideLength * -0.5f;
-                Vector2 rightEdge = rightEdgeInner + radiusOffset + orthogonal * sideLength * 0.5f;
-
-                vertices.Add(new(leftEdge - Main.screenPosition, Color.White, new(completionRatio, 1f)));
-                vertices.Add(new(rightEdge - Main.screenPosition, Color.White, new(nextCompletionRatio, 1f)));
-                vertices.Add(new(rightEdgeInner - Main.screenPosition, Color.White, new(nextCompletionRatio, 0f)));
-                vertices.Add(new(leftEdgeInner - Main.screenPosition, Color.White, new(completionRatio, 0f)));
-
-                triangleIndices.Add((short)(i * 4));
-                triangleIndices.Add((short)(i * 4 + 1));
-                triangleIndices.Add((short)(i * 4 + 2));
-                triangleIndices.Add((short)(i * 4));
-                triangleIndices.Add((short)(i * 4 + 2));
-                triangleIndices.Add((short)(i * 4 + 3));
-            }
-        }
-
         public static void CreateShockwave(Vector2 shockwavePosition, int rippleCount = 2, int rippleSize = 8, float rippleSpeed = 75f, bool playSound = true, bool useSecondaryVariant = false)
         {
             DeleteAllProjectiles(false, ModContent.ProjectileType<ScreenShakeProj>());
@@ -532,24 +468,6 @@ namespace InfernumMode
                 return LumUtils.ColorMessage(GetLocalization("Items.InfernalRelicText").Value, c);
             }
         }
-
-        //public static void SwapToRenderTarget(this RenderTarget2D renderTarget, Color? flushColor = null)
-        //{
-        //    // Local variables for convinience.
-        //    GraphicsDevice graphicsDevice = Main.graphics.GraphicsDevice;
-        //    SpriteBatch spriteBatch = Main.spriteBatch;
-
-        //    // If we are in the menu, a server, or any of these are null, return.
-        //    if (Main.gameMenu || Main.dedServ || renderTarget is null || graphicsDevice is null || spriteBatch is null)
-        //        return;
-
-        //    // Otherwise set the render target.
-        //    graphicsDevice.SetRenderTarget(renderTarget);
-
-        //    // "Flush" the screen, removing any previous things drawn to it.
-        //    flushColor ??= Color.Transparent;
-        //    graphicsDevice.Clear(flushColor.Value);
-        //}
 
         /// <summary>
         /// Creates a list of <see cref="InfernumMetaballParticle"/> from a given texture shape and color information.
@@ -656,7 +574,7 @@ namespace InfernumMode
         }
 
         /// <summary>
-        /// Returns the appropriate value for "resolution" in pixelshaders, to make the pixel size match Terraria's.
+        /// Returns the appropriate value for "resolution" in pixel shaders, to make the pixel size match Terraria's.
         /// </summary>
         /// <param name="areaSize">The size of the area the shader is being applied on.</param>
         /// <param name="scale">The scale at which the pixels are being drawn at, eg: NPC.scale.</param>

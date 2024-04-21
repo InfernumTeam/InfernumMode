@@ -6,7 +6,7 @@ using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Assets.Effects;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Common.Graphics.Primitives;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -19,8 +19,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
     public class SepulcherSoulBomb : ModProjectile
     {
         public int ExplodeCountdown;
-
-        public PrimitiveTrailCopy FireDrawer;
 
         public ref float Time => ref Projectile.ai[0];
 
@@ -135,21 +133,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            int sideCount = 512;
-            Utilities.GetCircleVertices(sideCount, Radius, Projectile.Center, out var triangleIndices, out var vertices);
-
-            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
-            Main.instance.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/BrimstoneSoulLayer").Value;
             var tear = InfernumEffectsRegistry.RealityTearVertexShader;
-            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.SetTexture(ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/ScrollingLayers/BrimstoneSoulLayer"), 1);
             tear.TrySetParameter("useOutline", false);
             tear.TrySetParameter("uCoordinateZoom", 3.2f);
             tear.TrySetParameter("uTimeFactor", 3.2f);
             tear.TrySetParameter("uSaturation", 10f);
-            tear.Apply();
-
-            Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
-            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+            tear.TrySetParameter("uSaturation", 10f);
+            PrimitiveRenderer.RenderCircle(Projectile.Center, new(_ => Radius, _ => Color.White, Shader: InfernumEffectsRegistry.RealityTearVertexShader));
             return false;
         }
     }

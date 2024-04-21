@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using InfernumMode.Content.Items.Placeables;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;

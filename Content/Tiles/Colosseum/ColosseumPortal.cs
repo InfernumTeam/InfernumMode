@@ -9,6 +9,7 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SubworldLibrary;
@@ -202,22 +203,15 @@ namespace InfernumMode.Content.Tiles.Colosseum
             SandPillarDrawer.Draw(points, -Main.screenPosition, 186);
 
             // Draw the portal.
-            int sideCount = 512;
             float radius = Utils.GetLerpValue(0.5f, 0.95f, AnimationCompletion, true) * 90f;
-            Utilities.GetCircleVertices(sideCount, radius, center - Vector2.UnitY * (radius + 60f), out var triangleIndices, out var vertices);
-
-            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
-            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Water.Value;
             var tear = InfernumEffectsRegistry.RealityTearVertexShader;
-            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.SetTexture(InfernumTextureRegistry.Water, 1);
             tear.TrySetParameter("useOutline", false);
             tear.TrySetParameter("uCoordinateZoom", 3.2f);
             tear.TrySetParameter("uTimeFactor", 3.2f);
             tear.TrySetParameter("uSaturation", 0.3f);
-            tear.Apply();
 
-            Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
-            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+            PrimitiveRenderer.RenderCircle(center - Vector2.UnitY * (radius + 60f), new(_ => radius, _ => Color.White, Shader: InfernumEffectsRegistry.RealityTearVertexShader));
 
             // Create light.
             for (float y = end.Y; y < start.Y; y += 16f)

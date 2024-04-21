@@ -17,6 +17,7 @@ using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -1855,18 +1856,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DrawBlackHole(NPC npc, float radius)
         {
-            int sideCount = 512;
-            Utilities.GetCircleVertices(sideCount, radius, npc.Center, out var triangleIndices, out var vertices);
-
-            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out Matrix view, out Matrix projection);
-            Main.instance.GraphicsDevice.Textures[1] = InfernumTextureRegistry.Stars.Value;
             var tear = InfernumEffectsRegistry.RealityTearVertexShader;
-            tear.TrySetParameter("uWorldViewProjection", view * projection);
+            tear.SetTexture(InfernumTextureRegistry.Stars, 1);
             tear.TrySetParameter("useOutline", false);
-            tear.Apply();
 
-            Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices.ToArray(), 0, vertices.Count, triangleIndices.ToArray(), 0, sideCount * 2);
-            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
+            PrimitiveRenderer.RenderCircle(npc.Center, new(_ => radius, _ => Color.White, Shader: InfernumEffectsRegistry.RealityTearVertexShader));
         }
 
         public static void DrawInstance(NPC npc, Vector2 drawPosition, Color lightColor, Color colorFactor)

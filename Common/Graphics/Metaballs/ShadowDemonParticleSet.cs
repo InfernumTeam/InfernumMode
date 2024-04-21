@@ -21,7 +21,7 @@ namespace InfernumMode.Common.Graphics.Metaballs
 
         public override string MetaballAtlasTextureToUse => "InfernumMode.BaseMetaball";
 
-        public override void UpdateParticle(MetaballInstance particle) => particle.Size *= 0.905f;
+        public override void UpdateParticle(MetaballInstance particle) => particle.Size *= 0.91f;
 
         public override bool ShouldKillParticle(MetaballInstance particle) => particle.Size <= 2f;
 

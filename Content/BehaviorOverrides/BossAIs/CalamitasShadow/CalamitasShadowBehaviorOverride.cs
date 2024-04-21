@@ -17,7 +17,6 @@ using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.Primitives;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Buffs;
-using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Systems;

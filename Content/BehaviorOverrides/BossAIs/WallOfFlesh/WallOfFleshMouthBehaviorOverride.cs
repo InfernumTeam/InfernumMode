@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
-using InfernumMode.Content.Credits;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;

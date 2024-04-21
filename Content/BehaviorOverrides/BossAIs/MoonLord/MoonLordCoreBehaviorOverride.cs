@@ -4,7 +4,6 @@ using System.Linq;
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.Assets.Sounds;
-using InfernumMode.Content.Credits;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Tiles.Misc;
 using InfernumMode.Content.WorldGeneration;

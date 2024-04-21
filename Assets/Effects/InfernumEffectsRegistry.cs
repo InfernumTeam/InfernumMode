@@ -20,7 +20,6 @@ namespace InfernumMode.Assets.Effects
         }
 
         public static MiscShaderData AEWShadowFormShader => GameShaders.Misc["Infernum:AEWShadowForm"];
-        public static MiscShaderData AreaBorderVertexShader => GameShaders.Misc["Infernum:AreaBorder"];
         public static MiscShaderData AresLightningVertexShader => GameShaders.Misc["Infernum:AresLightningArc"];
         public static MiscShaderData ArtemisLaserVertexShader => GameShaders.Misc["Infernum:ArtemisLaser"];
         public static MiscShaderData BackgroundDistortionShader => GameShaders.Misc["Infernum:BackgroundDistortion"];
@@ -125,9 +124,6 @@ namespace InfernumMode.Assets.Effects
 
             var aewShadowShader = assets.Request<Effect>("Assets/Effects/Overlays/AEWShadowShader", AssetRequestMode.ImmediateLoad);
             GameShaders.Misc["Infernum:AEWShadowForm"] = new MiscShaderData(aewShadowShader, "BurnPass");
-
-            var areaBorder = assets.Request<Effect>("Assets/Effects/Shapes/AreaBorderShader", AssetRequestMode.ImmediateLoad);
-            GameShaders.Misc["Infernum:AreaBorder"] = new MiscShaderData(areaBorder, "TrailPass");
 
             var aresEnergySlashShader = assets.Request<Effect>("Assets/Effects/Primitives/AresEnergySlashShader", AssetRequestMode.ImmediateLoad);
             GameShaders.Misc["Infernum:AresEnergySlash"] = new MiscShaderData(aresEnergySlashShader, "TrailPass");
@@ -438,6 +434,7 @@ namespace InfernumMode.Assets.Effects
 
         #region New
         #region Shaders
+        public static ManagedShader AreaBorderVertexShader => ShaderManager.GetShader("InfernumMode.AreaBorderShader");
         public static ManagedShader AresEnergySlashShader => ShaderManager.GetShader("InfernumMode.AresEnergySlashShader");
         public static ManagedShader FlameVertexShader => ShaderManager.GetShader("InfernumMode.Flame");
         public static ManagedShader GaleLightningShader => ShaderManager.GetShader("InfernumMode.HeavenlyGaleLightningArc");

@@ -1,21 +1,22 @@
-﻿sampler uImage0 : register(s0);
+sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
-sampler uImage2 : register(s2);
 float3 uColor;
 float3 uSecondaryColor;
 float uOpacity;
 float uSaturation;
 float uRotation;
-float uTime;
+float globalTime;
 float4 uSourceRect;
 float2 uWorldPosition;
 float uDirection;
 float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
-float2 uImageSize2;
 matrix uWorldViewProjection;
 float4 uShaderSpecificData;
+float uCoordinateZoom;
+float uTimeFactor;
+bool useOutline;
 
 struct VertexShaderInput
 {
@@ -39,26 +40,38 @@ VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
     
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
-
+    output.TextureCoordinates.y = (output.TextureCoordinates.y - 0.5) / input.TextureCoordinates.z + 0.5;
     return output;
+}
+
+float InverseLerp(float x, float min, float max)
+{
+    return saturate((x - min) / (max - min));
+}
+
+float4 StarColorFunction(float2 coords)
+{
+    float timeFactor = uTimeFactor + 1;
+    float4 c1 = tex2D(uImage1, coords + float2(sin(globalTime * timeFactor * 0.12) * 0.5, globalTime * timeFactor * 0.03));
+    float4 c2 = tex2D(uImage1, coords + float2(globalTime * timeFactor * -0.019, sin(globalTime * timeFactor * -0.09 + 0.754) * 0.6));
+    return pow(c1 + c2, 2.6);
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float2 coords = input.TextureCoordinates.xy;
-    coords.y = (coords.y - 0.5) / input.TextureCoordinates.z + 0.5;
+    float4 color = StarColorFunction(coords * float2(1, 0.1) * (uCoordinateZoom + 1)) * input.Color;
     
-    float brightnessInterpolant = pow(1 - coords.y, 2);
-    float4 color = input.Color;
-    color.gb += color.r * brightnessInterpolant * float2(1, 0.75);
+    float bloomPulse = sin(globalTime * 7.1 - coords.x * 12.55) * 0.5 + 0.5;
+    float opacity = pow(sin(3.141 * coords.y), 4 - bloomPulse * 2);
+    float fadeToWhite = pow(1 - sin(3.141 * coords.y), 1.4) * 4;
+    if (fadeToWhite >= 1)
+        fadeToWhite = 1;
     
-    float noise = tex2D(uImage1, coords + float2(0, uTime * -2)) - tex2D(uImage2, float2(coords.y, coords.x) + float2(uTime * -3, 0)).r * coords.y;
-    float edgeTaper = pow(sin(coords.x * 3.141), 2.8) * pow(sin(coords.y * 3.141), 0.8);
+    if (useOutline)
+        color *= (pow(1 - sin(3.141 * coords.y), 9) * 35000) + 1;
     
-    float4 finalColor = color;
-    finalColor.rgb *= noise;
-    
-    return color * noise * edgeTaper * (1 + brightnessInterpolant * 10);
+    return color * opacity * (uSaturation + 1) * 1.6;
 }
 
 technique Technique1

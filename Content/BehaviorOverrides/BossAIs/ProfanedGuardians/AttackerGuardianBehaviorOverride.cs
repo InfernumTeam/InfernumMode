@@ -10,6 +10,7 @@ using InfernumMode.Content.Projectiles.Wayfinder;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Luminance.Common.Easings;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -366,10 +367,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 DrawHealerShield(npc, spriteBatch, 3.5f, shieldOpacity);
 
             if (npc.Infernum().ExtraAI[FireBorderInterpolantIndex] > 0f)
-                DrawFireBorder(npc, spriteBatch);
+                DrawFireBorder(npc);
 
             if (WorldSaveSystem.HasProvidenceDoorShattered)
-                DrawTempleBorder(npc, spriteBatch);
+                DrawTempleBorder(npc);
             return false;
         }
 
@@ -495,88 +496,61 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.ExitShaderRegion();
         }
 
-        public static void DrawFireBorder(NPC npc, SpriteBatch spriteBatch)
+        public static void DrawFireBorder(NPC npc)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            static float widthFunction(float _) => 300f;
 
-            // Get variables.
-            List<VertexPosition2DColor> vertices = [];
-            float totalPoints = 200;
-            float width = 300f;
-            float radius = 1300f;
-            Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
-            float distanceFromCenter = radius - Main.player[npc.target].Center.Distance(npc.Center);
-            float alpha = Clamp(1f - distanceFromCenter / (radius * 1.5f), 0f, 1f);
-            color *= alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
-
-            for (int i = 0; i <= totalPoints; i++)
+            Color colorFunction(float _)
             {
-                float interpolant = i / totalPoints;
-                Vector2 position = npc.Center - Main.screenPosition + (i * TwoPi / totalPoints).ToRotationVector2() * radius;
-                Vector2 position2 = npc.Center - Main.screenPosition + (i * TwoPi / totalPoints).ToRotationVector2() * (radius + width);
-
-                Vector2 textureCoords = new(interpolant, 0f);
-                Vector2 textureCoords2 = new(interpolant, 1f);
-
-                vertices.Add(new VertexPosition2DColor(position, color, textureCoords));
-                vertices.Add(new VertexPosition2DColor(position2, color, textureCoords2));
+                Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
+                float distanceFromCenter = radiusFunction(_) - Main.player[npc.target].Center.Distance(npc.Center);
+                float alpha = Clamp(1f - distanceFromCenter / (radiusFunction(_) * 1.5f), 0f, 1f);
+                color *= alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex];
+                return color;
             }
-            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out var view, out var projection);
-            InfernumEffectsRegistry.AreaBorderVertexShader.UseOpacity(alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex]);
-            InfernumEffectsRegistry.AreaBorderVertexShader.UseColor(WayfinderSymbol.Colors[2]);
-            InfernumEffectsRegistry.AreaBorderVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
-            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["noiseSpeed"].SetValue(new Vector2(0.1f, 0.1f));
-            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["timeFactor"].SetValue(2f);
-            InfernumEffectsRegistry.AreaBorderVertexShader.Apply();
+
+            static float radiusFunction(float _) => 1300f;
+
+            float distanceFromCenter = radiusFunction(1f) - Main.player[npc.target].Center.Distance(npc.Center);
+            float alpha = Clamp(1f - distanceFromCenter / (radiusFunction(1f) * 1.5f), 0f, 1f);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("uOpacity", alpha * npc.Infernum().ExtraAI[FireBorderInterpolantIndex]);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("uColor", WayfinderSymbol.Colors[2]);
+            InfernumEffectsRegistry.AreaBorderVertexShader.SetTexture(InfernumTextureRegistry.HarshNoise, 1);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("noiseSpeed", new Vector2(0.1f, 0.1f));
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("timeFactor", 2f);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("flipY", false);
 
             Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient", AssetRequestMode.ImmediateLoad).Value;
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
-            spriteBatch.ExitShaderRegion();
+            Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
+            PrimitiveRenderer.RenderCircleEdge(npc.Center, new(widthFunction, colorFunction, radiusFunction, false, InfernumEffectsRegistry.AreaBorderVertexShader));
+            Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
-        public static void DrawTempleBorder(NPC npc, SpriteBatch spriteBatch)
+        public static void DrawTempleBorder(NPC npc)
         {
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
-            // Get variables.
-            List<VertexPosition2DColor> vertices = [];
-            float totalPoints = 50;
-            float width = 300f;
-            Color color = Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f);
             Vector2 startPos = new(WorldSaveSystem.ProvidenceDoorXPosition, CenterOfGarden.Y - 1200f);
             Vector2 endPos = startPos + new Vector2(0f, 2670f);
             float fadeDistance = 500f;
             float distanceFromBorder = new Vector2(Main.player[npc.target].Center.X, startPos.Y).Distance(startPos);
             float alpha = Clamp(1f - distanceFromBorder / (fadeDistance * 1.5f), 0f, 1f);
-            color *= alpha;
 
-            for (int i = 0; i < totalPoints; i++)
-            {
-                float interpolant = i / totalPoints;
-                Vector2 position = Vector2.Lerp(startPos, endPos, interpolant) - Main.screenPosition;
-                Vector2 position2 = (Vector2.Lerp(startPos, endPos, interpolant) - Main.screenPosition);
-                Vector2 textureCoords = new(interpolant, 0f);
-                Vector2 textureCoords2 = new(interpolant, 1f);
-                vertices.Add(new VertexPosition2DColor(position, color, textureCoords));
-                vertices.Add(new VertexPosition2DColor(position2 + new Vector2(width, 0f), color, textureCoords2));
-            }
+            Color colorFunction(float _) => Color.Lerp(WayfinderSymbol.Colors[0], WayfinderSymbol.Colors[1], 0.75f) * alpha;
 
-            LumUtils.CalculatePrimitiveMatrices(Main.screenWidth, Main.screenHeight, out var view, out var projection);
-            InfernumEffectsRegistry.AreaBorderVertexShader.UseOpacity(alpha);
-            InfernumEffectsRegistry.AreaBorderVertexShader.UseColor(WayfinderSymbol.Colors[2]);
-            InfernumEffectsRegistry.AreaBorderVertexShader.SetShaderTexture(InfernumTextureRegistry.HarshNoise);
-            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["uWorldViewProjection"].SetValue(view * projection);
-            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["noiseSpeed"].SetValue(new Vector2(0.1f, 0.1f));
-            InfernumEffectsRegistry.AreaBorderVertexShader.Shader.Parameters["timeFactor"].SetValue(2f);
-            InfernumEffectsRegistry.AreaBorderVertexShader.Apply();
+            Vector2[] positions = new Vector2[8];
+            for (int i = 0; i < positions.Length; i++)
+                positions[i] = Vector2.Lerp(startPos, endPos, i / (float)(positions.Length - 1)) + Vector2.UnitX * 310f;
 
-            Main.graphics.GraphicsDevice.Textures[0] = ModContent.Request<Texture2D>("InfernumMode/Assets/ExtraTextures/GreyscaleObjects/SolidEdgeGradient", AssetRequestMode.ImmediateLoad).Value;
-            Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices.ToArray(), 0, vertices.Count - 2);
-            spriteBatch.ExitShaderRegion();
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("uOpacity", alpha);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("uColor", WayfinderSymbol.Colors[2]);
+            InfernumEffectsRegistry.AreaBorderVertexShader.SetTexture(InfernumTextureRegistry.HarshNoise, 1);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("noiseSpeed", new Vector2(0.1f, 0.1f));
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("timeFactor", 2f);
+            InfernumEffectsRegistry.AreaBorderVertexShader.TrySetParameter("flipY", true);
 
+            Main.graphics.GraphicsDevice.Textures[0] = InfernumTextureRegistry.SolidEdgeGradient.Value;
+            Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
+            PrimitiveRenderer.RenderTrail(positions, new(_ => 300f, colorFunction, Shader: InfernumEffectsRegistry.AreaBorderVertexShader), 50);
+            Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
         #endregion Draw Effects
 

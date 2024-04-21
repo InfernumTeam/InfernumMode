@@ -5,7 +5,7 @@ float3 uSecondaryColor;
 float uOpacity;
 float uSaturation;
 float uRotation;
-float uTime;
+float globalTime;
 float4 uSourceRect;
 float2 uWorldPosition;
 float uDirection;
@@ -36,7 +36,7 @@ VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
     output.Position = pos;
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
-
+    output.TextureCoordinates.y = (output.TextureCoordinates.y - 0.5) / input.TextureCoordinates.z + 0.5;
     return output;
 }
 
@@ -44,11 +44,10 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float4 color = input.Color;
     float2 coords = input.TextureCoordinates.xy;
-    coords.y = (coords.y - 0.5) / input.TextureCoordinates.z + 0.5;
     
     // Fade out at the edges of the trail to give a blur effect.
     // This is very important.
-    float flameStreakBrightness = tex2D(uImage1, float2(frac(coords.x - uTime * 2.9), coords.y)).r;
+    float flameStreakBrightness = tex2D(uImage1, float2(frac(coords.x - globalTime * 2.9), coords.y)).r;
     float bloomOpacity = lerp(pow(sin(coords.y * 3.141), lerp(3, 10, coords.x)), 0.7, coords.x);
     return color * pow(bloomOpacity, 6.0) * lerp(2.0, 7, flameStreakBrightness);
 }

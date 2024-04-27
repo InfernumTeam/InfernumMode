@@ -93,7 +93,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Translators = "Dimension Translate Group\nIndeperevod";
 
-        public const string Supporters = "Borb9834\nOptrix\n-Runaway-\nyoshi";
+        public const string Supporters = "Borb9834\nOptrix\n-Runaway-\nyoshi\nThat1Blade";
 
         public override void Load()
         {

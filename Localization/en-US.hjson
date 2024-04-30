@@ -2519,6 +2519,7 @@ Mods: {
 			NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
 			AchievementsHeader: Death Wishes
 			AchievementsLabelText: Next
+			InfernumIconText: Infernum Mode is enabled
 			WishesHeader: Dev Wishes
 			WishesHoverTextButton: Open Death Wishes
 

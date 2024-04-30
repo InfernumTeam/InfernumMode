@@ -203,6 +203,12 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
         public const int LostColosseumPortalAnimationTime = 150;
 
+        public override void SaveWorldHeader(TagCompound tag)
+        {
+            if (InfernumModeEnabled)
+                tag["InfernumModeActive"] = true;
+        }
+
         public override void SaveWorldData(TagCompound tag)
         {
             var downed = new List<string>();

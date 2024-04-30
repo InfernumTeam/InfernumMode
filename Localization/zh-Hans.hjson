@@ -2519,6 +2519,7 @@ Mods: {
 			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
 			AchievementsHeader: 死亡祈愿
 			AchievementsLabelText: 下一个
+			// InfernumIconText: Infernum Mode is enabled
 			WishesHeader: 开发者祈愿
 			WishesHoverTextButton: 打开死亡祈愿
 

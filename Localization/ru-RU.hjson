@@ -2528,6 +2528,7 @@ Mods: {
 			NotExpertWarning: "[c/ff00000:РЕЖИМ ИНФЕРНУМ ДОСТУПЕН ТОЛЬКО В РЕЖИМЕ ЭКСПЕРТ]"
 			AchievementsHeader: Смертные Желания
 			AchievementsLabelText: Следующий
+			// InfernumIconText: Infernum Mode is enabled
 			WishesHeader: Желания Разработчиков
 			WishesHoverTextButton: Открыть Смертные Желания
 

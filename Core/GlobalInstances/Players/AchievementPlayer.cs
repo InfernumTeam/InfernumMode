@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using CalamityMod.Events;
 using InfernumMode.Content.Achievements;
 using Terraria;
@@ -30,7 +30,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             {
                 if (type.IsSubclassOf(baseAchievementType) && !type.IsAbstract && type != baseAchievementType)
                 {
-                    Achievement instance = (Achievement)FormatterServices.GetUninitializedObject(type);
+                    Achievement instance = (Achievement)RuntimeHelpers.GetUninitializedObject(type);
                     AchievementInstances.Add(instance);
                     i++;
                 }

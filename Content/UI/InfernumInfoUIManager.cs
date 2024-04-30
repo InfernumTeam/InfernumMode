@@ -4,7 +4,7 @@ using InfernumMode.Core.GlobalInstances.Systems;
 
 namespace InfernumMode.Content.UI
 {
-    internal class InfernumInfoUIManager : InfoUIManager
+    public class InfernumInfoUIManager : InfoUIManager
     {
         public override IEnumerable<WorldInfoIcon> GetWorldInfoIcons()
         {

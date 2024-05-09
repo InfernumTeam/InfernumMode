@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Items.Weapons.Rogue
             Item.shootSpeed = 16f;
             Item.DamageType = RogueDamageClass.Instance;
 
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
         }
 

@@ -46,7 +46,7 @@ namespace InfernumMode.Common.BaseEntities
             }
 
             // Leave if no rings are found.
-            if (!rings.Any())
+            if (rings.Count == 0)
                 return;
 
             Texture2D texture = InfernumTextureRegistry.Invisible.Value;

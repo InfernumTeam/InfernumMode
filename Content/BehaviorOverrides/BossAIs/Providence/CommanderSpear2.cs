@@ -20,7 +20,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
         public int OwnerIndex
         {
             get => (int)Projectile.ai[0];
-            set => Projectile.ai[0] = (int)value;
+            set => Projectile.ai[0] = value;
         }
 
         public NPC Owner => Main.npc[OwnerIndex];

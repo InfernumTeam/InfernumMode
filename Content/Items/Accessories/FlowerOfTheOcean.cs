@@ -33,7 +33,7 @@ namespace InfernumMode.Content.Items.Accessories
         {
             Item.width = 48;
             Item.height = 30;
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumOceanFlowerRarity>();
             Item.accessory = true;
             Item.Infernum_Tooltips().DeveloperItem = true;

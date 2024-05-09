@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 // Make it fade out for the last bit.
                 if (totalDrawPoints - i <= 20)
                 {
-                    float interpolant = ((float)i - (totalDrawPoints - 20f)) / (totalDrawPoints - (totalDrawPoints - 20f));
+                    float interpolant = (i - (totalDrawPoints - 20f)) / (totalDrawPoints - (totalDrawPoints - 20f));
                     lineColor = Color.Lerp(lineColor, Color.Transparent, interpolant);
                 }
                 lineColor *= Projectile.Opacity;

@@ -27,7 +27,7 @@ namespace InfernumMode.Common.Graphics.Fluids
 
             CreatedFields.RemoveAll(f => f is null);
 
-            if (!CreatedFields.Any())
+            if (CreatedFields.Count == 0)
                 return;
 
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);

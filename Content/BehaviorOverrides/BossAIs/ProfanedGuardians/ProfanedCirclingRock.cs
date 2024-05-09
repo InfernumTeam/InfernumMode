@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         rotationSpeed: Main.rand.NextFromList(-1, 1) * 0.01f);
                     GeneralParticleHandler.SpawnParticle(fire);
                 }
-                if (CalamityConfig.Instance.Screenshake)
+                if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                     target.Infernum_Camera().CurrentScreenShakePower = 2f;
             }
             if (Timer > WaitTime + ReelbackTime)

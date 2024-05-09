@@ -62,7 +62,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             else
                 return;
 
-            if (!CalamityConfig.Instance.Screenshake)
+            if (!(CalamityConfig.Instance.ScreenshakePower > 0f))
             {
                 CurrentScreenShakePower = 0f;
                 return;

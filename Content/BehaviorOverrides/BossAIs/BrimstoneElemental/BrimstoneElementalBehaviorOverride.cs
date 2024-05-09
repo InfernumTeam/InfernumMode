@@ -578,7 +578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             // Create heat effects in accordance with the percussions of Brimmy's theme.
-            if (CalamityConfig.Instance.Screenshake && TrackedMusicManager.TryGetSongInformation(out BaseTrackedMusic songInfo) && songInfo.HighPoints.Any(s => s.WithinRange(TrackedMusicManager.SongElapsedTime)))
+            if ((CalamityConfig.Instance.ScreenshakePower > 0f) && TrackedMusicManager.TryGetSongInformation(out BaseTrackedMusic songInfo) && songInfo.HighPoints.Any(s => s.WithinRange(TrackedMusicManager.SongElapsedTime)))
             {
                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 1f;
                 ScreenEffectSystem.SetFlashEffect(npc.Center, 0.7f, 25);

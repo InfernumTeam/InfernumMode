@@ -195,7 +195,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             {
                 eelSwallowIndex.Value = -1;
                 target.velocity = npc.velocity.SafeNormalize(Vector2.Zero) * 16f;
-                target.GiveIFrames(45, true);
+                target.GiveIFrames(-1, 45, true);
                 jawRotation = 0.8f;
             }
 

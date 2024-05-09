@@ -26,7 +26,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileID.Sets.ReplaceTileBreakUp[Type] = true;
             TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
-            DustType = (int)CalamityDusts.SulfurousSeaAcid;
+            DustType = (int)CalamityDusts.SulphurousSeaAcid;
 
             HitSound = SoundID.Grass;
 

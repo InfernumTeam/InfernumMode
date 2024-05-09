@@ -46,7 +46,7 @@ namespace InfernumMode.Content.Achievements
 
         public Achievement Achievement { get; private set; } = achievement;
 
-        private Rectangle AchievementIconFrame = new Rectangle(66, achievement.PositionInMainList * 66, 64, 64);
+        private Rectangle AchievementIconFrame = new(66, achievement.PositionInMainList * 66, 64, 64);
 
         public object CreationObject { get; private set; }
 

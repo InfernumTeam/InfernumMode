@@ -22,7 +22,7 @@ namespace InfernumMode.Content.Items.Misc
         public override void SetDefaults()
         {
             Item.width = Item.height = 14;
-            Item.value = CalamityGlobalItem.Rarity1BuyPrice;
+            Item.value = CalamityGlobalItem.RarityBlueBuyPrice;
             Item.rare = ItemRarityID.Gray;
             Item.Infernum_Tooltips().DeveloperItem = true;
         }

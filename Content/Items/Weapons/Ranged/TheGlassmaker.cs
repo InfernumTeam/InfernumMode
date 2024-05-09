@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Items.Weapons.Ranged
             Item.height = 28;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
         }
 

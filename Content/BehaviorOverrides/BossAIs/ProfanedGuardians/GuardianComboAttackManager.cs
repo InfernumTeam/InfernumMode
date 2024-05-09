@@ -302,7 +302,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<HolySpinningFireBeam>(), HolySpinningFireBeamDamage, 0f, -1, 0f, offsetAngleInterpolant);
                             }
                             // Screenshake
-                            if (CalamityConfig.Instance.Screenshake)
+                            if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                                 Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
                         }
                     }
@@ -311,7 +311,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (universalAttackTimer == HolySpinningFireBeam.TelegraphTime && commanderHasAlreadyDoneBoom == 0)
                 {
                     // Check this here so that the flag gets set regardless, stopping it happening if the player enables screenshake after the first attack.
-                    if (CalamityConfig.Instance.Screenshake)
+                    if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                     {
                         Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 6f;
                         ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
@@ -529,7 +529,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
                         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 3f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.2f, 30);
@@ -702,7 +702,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         commander.Infernum().ExtraAI[DefenderShouldGlowIndex] = 1;
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
                         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 3f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.2f, 30);
@@ -1170,7 +1170,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
-                            if (CalamityConfig.Instance.Screenshake)
+                            if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                             {
                                 //target.Infernum_Camera().CurrentScreenShakePower = 12f;
                                 ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 45);
@@ -1189,7 +1189,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             {
                                 for (int i = 0; i < pillarAmount; i++)
                                 {
-                                    Vector2 position = Vector2.Lerp(start, end, (float)i / pillarAmount);
+                                    Vector2 position = Vector2.Lerp(start, end, i / pillarAmount);
                                     Utilities.NewProjectileBetter(position, Vector2.Zero, ModContent.ProjectileType<LavaEruptionPillar>(), LavaPillarDamage, 0f);
                                 }
                             }
@@ -1295,7 +1295,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         if (universalAttackTimer == 1)
                         {
-                            if (CalamityConfig.Instance.Screenshake)
+                            if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                                 ScreenEffectSystem.SetFlashEffect(target.Center, 1f, 30);
 
                             for (int i = 0; i < 75; i++)
@@ -1422,7 +1422,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                             SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
                             SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
-                            if (CalamityConfig.Instance.Screenshake)
+                            if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                                 ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);
 
                             // Damage the defender slightly, as it has been stabbed by the spear.
@@ -1824,7 +1824,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound, target.Center);
                         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
 
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 3f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.4f, 30);
@@ -2269,7 +2269,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                                 Utilities.NewProjectileBetter(center, velocity, ModContent.ProjectileType<ProfanedRock>(), ProfanedRockDamage, 0f, -1, 0f, npc.whoAmI);
                             }
                         }
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 6f;
                             ScreenEffectSystem.SetBlurEffect(npc.Center, 0.75f, 45);
@@ -2347,7 +2347,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Pitch = 0.35f, Volume = 1.6f }, target.Center);
                         SoundEngine.PlaySound(npc.HitSound.Value with { Volume = 3f }, target.Center);
 
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 12f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 0.5f, 45);
@@ -2598,7 +2598,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         ScreenEffectSystem.SetFlashEffect(spearTip, 0.5f, 45);
 
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                             target.Infernum_Camera().CurrentScreenShakePower = 4f;
 
                         Vector2 spearVelocity = npc.SafeDirectionTo(target.Center) * Main.rand.NextFloat(spearSpeed * 0.9f, spearSpeed * 1.1f);
@@ -2742,7 +2742,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         ScreenEffectSystem.SetFlashEffect(target.Center, 0.5f, 45);
 
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                             target.Infernum_Camera().CurrentScreenShakePower = 4f;
 
                         CreateFireExplosion(spawnPosition, false);
@@ -2868,7 +2868,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         CreateFireExplosion(npc.Center, true);
                         SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceBurnSound with { Pitch = 1.2f }, target.Center);
                         SoundEngine.PlaySound(InfernumSoundRegistry.VassalJumpSound with { Pitch = -0.2f, Volume = 1.4f }, target.Center);
-                        if (CalamityConfig.Instance.Screenshake)
+                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                         {
                             ScreenEffectSystem.SetBlurEffect(npc.Center, 1f, 30);
                             target.Infernum_Camera().CurrentScreenShakePower = 6f;

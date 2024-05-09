@@ -120,7 +120,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                         npc.Center += directionToNextSegment.SafeNormalize(Vector2.Zero).RotatedBy(PiOver2) * Sin(Pi * npc.ai[3] / 35f + headSegment.ai[3] / 15f) * 3.6f;
                 }
 
-                if (AquaticScourgeHeadBehaviorOverride.WormSegments.Any())
+                if (AquaticScourgeHeadBehaviorOverride.WormSegments.Count != 0)
                     AquaticScourgeHeadBehaviorOverride.WormSegments[segmentIndex].Position = npc.Center;
             }
 

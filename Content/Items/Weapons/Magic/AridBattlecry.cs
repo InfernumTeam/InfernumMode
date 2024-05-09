@@ -30,7 +30,7 @@ namespace InfernumMode.Content.Items.Weapons.Magic
             Item.noMelee = true;
             Item.knockBack = 0f;
 
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
 
             Item.autoReuse = true;

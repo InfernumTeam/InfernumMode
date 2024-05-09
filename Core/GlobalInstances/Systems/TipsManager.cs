@@ -54,7 +54,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             IEnumerable<Func<NPC, string>> potentialTips = container.BehaviorOverride.GetTips();
             var possibleThingsToSay = potentialTips.Select(t => t(BossBeingFought)).Where(t => !string.IsNullOrEmpty(t) && !SaidText.Contains(t)).ToList();
 
-            if (!possibleThingsToSay.Any())
+            if (possibleThingsToSay.Count == 0)
                 return string.Empty;
 
             string key = possibleThingsToSay.ElementAt(Main.rand.Next(possibleThingsToSay.Count));

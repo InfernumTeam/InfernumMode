@@ -149,7 +149,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             List<Projectile> specialProjectiles = Main.projectile.Take(Main.maxProjectiles).Where(p => p.active && p.ModProjectile is not null and ISpecializedDrawRegion).ToList();
 
             // Don't mess with the spritebatch if there are no specialized projectiles.
-            if (!specialProjectiles.Any())
+            if (specialProjectiles.Count == 0)
                 return;
 
             foreach (var projectileGroup in specialProjectiles.GroupBy(p => p.type))

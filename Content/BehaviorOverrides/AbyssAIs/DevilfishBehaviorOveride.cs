@@ -90,7 +90,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             {
                 if (target.Type != NPCTargetType.Player)
                     npc.target = 0;
-                CalamityAI.PassiveSwimmingAI(npc, InfernumMode.Instance, 0, 0.01f, 0.15f, 0.15f, 4f, 4f, 0.1f);
+                npc.PassiveSwimmingAI(0, 0.01f, 0.15f, 0.15f, 4f, 4f, 0.1f);
                 return false;
             }
 

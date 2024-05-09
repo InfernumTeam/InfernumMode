@@ -39,7 +39,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<MyrindaelBonkProjectile>();
             Item.shootSpeed = 12f;
 
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumVassalRarity>();
 
             Item.width = Item.height = 68;

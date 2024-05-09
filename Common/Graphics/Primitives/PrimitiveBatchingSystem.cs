@@ -108,7 +108,7 @@ namespace InfernumMode.Common.Graphics.Primitives
                 return;
 
             // Offset all of the indices so that they remain separated.
-            if (batch.Indices.Any())
+            if (batch.Indices.Count != 0)
             {
                 short startingIndex = (short)(batch.Indices.Max() + 1);
                 for (int i = 0; i < triangleIndices.Count; i++)

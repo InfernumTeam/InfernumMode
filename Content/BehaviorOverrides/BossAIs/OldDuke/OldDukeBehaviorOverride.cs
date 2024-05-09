@@ -492,7 +492,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 for (int i = 0; i < 36; i++)
                 {
                     Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2(npc.width / 2f, npc.height) * 0.4f).RotatedBy(TwoPi * i / 36f);
-                    Dust acid = Dust.NewDustPerfect(dustSpawnPosition, (int)CalamityDusts.SulfurousSeaAcid);
+                    Dust acid = Dust.NewDustPerfect(dustSpawnPosition, (int)CalamityDusts.SulphurousSeaAcid);
                     acid.noGravity = true;
                     acid.noLight = true;
                     acid.velocity = npc.SafeDirectionTo(dustSpawnPosition) * 3f;
@@ -618,7 +618,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             {
                 Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(TwoPi * i / dustCount);
                 Vector2 dustVelocity = (Main.rand.NextFloatDirection() * PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
-                Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulfurousSeaAcid, dustVelocity);
+                Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulphurousSeaAcid, dustVelocity);
                 acid.scale *= 1.45f;
                 acid.velocity *= 0.25f;
                 acid.velocity -= npc.velocity;
@@ -669,7 +669,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             {
                 Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(TwoPi * i / dustCount);
                 Vector2 dustVelocity = (Main.rand.NextFloatDirection() * PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
-                Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulfurousSeaAcid, dustVelocity);
+                Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulphurousSeaAcid, dustVelocity);
                 acid.scale *= 1.45f;
                 acid.velocity *= 0.25f;
                 acid.velocity -= npc.velocity;

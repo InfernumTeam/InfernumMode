@@ -42,7 +42,7 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private static void DrawScaledTarget(RenderTarget2D target)
         {
-            if (!pixelPrimDrawersList.Any() && !pixelPrimDrawersListBeforeNPCs.Any())
+            if (pixelPrimDrawersList.Count == 0 && pixelPrimDrawersListBeforeNPCs.Count == 0)
                 return;
 
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
@@ -54,10 +54,10 @@ namespace InfernumMode.Common.Graphics.Primitives
 
         private void DrawPixelRenderTarget(On_Main.orig_DoDraw_DrawNPCsOverTiles orig, Main self)
         {
-            if (pixelPrimDrawersListBeforeNPCs.Any())
+            if (pixelPrimDrawersListBeforeNPCs.Count != 0)
                 DrawScaledTarget(pixelRenderTargetBeforeNPCs.Target);
             orig(self);
-            if (pixelPrimDrawersList.Any())
+            if (pixelPrimDrawersList.Count != 0)
                 DrawScaledTarget(pixelRenderTarget.Target);
         }
 
@@ -98,7 +98,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             }
 
             // Draw the prims. The render target gets set here.
-            if (pixelPrimDrawersList.Any() || pixelPrimDrawersListBeforeNPCs.Any())
+            if (pixelPrimDrawersList.Count != 0 || pixelPrimDrawersListBeforeNPCs.Count != 0)
             {
                 DrawPrimsToRenderTarget(pixelRenderTarget.Target, pixelPrimDrawersList);
                 DrawPrimsToRenderTarget(pixelRenderTargetBeforeNPCs.Target, pixelPrimDrawersListBeforeNPCs);
@@ -116,7 +116,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             // Swap to the custom render target to prepare things to pixelation.
             renderTarget.SwapToRenderTarget();
 
-            if (pixelPrimitives.Any())
+            if (pixelPrimitives.Count != 0)
             {
                 // Start a spritebatch, as one does not exist before the method we're detouring.
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null);

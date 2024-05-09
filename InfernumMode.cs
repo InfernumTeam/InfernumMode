@@ -127,8 +127,6 @@ namespace InfernumMode
                 InfernumEffectsRegistry.LoadEffects();
             }
 
-            CooldownRegistry.RegisterModCooldowns(this);
-
             if (Main.netMode != NetmodeID.Server)
             {
                 Main.QueueMainThreadAction(() =>

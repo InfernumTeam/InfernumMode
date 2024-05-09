@@ -53,7 +53,7 @@ namespace InfernumMode.Common.Graphics.Particles
             Rotation += RotationSpeed * (Velocity.X > 0 ? 1f : -1f);
 
             if (FadeIn && Time <= 15f)
-                Opacity = Lerp(0f, 1f, (int)Time / 15f);
+                Opacity = Lerp(0f, 1f, Time / 15f);
 
             if (LifetimeCompletion >= 0.8f)
             {

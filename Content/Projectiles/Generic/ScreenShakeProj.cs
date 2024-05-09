@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Projectiles.Generic
         public override void AI()
         {
             // Don't do anything if running server-side or if screen shake effects are disabled in the config.
-            if (Main.netMode == NetmodeID.Server || !CalamityConfig.Instance.Screenshake)
+            if (Main.netMode == NetmodeID.Server || !(CalamityConfig.Instance.ScreenshakePower > 0f))
                 return;
 
             if (!ScreenShader.IsActive())

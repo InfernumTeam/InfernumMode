@@ -32,7 +32,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileID.Sets.SwaysInWindBasic[Type] = true;
             TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
-            DustType = (int)CalamityDusts.SulfurousSeaAcid;
+            DustType = (int)CalamityDusts.SulphurousSeaAcid;
 
             HitSound = SoundID.Grass;
 

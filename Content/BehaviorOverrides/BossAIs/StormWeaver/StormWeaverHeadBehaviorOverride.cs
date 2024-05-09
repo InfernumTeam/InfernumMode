@@ -332,7 +332,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     potentialTargets.Add(n);
                 }
 
-                if (potentialTargets.Any())
+                if (potentialTargets.Count != 0)
                 {
                     targetIndex = potentialTargets.OrderBy(t => npc.Distance(t.Center)).First().whoAmI;
                     npc.netUpdate = true;

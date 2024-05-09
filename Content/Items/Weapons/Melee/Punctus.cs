@@ -31,7 +31,7 @@ namespace InfernumMode.Content.Items.Weapons.Melee
             Item.shoot = ModContent.ProjectileType<PunctusProjectile>();
             Item.shootSpeed = 45f;
 
-            Item.value = CalamityGlobalItem.Rarity9BuyPrice;
+            Item.value = CalamityGlobalItem.RarityCyanBuyPrice;
             Item.rare = ModContent.RarityType<InfernumProfanedRarity>();
             Item.Infernum_Tooltips().DeveloperItem = true;
 

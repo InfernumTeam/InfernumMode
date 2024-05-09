@@ -49,7 +49,7 @@ namespace InfernumMode.Content.Achievements
 
         public object CreationObject { get; private set; } = achievement;
 
-        private Rectangle AchievementIconFrame = new Rectangle(0, achievement.PositionInMainList * 66, 64, 64);
+        private Rectangle AchievementIconFrame = new(0, achievement.PositionInMainList * 66, 64, 64);
 
         private readonly Asset<Texture2D> AchievementTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Achievements/Textures/Achievement", AssetRequestMode.ImmediateLoad);
 

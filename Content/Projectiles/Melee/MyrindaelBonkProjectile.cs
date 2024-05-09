@@ -112,7 +112,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 }
             }
 
-            Owner.GiveIFrames(20);
+            Owner.GiveIFrames(-1, 20);
             Owner.velocity = Owner.SafeDirectionTo(target.Center) * -18f;
             Projectile.Kill();
         }

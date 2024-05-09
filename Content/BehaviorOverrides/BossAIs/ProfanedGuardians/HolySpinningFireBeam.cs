@@ -122,7 +122,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
             float width = Projectile.width * Projectile.scale * 1.75f;
 
             // If something is inbetween the npc and the target, go through blocks.
-            if (!Collision.CanHitLine(owner.Center, (int)width, (int)1, target.position, target.Hitbox.Width, target.Hitbox.Height))
+            if (!Collision.CanHitLine(owner.Center, (int)width, 1, target.position, target.Hitbox.Width, target.Hitbox.Height))
             {
                 CurrentLaserLength = MaxLaserLength;
                 return;

@@ -32,7 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
             Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true);
 
             // Emit sulphuric dust.
-            Dust acid = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f) - Projectile.velocity, (int)CalamityDusts.SulfurousSeaAcid);
+            Dust acid = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f) - Projectile.velocity, (int)CalamityDusts.SulphurousSeaAcid);
             acid.scale *= 1.45f;
             acid.velocity = Main.rand.NextVector2Circular(5f, 5f);
             acid.noGravity = true;

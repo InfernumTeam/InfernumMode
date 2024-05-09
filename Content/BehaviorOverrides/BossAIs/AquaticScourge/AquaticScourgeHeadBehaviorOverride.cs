@@ -205,7 +205,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             // Attach the verlet segments to the head.
-            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation && WormSegments.Any())
+            if (attackType != (int)AquaticScourgeAttackType.DeathAnimation && WormSegments.Count != 0)
                 WormSegments[0].Position = npc.Center;
 
             // Determine hostility.
@@ -383,7 +383,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Handle acoustic and visual triggers.
             Projectile bubbleProj = null;
             List<Projectile> goodBubbles = Utilities.AllProjectilesByID(ModContent.ProjectileType<WaterClearingBubble>()).ToList();
-            if (goodBubbles.Any())
+            if (goodBubbles.Count != 0)
                 bubbleProj = goodBubbles.First();
 
             if (attackTimer < waterBubbleTime)
@@ -1056,7 +1056,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Fly more aggressively if the target is close to the safety bubble.
             Projectile closestBubble = null;
             List<Projectile> goodBubbles = Utilities.AllProjectilesByID(ModContent.ProjectileType<WaterClearingBubble>()).ToList();
-            if (goodBubbles.Any())
+            if (goodBubbles.Count != 0)
             {
                 closestBubble = goodBubbles.OrderBy(b => b.DistanceSQ(target.Center)).First();
                 float closenessInterpolant = Utils.GetLerpValue(400f, 180f, closestBubble.Distance(target.Center), true);
@@ -1349,7 +1349,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
 
             // Circle around the tornado.
             List<Projectile> tornadoes = Utilities.AllProjectilesByID(ModContent.ProjectileType<SulphuricTornado>()).ToList();
-            if (!tornadoes.Any())
+            if (tornadoes.Count == 0)
             {
                 SelectNextAttack(npc);
                 return;
@@ -1712,7 +1712,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                     float increment = boostFactor / CalamityPlayer.SulphSeaWaterSafetyTime;
                     if (p.Calamity().sulphurskin)
                         increment *= 0.5f;
-                    if (p.Calamity().sulfurSet)
+                    if (p.Calamity().sulphurSet)
                         increment *= 0.5f;
                     p.Calamity().SulphWaterPoisoningLevel += increment;
                 }

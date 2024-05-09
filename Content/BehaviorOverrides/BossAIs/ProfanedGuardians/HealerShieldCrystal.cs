@@ -145,7 +145,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float crystalAmount = 50f;
                 for (int i = 0; i < crystalAmount; i++)
                 {
-                    Vector2 crystalSpawnPosition = Vector2.Lerp(wallBottom, wallTop, (float)i / crystalAmount) + Main.rand.NextVector2Circular(24f, 24f);
+                    Vector2 crystalSpawnPosition = Vector2.Lerp(wallBottom, wallTop, i / crystalAmount) + Main.rand.NextVector2Circular(24f, 24f);
                     Vector2 crystalVelocity = -Vector2.UnitX.RotatedByRandom(1.06f) * Main.rand.NextFloat(2f, 4f);
 
                     if (!Collision.SolidCollision(crystalSpawnPosition, 1, 1) && Main.netMode != NetmodeID.Server)

@@ -258,7 +258,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             }
 
             // Update any particles.
-            if (FormingRocks.Any())
+            if (FormingRocks.Count != 0)
                 UpdateFormingRocks();
 
             if (Timer == GlowEndTime + 1f)
@@ -430,7 +430,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 }
 
                 // And ofc some lovely screenshake.
-                if (CalamityConfig.Instance.Screenshake)
+                if ((CalamityConfig.Instance.ScreenshakePower > 0f))
                     Owner.Infernum_Camera().CurrentScreenShakePower = 2f;
 
                 // Update the current state, timer, and sync.
@@ -659,7 +659,7 @@ namespace InfernumMode.Content.Projectiles.Melee
             }
 
             // Draw any of the forming rock particles, over the top of this for the bloom effect.
-            if (FormingRocks.Any())
+            if (FormingRocks.Count != 0)
                 DrawRocks();
             return false;
         }

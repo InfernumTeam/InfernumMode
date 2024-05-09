@@ -332,8 +332,8 @@ namespace InfernumMode
                             // DO NOT REMOVE THESE "UNNECESSARY" FLOAT CASTS EITHER.
                             if (k > 0)
                             {
-                                float colorMult = (float)(afterimageCount - k);
-                                drawColor *= colorMult / ((float)afterimageCount * 1.5f);
+                                float colorMult = afterimageCount - k;
+                                drawColor *= colorMult / (afterimageCount * 1.5f);
                             }
                             Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(rectangle), drawColor, rotation, origin, scale, spriteEffects, 0f);
                             k += increment;
@@ -350,7 +350,7 @@ namespace InfernumMode
 
                             Vector2 drawPos = proj.oldPos[i] + centerOffset - Main.screenPosition + new Vector2(0f, proj.gfxOffY);
                             // DO NOT REMOVE THESE "UNNECESSARY" FLOAT CASTS. THIS WILL BREAK THE AFTERIMAGES.
-                            Color color = proj.GetAlpha(lightColor) * ((float)(proj.oldPos.Length - i) / (float)proj.oldPos.Length);
+                            Color color = proj.GetAlpha(lightColor) * ((proj.oldPos.Length - i) / (float)proj.oldPos.Length);
                             Main.spriteBatch.Draw(texture, drawPos, new Rectangle?(rectangle), color, afterimageRot, origin, scale, sfxForThisAfterimage, 0f);
                         }
                         break;

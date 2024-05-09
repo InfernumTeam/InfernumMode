@@ -1619,7 +1619,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Stick to the moon once completely invisible.
             List<Projectile> moons = Utilities.AllProjectilesByID(ModContent.ProjectileType<StolenCelestialObject>()).ToList();
-            if (npc.Opacity <= 0f && moons.Any())
+            if (npc.Opacity <= 0f && moons.Count != 0)
                 npc.Center = moons.First().Center;
 
             // Sweep the laser.
@@ -1650,7 +1650,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             animationBackgroundColor = Color.Transparent;
 
             // Transition to the next attack if the moon is gone.
-            if (!moons.Any() && rainbowState >= 3f)
+            if (moons.Count == 0 && rainbowState >= 3f)
                 SelectNextAttack(npc);
         }
 

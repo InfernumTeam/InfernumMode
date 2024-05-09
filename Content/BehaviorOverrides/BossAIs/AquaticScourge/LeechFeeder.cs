@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
                 if (Projectile.Hitbox.Intersects(target.Hitbox))
                 {
                     target.localAI[1] += 0.01f;
-                    Dust.NewDustDirect(target.TopLeft, target.width, target.height, (int)CalamityDusts.SulfurousSeaAcid);
+                    Dust.NewDustDirect(target.TopLeft, target.width, target.height, (int)CalamityDusts.SulphurousSeaAcid);
 
                     if (Main.rand.NextBool(150))
                         SoundEngine.PlaySound(SoundID.Item17, Projectile.Center);

@@ -730,7 +730,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            spriteBatch.Draw(BossTextureRegistry.DesertScourgeHead.Value, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(BossTextureRegistry.DesertScourgeHead.Value, npc.Center - Main.screenPosition, null, npc.GetAlpha(lightColor), npc.rotation, BossTextureRegistry.DesertScourgeHead.Value.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion

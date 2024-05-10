@@ -222,7 +222,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
                         SelectNewAttack(commander, ref attackTimer, (float)GuardiansAttackType.LargeGeyserAndCharge);
                         commander.Infernum().ExtraAI[CommanderAttackCyclePositionIndex] = 1f;
 
-                        HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedDefenderTip1");
+                        HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.ProfanedDefenderTip");
                         npc.life = 0;
                         npc.NPCLoot();
                         npc.active = false;

@@ -11,19 +11,36 @@ namespace InfernumMode.Common.Graphics.Primitives
     // This is old and crap, but i do not want to port all 254 references of it.
     public class PrimitiveTrailCopy
     {
-        public readonly struct VertexPosition2DColor(Vector2 position, Color color, Vector2 textureCoordinates) : IVertexType
+        public readonly struct VertexPosition2DColorTexture(Vector2 position, Color color, Vector2 textureCoordinates, float widthCorrectionFactor) : IVertexType
         {
+            /// <summary>
+            /// The position of the vertex.
+            /// </summary>
             public readonly Vector2 Position = position;
+
+            /// <summary>
+            /// The color of the vertex.
+            /// </summary>
             public readonly Color Color = color;
-            public readonly Vector2 TextureCoordinates = textureCoordinates;
 
-            public readonly VertexDeclaration VertexDeclaration => _vertexDeclaration;
+            /// <summary>
+            /// The texture-coordinate of the vertex.
+            /// </summary>
+            /// <remarks>
+            /// The Z component isn't actually related to 3D, it holds the width of the vertex at the given point, since arbitrary data cannot be saved on a per-vertex basis and needs to be contained within some pre-defined format.
+            /// </remarks>
+            public readonly Vector3 TextureCoordinates = new(textureCoordinates, widthCorrectionFactor);
 
-            private static readonly VertexDeclaration _vertexDeclaration = new(
+            /// <summary>
+            /// The vertex declaration. This declares the layout and size of the data in the vertex shader.
+            /// </summary>
+            public VertexDeclaration VertexDeclaration => VertexDeclaration2D;
+
+            public static readonly VertexDeclaration VertexDeclaration2D = new(
             [
-                new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
-                new VertexElement(8, VertexElementFormat.Color, VertexElementUsage.Color, 0),
-                new VertexElement(12, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+                new(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
+                new(8, VertexElementFormat.Color, VertexElementUsage.Color, 0),
+                new(12, VertexElementFormat.Vector3, VertexElementUsage.TextureCoordinate, 0)
             ]);
         }
 
@@ -191,9 +208,9 @@ namespace InfernumMode.Common.Graphics.Primitives
             return points;
         }
 
-        public List<VertexPosition2DColor> GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
+        public List<VertexPosition2DColorTexture> GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
         {
-            List<VertexPosition2DColor> vertices = [];
+            List<VertexPosition2DColorTexture> vertices = [];
 
             for (int i = 0; i < trailPoints.Count - 1; i++)
             {
@@ -207,18 +224,21 @@ namespace InfernumMode.Common.Graphics.Primitives
                 if (directionOverride.HasValue)
                     directionToAhead = directionOverride.Value.ToRotationVector2();
 
-                Vector2 leftCurrentTextureCoord = new(completionRatio, 0f);
-                Vector2 rightCurrentTextureCoord = new(completionRatio, 1f);
+                Vector2 leftCurrentTextureCoord = new(completionRatio, 0.5f - widthAtVertex * 0.5f);
+                Vector2 rightCurrentTextureCoord = new(completionRatio, 0.5f + widthAtVertex * 0.5f);
 
                 // Point 90 degrees away from the direction towards the next point, and use it to mark the edges of the rectangle.
                 // This doesn't use RotatedBy for the sake of performance (there can potentially be a lot of trail points).
                 Vector2 sideDirection = new(-directionToAhead.Y, directionToAhead.X);
 
+                Vector2 left = currentPosition - sideDirection * widthAtVertex;
+                Vector2 right = currentPosition + sideDirection * widthAtVertex;
+
                 // What this is doing, at its core, is defining a rectangle based on two triangles.
                 // These triangles are defined based on the width of the strip at that point.
                 // The resulting rectangles combined are what make the trail itself.
-                vertices.Add(new VertexPosition2DColor(currentPosition - sideDirection * widthAtVertex, vertexColor, leftCurrentTextureCoord));
-                vertices.Add(new VertexPosition2DColor(currentPosition + sideDirection * widthAtVertex, vertexColor, rightCurrentTextureCoord));
+                vertices.Add(new VertexPosition2DColorTexture(left, vertexColor, leftCurrentTextureCoord, widthAtVertex));
+                vertices.Add(new VertexPosition2DColorTexture(right, vertexColor, rightCurrentTextureCoord, widthAtVertex));
             }
 
             return vertices;
@@ -292,7 +312,7 @@ namespace InfernumMode.Common.Graphics.Primitives
             DrawPrimsFromVertexData(GetVerticesFromTrailPoints(trailPoints, directionOverride), GetIndicesFromTrailPoints(trailPoints.Count), pixelated);
         }
 
-        internal void DrawPrimsFromVertexData(List<VertexPosition2DColor> vertices, List<short> triangleIndices, bool pixelated)
+        internal void DrawPrimsFromVertexData(List<VertexPosition2DColorTexture> vertices, List<short> triangleIndices, bool pixelated)
         {
             if (triangleIndices.Count % 6 != 0 || vertices.Count <= 3)
                 return;

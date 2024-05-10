@@ -26,14 +26,14 @@ struct VertexShaderInput
 {
     float4 Position : POSITION0;
     float4 Color : COLOR0;
-    float2 TextureCoordinates : TEXCOORD0;
+    float3 TextureCoordinates : TEXCOORD0;
 };
 
 struct VertexShaderOutput
 {
     float4 Position : SV_POSITION;
     float4 Color : COLOR0;
-    float2 TextureCoordinates : TEXCOORD0;
+    float3 TextureCoordinates : TEXCOORD0;
 };
 
 VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
@@ -44,7 +44,7 @@ VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
     
     output.Color = input.Color;
     output.TextureCoordinates = input.TextureCoordinates;
-
+    output.TextureCoordinates.y = (output.TextureCoordinates.y - 0.5) / input.TextureCoordinates.z + 0.5;
     return output;
 }
 

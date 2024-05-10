@@ -17,7 +17,7 @@ namespace InfernumMode.Common.Graphics.Primitives
 
             public List<short> Indices;
 
-            public List<PrimitiveTrailCopy.VertexPosition2DColor> Vertices;
+            public List<PrimitiveTrailCopy.VertexPosition2DColorTexture> Vertices;
 
             public void Draw()
             {
@@ -95,12 +95,12 @@ namespace InfernumMode.Common.Graphics.Primitives
             if (trailPoints.All(point => point == trailPoints[0]))
                 return;
 
-            List<PrimitiveTrailCopy.VertexPosition2DColor> vertices = batch.PrimitiveDrawer.GetVerticesFromTrailPoints(trailPoints, directionOverride);
+            List<PrimitiveTrailCopy.VertexPosition2DColorTexture> vertices = batch.PrimitiveDrawer.GetVerticesFromTrailPoints(trailPoints, directionOverride);
             List<short> triangleIndices = PrimitiveTrailCopy.GetIndicesFromTrailPoints(trailPoints.Count);
             PrepareVertices<T>(triangleIndices, vertices);
         }
 
-        public static void PrepareVertices<T>(List<short> triangleIndices, List<PrimitiveTrailCopy.VertexPosition2DColor> vertices) where T : ModType
+        public static void PrepareVertices<T>(List<short> triangleIndices, List<PrimitiveTrailCopy.VertexPosition2DColorTexture> vertices) where T : ModType
         {
             // Don't attempt to prepare anything if the batch has not been created yet.
             Type type = typeof(T);

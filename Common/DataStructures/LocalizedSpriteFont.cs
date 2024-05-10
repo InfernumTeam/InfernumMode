@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using InfernumMode.Content.Achievements.DevWishes;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
 using Terraria.GameContent;
@@ -18,6 +19,14 @@ namespace InfernumMode.Common.DataStructures
 
         private readonly Dictionary<GameCulture, DynamicSpriteFont> OtherFonts;
 
+        // Why is an enum used if the culture doesnt store it??
+        public static readonly HashSet<string> LocalizedLanguages =
+        [
+            "English",
+            "Russian",
+            "Chinese"
+        ];
+
         public DynamicSpriteFont Font
         {
             get
@@ -26,8 +35,8 @@ namespace InfernumMode.Common.DataStructures
                 if (Utilities.LanguageIsActive(GameCulture.CultureName.English) || DefaultSupportedLanguages.Contains(Language.ActiveCulture))
                     return EnglishFont;
 
-                // If there is a custom font registered for this language, return that.
-                if (OtherFonts.TryGetValue(Language.ActiveCulture, out var font))
+                // If there is a custom font registered for this language, or this language is not localized, return that.
+                if (OtherFonts.TryGetValue(Language.ActiveCulture, out var font) && !LocalizedLanguages.Contains(Language.ActiveCulture.Name))
                     return font;
 
                 // Else just return AndyBold as a fallback, as that as localization for every language.

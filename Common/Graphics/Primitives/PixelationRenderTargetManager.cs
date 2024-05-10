@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using InfernumMode.Common.Graphics.Interfaces;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;

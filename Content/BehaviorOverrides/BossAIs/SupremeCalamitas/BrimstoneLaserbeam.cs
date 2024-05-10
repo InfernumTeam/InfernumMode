@@ -5,18 +5,18 @@ using CalamityMod;
 using CalamityMod.Graphics.Metaballs;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Magic;
-using InfernumMode.Common.Graphics.Interfaces;
+using InfernumMode.Assets.Effects;
+using InfernumMode.Assets.ExtraTextures;
 using InfernumMode.Common.Graphics.Primitives;
+using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class BrimstoneLaserbeam : ModProjectile, IPixelPrimitiveDrawer
+    public class BrimstoneLaserbeam : ModProjectile
     {
         public PrimitiveTrailCopy RayDrawer;
 
@@ -75,6 +75,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.myPlayer == Projectile.owner)
                 CreateTileHitEffects();
 
+            Projectile.hide = true;
+
             // Make the beam cast light along its length. The brightness of the light is reliant on the scale of the beam.
             DelegateMethods.v3_1 = Color.DarkViolet.ToVector3() * Projectile.scale * 0.4f;
             Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
@@ -116,20 +118,19 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             return Color.Lerp(vibrantColor, Color.White, 0.3f) * opacity * 2f;
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
-
-        public void DrawPixelPrimitives(SpriteBatch spriteBatch)
+        public override bool PreDraw(ref Color lightColor)
         {
-            RayDrawer ??= new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, specialShader: GameShaders.Misc["CalamityMod:Flame"]);
-
-            GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
-
             Vector2[] basePoints = new Vector2[24];
             for (int i = 0; i < basePoints.Length; i++)
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.DrawPixelated(basePoints, overallOffset, 62);
+            InfernumEffectsRegistry.FlameVertexShader.SetTexture(InfernumTextureRegistry.BlurryPerlinNoise, 1);
+            InfernumEffectsRegistry.FlameVertexShader.TrySetParameter("globalTime", Main.GlobalTimeWrappedHourly);
+            InfernumEffectsRegistry.FlameVertexShader.TrySetParameter("uSaturation", 1f);
+
+            PrimitiveRenderer.RenderTrail(basePoints, new(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, false, InfernumEffectsRegistry.FlameVertexShader), 64);
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

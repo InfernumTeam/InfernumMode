@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
     {
         public bool GuardiansType;
 
-        public static int Variant => (int)(ProvidenceBehaviorOverride.IsEnraged ? ProvidenceBoss.BossMode.Night : ProvidenceBoss.BossMode.Day);
+        public static int Variant => (int)(ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1 ? ProvidenceBoss.BossMode.Night : ProvidenceBoss.BossMode.Day);
 
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             for (int i = 0; i < 3; i++)
             {
                 Color fireColor = Color.Lerp(Color.Orange, Color.Red, Main.rand.NextFloat(0.2f, 0.4f));
-                if (ProvidenceBehaviorOverride.IsEnraged)
+                if (ProvidenceBehaviorOverride.IsEnraged && CalamityGlobalNPC.holyBoss != -1)
                     fireColor = Color.Lerp(fireColor, Color.SkyBlue, 0.7f);
 
                 fireColor = Color.Lerp(fireColor, Color.White, Main.rand.NextFloat(0.4f));
@@ -92,8 +92,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
             Color baseColor = ProvUtils.GetProjectileColor(Variant, 255);
             baseColor.A = 0;
-            Color colorA = baseColor;
-            Color colorB = baseColor * 0.5f;
+            Color colorA = baseColor with { A = 0 };
+            Color colorB = baseColor with { A = 0 } * 0.5f;
             colorA *= scaleInterpolant;
             colorB *= scaleInterpolant;
             Vector2 origin = texture.Size() / 2f;

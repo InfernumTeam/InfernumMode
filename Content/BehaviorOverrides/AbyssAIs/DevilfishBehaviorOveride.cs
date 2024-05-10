@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CalamityMod;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.Sounds;
 using InfernumMode.Assets.Sounds;

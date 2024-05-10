@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using InfernumMode.Content.Achievements.DevWishes;
 using Microsoft.Xna.Framework;
 using ReLogic.Graphics;
 using Terraria.GameContent;

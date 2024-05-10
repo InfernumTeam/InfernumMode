@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Assets.ExtraTextures;

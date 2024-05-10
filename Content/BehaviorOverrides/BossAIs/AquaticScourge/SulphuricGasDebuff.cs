@@ -93,7 +93,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             int b = 160 + (int)(Math.Sin(Pi * Projectile.identity / 9f + Main.GlobalTimeWrappedHourly * 11f) * 75f);
             Color drawColor = new Color(141, 255, b) * opacity;
             Vector2 scale = Vector2.One * 50f / texture.Size() * Projectile.scale * 1.35f;
-            Main.spriteBatch.SetBlendState(BlendState.AlphaBlend);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             Main.spriteBatch.ResetBlendState();
             return false;

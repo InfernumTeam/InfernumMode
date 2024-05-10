@@ -3,7 +3,6 @@ global using static System.MathF;
 global using static Microsoft.Xna.Framework.MathHelper;
 global using LumUtils = Luminance.Common.Utilities.Utilities;
 using System.IO;
-using CalamityMod.Cooldowns;
 using CalamityMod.ILEditing;
 using CalamityMod.Systems;
 using InfernumMode.Assets.BossTextures;

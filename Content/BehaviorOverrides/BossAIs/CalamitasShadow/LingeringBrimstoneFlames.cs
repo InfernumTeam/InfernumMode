@@ -56,7 +56,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Main.spriteBatch.Draw(texture, drawPosition, null, color with { A = 0 }, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
             Main.spriteBatch.Draw(texture, drawPosition, null, Color.White with { A = 0 } * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
-            return true;
+            return false;
         }
 
         public override Color? GetAlpha(Color lightColor)

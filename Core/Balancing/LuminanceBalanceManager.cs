@@ -110,7 +110,7 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBaseChangeModded(ModContent.NPCType<PerforatorHeadLarge>(), 3960);
             yield return CreateBaseChangeVanilla(NPCID.QueenBee, 9669);
             yield return CreateBaseChangeVanilla(NPCID.Deerclops, 22844);
-            yield return CreateBaseChangeVanilla(NPCID.SkeletronHead, 13860);
+            yield return CreateBaseChangeVanilla(NPCID.SkeletronHead, 9860);
             yield return CreateBaseChangeModded(ModContent.NPCType<SlimeGodCore>(), 3275);
             yield return CreateBaseChangeModded(ModContent.NPCType<CrimulanSGBig>(), 7464);
             yield return CreateBaseChangeModded(ModContent.NPCType<EbonianSGBig>(), 7464);

@@ -54,10 +54,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Color color = Projectile.GetAlpha(Color.White);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
-            Main.spriteBatch.Draw(texture, drawPosition, null, color, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
-            Main.spriteBatch.ResetBlendState();
+            Main.spriteBatch.Draw(texture, drawPosition, null, color with { A = 0 }, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White with { A = 0 } * Projectile.Opacity * 0.7f, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, 0, 0f);
             return true;
         }
 

@@ -740,6 +740,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 }
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)]));
             cursor.Emit(OpCodes.Ret);
         }
     }
@@ -842,6 +843,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     Utilities.NewProjectileBetter(player.Center, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f);
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)]));
             cursor.Emit(OpCodes.Ret);
         }
     }

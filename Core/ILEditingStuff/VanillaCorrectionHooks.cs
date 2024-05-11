@@ -837,6 +837,7 @@ namespace InfernumMode.Core.ILEditingStuff
                 }
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)]));
             cursor.Emit(OpCodes.Ret);
         }
     }

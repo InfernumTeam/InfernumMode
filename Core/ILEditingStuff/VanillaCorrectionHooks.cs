@@ -566,18 +566,24 @@ namespace InfernumMode.Core.ILEditingStuff
 
             cursor.EmitDelegate(() =>
             {
+                // I'll leave this here if the boss rush can ever be swapped.
+                /*
                 int tier2Boss = NPCID.TheDestroyer;
                 int tier3Boss = NPCID.CultistBoss;
                 if (InfernumMode.CanUseCustomAIs)
                 {
                     tier2Boss = ModContent.NPCType<ProfanedGuardianCommander>();
                     tier3Boss = ModContent.NPCType<SlimeGodCore>();
-                }
-
-                if (BossRushStage > Bosses.FindIndex(boss => boss.EntityID == tier3Boss))
+                }*/
+                if (BossRushStage > Bosses.FindIndex((boss) => boss.EntityID == ModContent.NPCType<CalamitasClone>()))
+                    return 5;
+                if (BossRushStage > Bosses.FindIndex((boss) => boss.EntityID == NPCID.Golem || boss.EntityID == NPCID.GolemHead))
+                    return 4;
+                if (BossRushStage > Bosses.FindIndex((boss) => boss.EntityID == ModContent.NPCType<SlimeGodCore>()))
                     return 3;
-                if (BossRushStage > Bosses.FindIndex(boss => boss.EntityID == tier2Boss))
+                if (BossRushStage > Bosses.FindIndex((boss) => boss.EntityID == ModContent.NPCType<ProfanedGuardianCommander>()))
                     return 2;
+
                 return 1;
             });
             cursor.Emit(OpCodes.Ret);

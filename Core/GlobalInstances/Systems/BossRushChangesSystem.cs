@@ -100,7 +100,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Cache our own boss order.
             Bosses =
             [
-                new Boss(NPCID.KingSlime, spawnContext: type => {
+                new Boss(NPCID.KingSlime, spawnContext: type => 
+                {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
             
                     // Set the startedBossRushAtLeastOnce boolean to true to

@@ -99,11 +99,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             }
 
             bool enraged = LeviathanComboAttackManager.FightState == LeviAnahitaFightState.AloneEnraged;
-           if (enraged){
+           if (enraged)
                 // this should be able to play the song instead of defaulting to boss 1
                 CalamityGlobalNPC.LeviAndAna = npc.whoAmI;
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.LeviathanFinalPhaseTip");
-            }
 
             Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 380f, -45f);
 

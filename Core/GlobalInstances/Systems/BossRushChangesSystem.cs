@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.CalPlayer;
+using CalamityMod.Enums;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
@@ -33,6 +34,7 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.Systems;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops;
@@ -98,7 +100,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             // Cache our own boss order.
             Bosses =
             [
-                new Boss(NPCID.KingSlime, permittedNPCs: [ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewel>()]),
+                new Boss(NPCID.KingSlime, spawnContext: type => {
+                    NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
+            
+                    // Set the startedBossRushAtLeastOnce boolean to true to
+                    // no longer give players the full Xeroc start monologue anymore
+                    DownedBossSystem.startedBossRushAtLeastOnce = true;
+                },  permittedNPCs: [ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewel>()]),
 
                 new Boss(NPCID.EyeofCthulhu, TimeChangeContext.Night, permittedNPCs: [NPCID.ServantofCthulhu, ModContent.NPCType<ExplodingServant>()]),
 
@@ -186,6 +194,9 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 // Tier 3.
                 new Boss(NPCID.SkeletronHead, TimeChangeContext.Night, type =>
                 {
+                    BossRushDialogueSystem.StartDialogue(BossRushDialoguePhase.TierOneComplete);
+                    CreateTierAnimation(3);
+
                     Player player = Main.player[ClosestPlayerToWorldCenter];
                     int sans = NPC.NewNPC(new EntitySource_WorldEvent(), (int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[sans].timeLeft *= 20;
@@ -220,7 +231,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }, permittedNPCs: [ NPCID.CultistBossClone, NPCID.CultistDragonHead, NPCID.CultistDragonBody1, NPCID.CultistDragonBody2, NPCID.CultistDragonBody3, NPCID.CultistDragonBody4,
                     NPCID.CultistDragonTail, NPCID.AncientCultistSquidhead, NPCID.AncientLight, NPCID.AncientDoom ]),
 
-                new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: [NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe]),
+                new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: [ModContent.NPCType<SkeletronPrime2>(), NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe]),
 
                 new Boss(ModContent.NPCType<OldDuke>(), spawnContext: type =>
                 {
@@ -243,7 +254,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     int drawcodeGoddess = NPC.NewNPC(new EntitySource_WorldEvent(), (int)Main.player[ClosestPlayerToWorldCenter].Center.X, (int)(Main.player[ClosestPlayerToWorldCenter].Center.Y - 400f), type, 1);
                     Main.npc[drawcodeGoddess].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(drawcodeGoddess);
-                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Events.BossRushTierThreeEndText2", XerocTextColor);
                 }, toChangeTimeTo: TimeChangeContext.Night),
 
                 new Boss(NPCID.Spazmatism, TimeChangeContext.Night, type =>
@@ -272,7 +282,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 // Tier 5.
                 new Boss(ModContent.NPCType<DevourerofGodsHead>(), TimeChangeContext.Day, type =>
                 {
-                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Events.BossRushTierFourEndText2", XerocTextColor);
                     Player player = Main.player[ClosestPlayerToWorldCenter];
                     for (int playerIndex = 0; playerIndex < Main.maxPlayers; playerIndex++)
                     {
@@ -329,18 +338,19 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 },
                 [ModContent.NPCType<ProfanedGuardianCommander>()] = npc =>
                 {
-                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Events.BossRushTierOneEndText", XerocTextColor);
+                    BossRushDialogueSystem.StartDialogue(BossRushDialoguePhase.TierOneComplete);
                     CreateTierAnimation(2);
                     BringPlayersBackToSpawn();
                 },
+                // Sorry, I couldn't find out why Slimegod doesn't want to do these tier things
+                // and i moved it to Skeletron Spawn
+                /*
                 [ModContent.NPCType<SlimeGodCore>()] = npc =>
                 {
-                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Events.BossRushTierTwoEndText", XerocTextColor);
-                    CreateTierAnimation(3);
-                },
+                },*/
                 [NPCID.Golem] = npc =>
                 {
-                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Events.BossRushTierThreeEndText", XerocTextColor);
+                    BossRushDialogueSystem.StartDialogue(BossRushDialoguePhase.TierThreeComplete);
                     CreateTierAnimation(4);
                 },
                 [ModContent.NPCType<CeaselessVoid>()] = npc =>
@@ -349,7 +359,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 },
                 [ModContent.NPCType<CalamitasClone>()] = npc =>
                 {
-                    LumUtils.BroadcastLocalizedText("Mods.CalamityMod.Events.BossRushTierFourEndText", XerocTextColor);
+                    BossRushDialogueSystem.StartDialogue(BossRushDialoguePhase.TierFourComplete);
                     CreateTierAnimation(5);
                 },
                 [ModContent.NPCType<Providence>()] = npc =>
@@ -358,6 +368,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 },
                 [ModContent.NPCType<SupremeCalamitas>()] = npc =>
                 {
+                    // Display the short dialogue version if the boss rush has been beaten before.
+                    BossRushDialogueSystem.StartDialogue(DownedBossSystem.downedBossRush ? BossRushDialoguePhase.EndRepeat : BossRushDialoguePhase.End);
                     CalamityUtils.KillAllHostileProjectiles();
                     HostileProjectileKillCounter = 3;
                 }

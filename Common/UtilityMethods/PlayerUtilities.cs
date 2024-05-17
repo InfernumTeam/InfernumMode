@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Cooldowns;
 using CalamityMod.Enums;
 using InfernumMode.Content.Cooldowns;
 using Microsoft.Xna.Framework;
@@ -34,13 +35,13 @@ namespace InfernumMode
             if (player.dead || !player.active)
                 return;
 
-            if (!player.HasCooldown(InfiniteFlight.ID))
-            {
-                CombatText.NewText(player.Hitbox, textColor, Language.GetTextValue("Mods.InfernumMode.Status.InfiniteFlight"), true);
-                SoundEngine.PlaySound(SoundID.Item35 with { Volume = 4f, Pitch = 0.3f }, player.Center);
-            }
+            //if (!player.HasCooldown(InfiniteFlight.ID))
+            //{
+            //    CombatText.NewText(player.Hitbox, textColor, Language.GetTextValue("Mods.InfernumMode.Status.InfiniteFlight"), true);
+            //    SoundEngine.PlaySound(SoundID.Item35 with { Volume = 4f, Pitch = 0.3f }, player.Center);
+            //}
 
-            player.AddCooldown(InfiniteFlight.ID, CalamityUtils.SecondsToFrames(0.5f));
+            //player.AddCooldown(InfiniteFlight.ID, CalamityUtils.SecondsToFrames(0.5f));
             player.wingTime = player.wingTimeMax;
             player.Calamity().infiniteFlight = true;
         }

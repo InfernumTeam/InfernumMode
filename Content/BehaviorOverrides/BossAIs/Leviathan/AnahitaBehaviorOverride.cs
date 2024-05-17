@@ -185,7 +185,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         {
             if (hasSummonedLeviathan == 1f)
                 return;
-
+            // play forbidden lullaby at phase transition
+            CalamityGlobalNPC.LeviAndAna = npc.whoAmI;
             // Force Anahita to use charging frames.
             npc.localAI[0] = 1f;
 

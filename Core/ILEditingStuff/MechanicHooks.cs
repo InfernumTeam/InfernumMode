@@ -687,6 +687,7 @@ namespace InfernumMode.Core.ILEditingStuff
                             CalamityUtils.SpawnBossBetter(player.Center, ModContent.NPCType<CeaselessVoid>(), new ExactPositionBossSpawnContext(), (int)CeaselessVoidBehaviorOverride.CeaselessVoidAttackType.DarkEnergySwirl, 0f, 0f, 1f);
                         else
                             NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<CeaselessVoid>());
+                        return false;
                     }
                 }
                 else if (player.ZoneUnderworldHeight)
@@ -712,6 +713,7 @@ namespace InfernumMode.Core.ILEditingStuff
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Signus>());
                         else
                             NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<Signus>());
+                        return false;
                     }
                 }
                 else if (player.ZoneSkyHeight)
@@ -736,10 +738,13 @@ namespace InfernumMode.Core.ILEditingStuff
                             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<StormWeaverHead>());
                         else
                             NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, -1, -1, null, player.whoAmI, ModContent.NPCType<StormWeaverHead>());
+                        return false;
                     }
                 }
+
+                return true;
             });
-            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)]));
             cursor.Emit(OpCodes.Ret);
         }
     }
@@ -842,6 +847,7 @@ namespace InfernumMode.Core.ILEditingStuff
                     Utilities.NewProjectileBetter(player.Center, Vector2.Zero, ModContent.ProjectileType<GuardiansSummonerProjectile>(), 0, 0f);
             });
             cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Newobj, typeof(bool?).GetConstructor([typeof(bool)]));
             cursor.Emit(OpCodes.Ret);
         }
     }

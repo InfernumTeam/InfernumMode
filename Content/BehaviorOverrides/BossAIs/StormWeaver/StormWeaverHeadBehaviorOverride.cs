@@ -960,6 +960,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
             ref float attackState = ref npc.ai[1];
             ref float attackCycleIndex = ref npc.Infernum().ExtraAI[5];
 
+            if (attackState == (int)StormWeaverAttackType.HuntSkyCreatures)
+                npc.Opacity = 1f;
+
             attackCycleIndex++;
             switch ((int)attackCycleIndex % 6)
             {

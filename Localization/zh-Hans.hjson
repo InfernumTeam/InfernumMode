@@ -156,7 +156,7 @@ Mods: {
 				}
 
 				TabletWish: {
-					DisplayName: 纯洁无暇
+					DisplayName: 纯洁无瑕
 					Description:
 						'''
 						不是所有的野兽都是怪物
@@ -217,12 +217,12 @@ Mods: {
 
 			BrimstoneExhaustion: {
 				DisplayName: 硫火之疲倦
-				Description: 你不能再召唤出硫火新月法杖的立场
+				Description: 你不能再召唤出硫火新月法杖的力场
 			}
 
 			BronzePetBuff: {
-				DisplayName: 2018年灾厄的嗡嗡蜂鸟
-				Description: 你知道你能在泰拉瑞亚中抚摸一只蜂鸟吗？
+				DisplayName: 2018年灾厄的癫痫鸟
+				Description: 你知道泰拉瑞亚里癫痫鸟也可以当宠物吗？
 			}
 
 			CatharsisHex: {
@@ -262,7 +262,7 @@ Mods: {
 
 			Sleepy: {
 				DisplayName: 困倦
-				Description: 你快睡着了
+				Description: 你睡意昏沉
 			}
 
 			WeaknessHex: {
@@ -292,7 +292,7 @@ Mods: {
 
 				DisplayTipsInChat: {
 					Label: 爆炸礼帽提示聊天栏显示
-					Tooltip: 确认爆炸礼帽宠物是否在聊天栏中显示其提示。
+					Tooltip: 决定爆炸礼帽召唤的宠物是否会在聊天栏中显示其提示。
 				}
 
 				ReducedGraphicsConfig: {
@@ -328,7 +328,7 @@ Mods: {
 			ExpandedDescription:
 				'''
 				 [c/B32E81:大部分敌人变得不同，拥有更具挑战的AI。]
-				 [c/B32E81:肾上腺素充能时间变长。]
+				 [c/B32E81:肾上腺素充能时间大幅变长。]
 				 [c/FF0055:适应力必不可少。]
 				'''
 			InfernumText: 炼狱模式已开启，祝你好运。
@@ -708,16 +708,16 @@ Mods: {
 				'''
 				在丛林蜥蜴祭坛使用，召唤石巨人
 				石巨人将会在祭坛周围创建一个矩形战斗场地
-				如果祭坛在神庙内，则场地内神庙方块会被破坏
+				如果祭坛在神庙内，则场地内非神庙物块会被破坏
 				'''
 
 			CherishedSealocket: {
 				DisplayName: 珍海吊坠
 				Tooltip:
 					'''
-					生成一个受击2次后消散的水波立场
-					当立场存在时，受到的伤害会减少60%，你会获得12%的伤害加成
-					立场会在90秒后再次生成
+					生成一个受击2次后消散的水波力场
+					当力场存在时，受到的伤害会减少60%，你会获得12%的伤害加成
+					力场会在90秒后再次生成
 					'''
 			}
 
@@ -769,10 +769,10 @@ Mods: {
 				DisplayName: 硫火新月杖
 				Tooltip:
 					'''
-					使用法杖可生成一个强大的立场，其会提供独立的60%伤害减免
-					立场存在时，受击将会触发强力的爆炸以伤害敌人
-					立场存在期间和消失后15秒内，你的伤害减少60%
-					立场在三次受击后破碎。破碎后45秒内无法再次生成立场
+					使用法杖可生成一个强大的力场，其会提供独立的60%伤害减免
+					力场存在时，受击将会触发强力的爆炸以伤害敌人
+					力场存在期间和消失后15秒内，你的伤害减少60%
+					力场在三次受击后破碎。破碎后45秒内无法再次生成力场
 					'''
 			}
 
@@ -1524,8 +1524,8 @@ Mods: {
 				DisplayName: 焱
 				Tooltip:
 					'''
-					左键发射一支长矛，当击中目标时碎裂。它将会变为一块环绕着你的岩石，一次最多储存6块
-					右键发射长矛周围所有的岩石。岩石数量为3块时，左键攻击将会追踪敌人。数量为6块时，所有岩石都会追踪敌人
+					左键发射一支长矛，当击中目标时碎裂，并重组为一块环绕着你的岩石，一次最多储存6块
+					右键与长矛一并发射周围所有的岩石。岩石数量达到3块时，左键攻击将会追踪敌人；达到6块时，岩石也会追踪敌人
 					[c/ffbf49:一把秽色之矛，仅能从她那最为虔诚、最为强大的追随者身上找到]
 					'''
 			}
@@ -1569,7 +1569,7 @@ Mods: {
 			DepthFeeder.DisplayName: 深水饵鱼
 			Herring.DisplayName: 鲱鱼
 			LionfishEnemy.DisplayName: 狮子鱼
-			DeusSpawn.DisplayName: 大白金
+			DeusSpawn.DisplayName: 大白星
 			BrainIllusion.DisplayName: 克苏鲁之脑
 			BrainIllusion2.DisplayName: 克苏鲁之脑
 			SoulSeeker2.DisplayName: 探魂者
@@ -1579,8 +1579,8 @@ Mods: {
 			RedPlasmaEnergy.DisplayName: 等离子球
 			RedirectingBubble.DisplayName: 泡泡
 			ExplodingServant.DisplayName: 克苏鲁之仆
-			GolemFistLeft.DisplayName: 石巨人拳
-			GolemFistRight.DisplayName: 石巨人拳
+			GolemFistLeft.DisplayName: 石巨人之拳
+			GolemFistRight.DisplayName: 石巨人之拳
 
 			BereftVassal: {
 				DisplayName: 无邦封臣，阿尔戈斯
@@ -1599,10 +1599,10 @@ Mods: {
 			SmallDrone.DisplayName: 小型无人机
 			PlanteraPinkTentacle.DisplayName: 世纪之花触手
 			PolterghastLeg.DisplayName: 诡灵腿
-			EtherealHand.DisplayName: 缥缈之手
+			EtherealHand.DisplayName: 灵手
 			HealerShieldCrystal.DisplayName: 圣洁之盾
-			SplitBigSlime.DisplayName: 不稳定的史莱姆子代
-			SplitBigSlimeAnimation.DisplayName: 不稳定的史莱姆子代
+			SplitBigSlime.DisplayName: 不稳定的史莱姆胞体
+			SplitBigSlimeAnimation.DisplayName: 不稳定的史莱姆胞体
 			ShadowDemon.DisplayName: 暗影巨蛇
 			GolemArenaPlatform.DisplayName: 石巨人战斗平台
 			CalamitasShadowClone.DisplayName: 灾厄遗影
@@ -1634,7 +1634,7 @@ Mods: {
 			AsterBossSpawn7: 咳，这将易如反掌!
 			AsterBossSpawn8: 勇往直前，我的骄傲。
 			AsterBossSpawn9: 给我展示一手，大人物。
-			AsterBossSpawn10: 记住，坠落也是一种躲避方法！
+			AsterBossSpawn10: 记住，放弃也是一个选择！
 			AsterPet1: 嘿,现在……
 			AsterPet2: 嗯？
 			AsterPet3: 喜欢!
@@ -1669,10 +1669,10 @@ Mods: {
 			CVEnergyBurstTip3: 保持冷静！兜圈子！别失去注意力！
 			CVEnergyChainsTip: 那些锁链撑不了多久了！做好准备！
 			CrabulonTip1: 菌生蟹只会在每第三次跳跃时发射孢子。最好数着点！
-			CrabulonTip2: 试着把注意力集中在真菌孢子上。如果你不管它们，它们有可能把你压到！
-			CrabulonTip3: 与菌生蟹的距离保持一种微妙的平衡可能会对你有所帮助，这总比在天上碰到一大堆孢子要好……
+			CrabulonTip2: 试着把注意力集中在真菌孢子上。如果你不管它们，它们有可能把你压倒！
+			CrabulonTip3: 你或许应该与菌生蟹保持同一水平位置，这总比在天上碰到一大堆孢子要好……
 			CrabulonTip4: 那只螃蟹可不傻。你的位置越高，他就跳得越高以便够到你！
-			CrabulonClawTip: 菌生蟹暴露它的内部时将会保护自己——也许你可以往后撤，如果你需要更多的空间的话！
+			CrabulonClawTip: 菌生蟹暴露它的内部时将会很有防御性——如果你需要更大的空间，或许你应该离它近一点！
 			CrabulonJokeTip1: 我们三个中有一个身上有蘑菇，我没有，你也没有。
 			CryogenTip1: 当它在你上方时移动幅度尽量小些，这应该能够平息它那多动症般的晃动！
 			CryogenTip2: 冰柱同样会分裂成寒冰匕首，当心侧面！
@@ -1680,7 +1680,7 @@ Mods: {
 			CryogenJokeTip2: 这东西可毫无寒意！
 			CryogenBlizzardTip: 极光之灵正在从暴风雪中夹击你，往侧面跑的时候要小心！
 			CultistTip1: 那家伙可真是个疯子，你也许需要额外的机动性！
-			CultistIceBurstTip: 试着在冰雪雾爆炸之前钻进这些线里！
+			CultistIceBurstTip: 你要提前找好冰块爆炸后真正的空隙！
 			CultistLightningTip: 闪电会瞄准你的前方！试着诱导它的位置！
 			DeerclopsTip1: 独眼巨鹿是个大近视，因此它会不断逼近你，不要让它把你逼入绝境！
 			DeerclopsTip2: 独眼巨鹿有固定的攻击模式，研究它们的行为，然后用放风筝打法！
@@ -1716,79 +1716,79 @@ Mods: {
 			DreadnautilusSummonItemTip: 我听说在某个地方，恐惧鹦鹉螺可以被一种特殊的“赤饵”召唤，它们对这玩意毫无抗拒力！你有这东西吗？
 			DreadnautilusTip1: 那些蝙蝠真的很想干掉你，但它们不是很敏捷。试着跟它们绕圈子！
 			DreadnautilusJokeTip1: 考虑到你现在已经死了很多次，我很恐惧你的未来……
-			DreadnautilusJokeTip2: 看起来你又失败了，但是不要害怕！你终将战胜这个恐惧！
-			DukeFishronRazorbladeTip: 做好准备，尽你最大的努力穿过这些刀片！
-			DukeFishronTidalWaveTip: 注意它在哪停留了很久！你可能会被海啸卷走！
-			EoLTip1: 大部分攻击并不需要大幅度的移动，保持慢速移动！
-			EoLMoonTip: 别跑远了！你正在与月光战斗，你跑不掉的！
+			DreadnautilusJokeTip2: 看起来你又失败了，但恐惧因武落！只要多打，恐惧就会被击败！
+			DukeFishronRazorbladeTip: 做好准备，尽你最大的努力穿过这些剃刀刃！
+			DukeFishronTidalWaveTip: 注意长冲刺的落点！你可能会被海啸卷走！
+			EoLTip1: 大部分攻击并不需要跑很远，保持小幅度移动！
+			EoLMoonTip: 贴近！你正在与月光战斗，你跑不掉的！
 			EoLJokeTip1: 你知道的，我很喜欢彩虹，但这东西的攻击有种杀手的样子-哦，我有些比喻不当。
 			EoWTip1: 多层平台有助于躲避爆炸的咒火！
 			EoWTip2: 如果世界吞噬者减速移动，跟它做同样的事，不然你可能会撞到魔刺上！
-			EoWRainTip: 吞噬者们将要生成雨云时会变慢并且飞到天上！注意这一点并规划好空间。
+			EoWRainTip: 吞噬者们将要生成雨云时会减速飞走！注意这一点并规划好空间。
 			EoWJokeTip1: 我猜它吃的不仅仅是世界……
-			EoCTip1: 待在那些尖牙球附近！这些牙齿会瞄准的很远！
-			EoCTip2: 别费心去杀克苏鲁之仆了，只要它们没死就会从你的眼睛里钻出来！
-			EoCJokeTip1: 我的眼睛不敢相信你就这样被它干瞎了。
+			EoCTip1: 待在那些尖牙球附近！这些牙齿会瞄准的是远处！
+			EoCTip2: 别费心去杀克苏鲁之仆了，还没等你打死它们，它们就飞走了！
+			EoCJokeTip1: 这又是哪只眼睛的盲点？
 			EoCJokeTip2: 哎呀！我的眼睛好痛……
 			GolemTip1: 石巨人的眼睛会随着攻击改变颜色，睁大你的眼睛！
-			GolemTip2: 如果你觉得登上平台太难了，你可以钩在墙上重置飞行时间！
+			GolemTip2: 如果你觉得踩到平台太难了，你可以钩在墙上重置飞行时间！
 			GolemJokeTip1: 你将会有一段坏时光......
 			HiveMindTip1: 如果你想了解对手的移动行为，可以利用它们的前摇来占上风！
-			HiveMindTip2: 试着远离腐巢意志来拉开与雨云的距离，这可以让你的战斗场地更干净！
+			HiveMindTip2: 试着朝着腐巢意志奔跑从而将雨云推开，这会让你的战斗场地更干净！
 			HiveMindTip3: 如果你攻击腐巢意志，它会提前开始下一次攻击；等它冷却完了再开火！
 			HiveMindFinalPhaseTip: 还没完吗？！
 			HiveMindJokeTip1: 那没啥用，但是别担心！我的意志十分坚定！
-			HiveMindJokeTip2: 我打算发表一些刻薄的评论，但我也许应该控制一下我的意志......
-			KingSlimeTip1: 试着理解史莱姆王的跳跃攻击！这有助于提前帮助你计划好你的走位。
-			KingSlimeTip2: 跳得挺高，但我想知道你能不能从下面越过去？
+			HiveMindJokeTip2: 我倒是想锐评一下，但我的意志好像不够坚定......
+			KingSlimeTip1: 把握好史莱姆王跳跃的节奏！这样就能提前计划走位了。
+			KingSlimeTip2: 跳得可真高啊，不过是不是能从下面钻过去？
 			KingSlimeJewelTip: 那颗王冠宝石很危险！记住，它总是以相同频率射击，所以可以自己默数！
 			KingSlimeNinjaTip: 离得越远，忍者射出的飞镖就越多，所以别跑太远！
 			KingSlimeJokeTip1: 你不得不面对一个相当“黏”手的局面......
 			KingSlimeDefeatTip: 它已经史到临头了！
 			AnahitaTip1: 如果你把阿娜希塔的位置诱导的足够好，她会在音符间留下一些空隙以便于你躲避！
 			AnahitaFinalPhaseTip: 最后的阶段了！像你以前那样做！
-			LeviathanTip1: 这些流星都以同样的方式分裂，利用好这个优势！
-			LeviathanFinalPhaseTip: 最后的阶段了！试着更多的注意自己而不是boss！
-			MoonLordTip1: 那些眼球的攻击需要大量的时间来完成！当它们出现时不要惊慌！
-			MoonLordLaserTip: 打起精神来！一连串缓慢的球将要释放了！
+			LeviathanTip1: 这些流星分裂的角度都一样，利用好这个优势！
+			LeviathanFinalPhaseTip: 最后的阶段了！盯住你自己而不要只看着boss！
+			MoonLordTip1: 那些眼球要花一段时间才就位呢！当它们出现时不要惊慌！
+			MoonLordLaserTip: 打起精神来！它会放一串缓慢的幻影光！
 			MoonLordTip2: 记得管理好你的空间，不然你可能会走投无路！
-			MoonLordBlackHoleTip: 月亮领主似乎发怒了！试着多开侧面的弹幕，不要碰那个黑洞！
-			MoonLordJokeTip1: Squib emoji
-			OldDukeTip1: 确保你记住了鲨鱼龙和鲨牙刺球的位置，这样它们分裂出的残骸就不会惊到你！
-			OldDukeTip2: 移动速度对于战胜那条鱼很重要！
+			MoonLordBlackHoleTip: 月亮领主似乎发怒了！你要躲开侧面的弹幕，不要碰那个黑洞！
+			MoonLordJokeTip1: x_x
+			OldDukeTip1: 一定要记住鲨鱼龙和鲨牙刺球的位置，这样它们分裂出的残骸就不会惊到你！
+			OldDukeTip2: 移动速度对于战胜那头猪很重要！
 			OldDukeFinalPhaseTip: 当他传送时你可以在心里默数冲刺次数，不然他可能会打你个出其不意！
 			OldDukeRealFinalPhaseTip: 仅仅使用对冲是行不通的，但也不能仅仅躲避......试着同时做这两件事！
-			OldDukeDashTip1: 你确定你不想用冲刺应对那条鱼吗？
+			OldDukeDashTip1: 你确定你不想用冲刺应对那头猪吗？
 			OldDukeDashTip2: 一个冲刺饰品在这场战斗中肯定会非常非常有用……
-			PBGDroneJailTip: 那些无人机正在你的身边建造一个囚笼，摧毁一架以打开它！
+			PBGDroneJailTip: 那些无人机要把你关起来，摧毁一架就可以打开了！
 			PBGDroneBuildTip: 在整座丛林被核爆之前摧毁那些建构无人机！
 			PerforatorsTip1: 宿主会喷射大量的滞留灵液，空间管理至关重要！
-			PerforatorsWorm1Tip: 小型血肉寄生者的弹幕在下落时会加速，当心发生意外！
+			PerforatorsWorm1Tip: 小型血肉寄生者的弹幕在下落时会加速，别太意外！
 			PerforatorsWorm2Tip: 这条血肉寄生者似乎不像它的朋友那样令人反感，也许就让它在你周围绕圈吧？
-			PerforatorsProjectilesTip: 保持冷静与静止在原地有助于你躲避慢速弹幕！
+			PerforatorsProjectilesTip: 躲慢速弹幕的时候，要冷静，少乱动！
 			PerforatorsFinalPhaseTip: 还没完吗？！
-			PlanteraTip1: 在触手伸长的时候寻找盲区！
+			PlanteraTip1: 找到那些触手伸长时的盲区！
 			PlanteraPlanteraTip: 小心那些云。只有穿过它们，你才能找到她触手的缺口！
 			PlanteraFinalPhaseTip: 世纪之花将不做任何保留地攻击你，小心！
 			PlanteraJokeTip1: 死于一株植物？这也太厄厄了。
-			PlanteraJokeTip2: 我可以告诉你的是，世纪之花赢了——但是谁在培养孢子？
-			PolterghastTip1: 冲刺对于转环攻击很有帮助，因为它可以帮你快速到达开口！
+			PlanteraJokeTip2: 就我看来，世纪之花绝对是个光污染boss——不然它怎么有那么多灯泡？
+			PolterghastTip1: 在转环攻击里，得用冲刺之类的东西钻过开口！
 			PolterghastTip2: 如果噬魂幽花的一条腿变红了，赶紧后退；它会扫你并释放加速弹幕！
 			PolterghastDesperationPhaseTip: 噬魂幽花体内的灵魂被释放了！但它们似乎对我们并不是很友善......
-			ProvidenceDawnWarningTip: 如果再一次跟普罗维登斯战斗，确保不会打一半到了白天！
-			ProvidenceDuskWarningTip: 如果再一次跟普罗维登斯战斗，确保不会打一半到了夜晚！
-			PrimeTip1: 他的手臂似乎对准了你将要移动的地方，最后一秒改变方向肯定会打乱它们的计算......
+			ProvidenceDawnWarningTip: 下次挑战普罗维登斯的时候，就别再搞得打一半天亮了！
+			ProvidenceDuskWarningTip: 下次挑战普罗维登斯的时候，就别再搞得打一半天黑了！
+			PrimeTip1: 他的手臂瞄准的似乎是你下一刻要去的地方，最后一秒改变方向肯定会打乱它们的计算......
 			PrimeTeslaTip: 那些蓝色特斯拉电球将会爆炸成气体，躲起来！
-			PrimeJokeTip1: 你最好像一个机械一样什么都不做......
+			PrimeJokeTip1: 这可真是个超囊的反面教材啊......
 			ProfanedRoDTip: 亵渎魔法似乎锁定了你的混沌传送杖！
 			ProfanedDefenderTip: 哦，他现在真的疯了！保持警觉！
-			ProfanedFlappyBirdTip: 它们把自己隐藏在右边，但如果你过去了的话就可以突破它们的防御！
-			ProfanedFlappyJokeTip: 那个火墙让我想到了个游戏，但玩家只能在空中跳跃！幸好你有翅膀，不是吗？
+			ProfanedFlappyBirdTip: 守卫们在右边躲着呢，你要去那边才能突破他们的防御！
+			ProfanedFlappyJokeTip: 这些火墙让我想到了另一个游戏，但是那个只允许在空中连跳！翅膀可真是个好东西啊......
 			ProfanedFlappyBirdEndTip: 它们是一支很好的团队！你可能想着一次性解决所有的事情，但是慢慢来才是你最好的办法！
-			ProfanedHealerDeathTip: 它现在更强了！别让另一个分散了你对其中一个的注意力！
+			ProfanedHealerDeathTip: 要开始体术了！别让另一个分散了你对其中一个的注意力！
 			ProvidenceTip1: 她的攻击循环与音乐循环相似，试着让音乐引导你完成这场战斗！
-			ProvidenceTip2: 专注于躲避，你没必要一直攻击！如果你不能活着看到这场战斗的结束，那还有什么意义呢？
-			ProvidenceExplosionTip: 那些火球似乎只有在撞击岩浆时才会产生爆炸，你可以把它们引走！
+			ProvidenceTip2: 你还是专心躲吧，别时时刻刻都贪刀，活着才有输出！
+			ProvidenceExplosionTip: 那些火球好像不进岩浆就不会爆炸，你可以把它们带偏！
 			ProvidenceFinalPhaseTip: 普罗维登斯看起来在准备些什么！
 			QueenBeeTip1: 那些蜂蜜弹会反弹，不要移到太快，不然它们会弹的到处都是！
 			QueenBeeTip2: 除掉那些额外的黄蜂是你的首要任务！
@@ -1798,37 +1798,37 @@ Mods: {
 			QueenSlimeTip1: 能不跑就尽量别跑！减少移动幅度对你有很大的帮助！
 			QueenSlimeBladeBeamTip: 那是啥？！离它远点，我今天可不想被打碎！
 			QueenSlimeCrystalTip: 那些晶体的间隔相等......你可以一直用同一种方式躲避它们！
-			RavagerTip1: 毁灭魔像的一些攻击会将你逼近，不要跑太远！
-			RavagerTip2: 管理好那些滞留血块的位置，你可不想玩“熔岩地板”游戏！
-			SignusTip1: 屏幕变黑时要小心——他给你的警告远超于你的想象！
+			RavagerTip1: 毁灭魔像的一些攻击贴近了才会更好躲，不要跑太远！
+			RavagerTip2: 管理好那些滞留血块的位置，你可不想玩“地板是熔岩”！
+			SignusTip1: 屏幕变黑时要注意——其实有很多预警的！
 			SignusShadowSlashTip: 当心，他可能在最后跟你耍些花招！
 			SignusBombTip: 那些爆弹会爆出飞向你的苦无，小心！
-			SkeletronTip1: 与你想象的相反，躲进暗影焰墙是行不通的，慢慢来！
-			SkeletronTip2: 当骷髅王用手放火球时不要惊慌！保持冷静并跳起来！
-			SkeletronTip3: 追踪头骨需要花很长时间才能转过弯来，所以最好待在一个正常地方躲避，而不是跑得很远！
+			SkeletronTip1: 与你想象的相反，你冲不出暗影焰墙的，慢慢来！
+			SkeletronTip2: 当骷髅王用手放火球时不要惊慌！保持冷静，跳！
+			SkeletronTip3: 追踪头骨需要好一阵子才能转过弯来，所以最好在稳定的方向躲避，而不是到处乱窜！
 			SkeletronJokeTip1: 花~~~~~~~~式吊打！！！
 			SlimeGodTip1: 它们看起来脑袋不太灵光，你也许可以跳高一点来诱导它们也这样？
 			SlimeGodTip2: 这有点令人措手不及！我想知道模仿它的移动对你是否有利？
 			StormWeaverTip1: 那些云朵会打你个措手不及！保持专注——风暴编织者似乎只专心于召唤攻击，而不是冲向你！
-			SCalJokeTip1: 你想要我的女巫帽吗？学习她的衣品可能会很有趣......
+			SCalJokeTip1: 你想要我的女巫帽吗？学习她的衣品真有趣......
 			SCalTip1: 当她拔出弩的时候靠近她，你可以看见她在瞄准哪里！
 			SCalSkullTip: 好多头骨，但它们似乎没有直接瞄准你！试着从中间穿过去！
-			SCalDesperationTip: 即使一切都失控了，你也要专心躲避！
+			SCalDesperationTip: 即使场面如此混乱，你也要专心躲避！
 			SCalFireSpinTip: 别被一大堆弹幕淹没，在这场热火朝天的战斗中保持冷静！
-			SCalFireChargeTip: 那些爆弹占据了很大的空间！试着诱导她在你容易躲开的地方发射它们！
-			TwinsTip1: 靠旋转来躲避很困难吗？三个人可以玩那个游戏，一起旋转！
+			SCalFireChargeTip: 深渊炙炎的范围很大！试着诱导她打偏！
+			TwinsTip1: 不会躲旋转攻击？躲不过就加入，跟着转！
 			TwinsFinalOptionTip: 双子魔眼中的每一个都有独特的最终程序，如果它们中的一个给你带来困扰，可以试着专注于另一个！
 			TwinsFinalPhaseTip: 当心，最后的魔眼会不顾一切攻击你！不要松懈！
 			WoFTip1: 你一定要朝反方向跑！
 			WoFTip2: 那些眼睛太吓人了，好在它们只会在特定的位置射击！
 			WoFTip3: 哎呀，那些奇怪的嘴折断并且飞起来了？！我真希望我能用自己的狱火把它们烧死......
-			WoFJokeTip1: 哇，你的巫毒娃娃浪费了！但是，没有什么比有更多的机会欺负向导更好了！
+			WoFJokeTip1: 哇，你的巫毒娃娃浪费了！但是，多欺负一次向导不香吗！
 			YharonPreHealTip: 你快做到了！犽戎现在肯定已是穷途末路了！
 			YharonPostHealTip: 啊？
 			YharonSpeedTip: 试着记住犽戎什么时候会疯狂冲刺，否则它会打你个措手不及！
 			YharonFlashbangTip: 不要让闪光吓到你！留意那些余烬在哪！
 			YharonCarpetBombTip: 在那些地毯式的爆炸火焰中，你最好待在战斗场地边缘，这样它们就不会影响走位了！
-			YharonJokeTip1: “如果我在你的伟业继续之前而死，你会......”等等，你死了？来吧，我在这里玩的很开心！
+			YharonJokeTip1: “如果我在你的伟业继续之前中道崩殂，你一定会......”等等，你死了？算了，还挺顺利的！
 		}
 
 		Projectiles: {
@@ -1842,7 +1842,7 @@ Mods: {
 			EidolistLightning.DisplayName: 闪电
 			EidolistRitual.DisplayName: 仪式
 			ElectricPulse.DisplayName: 电脉冲
-			InkBlob.DisplayName: 墨汁球
+			InkBlob.DisplayName: 墨点
 			InkBolt.DisplayName: 墨汁
 			MiniReaperShark.DisplayName: 猎魂鲨
 			ReaperSharkIceBreath.DisplayName: 冰息
@@ -1872,8 +1872,8 @@ Mods: {
 			SulphuricGas.DisplayName: 硫酸气体
 			SulphuricGasDebuff.DisplayName: 硫酸气体
 			SulphuricTornado.DisplayName: 硫酸龙卷
-			SulphurousRockRubble.DisplayName: 硫酸泡泡
-			WaterClearingBubble.DisplayName: 酸性气泡
+			SulphurousRockRubble.DisplayName: 硫石碎块
+			WaterClearingBubble.DisplayName: 净水气泡
 			AstralBlueComet.DisplayName: 星辉彗星
 			AstralLaserInfernum.DisplayName: 星界激光
 			AstralMissile.DisplayName: 星辉导弹
@@ -1896,8 +1896,8 @@ Mods: {
 			MassiveInfectedStar.DisplayName: 消亡之星
 			BloodGeyser2.DisplayName: 灵液间歇泉
 			IchorSpit.DisplayName: 灵液
-			PsionicLightningBolt.DisplayName: 灵能闪电
-			PsionicOrb.DisplayName: 灵能球
+			PsionicLightningBolt.DisplayName: 心灵闪电
+			PsionicOrb.DisplayName: 心灵球
 			Brimrose.DisplayName: 硫火玫瑰
 			BrimstoneDeathray.DisplayName: 硫火射线
 			BrimstoneFireball.DisplayName: 硫磺火球
@@ -1942,7 +1942,7 @@ Mods: {
 			EnergyTelegraph.DisplayName: 暗能量碎片
 			GammaBurstLineTelegraph.DisplayName: 预警线
 			OtherworldlyBolt.DisplayName: 虚空射线
-			RealitySlice.DisplayName: 现实撕裂者
+			RealitySlice.DisplayName: 现实碎片
 			SpinningDarkEnergy.DisplayName: 暗能量
 			TelegraphedOtherwordlyBolt.DisplayName: 超凡之矢
 			HomingSpore.DisplayName: 孢子
@@ -2026,8 +2026,8 @@ Mods: {
 			ArtemisGatlingLaser.DisplayName: 星流火焰激光
 			ArtemisLaser.DisplayName: 星流火焰激光
 			ArtemisLaserbeamTelegraph.DisplayName: 激光预警线
-			ArtemisSpinLaser.DisplayName: 终末激光
-			ArtemisSweepLaserbeam.DisplayName: 终末激光
+			ArtemisSpinLaser.DisplayName: 俄亥俄光束
+			ArtemisSweepLaserbeam.DisplayName: 俄亥俄光束
 			ExoplasmaBomb.DisplayName: 星流等离子炸弹
 			ExoplasmaExplosion.DisplayName: 星流等离子爆炸
 			PlasmaChargeTelegraph.DisplayName: 冲刺预警线
@@ -2036,8 +2036,8 @@ Mods: {
 			DetatchedThanatosLaser.DisplayName: 星流火焰激光
 			ExolaserBomb.DisplayName: 星流激光炸弹
 			ExolaserSpark.DisplayName: 星流激光火花
-			LightOverloadRay.DisplayName: 棱形过载激光
-			LightRayTelegraph.DisplayName: 棱形激光
+			LightOverloadRay.DisplayName: 棱镜过载激光
+			LightRayTelegraph.DisplayName: 棱镜激光
 			OverloadBoom.DisplayName: 爆炸
 			RefractionRotor.DisplayName: 折射转子
 			ThanatosAresComboLaser.DisplayName: 星流火焰激光
@@ -2110,7 +2110,7 @@ Mods: {
 			WaterSlice.DisplayName: 水之泪
 			WaterSpear.DisplayName: 水之泪
 			WaterTorrentBeam.DisplayName: 水流
-			BlobProjectile.DisplayName: 沼泽之眼
+			BlobProjectile.DisplayName: 腐化球
 			EaterOfSouls.DisplayName: 灵魂吞噬者
 			HiveMindWave.DisplayName: 爆炸
 			ShadeFire.DisplayName: 火
@@ -2122,7 +2122,7 @@ Mods: {
 			AtlantisSpear.DisplayName: 亚特兰蒂斯之矛
 			AtlantisSpear2.DisplayName: 亚特兰蒂斯之矛
 			HeavenlyLullaby.DisplayName: 天堂摇篮曲
-			LeviathanMeteor.DisplayName: 流陨倾泻
+			LeviathanMeteor.DisplayName: 流陨倾泄
 			LeviathanSpawner.DisplayName: 水
 			LeviathanSpawnWave.DisplayName: 波
 			LeviathanVomit.DisplayName: 利维坦之蚀
@@ -2149,7 +2149,7 @@ Mods: {
 			SharkSummonVortex.DisplayName: 硫海漩涡
 			SulphuricBlob.DisplayName: 硫海凝块
 			BloodGlob.DisplayName: 血腥凝块
-			Crimera.DisplayName: 克里米亚//芭知道叫啥了
+			Crimera.DisplayName: 猩红喀迈拉
 			FallingIchor.DisplayName: 灵液
 			FallingIchorBlast.DisplayName: 灵液块
 			FlyingIchor.DisplayName: 灵液
@@ -2162,15 +2162,15 @@ Mods: {
 			LargePlagueExplosion.DisplayName: 爆炸
 			PlagueCloud.DisplayName: 瘟疫毒云
 			PlagueDeathray.DisplayName: 瘟疫射线
-			PlagueMissile.DisplayName: 火箭
-			PlagueMissile2.DisplayName: 火箭
+			PlagueMissile.DisplayName: 导弹
+			PlagueMissile2.DisplayName: 导弹
 			PlagueNuclearExplosion.DisplayName: 爆炸
 			PlagueVomit.DisplayName: 瘟疫喷发
 			PlagueWave.DisplayName: 爆炸
 			RedirectingPlagueMissile.DisplayName: 火箭
 			BouncingPetal.DisplayName: 花瓣
 			ExplodingFlower.DisplayName: 花
-			NettlevineArenaSeparator.DisplayName: 荨麻
+			NettlevineArenaSeparator.DisplayName: 荆棘藤蔓
 			Petal.DisplayName: 花瓣
 			SporeFlower.DisplayName: 花
 			SporeGas.DisplayName: 孢子气体
@@ -2196,7 +2196,7 @@ Mods: {
 			TeslaBomb.DisplayName: 特斯拉炸弹
 			CommanderSpear.DisplayName: 神圣长矛
 			CommanderSpearThrown.DisplayName: 亵渎长矛
-			DefenderShield.DisplayName: 岩盾
+			DefenderShield.DisplayName: 坚岩固盾
 			GuardiansRodFailPulse.DisplayName: 爆炸
 			HolyAimedDeathray.DisplayName: 火焰光束
 			HolyAimedDeathrayTelegraph.DisplayName: 预警线
@@ -2225,7 +2225,7 @@ Mods: {
 			FallingCrystalShard.DisplayName: 圣晶碎片
 			HolyBasicFireball.DisplayName: 神圣火球
 			HolyBomb.DisplayName: 圣火炸弹
-			HolyCinder.DisplayName: 圣之烁光
+			HolyCinder.DisplayName: 圣火坠烬
 			HolyCross.DisplayName: 圣徽
 			HolyCrystalSpike.DisplayName: 水晶尖刺
 			HolyMagicLaserbeam.DisplayName: 圣火崩解死光
@@ -2269,10 +2269,10 @@ Mods: {
 			SlammingRockPillar.DisplayName: 岩柱
 			StompShockwave.DisplayName: 冲击波
 			UnholyBloodGlob.DisplayName: 不虔之血
-			CosmicExplosion.DisplayName: 寰宇爆炸
-			CosmicKunai.DisplayName: 星界苦无
-			CosmicMine.DisplayName: 星界雷
-			DarkCosmicBomb.DisplayName: 星界雷
+			CosmicExplosion.DisplayName: 星体爆炸
+			CosmicKunai.DisplayName: 星体苦无
+			CosmicMine.DisplayName: 星体雷
+			DarkCosmicBomb.DisplayName: 星体雷
 			EldritchScythe.DisplayName: 鬼镰
 			ShadowDashTelegraph.DisplayName: 预警线
 			ShadowSlash.DisplayName: 暗影斩
@@ -2280,7 +2280,7 @@ Mods: {
 			NonHomingSkull.DisplayName: 颅骨
 			ShadowflameFireball.DisplayName: 暗影焰炸弹
 			SpinningFireball.DisplayName: 暗影焰火球
-			DeceleratingCrimulanGlob.DisplayName: 不稳定的血猩球
+			DeceleratingCrimulanGlob.DisplayName: 不稳定的血腥球
 			DeceleratingEbonianGlob.DisplayName: 不稳定的腐化球
 			GroundSlimeGlob.DisplayName: 不稳定的史莱姆球
 			HomingWeaverSpark.DisplayName: 火花
@@ -2347,7 +2347,7 @@ Mods: {
 			HomingFireball.DisplayName: 追踪火球
 			InfernadoSpawner.DisplayName: 大耀斑
 			LingeringDragonFlames.DisplayName: 龙焰
-			MajesticSparkleBig.DisplayName: 耀目之光
+			MajesticSparkleBig.DisplayName: 威严之光
 			RedirectingYharonMeteor.DisplayName: 龙炎弹
 			VortexOfFlame.DisplayName: 火焰漩涡
 			VortexTelegraphBeam.DisplayName: 火焰光束预警线
@@ -2355,7 +2355,7 @@ Mods: {
 			YharonFlameExplosion.DisplayName: 高温聚爆
 			YharonFlamethrower.DisplayName: 龙焰吐息
 			YharonHeatFlashFireball.DisplayName: 火焰
-			YharonMajesticSparkle.DisplayName: 耀目火花
+			YharonMajesticSparkle.DisplayName: 威严火花
 			DraconicBurst.DisplayName: 龙炎飞弹
 			ExplodingWyvern.DisplayName: 飞龙
 			MeteorCinder.DisplayName: 火花
@@ -2418,7 +2418,7 @@ Mods: {
 			SheepGod.DisplayName: 羔羊之神
 			GlassmakerFire.DisplayName: 熔璃之火
 			GlassmakerHoldout.DisplayName: 熔璃化匠
-			GlassPiece.DisplayName: 玻璃碎片
+			GlassPiece.DisplayName: 熔璃碎片
 			DreamtasticEnergyBolt.DisplayName: 梦幻之能
 			DreamtasticProj.DisplayName: 梦幻
 			StormMaidensLightning.DisplayName: 风暴少女之闪电
@@ -2475,7 +2475,7 @@ Mods: {
 			PostYharonWyrmHint: 一束原始之光在深渊的最深处闪烁……
 			DraedonEffortMock1: 你的努力十分有趣。
 			DraedonEffortMock2: 继续吧，向我的机械输送更多信息。
-			DraedonAresDesperationBlenderLeaveWarning: 你是个优秀的测试对象。
+			DraedonAresDesperationBlenderLeaveWarning: 你的计算出现了致命错误。
 			ExoMechDesperationAres1: 阿瑞斯-09：核心温度迅速升高，即将自毁。
 			ExoMechDesperationAres2: 阿瑞斯-09：准备启用“精准伽马射线”互毁协定。
 			ExoMechDesperationTwins1: 阿尔忒弥斯-01：联合能量储备过低，即将发生系统故障。
@@ -2483,15 +2483,15 @@ Mods: {
 			ExoMechDesperationThanatos1: 塔纳托斯-05：星流炮塔在不稳定能量水平下燃烧，即将自毁。
 			ExoMechDesperationThanatos2: 塔纳托斯-05：准备启用“极限过载冲击”互毁协定。
 			DraedonDefeat1: 有趣，十分有趣。
-			DraedonDefeat2: 我引以为傲的杰作，彻底失败了。
+			DraedonDefeat2: 我引以为傲的杰作，被你彻底战胜了。
 			DraedonDefeat2HyperplaneMatrix: 你是个优秀的测试对象。
-			DraedonDefeat3: 这也非是我预期中的结果。
+			DraedonDefeat3: 这也并非我所预期的结果。
 			DraedonDefeat3HyperplaneMatrix: 我从你的战斗中获得的数据是无价的。
 			DraedonDefeat4: ……也许，我该给你的付出给予一些奖励。
 			DraedonDefeat4HyperplaneMatrix: ……很抱歉，但在看了这样一场“展示”之后，我必须得花点时间整理我的思绪。
-			DraedonDefeat5: 分析你的行为已超出了我的计算能力，但这也许并不荒谬。
+			DraedonDefeat5: 一切的理性分析都导向这样一个结果：你超出了我的分析能力。
 			DraedonDefeat6: 现在。
-			DraedonDefeat6HyperplaneMatrix: 那是我最有用的发明，我相信你会找到它的用处的。
+			DraedonDefeat6HyperplaneMatrix: 这是我最有用的发明，我相信你会找到它的用处的。
 			DraedonDefeat7: 你想要接触那位暴君，可惜我无法帮到你。
 			DraedonDefeat7HyperplaneMatrix: 明智地使用它。
 			DraedonDefeat8: 这并非出自怨恨，毕竟从一开始，我的目标就只有观察刚才的这一场战斗。
@@ -2504,7 +2504,7 @@ Mods: {
 				RedElectrified: "{0}无法承受住红色闪电的洗礼。"
 				DarkFlames: "{0}被亵渎之火烧成了灰烬。"
 				Madness: "{0}发疯了。"
-				HyperplaneMatrixExplosion: "{0}被炸死了。"
+				HyperplaneMatrixExplosion: "{0}原地爆炸了。"
 			}
 		}
 
@@ -2519,7 +2519,7 @@ Mods: {
 			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
 			AchievementsHeader: 死亡祈愿
 			AchievementsLabelText: 下一个
-			// InfernumIconText: Infernum Mode is enabled
+                        InfernumIconText: 炼狱模式已启用
 			WishesHeader: 开发者祈愿
 			WishesHoverTextButton: 打开死亡祈愿
 

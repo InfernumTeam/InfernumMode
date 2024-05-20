@@ -21,6 +21,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public override int NPCOverrideType => ModContent.NPCType<SoulSeekerSupreme>();
 
+        public override void SetDefaults(NPC npc)
+        {
+            npc.lifeMax = 14000; // Calamity doubled their HP; revert that.
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Die if SCal is no longer present.

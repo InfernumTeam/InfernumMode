@@ -748,8 +748,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                 }, Vector2.Zero, 50);
                 drawPosition.X -= npc.scale * 84f;
 
+                Main.spriteBatch.ExitShaderRegion();
                 spriteBatch.Draw(leftArm, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation + leftClawRotation, leftArm.Size() * 0.5f, npc.scale, 0, 0f);
                 spriteBatch.Draw(leftArmGlow, clawDrawPosition, null, glowColor, npc.rotation + leftClawRotation, leftArm.Size() * 0.5f, npc.scale, 0, 0f);
+                Main.spriteBatch.EnterShaderRegion();
 
                 // Draw the right arm.
                 clawDrawPosition = drawPosition + new Vector2(-npc.Infernum().ExtraAI[DetachedHandOffsetXIndex], npc.Infernum().ExtraAI[DetachedHandOffsetYIndex]) + GetBaseClawOffset(npc, true);
@@ -766,9 +768,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
                 }, Vector2.Zero, 50);
                 drawPosition.X += npc.scale * 84f;
 
+                Main.spriteBatch.ExitShaderRegion();
                 spriteBatch.Draw(rightArm, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation + rightClawRotation, rightArm.Size() * 0.5f, npc.scale, 0, 0f);
                 spriteBatch.Draw(rightArmGlow, clawDrawPosition, null, glowColor, npc.rotation + rightClawRotation, rightArm.Size() * 0.5f, npc.scale, 0, 0f);
-                Main.spriteBatch.ExitShaderRegion();
             }
 
             // Walking.

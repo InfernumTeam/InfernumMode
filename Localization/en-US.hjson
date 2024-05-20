@@ -2436,6 +2436,7 @@ Mods: {
 			PerditusProjectile.DisplayName: Perditus
 			PunctusProjectile.DisplayName: Punctus
 			PunctusRock.DisplayName: Punctus Rock
+			BrimstoneBarrageOld.DisplayName: Brimstone Dart
 		}
 
 		Status: {

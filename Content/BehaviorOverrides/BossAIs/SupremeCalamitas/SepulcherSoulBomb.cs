@@ -88,7 +88,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                                     Vector2 dartVelocity = (TwoPi * j / dartsPerRing).ToRotationVector2() * dartSpeed;
                                     if (i % 2 == 0)
                                         dartVelocity = dartVelocity.RotatedBy(Pi / dartsPerRing);
-                                    Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), SupremeCalamitasBehaviorOverride.BrimstoneDartDamage, 0f);
+                                    Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), SupremeCalamitasBehaviorOverride.BrimstoneDartDamage, 0f);
                                 }
                                 dartsPerRing += 4;
                             }

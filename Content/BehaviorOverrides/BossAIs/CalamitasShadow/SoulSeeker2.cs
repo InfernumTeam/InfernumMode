@@ -2,6 +2,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CalClone;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -68,7 +69,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 if (AttackTimer >= Lerp(90f, 30f, Utils.GetLerpValue(30f, 520f, AngerTimer, true)))
                 {
                     Vector2 shootVelocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 15f) * 21f;
-                    int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), CalamitasShadowBehaviorOverride.BrimstoneDartDamage, 0f, -1, 1f);
+                    int dart = Utilities.NewProjectileBetter(NPC.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), CalamitasShadowBehaviorOverride.BrimstoneDartDamage, 0f, -1, 1f);
                     if (Main.projectile.IndexInRange(dart))
                     {
                         Main.projectile[dart].tileCollide = false;

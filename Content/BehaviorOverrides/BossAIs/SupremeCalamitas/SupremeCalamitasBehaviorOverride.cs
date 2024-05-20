@@ -723,7 +723,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         Vector2 dartSpawnOffset = (TwoPi * i / 6f).ToRotationVector2() * 650f - target.velocity * 15f;
                         Vector2 dartShootVelocity = -dartSpawnOffset.SafeNormalize(Vector2.UnitY) * dartSpawnOffset.Length() / fanShootTime * 0.4f;
-                        Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
+                        Utilities.NewProjectileBetter(target.Center + dartSpawnOffset, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), BrimstoneDartDamage, 0f);
 
                         ProjectileSpawnManagementSystem.PrepareProjectileForSpawning(telegraph =>
                         {
@@ -992,7 +992,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             float dartOffsetAngle = Lerp(-dartSpread, dartSpread, i / (float)(dartCount - 1f));
                             Vector2 dartVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(dartOffsetAngle) * dartSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f, Main.myPlayer);
+                            Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), BrimstoneDartDamage, 0f, Main.myPlayer);
                         }
                     }
 
@@ -1357,7 +1357,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         float dartOffsetAngle = Lerp(-0.45f, 0.45f, i / (float)(dartCount - 1f));
                         Vector2 dartVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(dartOffsetAngle) * dartSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), BrimstoneDartDamage, 0f, Main.myPlayer);
                     }
                     dartShootCounter++;
                     npc.netUpdate = true;
@@ -1535,7 +1535,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 dartVelocity = npc.SafeDirectionTo(target.Center) * dartShootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 500, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), 500, 0f, Main.myPlayer);
                     }
                 }
 
@@ -1828,7 +1828,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (!NPC.AnyNPCs(ModContent.NPCType<SepulcherHead>()))
                 {
                     for (int i = 0; i < 2; i++)
-                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrage>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
+                        Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<BrimstoneBarrageOld>(), ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<SepulcherBone>());
                     if (Main.netMode != NetmodeID.MultiplayerClient && !WorldSaveSystem.HasSepulcherAnimationBeenPlayed)
                     {
                         WorldSaveSystem.HasSepulcherAnimationBeenPlayed = true;
@@ -2132,10 +2132,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             float shootOffsetAngle = Lerp(-dartSpread, dartSpread, i / (float)(dartsPerBurst - 1f));
                             Vector2 dartShootVelocity = (dartTelegraphDirection + shootOffsetAngle).ToRotationVector2() * dartShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), BrimstoneDartDamage, 0f);
 
                             dartShootVelocity *= -1f;
-                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), BrimstoneDartDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + dartShootVelocity * 2f, dartShootVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), BrimstoneDartDamage, 0f);
                         }
                     }
                 }
@@ -2162,7 +2162,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (attackTimer >= bombBulletHellDuration)
                 {
                     // Delete any stray darts or explosions.
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrage>());
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<DemonicExplosion>(), ModContent.ProjectileType<BrimstoneBarrageOld>());
 
                     attackState = 2f;
                     bombShootCounter = 0f;
@@ -2193,7 +2193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 // Release walls of darts from the top of the arena.
-                int brimstoneDartID = ModContent.ProjectileType<BrimstoneBarrage>();
+                int brimstoneDartID = ModContent.ProjectileType<BrimstoneBarrageOld>();
                 if (attackTimer % dartBulletHellReleaseRate == dartBulletHellReleaseRate - 1f)
                 {
                     for (float x = npc.Infernum().Arena.Left; x < npc.Infernum().Arena.Right; x += dartBulletHellWallArea * 2f)

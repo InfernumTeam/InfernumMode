@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     for (int i = 0; i < 6; i++)
                     {
                         Vector2 dartVelocity = (TwoPi * i / 6f).ToRotationVector2() * 7.4f;
-                        Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), SupremeCalamitasBehaviorOverride.BrimstoneDartDamage, 0f);
+                        Utilities.NewProjectileBetter(Projectile.Center, dartVelocity, ModContent.ProjectileType<BrimstoneBarrageOld>(), SupremeCalamitasBehaviorOverride.BrimstoneDartDamage, 0f);
                     }
                 }
             }

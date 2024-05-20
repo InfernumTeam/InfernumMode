@@ -235,7 +235,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 chargeCounter++;
                 if (chargeCounter >= chargeCount)
                 {
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<BrimstoneBarrage>());
+                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<DemonicBomb>(), ModContent.ProjectileType<BrimstoneBarrageOld>());
                     SelectNextAttack(npc);
                 }
 

@@ -20,6 +20,7 @@ namespace InfernumMode.Core.ILEditingStuff
             HookHelper.ModifyMethodWithDetour(FindFrameMethod, OverrideSystemHooks.FindFrameDetourMethod);
             HookHelper.ModifyMethodWithDetour(CalPreAIMethod, OverrideSystemHooks.CalPreAIDetourMethod);
             HookHelper.ModifyMethodWithDetour(CalGlobalNPCPredrawMethod, OverrideSystemHooks.CalGlobalNPCPredrawDetourMethod);
+            HookHelper.ModifyMethodWithDetour(CalGlobalNPCPostdrawMethod, OverrideSystemHooks.CalGlobalNPCPostdrawDetourMethod);
             InternalBalancingManager.AfterHPBalancingEvent += InternalBalancingManager_AfterHPBalancingEvent;
         }
 
@@ -67,10 +68,24 @@ namespace InfernumMode.Core.ILEditingStuff
 
         internal static bool CalGlobalNPCPredrawDetourMethod(Orig_CalGlobalNPCPredrawMethod orig, CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (npc.type == NPCID.GolemHeadFree)
-                return false;
+            if (InfernumMode.CanUseCustomAIs)
+            {
+                if (npc.type == NPCID.GolemHeadFree)
+                    return false;
+            }
 
             return orig(self, npc, spriteBatch, screenPos, drawColor);
+        }
+
+        internal static void CalGlobalNPCPostdrawDetourMethod(Orig_CalGlobalNPCPostdrawMethod orig, CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (InfernumMode.CanUseCustomAIs)
+            {
+                if (npc.type == NPCID.BrainofCthulhu)
+                    return;
+            }
+
+            orig(self, npc, spriteBatch, screenPos, drawColor);
         }
     }
 }

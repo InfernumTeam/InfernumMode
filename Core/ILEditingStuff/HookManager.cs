@@ -416,5 +416,9 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static MethodInfo CalGlobalNPCPredrawMethod => typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalGlobalNPCPredrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
+
+        internal static MethodInfo CalGlobalNPCPostdrawMethod => typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_CalGlobalNPCPostdrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
     }
 }

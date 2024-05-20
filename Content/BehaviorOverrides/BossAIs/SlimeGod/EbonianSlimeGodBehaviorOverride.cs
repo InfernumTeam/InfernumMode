@@ -38,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             npc.scale = SlimeGodComboAttackManager.BigSlimeBaseScale;
             npc.defense = 12;
             npc.Opacity = 0.8f;
+            npc.lifeMax = 4665; // Calamity increased its HP; revert
         }
 
         public override void BossHeadSlot(NPC npc, ref int index)

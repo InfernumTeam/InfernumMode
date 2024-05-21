@@ -413,6 +413,10 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public delegate void Orig_CalModifyHitNPCWithItemMethod(CalamityPlayer self, Item item, NPC target, ref NPC.HitModifiers modifiers);
 
+        internal static MethodInfo CalUpdateBadLifeRegenMethod => typeof(CalamityPlayer).GetMethod("UpdateBadLifeRegen", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_CalUpdateBadLifeRegenMethod(CalamityPlayer self);
+
         internal static MethodInfo CalGlobalNPCPredrawMethod => typeof(CalamityGlobalNPC).GetMethod("PreDraw", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalGlobalNPCPredrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);

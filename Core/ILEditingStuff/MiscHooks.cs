@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Reflection;
 using CalamityMod;
+using CalamityMod.CalPlayer;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using Luminance.Core.Balancing;
 using Luminance.Core.Hooking;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -236,6 +238,25 @@ namespace InfernumMode.Core.ILEditingStuff
                 volumeModifier = Clamp(volumeModifier, 0f, 1f);
                 self.Sound.Volume = volumeModifier;
             }
+        }
+    }
+
+    public class DisableAbyssLayer1PoisonHook : ICustomDetourProvider
+    {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(CalUpdateBadLifeRegenMethod, UpdateBadLifeRegen_Detour);
+        }
+
+        private void UpdateBadLifeRegen_Detour(Orig_CalUpdateBadLifeRegenMethod orig, CalamityPlayer self)
+        {
+            bool abyssalDivingSuit = self.abyssalDivingSuit; // Save old value to reset after
+            if (self.ZoneAbyssLayer1)
+                self.abyssalDivingSuit = true; // Gives immunity to specifically Sulphur water poison, which we want to prevent if you're in Abyss Layer 1.
+                                               // Does not affect anything else in UpdateBadLifeRegen, which means using it is fine.
+            orig(self);
+            self.abyssalDivingSuit = abyssalDivingSuit; // Reset value
+
         }
     }
 }

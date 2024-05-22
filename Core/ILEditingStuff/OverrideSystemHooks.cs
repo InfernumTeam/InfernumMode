@@ -83,6 +83,8 @@ namespace InfernumMode.Core.ILEditingStuff
             {
                 if (npc.type == NPCID.BrainofCthulhu)
                     return;
+                if (npc.type == NPCID.Creeper)
+                    return;
             }
 
             orig(self, npc, spriteBatch, screenPos, drawColor);

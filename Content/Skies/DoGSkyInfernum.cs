@@ -16,7 +16,6 @@ namespace InfernumMode.Content.Skies
 {
     public class DoGSkyScene : ModSceneEffect
     {
-        internal static readonly FieldInfo EffectsField = typeof(SkyManager).GetField("_effects", BindingFlags.NonPublic | BindingFlags.Instance);
         public override bool IsSceneEffectActive(Player player) => CosmicBackgroundSystem.EffectIsActive || CosmicBackgroundSystem.MonolithIntensity > 0f;
 
         // FUCK YOU FUCK YOU
@@ -26,24 +25,6 @@ namespace InfernumMode.Content.Skies
 
         public override void SpecialVisuals(Player player, bool isActive)
         {
-            // Clear all other skies, including the vanilla ones.
-            if (isActive)
-            {
-                Dictionary<string, CustomSky> skies = EffectsField.GetValue(SkyManager.Instance) as Dictionary<string, CustomSky>;
-                bool updateRequired = false;
-                foreach (string skyName in skies.Keys)
-                {
-                    if (skies[skyName].IsActive() && skyName != "InfernumMode:DoG")
-                    {
-                        skies[skyName].Opacity = 0f;
-                        skies[skyName].Deactivate();
-                        updateRequired = true;
-                    }
-                }
-
-                if (updateRequired)
-                    SkyManager.Instance.Update(new GameTime());
-            }
 
             if (!CosmicBackgroundSystem.EffectIsActive)
                 CosmicBackgroundSystem.MonolithIntensity = Clamp(CosmicBackgroundSystem.MonolithIntensity - 0.02f, 0f, 1f);

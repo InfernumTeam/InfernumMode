@@ -8,6 +8,7 @@ using CalamityMod.ILEditing;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.Providence;
@@ -424,5 +425,9 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static MethodInfo CalGlobalNPCPostdrawMethod => typeof(CalamityGlobalNPC).GetMethod("PostDraw", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalGlobalNPCPostdrawMethod(CalamityGlobalNPC self, NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor);
+
+        internal static MethodInfo CalDoGSkyUpdateDoGIndex => typeof(DoGSky).GetMethod("UpdateDoGIndex", Utilities.UniversalBindingFlags);
+
+        public delegate bool Orig_CalDoGSkyUpdateDoGIndex(DoGSky self);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -257,6 +258,22 @@ namespace InfernumMode.Core.ILEditingStuff
             orig(self);
             self.abyssalDivingSuit = abyssalDivingSuit; // Reset value
 
+        }
+    }
+
+    public class DisableDoGSkyHook : ICustomDetourProvider
+    {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(CalDoGSkyUpdateDoGIndex, CalDoGSkyUpdateDoGIndex_Detour);
+        }
+        private bool CalDoGSkyUpdateDoGIndex_Detour(Orig_CalDoGSkyUpdateDoGIndex orig, DoGSky self)
+        {
+            if (InfernumMode.CanUseCustomAIs && !InfernumConfig.Instance.ReducedGraphicsConfig)
+            {
+                return false;
+            }
+            return orig(self);
         }
     }
 }

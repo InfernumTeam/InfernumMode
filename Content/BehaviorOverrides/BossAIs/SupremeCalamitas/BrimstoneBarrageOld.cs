@@ -86,16 +86,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
             }
 
-            if (Projectile.localAI[0] == 0f)
-            {
-                Projectile.localAI[0] = 1f;
-                if (Projectile.ai[0] == 0f)
-                {
-                    int scalType = ModContent.NPCType<CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas>();
-                    Projectile.damage = NPC.AnyNPCs(scalType) ? Projectile.GetProjectileDamage(scalType) : Projectile.GetProjectileDamage(ModContent.NPCType<CalamitasClone>());
-                }
-            }
-
             Lighting.AddLight(Projectile.Center, 0.75f * Projectile.Opacity, 0f, 0f);
         }
 

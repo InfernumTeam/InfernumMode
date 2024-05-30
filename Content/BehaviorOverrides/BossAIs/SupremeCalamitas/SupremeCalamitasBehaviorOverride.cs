@@ -305,7 +305,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 Point arenaCenter = npc.Infernum().Arena.Center().ToTileCoordinates();
                 arenaCenter.X += 3;
-                arenaCenter.Y += 4;
+                arenaCenter.Y += 3;
                 int width = npc.Infernum().Arena.Width / 2 / 16 + 1;
                 int height = npc.Infernum().Arena.Height / 2 / 16 + 1;
                 for (int x = arenaCenter.X - width; x <= arenaCenter.X + width; x++)

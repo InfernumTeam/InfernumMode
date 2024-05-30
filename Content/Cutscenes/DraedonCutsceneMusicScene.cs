@@ -6,7 +6,7 @@ namespace InfernumMode.Content.Cutscenes
 {
     public class DraedonCutsceneMusicScene : ModSceneEffect
     {
-        public override int Music => MusicLoader.GetMusicSlot("CalamityMod/Sounds/Music/DraedonsAmbience");
+        public override int Music => MusicLoader.GetMusicSlot("CalamityMod/Sounds/Music/DraedonExoSelect");
 
         public override SceneEffectPriority Priority => (SceneEffectPriority)10;
 

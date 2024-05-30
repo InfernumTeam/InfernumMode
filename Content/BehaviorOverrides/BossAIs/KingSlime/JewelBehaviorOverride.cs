@@ -13,7 +13,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 {
     public class JewelBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<KingSlimeJewel>();
+        public override int NPCOverrideType => ModContent.NPCType<KingSlimeJewelRuby>();
 
         public override bool PreAI(NPC npc)
         {
@@ -80,7 +80,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
 
         public static void MakeJewelFire()
         {
-            int jewelIndex = NPC.FindFirstNPC(ModContent.NPCType<KingSlimeJewel>());
+            int jewelIndex = NPC.FindFirstNPC(ModContent.NPCType<KingSlimeJewelRuby>());
             if (jewelIndex <= -1 || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

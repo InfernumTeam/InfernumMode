@@ -91,7 +91,7 @@ namespace InfernumMode.Core.Balancing
         public override IEnumerable<NPCHPBalancingChange> GetNPCHPBalancingChanges()
         {
             #region Base Infernum HP
-            yield return CreateBaseChangeModded(ModContent.NPCType<KingSlimeJewel>(), 2000);
+            yield return CreateBaseChangeModded(ModContent.NPCType<KingSlimeJewelRuby>(), 2000);
             yield return CreateBaseChangeModded(ModContent.NPCType<DesertScourgeHead>(), 7200);
             yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP1Point6(4100), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && !Main.hardMode);
             yield return new(ModContent.NPCType<GiantClam>(), AccountForExpertHP1Point6(16200), InfernumModeBasePriority, () => InfernumMode.CanUseCustomAIs && Main.hardMode);
@@ -215,7 +215,7 @@ namespace InfernumMode.Core.Balancing
             #endregion
 
             #region Boss Rush HP
-            yield return CreateBossRushChange(ModContent.NPCType<KingSlimeJewel>(), 1176000);
+            yield return CreateBossRushChange(ModContent.NPCType<KingSlimeJewelRuby>(), 1176000);
             yield return CreateBossRushChange(ModContent.NPCType<DesertScourgeHead>(), 1185000);
             yield return CreateBossRushChange(NPCID.KingSlime, 420000);
             yield return CreateBossRushChange(NPCID.EyeofCthulhu, 770000);

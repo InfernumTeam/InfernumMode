@@ -141,13 +141,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 HatGirl.SayThingWhileOwnerIsAlive(target, "Mods.InfernumMode.PetDialog.KingSlimeJewelTip");
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.NewNPC(npc.GetSource_FromAI(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
+                    NPC.NewNPC(npc.GetSource_FromAI(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewelRuby>());
                 jewelSummonTimer = 1f;
                 npc.netUpdate = true;
             }
 
             // Resummon the jewel if it's gone and enough time has passed.
-            if (!NPC.AnyNPCs(ModContent.NPCType<KingSlimeJewel>()) && jewelSummonTimer >= 1f)
+            if (!NPC.AnyNPCs(ModContent.NPCType<KingSlimeJewelRuby>()) && jewelSummonTimer >= 1f)
             {
                 jewelSummonTimer++;
                 if (jewelSummonTimer >= 2100f)
@@ -245,7 +245,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
                 // Despawn the jewel
                 for (int i = 0; i < Main.npc.Length; i++)
                 {
-                    if (Main.npc[i].type == ModContent.NPCType<KingSlimeJewel>())
+                    if (Main.npc[i].type == ModContent.NPCType<KingSlimeJewelRuby>())
                     {
                         Main.npc[i].active = false;
                         break;

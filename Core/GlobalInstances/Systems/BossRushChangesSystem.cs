@@ -107,7 +107,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                     // Set the startedBossRushAtLeastOnce boolean to true to
                     // no longer give players the full Xeroc start monologue anymore
                     DownedBossSystem.startedBossRushAtLeastOnce = true;
-                },  permittedNPCs: [ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewel>()]),
+                },  permittedNPCs: [ModContent.NPCType<Ninja>(), ModContent.NPCType<KingSlimeJewelRuby>()]),
 
                 new Boss(NPCID.EyeofCthulhu, TimeChangeContext.Night, permittedNPCs: [NPCID.ServantofCthulhu, ModContent.NPCType<ExplodingServant>()]),
 

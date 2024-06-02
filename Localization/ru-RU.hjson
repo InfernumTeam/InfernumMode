@@ -2449,7 +2449,7 @@ Mods: {
 			PerditusProjectile.DisplayName: Потерянный
 			PunctusProjectile.DisplayName: Точный
 			PunctusRock.DisplayName: Камень Точного
-			// BrimstoneBarrageOld.DisplayName: Brimstone Dart
+			BrimstoneBarrageOld.DisplayName: Серный Дротик
 		}
 
 		Status: {

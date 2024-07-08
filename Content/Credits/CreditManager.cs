@@ -81,7 +81,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Musicians = "Pinpin";
 
-        public const string Programmers = "Dominic\nNycro\nToasty";
+        public const string Programmers = "Dominic\nImogen\nNycro";
 
         public const string Testers1 = "Blast\nBronze\nCataclysmic\nEin\nGamerXD";
 

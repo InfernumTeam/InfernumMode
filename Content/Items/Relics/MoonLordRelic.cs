@@ -8,7 +8,7 @@ namespace InfernumMode.Content.Items.Relics
     {
         public override string DisplayNameToUse => "Infernal Moon Lord Relic";
 
-        public override string PersonalMessage => Utilities.GetLocalization("Items.GolemRelic.PersonalMessage").Value;
+        public override string PersonalMessage => Utilities.GetLocalization("Items.MoonLordRelic.PersonalMessage").Value;
 
         public override Color? PersonalMessageColor => Color.Lerp(Color.Cyan, Color.DarkGreen, 0.5f);
 

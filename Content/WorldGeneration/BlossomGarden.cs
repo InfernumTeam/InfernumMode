@@ -25,7 +25,46 @@ namespace InfernumMode.Content.WorldGeneration
             // Shove it upwards from the pass.
             placementPositionY -= 200;
             var placementPoint = new Point(placementPositionX, placementPositionY);
-            var protectionArea = CalamityUtils.GetSchematicProtectionArea(schematic, placementPoint, schematicAnchor);
+            Rectangle protectionArea = CalamityUtils.GetSchematicProtectionArea(schematic, placementPoint, schematicAnchor);
+
+            // Attempt to find a valid position.
+            for (int i = 0; i < 50; i++)
+            {
+                // Randomly pick whether it should be above or below the Vernal Pass. Used to dodge placing the structure right on top of it.
+                bool above = WorldGen.genRand.NextBool();
+                int randY = WorldGen.genRand.Next(0, 400) * (above ? -1 : 1);
+
+                // Randomly offset the point.
+                var attemptPlacementPoint = placementPoint + new Point(WorldGen.genRand.Next(-400, 400), randY);
+                if (!above)
+                    attemptPlacementPoint.Y += 400;
+                // Check if the new position is valid.
+
+                var attemptProtectionArea = CalamityUtils.GetSchematicProtectionArea(schematic, attemptPlacementPoint, schematicAnchor);
+                // Check if all of the corners are close to jungle (jungle grass)
+                bool cornersJungle =
+                    CheckJungle(attemptProtectionArea.TopLeft().ToPoint()) && CheckJungle(attemptProtectionArea.TopRight().ToPoint()) &&
+                    CheckJungle(attemptProtectionArea.BottomLeft().ToPoint()) && CheckJungle(attemptProtectionArea.BottomRight().ToPoint());
+
+                if (attemptPlacementPoint.Y > Main.worldSurface + 250)
+                    placementPoint = placementPoint;
+
+                if (GenVars.structures.CanPlace(attemptProtectionArea, 4))
+                    placementPoint = placementPoint;
+
+                if (cornersJungle)
+                    placementPoint = placementPoint;
+
+                if (attemptPlacementPoint.Y > Main.worldSurface + 150 && cornersJungle)
+                {
+                    // success
+                    placementPoint = attemptPlacementPoint;
+                    protectionArea = attemptProtectionArea;
+                    break;
+                }
+
+            }
+            
             WorldSaveSystem.BlossomGardenCenter = placementPoint;
 
             bool _ = false;
@@ -41,6 +80,20 @@ namespace InfernumMode.Content.WorldGeneration
             });
 
             GenVars.structures.AddProtectedStructure(protectionArea, 16);
+        }
+
+        public static bool CheckJungle(Point point)
+        {
+            for (int x = -25; x <= 25; x++)
+            {
+                for (int y = -25; y <= 25; y++)
+                {
+                    Tile checkTile = Main.tile[point + new Point(x, y)];
+                    if (checkTile.TileType == TileID.JungleGrass)
+                        return true;
+                }
+            }
+            return false;
         }
     }
 }

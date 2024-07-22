@@ -46,15 +46,6 @@ namespace InfernumMode.Content.WorldGeneration
                     CheckJungle(attemptProtectionArea.TopLeft().ToPoint()) && CheckJungle(attemptProtectionArea.TopRight().ToPoint()) &&
                     CheckJungle(attemptProtectionArea.BottomLeft().ToPoint()) && CheckJungle(attemptProtectionArea.BottomRight().ToPoint());
 
-                if (attemptPlacementPoint.Y > Main.worldSurface + 250)
-                    placementPoint = placementPoint;
-
-                if (GenVars.structures.CanPlace(attemptProtectionArea, 4))
-                    placementPoint = placementPoint;
-
-                if (cornersJungle)
-                    placementPoint = placementPoint;
-
                 if (attemptPlacementPoint.Y > Main.worldSurface + 150 && cornersJungle)
                 {
                     // success

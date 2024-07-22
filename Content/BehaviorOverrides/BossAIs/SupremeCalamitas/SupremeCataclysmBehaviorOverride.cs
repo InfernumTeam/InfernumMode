@@ -202,7 +202,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackSpecificTimer = 0f;
                 SoundEngine.PlaySound(SCalNPC.HellblastSound, npc.Center);
 
-                int type = ModContent.ProjectileType<SupremeCataclysmFist>();
+                int type = ModContent.ProjectileType<SupremeCataclysmFistOld>();
                 Vector2 projectileSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 74f;
                 if (!isCataclysm)
                 {

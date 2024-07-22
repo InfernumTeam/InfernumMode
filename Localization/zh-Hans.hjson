@@ -2437,6 +2437,7 @@ Mods: {
 			PunctusProjectile.DisplayName: 焱
 			PunctusRock.DisplayName: 焱石
 			// BrimstoneBarrageOld.DisplayName: Brimstone Dart
+			// SupremeCataclysmFistOld.DisplayName: Fist of Fury
 		}
 
 		Status: {

@@ -2448,7 +2448,7 @@ Mods: {
 			PunctusProjectile.DisplayName: Точный
 			PunctusRock.DisplayName: Камень Точного
 			BrimstoneBarrageOld.DisplayName: Серный Дротик
-			// SupremeCataclysmFistOld.DisplayName: Fist of Fury
+			SupremeCataclysmFistOld.DisplayName: Кулак Ярости
 		}
 
 		Status: {

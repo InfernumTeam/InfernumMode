@@ -3,6 +3,7 @@ using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -16,14 +17,12 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas.SupremeCalamitasBehaviorOverride;
-using SCalNPC = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class DarkHeartBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<SoulSeekerSupreme>();
+        public override int NPCOverrideType => ModContent.NPCType<DarkHeart>();
 
 
         public override bool PreAI(NPC npc)

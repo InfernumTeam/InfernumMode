@@ -69,8 +69,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         public override void SetDefaults(NPC npc)
         {
             // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
-            npc.width = 32;
-            npc.height = 80;
+            npc.width = 104;
+            npc.height = 104;
             npc.scale = 1f;
             npc.Opacity = 1f;
             npc.defense = 4;
@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float initializedFlag = ref npc.ai[2];
-            ref float enrageTimer = ref npc.ai[3];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[10];
             ref float hideMapIcon = ref npc.Infernum().ExtraAI[HideMapIconIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
@@ -692,26 +692,36 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
         public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)
         {
-            int previousIndex = npc.whoAmI;
-            for (int i = 0; i < wormLength; i++)
+            int previous = npc.whoAmI;
+            int minLength = wormLength;
+
+            int bodyTypeAIVariable = 0;
+            for (int i = 0; i < minLength + 1; i++)
             {
-                int nextIndex;
-                if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                int lol;
+                if (i >= 0 && i < minLength)
+                {
+                    if (i == 0)
+                        bodyTypeAIVariable = 0;
+                    else if (i == minLength - 1)
+                        bodyTypeAIVariable = 30;
+                    else if (i % 2 == 0)
+                        bodyTypeAIVariable = 20;
+                    else
+                        bodyTypeAIVariable = 10;
+
+                    lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    Main.npc[lol].ai[3] = bodyTypeAIVariable;
+                }
                 else
-                    nextIndex = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
-                Main.npc[nextIndex].realLife = npc.whoAmI;
-                Main.npc[nextIndex].ai[2] = npc.whoAmI;
-                Main.npc[nextIndex].ai[1] = previousIndex;
-
-                if (i > 0)
-                    Main.npc[previousIndex].ai[0] = nextIndex;
-
-                // Force sync the new segment into existence.
-                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, nextIndex, 0f, 0f, 0f, 0);
-
-                previousIndex = nextIndex;
+                Main.npc[lol].ai[2] = npc.whoAmI;
+                Main.npc[lol].realLife = npc.whoAmI;
+                Main.npc[lol].ai[1] = previous;
+                Main.npc[previous].ai[0] = lol;
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, lol, 0f, 0f, 0f, 0);
+                previous = lol;
             }
         }
 
@@ -728,11 +738,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         #endregion
 
         #region Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            spriteBatch.Draw(BossTextureRegistry.DesertScourgeHead.Value, npc.Center - Main.screenPosition, null, npc.GetAlpha(lightColor), npc.rotation, BossTextureRegistry.DesertScourgeHead.Value.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-            return false;
-        }
+
         #endregion
 
         #region Tips

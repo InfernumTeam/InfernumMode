@@ -734,7 +734,8 @@ Mods: {
 				DisplayName: Purity
 				Tooltip:
 					'''
-					40% increased damage and attack speed
+					Multiplies damage by 1.4x and 40% increased attack speed
+					Summons can't benefit from this damage bonus
 					Grants immunity to Nightwither
 					[c/ff5d5d:You are unable to crit]
 					[c/59aae7:It sounds like two brothers, chasing glass frogs in the sun]

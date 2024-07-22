@@ -1,4 +1,5 @@
-﻿using InfernumMode.Common.Worldgen;
+﻿using CalamityMod;
+using InfernumMode.Common.Worldgen;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -76,12 +77,12 @@ namespace InfernumMode
                     if (!t.HasUnactuatedTile)
                         continue;
 
-                    if (t.TileType == TileID.Platforms || TileID.Sets.Platforms[t.TileType] || t.TileType == TileID.PlanterBox)
+                    if (t.TileType == TileID.Platforms || TileID.Sets.Platforms[t.TileType] || t.TileType == TileID.PlanterBox || t.IsTileSolidGround())
                         return true;
                 }
             }
 
-            bool halfCorrectCheck = Collision.SolidCollision(topLeft, width, height);
+            bool halfCorrectCheck = Collision.SolidCollision(topLeft, width, height) || Collision.SolidTiles(topLeft, width, height, false);
             return halfCorrectCheck;
         }
     }

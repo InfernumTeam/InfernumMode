@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.MaxUpdates = 2;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

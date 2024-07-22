@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 50;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

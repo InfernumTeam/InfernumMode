@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.timeLeft = 9000;
             Projectile.scale = 0.2f;
             Projectile.Calamity().DealsDefenseDamage = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

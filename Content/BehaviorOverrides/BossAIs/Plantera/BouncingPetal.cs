@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             Projectile.tileCollide = true;
             Projectile.timeLeft = 480;
             Projectile.penetrate = -1;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

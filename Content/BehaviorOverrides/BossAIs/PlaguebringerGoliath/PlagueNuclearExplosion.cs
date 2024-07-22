@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Projectile.extraUpdates = 1;
             Projectile.scale = 0.15f;
             Projectile.Calamity().DealsDefenseDamage = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

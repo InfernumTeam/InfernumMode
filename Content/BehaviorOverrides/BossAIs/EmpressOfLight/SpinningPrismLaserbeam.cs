@@ -54,7 +54,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Projectile.hide = true;
             Projectile.netImportant = true;
             Projectile.Calamity().DealsDefenseDamage = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void SendExtraAI(BinaryWriter writer)

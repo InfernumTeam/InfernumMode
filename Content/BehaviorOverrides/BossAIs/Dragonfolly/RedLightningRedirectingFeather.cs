@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.penetrate = -1;
             Projectile.timeLeft = RedirectDelay + FlyTime;
             Projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

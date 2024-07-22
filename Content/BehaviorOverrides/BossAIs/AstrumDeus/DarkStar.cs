@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             Projectile.ignoreWater = true;
             Projectile.timeLeft = Lifetime;
             Projectile.scale = 0.001f;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void SendExtraAI(BinaryWriter writer)

@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
-            cooldownSlot = ImmunityCooldownID.Bosses;
+            
             return base.CanHitPlayer(target, ref cooldownSlot);
         }
     }

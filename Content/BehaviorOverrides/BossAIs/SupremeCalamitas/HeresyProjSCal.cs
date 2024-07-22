@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.penetrate = -1;
             Projectile.timeLeft = 90000;
             Projectile.Opacity = 0f;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         // Projectile spawning code is done in SCal's AI.

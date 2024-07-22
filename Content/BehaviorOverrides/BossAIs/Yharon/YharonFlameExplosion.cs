@@ -19,7 +19,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.MaxUpdates = 2;
             Projectile.timeLeft = Projectile.MaxUpdates * 210;
             Projectile.scale = 0.15f;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

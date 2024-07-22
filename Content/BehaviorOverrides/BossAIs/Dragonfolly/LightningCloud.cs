@@ -27,7 +27,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.friendly = false;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 45;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(AngularOffset);

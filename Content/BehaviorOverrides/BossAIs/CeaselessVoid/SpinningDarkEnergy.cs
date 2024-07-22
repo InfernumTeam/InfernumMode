@@ -44,7 +44,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             Projectile.tileCollide = false;
             Projectile.timeLeft = 72000;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
             LocalParticles = [];
         }
 

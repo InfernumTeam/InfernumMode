@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             Projectile.tileCollide = false;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.penetrate = -1;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override bool? CanDamage() => Time > TelegraphTotalTime;

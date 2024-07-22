@@ -29,7 +29,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Signus
             Projectile.timeLeft = 60;
             Projectile.penetrate = -1;
             Projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

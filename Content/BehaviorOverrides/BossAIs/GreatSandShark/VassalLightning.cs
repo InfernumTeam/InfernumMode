@@ -49,7 +49,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             Projectile.hostile = true;
             Projectile.MaxUpdates = 6;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void SendExtraAI(BinaryWriter writer)

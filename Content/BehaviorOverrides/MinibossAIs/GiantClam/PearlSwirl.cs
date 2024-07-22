@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             Projectile.tileCollide = false;
             Projectile.timeLeft = 840;
             Projectile.penetrate = -1;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

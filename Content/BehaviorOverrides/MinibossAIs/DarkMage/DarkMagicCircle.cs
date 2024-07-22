@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.DarkMage
             Projectile.alpha = 255;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 270;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

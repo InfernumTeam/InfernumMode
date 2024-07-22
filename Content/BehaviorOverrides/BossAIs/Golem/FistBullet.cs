@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 300;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override bool PreAI()

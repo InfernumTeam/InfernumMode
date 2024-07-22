@@ -35,7 +35,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.KingSlime
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

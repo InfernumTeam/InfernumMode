@@ -45,7 +45,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.alpha = 255;
             Projectile.Calamity().DealsDefenseDamage = true;
             Projectile.MaxUpdates = 2;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

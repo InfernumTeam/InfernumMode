@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 210;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

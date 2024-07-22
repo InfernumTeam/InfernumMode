@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             Projectile.timeLeft = 360;
             Projectile.Opacity = 0;
             Projectile.hide = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override void AI()

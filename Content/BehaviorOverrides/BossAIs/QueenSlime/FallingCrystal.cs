@@ -41,7 +41,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             Projectile.timeLeft = 720;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
         }
 

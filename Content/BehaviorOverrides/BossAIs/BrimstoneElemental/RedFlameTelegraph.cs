@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = TelegraphTime;
-            CooldownSlot = ImmunityCooldownID.Bosses;
+            
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;

@@ -135,7 +135,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
-            cooldownSlot = ImmunityCooldownID.Bosses;
+            
             return true;
         }
 

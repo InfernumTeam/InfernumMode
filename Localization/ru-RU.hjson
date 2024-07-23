@@ -1259,7 +1259,7 @@ Mods: {
 			}
 
 			DungeonsCurse: {
-				DisplayName: Проклятье темницы
+				DisplayName: Проклятье Темницы
 				Tooltip:
 					'''
 					Призывает Скелетрона

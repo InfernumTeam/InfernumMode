@@ -2,7 +2,7 @@ Mods: {
 	InfernumMode: {
 		Achievements: {
 			BabysFirstAchievement: {
-				DisplayName: Первая из Многих
+				DisplayName: Первая из многих
 				Description:
 					'''
 					Чем больше ты пытаешься, тем больше ты узнаёшь
@@ -11,7 +11,7 @@ Mods: {
 			}
 
 			BereftVassalAchievement: {
-				DisplayName: Забытые Пески
+				DisplayName: Забытые пески
 				Description:
 					'''
 					В далёких краях пустынных дюн, превзойди в бою Обездоленного Вассала
@@ -20,7 +20,7 @@ Mods: {
 			}
 
 			ExoPathAchievement: {
-				DisplayName: Подопытная Крыса
+				DisplayName: Подопытная крыса
 				Description:
 					'''
 					Стань любимым испытуемым Дрэйдона
@@ -29,7 +29,7 @@ Mods: {
 			}
 
 			InfernalChaliceAchievement: {
-				DisplayName: Крещёние Адским Огнём
+				DisplayName: Крещёние адским огнём
 				Description:
 					'''
 					Преодолей последнее испытание и получи заслуженную награду
@@ -38,7 +38,7 @@ Mods: {
 			}
 
 			KillAllBossesAchievement: {
-				DisplayName: Инфернум, Убей Их Всех!
+				DisplayName: Инфернум, убей их всех!
 				Description:
 					'''
 					Рви и кромсай, пока не иссякнут
@@ -47,7 +47,7 @@ Mods: {
 			}
 
 			KillAllMinibossesAchievement: {
-				DisplayName: Маленький Задира
+				DisplayName: Маленький задира
 				Description:
 					'''
 					Изничтожь различные мелкие угрозы по всему миру!
@@ -56,7 +56,7 @@ Mods: {
 			}
 
 			MechaMayhemAchievement: {
-				DisplayName: Заводные и Злобные
+				DisplayName: Заводные и злобные
 				Description:
 					'''
 					Выведи из строя тройку Озорных Механимашек в один присест!
@@ -84,7 +84,7 @@ Mods: {
 
 			Wishes: {
 				BlahajWish: {
-					DisplayName: Силы Благотворительности
+					DisplayName: Силы благотворительности
 					Description:
 						'''
 						Тёплые объятия
@@ -111,7 +111,7 @@ Mods: {
 				}
 
 				MatrixWish: {
-					DisplayName: Научный Метод
+					DisplayName: Научный метод
 					Description:
 						'''
 						Экспериментировать - значит потерпеть неудачу. Потерпеть неудачу - значит научиться. Научиться - значит продвинуться
@@ -129,7 +129,7 @@ Mods: {
 				}
 
 				PurityWish: {
-					DisplayName: Загар от Звёздного Семени
+					DisplayName: Загар от звёздного семени
 					Description:
 						'''
 						Ощущается как солнечные ветра и солнечные куранты
@@ -138,7 +138,7 @@ Mods: {
 				}
 
 				SakuraWish: {
-					DisplayName: Невинный Ветерок
+					DisplayName: Невинный ветерок
 					Description:
 						'''
 						Тысяча причудливых духов, что игриво танцуют
@@ -147,7 +147,7 @@ Mods: {
 				}
 
 				StormMaidenWish: {
-					DisplayName: Скорбный Плач
+					DisplayName: Скорбный плач
 					Description:
 						'''
 						Их слёзы сливаются с каплями дождя, оплакивая всё то несбывшееся
@@ -178,25 +178,25 @@ Mods: {
 		Bestiary: {
 			BereftVassal: Бдительный стражник, однажды бродивший без цели. Узнав, что его король продолжает жить, было похоже, будто он начал возвращать себе волю к жизни. Он с нетерпением ждёт ещё одной битвы с тобой.
 			DepthFeeder: Даже в невыносимо враждебной среде Бездны, экосистема может процветать.
-			Herring: Необычайно выносливые, эти создания каким-то образом процветают в верхних токсичных пещерах бездны. Несмотря на это, они всё ещё на дне пищевой цепочки.
+			Herring: Необычайно выносливые, эти создания каким-то образом процветают в верхних токсичных пещерах Бездны. Несмотря на это, они всё ещё на дне пищевой цепочки.
 			Lionfish: На эту огрубевшую рыбу редко ведут охоту в её естественной среде обитания, всё из-за их ядовитых хребтов, служащих как защитой, так и оружием
 		}
 
 		Biomes: {
 			LostColosseumBiome: {
-				DisplayName: Затерянный Колизей
-				TownNPCDialogueName: биом Затерянного Колизея
+				DisplayName: Затерянный колизей
+				TownNPCDialogueName: биом Затерянного колизея
 			}
 
 			ProfanedTempleBiome: {
-				DisplayName: Осквернённый Храм
-				TownNPCDialogueName: биом Осквернённого Храма
+				DisplayName: Осквернённый храм
+				TownNPCDialogueName: биом Осквернённого храма
 			}
 		}
 
 		Buffs: {
 			AccentuationHex: {
-				DisplayName: Проклятье Выделения
+				DisplayName: Проклятье выделения
 				Description: Магия твоего соперника притягивается к тебе
 			}
 
@@ -211,12 +211,12 @@ Mods: {
 			}
 
 			BrimstoneBarrier: {
-				DisplayName: Серный Барьер
+				DisplayName: Серный барьер
 				Description: Твоя магия увядает из твоего орудия взамен на сильный магический барьер
 			}
 
 			BrimstoneExhaustion: {
-				DisplayName: Серное Истощение
+				DisplayName: Серное истощение
 				Description: Ты не можешь вызвать силовое поле Посоха Серного Полумесяца вновь
 			}
 
@@ -226,12 +226,12 @@ Mods: {
 			}
 
 			CatharsisHex: {
-				DisplayName: Проклятье Катарсиса
+				DisplayName: Проклятье катарсиса
 				Description: Естественная регенерация здоровья приостановлена, злые духи высвобождаются изнутри тебя
 			}
 
 			DarkFlames: {
-				DisplayName: Тёмные Огни
+				DisplayName: Тёмные огни
 				Description: Твоё тело пожирается покинутым адом. Защита снижена
 			}
 
@@ -241,7 +241,7 @@ Mods: {
 			}
 
 			IndignationHex: {
-				DisplayName: Проклятье Негодования
+				DisplayName: Проклятье негодования
 				Description: Тебя преследует искатель душ
 			}
 
@@ -251,7 +251,7 @@ Mods: {
 			}
 
 			ShadowflameInferno: {
-				DisplayName: Ад Теневого Пламени
+				DisplayName: Ад теневого пламени
 				Description: Быстрая потеря здоровья
 			}
 
@@ -266,12 +266,12 @@ Mods: {
 			}
 
 			WeaknessHex: {
-				DisplayName: Проклятье Слабости
+				DisplayName: Проклятье слабости
 				Description: Защита и снижение урона значительно ослаблены
 			}
 
 			ZealHex: {
-				DisplayName: Проклятье Усердия
+				DisplayName: Проклятье усердия
 				Description: Магия твоего соперника дико ускоряется
 			}
 
@@ -286,36 +286,36 @@ Mods: {
 				DisplayName: Конфигурация
 
 				BossIntroductionAnimationsAreAllowed: {
-					Label: Анимации Представления Боссов
+					Label: Анимации представления боссов
 					Tooltip: Включает анимации представления боссов. Доступно только в режиме Инфернум.
 				}
 
 				DisplayTipsInChat: {
-					Label: Подсказки Взрывного Цилиндра в Чате
+					Label: Подсказки Взрывного цилиндра в чате
 					Tooltip: Определяет, будут ли подсказки питомца Взрывного Цилиндра появляться в чате или нет.
 				}
 
 				ReducedGraphicsConfig: {
-					Label: Уменьшенные Графические Настройки
+					Label: Уменьшенные графические настройки
 					Tooltip: Включает режим уменьшенной графики. Включите, если испытываете лаг.
 				}
 
 				FlashbangOverlays: {
-					Label: Наложения на Экран
+					Label: Наложения на экран
 					Tooltip: Включает накладывающиеся на экран 'светошумовые' эффекты. Не влияет напрямую на механики геймплея.
 				}
 
 				CreditsRecordings: {
-					Label: Запись Видео Битвы с Боссом для Титров
+					Label: Запись видео битвы с боссом для титров
 					Tooltip: Включает записи битв с боссами для проигрывания во время титров.
 				}
 			}
 		}
 
 		Cooldowns: {
-			SealocketForcefieldCooldown: Восстановление Силового Поля
-			InfiniteFlightCooldown: Бесконечный Полёт
-			EggShieldRecharge: Перезарядка Яичного Щита
+			SealocketForcefieldCooldown: Восстановление силового поля
+			InfiniteFlightCooldown: Бесконечный полёт
+			EggShieldRecharge: Перезарядка Яичного щита
 		}
 
 		DifficultyUI: {
@@ -663,7 +663,7 @@ Mods: {
 		Items: {
 			// Beware translators, this line must match the "enrage" word in the tooltip of your language
 			EnrageTooltip: разъяряется
-			DeveloperItem: "[c/{0}:~ Предмет Разработчика ~]"
+			DeveloperItem: "[c/{0}:~ Предмет разработчика ~]"
 			InfernalRelicText: Наполнена инфернальным пламенем поверженного врага
 
 			Lore: {
@@ -675,44 +675,44 @@ Mods: {
 						Не имея цели жизни, он искал убежища в этих загадочных руинах, тихо наблюдая за течением времени перед твоим приходом.
 						Судьбы как эта - последствия обманывающего самодовольства. Не причиняй бездумной боли в стремлении к великим целям.
 						'''
-					DisplayName: Обездоленный Вассал
+					DisplayName: Обездоленный вассал
 				}
 			}
 
 			CelestialSigil.SummoningText:
 				'''
-				Призывает Лунного Лорда мгновенно
+				Призывает Лунного лорда мгновенно
 				Создаёт арену вокруг игрока
 				Не тратится
 				'''
 
 			ProfanedShard: {
-				SummoningText: Призывает Осквернённых Стражей при использовании на утёсе в осквернённом саду в правой части преисподней
+				SummoningText: Призывает Осквернённых стражей при использовании на утёсе в осквернённом саду в правой части преисподней
 				GardenWarning:
 					'''
-					В вашем мире сейчас нету Осквернённого Сада. Убейте Лунного Лорда вновь чтобы сгенерировать его
-					Убедитесь, что вы уже забрали Схему из Ада, поскольку сад может разрушить лабораторию
+					В вашем мире сейчас нету Осквернённого сада. Убейте Лунного лорда вновь чтобы сгенерировать его
+					Убедитесь, что вы уже забрали Схему из ада, поскольку сад может разрушить лабораторию
 					'''
 			}
 
 			EyeofDesolation.SummoningText: Призывает босса {0} при использовании ночью
 			ProfanedCore.SummoningText: Призывает Провиденс при использовании на алтаре в осквернённом храме в правом конце Преисподней
-			RuneofKos.DeveloperText: Нескончаемая Пустота может быть призвана только в Архивах
+			RuneofKos.DeveloperText: Нескончаемая пустота может быть призвана только в Архивах
 
 			SandstormsCore: {
-				PortalDetail: Открывает портал в Потерянный Колизей
-				GatewayWarning: В вашем мире сейчас нет Потерянных Врат. Убейте Культиста-лунатика вновь чтобы сгенерировать их.
+				PortalDetail: Открывает портал в Потерянный колизей
+				GatewayWarning: В вашем мире сейчас нет Потерянных врат. Убейте Культиста-лунатика вновь чтобы сгенерировать их.
 			}
 
 			LihzahrdPowerCell.SummoningText:
 				'''
-				Призывает Голема при использовании на Алтаре Ящщеров
+				Призывает Голема при использовании на Алтаре ящщеров
 				Голем создаёт прямоугольную арену вокруг алтаря
 				Если алтарь находится внутри храма, то все твёрдые блоки внутри арены будут сломаны
 				'''
 
 			CherishedSealocket: {
-				DisplayName: Заветный Морской Медальон
+				DisplayName: Заветный морской медальон
 				Tooltip:
 					'''
 					Создаёт вокруг игрока водяное силовое поле, которое разрушается после 2 ударов
@@ -722,7 +722,7 @@ Mods: {
 			}
 
 			FlowerOfTheOcean: {
-				DisplayName: Цветок Океана
+				DisplayName: Цветок океана
 				Tooltip:
 					'''
 					Обеспечивает значительно увеличенной видимостью под водой
@@ -744,7 +744,7 @@ Mods: {
 
 			// Important: Don't translate this tooltip, currently is being used for the tooltip effect
 			SakuraBloom: {
-				DisplayName: Цветок Сакуры
+				DisplayName: Цветок сакуры
 				Tooltip:
 					'''
 					A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyy
@@ -762,12 +762,12 @@ Mods: {
 			}
 
 			BereftVassalBossBag: {
-				DisplayName: Мешок с Сокровищами (Обездоленный Вассал)
+				DisplayName: Мешок с Сокровищами (Обездоленный вассал)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
 			BrimstoneCrescentStaff: {
-				DisplayName: Посох Серного Полумесяца
+				DisplayName: Посох серного полумесяца
 				Tooltip:
 					'''
 					Используйте посох, чтобы создать сильное силовое поле вокруг игрока, уменьшающее получаемый урон на 60%
@@ -778,15 +778,15 @@ Mods: {
 			}
 
 			DemonicChaliceOfInfernum: {
-				DisplayName: Демоническая Чаша Инфернума
+				DisplayName: Демоническая чаша Инфернума
 				Tooltip: ""
 			}
 
-			ProfanedCrystalDye.DisplayName: Краситель Осквернённого Кристалла
+			ProfanedCrystalDye.DisplayName: Краситель осквернённого кристалла
 
 			ElysianRose: {
-				DisplayName: Елисейская Роза
-				Tooltip: Она тоскует о глубочайших глубинах бездны...
+				DisplayName: Елисейская роза
+				Tooltip: Она тоскует о глубочайших глубинах Бездны...
 			}
 
 			HyperplaneMatrix: {
@@ -806,7 +806,7 @@ Mods: {
 			}
 
 			KnowledgeBereftVassal: {
-				DisplayName: Обездоленный Вассал и Великая Песчаная Акула
+				DisplayName: Обездоленный вассал и Великая песчаная акула
 				Tooltip:
 					'''
 					[c/e3af40:До ваших ушей доносится далёкий шёпот...]
@@ -815,7 +815,7 @@ Mods: {
 			}
 
 			LunarCoin: {
-				DisplayName: Лунная Монета
+				DisplayName: Лунная монета
 				Tooltip: ""
 			}
 
@@ -825,12 +825,12 @@ Mods: {
 			}
 
 			BlastedTophat: {
-				DisplayName: Взрывной Цилиндр
+				DisplayName: Взрывной цилиндр
 				Tooltip: Призывает маленькую шляподевочку, которая даёт советы о боссах, с которыми вы сражаетесь
 			}
 
 			DisenchantedTablet: {
-				DisplayName: Расколдованная Табличка
+				DisplayName: Расколдованная табличка
 				Tooltip:
 					'''
 					Содержит сложную сеть из спутанных воспоминаний, сокрытых внутри
@@ -839,16 +839,16 @@ Mods: {
 			}
 
 			NightmareCatcher: {
-				DisplayName: Ловец Кошмаров
+				DisplayName: Ловец кошмаров
 				Tooltip:
 					'''
-					Призывает Лорда Овец, следующего за вами
+					Призывает Лорда овец, следующего за вами
 					Это Появляется Из Темноты, Пока Я Медленно Пропадаю В Сон
 					'''
 			}
 
 			RisingWarriorsSoulstone: {
-				DisplayName: Камень Души Восходящего Воина
+				DisplayName: Камень души восходящего воина
 				Tooltip:
 					'''
 					Призывает звёздное дитя волка которое... 'помогает' тебе?
@@ -857,37 +857,37 @@ Mods: {
 			}
 
 			SuspiciouslyRoundFeather: {
-				DisplayName: Подозрительно Круглое Перо
+				DisplayName: Подозрительно круглое перо
 				Tooltip: Призывает старого друга
 			}
 
 			AquaticScourgeSkull: {
-				DisplayName: Череп Акватического Бича
+				DisplayName: Череп Акватического бича
 				Tooltip: ""
 			}
 
 			BereftVassalTrophy: {
-				DisplayName: Трофей Обездоленного Вассала
+				DisplayName: Трофей Обездоленного вассала
 				Tooltip: ""
 			}
 
 			CosmicMonolithItem: {
-				DisplayName: Космический Монолит
+				DisplayName: Космический монолит
 				Tooltip: ""
 			}
 
 			CreditPainting: {
-				DisplayName: Должное там, где Должное стоит Отдать
+				DisplayName: Должное там, где Должное стоит отдать
 				Tooltip: ""
 			}
 
 			GrandStatueItem: {
-				DisplayName: Великая Статуя
+				DisplayName: Великая статуя
 				Tooltip: ""
 			}
 
 			ProfanedFountainItem: {
-				DisplayName: Фонтан Осквернённой Лавы
+				DisplayName: Фонтан осквернённой лавы
 				Tooltip: ""
 			}
 
@@ -897,87 +897,87 @@ Mods: {
 			}
 
 			TabletPedestal: {
-				DisplayName: Пьедестал для Таблички
+				DisplayName: Пьедестал для таблички
 				Tooltip: Может быть использован для того, чтобы заколдовать одну расколдованную табличку
 			}
 
 			AEWRelic: {
-				DisplayName: Инфернальная Реликвия Первозданного Змия
+				DisplayName: Инфернальная реликвия Первозданного змия
 				Tooltip: GetsChanged
 			}
 
 			AquaticScourgeRelic: {
-				DisplayName: Инфернальная Реликвия Акватического Бича
+				DisplayName: Инфернальная реликвия Акватического бича
 				Tooltip: GetsChanged
 			}
 
 			AstrumAureusRelic: {
-				DisplayName: Инфернальная Реликвия Аструм Ареуса
+				DisplayName: Инфернальная реликвия Аструм Ареуса
 				Tooltip: GetsChanged
 			}
 
 			AstrumDeusRelic: {
-				DisplayName: Инфернальная Реликвия Аструм Деуса
+				DisplayName: Инфернальная реликвия Аструм Деуса
 				Tooltip: GetsChanged
 			}
 
 			BereftVassalRelic: {
-				DisplayName: Инфернальная Реликвия Обездоленного Вассала
+				DisplayName: Инфернальная реликвия Обездоленного вассала
 				Tooltip: GetsChanged
 			}
 
 			BetsyRelic: {
-				DisplayName: Инфернальная Реликвия Бетси
+				DisplayName: Инфернальная реликвия Бетси
 				Tooltip: GetsChanged
 			}
 
 			BrainOfCthulhuRelic: {
-				DisplayName: Инфернальная Реликвия Мозга Ктулху
+				DisplayName: Инфернальная реликвия Мозга Ктулху
 				Tooltip: GetsChanged
 			}
 
 			BrimstoneElementalRelic: {
-				DisplayName: Инфернальная Реликвия Серного Элементаля
+				DisplayName: Инфернальная реликвия Серного элементаля
 				Tooltip: GetsChanged
 			}
 
 			CeaselessVoidRelic: {
-				DisplayName: Инфернальная Реликвия Нескончаемой Пустоты
+				DisplayName: Инфернальная реликвия Нескончаемой пустоты
 				Tooltip: GetsChanged
 			}
 
 			CrabulonRelic: {
-				DisplayName: Инфернальная Реликвия Крабулона
+				DisplayName: Инфернальная реликвия Крабулона
 				Tooltip: GetsChanged
 			}
 
 			CryogenRelic: {
-				DisplayName: Инфернальная Реликвия Криогена
+				DisplayName: Инфернальная реликвия Криогена
 				Tooltip: GetsChanged
 			}
 
 			DarkMageRelic: {
-				DisplayName: Инфернальная Реликвия Тёмного Мага
+				DisplayName: Инфернальная реликвия Тёмного мага
 				Tooltip: GetsChanged
 			}
 
 			DeerclopsRelic: {
-				DisplayName: Инфернальная Реликвия Циклоленя
+				DisplayName: Инфернальная реликвия Циклоленя
 				Tooltip: GetsChanged
 			}
 
 			DesertScourgeRelic: {
-				DisplayName: Инфернальная Реликвия Пустынного Бича
+				DisplayName: Инфернальная реликвия Пустынного бича
 				Tooltip: GetsChanged
 			}
 
 			DestroyerRelic: {
-				DisplayName: Инфернальная Реликвия Уничтожителя
+				DisplayName: Инфернальная реликвия Уничтожителя
 				Tooltip: GetsChanged
 			}
 
 			DevourerOfGodsRelic: {
-				DisplayName: Инфернальная Реликвия Пожирателя Богов
+				DisplayName: Инфернальная реликвия Пожирателя богов
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
@@ -988,7 +988,7 @@ Mods: {
 			}
 
 			DraedonRelic: {
-				DisplayName: Инфернальная Реликвия Дрэйдона
+				DisplayName: Инфернальная реликвия Дрэйдона
 				Tooltip: GetsChanged
 
 				PersonalMessage: {
@@ -1006,27 +1006,27 @@ Mods: {
 			}
 
 			DragonfollyRelic: {
-				DisplayName: Инфернальная Реликвия Псевдодракона
+				DisplayName: Инфернальная реликвия Псевдодракона
 				Tooltip: GetsChanged
 			}
 
 			DreadnautilusRelic: {
-				DisplayName: Инфернальная Реликвия Дреднаутилуса
+				DisplayName: Инфернальная реликвия Дреднаутилуса
 				Tooltip: GetsChanged
 			}
 
 			DukeFishronRelic: {
-				DisplayName: Инфернальная Реликвия Герцога Рыброна
+				DisplayName: Инфернальная реликвия Герцога рыброна
 				Tooltip: GetsChanged
 			}
 
 			EaterOfWorldsRelic: {
-				DisplayName: Инфернальная Реликвия Пожирателя Миров
+				DisplayName: Инфернальная реликвия Пожирателя миров
 				Tooltip: GetsChanged
 			}
 
 			EmpressOfLightRelic: {
-				DisplayName: Инфернальная Реликвия Императрицы Света
+				DisplayName: Инфернальная реликвия Императрицы света
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
@@ -1036,7 +1036,7 @@ Mods: {
 			}
 
 			EyeOfCthulhuRelic: {
-				DisplayName: Инфернальная Реликвия Глаза Ктулху
+				DisplayName: Инфернальная реликвия Глаза Ктулху
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
@@ -1046,44 +1046,44 @@ Mods: {
 			}
 
 			ForgottenShadowOfCalamitasRelic: {
-				DisplayName: Инфернальная Реликвия Забытой Тени Каламитас
+				DisplayName: Инфернальная реликвия Забытой тени Каламитас
 				Tooltip: GetsChanged
 			}
 
 			GiantClamRelic: {
-				DisplayName: Инфернальная Реликвия Гигантского моллюска
+				DisplayName: Инфернальная реликвия Гигантского моллюска
 				Tooltip: GetsChanged
 			}
 
 			GolemRelic: {
-				DisplayName: Инфернальная Реликвия Голема
+				DisplayName: Инфернальная реликвия Голема
 				Tooltip: GetsChanged
 				PersonalMessage: Простое и методичное планирование проложит вам долгую дорогу. Оно будет неоценимо важным для будущих препятствий.
 			}
 
 			HiveMindRelic: {
-				DisplayName: Инфернальная Реликвия Разума Улья
+				DisplayName: Инфернальная реликвия Разума улья
 				Tooltip: GetsChanged
 			}
 
 			KingSlimeRelic: {
-				DisplayName: Инфернальная Реликвия Короля Слизней
+				DisplayName: Инфернальная реликвия Короля слизней
 				Tooltip: GetsChanged
 				PersonalMessage: Даже самым закалённым игрокам может быть сложно из-за чего-то нового и неизвестного. Адаптивность - вот ключ к победе.
 			}
 
 			LeviathanRelic: {
-				DisplayName: Инфернальная Реликвия Левиафан
+				DisplayName: Инфернальная реликвия Левиафан
 				Tooltip: GetsChanged
 			}
 
 			LunaticCultistRelic: {
-				DisplayName: Инфернальная Реликвия Культиста-лунатика
+				DisplayName: Инфернальная реликвия Культиста-лунатика
 				Tooltip: GetsChanged
 			}
 
 			MoonLordRelic: {
-				DisplayName: Инфернальная Реликвия Лунного Лорда
+				DisplayName: Инфернальная реликвия Лунного лорда
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
@@ -1093,12 +1093,12 @@ Mods: {
 			}
 
 			OgreRelic: {
-				DisplayName: Инфернальная Реликвия Огра
+				DisplayName: Инфернальная реликвия Огра
 				Tooltip: GetsChanged
 			}
 
 			OldDukeRelic: {
-				DisplayName: Инфернальная Реликвия Старого Герцога
+				DisplayName: Инфернальная реликвия Старого герцога
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
@@ -1108,37 +1108,37 @@ Mods: {
 			}
 
 			PerforatorsRelic: {
-				DisplayName: Инфернальная Реликвия Улья Перфораторов
+				DisplayName: Инфернальная реликвия Улья Перфораторов
 				Tooltip: GetsChanged
 			}
 
 			PlaguebringerGoliathRelic: {
-				DisplayName: Инфернальная Реликвия Разносчицы чумы Голиаф
+				DisplayName: Инфернальная реликвия Разносчицы чумы Голиаф
 				Tooltip: GetsChanged
 			}
 
 			PlanteraRelic: {
-				DisplayName: Инфернальная Реликвия Плантеры
+				DisplayName: Инфернальная реликвия Плантеры
 				Tooltip: GetsChanged
 				PersonalMessage:
 					'''
-					Гордись своим счётчиком смертей!
+					Гордись своим количеством смертей!
 					Чем больше раз ты умираешь, тем больше узнаёшь. Так держать!
 					'''
 			}
 
 			PolterghastRelic: {
-				DisplayName: Инфернальная Реликвия Полтергаста
+				DisplayName: Инфернальная реликвия Полтергаста
 				Tooltip: GetsChanged
 			}
 
 			ProfanedGuardiansRelic: {
-				DisplayName: Инфернальная Реликвия Осквернённых Стражей
+				DisplayName: Инфернальная реликвия Осквернённых стражей
 				Tooltip: GetsChanged
 			}
 
 			ProvidenceRelic: {
-				DisplayName: Инфернальная Реликвия Провиденс
+				DisplayName: Инфернальная реликвия Провиденс
 				Tooltip: GetsChanged
 
 				PersonalMessage: {
@@ -1156,55 +1156,55 @@ Mods: {
 			}
 
 			QueenBeeRelic: {
-				DisplayName: Инфернальная Реликвия Королевы Пчёл
+				DisplayName: Инфернальная реликвия Королевы пчёл
 				Tooltip: GetsChanged
 			}
 
 			QueenSlimeRelic: {
-				DisplayName: Инфернальная Реликвия Королевы Слизней
+				DisplayName: Инфернальная реликвия Королевы слизней
 				Tooltip: GetsChanged
 			}
 
 			RavagerRelic: {
-				DisplayName: Инфернальная Реликвия Разрушителя
+				DisplayName: Инфернальная реликвия Разрушителя
 				Tooltip: GetsChanged
 			}
 
 			SignusRelic: {
-				DisplayName: Инфернальная Реликвия Сигнуса
+				DisplayName: Инфернальная реликвия Сигнуса
 				Tooltip: GetsChanged
 			}
 
 			SkeletronPrimeRelic: {
-				DisplayName: Инфернальная Реликвия Скелетрона Прайма
+				DisplayName: Инфернальная реликвия Скелетрона Прайма
 				Tooltip: GetsChanged
 			}
 
 			SkeletronRelic: {
-				DisplayName: Инфернальная Реликвия Скелетрона
+				DisplayName: Инфернальная реликвия Скелетрона
 				Tooltip: GetsChanged
 				PersonalMessage: Первая значительная преграда. Ты стал лучше по сравнению с тем, что было до битвы с ним. Было ли весело учить его паттерны?
 			}
 
 			SlimeGodRelic: {
-				DisplayName: Инфернальная Реликвия Бога Слизней
+				DisplayName: Инфернальная реликвия Бога слизней
 				Tooltip: GetsChanged
 			}
 
 			StormWeaverRelic: {
-				DisplayName: Инфернальная Реликвия Штормового Ткача
+				DisplayName: Инфернальная реликвия Штормового ткача
 				Tooltip: GetsChanged
 			}
 
 			SupremeCalamitasRelic: {
-				DisplayName: Инфернальная Реликвия Высшей Ведьмы Каламитас
+				DisplayName: Инфернальная реликвия Высшей ведьмы Каламитас
 				Tooltip: GetsChanged
 
 				PersonalMessage: {
 					DefaultMessage:
 						'''
 						Ты показал себя феноменально. Теперь осталось лишь последнее испытание-
-						Встреться с Космическим Инженером.
+						Встреться с Космическим инженером.
 						'''
 					DownedExoMechsMessage:
 						'''
@@ -1215,22 +1215,22 @@ Mods: {
 			}
 
 			TwinsRelic: {
-				DisplayName: Инфернальная Реликвия Близнецов
+				DisplayName: Инфернальная реликвия Близнецов
 				Tooltip: GetsChanged
 			}
 
 			WallOfFleshRelic: {
-				DisplayName: Инфернальная Реликвия Стены Плоти
+				DisplayName: Инфернальная реликвия Стены плоти
 				Tooltip: GetsChanged
 			}
 
 			YharonRelic: {
-				DisplayName: Инфернальная Реликвия Ярона
+				DisplayName: Инфернальная реликвия Ярона
 				Tooltip: GetsChanged
 			}
 
 			SakuraBud: {
-				DisplayName: Бутон Сакуры
+				DisplayName: Бутон сакуры
 				Tooltip:
 					'''
 					Деликатный, хрупкий бутон сакуры, вот-вот готовый зацвести
@@ -1249,17 +1249,17 @@ Mods: {
 			}
 
 			BloodwormPlatter: {
-				DisplayName: Тарелка с Глицерой
+				DisplayName: Тарелка с глицерой
 				Tooltip:
 					'''
-					Призывает Старого Герцога
-					Может быть использовано только в Сернистом Море
+					Призывает Старого герцога
+					Может быть использовано только в сернистом море
 					Не тратится
 					'''
 			}
 
 			DungeonsCurse: {
-				DisplayName: Проклятье Темницы
+				DisplayName: Проклятье темницы
 				Tooltip:
 					'''
 					Призывает Скелетрона
@@ -1270,27 +1270,27 @@ Mods: {
 			}
 
 			EvokingSearune: {
-				DisplayName: Взывающая Морская Руна
+				DisplayName: Взывающая морская руна
 				Tooltip:
 					'''
-					Призывает Первозданного Змия на самом глубоком слое Бездны
-					Первобытный артефакт, по легенде созданный Первым Богом, способный призвать охраняющее его привидение
+					Призывает Первозданного змия на самом глубоком слое Бездны
+					Первобытный артефакт, по легенде созданный Первым богом, способный призвать охраняющее его привидение
 					Не тратится
 					'''
 			}
 
 			FleshChunk: {
-				DisplayName: Кусок Плоти
+				DisplayName: Кусок плоти
 				Tooltip:
 					'''
-					Призывает Стену Плоти
-					Может быть использовано только в Преисподней
+					Призывает Стену плоти
+					Может быть использовано только в преисподней
 					Не тратится
 					'''
 			}
 
 			LeviathanDetector: {
-				DisplayName: Прибор для Обнаружения Левиафанов
+				DisplayName: Прибор для обнаружения левиафанов
 				Tooltip:
 					'''
 					Призывает Анахиту
@@ -1299,18 +1299,18 @@ Mods: {
 			}
 
 			RadiantCrystal: {
-				DisplayName: Сияющий Кристалл
+				DisplayName: Сияющий кристалл
 				Tooltip:
 					'''
-					Призывает Императрицу Света
-					Может быть использовано вне Святого биома
+					Призывает Императрицу света
+					Может быть использовано вне святого биома
 					Императрица разъяряется днём
 					Не тратится
 					'''
 			}
 
 			RedBait: {
-				DisplayName: Красная Приманка
+				DisplayName: Красная приманка
 				Tooltip:
 					'''
 					Призывает Дреднаутилуса
@@ -1320,30 +1320,30 @@ Mods: {
 			}
 
 			SparklingTunaCan: {
-				DisplayName: Блестящая Банка Моллюсков
+				DisplayName: Блестящая банка моллюсков
 				Tooltip:
 					'''
 					Призывает Гигантского моллюска
-					Может быть использовано только в Затерянном Море
+					Может быть использовано только в затерянном Море
 					Не тратится
 					'''
 			}
 
 			TrufflePlatter: {
-				DisplayName: Тарелка с Трюфельным Червём
+				DisplayName: Тарелка с трюфельным червём
 				Tooltip:
 					'''
-					Призывает Герцога Рыброна
-					Может быть использовано только в Океане
+					Призывает Герцога рыброна
+					Может быть использовано только в океане
 					Не тратится
 					'''
 			}
 
 			WaterglassToken: {
-				DisplayName: Жетон Водяного Стекла
+				DisplayName: Жетон водяного стекла
 				Tooltip:
 					'''
-					Телепортирует игрока в Затерянный Колизей и обратно
+					Телепортирует игрока в Затерянный колизей и обратно
 					Этот предмет не может быть использован из инвентаря и будет работать только из хотбара
 					'''
 			}
@@ -1365,23 +1365,23 @@ Mods: {
 			}
 
 			AridBattlecry: {
-				DisplayName: Осушающий Боевой Клич
+				DisplayName: Осушающий боевой клич
 				Tooltip: Призывает под курсором акул, летящих к врагам
 			}
 
 			EyeOfMadness: {
-				DisplayName: Глаз Безумия
+				DisplayName: Глаз безумия
 				Tooltip:
 					'''
 					Выпускает шквал теневых усиков, оплетающих врагов в их диапазоне
 					Священный артефакт, которым когда-то давно пользовались Эйдолисты. Неизвестным образом, оно содержит в себе
-					                                   познания о прошлом тысячелетней давности. К сожалению, полная картина его содержания за гранью твоего понимания, но похоже,
-					                                   что у тебя есть какая-то близость с его скрытыми силами, даже если их использование стоит тебе немного здравомыслия
+					познания о прошлом тысячелетней давности. К сожалению, полная картина его содержания за гранью твоего понимания, но похоже,
+					что у тебя есть какая-то близость с его скрытыми силами, даже если их использование стоит тебе немного здравомыслия
 					'''
 			}
 
 			IllusionersReverie: {
-				DisplayName: Грёзы Иллюзионера
+				DisplayName: Грёзы иллюзионера
 				Tooltip:
 					'''
 					Отбрасывает теневые иллюзии тебя, атакующие врагов поблизости перед тем, как рассеяться в облака тёмной магии
@@ -1440,25 +1440,25 @@ Mods: {
 
 			Dyes: {
 				ProfanedCrystalDye: {
-					DisplayName: Краситель Осквернённого Кристалла
+					DisplayName: Краситель осквернённого кристалла
 					Tooltip: ""
 				}
 			}
 
 			NuclearTerrorRelic: {
-				DisplayName: Реликвия Ядерного Террора
+				DisplayName: Реликвия Ядерного террора
 				Tooltip: ""
 			}
 
 			SakuraTreetop: {
-				DisplayName: Верхушка Дерева Сакуры
+				DisplayName: Верхушка дерева сакуры
 				Tooltip: ""
 			}
 
 			Weapons: {
 				Rogue: {
 					WanderersShell: {
-						DisplayName: Ракушка Странника
+						DisplayName: Ракушка странника
 						Tooltip:
 							'''
 							Размашисто бросает морские ракушки, которые самонаводятся во врагом перед тем,
@@ -1470,7 +1470,7 @@ Mods: {
 					}
 
 					StormMaidensRetribution: {
-						DisplayName: Возмездие Штормовой Девы
+						DisplayName: Возмездие штормовой девы
 						Tooltip:
 							'''
 							Кидает копьё, выпускающее потоки красных молний после броска
@@ -1505,7 +1505,7 @@ Mods: {
 			}
 
 			DeusMonolithItem: {
-				DisplayName: Монолит Астрального Измерения
+				DisplayName: Монолит Астрального измерения
 				Tooltip: ""
 			}
 
@@ -1513,8 +1513,8 @@ Mods: {
 				DisplayName: Установщик Локации Запретных Архивов
 				Tooltip:
 					'''
-					Используйте, если архивы в вашем мире были разрушены бездной
-					Нажмите ЛКМ в центре вашей арены в Темнице, чтобы позволить Нескончаемой Бездне появляться естественно
+					Используйте, если архивы в вашем мире были разрушены Бездной
+					Нажмите ЛКМ в центре вашей арены в Темнице, чтобы позволить Нескончаемой пустоте появляться естественно
 					Вы можете нажать ПКМ чтобы вернуть позицию к прошлой
 					'''
 			}
@@ -1542,24 +1542,24 @@ Mods: {
 			}
 
 			ProfanedTempleBackgroundWall: {
-				// DisplayName: Profaned Temple Background Wall
-				// Tooltip: ""
+				DisplayName: Стены Фона Осквернённого Храма
+				Tooltip: ""
 			}
 		}
 
 		Keybinds: {
-			"Wayfinder Create Key.DisplayName": Клавиша Создания Путеводителя
-			"Wayfinder Destroy Key.DisplayName": Клавиша Разрушения Путеводителя
+			"Wayfinder Create Key.DisplayName": Клавиша создания Путеводителя
+			"Wayfinder Destroy Key.DisplayName": Клавиша разрушения Путеводителя
 		}
 
 		MusicDisplay: {
 			ForgottenWinds: {
-				DisplayName: Забытые Ветра
+				DisplayName: Forgotten Wings
 				Author: авт. Toasty
 			}
 
 			UnholySanctuary: {
-				DisplayName: Несвятое Убежище
+				DisplayName: Unholy Sanctuary
 				Author: авт. Toasty
 			}
 
@@ -1577,48 +1577,48 @@ Mods: {
 
 		NPCs: {
 			ColossalSquidTentacle.DisplayName: Щупальце
-			DepthFeeder.DisplayName: Кормилец Глубин
+			DepthFeeder.DisplayName: Кормилец глубин
 			Herring.DisplayName: Сельдь
-			LionfishEnemy.DisplayName: Рыба-Крылатка
+			LionfishEnemy.DisplayName: Рыба-крылатка
 			DeusSpawn.DisplayName: Порождение Деуса
 			BrainIllusion.DisplayName: Мозг Ктулху
 			BrainIllusion2.DisplayName: Мозг Ктулху
-			SoulSeeker2.DisplayName: Искатель Душ
-			LightSnuffingHand.DisplayName: Теневая Рука, Нюхающая Свет
-			AresEnergyKatana.DisplayName: Энергетическая Катана ВУ-09 Ареса
-			AresPulseCannon.DisplayName: Импульсная Пушка ВУ-09 Ареса
-			RedPlasmaEnergy.DisplayName: Сфера Плазмы
+			SoulSeeker2.DisplayName: Искатель душ
+			LightSnuffingHand.DisplayName: Теневая рука, нюхающая свет
+			AresEnergyKatana.DisplayName: Энергетическая катана ВУ-09 Ареса
+			AresPulseCannon.DisplayName: Импульсная пушка ВУ-09 Ареса
+			RedPlasmaEnergy.DisplayName: Сфера плазмы
 			RedirectingBubble.DisplayName: Пузырь
 			ExplodingServant.DisplayName: Прислужник Ктулху
 			GolemFistLeft.DisplayName: Кулак Голема
 			GolemFistRight.DisplayName: Кулак Голема
 
 			BereftVassal: {
-				DisplayName: Аргус, Обездоленный Вассал
+				DisplayName: Аргус, Обездоленный вассал
 
 				BossChecklistIntegration: {
 					SpawnInfo: Используй [i:7119] на пьедестале в сердце пустыни.
-					EntryName: Обездоленный Вассал
+					EntryName: Обездоленный вассал
 				}
 			}
 
 			Ninja.DisplayName: Ниндзя
-			BuilderDroneBig.DisplayName: Большой Строительный Дрон
-			BuilderDroneSmall.DisplayName: Маленький Строительный Дрон
-			ExplosivePlagueCharger.DisplayName: Взрывной Чумной Нападающий
-			PlagueNuke.DisplayName: Чумная Атомная Бомба
-			SmallDrone.DisplayName: Маленький Дрон
+			BuilderDroneBig.DisplayName: Большой строительный дрон
+			BuilderDroneSmall.DisplayName: Маленький строительный дрон
+			ExplosivePlagueCharger.DisplayName: Взрывной чумной нападающий
+			PlagueNuke.DisplayName: Чумная атомная бомба
+			SmallDrone.DisplayName: Маленький дрон
 			PlanteraPinkTentacle.DisplayName: Щупальце Плантеры
-			PolterghastLeg.DisplayName: Призрачная Нога
-			EtherealHand.DisplayName: Эфирная Рука
-			HealerShieldCrystal.DisplayName: Святой Щит
-			SplitBigSlime.DisplayName: Нестабильное Порождение Слизи
-			SplitBigSlimeAnimation.DisplayName: Нестабильное Порождение Слизи
-			ShadowDemon.DisplayName: Теневая Гидра
-			GolemArenaPlatform.DisplayName: Платформа Арены Голема
-			CalamitasShadowClone.DisplayName: Забытая Тень Каламитас
-			CataclysmShadow.DisplayName: Забытая Тень Катаклизма
-			CatastropheShadow.DisplayName: Забытая Тень Катастрофа
+			PolterghastLeg.DisplayName: Призрачная нога
+			EtherealHand.DisplayName: Эфирная пука
+			HealerShieldCrystal.DisplayName: Святой щит
+			SplitBigSlime.DisplayName: Нестабильное порождение слизи
+			SplitBigSlimeAnimation.DisplayName: Нестабильное порождение слизи
+			ShadowDemon.DisplayName: Теневая гидра
+			GolemArenaPlatform.DisplayName: Платформа арены Голема
+			CalamitasShadowClone.DisplayName: Забытая тень Каламитас
+			CataclysmShadow.DisplayName: Забытая тень Катаклизма
+			CatastropheShadow.DisplayName: Забытая тень Катастрофа
 		}
 
 		PetDialog: {
@@ -1667,7 +1667,7 @@ Mods: {
 			BrimstoneElementalRoseCircleTip: Держись в центре арены, если можешь. Эти шипы с лёгкостью загонят тебя в угол!
 			BoCTip1: Мозг Ктулху много предугадывает и обманывает в своих атаках, поэтому будь умнее!
 			BoCTip2: Мозг Ктулху определённо любит фокусы, Обращай внимание на реальную угрозу в толпе!
-			BoCTip3: Старайся часто менять направление когда Криперы начнут стрелять в тебя ихором, может, будет посвободнее двигаться!
+			BoCTip3: Старайся часто менять направление когда криперы начнут стрелять в тебя ихором, может, будет посвободнее двигаться!
 			CalShadowTip1: А что это за магическое кольцо вокруг тебя? Обращай внимание на его эффекты!
 			CalShadowBrosTip: Атаки братьев до ужаса просты, если ты двигаешься медленнее!
 			CalShadowFinalPhaseTip: Она жмёт на все рычаги… но теперь её проклятия бессильны! Теперь она твоя единственная цель!
@@ -1680,51 +1680,51 @@ Mods: {
 			CVEnergyBurstTip3: Двигайся спокойно и по кругу! Сохраняй концентрацию!
 			CVEnergyChainsTip: Похоже, эти цепи надолго его не удержат, готовься!
 			CrabulonTip1: Крабулон запускает споры только каждый третий прыжок, смотри не сбейся со счёта!
-			CrabulonTip2: Сфокусируйся на этих Крабовых Грибах. И минуты не пройдёт, как их будет целая армия!
+			CrabulonTip2: Сфокусируйся на этих крабовых грибах. И минуты не пройдёт, как их будет целая армия!
 			CrabulonTip3: Держаться на одной высоте с Крабулоном может быть полезно, мало ли какие бактерии зависли в воздухе...
 			CrabulonTip4: Этого краба так просто не обманешь. чем выше ты, тем выше прыгает он в попытках тебя достать!
 			CrabulonClawTip: Крабулон пытается защитить себя больше, когда открывается - может, ты сможешь оттолкнуть его назад, чтобы создать больше места!
 			CrabulonJokeTip1: Здесь немухомного места для нас троих, и я уже знаю кто выиграл эту лотерею.
 			CryogenTip1: Двигайся как можно меньше пока он сверху. Может, он успокоится и не будет так бешено дрожать!
-			CryogenTip2: Ледяные колонны также раскалываются на Ледяные кинжалы, так что смотри по сторонам!
+			CryogenTip2: Ледяные колонны также раскалываются на ледяные кинжалы, так что смотри по сторонам!
 			CryogenJokeTip1: Чувак, нифига не айс!
 			CryogenJokeTip2: Эта штука никак не остынет!
-			CryogenBlizzardTip: Метель подбирает Духов Авроры с обеих сторон, не беги только в одну сторону!
+			CryogenBlizzardTip: Метель подбирает духов авроры с обеих сторон, не беги только в одну сторону!
 			CultistTip1: Чувак реальный лунатик, Немного мобильности не помешает!
 			CultistIceBurstTip: Старайся протиснуться между линиями перед тем, как ледяной шквал взорвался!
 			CultistLightningTip: Молнии будут появляться впереди тебя! Пытайся байтить!
 			DeerclopsTip1: Циклолени близорукие, поэтому он будет пытаться держать тебя близко, смотри не зайди в угол!
 			DeerclopsTip2: Циклолень атакует в определённом порядке, изучай его поведение и кайти его атаки!
 			DeerclopsTip3: Следи за пространством!
-			DeerclopsCharlieTip: Если позволишь этим теням собраться вокруг глаза Циклопа, его свет будет недостаточно сильным, чтобы отгонять тьму, отгоняй их!
+			DeerclopsCharlieTip: Если позволишь этим теням собраться вокруг глаза циклопа, его свет будет недостаточно сильным, чтобы отгонять тьму, поэтому отгоняй их!
 			DeerclopsJokeTip1: Боже правый... Кстати, а у него глаз правый или левый?..
 			DeerclopsDefeatTip: Похоже на конец акта!
 			DestroyerTip1: Готовься к его последней атаке! Смотри за телеграфами лазеров и готовься бежать от них!
-			DestroyerTip2: Эти обломки летят быстро, да? Попытайся пойти вверх вместе с Уничтожителем, чтобы лучше их видеть!
+			DestroyerTip2: Эти обломки летят быстро, да? Попытайся пойти вверх вместе с уничтожителем, чтобы лучше их видеть!
 			DestroyerTip3: Его рывки довольно мощные, какой-нибудь таран или хоть какой-то способ быстро убраться с пути точно поможет!
-			DSTip1: Я заметил, что Бич всегда рычит перед тем, как поднять эти огромные столбы пыли, предусмотрительно!
-			DSTip2: Использование крюка-кошки точно поможет убраться с пути Бича.
+			DSTip1: Я заметил, что бич всегда рычит перед тем, как поднять эти огромные столбы пыли, предусмотрительно!
+			DSTip2: Использование крюка-кошки точно поможет убраться с пути бича.
 			DSFinalPhaseTip: Похоже, эти стервятники сегодня пообедают, так или иначе...
-			DSJokeTip1: Действительно подал себя как Песочное Биченье...
-			DoGTip1: У Пожирателя есть ритм в его безумных движениях, найди этот ритм и сражайся в такт!
+			DSJokeTip1: Действительно подали себя как песочное биченье...
+			DoGTip1: У пожирателя есть ритм в его безумных движениях, найди этот ритм и сражайся в такт!
 			DoGLaserTip: Ух ты ж, а тут много лазеров! Медленные и точные движения наверняка тут помогут...
-			DoGRoDTip: Похоже, он что-то делает с твоими силами телепортации, Жезл Раздора тут бесполезен!
-			DoGChargeTip: Не пугайся, встреть страхи лицом к лицу и сделай рывок прямо в пасть Пожирателя!
+			DoGRoDTip: Похоже, он что-то делает с твоими силами телепортации, жезл раздора тут бесполезен!
+			DoGChargeTip: Не пугайся, встреть страхи лицом к лицу и сделай рывок прямо в пасть пожирателя!
 			DoGDashTip: Аксессуар с дэшем тут оооооочень бы помог...
 			DoGBashTip: Знаешь, я считаю, что лучше было бы таранить его голову, а что думаешь ты?
-			DoGJokeTip1: Вут дэ дог дуин?
+			DoGJokeTip1: Пожиратель богов? Скорее 'Пожиратель мозгов', своей кансерностью все мозги проел!
 			ExoMechComboTip: Похоже, что они объединяют свои усилия, готовься!
 			DraedonChooseTip1: Сделай правильный выбор!
 			DraedonChooseTip2: Если какая-то определённая комбинация не работает для тебя, может, стоит попробовать другую?
-			AresTip1: Лучше всего будет держаться близко во время этих Экзо Перегрузок, иначе не будешь успевать за вращением!
+			AresTip1: Лучше всего будет держаться близко во время этих Экзо перегрузок, иначе не будешь успевать за вращением!
 			AresTip2: Арес - тот ещё навороченный компьютер, его руки супер-предугадывающие! Может быть, ты сможешь обернуть это в свою пользу?
-			ExoTwinsTip1: Экзо Близнецы двигаются синхронно, поможет ли тут твоё чувство ритма?
+			ExoTwinsTip1: Экзо близнецы двигаются синхронно, поможет ли тут твоё чувство ритма?
 			ThanatosChargeTip: Не волнуйся, встреть страхи лицом к лицу и сделай рывок прямо в лицевые платы Танатоса!
 			DragonfollyTip1: Псевдодракон лишь хочет, чтобы ты думал, что он хаотичен, но он не такой! Чуть притормози и всё проанализируй!
 			DragonfollyTip2: Эти столбы красных молний можно избежать, если лететь под ними!
 			Dragonfollytip3: Смотри, когда он становится красным - если он не сможет близко подобраться к тебе, то напрыгнет со спины!
 			DragonfollyBoltTip: Статичные болты, кажется, летят в тебя! Наблюдай за ними, и старайся не попать в ловушку из молний!
-			DreadnautilusSummonItemTip: Я где-то читал, что Дреднаутилус не может устоять перед Красной Приманкой! У тебя такая есть?
+			DreadnautilusSummonItemTip: Я где-то читал, что Дреднаутилус не может устоять перед красной приманкой! У тебя такая есть?
 			DreadnautilusTip1: Эти мыши преследуют тебя скрупулёзно, но ловкости у них маловато. Попробуй обвести их!
 			DreadnautilusJokeTip1: Смотря на то, как часто ты сейчас умираешь, у меня какой-то дред за твоё будущее...
 			DreadnautilusJokeTip2: Похоже, что ты опять проиграл, но не скручивайся в раковину! однажды ты победишь этот ужас!
@@ -1733,7 +1733,7 @@ Mods: {
 			EoLTip1: Многие атаки не требуют так много движения, так что придержи коней!
 			EoLMoonTip: Держись ближе! Ты сражаешься со светом луны, убежать не получится!
 			EoLJokeTip1: Знаешь, я уже был неравнодушен к радугам, но у этой дамы просто убийственные движе- ой. Зря я это сказал.
-			EoWTip1: Много слоёв платформ очень помогут с уклонениями от Проклятых Взрывов!
+			EoWTip1: Много слоёв платформ очень помогут с уклонениями от проклятых взрывов!
 			EoWTip2: Если Пожиратель замедляется, сделай так же или забежишь прямо в колючки!
 			EoWRainTip: Пожиратели начнут замедляться и дрифтовать, когда они начнут спавнить облака! Наблюдай за ними и следи за пространством.
 			EoWJokeTip1: Похоже, одними мирами он сыт не будет.
@@ -1745,25 +1745,25 @@ Mods: {
 			GolemTip2: если тебе трудно стоять на платформах, ты всегда можешь зацепиться крюком за стену и восстановить полёт!
 			GolemJokeTip1: Сейчас у тебя будут неприятности...
 			HiveMindTip1: Вот сейчас самое время чтоб начать изучить движения соперника, используй все сигналы чтоб вырваться вперёд!
-			HiveMindTip2: Попробуй оттолкнуть Дождевой Рывок, двигаясь Разуму Улья навстречу, поможет содержать арену чистой!
-			HiveMindTip3: Разум Улья начинает следующую атаку раньше, если ты атакуешь его; подожди немного, прежде чем атаковать!
+			HiveMindTip2: Попробуй оттолкнуть дождевой рывок, двигаясь навстречу к разуму улья, поможет содержать арену чистой!
+			HiveMindTip3: Разум улья начинает следующую атаку раньше, если ты атакуешь его; подожди немного, прежде чем атаковать!
 			HiveMindFinalPhaseTip: Он всё ещё живой?!
 			HiveMindJokeTip1: Не сработало, но не переживай! Улья-нов не за день коммунизм построил!
 			HiveMindJokeTip2: Я бы сейчас очень злобно пошутил, но, пожалуй, поступлю Разумно и...
-			KingSlimeTip1: Постарайся выучить цикл прыжков Короля Слизней! Поможет распланировать действия на несколько шагов вперёд.
+			KingSlimeTip1: Постарайся выучить цикл прыжков короля слизней! Поможет распланировать действия на несколько шагов вперёд.
 			KingSlimeTip2: Он прыгает так высоко, ты не думал, что можно попробовать прокрасться под ним?
 			KingSlimeJewelTip: Этот камень из короны точно опасен! Запомни, что он стреляет всегда в одно и то же время, поэтому старайся попасть в такт!
 			KingSlimeNinjaTip: Чем ты дальше от ниндзя, тем больше сюрикенов он стреляет, так что далеко не уходи!
 			KingSlimeJokeTip1: Довольно липкая ситуация, не находишь...
 			KingSlimeDefeatTip: Вот и моё склизкое прощание!
-			AnahitaTip1: Если будешь играть в поводыря Анахиты достаточно хорошо, она будет оставлять дыры в Ключах, через которые легко пройти!
+			AnahitaTip1: Если будешь играть в поводыря Анахиты достаточно хорошо, она будет оставлять дыры в ключах, через которые легко пройти!
 			AnahitaFinalPhaseTip: Финишная прямая! Просто делай всё то же самое!
 			LeviathanTip1: Она плюёт все метеоры в одну сторону; используй это в свою пол!
 			LeviathanFinalPhaseTip: Финишная прямая! теперь лучше будет смотреть за собой, а не за боссом!
 			MoonLordTip1: Эти глаза исполняют атаки, для которых нужно много двигаться! Постарайся не паниковать во время этих атак!
 			MoonLordLaserTip: Готовься! Сейчас будет выпущен шквал медленных стрел!
 			MoonLordTip2: Помни об управлении пространством, или тебя загонят в угол!
-			MoonLordBlackHoleTip: Лунный Лорд выглядит злым! Старайся уворачиваться от снарядов со сторон и не трогать ту чёрную дыру!
+			MoonLordBlackHoleTip: Лунный лорд выглядит злым! Старайся уворачиваться от снарядов со сторон и не трогать ту чёрную дыру!
 			MoonLordJokeTip1: Эмодзи Кьлмар
 			OldDukeTip1: Запоминай когда появляются акулоны или шары зубов, чтобы потом их остатки не застали тебя врасплох!
 			OldDukeTip2: Скорость передвижения будет очень важна против этой рыбы!
@@ -1782,7 +1782,7 @@ Mods: {
 			PlanteraPlanteraTip: Управляй этими облаками осторожнее. Тебе придётся протискиваться через них, чтобы найти дырки в её щупальцах!
 			PlanteraFinalPhaseTip: Плантера не щадит никого и ничего, смотри в оба!
 			PlanteraJokeTip1: Немного постыдно, умереть от цветка.
-			PlanteraJokeTip2: Да, определённо, неоспоримо, Плантера пока побеждает.
+			PlanteraJokeTip2: Да, Плантера пока побеждает... Вроде. Кто-нибудь ведёт счёт?
 			PolterghastTip1: Какой-нибудь дэш точно поможет с вращающимися кольцами, он даст тебе возможность быстро добраться до прохода!
 			PolterghastTip2: Если одна из ног Полтергаста стала красной, быстро отойди; она замахнётся на тебя и выпустит разгоняющиеся снаряды!
 			PolterghastDesperationPhaseTip: Духи Полтергаста освобождены! Но видеть нас они не особо рады...
@@ -1791,7 +1791,7 @@ Mods: {
 			PrimeTip1: Его руки целятся туда, куда ты идёшь, попытайся сменить направление движения в самый последний момент…
 			PrimeTeslaTip: Эти голубые мины сейчас превратятся в газ; ложись!
 			PrimeJokeTip1: Всё, что ты сделал - прямо-таки скелет плохой попытки..
-			ProfanedRoDTip: Осквернённая магия блокирует твой Жезл Раздора!
+			ProfanedRoDTip: Осквернённая магия блокирует твой жезл раздора!
 			ProfanedDefenderTip: Оооо, а вот теперь он разозлился! Не расслабляйся!
 			ProfanedFlappyBirdTip: Они отсиживаются где-то справа, но если доберёшься до них, то сможешь прорвать их защиту!
 			ProfanedFlappyJokeTip: Это нашествие огненных стен напоминает мне об одной игре, где игрок мог только прыгать в воздухе! Хорошо, что у тебя есть крылья, да?
@@ -1801,15 +1801,15 @@ Mods: {
 			ProvidenceTip2: Сфокусируйся на уклонениях, Не нужно постоянно атаковать её! Какой толк в уроне, если ты не доживёшь до конца битвы?
 			ProvidenceExplosionTip: Похоже, что эти огненные шары взрываются только в лаве, попробуй увести их в сторону!
 			ProvidenceFinalPhaseTip: Похоже, что она к чему-то готовится!
-			QueenBeeTip1: Эти Медовые Выстрелы и вправду прыгучие, не двигайся слишком быстро, иначе они будут повсюду!
+			QueenBeeTip1: Эти медовые выстрелы и вправду прыгучие, не двигайся слишком быстро, иначе они будут повсюду!
 			QueenBeeTip2: Избавляйся от этих шершней, эта цель должна быть у тебя в приоритете!
-			QueenBeeTip3: Знаешь, этот яд довольно отвратный; может, стоит найти Безоар?
-			QueenBeeJokeTip1: Ты трудился как пчела, но всё равно умер!
+			QueenBeeTip3: Знаешь, этот яд довольно отвратный; может, стоит найти безоар?
+			QueenBeeJokeTip1: Ты трудился как пчела, но всё равно умер! Досадно!
 			QueenBeeJokeTip2: Уф, не укололся?...
 			QueenSlimeTip1: Если чувствуешь, что не можешь бежать, то не беги! Это определённо поможет
 			QueenSlimeBladeBeamTip: А ЭТО ещё что?! Уходи от этого подальше! Я не хочу быть испелелённым!
 			QueenSlimeCrystalTip: Эти кристаллы распологаются на равном расстоянии... ты можешь уворачиваться от них одинаково каждый раз!
-			RavagerTip1: Некоторые атаки Разрушителя награждают, если быть близко. Попытайся не убегать!
+			RavagerTip1: Некоторые атаки разрушителя награждают, если быть близко. Попытайся не убегать!
 			RavagerTip2: Следи за этими сгустками-пятнами, тебе навряд ли сильно хочется играть в "пол это лава"!
 			SignusTip1: Уделяй пристальное внимание затмениям - Сигнус может дать более заметный сигнал, чем ты думаешь!
 			SignusShadowSlashTip: Смотри, он может попробовать обмануть тебя под конец!
@@ -1821,19 +1821,19 @@ Mods: {
 			SlimeGodTip1: Они не выглядят очень разумными, может, если ты высоко прыгнешь, то они последуют за тобой?
 			SlimeGodTip2: Это было подавляюще! Интересно, если ты будешь двигаться как он, сработает ли это?
 			StormWeaverTip1: Эти шквалы облаков могут застать тебя врасплох! Сфокусируйся - этот бич штормов только кажется сосредоточенным на призыве атак, а не на таране тебя!
-			SCalJokeTip1: Хочешь мою Шляпу ведьмы? Было бы забавно, если б у вас были похожие костюмы...
+			SCalJokeTip1: Хочешь мою шляпу Ведьмы? Было бы забавно, если б у вас были похожие костюмы...
 			SCalTip1: Подберись ближе, когда она достанет свой арбалет, и увидишь, куда она целится!
 			SCalSkullTip: Так много черепов, но они не все идут прямо на тебя! Попытайся протиснуться!
 			SCalDesperationTip: Даже если всё кажется адом на земле, не волнуйся и уворачивайся!
 			SCalFireSpinTip: Не удавись всеми этими снарядами, оставайся холоден во время этого пламенного сражения!
 			SCalFireChargeTip: Эти бомбы занимают много места! Попробуй заставить её стрелять туда, откуда ты легко выберешься!
 			TwinsTip1: Проблемы во время раскрутки? В эту игру можно играть втроём, Крутись с ними!
-			TwinsFinalOptionTip: У каждого из Близнецов своё средство на крайний случай, если один из них предоставляет трудности; попытайся сфокусироваться на другом!
+			TwinsFinalOptionTip: У каждого из близнецов своё средство на крайний случай, если один из них предоставляет трудности; попытайся сфокусироваться на другом!
 			TwinsFinalPhaseTip: Гляди, последний близнец собирается запустить в тебя всё что есть! Не раскисай!
 			WoFTip1: Беги в обратном от стены направлении!
 			WoFTip2: Эти отсоединённые глаза выглядят пугающими, Как же хорошо, что стреляют они только в определённых точках!
 			WoFTip3: Бе, эти огромные рты отваливаются и летают?! Как же хочется испепелить их в адском огне...
-			WoFJokeTip1: Ну, это провал! С другой стороны, это ещё одна возможность поиздеваться над Гидом!
+			WoFJokeTip1: Ну, это провал! С другой стороны, это ещё одна возможность поиздеваться над гидом!
 			YharonPreHealTip: Ты почти это сделал! Ярон точно вот-вот готов умереть!
 			YharonPostHealTip: Оу..
 			YharonSpeedTip: Постарайся запомнить, когда Ярон начинает свои гипер-рывки, иначе он застанет тебя врасплох!
@@ -1844,332 +1844,332 @@ Mods: {
 
 		Projectiles: {
 			AbyssalIce.DisplayName: Лёд Бездны
-			BoxJellyZap.DisplayName: Удар Медузы
-			DevilfishExplosion.DisplayName: Дьявольский Взрыв
-			EidolistElectricOrb.DisplayName: Электрическая Сфера
-			EidolistElectricOrb2.DisplayName: Электрическая Сфера
+			BoxJellyZap.DisplayName: Удар медузы
+			DevilfishExplosion.DisplayName: Дьявольский взрыв
+			EidolistElectricOrb.DisplayName: Электрическая сфера
+			EidolistElectricOrb2.DisplayName: Электрическая сфера
 			EidolistIce.DisplayName: Лёд Бездны
 			EidolistIceBomb.DisplayName: Лёд Бездны
-			EidolistLightning.DisplayName: Удар Молнии
+			EidolistLightning.DisplayName: Удар молнии
 			EidolistRitual.DisplayName: Ритуал
-			ElectricPulse.DisplayName: Электрический Импульс
-			InkBlob.DisplayName: Сгусток Чернил
+			ElectricPulse.DisplayName: Электрический импульс
+			InkBlob.DisplayName: Сгусток чернил
 			InkBolt.DisplayName: Чернила
 			MiniReaperShark.DisplayName: Акула-жнец
-			ReaperSharkIceBreath.DisplayName: Ледяное Дыхание
+			ReaperSharkIceBreath.DisplayName: Ледяное дыхание
 			SimpleAbyssalSoul.DisplayName: Дух Бездны
 			AbyssalSoul.DisplayName: Дух Бездны
 			AbyssalSoulTelegraph.DisplayName: Телеграф Бездны
 			AEWIllusionTelegraphLine.DisplayName: Телеграф
-			AEWNightmareWyrm.DisplayName: Эйдолонский Змий
-			AEWSplitForm.DisplayName: Эйдолонский Змий
+			AEWNightmareWyrm.DisplayName: Эйдолонский змий
+			AEWSplitForm.DisplayName: Эйдолонский змий
 			AEWTelegraphLine.DisplayName: Телеграф
 			CircleCenterTelegraph.DisplayName: Телеграф
-			ConvergingLumenylCrystal.DisplayName: Божественный Люменил
-			DivineLightBolt.DisplayName: Божественная Стрела Света
-			DivineLightLaserbeam.DisplayName: Божественный Смертельный Луч Света
-			DivineLightOrb.DisplayName: Божественный Шар Света
-			HorizontalRayTerminus.DisplayName: Горизонтальный Луч Терминус
+			ConvergingLumenylCrystal.DisplayName: Божественный люменил
+			DivineLightBolt.DisplayName: Божественная стрела света
+			DivineLightLaserbeam.DisplayName: Луч смерти божественного света
+			DivineLightOrb.DisplayName: Божественный шар света
+			HorizontalRayTerminus.DisplayName: Горизонтальный луч Терминуса
 			LightCleaveTelegraph.DisplayName: Телеграф
-			PsychicBlast.DisplayName: Психический Выстрел
-			TerminusDeathray.DisplayName: Первобытный Свет
+			PsychicBlast.DisplayName: Психический выстрел
+			TerminusDeathray.DisplayName: Первобытный свет
 			AcceleratingArcingAcid.DisplayName: Кислота
-			AcidBubble.DisplayName: Кислотный Пузырь
-			AquaticScourgeBodySpike.DisplayName: Облучённый Шип
+			AcidBubble.DisplayName: Кислотный пузырь
+			AquaticScourgeBodySpike.DisplayName: Облучённый шип
 			AquaticScourgeGore.DisplayName: Останки
 			FallingAcid.DisplayName: Кислота
 			LeechFeeder.DisplayName: Поедатель
-			RadiationPulse.DisplayName: Импульс Радиации
-			SulphuricGas.DisplayName: Газ Сернистой Кислоты
-			SulphuricGasDebuff.DisplayName: Газ Сернистой Кислоты
-			SulphuricTornado.DisplayName: Сернистый Тайфун
-			SulphurousRockRubble.DisplayName: Сернистые Обломки
-			WaterClearingBubble.DisplayName: Кислотный Пузырь
-			AstralBlueComet.DisplayName: Астральная Комета
-			AstralLaserInfernum.DisplayName: Астральный Залп Лазеров
-			AstralMissile.DisplayName: Астральная Ракета
-			BlueLaserbeam.DisplayName: Астральный Смертельный Луч
+			RadiationPulse.DisplayName: Импульс радиации
+			SulphuricGas.DisplayName: Газ сернистой кислоты
+			SulphuricGasDebuff.DisplayName: Газ сернистой кислоты
+			SulphuricTornado.DisplayName: Сернистый тайфун
+			SulphurousRockRubble.DisplayName: Сернистые обломки
+			WaterClearingBubble.DisplayName: Кислотный пузырь
+			AstralBlueComet.DisplayName: Астральная комета
+			AstralLaserInfernum.DisplayName: Астральный залп лазеров
+			AstralMissile.DisplayName: Астральная ракета
+			BlueLaserbeam.DisplayName: Астральный луч смерти
 			MissileTelegraphLine.DisplayName: Телеграф
-			OrangeLaserbeam.DisplayName: Астральный Смертельный Луч
-			AstralBlackHole.DisplayName: Астральная Чёрная Дыра
+			OrangeLaserbeam.DisplayName: Астральный луч смерти
+			AstralBlackHole.DisplayName: Астральная чёрная дыра
 			AstralConstellation.DisplayName: Звезда
-			AstralCrystal.DisplayName: Астральный Кристалл
-			AstralFlame2.DisplayName: Астральное Пламя
-			AstralPlasmaFireball.DisplayName: Астральное Плазменное Пламя
-			AstralPlasmaSpark.DisplayName: Астральная Плазменная Искра
-			AstralRubble.DisplayName: Астральные Обломки
-			AstralSparkle.DisplayName: Астральный Блеск
+			AstralCrystal.DisplayName: Астральный кристалл
+			AstralFlame2.DisplayName: Астральное пламя
+			AstralPlasmaFireball.DisplayName: Астральное плазменное пламя
+			AstralPlasmaSpark.DisplayName: Астральная плазменная искра
+			AstralRubble.DisplayName: Астральные обломки
+			AstralSparkle.DisplayName: Астральный блеск
 			AstralTelegraphLine.DisplayName: Телеграф
-			AstralVortex.DisplayName: Поглощённый Вихрь
-			DarkGodLaser.DisplayName: Антиматериальный Смертельный Луч
-			DarkStar.DisplayName: Тёмная Звезда
-			InfectionGlob.DisplayName: Капля Инфекции
-			MassiveInfectedStar.DisplayName: Поглощённая Звезда
-			BloodGeyser2.DisplayName: Ихоровый Гейзер
+			AstralVortex.DisplayName: Поглощённый вихрь
+			DarkGodLaser.DisplayName: Антиматериальный луч смерти
+			DarkStar.DisplayName: Тёмная звезда
+			InfectionGlob.DisplayName: Капля инфекции
+			MassiveInfectedStar.DisplayName: Поглощённая звезда
+			BloodGeyser2.DisplayName: Ихоровый гейзер
 			IchorSpit.DisplayName: Ихор
-			PsionicLightningBolt.DisplayName: Псионический Удар Молнии
-			PsionicOrb.DisplayName: Психическая Энергия
+			PsionicLightningBolt.DisplayName: Псионический удар молнии
+			PsionicOrb.DisplayName: Психическая энергия
 			Brimrose.DisplayName: Серороза
-			BrimstoneDeathray.DisplayName: Серный Смертельный Луч
-			BrimstoneFireball.DisplayName: Серное Пламя
-			BrimstonePetal.DisplayName: Серный Лепесток
-			BrimstonePetal2.DisplayName: Серный Лепесток
-			BrimstoneRose.DisplayName: Серная Роза
-			BrimstoneSkull.DisplayName: Серный Череп
-			BrimstoneTelegraphRay.DisplayName: Серный Смертельный Луч
-			HomingBrimstoneSkull.DisplayName: Серный Адский Выстрел
+			BrimstoneDeathray.DisplayName: Серный луч смерти
+			BrimstoneFireball.DisplayName: Серное пламя
+			BrimstonePetal.DisplayName: Серный лепесток
+			BrimstonePetal2.DisplayName: Серный лепесток
+			BrimstoneRose.DisplayName: Серная роза
+			BrimstoneSkull.DisplayName: Серный череп
+			BrimstoneTelegraphRay.DisplayName: Серный Луч Смерти
+			HomingBrimstoneSkull.DisplayName: Серный адский выстрел
 			RedFlameTelegraph.DisplayName: Блять как меня эта хуйня уже заебала. Блять уже почти одиннадцать лет, а эта всё хуйня продолжается и продолжается блять
-			AccentuationHexProj.DisplayName: Бедственное Проклятье
-			ArcingBrimstoneDart.DisplayName: Серный Дротик
-			BrimstoneBomb.DisplayName: Серная Бомба
+			AccentuationHexProj.DisplayName: Бедственное проклятье
+			ArcingBrimstoneDart.DisplayName: Серный дротик
+			BrimstoneBomb.DisplayName: Серная бомба
 			BrimstoneBoomExplosion.DisplayName: Взрыв
-			BrimstoneLightning.DisplayName: Серный Удар Молнии
-			BrimstoneMeteor.DisplayName: Серный Метеор
-			BrimstoneSlash.DisplayName: Серный Разрез
-			CatharsisHexProj.DisplayName: Бедственное Проклятье
-			CatharsisSoul.DisplayName: Горящая Душа Катарсиса
-			CharredWand.DisplayName: Обугленная Палочка
-			ConvergingShadowSpark.DisplayName: Теневая Искра
-			DarkMagicFlame.DisplayName: Пламя Тёмной Магии
-			EntropyBeam.DisplayName: Энтропический Луч
-			HauntingSoulSeeker.DisplayName: Искатель Душ
-			HomingBrimstoneBurst.DisplayName: Серное Пламя
-			IndignationHexProj.DisplayName: Бедственное Проклятье
-			LargeDarkFireOrb.DisplayName: Сфера Тёмного Огня
-			LingeringBrimstoneFlames.DisplayName: Облако Серного Огня
-			RisingBrimstoneFireball.DisplayName: Серная Бомба
-			ShadowBlob.DisplayName: Сгусток Тени
-			SoulSeekerResurrectionBeam.DisplayName: Луч Некроманта
-			ThinBrimstoneSlash.DisplayName: Серный Разрез
-			WeaknessHexProj.DisplayName: Бедственное Проклятье
-			ZealHexProj.DisplayName: Бедственное Проклятье
-			AcceleratingDarkEnergy.DisplayName: Тёмная Энергия
-			CeaselessEnergyPulse.DisplayName: Импульс Нескончаемой Энергии,
+			BrimstoneLightning.DisplayName: Серный удар молнии
+			BrimstoneMeteor.DisplayName: Серный метеор
+			BrimstoneSlash.DisplayName: Серный разрез
+			CatharsisHexProj.DisplayName: Бедственное проклятье
+			CatharsisSoul.DisplayName: Горящая душа катарсиса
+			CharredWand.DisplayName: Обугленная палочка
+			ConvergingShadowSpark.DisplayName: Теневая искра
+			DarkMagicFlame.DisplayName: Пламя тёмной магии
+			EntropyBeam.DisplayName: Энтропический луч
+			HauntingSoulSeeker.DisplayName: Искатель душ
+			HomingBrimstoneBurst.DisplayName: Серное пламя
+			IndignationHexProj.DisplayName: Бедственное проклятье
+			LargeDarkFireOrb.DisplayName: Сфера тёмного огня
+			LingeringBrimstoneFlames.DisplayName: Облако серного огня
+			RisingBrimstoneFireball.DisplayName: Серная бомба
+			ShadowBlob.DisplayName: Сгусток тени
+			SoulSeekerResurrectionBeam.DisplayName: Луч некроманта
+			ThinBrimstoneSlash.DisplayName: Серный разрез
+			WeaknessHexProj.DisplayName: Бедственное проклятье
+			ZealHexProj.DisplayName: Бедственное проклятье
+			AcceleratingDarkEnergy.DisplayName: Тёмная энергия
+			CeaselessEnergyPulse.DisplayName: Импульс нескончаемой энергии
 			CeaselessVoidLineTelegraph.DisplayName: Линия Телеграф
-			CeaselessVoidShell.DisplayName: Металлическая Оболочка
-			CeaselessVortex.DisplayName: Нескончаемый Вихрь
-			CeaselessVortexTear.DisplayName: Нескончаемая Слеза
-			ConvergingDungeonRubble.DisplayName: Энергичные Обломки
+			CeaselessVoidShell.DisplayName: Металлическая оболочка
+			CeaselessVortex.DisplayName: Нескончаемый вихрь
+			CeaselessVortexTear.DisplayName: Нескончаемая слеза
+			ConvergingDungeonRubble.DisplayName: Энергичные обломки
 			EnergyTelegraph.DisplayName: Осколок Тёмной Энергии
 			GammaBurstLineTelegraph.DisplayName: Линия Телеграф
-			OtherworldlyBolt.DisplayName: Потусторонняя Стрела
-			RealitySlice.DisplayName: Слеза Реальности
-			SpinningDarkEnergy.DisplayName: Тёмная Энергия
-			TelegraphedOtherwordlyBolt.DisplayName: Стрела из Другого мира
+			OtherworldlyBolt.DisplayName: Потусторонняя стрела
+			RealitySlice.DisplayName: Слеза реальности
+			SpinningDarkEnergy.DisplayName: Тёмная энергия
+			TelegraphedOtherwordlyBolt.DisplayName: Стрела из другого мира
 			HomingSpore.DisplayName: Спора
-			MushroomPillar.DisplayName: Колонна Грибов
-			SporeCloud.DisplayName: Споровый Газ
-			AimedIcicleSpike.DisplayName: Ледяной Шип
-			AuroraSpirit.DisplayName: Дух Авроры
-			AuroraSpirit2.DisplayName: Дух Авроры
-			IceBomb2.DisplayName: Ледяная Бомба
-			IcePillar.DisplayName: Ледяная Башня
-			IceRain2.DisplayName: Ледяной Дождь
-			IcicleSpike.DisplayName: Ледяной Шип
+			MushroomPillar.DisplayName: Колонна грибов
+			SporeCloud.DisplayName: Споровый газ
+			AimedIcicleSpike.DisplayName: Ледяной шип
+			AuroraSpirit.DisplayName: Дух авроры
+			AuroraSpirit2.DisplayName: Дух авроры
+			IceBomb2.DisplayName: Ледяная бомба
+			IcePillar.DisplayName: Ледяная башня
+			IceRain2.DisplayName: Ледяной дождь
+			IcicleSpike.DisplayName: Ледяной шип
 			AncientDoom.DisplayName: Думер
 			CultistFireBeamTelegraph.DisplayName: Телеграф
 			CultistRitual.DisplayName: Ритуал
-			DarkBolt.DisplayName: Тёмный Выстрел
-			DarkBoltLarge.DisplayName: Тёмный Выстрел
-			DarkPulse.DisplayName: Тёмный Импульс
+			DarkBolt.DisplayName: Тёмный выстрел
+			DarkBoltLarge.DisplayName: Тёмный выстрел
+			DarkPulse.DisplayName: Тёмный импульс
 			DeathExplosion.DisplayName: Взрыв
 			DoomBeam.DisplayName: Луч Смерти
 			FireballLineTelegraph.DisplayName: Телеграф
-			FireBeam.DisplayName: Луч Пламени
-			IceMass.DisplayName: Ледяная Масса
-			IceShard.DisplayName: Ледяной Осколок
+			FireBeam.DisplayName: Луч пламени
+			IceMass.DisplayName: Ледяная масса
+			IceShard.DisplayName: Ледяной осколок
 			LightBeam.DisplayName: Луч
-			LightBurst.DisplayName: Вспышка Света
+			LightBurst.DisplayName: Вспышка света
 			TeleportTelegraph.DisplayName: Телеграф
-			AcceleratingShadowHand.DisplayName: Теневая Рука
-			ArenaIcicle.DisplayName: Длинная Сосулька
-			DeathAnimationShadowHand.DisplayName: Теневая Рука
-			DeerclopsEyeLaserbeam.DisplayName: Огненный Луч
+			AcceleratingShadowHand.DisplayName: Теневая рука
+			ArenaIcicle.DisplayName: Длинная сосулька
+			DeathAnimationShadowHand.DisplayName: Теневая рука
+			DeerclopsEyeLaserbeam.DisplayName: Огненный луч
 			DeerclopsP2Wave.DisplayName: Взрыв
-			GroundIcicleSpike.DisplayName: Ледяной Шип
-			ShadowHandArena.DisplayName: Теневая Рука
-			SpinningShadowHand.DisplayName: Теневая Рука
-			SandBlastInfernum.DisplayName: Струя Песка
-			Sandnado.DisplayName: Песчаное Торнадо
-			SandstormBlast.DisplayName: Струя Песка
+			GroundIcicleSpike.DisplayName: Ледяной шип
+			ShadowHandArena.DisplayName: Теневая рука
+			SpinningShadowHand.DisplayName: Теневая рука
+			SandBlastInfernum.DisplayName: Струя песка
+			Sandnado.DisplayName: Песчаное торнадо
+			SandstormBlast.DisplayName: Струя песка
 			DestroyerBomb.DisplayName: Взрыв
-			DestroyerPierceLaser.DisplayName: Пламенный Лазер
+			DestroyerPierceLaser.DisplayName: Пламенный лазер
 			DestroyerPierceLaserTelegraph.DisplayName: Телеграф
-			EnergyBlast2.DisplayName: Выплеск Энергии
-			EnergySpark.DisplayName: Красная Искра
-			EnergySpark2.DisplayName: Красная Искра
-			AcceleratingDoGBurst.DisplayName: Огонь Смерти
+			EnergyBlast2.DisplayName: Выплеск энергии
+			EnergySpark.DisplayName: Красная искра
+			EnergySpark2.DisplayName: Красная искра
+			AcceleratingDoGBurst.DisplayName: Огонь смерти
 			DoGChargeGate.DisplayName: Портал
-			DoGDeathInfernum.DisplayName: Луч Смерти
+			DoGDeathInfernum.DisplayName: Луч смерти
 			DoGPhase2IntroPortalGate.DisplayName: Портал
 			DoGSpawnBoom.DisplayName: Взрыв
 			RealityBreakPortalLaserWall.DisplayName: Портал
 			RoDFailPulse.DisplayName: Взрыв
-			AresBeamExplosion.DisplayName: Взрыв Экзовспышки
+			AresBeamExplosion.DisplayName: Взрыв экзовспышки
 			AresBeamTelegraph.DisplayName: Луч Гамма Распада Телеграф
-			AresCannonLaser.DisplayName: Лазер Экзо Пламени
-			AresDeathBeamTelegraph.DisplayName: Телеграф Экзо Перегрузки
-			AresEnergyDeathray.DisplayName: Вспышка Экзо Энергии
+			AresCannonLaser.DisplayName: Лазер экзо пламени
+			AresDeathBeamTelegraph.DisplayName: Телеграф экзо перегрузки
+			AresEnergyDeathray.DisplayName: Вспышка экзо энергии
 			AresEnergyDeathrayTelegraph.DisplayName: Вспышка Экзо Энергии Телеграф
-			AresEnergySlash.DisplayName: Разрез Экзо Энергии
-			AresLaserDeathray.DisplayName: Лазерный Смертельный Луч
+			AresEnergySlash.DisplayName: Разрез экзо энергии
+			AresLaserDeathray.DisplayName: Лазер-луч смерти
 			AresLaughBoom.DisplayName: Взрыв
-			AresPlasmaFireball.DisplayName: Взрывоопасный Плазменный Выстрел
-			AresPrecisionBlast.DisplayName: Точный Выстрел
-			AresPulseBlast.DisplayName: Выплеск Энергии Экзоимпульса
-			AresPulseDeathray.DisplayName: Импульсный Луч Смерти
-			AresSpinningDeathBeam.DisplayName: Луч Экзо Перегрузки
-			AresSpinningRedDeathray.DisplayName: Смертельный Луч Экзотермального Распада
-			AresTeslaGasField.DisplayName: Электрическое Облако
-			AresTeslaOrb.DisplayName: Тесла Сфера
-			AresTeslaSpark.DisplayName: Тесла Искра
-			ExoburstSpark.DisplayName: Искра Экзовспышки
-			HotMetal.DisplayName: Перегретый Металл
+			AresPlasmaFireball.DisplayName: Взрывоопасный плазменный выстрел
+			AresPrecisionBlast.DisplayName: Точный выстрел
+			AresPulseBlast.DisplayName: Выплеск энергии экзоимпульса
+			AresPulseDeathray.DisplayName: Импульсный луч смерти
+			AresSpinningDeathBeam.DisplayName: Луч экзо перегрузки
+			AresSpinningRedDeathray.DisplayName: Смертельный луч экзотермального распада
+			AresTeslaGasField.DisplayName: Электрическое облако
+			AresTeslaOrb.DisplayName: Тесла сфера
+			AresTeslaSpark.DisplayName: Тесла искра
+			ExoburstSpark.DisplayName: Искра экзовспышки
+			HotMetal.DisplayName: Перегретый металл
 			PlasmaGas.DisplayName: Плазма
-			SmallPlasmaSpark.DisplayName: Плазменная Искра
-			ApolloAcceleratingPlasmaSpark.DisplayName: Плазменная Искра
-			ApolloFallingPlasmaSpark.DisplayName: Плазменная Искра
-			ApolloFlamethrower.DisplayName: Огнемёт Экзоплазмы
-			ApolloPlasmaFireball.DisplayName: Взрывоопасный Плазменный Выстрел
-			ApolloRocketInfernum.DisplayName: Фугасная Плазменная Взрывчатка
-			ArtemisBasicShotLaser.DisplayName: Лазер Экзо Пламени
-			ArtemisGasFireballBlast.DisplayName: Взрывоопасный Огненный Выстрел
-			ArtemisGatlingLaser.DisplayName: Лазер Экзо Пламени
-			ArtemisLaser.DisplayName: Лазер Экзо Пламени
+			SmallPlasmaSpark.DisplayName: Плазменная искра
+			ApolloAcceleratingPlasmaSpark.DisplayName: Плазменная искра
+			ApolloFallingPlasmaSpark.DisplayName: Плазменная искра
+			ApolloFlamethrower.DisplayName: Огнемёт экзоплазмы
+			ApolloPlasmaFireball.DisplayName: Взрывоопасный плазменный выстрел
+			ApolloRocketInfernum.DisplayName: Фугасная плазменная взрывчатка
+			ArtemisBasicShotLaser.DisplayName: Лазер экзо пламени
+			ArtemisGasFireballBlast.DisplayName: Взрывоопасный огненный выстрел
+			ArtemisGatlingLaser.DisplayName: Лазер экзо пламени
+			ArtemisLaser.DisplayName: Лазер экзо пламени
 			ArtemisLaserbeamTelegraph.DisplayName: Луч Лазера Телеграф
 			ArtemisSpinLaser.DisplayName: Луч Огайо
 			ArtemisSweepLaserbeam.DisplayName: Луч Огайо
-			ExoplasmaBomb.DisplayName: Бомба Экзоплазмы
-			ExoplasmaExplosion.DisplayName: Взрыв Экзоплазмы
+			ExoplasmaBomb.DisplayName: Бомба экзоплазмы
+			ExoplasmaExplosion.DisplayName: Взрыв экзоплазмы
 			PlasmaChargeTelegraph.DisplayName: Заряд Телеграф
-			SuperheatedExofireGas.DisplayName: Перегретый Огонь
-			ThermonuclearDeathOrb.DisplayName: Термоядерная Сфера Смерти
-			DetatchedThanatosLaser.DisplayName: Лазер Экзо Пламени
-			ExolaserBomb.DisplayName: Бомба Экзолазера
-			ExolaserSpark.DisplayName: Искра Экзолазера
-			LightOverloadRay.DisplayName: Луч Призматической Перегрузки
+			SuperheatedExofireGas.DisplayName: Перегретый огонь
+			ThermonuclearDeathOrb.DisplayName: Термоядерная сфера смерти
+			DetatchedThanatosLaser.DisplayName: Лазер экзо пламени
+			ExolaserBomb.DisplayName: Бомба экзолазера
+			ExolaserSpark.DisplayName: Искра экзолазера
+			LightOverloadRay.DisplayName: Луч призматической перегрузки
 			LightRayTelegraph.DisplayName: Призматический Свет
 			OverloadBoom.DisplayName: Взрыв
-			RefractionRotor.DisplayName: Преломляющий Винт
-			ThanatosAresComboLaser.DisplayName: Лазер Экзо Пламени
+			RefractionRotor.DisplayName: Преломляющий винт
+			ThanatosAresComboLaser.DisplayName: Лазер экзо пламени
 			BigFollyFeather.DisplayName: Перо
-			BirbThunderAuraFlare.DisplayName: Вспышка Драконьей Ауры
-			ExplodingEnergyOrb.DisplayName: Шар Плазмы
+			BirbThunderAuraFlare.DisplayName: Вспышка драконьей ауры
+			ExplodingEnergyOrb.DisplayName: Шар плазмы
 			FollyFeather.DisplayName: Перо
 			LightningCloud.DisplayName: Молния
 			LightningCloud2.DisplayName: Молния
 			LightningSuperchargeTelegraph.DisplayName: Заряд Телеграф
-			RedLightningRedirectingFeather.DisplayName: Молниеносное Перо
-			RedLightningSnipeFeather.DisplayName: Молниеносное Перо
-			RedSpark.DisplayName: Молниеносное Перо
-			VolatileLightning.DisplayName: Штормовое Облако
-			BloodBolt.DisplayName: КровавАя Стрела
+			RedLightningRedirectingFeather.DisplayName: Молниеносное перо
+			RedLightningSnipeFeather.DisplayName: Молниеносное перо
+			RedSpark.DisplayName: Молниеносное перо
+			VolatileLightning.DisplayName: Штормовое облако
+			BloodBolt.DisplayName: Кровавая стрела
 			BloodShot2.DisplayName: Кровь
 			GoreSpike.DisplayName: Шип
-			GoreSpitBall.DisplayName: Плевок Останков
-			SanguineBat.DisplayName: Кровавая Летучая Мышь
+			GoreSpitBall.DisplayName: Плевок останков
+			SanguineBat.DisplayName: Кровавая летучая мышь
 			ChargeTyphoon.DisplayName: Тайфун
-			SharkSummoner.DisplayName: Призыв Штука
+			SharkSummoner.DisplayName: Призывальная Штука
 			SmallWave.DisplayName: Волна
 			TidalWave.DisplayName: Прилив
 			Tornado.DisplayName: Торнадо
-			TyphoonBlade.DisplayName: Лезвие Тайфуна
-			AcceleratingPrismaticBolt.DisplayName: Призматическая Стрела
-			ArcingLightBolt.DisplayName: Световая Стрела
+			TyphoonBlade.DisplayName: Лезвие тайфуна
+			AcceleratingPrismaticBolt.DisplayName: Призматическая стрела
+			ArcingLightBolt.DisplayName: Световая стрела
 			EmpressAurora.DisplayName: Аврора
 			EmpressExplosion.DisplayName: Взрыв
 			EmpressPrism.DisplayName: Призма
-			EmpressSparkle.DisplayName: Величественный Блеск
+			EmpressSparkle.DisplayName: Величественный блеск
 			EmpressSword.DisplayName: Клинок Императрицы
-			EtherealLance.DisplayName: Эфирное Копьё
+			EtherealLance.DisplayName: Эфирное копьё
 			LanceCreatingSword.DisplayName: Клинок Императрицы
-			LightOverloadBeam.DisplayName: Луч Призматической Перегрузки
-			PrismaticBolt.DisplayName: Призматическая Стрела
-			PrismLaserbeam.DisplayName: Призматический Луч
+			LightOverloadBeam.DisplayName: Луч призматической перегрузки
+			PrismaticBolt.DisplayName: Призматическая стрела
+			PrismLaserbeam.DisplayName: Призматический луч
 			ShimmeringLightWave.DisplayName: Взрыв
-			SpinningPrismLaserbeam.DisplayName: Призматический Луч
-			StarBolt.DisplayName: Звёздная Стрела
-			StolenCelestialObject.DisplayName: Огромное Украденное Небесное Тело
-			CorruptThorn.DisplayName: Проклятая Колючка
-			CursedBullet.DisplayName: Проклятый Выстрел
-			CursedFlameBomb.DisplayName: Бомба Проклятого Пламени
-			ShadowOrb.DisplayName: Теневая Сфера
+			SpinningPrismLaserbeam.DisplayName: Призматический луч
+			StarBolt.DisplayName: Звёздная стрела
+			StolenCelestialObject.DisplayName: Огромное украденное небесное тело
+			CorruptThorn.DisplayName: Проклятая колючка
+			CursedBullet.DisplayName: Проклятый выстрел
+			CursedFlameBomb.DisplayName: Бомба проклятого пламени
+			ShadowOrb.DisplayName: Теневая сфера
 			BloodShot.DisplayName: Кровь
 			EoCTooth.DisplayName: Зуб
 			EoCTooth2.DisplayName: Зуб
-			SittingBlood.DisplayName: Шар Зубов
-			FistBullet.DisplayName: Кулак-Пуля
+			SittingBlood.DisplayName: Шар зубов
+			FistBullet.DisplayName: Кулак-пуля
 			FistBulletTelegraph.DisplayName: Телеграф
-			GolemEyeLaserRay.DisplayName: Тепловой Луч
-			GolemLaser.DisplayName: Тепловой Лазер
-			GroundFireCrystal.DisplayName: Огненный Кристал
-			SpikeTrap.DisplayName: Ловушка с Шипами
-			StationarySpikeTrap.DisplayName: Ловушка с Шипами
-			ThermalDeathray.DisplayName: Тепловой Смертельный Луч
+			GolemEyeLaserRay.DisplayName: Тепловой луч
+			GolemLaser.DisplayName: Тепловой лазер
+			GroundFireCrystal.DisplayName: Огненный кристалл
+			SpikeTrap.DisplayName: Ловушка с шипами
+			StationarySpikeTrap.DisplayName: Ловушка с шипами
+			ThermalDeathray.DisplayName: Тепловой смертельный луч
 			BereftVassalBigBoom.DisplayName: Взрыв
 			BereftVassalSpear.DisplayName: Мириндаль
 			BereftVassalTeleportBoom.DisplayName: Взрыв
 			DustDevil.DisplayName: Дьявол Пыли
-			GreatSandBlast.DisplayName: Струя Песка
+			GreatSandBlast.DisplayName: Струя песка
 			GroundSlamWave.DisplayName: Волна
-			PressureSandnado.DisplayName: Песчаное Торнадо
+			PressureSandnado.DisplayName: Песчаное торнадо
 			SandBlob.DisplayName: Сгусток Песка
 			SparkTelegraphLine.DisplayName: Телеграф
 			TorrentWave.DisplayName: Волна
 			VassalLightning.DisplayName: Молния Мириндали
 			VassalSpark.DisplayName: Искра
-			WaterSlice.DisplayName: Водяной Разрыв
-			WaterSpear.DisplayName: Водяное Копьё
-			WaterTorrentBeam.DisplayName: Водяной Поток
-			BlobProjectile.DisplayName: Сгусток Улья
-			EaterOfSouls.DisplayName: Пожиратель Душ
+			WaterSlice.DisplayName: Водяной разрыв
+			WaterSpear.DisplayName: Водяное копьё
+			WaterTorrentBeam.DisplayName: Водяной роток
+			BlobProjectile.DisplayName: Сгусток улья
+			EaterOfSouls.DisplayName: Пожиратель душ
 			HiveMindWave.DisplayName: Взрыв
 			ShadeFire.DisplayName: Огонь
-			DeathSlash.DisplayName: Разрез Ниндзя
+			DeathSlash.DisplayName: Разрез ниндзя
 			JewelBeam.DisplayName: Луч
 			Shuriken.DisplayName: Сюрикен
 			AnahitaWaterIllusion.DisplayName: Иллюзия Анахиты
-			AquaticAberrationProj.DisplayName: Акватическая Аномалия
+			AquaticAberrationProj.DisplayName: Акватическая аномалия
 			AtlantisSpear.DisplayName: Копьё Атлантиды
 			AtlantisSpear2.DisplayName: Копьё Атлантиды
-			HeavenlyLullaby.DisplayName: Райская Колыбель
-			LeviathanMeteor.DisplayName: Метеор Левиафана
+			HeavenlyLullaby.DisplayName: Райская колыбель
+			LeviathanMeteor.DisplayName: Метеор Левиафан
 			LeviathanSpawner.DisplayName: Вода
 			LeviathanSpawnWave.DisplayName: Волна
-			LeviathanVomit.DisplayName: Рвота Левиафана
-			RedirectingWaterBolt.DisplayName: Водяное Копьё
-			WaterBolt.DisplayName: Водяное Копьё
-			LunarAsteroid.DisplayName: Лунное Пламя
-			LunarFireball.DisplayName: Лунное Пламя
-			LunarFlare.DisplayName: Призрачная Вспышка
+			LeviathanVomit.DisplayName: Рвота Левиафан
+			RedirectingWaterBolt.DisplayName: Водяное копьё
+			WaterBolt.DisplayName: Водяное копьё
+			LunarAsteroid.DisplayName: Лунное пламя
+			LunarFireball.DisplayName: Лунное пламя
+			LunarFlare.DisplayName: Призрачная вспышка
 			LunarFlareTelegraph.DisplayName: Телеграф
 			MoonLordDeathAnimationHandler.DisplayName: Анимация Смерти
-			MoonLordDeathBloodBlob.DisplayName: Сгусток Лунной Энергии
+			MoonLordDeathBloodBlob.DisplayName: Сгусток лунной энергии
 			MoonLordExplosion.DisplayName: Взрыв
 			MoonLordExplosionCinder.DisplayName: Зола
 			MoonLordWave.DisplayName: Взрыв
-			NonHomingPhantasmalEye.DisplayName: Призрачный Глаз
-			PhantasmalDeathray.DisplayName: Призрачный Луч Смерти
+			NonHomingPhantasmalEye.DisplayName: Призрачный глаз
+			PhantasmalDeathray.DisplayName: Призрачный луч смерти
 			PhantasmalOrb.DisplayName: Призрачная Сфера
-			PressurePhantasmalDeathray.DisplayName: Призрачный Луч Смерти
+			PressurePhantasmalDeathray.DisplayName: Призрачный луч смерти
 			StardustConstellation.DisplayName: Звезда
 			TrueEyeChargeTelegraph.DisplayName: Заряд Телеграф
 			VoidBlackHole.DisplayName: Пустота
 			HomingAcid.DisplayName: Кислота
 			OldDukeTooth.DisplayName: Гнилой Зуб
-			SharkSummonVortex.DisplayName: Сернистый Вихрь
-			SulphuricBlob.DisplayName: Сгусток Серы
-			BloodGlob.DisplayName: Кровяная Капля
+			SharkSummonVortex.DisplayName: Сернистый вихрь
+			SulphuricBlob.DisplayName: Сгусток серы
+			BloodGlob.DisplayName: Кровяная капля
 			Crimera.DisplayName: Кримера
 			FallingIchor.DisplayName: Ихор
-			FallingIchorBlast.DisplayName: Сгусток Ихора
+			FallingIchorBlast.DisplayName: Сгусток ихора
 			FlyingIchor.DisplayName: Ихор
 			IchorBlast.DisplayName: Ихорный Выстрел
 			IchorBolt.DisplayName: Ихорный Плевок
 			PerforatorWave.DisplayName: Взрыв
 			ToothBall.DisplayName: Шар Зубов
 			BombingTelegraph.DisplayName: Телеграф
-			HostilePlagueSeeker.DisplayName: Чумной Искатель
+			HostilePlagueSeeker.DisplayName: Чумной искатель
 			LargePlagueExplosion.DisplayName: Взрыв
 			PlagueCloud.DisplayName: Облако Чумы
 			PlagueDeathray.DisplayName: Чумной Луч
@@ -2184,11 +2184,11 @@ Mods: {
 			NettlevineArenaSeparator.DisplayName: Крапива
 			Petal.DisplayName: Лепесток
 			SporeFlower.DisplayName: Цветок
-			SporeGas.DisplayName: Споровый Газ
+			SporeGas.DisplayName: Споровый газ
 			ArcingSoul.DisplayName: Душа
-			CirclingEctoplasm.DisplayName: Огонёк Эктоплазмы
-			EctoplasmShot.DisplayName: Выстрел Эктоплазмы
-			GhostlyVortex.DisplayName: Вихрь Фантоплазмы
+			CirclingEctoplasm.DisplayName: Огонёк эктоплазмы
+			EctoplasmShot.DisplayName: Выстрел эктоплазмы
+			GhostlyVortex.DisplayName: Вихрь фантоплазмы
 			Light.DisplayName: Свет
 			NonReturningSoul.DisplayName: Душа
 			NotSpecialSoul.DisplayName: Душа
@@ -2196,227 +2196,227 @@ Mods: {
 			SoulTelegraphLine.DisplayName: Телеграф
 			SpinningSoul.DisplayName: Душа
 			WavySoul.DisplayName: Душа
-			EvenlySpreadPrimeLaserRay.DisplayName: Луч Смерти
+			EvenlySpreadPrimeLaserRay.DisplayName: Луч смерти
 			LightningStrike.DisplayName: Молния
-			MetallicSpike.DisplayName: Металлический Шип
+			MetallicSpike.DisplayName: Металлический шип
 			PrimeMissile.DisplayName: Ракета
 			PrimeShield.DisplayName: Щит
 			PrimeSmallLaser.DisplayName: Лазер
-			SawSpark.DisplayName: Искра из Пилы
+			SawSpark.DisplayName: Искра из пилы
 			SmallElectricGasGloud.DisplayName: Электрическое облако
-			TeslaBomb.DisplayName: Тесла Бомба
-			CommanderSpear.DisplayName: Святое Копьё
-			CommanderSpearThrown.DisplayName: Осквернённое Копьё
-			DefenderShield.DisplayName: Щит из Камней
+			TeslaBomb.DisplayName: Тесла бомба
+			CommanderSpear.DisplayName: Святое копьё
+			CommanderSpearThrown.DisplayName: Осквернённое копьё
+			DefenderShield.DisplayName: Щит из камней
 			GuardiansRodFailPulse.DisplayName: Взрыв
-			HolyAimedDeathray.DisplayName: Луч Пламени
+			HolyAimedDeathray.DisplayName: Луч пламени
 			HolyAimedDeathrayTelegraph.DisplayName: Телеграф
-			HolyDogmaFireball.DisplayName: Огромный Шар Огня
-			HolyFireRift.DisplayName: Огненный Раскол
-			HolyFireWall.DisplayName: Огненная Стена
-			HolyPushbackWall.DisplayName: Огненная Стена
-			HolySineSpear.DisplayName: Осквернённое Копьё
-			HolySpinningFireBeam.DisplayName: Луч Святого Огня
-			LavaEruptionPillar.DisplayName: Лавовый Гейзер
-			LingeringHolyFire.DisplayName: Святой Огонь
-			MagicCrystalShot.DisplayName: Кристальный Свет
-			MagicSpiralCrystalShot.DisplayName: Кристальный Свет
-			ProfanedCirclingRock.DisplayName: Осквернённый Камень
-			ProfanedCrack.DisplayName: Осквернённые Трещины
-			ProfanedField.DisplayName: Поле Осквернённого Защитника
-			ProfanedRock.DisplayName: Осквернённый Камень
-			ProfanedSpearInfernum.DisplayName: Осквернённое Копьё
-			TelegraphedProfanedSpearInfernum.DisplayName: Осквернённое Копьё
-			AcceleratingCrystalShard.DisplayName: Осколок Святого Кристалла
-			AcceleratingMagicProfanedRock.DisplayName: Осквернённый Камень
-			CleansingFireball.DisplayName: Очищающий Шар Огня
-			CommanderSpear2.DisplayName: Святое Копьё
+			HolyDogmaFireball.DisplayName: Огромный шар огня
+			HolyFireRift.DisplayName: Огненный раскол
+			HolyFireWall.DisplayName: Огненная стена
+			HolyPushbackWall.DisplayName: Огненная стена
+			HolySineSpear.DisplayName: Осквернённое копьё
+			HolySpinningFireBeam.DisplayName: Луч святого огня
+			LavaEruptionPillar.DisplayName: Лавовый гейзер
+			LingeringHolyFire.DisplayName: Святой огонь
+			MagicCrystalShot.DisplayName: Кристальный свет
+			MagicSpiralCrystalShot.DisplayName: Кристальный свет
+			ProfanedCirclingRock.DisplayName: Осквернённый камень
+			ProfanedCrack.DisplayName: Осквернённые трещины
+			ProfanedField.DisplayName: Поле осквернённого защитника
+			ProfanedRock.DisplayName: Осквернённый камень
+			ProfanedSpearInfernum.DisplayName: Осквернённое копьё
+			TelegraphedProfanedSpearInfernum.DisplayName: Осквернённое копьё
+			AcceleratingCrystalShard.DisplayName: Осколок святого кристалла
+			AcceleratingMagicProfanedRock.DisplayName: Осквернённый камень
+			CleansingFireball.DisplayName: Очищающий шар огня
+			CommanderSpear2.DisplayName: Святое копьё
 			CrystalTelegraphLine.DisplayName: Телеграф
-			DyingSun.DisplayName: Умирающее Солнце
-			FallingCrystalShard.DisplayName: Осколок Святого Кристалла
-			HolyBasicFireball.DisplayName: Шар Святого Огня
-			HolyBomb.DisplayName: Святая Бомба
-			HolyCinder.DisplayName: Святая Зола
-			HolyCross.DisplayName: Святой Символ
-			HolyCrystalSpike.DisplayName: Кристальное Острие
-			HolyMagicLaserbeam.DisplayName: Святой Смертельный Луч Дезинтеграции
-			HolyRitual.DisplayName: Святой Ритуал
-			HolySpear.DisplayName: Святое Копьё
-			HolySpearFirePillar.DisplayName: Лавовый Гейзер
-			HolySunExplosion.DisplayName: Святой Взрыв
-			ProfanedLava.DisplayName: Обжигающая Лава Искупления
-			ProfanedLavaBlob.DisplayName: Сгусток Лавы
+			DyingSun.DisplayName: Умирающее солнце
+			FallingCrystalShard.DisplayName: Осколок святого кристалла
+			HolyBasicFireball.DisplayName: Шар святого огня
+			HolyBomb.DisplayName: Святая бомба
+			HolyCinder.DisplayName: Святая зола
+			HolyCross.DisplayName: Святой символ
+			HolyCrystalSpike.DisplayName: Кристальное острие
+			HolyMagicLaserbeam.DisplayName: Святой дезинтегрирующий луч смерти
+			HolyRitual.DisplayName: Святой ритуал
+			HolySpear.DisplayName: Святое копьё
+			HolySpearFirePillar.DisplayName: Лавовый гейзер
+			HolySunExplosion.DisplayName: Святой взрыв
+			ProfanedLava.DisplayName: Обжигающая лава искупления
+			ProfanedLavaBlob.DisplayName: Сгусток лавы
 			ProvBoomDeath.DisplayName: Взрыв
 			ProvidenceArenaBorder.DisplayName: Граница
 			ProvidenceWave.DisplayName: Взрыв
-			ProvSummonFlameExplosion.DisplayName: Гипертермический Взрыв
-			StrongProfanedCrack.DisplayName: Осквернённые Трещины
+			ProvSummonFlameExplosion.DisplayName: Гипертермический взрыв
+			StrongProfanedCrack.DisplayName: Осквернённые трещины
 			BeeWave.DisplayName: Взрыв
 			ConvergingHornet.DisplayName: Шершень
-			HoneyBlast.DisplayName: Медовый Выстрел
+			HoneyBlast.DisplayName: Медовый выстрел
 			HornetHive.DisplayName: Улей
 			TinyBee.DisplayName: Пчела
-			BouncingSlimeProj.DisplayName: Отскакивающий Слизень
-			FallingCrystal.DisplayName: Святой Кристалл
-			FallingGel.DisplayName: Падающий Гель
-			FallingSpikeSlimeProj.DisplayName: Кристальный Слизень
-			HallowBlade.DisplayName: Святой Клинок
-			HallowBladeLaserbeam.DisplayName: Смертельный Луч Святого Клинка
-			HallowCrystalSpike.DisplayName: Кристальный Шип
-			HallowLaserbeam.DisplayName: Святой Лазер Смерти
+			BouncingSlimeProj.DisplayName: Отскакивающий слизень
+			FallingCrystal.DisplayName: Святой кристалл
+			FallingGel.DisplayName: Падающий гель
+			FallingSpikeSlimeProj.DisplayName: Кристальный слизень
+			HallowBlade.DisplayName: Святой клинок
+			HallowBladeLaserbeam.DisplayName: Луч смерти святого клинка
+			HallowCrystalSpike.DisplayName: Кристальный шип
+			HallowLaserbeam.DisplayName: Святой лазер смерти
 			QueenJewelBeam.DisplayName: Луч
-			QueenSlimeCrown.DisplayName: Корона Королевы Слизней
-			QueenSlimeCrystalSpike.DisplayName: Кристальный Шип
+			QueenSlimeCrown.DisplayName: Корона Королевы слизней
+			QueenSlimeCrystalSpike.DisplayName: Кристальный шип
 			QueenSlimeLightWave.DisplayName: Взрыв
-			QueenSlimeSplitFormProj.DisplayName: Райский Слизень
-			SpinningLaserCrystal.DisplayName: Святой Кристалл
-			DarkFlamePillar.DisplayName: Столб Тёмного Огня
+			QueenSlimeSplitFormProj.DisplayName: Райский слизень
+			SpinningLaserCrystal.DisplayName: Святой кристалл
+			DarkFlamePillar.DisplayName: Столб тёмного огня
 			DarkFlamePillarTelegraph.DisplayName: Телеграф
 			DarkMagicCinder.DisplayName: Зола Тёмной Магии
-			DarkMagicFireball.DisplayName: Шар Огня Тёмной Магии
-			GroundBloodSpike.DisplayName: Кровавый Шип
+			DarkMagicFireball.DisplayName: Шар огня тёмной магии
+			GroundBloodSpike.DisplayName: Кровавый шип
 			GroundBloodSpikeCreator.DisplayName: Создатель Кровавых Шипов
-			RitualFlame.DisplayName: Синее Пламя
-			SlammingRockPillar.DisplayName: Каменный Столб
-			StompShockwave.DisplayName: Ударная Волна
-			UnholyBloodGlob.DisplayName: Безбожная Кровь
-			CosmicExplosion.DisplayName: Космический Взрыв
-			CosmicKunai.DisplayName: Космический Кунай
-			CosmicMine.DisplayName: Космическая Мина
-			DarkCosmicBomb.DisplayName: Космическая Бомба
+			RitualFlame.DisplayName: Синее пламя
+			SlammingRockPillar.DisplayName: Каменный столб
+			StompShockwave.DisplayName: Ударная волна
+			UnholyBloodGlob.DisplayName: Безбожная кровь
+			CosmicExplosion.DisplayName: Космический взрыв
+			CosmicKunai.DisplayName: Космический кунай
+			CosmicMine.DisplayName: Космическая мина
+			DarkCosmicBomb.DisplayName: Космическая бомба
 			EldritchScythe.DisplayName: Коса
 			ShadowDashTelegraph.DisplayName: Телеграф
-			ShadowSlash.DisplayName: Теневой Разрез
+			ShadowSlash.DisplayName: Теневой разрез
 			AcceleratingSkull.DisplayName: Череп
 			NonHomingSkull.DisplayName: Череп
-			ShadowflameFireball.DisplayName: Бомба Теневого Пламени
-			SpinningFireball.DisplayName: Шар Теневого Пламени
-			DeceleratingCrimulanGlob.DisplayName: Нестабильная Багротановая Капля
-			DeceleratingEbonianGlob.DisplayName: Нестабильная Эбонитовая Капля
-			GroundSlimeGlob.DisplayName: Нестабильная Капля Слизи
+			ShadowflameFireball.DisplayName: Бомба теневого пламени
+			SpinningFireball.DisplayName: Шар теневого пламени
+			DeceleratingCrimulanGlob.DisplayName: Нестабильная багротановая капля
+			DeceleratingEbonianGlob.DisplayName: Нестабильная эбонитовая капля
+			GroundSlimeGlob.DisplayName: Нестабильная капля слизи
 			HomingWeaverSpark.DisplayName: Искра
 			WeaverSpark.DisplayName: Искра
-			WindGust.DisplayName: Порыв Ветра
-			AcceleratingDarkMagicFlame.DisplayName: Пламя Тёмной Магии
-			BrimstoneDemonSummonExplosion.DisplayName: Серный Взрыв
-			BrimstoneFlameOrb.DisplayName: Сфера Серного Пламени
-			BrimstoneFlamePillar.DisplayName: Столб Серного Пламени
+			WindGust.DisplayName: Порыв ветра
+			AcceleratingDarkMagicFlame.DisplayName: Пламя тёмной магии
+			BrimstoneDemonSummonExplosion.DisplayName: Серный взрыв
+			BrimstoneFlameOrb.DisplayName: Сфера серного пламени
+			BrimstoneFlamePillar.DisplayName: Столб серного пламени
 			BrimstoneFlamePillarTelegraph.DisplayName: Телеграф
-			BrimstoneJewelProj.DisplayName: Серный Камень
-			BrimstoneLaserbeam.DisplayName: Серный Луч Смерти
-			CatastropheSlash.DisplayName: Резонирующий Разрез
-			CondemnationArrowSCal.DisplayName: Тёмная Стрела
+			BrimstoneJewelProj.DisplayName: Серный камень
+			BrimstoneLaserbeam.DisplayName: Серный луч смерти
+			CatastropheSlash.DisplayName: Резонирующий разрез
+			CondemnationArrowSCal.DisplayName: Тёмная стрела
 			CondemnationProj.DisplayName: Приговор
 			CalamitasCutsceneProj.DisplayName: Каламитас
-			DemonicBomb.DisplayName: Демоническая Бомба
-			DemonicExplosion.DisplayName: Демоническый Взрыв
+			DemonicBomb.DisplayName: Демоническая бомба
+			DemonicExplosion.DisplayName: Демоническый взрыв
 			DemonicTelegraphLine.DisplayName: Телеграф
-			FlameOverloadBeam.DisplayName: Луч Переизбытка Серного Пламени
+			FlameOverloadBeam.DisplayName: Луч переизбытка серного пламени
 			HeresyProjSCal.DisplayName: Ересь
-			InfernumBrimstoneGigablast.DisplayName: Серный Гигавыстрел
-			LostSoulProj.DisplayName: Горящая Душа
-			RedirectingDarkSoul.DisplayName: Тёмная Душа
-			RedirectingHellfireSCal.DisplayName: Адское Серное Пламя
-			RedirectingLostSoulProj.DisplayName: Горящая Душа
-			RitualBrimstoneHeart.DisplayName: Серное Сердце
-			SepulcherBone.DisplayName: Оккультная Кость
-			SepulcherSoulBomb.DisplayName: Яростные Духи
-			ShadowBolt.DisplayName: Теневая Стрела
-			ShadowFlameBlast.DisplayName: Теневой Выстрел
-			ShadowGigablast.DisplayName: Теневой Гигавыстрел
+			InfernumBrimstoneGigablast.DisplayName: Серный гигавыстрел
+			LostSoulProj.DisplayName: Горящая душа
+			RedirectingDarkSoul.DisplayName: Тёмная душа
+			RedirectingHellfireSCal.DisplayName: Адское серное пламя
+			RedirectingLostSoulProj.DisplayName: Горящая душа
+			RitualBrimstoneHeart.DisplayName: Серное сердце
+			SepulcherBone.DisplayName: Оккультная кость
+			SepulcherSoulBomb.DisplayName: Яростные духи
+			ShadowBolt.DisplayName: Теневая стрела
+			ShadowFlameBlast.DisplayName: Теневой выстрел
+			ShadowGigablast.DisplayName: Теневой гигавыстрел
 			ShadowSpark.DisplayName: Теневая Искра
 			SuicideBomberDemonExplosion.DisplayName: Взрыв
 			SuicideBomberDemonHostile.DisplayName: Демон
 			SuicideBomberRitual.DisplayName: Ритуал
-			SupremeCalamitasBrotherPortal.DisplayName: Тёмный Портал
-			SCalSymbol.DisplayName: Алхимический Символ
+			SupremeCalamitasBrotherPortal.DisplayName: Тёмный портал
+			SCalSymbol.DisplayName: Алхимический символ
 			VigilanceProj.DisplayName: Линчевание
-			CursedCinder.DisplayName: Проклятая Зола
-			CursedFireballBomb.DisplayName: Бомба Шаров Проклятого Пламени
-			CursedFlameBurst.DisplayName: Проклятое Пламя
+			CursedCinder.DisplayName: Проклятая зола
+			CursedFireballBomb.DisplayName: Бомба шаров проклятого пламени
+			CursedFlameBurst.DisplayName: Проклятое пламя
 			CursedFlameBurstTelegraph.DisplayName: Телеграф
-			HomingCursedFlameBurst.DisplayName: Проклятое Пламя
-			LaserGroundShock.DisplayName: Ударная Волна
+			HomingCursedFlameBurst.DisplayName: Проклятое пламя
+			LaserGroundShock.DisplayName: Ударная волна
 			LightningTelegraph.DisplayName: Телеграф Луч
 			RedLightning.DisplayName: Молния
-			RetinazerAimedDeathray.DisplayName: Луч Смерти
-			RetinazerAimedDeathray2.DisplayName: Луч Смерти
-			RetinazerGroundDeathray.DisplayName: Луч Смерти
-			RetinazerLaser.DisplayName: Лазер Смерти
-			SpazmatismFlamethrower.DisplayName: Проклятый Огнемёт
+			RetinazerAimedDeathray.DisplayName: Луч смерти
+			RetinazerAimedDeathray2.DisplayName: Луч смерти
+			RetinazerGroundDeathray.DisplayName: Луч смерти
+			RetinazerLaser.DisplayName: Лазер смерти
+			SpazmatismFlamethrower.DisplayName: Проклятый огнемёт
 			TwinsEnergyExplosion.DisplayName: Бум
-			TwinsLensFlare.DisplayName: Отблеск Линзы
+			TwinsLensFlare.DisplayName: Отблеск линзы
 			TwinsShield.DisplayName: Щит
-			TwinsSpriteExplosion.DisplayName: Взрыв Близнецов
+			TwinsSpriteExplosion.DisplayName: Взрыв близнецов
 			CursedSoul.DisplayName: Душа
 			FireBeamTelegraph.DisplayName: Телеграф
-			FireBeamWoF.DisplayName: Луч Пламени
+			FireBeamWoF.DisplayName: Луч пламени
 			TileTentacle.DisplayName: Щупальце
-			DraconicBlossomPetal.DisplayName: Лепесток Драконьего Цветка
-			DraconicInfernado.DisplayName: Драконье Инфернадо
-			DragonFireball.DisplayName: Шар Огня
-			HomingFireball.DisplayName: Самонаводящийся Шар Огня
-			InfernadoSpawner.DisplayName: Большая Вспышка
-			LingeringDragonFlames.DisplayName: Драконий Огонь
-			MajesticSparkleBig.DisplayName: Величественный Блеск
-			RedirectingYharonMeteor.DisplayName: Шар Драконьего Огня
-			VortexOfFlame.DisplayName: Вихрь Пламени
+			DraconicBlossomPetal.DisplayName: Лепесток драконьего цветка
+			DraconicInfernado.DisplayName: Драконье инфернадо
+			DragonFireball.DisplayName: Шар огня
+			HomingFireball.DisplayName: Самонаводящийся шар огня
+			InfernadoSpawner.DisplayName: Большая вспышка
+			LingeringDragonFlames.DisplayName: Драконий огонь
+			MajesticSparkleBig.DisplayName: Величественный блеск
+			RedirectingYharonMeteor.DisplayName: Шар драконьего огня
+			VortexOfFlame.DisplayName: Вихрь пламени
 			VortexTelegraphBeam.DisplayName: Луч Пламени Телеграф
 			YharonBoom.DisplayName: Бум
-			YharonFlameExplosion.DisplayName: Гипертермальный Взрыв
-			YharonFlamethrower.DisplayName: Дыхание Драконьего Пламени
+			YharonFlameExplosion.DisplayName: Гипертермальный взрыв
+			YharonFlamethrower.DisplayName: Дыхание драконьего пламени
 			YharonHeatFlashFireball.DisplayName: Огонь
-			YharonMajesticSparkle.DisplayName: Величественный Блеск
-			DraconicBurst.DisplayName: Драконья Очередь
+			YharonMajesticSparkle.DisplayName: Величественный блеск
+			DraconicBurst.DisplayName: Драконья очередь
 			ExplodingWyvern.DisplayName: Виверна
 			MeteorCinder.DisplayName: Пепел
 			MoltenMeteor.DisplayName: Метеор
-			CloudLightning.DisplayName: Штормовое Облако
-			LargeCloud.DisplayName: Большое Облако
-			LargeHail.DisplayName: Большой Град
-			SmallHail.DisplayName: Малый Град
-			ChainGuillotine.DisplayName: Цепная Гильотина
-			CursedDart.DisplayName: Дротик Проклятого Пламени
-			CursedFlamePillar.DisplayName: Столб Проклятого Пламени
-			FetidBaghnakhs.DisplayName: Вонючий Багнак
-			IchorDart.DisplayName: Дротик Ихора
-			LifeDrainingField.DisplayName: Высасывающее Жизнь Поле
-			DarkMagicCircle.DisplayName: Тёмная Магия
-			RedirectingWeakDarkMagicFlame.DisplayName: Тёмное Пламя
+			CloudLightning.DisplayName: Штормовое облако
+			LargeCloud.DisplayName: Большое облако
+			LargeHail.DisplayName: Большой град
+			SmallHail.DisplayName: Малый град
+			ChainGuillotine.DisplayName: Цепная гильотина
+			CursedDart.DisplayName: Дротик проклятого пламени
+			CursedFlamePillar.DisplayName: Столб проклятого пламени
+			FetidBaghnakhs.DisplayName: Вонючий багнак
+			IchorDart.DisplayName: Дротик ихора
+			LifeDrainingField.DisplayName: Высасывающее жизнь поле
+			DarkMagicCircle.DisplayName: Тёмная магия
+			RedirectingWeakDarkMagicFlame.DisplayName: Тёмное пламя
 			PearlSwirl.DisplayName: Жемчуговорот
-			CrystalShard.DisplayName: Кристальный Осколок
-			FlyingKnife.DisplayName: Летающий Нож
-			HolyStar.DisplayName: Святая Стрела
-			PiercingCrystalShard.DisplayName: Кристальный Осколок
-			ConvergingGammaEnergy.DisplayName: Гамма Пепел
-			GammaRain.DisplayName: Гамма Дождь
-			GammaSuperDeathray.DisplayName: Гамма Луч Смерти
+			CrystalShard.DisplayName: Кристальный осколок
+			FlyingKnife.DisplayName: Летающий нож
+			HolyStar.DisplayName: Святая стрела
+			PiercingCrystalShard.DisplayName: Кристальный осколок
+			ConvergingGammaEnergy.DisplayName: Гамма пепел
+			GammaRain.DisplayName: Гамма дождь
+			GammaSuperDeathray.DisplayName: Гамма луч смерти
 			BouncingSpitBall.DisplayName: Плевок
-			RisingFireball.DisplayName: Шар Огня
-			SandFlameBall.DisplayName: Шар Песка
-			Sandnado2.DisplayName: Песчаное Торнадо
-			WanderersShellWater.DisplayName: Водяной Поток
-			BrimstoneCrescentStaffProj.DisplayName: Посох Серного Полумесяца
-			BrimstoneForcefieldExplosion.DisplayName: Серный Взрыв
-			CherryBlossomPetal.DisplayName: Лепесток Цветка Вишни
-			DisenchantedTabletProj.DisplayName: Расколдованная Табличка
+			RisingFireball.DisplayName: Шар огня
+			SandFlameBall.DisplayName: Шар песка
+			Sandnado2.DisplayName: Песчаное торнадо
+			WanderersShellWater.DisplayName: Водяной поток
+			BrimstoneCrescentStaffProj.DisplayName: Посох серного полумесяца
+			BrimstoneForcefieldExplosion.DisplayName: Серный взрыв
+			CherryBlossomPetal.DisplayName: Лепесток цветка вишни
+			DisenchantedTabletProj.DisplayName: Расколдованная табличка
 			GuardiansSummonerProjectile.DisplayName: Снаряд Призывателя Стражей
 			HydrothermalSmoke.DisplayName: Пар
-			PortalLensFlare.DisplayName: Отблеск Линзы
+			PortalLensFlare.DisplayName: Отблеск линзы
 			ProvidenceSummonerProjectile.DisplayName: Снаряд Призывателя Провиденс
 			ScreenShakeProj.DisplayName: Тряска Экрана
 			TerminusAnimationProj.DisplayName: Снар Анимация Терминуса
-			WaterglassTokenProjectile.DisplayName: Жетон Водяного Стекла
+			WaterglassTokenProjectile.DisplayName: Жетон водяного стекла
 			HyperplaneMatrixProjectile.DisplayName: Матрица Гиперплоскости
-			AridBattlecryProjectile.DisplayName: Осушающий Боевой Клич
-			EyeOfMadnessProj.DisplayName: Глаз Безумия
-			IllusionersReverieProj.DisplayName: Грёзы Иллюзионера
+			AridBattlecryProjectile.DisplayName: Осушающий боевой клич
+			EyeOfMadnessProj.DisplayName: Глаз безумия
+			IllusionersReverieProj.DisplayName: Грёзы иллюзионера
 			KevinProjectile.DisplayName: Kevin
-			LingeringSandSkull.DisplayName: Песочный Череп
-			MiniSandShark.DisplayName: Мини Песочная Акула
-			ShadowIllusion.DisplayName: Отблеск Линзы
-			ShadowTendril.DisplayName: Теневой Усик
-			EggGoldProjectile.DisplayName: Золотое Яйцо
+			LingeringSandSkull.DisplayName: Песочный череп
+			MiniSandShark.DisplayName: Мини песочная акула
+			ShadowIllusion.DisplayName: Отблеск линзы
+			ShadowTendril.DisplayName: Теневой усик
+			EggGoldProjectile.DisplayName: Золотое яйцо
 			EggProjectile.DisplayName: Яйцо
 			MyrindaelBonkProjectile.DisplayName: Мириндаль
 			MyrindaelLightning.DisplayName: Молния Мириндали
@@ -2426,29 +2426,29 @@ Mods: {
 			BlahajProj.DisplayName: Блохэй
 			BronzePetProj.DisplayName: Ярн
 			HatGirl.DisplayName: Шляподевочка
-			SheepGod.DisplayName: Бог Овец
-			GlassmakerFire.DisplayName: Стеклянное Пламя
+			SheepGod.DisplayName: Бог овец
+			GlassmakerFire.DisplayName: Стеклянное пламя
 			GlassmakerHoldout.DisplayName: Стеклодув
-			GlassPiece.DisplayName: Кусок Стекла
-			DreamtasticEnergyBolt.DisplayName: Вспышка Энергии Мечтателя
+			GlassPiece.DisplayName: Кусок стекла
+			DreamtasticEnergyBolt.DisplayName: Вспышка энергии Мечтателя
 			DreamtasticProj.DisplayName: Мечтастика
-			StormMaidensLightning.DisplayName: Молния Штормовой Девы
-			StormMaidensRetributionProj.DisplayName: Возмездие Штормовой Девы
-			StormMaidensRetributionWorldProj.DisplayName: Возмездие Штормовой Девы
-			WanderersShellProj.DisplayName: Ракушка Странника
+			StormMaidensLightning.DisplayName: Молния штормовой девы
+			StormMaidensRetributionProj.DisplayName: Возмездие штормовой девы
+			StormMaidensRetributionWorldProj.DisplayName: Возмездие штормовой девы
+			WanderersShellProj.DisplayName: Ракушка странника
 			WayfinderGate.DisplayName: Врата Путеводителя
 			WayfinderHoldout.DisplayName: Путеводитель
 			WayfinderItemProjectile.DisplayName: Путеводитель
 			WayfinderSymbol.DisplayName: Символ Врат Путеводителя
-			MushBombInfernum.DisplayName: Грибная Бомба Инфернум
+			MushBombInfernum.DisplayName: Грибная бомба Инфернум
 			DoGProviCutsceneInitialPortal.DisplayName: До Г Прови Катсцена Иниц Портал
 			DoGProviCutsceneProjectile.DisplayName: Снар До Г Прови Катсцена
-			ProviBurnPulseRing.DisplayName: Горящее Пульсируещее Кольцо
+			ProviBurnPulseRing.DisplayName: Горящее пульсируещее кольцо
 			PerditusProjectile.DisplayName: Потерянный
 			PunctusProjectile.DisplayName: Точный
 			PunctusRock.DisplayName: Камень Точного
-			BrimstoneBarrageOld.DisplayName: Серный Дротик
-			SupremeCataclysmFistOld.DisplayName: Кулак Ярости
+			BrimstoneBarrageOld.DisplayName: Серный дротик
+			SupremeCataclysmFistOld.DisplayName: Кулак ярости
 		}
 
 		Status: {
@@ -2474,7 +2474,7 @@ Mods: {
 			PBGNuclearCoreGeneration: ЯДЕРНОЕ ЯДРО ОБРАЗОВАНО. ИНИЦИАЛИЗАЦИЯ СТРОИТЕЛЬНОЙ ПРОЦЕДУРЫ!
 			PostCultistColosseumCreation: Мистические руины образовались в сердце пустыни!
 			PostMLTempleCreation: Осквернённый сад возник из пепла на краю Преисподней!
-			ProvidenceLavaRise: Лава поднимается снизу!
+			ProvidenceLavaRise: Лава поднимается со дна Преисподней!
 			DoGTeleportDenial1: ТАК ПРОСТО УКЛОНИТЬСЯ НЕ ПОЛУЧИТСЯ!
 			DoGTeleportDenial2: НЕ НАДЕЙСЯ ПЕРЕХИТРИТЬ МАСТЕРА ИЗМЕРЕНИЙ!
 			DoGTeleportDenial3: НЕ ТАК БЫСТРО!
@@ -2525,7 +2525,7 @@ Mods: {
 			HydrothermalVent.MapEntry: Гейзер
 			GolemArena.MapEntry: Арена
 			MoonlordArena.MapEntry: Арена
-			SeaShell.MapEntry: Морская Раковина
+			SeaShell.MapEntry: Морская раковина
 		}
 
 		UI: {
@@ -2545,14 +2545,14 @@ Mods: {
 
 			// Enrage tooltips
 			EnrageTooltipReplacements: {
-				DecapoditaSprout: Разъяряется вне Грибного биома
-				WormFood: Разъяряется вне биома Порчи
-				BloodySpine: Разъяряется вне биома Багрянца
-				Teratoma: Разъяряется вне биома Порчи
-				BloodyWormFood: Разъяряется вне биома Багрянца
-				Seafood: Разъяряется вне вод Сернистого Моря
-				Abombination: Разъяряется вне Подземных Джунглей
-				NecroplasmicBeacon: Разъяряется вне Подземелья
+				DecapoditaSprout: Разъяряется вне грибного биома
+				WormFood: Разъяряется вне биома порчи
+				BloodySpine: Разъяряется вне биома багрянца
+				Teratoma: Разъяряется вне биома порчи
+				BloodyWormFood: Разъяряется вне биома багрянца
+				Seafood: Разъяряется вне вод сернистого моря
+				Abombination: Разъяряется вне подземных джунглей
+				NecroplasmicBeacon: Разъяряется вне подземелья
 			}
 
 			HyperplaneMatrixUI: {

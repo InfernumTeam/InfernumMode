@@ -16,8 +16,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
         public override void SetDefaults(NPC npc)
         {
             // Set defaults that, if were to be changed by Calamity, would cause significant issues to the fight.
-            npc.width = 32;
-            npc.height = 36;
+            npc.width = 104;
+            npc.height = 104;
             npc.scale = 1f;
             npc.Opacity = 1f;
             npc.defense = 6;
@@ -45,18 +45,78 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             npc.defense = aheadSegment.defense;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
 
+
+            if (npc.ai[3] > 0f)
+            {
+                switch ((int)npc.ai[3])
+                {
+                    default:
+                        break;
+
+                    case 10:
+
+                        npc.ai[3] = 1f;
+
+                        npc.position = npc.Center;
+                        npc.position -= npc.Size * 0.5f;
+                        npc.frame = new Rectangle(0, 0, DesertScourgeBody.BodyTexture2 is null ? 0 : DesertScourgeBody.BodyTexture2.Width(), DesertScourgeBody.BodyTexture2 is null ? 0 : DesertScourgeBody.BodyTexture2.Height());
+
+                        npc.netUpdate = true;
+
+                        // Prevent netUpdate from being blocked by the spam counter.
+                        npc.netSpam = 0;
+
+                        break;
+
+                    case 20:
+
+                        npc.ai[3] = 2f;
+
+                        npc.position = npc.Center;
+                        npc.position -= npc.Size * 0.5f;
+                        npc.frame = new Rectangle(0, 0, DesertScourgeBody.BodyTexture3 is null ? 0 : DesertScourgeBody.BodyTexture3.Width(), DesertScourgeBody.BodyTexture3 is null ? 0 : DesertScourgeBody.BodyTexture3.Height());
+
+                        npc.netUpdate = true;
+
+                        // Prevent netUpdate from being blocked by the spam counter.
+                        npc.netSpam = 0;
+
+                        break;
+
+                    case 30:
+
+                        npc.ai[3] = 3f;
+
+                        npc.position = npc.Center;
+                        npc.position -= npc.Size * 0.5f;
+                        npc.frame = new Rectangle(0, 0, DesertScourgeBody.BodyTexture4 is null ? 0 : DesertScourgeBody.BodyTexture4.Width(), DesertScourgeBody.BodyTexture4 is null ? 0 : DesertScourgeBody.BodyTexture4.Height());
+
+                        npc.netUpdate = true;
+
+                        // Prevent netUpdate from being blocked by the spam counter.
+                        npc.netSpam = 0;
+
+                        break;
+                }
+            }
+            Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
+            if (aheadSegment.rotation != npc.rotation)
+            {
+                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
+                directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 1f);
+            }
+            int segmentOffset = 70;
+            npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
+            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * segmentOffset;
+            npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
+            /*
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
 
             npc.rotation = directionToNextSegment.ToRotation() + PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
-            return false;
-        }
-
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            spriteBatch.Draw(BossTextureRegistry.DesertScourgeBody.Value, npc.Center - Main.screenPosition, null, npc.GetAlpha(lightColor), npc.rotation, BossTextureRegistry.DesertScourgeBody.Value.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            */
             return false;
         }
     }

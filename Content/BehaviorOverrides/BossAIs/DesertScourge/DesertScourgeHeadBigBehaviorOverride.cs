@@ -78,11 +78,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
         }
 
-        public override void BossHeadSlot(NPC npc, ref int index)
-        {
-            index = ModContent.GetModBossHeadSlot(BossTextureRegistry.DesertScourgeMapIcon);
-        }
-
         public override bool PreAI(NPC npc)
         {
             // Reset the contact damage.
@@ -94,11 +89,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
             // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
-            ref float attackType = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
-            ref float initializedFlag = ref npc.ai[2];
-            ref float enrageTimer = ref npc.Infernum().ExtraAI[10];
+            ref float attackType = ref npc.Infernum().ExtraAI[11];
+            ref float attackTimer = ref npc.Infernum().ExtraAI[12];
+            ref float initializedFlag = ref npc.Infernum().ExtraAI[13];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[14];
             ref float hideMapIcon = ref npc.Infernum().ExtraAI[HideMapIconIndex];
+
+            //Main.NewText(attackType + " " + attackTimer + " " + initializedFlag + " " + enrageTimer + " " + hideMapIcon); 
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -644,8 +641,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
         public static void SelectNextAttack(NPC npc)
         {
+            ref float attackType = ref npc.Infernum().ExtraAI[11];
+            ref float attackTimer = ref npc.Infernum().ExtraAI[12];
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            DesertScourgeAttackType oldAttack = (DesertScourgeAttackType)(int)npc.ai[0];
+            DesertScourgeAttackType oldAttack = (DesertScourgeAttackType)(int)attackType;
             List<DesertScourgeAttackType> potentialAttacks =
             [
                 DesertScourgeAttackType.SandSpit,
@@ -665,14 +665,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
                 npc.Infernum().ExtraAI[i] = 0f;
 
             do
-                npc.ai[0] = (int)Main.rand.Next(potentialAttacks);
-            while ((int)oldAttack == (int)npc.ai[0] && potentialAttacks.Count >= 2);
+                attackType = (int)Main.rand.Next(potentialAttacks);
+            while ((int)oldAttack == (int)attackType && potentialAttacks.Count >= 2);
 
             if (oldAttack == DesertScourgeAttackType.SpawnAnimation)
-                npc.ai[0] = (int)DesertScourgeAttackType.SandSpit;
+                attackType = (int)DesertScourgeAttackType.SandSpit;
 
             npc.TargetClosest();
-            npc.ai[1] = 0f;
+            attackTimer = 0f;
             npc.netUpdate = true;
         }
 

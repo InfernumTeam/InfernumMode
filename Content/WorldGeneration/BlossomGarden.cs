@@ -79,7 +79,10 @@ namespace InfernumMode.Content.WorldGeneration
             {
                 for (int y = -25; y <= 25; y++)
                 {
-                    Tile checkTile = Main.tile[point + new Point(x, y)];
+                    Point p = point + new Point(x, y);
+                    if (!WorldGen.InWorld(p.X, p.Y))
+                        continue;
+                    Tile checkTile = Main.tile[p];
                     if (checkTile.TileType == TileID.JungleGrass)
                         return true;
                 }

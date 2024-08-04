@@ -4,6 +4,7 @@ using System.Reflection;
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.World;
 using InfernumMode.Content.Achievements;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -274,6 +275,21 @@ namespace InfernumMode.Core.ILEditingStuff
                 return false;
             }
             return orig(self);
+        }
+    }
+
+    public class AvoidLabGardenIntersectHook : ICustomDetourProvider
+    {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(CalShouldAvoidLocation, CalShouldAvoidLocation_Detour);
+        }
+        public static bool CalShouldAvoidLocation_Detour(Orig_CalShouldAvoidLocation orig, Point placementPoint, bool careAboutLava = true)
+        {
+            bool value = orig(placementPoint, careAboutLava);
+            if (WorldSaveSystem.ProvidenceArena.Contains(placementPoint))
+                value = true;
+           return value;
         }
     }
 }

@@ -34,12 +34,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) => DrawFist(NPC, Main.spriteBatch, drawColor, true);
 
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
-        {
-            
-            return base.CanHitPlayer(target, ref cooldownSlot);
-        }
-
         public static bool DoFistAI(NPC npc)
         {
             if (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].type != NPCID.Golem)

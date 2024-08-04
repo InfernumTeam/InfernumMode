@@ -88,10 +88,5 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DukeFishron
 
         public override bool CheckActive() => false;
 
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
-        {
-            cooldownSlot = 1;
-            return true;
-        }
     }
 }

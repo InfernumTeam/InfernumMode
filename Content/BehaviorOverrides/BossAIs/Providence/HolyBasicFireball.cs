@@ -38,7 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.timeLeft = 240;
             Projectile.scale = 0f;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);

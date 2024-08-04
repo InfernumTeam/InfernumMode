@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             Projectile.hide = true;
             Projectile.netImportant = true;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

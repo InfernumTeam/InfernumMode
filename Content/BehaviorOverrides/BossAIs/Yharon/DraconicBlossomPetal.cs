@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
@@ -31,6 +32,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
             Projectile.netImportant = true;
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

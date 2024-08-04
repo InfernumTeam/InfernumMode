@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             Projectile.timeLeft = 32;
             Projectile.Opacity = 0f;
             Projectile.rotation = Main.rand?.NextFloat(TwoPi) ?? 0f;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

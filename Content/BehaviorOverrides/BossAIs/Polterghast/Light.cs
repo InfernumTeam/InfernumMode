@@ -23,7 +23,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Projectile.ignoreWater = true;
             Projectile.timeLeft = 40;
             Projectile.penetrate = -1;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI() => Time++;

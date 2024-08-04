@@ -28,7 +28,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.BrimstoneElemental
             Projectile.penetrate = -1;
             Projectile.timeLeft = 420;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

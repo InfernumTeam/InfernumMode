@@ -240,6 +240,12 @@ namespace InfernumMode.Core.GlobalInstances
             if ((container is not null && container.BehaviorOverride.UseBossImmunityCooldownID) || isSepulcher || isWofNPC || isBee)
             */
 
+            // Remove usages of the Boss cooldown slot - to prevent possible accidental double hits
+            /*
+            if (cooldownSlot == 1)
+                cooldownSlot = -1;
+            Main.NewText("npc " + cooldownSlot);
+            */
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && NPCBehaviorOverride.Registered<DevourerofGodsHead>())
             {
                 cooldownSlot = 0;

@@ -541,7 +541,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
             // Use the boss cooldown slot.
-            
+            cooldownSlot = ImmunityCooldownID.Bosses;
 
             // Don't do damage if Ares is in the background.
             if (Ares.ai[2] >= 0.25f)

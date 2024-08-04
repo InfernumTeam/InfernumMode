@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.tileCollide = false;
             Projectile.timeLeft = 1600;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void SendExtraAI(BinaryWriter writer)

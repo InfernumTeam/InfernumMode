@@ -133,12 +133,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             return true;
         }
 
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
-        {
-            
-            return true;
-        }
-
         public override void FindFrame(int frameHeight)
         {
             NPC.frameCounter++;

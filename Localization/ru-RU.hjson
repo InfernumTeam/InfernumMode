@@ -2449,6 +2449,7 @@ Mods: {
 			PunctusRock.DisplayName: Камень Точного
 			BrimstoneBarrageOld.DisplayName: Серный дротик
 			SupremeCataclysmFistOld.DisplayName: Кулак ярости
+			// VortexFireball.DisplayName: Vortex Fireball
 		}
 
 		Status: {

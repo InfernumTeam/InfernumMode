@@ -99,7 +99,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DesertScourge
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
-                CreateSegments(npc, 28, ModContent.NPCType<DesertScourgeBody>(), ModContent.NPCType<DesertScourgeTail>());
+                CreateSegments(npc, 17, ModContent.NPCType<DesertScourgeBody>(), ModContent.NPCType<DesertScourgeTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }

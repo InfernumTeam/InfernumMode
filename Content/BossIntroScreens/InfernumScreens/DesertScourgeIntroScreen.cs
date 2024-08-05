@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BossIntroScreens.InfernumScreens
         public override bool ShouldBeActive()
         {
             int desertScourgeIndex = NPC.FindFirstNPC(ModContent.NPCType<DesertScourgeHead>());
-            return desertScourgeIndex >= 0 && (Main.npc[desertScourgeIndex].ai[0] != (int)DesertScourgeHeadBigBehaviorOverride.DesertScourgeAttackType.SpawnAnimation || Main.npc[desertScourgeIndex].Infernum().ExtraAI[0] >= 1f) && InfernumMode.CanUseCustomAIs;
+            return desertScourgeIndex >= 0 && (Main.npc[desertScourgeIndex].Infernum().ExtraAI[11] != (int)DesertScourgeHeadBigBehaviorOverride.DesertScourgeAttackType.SpawnAnimation || Main.npc[desertScourgeIndex].Infernum().ExtraAI[0] >= 1f) && InfernumMode.CanUseCustomAIs;
         }
 
         public override SoundStyle? SoundToPlayWithTextCreation => null;

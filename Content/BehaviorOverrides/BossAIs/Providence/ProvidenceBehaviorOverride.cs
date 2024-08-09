@@ -2529,13 +2529,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                 acceleration *= 1.35f;
             }
 
-            // Fly faster at night.
-            if (IsEnraged)
-            {
-                maxFlySpeed *= 1.35f;
-                acceleration *= 1.35f;
-            }
-
             // Don't stray too far from the target.
             npc.velocity.X = Clamp(npc.velocity.X + flightPath * acceleration, -maxFlySpeed, maxFlySpeed);
             if (verticalDistanceFromTarget < 50f)

@@ -64,7 +64,7 @@ namespace InfernumMode.Content.Items.Misc
                     drawOffset.X += SakuraBloom.DrawLine(line, drawOffset, WaterSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.FifthText").Value, true, overrideColor: new(26, 169, 208));
                 }
                 else
-                    SakuraBloom.DrawLine(line, drawOffset, WaterSparkles, "Maybe you should follow its call?");
+                    SakuraBloom.DrawLine(line, drawOffset, WaterSparkles, Utilities.GetLocalization("Items.SakuraBud.TooltipEffect.SixthText").Value);
 
                 return false;
             }

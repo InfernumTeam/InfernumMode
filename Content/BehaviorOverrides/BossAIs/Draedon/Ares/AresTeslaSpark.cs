@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile.Opacity = 0f;
             Projectile.hide = true;
             Projectile.Infernum().FadesAwayWhenManuallyKilled = true;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

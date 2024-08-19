@@ -44,7 +44,8 @@ namespace InfernumMode.Content.WorldGeneration
                 // Check if all of the corners are close to jungle (jungle grass)
                 bool cornersJungle =
                     CheckJungle(attemptProtectionArea.TopLeft().ToPoint()) && CheckJungle(attemptProtectionArea.TopRight().ToPoint()) &&
-                    CheckJungle(attemptProtectionArea.BottomLeft().ToPoint()) && CheckJungle(attemptProtectionArea.BottomRight().ToPoint());
+                    CheckJungle(attemptProtectionArea.BottomLeft().ToPoint()) && CheckJungle(attemptProtectionArea.BottomRight().ToPoint()) &&
+                    CheckJungle(attemptProtectionArea.Top().ToPoint()) && CheckJungle(attemptProtectionArea.Bottom().ToPoint());
 
                 if (attemptPlacementPoint.Y > Main.worldSurface + 150 && cornersJungle)
                 {
@@ -75,13 +76,18 @@ namespace InfernumMode.Content.WorldGeneration
 
         public static bool CheckJungle(Point point)
         {
-            for (int x = -25; x <= 25; x++)
+            for (int x = -7; x <= 7; x++)
             {
-                for (int y = -25; y <= 25; y++)
+                for (int y = -7; y <= 7; y++)
                 {
-                    Tile checkTile = Main.tile[point + new Point(x, y)];
+                    Point p = point + new Point(x, y);
+                    if (!WorldGen.InWorld(p.X, p.Y))
+                        continue;
+                    Tile checkTile = Main.tile[p];
                     if (checkTile.TileType == TileID.JungleGrass)
                         return true;
+                    if (checkTile.TileType == TileID.LihzahrdBrick || checkTile.WallType == WallID.LihzahrdBrickUnsafe)
+                        return false;
                 }
             }
             return false;

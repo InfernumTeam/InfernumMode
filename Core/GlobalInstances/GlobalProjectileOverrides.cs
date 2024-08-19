@@ -86,8 +86,13 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (InfernumMode.CanUseCustomAIs)
             {
-                if (projectile.type == ModContent.ProjectileType<TrilobiteSpike>())
-                    projectile.ModProjectile.CooldownSlot = 1;
+                /*
+                // Remove usages of the Boss cooldown slot - to prevent possible accidental double hits
+                if (projectile.ModProjectile != null && projectile.ModProjectile.CooldownSlot == ImmunityCooldownID.Bosses)
+                    projectile.ModProjectile.CooldownSlot = ImmunityCooldownID.General;
+                if (projectile.ModProjectile != null)
+                    Main.NewText("proj " + projectile.ModProjectile.CooldownSlot);
+                */
 
                 // Why the FUCK does this exist. No one cares or does the "stealth" system in the abyss.
                 projectile.Calamity().overridesMinionDamagePrevention = true;

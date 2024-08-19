@@ -19,7 +19,6 @@ namespace InfernumMode.Content.Projectiles.Generic
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Lifetime;
-            CooldownSlot = 1;
         }
 
         public override void AI()

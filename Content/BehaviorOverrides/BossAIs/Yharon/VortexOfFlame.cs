@@ -30,7 +30,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
             Projectile.alpha = 255;
             Projectile.timeLeft = Lifetime;
             Projectile.Calamity().DealsDefenseDamage = true;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()
@@ -47,7 +47,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     for (int i = 0; i < 4; i++)
                     {
                         float offsetAngle = TwoPi * i / 4f;
-                        Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, YharonBehaviorOverride.RegularFireballDamage, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ModContent.ProjectileType<VortexFireball>(), YharonBehaviorOverride.RegularFireballDamage, 0f, Main.myPlayer);
                     }
                 }
             }

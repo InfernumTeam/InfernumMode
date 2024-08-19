@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             Projectile.extraUpdates = 1;
             Projectile.timeLeft = Projectile.MaxUpdates * 120;
             Projectile.scale = 0.1f;
-            
+            CooldownSlot = ImmunityCooldownID.Bosses;
         }
 
         public override void AI()

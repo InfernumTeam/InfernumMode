@@ -429,5 +429,9 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static MethodInfo CalDoGSkyUpdateDoGIndex => typeof(DoGSky).GetMethod("UpdateDoGIndex", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalDoGSkyUpdateDoGIndex(DoGSky self);
+
+        internal static MethodInfo CalShouldAvoidLocation => typeof(DraedonStructures).GetMethod("ShouldAvoidLocation", Utilities.UniversalBindingFlags);
+
+        public delegate bool Orig_CalShouldAvoidLocation(Point placementPoint, bool careAboutLava = true);
     }
 }

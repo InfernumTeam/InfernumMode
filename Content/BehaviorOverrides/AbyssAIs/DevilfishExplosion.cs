@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.Calamity().DealsDefenseDamage = true;
-            CooldownSlot = 1;
+            CooldownSlot = 0;
         }
 
         public override void AI()

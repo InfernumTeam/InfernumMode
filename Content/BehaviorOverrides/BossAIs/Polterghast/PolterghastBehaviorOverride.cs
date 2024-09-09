@@ -154,6 +154,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             npc.DR_NERD(0.2f);
         }
 
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
+            index = inPhase3 ? PolterghastBoss.phase3IconIndex : PolterghastBoss.phase1IconIndex;
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Set the whoAmI index.

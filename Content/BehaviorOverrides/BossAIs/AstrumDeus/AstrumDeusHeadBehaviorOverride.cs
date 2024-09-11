@@ -503,7 +503,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
                 if (attackTimer >= minDescendTime + minRiseTime + attackTransitionDelay)
                 {
-                    Utilities.DeleteAllProjectiles(true, ModContent.ProjectileType<AstralRubble>());
                     SelectNextAttack(npc);
                 }
 

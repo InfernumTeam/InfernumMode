@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Items.Weapons.Melee
 {
-    // Dedicated to: Toasty
+    // Dedicated to: Imogen
     public class Punctus : ModItem
     {
         public override void SetStaticDefaults()

@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.Map;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Terraria.Localization;
 
 namespace InfernumMode.Common.MapLayers
 {

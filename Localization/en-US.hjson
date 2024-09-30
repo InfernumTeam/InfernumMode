@@ -1225,6 +1225,7 @@ Mods: {
 				Tooltip: GetsChanged
 			}
 
+			// Important: Don't translate this tooltip, currently is being used for the tooltip effect
 			SakuraBud: {
 				DisplayName: Sakura Bud
 				Tooltip:

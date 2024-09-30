@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
 
             npc.defense = aheadSegment.defense;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
-            npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
+            npc.damage = npc.alpha > 40 || headSegment.damage <= 0 ? 0 : npc.defDamage;
 
             npc.Calamity().DR = MathF.Min(npc.Calamity().DR, 0.65f);
 

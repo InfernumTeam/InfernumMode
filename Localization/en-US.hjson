@@ -670,7 +670,7 @@ Mods: {
 				KnowledgeBereftVassal: {
 					Lore:
 						'''
-						An unusal pair of solitary camaraderie.
+						An unusual pair of solitary camaraderie.
 						Once a warrior of noble renown, it would seem that Argus was one of the few survivors to emerge from the ruins of Ilmeris.
 						Without purpose, he sought refuge in these enigmatic ruins, silently witnessing the passage of time until your arrival.
 						Fates like his are the consequence of misguided self-righteousness. Do not cause senseless pain in the pursuit of greater causes.
@@ -687,7 +687,7 @@ Mods: {
 				'''
 
 			ProfanedShard: {
-				SummoningText: Summons the Profaned Guardians when used on the cliff in the profaned garden at the far right of the underworld
+				SummoningText: Summons the Profaned Guardians when used on the cliff in the left of profaned garden at the far right of the underworld
 				GardenWarning:
 					'''
 					Your world does not currently have a Profaned Garden. Kill the Moon Lord again to generate it
@@ -725,8 +725,8 @@ Mods: {
 				DisplayName: Flower of the Ocean
 				Tooltip:
 					'''
-					Grants vastly increased visibility while underwater
-					Creates an underwater visual
+					The ocean architect's calling calms the night skies, blessing it with the grace of the seas.
+					Protects against dangerous nighttime events and grants vastly increased visibility while under water, even while worn in vanity slots
 					'''
 			}
 

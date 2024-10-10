@@ -700,7 +700,11 @@ Mods: {
 			RuneofKos.DeveloperText: The Ceaseless Void can only be fought in the Archives
 
 			SandstormsCore: {
-				PortalDetail: Opens a portal to the Lost Colosseum
+				PortalDetail: 
+                    '''
+                    Opens a portal to the Lost Colosseum
+                    Used at the Lost Gateway altar in the underground desert 
+                    '''
 				GatewayWarning: Your world does not currently have a Lost Gateway. Kill the Lunatic Cultist again to generate it.
 			}
 

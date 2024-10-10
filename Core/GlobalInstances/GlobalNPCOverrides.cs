@@ -194,6 +194,9 @@ namespace InfernumMode.Core.GlobalInstances
 
         public override void OnKill(NPC npc)
         {
+            // no shark
+            CalamityMod.CalamityMod.sharkKillCount = 0;
+
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 

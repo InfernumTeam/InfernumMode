@@ -735,7 +735,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             }
 
             // Reset to the slowdown state in preparation for the next attack.
-            if (attackTimer == teleportDelay + waitTime + moveTime)
+            if (attackTimer >= teleportDelay + waitTime + moveTime)
                 npc.Infernum().ExtraAI[0] = (int)HiveMindAttackState.SlowDown;
         }
 

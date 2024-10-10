@@ -135,6 +135,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
             bool canSummonLeviathan = !NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()) && !Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
             if (lifeRatio < LeviathanSummonLifeRatio && canSummonLeviathan && hasSummonedLeviathan == 0f)
             {
+                if (npc.ai[0] != 0)
+                    npc.alpha = 0;
                 npc.ai[0] = 0f;
                 attackTimer = 0f;
                 DoBehavior_SummonLeviathan(npc, ref hasSummonedLeviathan);

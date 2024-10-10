@@ -292,4 +292,17 @@ namespace InfernumMode.Core.ILEditingStuff
            return value;
         }
     }
+    public class DisableGSSMessageHook : ICustomDetourProvider
+    {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(CalDisplayLocalizedText, CalDisplayLocalizedText_Detour);
+        }
+        public static void CalDisplayLocalizedText_Detour(Orig_CalDisplayLocalizedText orig, string key, Color? textColor = null)
+        {
+            if (key == "Mods.CalamityMod.Status.Progression.SandSharkText3")
+                return;
+            orig(key, textColor);
+        }
+    }
 }

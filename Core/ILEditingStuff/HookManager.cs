@@ -433,5 +433,9 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static MethodInfo CalShouldAvoidLocation => typeof(DraedonStructures).GetMethod("ShouldAvoidLocation", Utilities.UniversalBindingFlags);
 
         public delegate bool Orig_CalShouldAvoidLocation(Point placementPoint, bool careAboutLava = true);
+
+        internal static MethodInfo CalDisplayLocalizedText => typeof(CalamityUtils).GetMethod("DisplayLocalizedText", Utilities.UniversalBindingFlags);
+
+        public delegate void Orig_CalDisplayLocalizedText(string key, Color? textColor = null);
     }
 }

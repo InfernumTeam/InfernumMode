@@ -8,6 +8,7 @@ using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -760,6 +761,15 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         #endregion AI
 
         #region Drawing
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            float phase2TransitionCountdown = npc.Infernum().ExtraAI[6];
+            bool inPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
+            if (phase2TransitionCountdown > GoreSpawnCountdownTime)
+                inPhase2 = false;
+
+            index = inPhase2 ? 12 : 11;
+        }
 
         public override void FindFrame(NPC npc, int frameHeight)
         {

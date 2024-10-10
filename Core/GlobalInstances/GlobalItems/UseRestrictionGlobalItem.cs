@@ -57,7 +57,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
                 return false;
 
             bool inArena = player.Infernum_Biome().InProfanedArenaAntiCheeseZone || SubworldSystem.IsActive<LostColosseum>();
-            bool illegalItemForArena = item.type is ItemID.Sandgun or ItemID.DirtBomb or ItemID.DirtStickyBomb or ItemID.DryBomb;
+            bool illegalItemForArena = item.type is ItemID.Sandgun or ItemID.DirtBomb or ItemID.DirtStickyBomb or ItemID.DryBomb or ItemID.BottomlessShimmerBucket;
             if (illegalItemForArena && inArena)
                 return false;
 

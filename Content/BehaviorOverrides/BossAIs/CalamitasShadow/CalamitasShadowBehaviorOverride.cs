@@ -969,7 +969,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 fireOrbSpawnPosition = npc.Top - Vector2.UnitY * (LargeDarkFireOrb.MaxFireOrbRadius - 75f);
-                        Utilities.NewProjectileBetter(fireOrbSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LargeDarkFireOrb>(), 0, 0f);
+                        Utilities.NewProjectileBetter(fireOrbSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LargeDarkFireOrb>(), 0, 0f, ai2: npc.whoAmI);
                     }
                 }
 

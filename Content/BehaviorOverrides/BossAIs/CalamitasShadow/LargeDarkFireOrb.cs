@@ -18,6 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
     public class LargeDarkFireOrb : ModProjectile, ISpecializedDrawRegion
     {
         public ref float Time => ref Projectile.ai[1];
+        public ref float NPCID => ref Projectile.ai[2];
 
         public static float MaxFireOrbRadius => 320f;
 
@@ -51,9 +52,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
         public override void AI()
         {
+            int npcID = (int)Projectile.ai[2];
             // Disappear if Calamitas' shadow is not present.
-            if (CalamityGlobalNPC.calamitas == -1)
+            if (CalamityGlobalNPC.calamitas == -1 || !npcID.WithinBounds(Main.maxPlayers) || Main.npc[npcID] == null || !Main.npc[npcID].active)
+            {
                 Projectile.Kill();
+                return;
+            }
 
             Projectile.scale = Utils.Remap(Projectile.timeLeft, 25f, 1f, 1f, 10f);
             Projectile.Opacity = Utils.GetLerpValue(1f, 18f, Projectile.timeLeft, true);
@@ -65,7 +70,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
             }
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.76f);
-
             Time++;
         }
 

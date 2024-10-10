@@ -84,7 +84,7 @@ namespace InfernumMode.Content.Items.Accessories
             {
                 modifiers.ModifyHurtInfo += (ref Player.HurtInfo info) =>
                 {
-                    if (info.Damage >= 120)
+                    if (info.Damage >= 120 && player.Player.Calamity().SpongeShieldDurability <= 0)
                         player.SetValue<bool>("SealocketShouldReduceDamage", true);
                     else
                         player.SetValue<bool>("SealocketShouldReduceDamage", false);

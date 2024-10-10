@@ -1,4 +1,5 @@
 ﻿using CalamityMod.CalPlayer;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Signus;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -12,7 +13,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
     {
         public override void PreUpdateWorld()
         {
-            if (WorldSaveSystem.MetSignusAtProfanedGarden || !InfernumMode.CanUseCustomAIs || !NPC.downedMoonlord)
+            bool anyProfanedGuards = CalamityGlobalNPC.doughnutBoss != -1 || CalamityGlobalNPC.doughnutBossDefender != -1 || CalamityGlobalNPC.doughnutBossHealer != -1;
+            if (WorldSaveSystem.MetSignusAtProfanedGarden || !InfernumMode.CanUseCustomAIs || !NPC.downedMoonlord || anyProfanedGuards)
                 return;
 
             Vector2 signusSpawnPosition = WorldSaveSystem.ProvidenceArena.TopLeft() * 16f + new Vector2(4380f, 1600f);

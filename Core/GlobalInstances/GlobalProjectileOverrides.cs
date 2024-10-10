@@ -104,25 +104,28 @@ namespace InfernumMode.Core.GlobalInstances
 
             // No tombs.
             // h.
-            bool isTomb = projectile.type is ProjectileID.Tombstone or ProjectileID.Gravestone or ProjectileID.RichGravestone1 or ProjectileID.RichGravestone2 or
-                ProjectileID.RichGravestone3 or ProjectileID.RichGravestone4 or ProjectileID.RichGravestone4 or ProjectileID.Headstone or ProjectileID.Obelisk;
+            bool isTomb = InfernumSets.Projectiles.Tombstone[projectile.type];
+            if (isTomb)
+            {
+                projectile.active = false;
+                return base.PreAI(projectile);
+            }
 
-            bool illegalRocket = projectile.type is ProjectileID.DryRocket or ProjectileID.DryGrenade or ProjectileID.DryMine or ProjectileID.DrySnowmanRocket;
-            illegalRocket |= projectile.type is ProjectileID.WetRocket or ProjectileID.WetGrenade or ProjectileID.WetMine or ProjectileID.WetBomb or ProjectileID.WetSnowmanRocket;
-            illegalRocket |= projectile.type is ProjectileID.HoneyRocket or ProjectileID.HoneyGrenade or ProjectileID.HoneyMine or ProjectileID.HoneyBomb or ProjectileID.HoneySnowmanRocket;
-            illegalRocket |= projectile.type is ProjectileID.LavaRocket or ProjectileID.LavaGrenade or ProjectileID.LavaMine or ProjectileID.LavaBomb or ProjectileID.LavaSnowmanRocket;
-            illegalRocket |= projectile.type is ProjectileID.DirtBomb or ProjectileID.DirtStickyBomb;
+            bool illegalRocket = InfernumSets.Projectiles.RocketIllegalInArena[projectile.type];
+            bool illegalRay = projectile.type == ModContent.ProjectileType<CrystylCrusherRay>();
+
+            if (!illegalRocket && !illegalRay) // optimization
+                return base.PreAI(projectile);
 
             bool projectileInProvArena = new Rectangle((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena);
             bool mouseInProvArena = new Rectangle((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16, 4, 4).Intersects(WorldSaveSystem.ProvidenceArena);
             bool inColosseum = SubworldSystem.IsActive<LostColosseum>();
+
             if (illegalRocket && (projectileInProvArena || inColosseum))
                 projectile.active = false;
-            if (projectile.type == ModContent.ProjectileType<CrystylCrusherRay>() && (mouseInProvArena || inColosseum))
+            if (illegalRay && (mouseInProvArena || inColosseum))
                 projectile.active = false;
 
-            if (isTomb)
-                projectile.active = false;
 
             return base.PreAI(projectile);
         }

@@ -135,7 +135,8 @@ namespace InfernumMode.Content.Items.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.Infernum().SetValue<bool>("SealocketMechanicalEffectsApply", true);
-            player.Infernum().SetValue<bool>("SealocketForcefieldCanDraw", true);
+            if (!hideVisual)
+                player.Infernum().SetValue<bool>("SealocketForcefieldCanDraw", true);
         }
 
         public override void UpdateVanity(Player player) => player.Infernum().SetValue<bool>("SealocketForcefieldCanDraw", true);

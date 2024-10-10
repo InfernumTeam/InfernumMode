@@ -3,6 +3,7 @@ using CalamityMod.NPCs.Leviathan;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,13 +11,12 @@ namespace InfernumMode.Content.Items.SummonItems
 {
     public class LeviathanDetector : ModItem
     {
-        public int FrameCounter;
-
-        public int Frame;
-
+        public override string Texture => base.Texture + "_Animated";
         public override void SetStaticDefaults()
         {
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 14; // Frost Moon
+            ItemID.Sets.AnimatesAsSoul[Type] = true;
+            Main.RegisterItemAnimation(Type, new DrawAnimationVertical(5, 14));
         }
 
         public override void SetDefaults()
@@ -40,21 +40,6 @@ namespace InfernumMode.Content.Items.SummonItems
             recipe.AddIngredient(ItemID.SoulofNight, 4);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
-        }
-
-        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frameI, Color drawColor, Color itemColor, Vector2 origin, float scale)
-        {
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SummonItems/LeviathanDetector_Animated").Value;
-            Rectangle f = Item.GetCurrentFrame(ref Frame, ref FrameCounter, 5, 14);
-            Main.spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * 0.5f, scale, SpriteEffects.None, 0);
-            return false;
-        }
-
-        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
-        {
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Content/Items/SummonItems/LeviathanDetector_Animated").Value;
-            Main.spriteBatch.Draw(texture, Item.position - Main.screenPosition, Item.GetCurrentFrame(ref Frame, ref FrameCounter, 5, 8), lightColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
-            return false;
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<Anahita>()) && !NPC.AnyNPCs(ModContent.NPCType<Leviathan>()) && (player.Center.X < 9000f || player.Center.X > Main.maxTilesX * 16f - 9000f);

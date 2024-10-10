@@ -1,4 +1,5 @@
-﻿using CalamityMod;
+﻿using System;
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Items;
 using CalamityMod.Items.Materials;
@@ -38,7 +39,9 @@ namespace InfernumMode.Content.Items.Accessories
                     player.Player.GetDamage<SummonMeleeSpeedDamageClass>() *= 1.4f;
                     player.Player.GetDamage<RogueDamageClass>() *= 1.4f;
 
-                    player.Player.GetAttackSpeed<GenericDamageClass>() += 0.4f;
+                    bool stealthStrike = player.Player.Calamity().StealthStrikeAvailable();
+                    if (!stealthStrike)
+                        player.Player.GetAttackSpeed<GenericDamageClass>() += 0.4f;
                     player.Player.buffImmune[ModContent.BuffType<Nightwither>()] = true;
                 }
             };

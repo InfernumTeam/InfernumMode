@@ -2,6 +2,7 @@
 using InfernumMode.Content.Items.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -28,7 +29,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void Update()
         {
-            if (CurrentDeathsInARow >= DeathsNeeded)
+            if (CurrentDeathsInARow >= DeathsNeeded || Main.LocalPlayer.difficulty == PlayerDifficultyID.Hardcore)
                 CurrentCompletion++;
         }
 

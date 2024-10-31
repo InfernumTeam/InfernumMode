@@ -730,7 +730,7 @@ Mods: {
 				Tooltip:
 					'''
 					The ocean architect's calling calms the night skies, blessing it with the grace of the seas.
-					Protects against dangerous nighttime events and grants vastly increased visibility while under water, even while worn in vanity slots
+					Protects against dangerous nighttime events even while worn in vanity slots and grants vastly increased visibility while under water
 					'''
 			}
 

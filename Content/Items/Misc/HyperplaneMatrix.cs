@@ -16,10 +16,10 @@ using Terraria.ModLoader.IO;
 
 namespace InfernumMode.Content.Items.Misc
 {
-    // Dedicated to: Dominic Karma
+    // Dedicated to: Lucille Karma
     public class HyperplaneMatrix : ModItem
     {
-        public static bool CanBeUsed => (DownedBossSystem.downedCalamitas && DownedBossSystem.downedExoMechs) || Main.LocalPlayer.name == "Dominic";
+        public static bool CanBeUsed => (DownedBossSystem.downedCalamitas && DownedBossSystem.downedExoMechs) || Main.LocalPlayer.name == "Dominic" || Main.LocalPlayer.name == "Lucille";
 
         // How much the player gets hurt for if the matrix explodes due to being able to be used.
         public const int UnableToBeUsedHurtDamage = 500;

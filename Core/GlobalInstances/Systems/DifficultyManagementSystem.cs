@@ -15,7 +15,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 #pragma warning disable IDE0051 // Remove unused private members
         private const string Message = "Hello, fellow developer. The fact that you're in this file likely means that you want to enable the disallowed difficulty modes in Infernum." +
             "While I personally think it isn't worth it, I won't be spiteful about it or work against people who know what they're doing. The boolean property can simply be set to false and" +
-            "the effects will be disabled, no annoying label IL needed. -Dominic";
+            "the effects will be disabled, no annoying label IL needed. -Lucille";
 #pragma warning restore IDE0051 // Remove unused private members
 
         public static bool DisableDifficultyModes

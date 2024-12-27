@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.DataStructures;
@@ -21,6 +21,7 @@ using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.IO;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static CalamityMod.Schematics.SchematicManager;
@@ -347,5 +348,39 @@ namespace InfernumMode.Content.Subworlds
             Rectangle frame = new(0, frameHeight * Frame, LoadingAnimationTexture.Width, frameHeight);
             Main.spriteBatch.Draw(LoadingAnimationTexture, animationDrawPosition, frame, Color.White, 0f, frame.Size() * 0.5f, 1f, SpriteEffects.FlipHorizontally, 0f);
         }
+
+        #region World Data Management
+
+        public static TagCompound SafeWorldDataToTag(string suffix, bool saveInCentralRegistry = true)
+        {
+            // Re-initialize the save data tag.
+            TagCompound savedWorldData = [];
+
+            // Save Calamity's boss defeat data.
+            CalamityVariablesSystem.SaveDefeatStates(savedWorldData);
+
+            // Store the tag.
+            if (saveInCentralRegistry)
+                SubworldSystem.CopyWorldData($"ColosseumSavedWorldData_{suffix}", savedWorldData);
+
+            return savedWorldData;
+        }
+
+        private void LoadWorldDataFromTag(string suffix, TagCompound specialTag = null)
+        {
+            TagCompound savedWorldData = specialTag ?? SubworldSystem.ReadCopiedWorldData<TagCompound>($"ColosseumSavedWorldData_{suffix}");
+
+            CalamityVariablesSystem.LoadDefeatStates(savedWorldData);
+        }
+
+        public override void CopyMainWorldData() => SafeWorldDataToTag("Main");
+
+        public override void ReadCopiedMainWorldData() => LoadWorldDataFromTag("Main");
+
+        public override void CopySubworldData() => SafeWorldDataToTag("Subworld");
+
+        public override void ReadCopiedSubworldData() => LoadWorldDataFromTag("Subworld");
+
+        #endregion
     }
 }

@@ -23,6 +23,7 @@ using InfernumMode.Content.Subworlds;
 using InfernumMode.Core.CrossCompatibility;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using InfernumMode.Core.OverridingSystem;
 using Luminance.Core.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -199,7 +200,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.value = Item.buyPrice(6, 25, 0, 0) / 5;
             NPC.netAlways = true;
-            NPC.BossBar = ModContent.GetInstance<BereftVassalBossBar>();
 
             NPC.Calamity().ShouldCloseHPBar = true;
         }
@@ -2052,5 +2052,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
         }
 
         public override bool CheckActive() => false;
+    }
+
+    public class BereftVassalBehaviorOverride : NPCBehaviorOverride{
+        public override int NPCOverrideType => ModContent.NPCType<BereftVassal>();
+
+        public const float Phase2LifeRatio = 0.6f;
+
+        public override float[] PhaseLifeRatioThresholds =>
+        [
+            Phase2LifeRatio
+        ];
+
     }
 }

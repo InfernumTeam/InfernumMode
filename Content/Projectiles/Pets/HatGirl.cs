@@ -133,7 +133,7 @@ namespace InfernumMode.Content.Projectiles.Pets
                 Color messageColor = Color.DeepPink;
                 if (!string.IsNullOrEmpty(tipText))
                 {
-                    if (InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
+                    if (InfernumConfig.Instance.DisplayTipsInChat)
                         Main.NewText(tipText, messageColor);
                     else
                     {

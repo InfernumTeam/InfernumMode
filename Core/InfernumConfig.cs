@@ -28,10 +28,6 @@ namespace InfernumMode.Core
         [DefaultValue(true)]
         public bool FlashbangOverlays { get; set; }
 
-        [BackgroundColor(224, 127, 180, 192)]
-        [DefaultValue(false)]
-        public bool CreditsRecordings { get; set; }
-
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => false;
     }
 }

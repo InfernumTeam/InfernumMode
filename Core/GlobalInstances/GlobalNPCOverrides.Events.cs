@@ -3,7 +3,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Core.GlobalInstances
 {
-    // Please keep these in alphabetical order if they're updated. -Dominic
+    // Please keep these in alphabetical order if they're updated. -Lucille
     public partial class GlobalNPCOverrides : GlobalNPC
     {
         public delegate void BossHeadSlotDelegate(NPC npc, ref int index);

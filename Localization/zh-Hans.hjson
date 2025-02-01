@@ -746,14 +746,14 @@ Mods: {
 				DisplayName: 盛开的樱花
 				Tooltip:
 					'''
-					这象征着爱情在盛开时是多么美丽，而它又多么容易枯萎
-					短暂的
+					A symbol of how beautiful love is when in bloom, and how easily it can wither away whyyyy
+					Temporary
 					'''
 
 				TooltipEffect: {
 					FirstText: 这象征着
 					SecondText: 爱情
-					ThirdText: 在盛开时是多么美丽，而它又多么容易枯萎
+					ThirdText: 在盛开时是多么美丽，而又多么容易枯萎
 					FourthText: 也许有了这个，我们就能保存
 					FifthText: 记忆
 					SixthText: ？
@@ -1230,16 +1230,16 @@ Mods: {
 				Tooltip:
 					'''
 					一朵娇嫩脆弱的樱花花苞，含苞待放
-					你感觉一只精灵尝试指引你去往花苞的家
-					也许你应该跟随它的指引？
+					You feel a guiding spirit trying to lead you the bloom’s home
+					Maybe you should follow its call?
 					'''
 
 				TooltipEffect: {
-					FirstText: 你感觉一只
-					SecondText: 精灵尝试指引
-					ThirdText: 你去往花苞的家
-					FourthText: 精灵尝试吸引你的注意力到
-					FifthText: 水中
+					FirstText: 你感到一只
+					SecondText: 精灵
+					ThirdText: 在尝试指引你去往花苞的家
+					FourthText: 精灵想让你注意到
+					FifthText: 湖水
 					SixthText: 也许你应该跟随它的指引？
 				}
 			}
@@ -1555,7 +1555,7 @@ Mods: {
 
 			SignusAmbience: {
 				DisplayName: ???
-				Author: 作者：Dominic
+				Author: 作者：Lucille
 			}
 		}
 
@@ -2437,9 +2437,9 @@ Mods: {
 			PerditusProjectile.DisplayName: 失落长汐
 			PunctusProjectile.DisplayName: 焱
 			PunctusRock.DisplayName: 焱石
-			// BrimstoneBarrageOld.DisplayName: Brimstone Dart
-			// SupremeCataclysmFistOld.DisplayName: Fist of Fury
-			// VortexFireball.DisplayName: Vortex Fireball
+			BrimstoneBarrageOld.DisplayName: 硫火飞弹
+			SupremeCataclysmFistOld.DisplayName: 硫火碎魂拳
+			VortexFireball.DisplayName: 漩涡火球
 		}
 
 		Status: {

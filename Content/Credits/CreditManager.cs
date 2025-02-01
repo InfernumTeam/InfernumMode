@@ -81,7 +81,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Musicians = "Pinpin";
 
-        public const string Programmers = "Dominic\nImogen\nNycro";
+        public const string Programmers = "Lucille\nImogen\nNycro";
 
         public const string Testers1 = "Blast\nBronze\nCataclysmic\nEin\nGamerXD";
 
@@ -122,7 +122,7 @@ namespace InfernumMode.Content.Credits
         public static void BeginCredits()
         {
             // Return if the credits are already playing, or have completed for this player.
-            if (CreditsPlaying /*|| Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed")*/)
+            if (CreditsPlaying || Main.LocalPlayer.Infernum().GetValue<bool>("CreditsHavePlayed"))
                 return;
 
             // Else, mark them as playing.

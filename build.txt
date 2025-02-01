@@ -7,4 +7,3 @@ hideResources = false
 includeSource = true
 homepage = https://discord.gg/S9duFWAnzD
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
-dllReferences = Gif

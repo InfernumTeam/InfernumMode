@@ -2555,10 +2555,27 @@ Mods: {
 				Godmode: Toggle cybernetic immortality
 				NoClip: Toggle physics defiance flying
 				TimeSetMorning: Accelerate time until sunrise
-				TimeSetNoon: Accelerate time until noon"
+				TimeSetNoon: Accelerate time until noon
 				TimeSetDusk: Accelerate time until sunset
 				Butcher: Atomize every single hostile NPC
 			}
+		}
+
+		CreditsHeaders: {
+			ProgramHeader: Programmers
+			MusicHeader: Musician
+			ArtHeader: Artists
+			TestHeader: Testers
+			TranslateHeader: Translators
+			SupportHeader: Supporters
+		}
+
+		WorldGen: {
+			BlossomGarden: Growing a garden
+			EggShrine: Hiding eggs
+			TabletPedestal: Placing a tablet
+			LostColosseum: Generating a Lost Colosseum
+			ProfanedGarden: Constructing a temple for an ancient goddess
 		}
 	}
 }

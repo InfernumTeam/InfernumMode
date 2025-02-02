@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 using static CalamityMod.Schematics.SchematicManager;
 
@@ -15,7 +16,7 @@ namespace InfernumMode.Content.WorldGeneration
     {
         public static void Generate(GenerationProgress progress, GameConfiguration _2)
         {
-            progress.Message = "Growing a garden...";
+            progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.BlossomGarden");
 
             var schematic = TileMaps["BlossomGarden"];
             var schematicAnchor = SchematicAnchor.Center;

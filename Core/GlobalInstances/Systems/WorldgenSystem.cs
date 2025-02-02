@@ -13,11 +13,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             int finalCleanupIndex = tasks.FindIndex(g => g.Name == "Final Cleanup");
             if (finalCleanupIndex != -1)
             {
-                tasks.Insert(++finalCleanupIndex, new PassLegacy("Prov Arena", (progress, config) =>
-                {
-                    progress.Message = "Constructing a temple for an ancient goddess";
-                    ProfanedGarden.Generate(progress, config);
-                }));
+                tasks.Insert(++finalCleanupIndex, new PassLegacy("Prov Arena", ProfanedGarden.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Desert Digout Area", LostColosseumEntrance.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Hiding eggs", EggShrineGeneration.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Placing tablet", TabletPedestalGeneration.Generate));

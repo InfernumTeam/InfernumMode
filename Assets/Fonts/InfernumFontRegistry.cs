@@ -38,6 +38,7 @@ namespace InfernumMode.Assets.Fonts
                 GameCulture.CultureName.Portuguese, GameCulture.CultureName.Polish);
 
             ProfanedTextFont = new LocalizedSpriteFont(ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedText", AssetRequestMode.ImmediateLoad).Value)
+                .WithLanguage(GameCulture.CultureName.Russian, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedTextRussian", AssetRequestMode.ImmediateLoad).Value)
                 .WithLanguage(GameCulture.CultureName.Chinese, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedTextChinese", AssetRequestMode.ImmediateLoad).Value);
         }
 

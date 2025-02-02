@@ -2555,5 +2555,22 @@ Mods: {
 				Butcher: 湮灭敌对NPC
 			}
 		}
+
+		CreditsHeaders: {
+			// ProgramHeader: Programmers
+			// MusicHeader: Musician
+			// ArtHeader: Artists
+			// TestHeader: Testers
+			// TranslateHeader: Translators
+			// SupportHeader: Supporters
+		}
+
+		WorldGen: {
+			// BlossomGarden: Growing a garden
+			// EggShrine: Hiding eggs
+			// TabletPedestal: Placing a tablet
+			// LostColosseum: Generating a Lost Colosseum
+			// ProfanedGarden: Constructing a temple for an ancient goddess
+		}
 	}
 }

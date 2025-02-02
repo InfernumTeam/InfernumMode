@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.DataStructures;
@@ -20,6 +20,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
@@ -36,7 +37,7 @@ namespace InfernumMode.Content.Subworlds
 
             protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
             {
-                progress.Message = "Generating a Lost Colosseum";
+                progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.TabletPedestal");
                 Main.worldSurface = Main.maxTilesY - 25;
                 Main.rockLayer = Main.maxTilesY - 30;
 

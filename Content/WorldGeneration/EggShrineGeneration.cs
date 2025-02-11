@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 
@@ -11,7 +12,7 @@ namespace InfernumMode.Content.WorldGeneration
     {
         public static void Generate(GenerationProgress progress, GameConfiguration _2)
         {
-            progress.Message = "Hiding eggs...";
+            progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.EggShrine");
 
             // Generate eight shrines near the horizontal center of the world.
             int tries = 0;

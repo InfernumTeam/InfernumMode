@@ -5,15 +5,19 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 using static CalamityMod.Schematics.SchematicManager;
+using static tModPorter.ProgressUpdate;
 
 namespace InfernumMode.Content.WorldGeneration
 {
     public static class ProfanedGarden
     {
-        public static void Generate(GenerationProgress _, GameConfiguration _2)
+        public static void Generate(GenerationProgress progress, GameConfiguration _2)
         {
+            progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.ProfanedGarden");
+
             bool _3 = false;
             Point bottomRightOfWorld = new(Main.maxTilesX - 42, Main.maxTilesY - 42);
             PlaceSchematic<Action<Chest>>("Profaned Arena", bottomRightOfWorld, SchematicAnchor.BottomRight, ref _3);

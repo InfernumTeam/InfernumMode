@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -41,7 +42,15 @@ namespace InfernumMode.Content.Credits
 
         private static readonly string[] Names = [Programmers, Musicians, Artists, Testers1, Testers2, Testers3, Testers4, Translators, Supporters];
 
-        private static readonly string[] Headers = ["Programmers", "Musician", "Artists", "Testers", "Testers", "Testers", "Testers", "Translators", "Supporters"];
+        private static string[] Headers => [Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.ProgramHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.MusicHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.ArtHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.TestHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.TestHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.TestHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.TestHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.TranslateHeader"),
+            Language.GetTextValue("Mods.InfernumMode.CreditsHeaders.SupportHeader")];
 
         private static readonly Color[] HeaderColors =
         [
@@ -81,7 +90,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Musicians = "Pinpin";
 
-        public const string Programmers = "Lucille\nImogen\nNycro";
+        public const string Programmers = "Lucille\nImogen\nNycro\nJavyz";
 
         public const string Testers1 = "Blast\nBronze\nCataclysmic\nEin\nGamerXD";
 
@@ -91,7 +100,7 @@ namespace InfernumMode.Content.Credits
 
         public const string Testers4 = "PurpleMattik\nSmh\nShade\nShadine\nTeiull";
 
-        public const string Translators = "Dimension Translate Group\nIndeperevod";
+        public const string Translators = "Dimension Translate Group\nIndeperevod Team";
 
         public const string Supporters = "Borb9834\nOptrix\n-Runaway-\nyoshi\nThat1Blade\nConnor";
 

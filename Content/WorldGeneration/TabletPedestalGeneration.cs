@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace InfernumMode.Content.WorldGeneration
@@ -12,7 +13,7 @@ namespace InfernumMode.Content.WorldGeneration
     {
         public static void Generate(GenerationProgress progress, GameConfiguration _2)
         {
-            progress.Message = "Placing a tablet...";
+            progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.TabletPedestal");
 
             for (int tries = 0; tries < 2500; tries++)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using CalamityMod;
+using CalamityMod.Items.Tools.ClimateChange;
 using CalamityMod.NPCs.Abyss;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;

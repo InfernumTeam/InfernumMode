@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                     CalamityMod.CalamityMod.StopRain();
                 else if (!Main.raining || Main.maxRaining < 0.7f)
                 {
-                    CalamityUtils.StartRain(false, true);
+                    Utilities.StartRain(false, true);
                     Main.cloudBGActive = 1f;
                     Main.numCloudsTemp = 160;
                     Main.numClouds = Main.numCloudsTemp;

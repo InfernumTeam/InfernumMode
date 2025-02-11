@@ -207,7 +207,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 hitEffectCooldown--;
 
             // Make a blizzard happen.
-            CalamityUtils.StartRain();
+            Utilities.StartRain();
 
             // Slowly going insane.
             if (target.HasBuff(BuffID.Slow))

@@ -1188,7 +1188,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             // Create very strong rain.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                CalamityUtils.StartRain(true, true);
+                Utilities.StartRain(true, true);
                 Main.cloudBGActive = 1f;
                 Main.numCloudsTemp = 150;
                 Main.numClouds = Main.numCloudsTemp;

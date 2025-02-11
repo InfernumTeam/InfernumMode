@@ -266,7 +266,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && !BossRushEvent.BossRushActive)
                 {
-                    CalamityUtils.StartRain(true);
+                    Utilities.StartRain(true);
                     Main.cloudBGActive = 1f;
                     Main.numCloudsTemp = 160;
                     Main.numClouds = Main.numCloudsTemp;

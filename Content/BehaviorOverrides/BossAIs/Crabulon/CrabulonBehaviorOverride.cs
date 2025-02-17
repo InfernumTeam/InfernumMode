@@ -97,7 +97,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             npc.scale = 1f;
             npc.Opacity = 1f;
             npc.defense = 8;
-            npc.DR_NERD(0.2f);
+            npc.DR_NERD(0.1f);
         }
 
         public override bool PreAI(NPC npc)

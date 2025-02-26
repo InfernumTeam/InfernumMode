@@ -311,8 +311,8 @@ Mods: {
 				}
 
 				CameraAnimations: {
-					// Label: Camera Animations
-					// Tooltip: ""
+					// Label: Ceaseless Void Camera
+					// Tooltip: Determines whether Ceaseless Void changes the behavior of the camera during the fight.
 				}
 			}
 		}

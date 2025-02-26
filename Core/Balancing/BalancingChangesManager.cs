@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
+using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
@@ -19,6 +22,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace InfernumMode.Core.Balancing
@@ -52,6 +56,9 @@ namespace InfernumMode.Core.Balancing
             [
                 // King Slime.
                 new NPCBalancingChange(NPCID.KingSlime, new PierceResistBalancingRule(0.67f)),
+
+                // Negate the Crabulon true melee resistance from base Calamity
+                new NPCBalancingChange(NPCType<Crabulon>(), new TrueMeleeBalancingRule(2f)),
 
                 // Eater of Worlds.
                 new NPCBalancingChange(NPCID.EaterofWorldsBody, Do(eowIsSplitRequirement, new PierceResistBalancingRule(0.55f))),

@@ -309,6 +309,11 @@ Mods: {
 					Label: Boss记录回放
 					Tooltip: 启用Boss记录以便在制作人名单期间播放
 				}
+
+				CameraAnimations: {
+					// Label: Camera Animations
+					// Tooltip: ""
+				}
 			}
 		}
 

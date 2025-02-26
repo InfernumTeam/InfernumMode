@@ -15,6 +15,7 @@ using InfernumMode.Assets.Sounds;
 using InfernumMode.Common.Graphics.Particles;
 using InfernumMode.Common.Graphics.ScreenEffects;
 using InfernumMode.Content.Projectiles.Pets;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Luminance.Core.Graphics;
@@ -239,7 +240,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Lock the camera onto the Ceaseless Void because it's very egotistical and cannot bear the thought of not being the center of attention.
-            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp && !phase3)
+            if (Main.LocalPlayer.WithinRange(npc.Center, 2200f) && attackType != (int)CeaselessVoidAttackType.ChainedUp && !phase3 && InfernumConfig.Instance.CameraAnimations)
             {
                 float lookAtTargetInterpolant = Utils.GetLerpValue(420f, 2700f, ((target.Center - npc.Center) * new Vector2(1f, 1.8f)).Length(), true);
                 Main.LocalPlayer.Infernum_Camera().ScreenFocusInterpolant = 1f;

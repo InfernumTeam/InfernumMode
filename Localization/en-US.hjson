@@ -309,6 +309,11 @@ Mods: {
 					Label: Boss Footage Credits Recording
 					Tooltip: Enables boss footage recordings for the playback during the credits.
 				}
+
+				CameraAnimations: {
+					Label: Ceaseless Void Camera
+					Tooltip: "Determines whether Ceaseless Void changes the behavior of the camera during the fight."
+				}
 			}
 		}
 

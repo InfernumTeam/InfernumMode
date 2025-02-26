@@ -309,6 +309,11 @@ Mods: {
 					Label: Запись видео битвы с боссом для титров
 					Tooltip: Включает записи битв с боссами для проигрывания во время титров.
 				}
+
+				CameraAnimations: {
+					// Label: Camera Animations
+					// Tooltip: ""
+				}
 			}
 		}
 

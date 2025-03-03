@@ -161,7 +161,7 @@ namespace InfernumMode.Core.Balancing
             yield return CreateBaseChangeModded(ModContent.NPCType<Cataclysm>(), 20600);
             yield return CreateBaseChangeModded(ModContent.NPCType<Catastrophe>(), 13000);
             yield return CreateBaseChangeModded(ModContent.NPCType<SoulSeeker>(), 2100);
-            yield return CreateBaseChangeVanilla(NPCID.Plantera, 110500);
+            yield return CreateBaseChangeVanilla(NPCID.Plantera, 160225);
             yield return CreateBaseChangeModded(ModContent.NPCType<Leviathan>(), 102097);
             yield return CreateBaseChangeModded(ModContent.NPCType<AquaticAberration>(), 900);
             yield return CreateBaseChangeModded(ModContent.NPCType<Anahita>(), 71000);

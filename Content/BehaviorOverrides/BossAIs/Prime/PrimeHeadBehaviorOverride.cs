@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Prime
 
         public const int ShudderAmountIndex = 8;
 
-        public const int BaseCollectiveCannonHP = 22000;
+        public const int BaseCollectiveCannonHP = 30800;
 
         public const int BaseCollectiveCannonHPBossRush = 346000;
 

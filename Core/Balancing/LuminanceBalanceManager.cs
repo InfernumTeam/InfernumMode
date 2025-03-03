@@ -130,9 +130,9 @@ namespace InfernumMode.Core.Balancing
             yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP1Point4((int)(29950 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
             yield return new NPCHPBalancingChange(NPCID.Retinazer, AccountForExpertHP1Point4(29950), InfernumModeBasePriority, InfernumFinalMechCondition);
 
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4((int)(28000 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4((int)(28000 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
-            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4(28000), InfernumModeBasePriority, InfernumFinalMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4((int)(39200 * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4((int)(39200 * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);
+            yield return new NPCHPBalancingChange(NPCID.SkeletronPrime, AccountForExpertHP1Point4(39200), InfernumModeBasePriority, InfernumFinalMechCondition);
 
             yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.8f)), InfernumModeBasePriority, InfernumFirstMechCondition);
             yield return new NPCHPBalancingChange(NPCID.PrimeVice, AccountForExpertHP1Point4((int)(PrimeHeadBehaviorOverride.BaseCollectiveCannonHP * 0.9f)), InfernumModeBasePriority, InfernumSecondMechCondition);

@@ -607,9 +607,11 @@ namespace InfernumMode.Core.ILEditingStuff
             }
         }
 
+        public static readonly Vector3 cleanColor = new(10, 109, 193);
         private void MakeSulphSeaWaterBrighter(Terraria.Graphics.Light.On_TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
         {
             orig(self, x, y, out outputColor);
+
 
             Tile tile = Framing.GetTileSafely(x, y);
             if (tile.LiquidAmount <= 0 || tile.HasTile || Main.waterStyle != SulphurWaterIndex)
@@ -621,11 +623,11 @@ namespace InfernumMode.Core.ILEditingStuff
 
                 if (SulphuricWaterSafeZoneSystem.NearbySafeTiles.Count >= 1)
                 {
-                    Color cleanWaterColor = new(10, 109, 193);
-                    Point closestSafeZone = SulphuricWaterSafeZoneSystem.NearbySafeTiles.Keys.OrderBy(t => t.ToVector2().DistanceSQ(new(x, y))).First();
-                    float distanceToClosest = new Vector2(x, y).Distance(closestSafeZone.ToVector2());
+                    Vector2 pos = new(x, y);
+                    Point closestSafeZone = SulphuricWaterSafeZoneSystem.NearbySafeTiles.Keys.OrderBy(t => t.ToVector2().DistanceSQ(pos)).First();
+                    float distanceToClosest = pos.Distance(closestSafeZone.ToVector2());
                     float acidicWaterInterpolant = Utils.GetLerpValue(12f, 20.5f, distanceToClosest + (1f - SulphuricWaterSafeZoneSystem.NearbySafeTiles[closestSafeZone]) * 21f, true);
-                    idealColor = Vector3.Lerp(idealColor, cleanWaterColor.ToVector3(), 1f - acidicWaterInterpolant);
+                    idealColor = Vector3.Lerp(idealColor, cleanColor, 1f - acidicWaterInterpolant);
                 }
 
                 outputColor = Vector3.Lerp(outputColor, idealColor, 0.8f);

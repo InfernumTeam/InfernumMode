@@ -458,7 +458,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EoW
 
         public static void SelectNextAttack(NPC npc)
         {
+            
             float splitCounter = npc.ai[2];
+
+            // Despawn if incorrect amount of heads are alive
+            int heads = NPC.CountNPCS(NPCID.EaterofWorldsHead);
+            if ((splitCounter >= 2f && heads < 4) || (splitCounter < 2f && splitCounter >= 1f && heads < 2))
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].realLife == npc.whoAmI || i == npc.whoAmI)
+                    {
+                        Main.npc[i].active = false;
+                    }
+                }
+                return;
+            }
+
             EoWAttackState oldAttackState = (EoWAttackState)(int)npc.ai[0];
 
             List<EoWAttackState> possibleAttacks =

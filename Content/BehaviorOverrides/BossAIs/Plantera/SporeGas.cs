@@ -44,6 +44,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
         public override void AI()
         {
             Time++;
+            if (Time < 1800f && !NPC.AnyNPCs(NPCID.Plantera))
+                Time = 1800f;
 
             Projectile.Opacity = Utils.GetLerpValue(0f, 120f, Time, true) * (1f - Projectile.localAI[0] / 255f);
             if (Time > 1800f)

@@ -896,7 +896,7 @@ Mods: {
 			}
 
 			ProvidenceSpawnerItem: {
-				DisplayName: 亵渎祭坛 (DEBUG)
+				DisplayName: 亵渎祭坛(DEBUG)
 				Tooltip: 用亵渎晶核在其上右键以召唤亵渎天神
 			}
 
@@ -1491,7 +1491,7 @@ Mods: {
 			}
 
 			ProfanedGardenLocationSetter: {
-				DisplayName: 亵渎花园位置设置器 (DEBUG)
+				DisplayName: 亵渎花园位置设置器(DEBUG)
 				Tooltip:
 					'''
 					用它来修复亵渎花园功能异常的问题。
@@ -1507,7 +1507,7 @@ Mods: {
 			}
 
 			ForbiddenArchivesLocationSetter: {
-				DisplayName: 废弃档案室位置设置器 (DEBUG)
+				DisplayName: 废弃档案室位置设置器(DEBUG)
 				Tooltip:
 					'''
 					如果你的档案室被深渊摧毁了的话，请使用这个

@@ -29,7 +29,7 @@ Mods: {
 			}
 
 			InfernalChaliceAchievement: {
-				DisplayName: Крещёние адским огнём
+				DisplayName: Крещение адским огнём
 				Description:
 					'''
 					Преодолейте последнее испытание и получите заслуженную награду
@@ -51,7 +51,7 @@ Mods: {
 				Description:
 					'''
 					Изничтожьте различные мелкие угрозы по всему миру!
-					[c/777777:Одолейте всех минибоссов в режиме Инфернум]
+					[c/777777:Одолейте всех мини-боссов в режиме Инфернум]
 					'''
 			}
 
@@ -484,7 +484,7 @@ Mods: {
 				'''
 			EmpressOfLightIntroScreen.TextToDisplay:
 				'''
-				Призматичная Фея
+				Призматическая Фея
 				Императрица Света
 				'''
 			EyeOfCthulhuIntroScreen.TextToDisplay:
@@ -734,7 +734,7 @@ Mods: {
 				DisplayName: Цветок океана
 				Tooltip:
 					'''
-					Звание архитектора океана успокаивает ночное небо, благославляя его изяществом морей
+					Звание архитектора океана успокаивает ночное небо, благословляя его изяществом морей
 					Защищает против опасных ночных событий, даже в слотах для украшений, 
 					и предоставляет значительно увеличенную видимость под водой
 					'''
@@ -800,7 +800,7 @@ Mods: {
 			}
 
 			HyperplaneMatrix: {
-				DisplayName: Матрица Гиперплоскости
+				DisplayName: Матрица гиперплоскости
 				Tooltip:
 					'''
 					Невычисляемо сложный аппарат, содержащий бесконечную силу
@@ -819,7 +819,7 @@ Mods: {
 				DisplayName: Обездоленный вассал и Великая песчаная акула
 				Tooltip:
 					'''
-					[c/e3af40:До Ваших ушей доносится далёкий шёпот...]
+					[c/e3af40:До ваших ушей доносится далёкий шёпот...]
 					[c/bebebe:Удерживайте "Левый Shift" чтобы прислушаться]
 					'''
 			}
@@ -861,7 +861,7 @@ Mods: {
 				DisplayName: Камень души восходящего воина
 				Tooltip:
 					'''
-					Призывает звёздное дитя волка которое... 'помогает' тебе?
+					Призывает звёздное дитя волка, которое... 'помогает' тебе?
 					Табличка резонирует с сильным наследием
 					'''
 			}
@@ -902,7 +902,7 @@ Mods: {
 			}
 
 			ProvidenceSpawnerItem: {
-				DisplayName: Святыня Провиденс: Предмет отладки
+				DisplayName: Святыня Провиденс (DEBUG)
 				Tooltip: Призывает Провиденс при нажатии ПКМ с осквернённым ядром
 			}
 
@@ -1041,7 +1041,7 @@ Mods: {
 				PersonalMessage:
 					'''
 					Второстепенные враги иногда могут быть самыми грозными.
-					Но также, они могут преподнести величественные награды.
+					Но они также могут преподнести величественные награды.
 					'''
 			}
 
@@ -1355,7 +1355,7 @@ Mods: {
 				Tooltip:
 					'''
 					Телепортирует вас в затерянный колизей и обратно
-					Этот предмет не может быть использован из инвентаря и будет работать только из хотбара
+					Этот предмет не может быть использован из инвентаря и будет работать только из панели быстрого доступа
 					'''
 			}
 
@@ -1474,7 +1474,7 @@ Mods: {
 							'''
 							Размашисто бросает морские ракушки, которые самонаводятся во врагом перед тем,
 							как отскочить от них и остаться лежать на земле
-							Скрытные удары заставляют все залежавшие ракушки взрываться в водяные гейзеры,
+							Скрытные удары заставляют все лежащие на земле ракушки взрываться в водяные гейзеры,
 							нацеливающиеся на врагов поблизости
 							Открытая часть слишком острая, чтобы подложить её к уху
 							'''
@@ -1505,7 +1505,7 @@ Mods: {
 			}
 
 			ProfanedGardenLocationSetter: {
-				DisplayName: Установщик локации осквернённого сада
+				DisplayName: Установщик локации осквернённого сада (DEBUG)
 				Tooltip:
 					'''
 					Используйте, если осквернённый сад работает неисправно
@@ -1521,7 +1521,7 @@ Mods: {
 			}
 
 			ForbiddenArchivesLocationSetter: {
-				DisplayName: Установщик локации запретных архивов
+				DisplayName: Установщик локации запретных архивов (DEBUG)
 				Tooltip:
 					'''
 					Используйте, если архивы в вашем мире были разрушены Бездной
@@ -1660,7 +1660,7 @@ Mods: {
 			AsterPet1: Ну эй...
 			AsterPet2: ЧТУФ?
 			AsterPet3: Воздействия!
-			AsterPet4: Подожди, не останавливайя...
+			AsterPet4: Подожди, не останавливайся...
 			AEWJokeTip1: В чём вообще смысл этого тупого камня?!
 			AquaticScourgeTip1: Посмотри на то, как бешено плавает этот змей; вода вокруг разгоняется настолько, что можно плавать просто с помощью рук!
 			AquaticScourgeTip2: Если тебе нужно больше места, попробуй расчистить сернистый песок вокруг!
@@ -1684,7 +1684,7 @@ Mods: {
 			CalShadowFinalPhaseTip: Она жмёт на все рычаги... но теперь её проклятия бессильны! Теперь она твоя единственная цель!
 			CalShadowJokeTip1: Я б сам разозлился, но только посмотри на неё! ну что за прелесть.
 			CVTip1: Постарайся много не двигаться в начале битвы. Найди себе укромное место и старайся держаться возле него!
-			CVTip2: Многие атаки Войда требуют быстой манёвренности для уклонения. Внимательно наблюдай за каждым выстрелом на экране!
+			CVTip2: Многие атаки Войда требуют быстрой манёвренности для уклонения. Внимательно наблюдай за каждым выстрелом на экране!
 			CVPortalTip: Эти порталы не к добру! Быстро, встань ближе к Войду!
 			CVEnergyBurstTip: Он выпускает так много энергии! Попробуй встать к краю и двигаться вверх и вниз чтоб пройти между ними!
 			CVEnergyBurstTip2: Похоже, эти сгустки движутся в спирали! Крутись вместе с ними!
@@ -1739,7 +1739,7 @@ Mods: {
 			DreadnautilusTip1: Эти мыши преследуют тебя скрупулёзно, но ловкости у них маловато. Попробуй обвести их!
 			DreadnautilusJokeTip1: Смотря на то, как часто ты сейчас умираешь, у меня будто гроза над головой начинается...
 			DreadnautilusJokeTip2: Похоже, что ты опять проиграл, но не скручивайся в раковину! однажды ты победишь этот ужас!
-			DukeFishronRazorbladeTip: Постарайся вплестить через эти лезвия и готовься к большему!
+			DukeFishronRazorbladeTip: Постарайся вплестись через эти лезвия и готовься к большему!
 			DukeFishronTidalWaveTip: Наблюдай за тем, где останавливается его долгий рывок! Тебя может смыть приливом!
 			EoLTip1: Многие атаки не требуют так много движения, так что придержи коней!
 			EoLMoonTip: Держись ближе! Ты сражаешься со светом луны, убежать не получится!
@@ -1784,7 +1784,7 @@ Mods: {
 			OldDukeDashTip2: Аксессуар с дэшем тут оооооочень бы помог...
 			PBGDroneJailTip: Эти дроны строят вокруг тебя камеру, разрушь хотя бы одну чтобы создать проход!
 			PBGDroneBuildTip: Уничтожь эти строительные дроны, пока джунгли не сделали бум!
-			PerforatorsTip1: Улей плеётся тоннами лежачего ихора, старайся не остаться без места!
+			PerforatorsTip1: Улей плюётся тоннами лежачего ихора, старайся не остаться без места!
 			PerforatorsWorm1Tip: Снаряды маленького перфоратора хорошо разгоняются пока падают, будь готов к сюрпризам!
 			PerforatorsWorm2Tip: Этот перфоратор не такой враждебный как остальные, Может, дашь ему закрутиться вокруг себя?
 			PerforatorsProjectilesTip: Если будешь спокойным и неподвижным, то уворачиваться от медленных снарядов будет проще!
@@ -1816,12 +1816,12 @@ Mods: {
 			QueenBeeTip2: Избавляйся от этих шершней, эта цель должна быть у тебя в приоритете!
 			QueenBeeTip3: Знаешь, этот яд довольно отвратный; может, стоит найти безоар?
 			QueenBeeJokeTip1: Ты трудился как пчела, но всё равно умер! Досадно!
-			QueenBeeJokeTip2: Уф, не укололся?...
+			QueenBeeJokeTip2: Уф, не укололся?..
 			QueenSlimeTip1: Если чувствуешь, что не можешь бежать, то не беги! Это определённо поможет
 			QueenSlimeBladeBeamTip: А ЭТО ещё что?! Уходи от этого подальше! Я не хочу быть испелелённым!
-			QueenSlimeCrystalTip: Эти кристаллы распологаются на равном расстоянии... ты можешь уворачиваться от них одинаково каждый раз!
+			QueenSlimeCrystalTip: Эти кристаллы располагаются на равном расстоянии... ты можешь уворачиваться от них одинаково каждый раз!
 			RavagerTip1: Некоторые атаки разрушителя награждают, если быть близко. Попытайся не убегать!
-			RavagerTip2: Следи за этими сгустками-пятнами, тебе навряд ли сильно хочется играть в "пол это лава"!
+			RavagerTip2: Следи за этими сгустками-пятнами, тебе навряд ли сильно хочется играть в "пол – это лава"!
 			SignusTip1: Уделяй пристальное внимание затмениям – Сигнус может дать более заметный сигнал, чем ты думаешь!
 			SignusShadowSlashTip: Смотри, он может попробовать обмануть тебя под конец!
 			SignusBombTip: Эти бомбы взорвутся в кунаи, которые полетят в тебя. Осторожно!
@@ -2016,7 +2016,7 @@ Mods: {
 			DoGSpawnBoom.DisplayName: Взрыв
 			RealityBreakPortalLaserWall.DisplayName: Портал
 			RoDFailPulse.DisplayName: Взрыв
-			AresBeamExplosion.DisplayName: Взрыв экзовспышки
+			AresBeamExplosion.DisplayName: Взрыв экзо-вспышки
 			AresBeamTelegraph.DisplayName: Луч Гамма Распада Телеграф
 			AresCannonLaser.DisplayName: Лазер экзо пламени
 			AresDeathBeamTelegraph.DisplayName: Телеграф экзо перегрузки
@@ -2027,20 +2027,20 @@ Mods: {
 			AresLaughBoom.DisplayName: Взрыв
 			AresPlasmaFireball.DisplayName: Взрывоопасный плазменный выстрел
 			AresPrecisionBlast.DisplayName: Точный выстрел
-			AresPulseBlast.DisplayName: Выплеск энергии экзоимпульса
+			AresPulseBlast.DisplayName: Выплеск энергии экзо-импульса
 			AresPulseDeathray.DisplayName: Импульсный луч смерти
 			AresSpinningDeathBeam.DisplayName: Луч экзо перегрузки
 			AresSpinningRedDeathray.DisplayName: Смертельный луч экзотермального распада
 			AresTeslaGasField.DisplayName: Электрическое облако
 			AresTeslaOrb.DisplayName: Тесла сфера
 			AresTeslaSpark.DisplayName: Тесла искра
-			ExoburstSpark.DisplayName: Искра экзовспышки
+			ExoburstSpark.DisplayName: Искра экзо-вспышки
 			HotMetal.DisplayName: Перегретый металл
 			PlasmaGas.DisplayName: Плазма
 			SmallPlasmaSpark.DisplayName: Плазменная искра
 			ApolloAcceleratingPlasmaSpark.DisplayName: Плазменная искра
 			ApolloFallingPlasmaSpark.DisplayName: Плазменная искра
-			ApolloFlamethrower.DisplayName: Огнемёт экзоплазмы
+			ApolloFlamethrower.DisplayName: Огнемёт экзо-плазмы
 			ApolloPlasmaFireball.DisplayName: Взрывоопасный плазменный выстрел
 			ApolloRocketInfernum.DisplayName: Фугасная плазменная взрывчатка
 			ArtemisBasicShotLaser.DisplayName: Лазер экзо пламени
@@ -2050,19 +2050,19 @@ Mods: {
 			ArtemisLaserbeamTelegraph.DisplayName: Луч Лазера Телеграф
 			ArtemisSpinLaser.DisplayName: Луч Огайо
 			ArtemisSweepLaserbeam.DisplayName: Луч Огайо
-			ExoplasmaBomb.DisplayName: Бомба экзоплазмы
-			ExoplasmaExplosion.DisplayName: Взрыв экзоплазмы
+			ExoplasmaBomb.DisplayName: Бомба экзо-плазмы
+			ExoplasmaExplosion.DisplayName: Взрыв экзо-плазмы
 			PlasmaChargeTelegraph.DisplayName: Заряд Телеграф
 			SuperheatedExofireGas.DisplayName: Перегретый огонь
 			ThermonuclearDeathOrb.DisplayName: Термоядерная сфера смерти
 			DetatchedThanatosLaser.DisplayName: Лазер экзо пламени
-			ExolaserBomb.DisplayName: Бомба экзолазера
-			ExolaserSpark.DisplayName: Искра экзолазера
+			ExolaserBomb.DisplayName: Экзо-лазерная бомба
+			ExolaserSpark.DisplayName: Экзо-лазерная искра
 			LightOverloadRay.DisplayName: Луч призматической перегрузки
 			LightRayTelegraph.DisplayName: Призматический Свет
 			OverloadBoom.DisplayName: Взрыв
 			RefractionRotor.DisplayName: Преломляющий винт
-			ThanatosAresComboLaser.DisplayName: Лазер экзо пламени
+			ThanatosAresComboLaser.DisplayName: Лазер экзо-пламени
 			BigFollyFeather.DisplayName: Перо
 			BirbThunderAuraFlare.DisplayName: Вспышка драконьей ауры
 			ExplodingEnergyOrb.DisplayName: Шар плазмы
@@ -2167,7 +2167,7 @@ Mods: {
 			TrueEyeChargeTelegraph.DisplayName: Заряд Телеграф
 			VoidBlackHole.DisplayName: Пустота
 			HomingAcid.DisplayName: Кислота
-			OldDukeTooth.DisplayName: Гнилой Зуб
+			OldDukeTooth.DisplayName: Гнилой зуб
 			SharkSummonVortex.DisplayName: Сернистый вихрь
 			SulphuricBlob.DisplayName: Сгусток серы
 			BloodGlob.DisplayName: Кровяная капля
@@ -2175,19 +2175,19 @@ Mods: {
 			FallingIchor.DisplayName: Ихор
 			FallingIchorBlast.DisplayName: Сгусток ихора
 			FlyingIchor.DisplayName: Ихор
-			IchorBlast.DisplayName: Ихорный Выстрел
-			IchorBolt.DisplayName: Ихорный Плевок
+			IchorBlast.DisplayName: Ихорный выстрел
+			IchorBolt.DisplayName: Ихорный плевок
 			PerforatorWave.DisplayName: Взрыв
-			ToothBall.DisplayName: Шар Зубов
+			ToothBall.DisplayName: Шар зубов
 			BombingTelegraph.DisplayName: Телеграф
 			HostilePlagueSeeker.DisplayName: Чумной искатель
 			LargePlagueExplosion.DisplayName: Взрыв
-			PlagueCloud.DisplayName: Облако Чумы
-			PlagueDeathray.DisplayName: Чумной Луч
+			PlagueCloud.DisplayName: Облако чумы
+			PlagueDeathray.DisplayName: Чумной луч
 			PlagueMissile.DisplayName: Ракета
 			PlagueMissile2.DisplayName: Ракета
 			PlagueNuclearExplosion.DisplayName: Взрыв
-			PlagueVomit.DisplayName: Чумная Рвота
+			PlagueVomit.DisplayName: Чумная рвота
 			PlagueWave.DisplayName: Взрыв
 			RedirectingPlagueMissile.DisplayName: Ракета
 			BouncingPetal.DisplayName: Лепесток
@@ -2320,7 +2320,7 @@ Mods: {
 			CondemnationProj.DisplayName: Приговор
 			CalamitasCutsceneProj.DisplayName: Каламитас
 			DemonicBomb.DisplayName: Демоническая бомба
-			DemonicExplosion.DisplayName: Демоническый взрыв
+			DemonicExplosion.DisplayName: Демонический взрыв
 			DemonicTelegraphLine.DisplayName: Телеграф
 			FlameOverloadBeam.DisplayName: Луч переизбытка серного пламени
 			HeresyProjSCal.DisplayName: Ересь
@@ -2374,7 +2374,7 @@ Mods: {
 			VortexOfFlame.DisplayName: Вихрь пламени
 			VortexTelegraphBeam.DisplayName: Луч Пламени Телеграф
 			YharonBoom.DisplayName: Бум
-			YharonFlameExplosion.DisplayName: Гипертермальный взрыв
+			YharonFlameExplosion.DisplayName: Гипер-термальный взрыв
 			YharonFlamethrower.DisplayName: Дыхание драконьего пламени
 			YharonHeatFlashFireball.DisplayName: Огонь
 			YharonMajesticSparkle.DisplayName: Величественный блеск
@@ -2454,7 +2454,7 @@ Mods: {
 			MushBombInfernum.DisplayName: Грибная бомба Инфернум
 			DoGProviCutsceneInitialPortal.DisplayName: До Г Прови Катсцена Иниц Портал
 			DoGProviCutsceneProjectile.DisplayName: Снар До Г Прови Катсцена
-			ProviBurnPulseRing.DisplayName: Горящее пульсируещее кольцо
+			ProviBurnPulseRing.DisplayName: Горящее пульсирующее кольцо
 			PerditusProjectile.DisplayName: Потерянный
 			PunctusProjectile.DisplayName: Точный
 			PunctusRock.DisplayName: Камень Точного

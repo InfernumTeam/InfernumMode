@@ -10,6 +10,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.CeaselessVoid;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.NPCs.ProfanedGuardians;
@@ -535,6 +536,21 @@ namespace InfernumMode.Core.ILEditingStuff
         {
             if (armorItem.type == ModContent.ItemType<CherishedSealocket>())
                 ForcefieldShader = GameShaders.Armor.GetShaderFromItemId(dyeItem.type);
+        }
+    }
+
+    public sealed class LetAresHitPlayersHook : ICustomDetourProvider
+    {
+        void ICustomDetourProvider.ModifyMethods()
+        {
+            HookHelper.ModifyMethodWithDetour(AresBodyCanHitPlayer, AresBodyCanHitPlayer_Detour);
+        }
+        private static bool AresBodyCanHitPlayer_Detour(Orig_AresBodyCanHitPlayer orig, AresBody self, Player target, ref int cooldownSlot)
+        {
+            bool value = orig(self, target, ref cooldownSlot);
+            if (InfernumMode.CanUseCustomAIs)
+                return true;
+            return value;
         }
     }
 

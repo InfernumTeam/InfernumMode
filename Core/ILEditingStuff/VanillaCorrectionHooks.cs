@@ -852,20 +852,6 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class LetAresHitPlayersHook : ILEditProvider
-    {
-        public override void Subscribe(ManagedILEdit edit) => AresBodyCanHitPlayer += edit.SubscriptionWrapper;
-
-        public override void Unsubscribe(ManagedILEdit edit) => AresBodyCanHitPlayer -= edit.SubscriptionWrapper;
-
-        public override void PerformEdit(ILContext il, ManagedILEdit edit)
-        {
-            ILCursor cursor = new(il);
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Ret);
-        }
-    }
-
     public class AdjustAbyssDefinitionHook : ICustomDetourProvider
     {
         void ICustomDetourProvider.ModifyMethods()

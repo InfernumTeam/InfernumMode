@@ -127,12 +127,6 @@ namespace InfernumMode.Core.ILEditingStuff
             remove => HookHelper.ILEventRemove();
         }
 
-        public static event ILContext.Manipulator AresBodyCanHitPlayer
-        {
-            add => HookHelper.ModifyMethodWithIL(typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags), value);
-            remove => HookHelper.ILEventRemove();
-        }
-
         public static event ILContext.Manipulator YharonOnHitPlayer
         {
             add => HookHelper.ModifyMethodWithIL(typeof(Yharon).GetMethod("OnHitPlayer", Utilities.UniversalBindingFlags), value);
@@ -437,5 +431,9 @@ namespace InfernumMode.Core.ILEditingStuff
         internal static MethodInfo CalDisplayLocalizedText => typeof(CalamityUtils).GetMethod("DisplayLocalizedText", Utilities.UniversalBindingFlags);
 
         public delegate void Orig_CalDisplayLocalizedText(string key, Color? textColor = null);
+
+        internal static MethodInfo AresBodyCanHitPlayer => typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags);
+
+        public delegate bool Orig_AresBodyCanHitPlayer(AresBody self, Player target, ref int cooldownSlot);
     }
 }

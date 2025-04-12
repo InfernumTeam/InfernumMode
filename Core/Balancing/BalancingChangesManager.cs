@@ -119,7 +119,6 @@ namespace InfernumMode.Core.Balancing
                 new NPCBalancingChange(NPCType<AresTeslaCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresGaussNuke>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresPulseCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
-                new NPCBalancingChange(NPCType<AresBody>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new PierceResistBalancingRule(thanatosPierceResistFactor))),
                 new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new PierceResistBalancingRule(thanatosPierceResistFactor))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),

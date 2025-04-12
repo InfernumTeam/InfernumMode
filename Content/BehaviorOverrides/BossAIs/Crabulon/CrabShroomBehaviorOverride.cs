@@ -1,5 +1,8 @@
 ﻿using System;
+using CalamityMod.Events;
+using CalamityMod;
 using CalamityMod.NPCs.Crabulon;
+using CalamityMod.World;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.ModLoader;
@@ -17,6 +20,14 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Crabulon
             npc.height = 14;
             npc.scale = 1f;
             npc.Opacity = 1f;
+
+            // revert cal buff
+            npc.lifeMax = 15;
+            if (BossRushEvent.BossRushActive)
+                npc.lifeMax = 8000;
+
+            double HPBoost = CalamityConfig.Instance.BossHealthBoost * 0.01;
+            npc.lifeMax += (int)(npc.lifeMax * HPBoost);
         }
 
         public override bool PreAI(NPC npc)

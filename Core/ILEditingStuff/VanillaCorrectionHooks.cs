@@ -680,18 +680,22 @@ namespace InfernumMode.Core.ILEditingStuff
 
         public override void PerformEdit(ILContext il, ManagedILEdit edit)
         {
+            static int DashDelay() => InfernumMode.CanUseCustomAIs ? InfernumBalancingManager.DashDelay : BalancingConstants.UniversalDashCooldown;
             ILCursor c = new(il);
             c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalDashCooldown));
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
+            c.EmitDelegate(DashDelay);
+            //c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
 
             c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalShieldSlamCooldown));
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
+            c.EmitDelegate(DashDelay);
+            //c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
 
             c.GotoNext(MoveType.After, i => i.MatchLdcI4(BalancingConstants.UniversalShieldBonkCooldown));
             c.Emit(OpCodes.Pop);
-            c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
+            c.EmitDelegate(DashDelay);
+            //c.Emit(OpCodes.Ldc_I4, InfernumBalancingManager.DashDelay);
         }
     }
 

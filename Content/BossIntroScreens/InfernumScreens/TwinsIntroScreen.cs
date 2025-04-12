@@ -24,7 +24,7 @@ namespace InfernumMode.Content.BossIntroScreens.InfernumScreens
             shader.GraphicsDevice.Textures[1] = InfernumTextureRegistry.DiagonalGleam.Value;
         }
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.Retinazer) || NPC.AnyNPCs(NPCID.Spazmatism) && InfernumMode.CanUseCustomAIs;
+        public override bool ShouldBeActive() => (NPC.AnyNPCs(NPCID.Retinazer) || NPC.AnyNPCs(NPCID.Spazmatism)) && InfernumMode.CanUseCustomAIs;
 
         public override SoundStyle? SoundToPlayWithTextCreation => new SoundStyle("InfernumMode/Assets/Sounds/Custom/ExoMechs/ThanatosTransition");
 

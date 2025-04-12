@@ -1592,7 +1592,7 @@ Mods: {
 				DisplayName: 无邦封臣，阿尔戈斯
 
 				BossChecklistIntegration: {
-					SpawnInfo: 在沙漠中心的基座上使用[i:7119]。
+					SpawnInfo: 在沙漠中心的基座上使用[i:CalamityMod/SandstormsCore]。
 					EntryName: 无邦封臣
 				}
 			}

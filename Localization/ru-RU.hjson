@@ -1609,7 +1609,7 @@ Mods: {
 				DisplayName: Аргус, обездоленный вассал
 
 				BossChecklistIntegration: {
-					SpawnInfo: Используй [i:7119] на пьедестале в сердце пустыни.
+					SpawnInfo: Используй [i:CalamityMod/SandstormsCore] на пьедестале в сердце пустыни.
 					EntryName: Обездоленный вассал
 				}
 			}

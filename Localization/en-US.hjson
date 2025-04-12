@@ -1597,7 +1597,7 @@ Mods: {
 				DisplayName: Argus, the Bereft Vassal
 
 				BossChecklistIntegration: {
-					SpawnInfo: Use a [i:7119] at the pedestal in the heart of the desert.
+					SpawnInfo: Use a [i:CalamityMod/SandstormsCore] at the pedestal in the heart of the desert.
 					EntryName: Bereft Vassal
 				}
 			}

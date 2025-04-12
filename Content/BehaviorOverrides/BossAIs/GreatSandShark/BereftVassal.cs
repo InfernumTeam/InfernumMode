@@ -41,7 +41,7 @@ using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 {
     [AutoloadBossHead]
-    public class BereftVassal : ModNPC, IBossChecklistHandler
+    public class BereftVassal : ModNPC
     {
         public enum BereftVassalAttackType
         {
@@ -135,36 +135,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
 
         public const float Phase2LifeRatio = 0.6f;
 
-        // Boss Checklist things.
-        public string BossTitle => "Bereft Vassal";
-
-        // A little bit after Astrum Deus.
-        public float ProgressionValue => 17.75f;
-
-        public List<int> CollectibleItems =>
-        [
-            ModContent.ItemType<BereftVassalTrophy>(),
-            ModContent.ItemType<KnowledgeBereftVassal>(),
-            ModContent.ItemType<WaterglassToken>(),
-            ModContent.ItemType<ThankYouPainting>(),
-        ];
-
-        public int? SpawnItem => ModContent.ItemType<SandstormsCore>();
-
-        public string SpawnRequirement => $"Use a [i:{SpawnItem.Value}] at the pedestal in the heart of the desert.";
-
-        public string DespawnMessage => LumUtils.ColorMessage("Argus returns to quiet solitude at the center of the Colosseum.", new(28, 175, 189));
-
-        public bool AvailabilityCondition => NPC.downedAncientCultist;
-
-        public bool DefeatCondition => WorldSaveSystem.DownedBereftVassal;
-
-        public string HeadIconPath => "InfernumMode/Content/BehaviorOverrides/BossAIs/GreatSandShark/BereftVassal_Head_Boss";
-
-        public List<int> ExtraNPCIDs =>
-        [
-            ModContent.NPCType<GreatSandSharkNPC>()
-        ];
 
         public override void SetStaticDefaults()
         {

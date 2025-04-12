@@ -141,7 +141,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             var postSkeletron = npcLoot.DefineConditionalDropSet(DropHelper.PostSkele());
-            postSkeletron.Add(ModContent.ItemType<Lionfish>(), 10);
+            postSkeletron.Add(ModContent.ItemType<Lionfish>(), 2);
         }
     }
 }

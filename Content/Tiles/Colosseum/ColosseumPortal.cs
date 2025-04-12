@@ -122,7 +122,8 @@ namespace InfernumMode.Content.Tiles.Colosseum
 
             if (teleportInterpolant <= 1f)
             {
-                teleportInterpolant += 0.028f;
+                if (closer)
+                    teleportInterpolant += 0.028f;
                 return;
             }
 

@@ -1383,7 +1383,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Teleport above the target and create a bunch of swords on the first frame.
             if (attackTimer == 1f)
             {
-                TeleportTo(npc, target.Center - Vector2.UnitY * 300f);
+                Vector2 teleDestination = target.Center - Vector2.UnitY * 300f;
+                teleDestination.X = Clamp(teleDestination.X, 1000, Main.maxTilesX * 16 - 1000);
+                teleDestination.Y = Clamp(teleDestination.Y, 1000, Main.maxTilesY * 16 - 1000);
+                TeleportTo(npc, teleDestination);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1404,6 +1407,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             // Try to hover near the player so that they can use true melee against the empress.
             float hoverSpeed = 16f;
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 250f, -175f);
+            hoverDestination.X = Clamp(hoverDestination.X, 1000, Main.maxTilesX * 16 - 1000);
+            hoverDestination.Y = Clamp(hoverDestination.Y, 1000, Main.maxTilesY * 16 - 1000);
             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero.MoveTowards(hoverDestination - npc.Center, hoverSpeed), 0.25f);
 
             // Wait before attacking.

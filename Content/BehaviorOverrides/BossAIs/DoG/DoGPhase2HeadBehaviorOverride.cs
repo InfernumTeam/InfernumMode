@@ -170,8 +170,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
                 {
                     npc.Center = target.Center - Vector2.UnitY * 600f;
 
+                    Vector2 pos = npc.Center;
+                    pos.X = Clamp(pos.X, 800, Main.maxTilesX * 16 - 800);
+                    pos.Y = Clamp(pos.Y, 800, Main.maxTilesY * 16 - 800);
+
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), pos, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
                     npc.netUpdate = true;
                 }
 

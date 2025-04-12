@@ -901,7 +901,7 @@ Mods: {
 			}
 
 			ProvidenceSpawnerItem: {
-				DisplayName: Providence Shrine Debug Item
+				DisplayName: Providence Shrine (DEBUG)
 				Tooltip: Summons Providence when right clicked with a Profaned Core
 			}
 
@@ -1496,7 +1496,7 @@ Mods: {
 			}
 
 			ProfanedGardenLocationSetter: {
-				DisplayName: Profaned Garden Location Setter
+				DisplayName: Profaned Garden Location Setter (DEBUG)
 				Tooltip:
 					'''
 					Use this to fix the profaned garden not functioning properly
@@ -1512,7 +1512,7 @@ Mods: {
 			}
 
 			ForbiddenArchivesLocationSetter: {
-				DisplayName: Forbidden Archives Location Setter
+				DisplayName: Forbidden Archives Location Setter (DEBUG)
 				Tooltip:
 					'''
 					Use this if your archives were destroyed by the abyss

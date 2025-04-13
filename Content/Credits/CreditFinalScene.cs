@@ -30,7 +30,7 @@ namespace InfernumMode.Content.Credits
         public static Texture2D PikyTexture { get; private set; }
         public static Texture2D ShadeTexture { get; private set; }
         public static Texture2D SmhTexture { get; private set; }
-        public static Texture2D ToastyTexture { get; private set; }
+        public static Texture2D ImogenTexture { get; private set; }
 
         public static Texture2D MainScene { get; private set; }
 
@@ -60,7 +60,7 @@ namespace InfernumMode.Content.Credits
             PikyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Piky", AssetRequestMode.ImmediateLoad).Value;
             ShadeTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Shade", AssetRequestMode.ImmediateLoad).Value;
             SmhTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Smh", AssetRequestMode.ImmediateLoad).Value;
-            ToastyTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Toasty", AssetRequestMode.ImmediateLoad).Value;
+            ImogenTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/Toasty", AssetRequestMode.ImmediateLoad).Value;
 
             MainScene = ModContent.Request<Texture2D>("InfernumMode/Content/Credits/Textures/FinalCreditScene", AssetRequestMode.ImmediateLoad).Value;
 
@@ -91,8 +91,8 @@ namespace InfernumMode.Content.Credits
             CreditDevelopers.Add(shade);
             var smh = new CreditDeveloper(SmhTexture, ImagePosition + new Vector2(-240f, 31f), Vector2.Zero, 0f, SpriteEffects.None);
             CreditDevelopers.Add(smh);
-            var toasty = new CreditDeveloper(ToastyTexture, ImagePosition + new Vector2(45f, -3f), Vector2.Zero, 0f, SpriteEffects.None);
-            CreditDevelopers.Add(toasty);
+            var imogen = new CreditDeveloper(ImogenTexture, ImagePosition + new Vector2(45f, -3f), Vector2.Zero, 0f, SpriteEffects.None);
+            CreditDevelopers.Add(imogen);
 
             // Initialize the portrait render target.
             PortraitTarget ??= new ManagedRenderTarget(true, ManagedRenderTarget.CreateScreenSizedTarget);

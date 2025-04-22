@@ -2588,11 +2588,11 @@ Mods: {
 		}
 
 		WorldGen: {
-			BlossomGarden: Выращивание сада
-			EggShrine: Скрытие яйца
-			TabletPedestal: Установка таблички
-			LostColosseum: Генерация затерянного колизея
-			ProfanedGarden: Постройка храма для древней богини
+			BlossomGarden: Выращивание сада...
+			EggShrine: Сокрытие яйца...
+			TabletPedestal: Установка таблички...
+			LostColosseum: Генерация затерянного колизея...
+			ProfanedGarden: Постройка храма для древней богини...
 		}
 	}
 }

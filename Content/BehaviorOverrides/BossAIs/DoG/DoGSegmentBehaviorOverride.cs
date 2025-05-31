@@ -225,9 +225,6 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
             for (int i = 0; i < npc.buffImmune.Length; i++)
                 npc.buffImmune[i] = true;
 
-            // Most bosses and boss servants are not immune to Kami Flu.
-            npc.buffImmune[ModContent.BuffType<KamiFlu>()] = false;
-
             // Nothing should be immune to Enraged.
             npc.buffImmune[ModContent.BuffType<Enraged>()] = false;
         }

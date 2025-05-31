@@ -1187,7 +1187,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.DoG
 
                         if (perpendicularPortalAttackTimer == 10f)
                         {
-                            SoundEngine.PlaySound(YanmeisKnife.HitSound with { Volume = 1.7f }, target.Center);
+                            SoundEngine.PlaySound(InfernumSoundRegistry.YanmeiKnife with { Volume = 1.7f }, target.Center);
                             SoundEngine.PlaySound(TeslaCannon.FireSound with { Volume = 1.7f }, target.Center);
                             target.Calamity().GeneralScreenShakePower = 10f;
                             ScreenEffectSystem.SetBlurEffect(npc.Center, 0.1f, 25);

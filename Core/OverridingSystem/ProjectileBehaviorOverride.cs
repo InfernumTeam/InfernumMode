@@ -13,7 +13,7 @@ namespace InfernumMode.Core.OverridingSystem
 
         internal static void LoadAll()
         {
-            BehaviorOverrideSet = new SetFactory(ContentSamples.ProjectilesByType.Count).CreateCustomSet<ProjectileBehaviorOverride>(null);
+            BehaviorOverrideSet = new SetFactory(ContentSamples.ProjectilesByType.Count, "InfernumMode/ProjectileBehaviorOverride").CreateCustomSet<ProjectileBehaviorOverride>(null);
 
             foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(ProjectileBehaviorOverride), typeof(InfernumMode).Assembly))
             {

@@ -258,6 +258,9 @@ namespace InfernumMode.Assets.Sounds
 
         public static readonly SoundStyle WyrmChargeSound = new("InfernumMode/Assets/Sounds/Custom/AEW/WyrmElectricCharge");
 
+        //Yanmei's Knife has been removed in base Calamity Mod. It has been ported to Infernum for the sake of preserving the sound effect because it is used in Infernum fights. - midnight.
+        public static readonly SoundStyle YanmeiKnife = new("InfernumMode/Assets/Sounds/Custom/YanmeiKnifeHit");
+
         public const int AresTelegraphSoundLength = 183;
         #endregion Bosses and Enemies
 

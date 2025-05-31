@@ -16,9 +16,12 @@ namespace InfernumMode.Core.OverridingSystem
         #region Statics
         internal static NPCBehaviorOverrideContainer[] BehaviorOverrideSet;
 
+        //public static SetFactory BehaviorOverrideSet = new SetFactory(ContentSamples.NpcsByNetId.Count).CreateCustomSet<NPCBehaviorOverrideContainer>(null);
+
         internal static void LoadAll()
         {
-            BehaviorOverrideSet = new SetFactory(ContentSamples.NpcsByNetId.Count).CreateCustomSet<NPCBehaviorOverrideContainer>(null);
+           
+            BehaviorOverrideSet = new SetFactory(ContentSamples.NpcsByNetId.Count, "InfernumMode/NPCBehaviorOverride").CreateCustomSet<NPCBehaviorOverrideContainer>(null);
 
             foreach (Type type in Utilities.GetEveryTypeDerivedFrom(typeof(NPCBehaviorOverride), typeof(InfernumMode).Assembly))
             {

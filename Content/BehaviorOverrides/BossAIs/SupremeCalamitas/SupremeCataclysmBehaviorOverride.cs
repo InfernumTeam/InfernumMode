@@ -398,7 +398,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                 }
 
-                SoundEngine.PlaySound(!isCataclysm ? YanmeisKnife.HitSound : ScorchedEarth.ShootSound, npc.Center);
+                SoundEngine.PlaySound(!isCataclysm ? InfernumSoundRegistry.YanmeiKnife : ScorchedEarth.ShootSound, npc.Center);
             }
 
             // Define the red-glow interpolant.

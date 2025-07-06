@@ -343,7 +343,7 @@ Mods: {
 		ExoMechsFight: {
 			PickTwoText: Выберите двух. Битва с первым мехом будет в одиночку. При достаточных повреждениях, второй мех будет призван, и оба будут сражаться вместе.
 			ThanatosDesc: Танатос, змеевидный ужас с непробиваемой бронёй и бесчисленными лазерными турелями.
-			AresDesc: Арес, дьявольское чудовище-тяжеловес с шестью Экзо-суперорудиями.
+			AresDesc: Арес, дьявольское чудовище-тяжеловес с шестью экзо-суперорудиями.
 			ArtemisApolloDesc: Артемида и Аполлон, пара экстремально ловких истребителей с нестабильными запасами энергии.
 		}
 
@@ -1728,9 +1728,9 @@ Mods: {
 			ExoMechComboTip: Похоже, что они объединяют свои усилия, готовься!
 			DraedonChooseTip1: Сделай правильный выбор!
 			DraedonChooseTip2: Если какая-то определённая комбинация не работает для тебя, может, стоит попробовать другую?
-			AresTip1: Лучше всего будет держаться близко во время этих Экзо перегрузок, иначе не будешь успевать за вращением!
+			AresTip1: Лучше всего будет держаться близко во время этих экзо-перегрузок, иначе не будешь успевать за вращением!
 			AresTip2: Арес — тот ещё навороченный компьютер, его руки супер-предугадывающие! Может быть, ты сможешь обернуть это в свою пользу?
-			ExoTwinsTip1: Экзо близнецы двигаются синхронно, поможет ли тут твоё чувство ритма?
+			ExoTwinsTip1: Экзо-близнецы двигаются синхронно, поможет ли тут твоё чувство ритма?
 			ThanatosChargeTip: Не волнуйся, встреть страхи лицом к лицу и сделай рывок прямо в лицевые платы Танатоса!
 			DragonfollyTip1: Псевдодракон лишь хочет, чтобы ты думал, что он хаотичен, но он не такой! Чуть притормози и всё проанализируй!
 			DragonfollyTip2: Эти столбы красных молний можно избежать, если лететь под ними!
@@ -2019,19 +2019,19 @@ Mods: {
 			RoDFailPulse.DisplayName: Взрыв
 			AresBeamExplosion.DisplayName: Взрыв экзо-вспышки
 			AresBeamTelegraph.DisplayName: Луч Гамма Распада Телеграф
-			AresCannonLaser.DisplayName: Лазер экзо пламени
-			AresDeathBeamTelegraph.DisplayName: Телеграф экзо перегрузки
-			AresEnergyDeathray.DisplayName: Вспышка экзо энергии
+			AresCannonLaser.DisplayName: Лазер экзо-пламени
+			AresDeathBeamTelegraph.DisplayName: Телеграф экзопперегрузки
+			AresEnergyDeathray.DisplayName: Вспышка экзо-энергии
 			AresEnergyDeathrayTelegraph.DisplayName: Вспышка Экзо Энергии Телеграф
-			AresEnergySlash.DisplayName: Разрез экзо энергии
+			AresEnergySlash.DisplayName: Экзо-энергетический разрез
 			AresLaserDeathray.DisplayName: Лазер-луч смерти
 			AresLaughBoom.DisplayName: Взрыв
 			AresPlasmaFireball.DisplayName: Взрывоопасный плазменный выстрел
 			AresPrecisionBlast.DisplayName: Точный выстрел
 			AresPulseBlast.DisplayName: Выплеск энергии экзо-импульса
 			AresPulseDeathray.DisplayName: Импульсный луч смерти
-			AresSpinningDeathBeam.DisplayName: Луч экзо перегрузки
-			AresSpinningRedDeathray.DisplayName: Смертельный луч экзотермального распада
+			AresSpinningDeathBeam.DisplayName: Луч экзо-перегрузки
+			AresSpinningRedDeathray.DisplayName: Смертельный луч экзо-термального распада
 			AresTeslaGasField.DisplayName: Электрическое облако
 			AresTeslaOrb.DisplayName: Тесла сфера
 			AresTeslaSpark.DisplayName: Тесла искра
@@ -2044,10 +2044,10 @@ Mods: {
 			ApolloFlamethrower.DisplayName: Огнемёт экзо-плазмы
 			ApolloPlasmaFireball.DisplayName: Взрывоопасный плазменный выстрел
 			ApolloRocketInfernum.DisplayName: Фугасная плазменная взрывчатка
-			ArtemisBasicShotLaser.DisplayName: Лазер экзо пламени
+			ArtemisBasicShotLaser.DisplayName: Лазер экзо-пламени
 			ArtemisGasFireballBlast.DisplayName: Взрывоопасный огненный выстрел
-			ArtemisGatlingLaser.DisplayName: Лазер экзо пламени
-			ArtemisLaser.DisplayName: Лазер экзо пламени
+			ArtemisGatlingLaser.DisplayName: Лазер экзо-пламени
+			ArtemisLaser.DisplayName: Лазер экзо-пламени
 			ArtemisLaserbeamTelegraph.DisplayName: Луч Лазера Телеграф
 			ArtemisSpinLaser.DisplayName: Луч Огайо
 			ArtemisSweepLaserbeam.DisplayName: Луч Огайо
@@ -2056,7 +2056,7 @@ Mods: {
 			PlasmaChargeTelegraph.DisplayName: Заряд Телеграф
 			SuperheatedExofireGas.DisplayName: Перегретый огонь
 			ThermonuclearDeathOrb.DisplayName: Термоядерная сфера смерти
-			DetatchedThanatosLaser.DisplayName: Лазер экзо пламени
+			DetatchedThanatosLaser.DisplayName: Лазер экзо-пламени
 			ExolaserBomb.DisplayName: Экзо-лазерная бомба
 			ExolaserSpark.DisplayName: Экзо-лазерная искра
 			LightOverloadRay.DisplayName: Луч призматической перегрузки
@@ -2466,28 +2466,28 @@ Mods: {
 
 		Status: {
 			AchievementCompletionText: Достижение получено!
-			InfernumDisallowedInWeirdDifficulties: Режим Инфернум не поддерживает режим Мастера и сиды «For the Worthy» и «Get fixed boi».
+			InfernumDisallowedInWeirdDifficulties: Режим Инфернум не поддерживает режим мастера и сиды «For the Worthy» и «Get fixed boi».
 			EternityModeWarning: Изменения ИИ боссов режима Вечность перекрываются режимом Инфернум во избежание конфликтов.
 			CyberneticImmortalityEnabled: Кибернетическое бессмертие включено.
 			CyberneticImmortalityDisabled: Кибернетическое бессмертие выключено.
 			AbyssTeleportAwayDenial: Давление слишком высоко, чтобы сбежать!
 			EggSwordShrineBreakFailure: Яйца отвергают ваши попытки забрать клинок!
 			WayfinderGateNotSet: Врата не установлены!
-			InfernumNeededToEnterColosseum: Инфернум должен быть включён, чтобы войти в Колизей!
+			InfernumNeededToEnterColosseum: Инфернум должен быть включён, чтобы войти в колизей!
 			InfiniteFlight: Дарован бесконечный полёт!
 			AquaticScourgeFinalPhaseAcid: Кислотный поток быстро поднимается!
-			CalShadowBrothersSummon: Изничтожьте его, братья мои.
+			CalShadowBrothersSummon: Изничтожьте их, братья мои.
 			CalShadowFinalPhase: Это лишь только начало!
 			CalShadowFinalHexWarning: Это ещё не конец! Приготовься к моему сильнейшему проклятью!
 			CalShadowFinalHexSurprise: Оу.
-			TwinsForcefieldSummonSpazmatism: СПА-МАРК-4: ЗАЩИТА ПРОБИТА. ИНИЦИАЛИЗАЦИЯ ПРОЦЕССА ЩЩТ-17ECF9.
-			TwinsForcefieldSummonRetinazer: РЕТ-МАРК-7: ЗАЩИТА ПРОБИТА. ИНИЦИАЛИЗАЦИЯ ПРОЦЕССА ЩЩТ-17ECF9.
-			TwinsFinalPhaseSpazmatism: СПА-МАРК-4: ОШИБКА. ВТОРОЙ СОСТАВ НЕ НАЙДЕН. СЖИГАНИЕ ОСТАТКОВ ТОПЛИВА.
-			TwinsFinalPhaseRetinazer: РЕТ-МАРК-7: ОШИБКА. ВТОРОЙ СОСТАВ НЕ НАЙДЕН. СЖИГАНИЕ ОСТАТКОВ ТОПЛИВА.
+			TwinsForcefieldSummonSpazmatism: СПА-ВЕР-4: ЗАЩИТА ПРОБИТА. ИНИЦИАЛИЗАЦИЯ ПРОЦЕССА ЩЩТ-17ECF9.
+			TwinsForcefieldSummonRetinazer: РЕТ-ВЕР-7: ЗАЩИТА ПРОБИТА. ИНИЦИАЛИЗАЦИЯ ПРОЦЕССА ЩЩТ-17ECF9.
+			TwinsFinalPhaseSpazmatism: СПА-ВЕР-4: ОШИБКА. ВТОРОЙ СОСТАВ НЕ НАЙДЕН. СЖИГАНИЕ ОСТАТКОВ ТОПЛИВА.
+			TwinsFinalPhaseRetinazer: РЕТ-ВЕР-7: ОШИБКА. ВТОРОЙ СОСТАВ НЕ НАЙДЕН. СЖИГАНИЕ ОСТАТКОВ ТОПЛИВА.
 			PBGNuclearCoreGeneration: ЯДЕРНОЕ ЯДРО ОБРАЗОВАНО. ИНИЦИАЛИЗАЦИЯ СТРОИТЕЛЬНОЙ ПРОЦЕДУРЫ!
 			PostCultistColosseumCreation: Мистические руины образовались в сердце пустыни!
-			PostMLTempleCreation: Осквернённый сад возник из пепла на краю Преисподней!
-			ProvidenceLavaRise: Лава поднимается со дна Преисподней!
+			PostMLTempleCreation: Осквернённый сад возник из пепла на краю преисподней!
+			ProvidenceLavaRise: Лава поднимается со дна преисподней!
 			DoGTeleportDenial1: ТАК ПРОСТО УКЛОНИТЬСЯ НЕ ПОЛУЧИТСЯ!
 			DoGTeleportDenial2: НЕ НАДЕЙСЯ ПЕРЕХИТРИТЬ МАСТЕРА ИЗМЕРЕНИЙ!
 			DoGTeleportDenial3: НЕ ТАК БЫСТРО!
@@ -2498,16 +2498,16 @@ Mods: {
 			DoGDeath5: Я...
 			YharonSecondPhase: Воздух опаляет вашу кожу...
 			YharonFinalPhase: Жар нарастает...
-			PostYharonWyrmHint: Первобытный свет мерцает в глубинах Бездны...
+			PostYharonWyrmHint: Первобытный свет мерцает в глубинах бездны...
 			DraedonEffortMock1: Твои усилия интригуют.
 			DraedonEffortMock2: Давай. Продолжай подавать информацию моим машинам.
-			DraedonAresDesperationBlenderLeaveWarning: Ты допустил летальную ошибку.
+			DraedonAresDesperationBlenderLeaveWarning: Ошибка твоих расчётов, летальная ошибка.
 			ExoMechDesperationAres1: АРЕС-09: ТЕМПЕРАТУРА ЯДРА СТРЕМИТЕЛЬНО ПОВЫШАЕТСЯ. САМОУНИЧТОЖЕНИЕ НЕИЗБЕЖНО.
-			ExoMechDesperationAres2: АРЕС-09: ПОДГОТОВКА ПРОТОКОЛА СОВМЕСТНОГО РАЗРУШЕНИЯ 'ТОЧНЫЕ ГАММА-ВЗРЫВЫ'.
+			ExoMechDesperationAres2: АРЕС-09: ПОДГОТОВКА ПРОТОКОЛА СОВМЕСТНОГО РАЗРУШЕНИЯ «ТОЧНЫЕ ГАММА-ВЗРЫВЫ».
 			ExoMechDesperationTwins1: АРТЕМИДА-01: ОБЪЕДИНЁННЫЕ ОСТАТКИ ЭНЕРГИИ НА НИЗКОМ УРОВНЕ. СИСТЕМНЫЙ СБОЙ НЕИЗБЕЖЕН.
-			ExoMechDesperationTwins2: АПОЛЛОН-03: ПОДГОТОВКА ПРОТОКОЛА СОВМЕСТНОГО РАЗРУШЕНИЯ 'ТЕРМОЯДЕРНЫЙ БЛИЦ'.
-			ExoMechDesperationThanatos1: ТАНАТОС-05: ЭКЗО ТУРЕЛИ ГОРЯТ НА НЕСТАБИЛЬНОМ УРОВНЕ ЭНЕРГИИ. САМОУНИЧТОЖЕНИЕ НЕИЗБЕЖНО.
-			ExoMechDesperationThanatos2: ТАНАТОС-05: ПОДГОТОВКА ПРОТОКОЛА СОВМЕСТНОГО РАЗРУШЕНИЯ 'ЗАРЯД МАКСИМАЛЬНОЙ ПЕРЕГРУЗКИ'.
+			ExoMechDesperationTwins2: АПОЛЛОН-03: ПОДГОТОВКА ПРОТОКОЛА СОВМЕСТНОГО РАЗРУШЕНИЯ «ТЕРМОЯДЕРНЫЙ БЛИЦ».
+			ExoMechDesperationThanatos1: ТАНАТОС-05: ЭКЗО-ТУРЕЛИ ГОРЯТ НА НЕСТАБИЛЬНОМ УРОВНЕ ЭНЕРГИИ. САМОУНИЧТОЖЕНИЕ НЕИЗБЕЖНО.
+			ExoMechDesperationThanatos2: ТАНАТОС-05: ПОДГОТОВКА ПРОТОКОЛА СОВМЕСТНОГО РАЗРУШЕНИЯ «ЗАРЯД МАКСИМАЛЬНОЙ ПЕРЕГРУЗКИ».
 			DraedonDefeat1: Интригующе. Правда, интригующе.
 			DraedonDefeat2: Мои величайшие творения, действительно разрушены.
 			DraedonDefeat2HyperplaneMatrix: Ты — прекрасный испытуемый.
@@ -2543,11 +2543,11 @@ Mods: {
 
 		UI: {
 			NotExpertWarning: "[c/ff00000:РЕЖИМ ИНФЕРНУМ ДОСТУПЕН ТОЛЬКО В РЕЖИМЕ ЭКСПЕРТ]"
-			AchievementsHeader: Смертные желания
-			AchievementsLabelText: Следующий
+			AchievementsHeader: Желания смерти
+			AchievementsLabelText: Следующее
 			InfernumIconText: Включён режим Инфернум
 			WishesHeader: Желания разработчиков
-			WishesHoverTextButton: Открыть смертные желания
+			WishesHoverTextButton: Открыть желания смерти
 
 			GuardiansPlaqueUI: {
 				HoverText: Читать

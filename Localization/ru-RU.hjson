@@ -2020,7 +2020,7 @@ Mods: {
 			AresBeamExplosion.DisplayName: Взрыв экзо-вспышки
 			AresBeamTelegraph.DisplayName: Луч Гамма Распада Телеграф
 			AresCannonLaser.DisplayName: Лазер экзо-пламени
-			AresDeathBeamTelegraph.DisplayName: Телеграф экзопперегрузки
+			AresDeathBeamTelegraph.DisplayName: Телеграф экзо-перегрузки
 			AresEnergyDeathray.DisplayName: Вспышка экзо-энергии
 			AresEnergyDeathrayTelegraph.DisplayName: Вспышка Экзо Энергии Телеграф
 			AresEnergySlash.DisplayName: Экзо-энергетический разрез

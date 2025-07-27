@@ -15,10 +15,10 @@ namespace InfernumMode
         public static bool HasShieldBash(this Player player)
         {
             var dashType = player.Calamity().UsedDash;
-            if (dashType is null)
+            if (dashType is null && player.dashType != 3)
                 return false;
 
-            return dashType.CollisionType == DashCollisionType.ShieldSlam;
+            return player.dashType == 3 || dashType.CollisionType == DashCollisionType.ShieldSlam;
         }
 
         public static bool HasDash(this Player player)

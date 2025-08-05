@@ -253,7 +253,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             if (Main.netMode != NetmodeID.Server && CurrentAttack != BereftVassalAttackType.IdleState)
             {
                 if (!Target.dead && Target.active)
+                {
                     Target.AddBuff(ModContent.BuffType<WeakPetrification>(), 15);
+                    if (Target.mount.Active)
+                        Target.mount.Dismount(Target); // undo cal's weak petrification change to not unmount
+                }
             }
 
             // Stay inside of the world.

@@ -7,6 +7,7 @@ using CalamityMod.Items.Weapons.DraedonsArsenal;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Particles;
 using CalamityMod.Projectiles.Boss;
@@ -1719,6 +1720,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
 
                 // Perform increasingly rapid charges.
                 case 3:
+                    // Enrage if the nearest target is incredibly far away.
+                    if (!npc.WithinRange(target.Center, 12000f) && NPC.FindFirstNPC(ModContent.NPCType<DraedonNPC>()) is int draedonIndex && draedonIndex >= 0 && draedonIndex < Main.maxNPCs)
+                    {
+                        // Split to two parts for readability
+                        if (Main.npc[draedonIndex] is NPC draedon && draedon != null && draedon.active && draedon.Infernum().ExtraAI[1] == 0f)
+                        {
+                            SoundEngine.PlaySound(AresBody.EnragedSound with
+                            {
+                                Volume = 2f
+                            });
+                            LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
+                            draedon.Infernum().ExtraAI[1] = 1f;
+                            draedon.netUpdate = true;
+                            npc.ai[0] = (int)TwinsAttackType.BasicShots;
+                            npc.active = false;
+                        }
+                    }
                     // Handle frames.
                     npc.frameCounter++;
                     frame = (int)Math.Round(Lerp(20f, 29f, (float)npc.frameCounter / 45f % 1f));

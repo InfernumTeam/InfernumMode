@@ -1,6 +1,6 @@
-﻿using System;
-using CalamityMod;
+﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.CalPlayer;
 using CalamityMod.Items;
 using CalamityMod.Items.Materials;
 using CalamityMod.Items.Placeables.Ores;
@@ -9,6 +9,8 @@ using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Rarities.InfernumRarities;
 using InfernumMode.Core.GlobalInstances.Players;
 using Microsoft.Xna.Framework;
+using System;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -39,7 +41,13 @@ namespace InfernumMode.Content.Items.Accessories
                     player.Player.GetDamage<SummonMeleeSpeedDamageClass>() *= 1.4f;
                     player.Player.GetDamage<RogueDamageClass>() *= 1.4f;
 
-                    bool stealthStrike = player.Player.Calamity().StealthStrikeAvailable();
+                    var heldItem = player.Player.HeldItem;
+                    var calPlayer = player.Player.Calamity();
+                    var UpdateStealthGenStats = typeof(CalamityPlayer).GetMethod("UpdateStealthGenStats", BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+                    bool stealthStrike = calPlayer.rogueStealth > calPlayer.rogueStealthMax * (float)UpdateStealthGenStats?.Invoke(calPlayer, null) / 120f; // make sure it doesn't never give attack speed due to stealth gen
+                    if (heldItem != null)
+                        stealthStrike &= heldItem.CountsAsClass<RogueDamageClass>();
+                        
                     if (!stealthStrike)
                         player.Player.GetAttackSpeed<GenericDamageClass>() += 0.4f;
                     player.Player.buffImmune[ModContent.BuffType<Nightwither>()] = true;

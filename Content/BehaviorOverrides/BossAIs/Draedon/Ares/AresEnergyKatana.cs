@@ -533,9 +533,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => false;
 
+        public override bool? CanBeHitByItem(Player player, Item item)
+        {
+            return item.getRect().Intersects(ActualHitbox) && KatanaIsInUse ? null : false;
+        }
         public override bool? CanBeHitByProjectile(Projectile projectile)
         {
-            return projectile.Colliding(projectile.Hitbox, ActualHitbox) ? null : false;
+            return projectile.Colliding(projectile.Hitbox, ActualHitbox) && KatanaIsInUse ? null : false;
         }
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)

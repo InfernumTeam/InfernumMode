@@ -47,11 +47,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public bool KatanaIsInUse
         {
-            get => katanaIsInUse;
+            get
+            {
+                if (katanaIsInUse)
+                    NPC.dontTakeDamage = false;
+                else NPC.dontTakeDamage = true;
+
+                return katanaIsInUse;
+            }
             set
             {
-                if (value && !katanaIsInUse)
-                    SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, NPC.Center);
+                NPC.dontTakeDamage = true;
+                if (value)
+                {
+                    NPC.dontTakeDamage = false;
+                    if (!katanaIsInUse)
+                        SoundEngine.PlaySound(CommonCalamitySounds.ExoLaserShootSound, NPC.Center);
+                }
 
                 katanaIsInUse = value;
             }
@@ -241,9 +253,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
 
             // Ensure this does not take damage in the desperation attack.
-            NPC.dontTakeDamage = false;
+            /*NPC.dontTakeDamage = false;
             if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
-                NPC.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;*/ // already checked in CanBeHitByX by KatanaIsInUse
 
             bool currentlyDisabled = ArmIsDisabled(NPC);
 

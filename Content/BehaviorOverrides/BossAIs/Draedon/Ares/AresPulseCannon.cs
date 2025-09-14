@@ -100,7 +100,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Ensure this does not take damage in the desperation attack.
             NPC.dontTakeDamage = false;
             if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
+            {
+                NPC.Calamity().DR = 0.9999999f;
+                NPC.Calamity().unbreakableDR = true;
                 NPC.dontTakeDamage = true;
+            }
 
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);

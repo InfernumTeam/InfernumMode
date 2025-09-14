@@ -1031,6 +1031,23 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 // Hover above the target and begin attacking.
                 case 1:
+                    // Enrage if the nearest target is incredibly far away.
+                    if (!npc.WithinRange(target.Center, 12000f) && draedonIndex >= 0 && draedonIndex < Main.maxNPCs)
+                    {
+                        // Split to two parts for readability
+                        if (Main.npc[draedonIndex] is NPC draedon && draedon != null && draedon.active && draedon.Infernum().ExtraAI[1] == 0f)
+                        {
+                            SoundEngine.PlaySound(AresBody.EnragedSound with
+                            {
+                                Volume = 2f
+                            });
+                            LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
+                            draedon.Infernum().ExtraAI[1] = 1f;
+                            draedon.netUpdate = true;
+                            npc.ai[0] = (int)AresBodyAttackType.IdleHover;
+                            npc.active = false;
+                        }
+                    }
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
@@ -1166,17 +1183,22 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                     }
 
                     // Make Draedon become enraged if you leave the blender.
-                    if (draedonIndex != -1 && Main.npc[draedonIndex].active && Main.npc[draedonIndex].Infernum().ExtraAI[1] == 0f && !npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 40f))
+                    if (!npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 40f) && draedonIndex >= 0 && draedonIndex < Main.maxNPCs)
                     {
-                        SoundEngine.PlaySound(AresBody.EnragedSound with
+                        // Split to two parts for readability
+                        if (Main.npc[draedonIndex] is NPC draedon && draedon != null && draedon.active && draedon.Infernum().ExtraAI[1] == 0f)
                         {
-                            Volume = 2f
-                        });
-                        LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
+                            SoundEngine.PlaySound(AresBody.EnragedSound with
+                            {
+                                Volume = 2f
+                            });
+                            LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.DraedonAresDesperationBlenderLeaveWarning", DraedonNPC.TextColorEdgy);
 
-                        NPC draedon = Main.npc[draedonIndex];
-                        draedon.Infernum().ExtraAI[1] = 1f;
-                        draedon.netUpdate = true;
+                            draedon.Infernum().ExtraAI[1] = 1f;
+                            draedon.netUpdate = true;
+                            npc.ai[0] = (int)AresBodyAttackType.IdleHover;
+                            npc.active = false;
+                        }
                     }
 
                     if (attackTimer >= laserbeamSpinTime - 60f)

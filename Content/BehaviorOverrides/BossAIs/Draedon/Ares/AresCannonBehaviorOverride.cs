@@ -1,4 +1,4 @@
-﻿using System;
+﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Particles;
@@ -9,6 +9,7 @@ using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -59,7 +60,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Ensure the cannon does not take damage during the desperation attack.
             npc.dontTakeDamage = false;
             if (Ares.ai[0] == (int)AresBodyAttackType.PrecisionBlasts)
+            {
+                npc.Calamity().DR = 0.9999999f;
+                npc.Calamity().unbreakableDR = true;
                 npc.dontTakeDamage = true;
+            }
 
             // Inherit a bunch of attributes such as opacity from the body.
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);

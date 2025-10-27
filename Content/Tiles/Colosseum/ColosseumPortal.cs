@@ -120,16 +120,17 @@ namespace InfernumMode.Content.Tiles.Colosseum
             if (!insidePortal || !WorldSaveSystem.HasOpenedLostColosseumPortal || t.TileFrameX != 36 || t.TileFrameY != 18)
                 return;
 
+            if (closer && !Main.gamePaused && !Main.GlobalTimerPaused)
+                teleportInterpolant += 0.04f;
+
             if (teleportInterpolant <= 1f)
-            {
-                if (closer)
-                    teleportInterpolant += 0.028f;
                 return;
-            }
 
             teleportInterpolant = 0f;
             if (SubworldSystem.IsActive<LostColosseum>())
+            {
                 SubworldSystem.Exit();
+            }
             else
             {
                 // Don't allow the player to use the portal if Infernum is not active.

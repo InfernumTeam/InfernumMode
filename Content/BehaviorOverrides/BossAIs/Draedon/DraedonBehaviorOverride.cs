@@ -150,17 +150,17 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon
                 return false;
             }
 
+
+            CalamityGlobalNPC.draedonAmbience = -1;
             if (!ExoMechIsPresent)
             {
-                npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossHigh;
+                CalamityGlobalNPC.draedonAmbience = npc.whoAmI;
                 if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
                 {
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonExoSelect");
                     InfernumMode.DraedonThemeTimer = 0f;
                 }
                 else
                 {
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Draedon");
                     InfernumMode.DraedonThemeTimer = 1f;
                 }
             }

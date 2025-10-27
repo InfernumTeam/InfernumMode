@@ -61,10 +61,6 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
             if (illegalItemForArena && inArena)
                 return false;
 
-            bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
-            if (inAbyss && (item.type is ItemID.RecallPotion or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch))
-                return false;
-
             // Don't let tiles be placed in the profaned garden.
             var noPlaceRect = WorldSaveSystem.ProvidenceArena.ToWorldCoords();
             noPlaceRect.Inflate(2, 2);
@@ -78,7 +74,7 @@ namespace InfernumMode.Core.GlobalInstances.GlobalItems
         {
             // Disable magic mirror teleportation effects in the lower layers of the abyss.
             bool inAbyss = InfernumMode.CanUseCustomAIs && (player.Calamity().ZoneAbyssLayer3 || player.Calamity().ZoneAbyssLayer4);
-            bool spawnTeleportingItem = item.type is ItemID.MagicMirror or ItemID.CellPhone;
+            bool spawnTeleportingItem = (item.type is ItemID.RecallPotion or ItemID.PotionOfReturn or ItemID.MagicMirror or ItemID.IceMirror or ItemID.MagicConch or ItemID.DemonConch or ItemID.CellPhone or ItemID.ShellphoneDummy) || (item.type >= 5358 && item.type <= 5361);
             if (spawnTeleportingItem && inAbyss)
             {
                 if (player.itemAnimation >= item.useAnimation - 2)

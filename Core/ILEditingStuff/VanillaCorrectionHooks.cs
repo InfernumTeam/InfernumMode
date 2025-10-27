@@ -778,31 +778,6 @@ namespace InfernumMode.Core.ILEditingStuff
         }
     }
 
-    public class UseCustomShineParticlesForInfernumParticlesHook : IExistingDetourProvider
-    {
-        void IExistingDetourProvider.Subscribe() => On_TileDrawing.DrawTiles_EmitParticles += EmitFireParticles;
-
-        void IExistingDetourProvider.Unsubscribe() => On_TileDrawing.DrawTiles_EmitParticles -= EmitFireParticles;
-
-        private static void EmitFireParticles(On_TileDrawing.orig_DrawTiles_EmitParticles orig, TileDrawing self, int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
-        {
-            ModTile mt = TileLoader.GetTile(tileCache.TileType);
-            if ((tileLight.R > 20 || tileLight.B > 20 || tileLight.G > 20) && Main.rand.NextBool(12) && mt is not null and BaseInfernumBossRelic)
-            {
-                Dust fire = Dust.NewDustDirect(new Vector2(i * 16, j * 16), 16, 16, Main.rand.NextBool() ? 267 : 6, 0f, 0f, 254, Color.White, 1.4f);
-                fire.velocity = -Vector2.UnitY.RotatedByRandom(0.5f);
-                fire.color = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.7f));
-                fire.noGravity = true;
-            }
-
-            // I don't know who fucked this up. I don't know if it was me.
-            // But I'm sick of my game going to 1 FPS due to hundreds of exceptions being thrown every single frame and as such will be the one
-            // to fix it.
-            if (tileCache.TileType is not TileID.LeafBlock and not TileID.LivingMahoganyLeaves)
-                orig(self, i, j, tileCache, typeCache, tileFrameX, tileFrameY, tileLight);
-        }
-    }
-
     public class ReplaceAbyssWorldgen : ICustomDetourProvider
     {
         void ICustomDetourProvider.ModifyMethods() => HookHelper.ModifyMethodWithDetour(typeof(Abyss).GetMethod("PlaceAbyss", Utilities.UniversalBindingFlags), ChangeAbyssGen);

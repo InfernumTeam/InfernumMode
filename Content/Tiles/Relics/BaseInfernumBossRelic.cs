@@ -114,6 +114,17 @@ namespace InfernumMode.Content.Tiles.Relics
             }
         }
 
+        public sealed override void EmitParticles(int i, int j, Tile tile, short tileFrameX, short tileFrameY, Color tileLight, bool visible)
+        {
+            if ((tileLight.R > 20 || tileLight.B > 20 || tileLight.G > 20) && Main.rand.NextBool(12))
+            {
+                Dust fire = Dust.NewDustDirect(new Vector2(i * 16, j * 16), 16, 16, Main.rand.NextBool() ? 267 : 6, 0f, 0f, 254, Color.White, 1.4f);
+                fire.velocity = -Vector2.UnitY.RotatedByRandom(0.5f);
+                fire.color = Color.Lerp(Color.Yellow, Color.Red, Main.rand.NextFloat(0.7f));
+                fire.noGravity = true;
+            }
+        }
+
         public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)
         {
             // This is lighting-mode specific, always include this if you draw tiles manually

@@ -229,8 +229,15 @@ namespace InfernumMode.Content.Subworlds
             return false;
         }
 
+        public override void OnEnter()
+        {
+            // Portal cooldown
+            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
+        }
         public override void OnExit()
         {
+            // Portal cooldown
+            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
             // Reset the sunset interpolant.
             SunsetInterpolant = 0f;
 

@@ -140,7 +140,18 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (SubworldSystem.IsActive<LostColosseum>())
                 Player.Calamity().noStupidNaturalARSpawns = true;
 
-            LostColosseumTeleportInterpolant = Clamp(LostColosseumTeleportInterpolant - 0.008f, 0f, 1f);
+            float equalizer = 0.0005f;
+            ref float cd = ref LostColosseumTeleportInterpolant;
+            if (cd < 0f)
+            {
+                equalizer -= equalizer * 2;
+                if (cd - equalizer > 0f)
+                    cd = 0f;
+            }
+            else if (cd > 0f && cd - equalizer < 0f) cd = 0f;
+
+            if (cd != 0f)
+                cd = Clamp(cd - equalizer, -1f, 1f);
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.

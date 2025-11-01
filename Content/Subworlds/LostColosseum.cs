@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using CalamityMod;
 using CalamityMod.DataStructures;
 using CalamityMod.Schematics;
@@ -10,6 +12,7 @@ using InfernumMode.Content.Achievements.InfernumAchievements;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
+using log4net.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -22,6 +25,7 @@ using Terraria.ID;
 using Terraria.IO;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static CalamityMod.Schematics.SchematicManager;
@@ -229,18 +233,63 @@ namespace InfernumMode.Content.Subworlds
             return false;
         }
 
+        public override void CopyMainWorldData()
+        {
+            TagCompound downedCal = [];
+            if (InfernumMode.CalamityMod != null)
+            {
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                {
+                    downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                }
+            }
+            TagCompound downedInf = [];
+            downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
+            SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
+            SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
+        }
+
+        public override void ReadCopiedMainWorldData()
+        {
+            if (InfernumMode.CalamityMod != null)
+            {
+                var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                foreach (PropertyInfo boss in DownedBossCalList?.Where(b => b.Name == downed?.GetString(b.Name)))
+                {
+                    boss?.SetValue(null, downed?.GetBool(boss?.Name));
+                }
+            }
+            WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
+            base.ReadCopiedMainWorldData();
+        }
+
         public override void OnEnter()
         {
             // Portal cooldown
             Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
+            base.OnEnter();
         }
-        public override void OnExit()
-        {
-            // Portal cooldown
-            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
-            // Reset the sunset interpolant.
-            SunsetInterpolant = 0f;
 
+        public override void CopySubworldData()
+        {
+            TagCompound downedCal = [];
+            if (InfernumMode.CalamityMod != null)
+            {
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                {
+                    downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                }
+            }
+            TagCompound downedInf = [];
+            downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
+            SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
+            SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
             // Ensure that the vassal defeat achievement translates over when the player goes to a different subworld.
             if (Main.netMode != NetmodeID.Server)
             {
@@ -253,9 +302,38 @@ namespace InfernumMode.Content.Subworlds
                     }
                 }
             }
+            base.CopySubworldData();
+        }
+
+        public override void ReadCopiedSubworldData()
+        {
+            if (InfernumMode.CalamityMod != null)
+            {
+                var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
+                var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                if (DownedBossCalList?.Length != downed.ToArray().Length)
+                {
+                    InfernumMode.Instance.Logger.Error("Calamity mod boss downed property array length does not match the saved data array length");
+                }
+                foreach (PropertyInfo boss in DownedBossCalList?.Where(b => b.Name == downed?.GetString(b.Name)))
+                {
+                    boss?.SetValue(null, downed?.GetBool(boss?.Name));
+                }
+            }
+            WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
+            base.ReadCopiedSubworldData();
+        }
+        public override void OnExit()
+        {
+            // Portal cooldown
+            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
+            // Reset the sunset interpolant.
+            SunsetInterpolant = 0f;
 
             // Ensure that the player returns to their original spot before entering the subworld instead of to their typical spawn point.
             Main.LocalPlayer.Infernum_Biome().ReturnToPositionBeforeSubworld = true;
+            base.OnExit();
         }
 
         public static void ManageSandstorm()

@@ -98,7 +98,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             npc.Calamity().ProvidesProximityRage = isHostile == 1f;
             if (volume > 0f && isHostile == 0f && !AbyssMinibossSpawnSystem.MajorAbyssEnemyExists)
             {
-                npc.boss = true;
+                npc.boss = true; // TODO: Replace with a ModSceneEffect instead of setting to boss
                 npc.ModNPC.SceneEffectPriority = SceneEffectPriority.BossMedium;
                 npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Nothing");
             }

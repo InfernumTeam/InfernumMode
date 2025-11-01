@@ -304,7 +304,10 @@ namespace InfernumMode.Content.Subworlds
                     if (achievement.GetType() == typeof(BereftVassalAchievement))
                     {
                         if (achievement.DoneCompletionEffects)
+                        {
                             VassalWasBeaten = true;
+                            break;
+                        }
                     }
                 }
             }

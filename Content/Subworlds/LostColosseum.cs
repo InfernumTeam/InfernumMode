@@ -275,7 +275,7 @@ namespace InfernumMode.Content.Subworlds
         public override void OnEnter()
         {
             // Portal cooldown
-            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
+            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -2f;
             base.OnEnter();
         }
 
@@ -337,7 +337,7 @@ namespace InfernumMode.Content.Subworlds
         public override void OnExit()
         {
             // Portal cooldown
-            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -1f;
+            Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant = -2f;
             // Reset the sunset interpolant.
             SunsetInterpolant = 0f;
 

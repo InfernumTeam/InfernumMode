@@ -392,7 +392,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             CurrentFrame = 0f;
 
             // Get rid of any and all adrenaline.
-            Target.Calamity().adrenaline = 0f;
+            foreach (Player player in Main.ActivePlayers)
+            {
+                player.Calamity().adrenaline = 0f;
+            }
 
             if (hasBegunAnimation == 0f)
                 return;

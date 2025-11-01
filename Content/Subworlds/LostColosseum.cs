@@ -239,11 +239,15 @@ namespace InfernumMode.Content.Subworlds
             {
                 var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
                                                     .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
-                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                try
                 {
-                    if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
-                        downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                    for (int i = 0; i < DownedBossCalList?.Length; i++)
+                    {
+                        if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
+                            downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                    }
                 }
+                catch { InfernumMode.Instance.Logger.Error("Prevented an infinite loop from occurring"); }
             }
             TagCompound downedInf = [];
             downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
@@ -290,11 +294,15 @@ namespace InfernumMode.Content.Subworlds
             {
                 var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
                                                     .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
-                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                try
                 {
-                    if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
-                        downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                    for (int i = 0; i < DownedBossCalList?.Length; i++)
+                    {
+                        if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
+                            downedCal.Add(DownedBossCalList?[i]?.Name, DownedBossCalList?[i]?.GetValue(null));
+                    }
                 }
+                catch { InfernumMode.Instance.Logger.Error("Prevented an infinite loop from occurring"); }
             }
             TagCompound downedInf = [];
             downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
@@ -326,11 +334,15 @@ namespace InfernumMode.Content.Subworlds
                 {
                     InfernumMode.Instance.Logger.Error("Calamity mod boss downed property array length does not match the saved data array length");
                 }
-                for (int i = 0; i < DownedBossCalList?.Length; i++)
+                try
                 {
-                    if (DownedBossCalList?[i]?.Name == downed?.GetString(DownedBossCalList?[i]?.Name))
-                        DownedBossCalList?[i]?.SetValue(null, downed?.GetBool(DownedBossCalList?[i]?.Name));
+                    for (int i = 0; i < DownedBossCalList?.Length; i++)
+                    {
+                        if (DownedBossCalList?[i]?.Name == downed?.GetString(DownedBossCalList?[i]?.Name))
+                            DownedBossCalList?[i]?.SetValue(null, downed?.GetBool(DownedBossCalList?[i]?.Name));
+                    }
                 }
+                catch { InfernumMode.Instance.Logger.Error("Prevented an infinite loop from occurring"); }
             }
             WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
             base.ReadCopiedSubworldData();

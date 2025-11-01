@@ -238,7 +238,7 @@ namespace InfernumMode.Content.Subworlds
             if (InfernumMode.CalamityMod != null)
             {
                 var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
-                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
                 for (int i = 0; i < DownedBossCalList?.Length; i++)
                 {
                     if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
@@ -257,7 +257,7 @@ namespace InfernumMode.Content.Subworlds
             {
                 var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
                 var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
-                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
                 if (DownedBossCalList?.Length != downed.ToArray().Length)
                 {
                     InfernumMode.Instance.Logger.Error("Calamity mod boss downed property array length does not match the saved data array length");
@@ -285,7 +285,7 @@ namespace InfernumMode.Content.Subworlds
             if (InfernumMode.CalamityMod != null)
             {
                 var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
-                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
                 for (int i = 0; i < DownedBossCalList?.Length; i++)
                 {
                     if (DownedBossCalList?[i]?.Name == downedCal.GetString(DownedBossCalList?[i]?.Name))
@@ -317,7 +317,7 @@ namespace InfernumMode.Content.Subworlds
             {
                 var downed = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedCalBosses_Inf");
                 var DownedBossCalList = InfernumMode.CalamityMod.Code?.GetTypes()?.Where(t => t.Name == "DownedBossSystem")?.First()?
-                                                    .GetProperties(BindingFlags.Public | BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
+                                                    .GetProperties(BindingFlags.Public & BindingFlags.Static)?.Where(p => p.Name is not "Mod" or "Name" or "FullName")?.ToArray();
                 if (DownedBossCalList?.Length != downed.ToArray().Length)
                 {
                     InfernumMode.Instance.Logger.Error("Calamity mod boss downed property array length does not match the saved data array length");

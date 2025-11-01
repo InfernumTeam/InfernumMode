@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             // Begin the animation once the player is sufficiently close to the vassal.
-            if (NPC.WithinRange(Target.Center, 700f) && hasBegunAnimation == 0f)
+            if (Target.whoAmI >= 0 && Target.whoAmI < Main.maxPlayers && !Target.dead && NPC.WithinRange(Target.Center, 700f) && hasBegunAnimation == 0f)
             {
                 hasBegunAnimation = 1f;
                 SpearRotation = NPC.AngleTo(Target.Center) + PiOver4;

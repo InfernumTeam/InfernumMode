@@ -209,6 +209,8 @@ namespace InfernumMode.Content.Subworlds
             set;
         }
 
+        public override LocalizedText DisplayName => Language.GetText($"Mods.{Mod.Name}.Biomes.{nameof(LostColosseum)}Biome.DisplayName");
+
         public override void Load()
         {
             LoadingBackgroundTexture = ModContent.Request<Texture2D>("InfernumMode/Content/Subworlds/ColosseumLoadingBackground", AssetRequestMode.ImmediateLoad).Value;

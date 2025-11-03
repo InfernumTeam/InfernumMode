@@ -4,6 +4,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Biomes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.WorldGeneration;
@@ -254,7 +255,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (SubworldSystem.IsActive<LostColosseum>())
             {
                 // Only mark this if no other players are alive.
-                if (!Main.player.Any(player => !player.dead && player.active))
+                if (!Main.player.Any(player => !player.dead && player.active) && !NPC.AnyNPCs(ModContent.NPCType<BereftVassal>()))
                     LostColosseum.HasBereftVassalAppeared = false;
 
                 Main.spawnTileX = LostColosseum.CampfirePosition.X;

@@ -291,7 +291,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                 {
                     Vector2 chargeDustSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(chargeDustOffset, chargeDustOffset) * Main.rand.NextFloat(0.8f, 1f);
                     Vector2 chargeDustVelocity = (npc.Center - chargeDustSpawnPosition) * 0.05f;
-                    Dust electricity = Dust.NewDustPerfect(chargeDustSpawnPosition, 229);
+                    Dust electricity = Dust.NewDustPerfect(chargeDustSpawnPosition, DustID.Vortex);
                     electricity.velocity = chargeDustVelocity * Main.rand.NextFloat(0.9f, 1.1f);
                     electricity.scale = Lerp(1f, 1.45f, chargePowerup);
                     electricity.alpha = 84;

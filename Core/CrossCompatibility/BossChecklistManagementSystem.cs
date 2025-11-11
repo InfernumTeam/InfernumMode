@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using CalamityMod;
+using CalamityMod.Items.Pets;
+using CalamityMod.Items.Placeables;
 using CalamityMod.Items.Placeables.Furniture.DevPaintings;
 using CalamityMod.Items.SummonItems;
+using CalamityMod.Items.Weapons.Magic;
+using CalamityMod.Items.Weapons.Melee;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.NPCs.GreatSandShark;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Items.LoreItems;
 using InfernumMode.Content.Items.Misc;
 using InfernumMode.Content.Items.Placeables;
+using InfernumMode.Content.Items.Relics;
+using InfernumMode.Content.Items.SummonItems;
+using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -44,7 +53,9 @@ namespace InfernumMode.Core.CrossCompatibility
         public Dictionary<string, float> BossChecklistValues = new()
         {
             // A little bit after Astrum Deus.
-            {"BereftVassal", 17.75f}
+            {"BereftVassal", 17.75f },
+            // After Yharon
+            {"PrimordialWyrm", 22.5f}
         };
         public override void PostSetupContent()
         {
@@ -82,18 +93,29 @@ namespace InfernumMode.Core.CrossCompatibility
                     }
                 );
             }
-            Add("Boss",
-                nameof(BereftVassal),
-                [ModContent.NPCType<BereftVassal>(), ModContent.NPCType<GreatSandShark>()],
-                () => WorldSaveSystem.DownedBereftVassal,
-                () => NPC.downedAncientCultist,
-                [
+            Add(type: "Boss",
+                bossName: nameof(BereftVassal),
+                npcIDs: [ModContent.NPCType<BereftVassal>(), ModContent.NPCType<GreatSandShark>()],
+                downed: () => WorldSaveSystem.DownedBereftVassal,
+                available: () => InfernumMode.CanUseCustomAIs && NPC.downedAncientCultist,
+                collectibles: [
                     ModContent.ItemType<BereftVassalTrophy>(),
                     ModContent.ItemType<KnowledgeBereftVassal>(),
                     ModContent.ItemType<WaterglassToken>(),
                     ModContent.ItemType<ThankYouPainting>(),
                 ],
-                [ModContent.ItemType<SandstormsCore>()]
+                spawnItems: [ModContent.ItemType<SandstormsCore>()]
+            );
+            Add(type: "Boss",
+            bossName: nameof(CalamityMod.NPCs.PrimordialWyrm),
+            npcIDs: [ModContent.NPCType<CalamityMod.NPCs.PrimordialWyrm.PrimordialWyrmHead>()],
+            downed: () => DownedBossSystem.downedPrimordialWyrm,
+            available: () => InfernumMode.CanUseCustomAIs && DownedBossSystem.downedYharon,
+            collectibles: [
+                ModContent.ItemType<Terminus>()
+            ],
+            spawnItems: [ModContent.ItemType<EvokingSearune>()],
+            portrait: "Assets/BossTextures/PrimordialWyrm/PrimordialWyrm_BossChecklist"
             );
         }
 

@@ -38,6 +38,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0.15f;
             NPC.Calamity().canBreakPlayerDefense = true;
+            NPC.buffImmune[BuffID.Confused] = true;
         }
 
         public override void AI()

@@ -1619,6 +1619,13 @@ Mods: {
 			CalamitasShadowClone.DisplayName: Forgotten Shadow of Calamitas
 			CataclysmShadow.DisplayName: Forgotten Shadow of Cataclysm
 			CatastropheShadow.DisplayName: Forgotten Shadow of Catastrophe
+
+			PrimordialWyrm: {
+				BossChecklistIntegration: {
+					SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use [i:InfernumMode/EvokingSearune].
+					EntryName: Primordial Wyrm
+				}
+			}
 		}
 
 		PetDialog: {

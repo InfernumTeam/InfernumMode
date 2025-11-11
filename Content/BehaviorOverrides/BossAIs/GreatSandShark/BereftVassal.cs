@@ -369,7 +369,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             }
 
             // Begin the animation once the player is sufficiently close to the vassal.
-            if (NPC.WithinRange(Target.Center, 700f) && hasBegunAnimation == 0f)
+            if (Target.whoAmI >= 0 && Target.whoAmI < Main.maxPlayers && !Target.dead && NPC.WithinRange(Target.Center, 700f) && hasBegunAnimation == 0f)
             {
                 hasBegunAnimation = 1f;
                 SpearRotation = NPC.AngleTo(Target.Center) + PiOver4;
@@ -392,7 +392,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
             CurrentFrame = 0f;
 
             // Get rid of any and all adrenaline.
-            Target.Calamity().adrenaline = 0f;
+            foreach (Player player in Main.ActivePlayers)
+            {
+                player.Calamity().adrenaline = 0f;
+            }
 
             if (hasBegunAnimation == 0f)
                 return;

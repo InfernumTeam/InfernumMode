@@ -839,15 +839,6 @@ Mods: {
 				Tooltip: Призывает маленькую шляподевочку, которая даёт советы о боссах, с которыми вы сражаетесь
 			}
 
-			DisenchantedTablet: {
-				DisplayName: Расколдованная табличка
-				Tooltip:
-					'''
-					Содержит сложную сеть из спутанных воспоминаний, сокрытых внутри
-					Может быть заколдована на алтаре, расположенном где-то на поверхности
-					'''
-			}
-
 			NightmareCatcher: {
 				DisplayName: Ловец кошмаров
 				Tooltip:
@@ -904,11 +895,6 @@ Mods: {
 			ProvidenceSpawnerItem: {
 				DisplayName: Святыня Провиденс (DEBUG)
 				Tooltip: Призывает Провиденс при нажатии ПКМ с осквернённым ядром
-			}
-
-			TabletPedestal: {
-				DisplayName: Пьедестал для таблички
-				Tooltip: Может быть использован для того, чтобы заколдовать одну расколдованную табличку
 			}
 
 			AEWRelic: {
@@ -2418,7 +2404,6 @@ Mods: {
 			BrimstoneCrescentStaffProj.DisplayName: Посох серного полумесяца
 			BrimstoneForcefieldExplosion.DisplayName: Серный взрыв
 			CherryBlossomPetal.DisplayName: Лепесток цветка вишни
-			DisenchantedTabletProj.DisplayName: Расколдованная табличка
 			GuardiansSummonerProjectile.DisplayName: Снаряд Призывателя Стражей
 			HydrothermalSmoke.DisplayName: Пар
 			PortalLensFlare.DisplayName: Отблеск линзы
@@ -2597,7 +2582,6 @@ Mods: {
 		WorldGen: {
 			BlossomGarden: Выращивание сада
 			EggShrine: Скрытие яйца
-			TabletPedestal: Установка таблички
 			LostColosseum: Генерация затерянного колизея
 			ProfanedGarden: Постройка храма для древней богини
 		}

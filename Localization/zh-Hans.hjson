@@ -833,15 +833,6 @@ Mods: {
 				Tooltip: 召唤一个小小的礼帽女孩在你与Boss战斗时给予你建议
 			}
 
-			DisenchantedTablet: {
-				DisplayName: 未注魔的石碑
-				Tooltip:
-					'''
-					其容纳着被锁定的错综复杂的记忆之网
-					可以在地表某处的石碑祭坛上被附魔
-					'''
-			}
-
 			NightmareCatcher: {
 				DisplayName: 噩梦捕手
 				Tooltip:
@@ -898,11 +889,6 @@ Mods: {
 			ProvidenceSpawnerItem: {
 				DisplayName: 亵渎祭坛(DEBUG)
 				Tooltip: 用亵渎晶核在其上右键以召唤亵渎天神
-			}
-
-			TabletPedestal: {
-				DisplayName: 石碑基座
-				Tooltip: 可用于附魔一块特殊的未注魔的石碑
 			}
 
 			AEWRelic: {
@@ -2401,7 +2387,6 @@ Mods: {
 			BrimstoneCrescentStaffProj.DisplayName: 硫火新月法杖
 			BrimstoneForcefieldExplosion.DisplayName: 硫火爆炸
 			CherryBlossomPetal.DisplayName: 樱花花瓣
-			DisenchantedTabletProj.DisplayName: 未注魔的石碑基座
 			GuardiansSummonerProjectile.DisplayName: 守卫召唤弹幕
 			HydrothermalSmoke.DisplayName: 蒸汽
 			PortalLensFlare.DisplayName: 镜头光晕
@@ -2580,7 +2565,6 @@ Mods: {
 		WorldGen: {
 			// BlossomGarden: Growing a garden
 			// EggShrine: Hiding eggs
-			// TabletPedestal: Placing a tablet
 			// LostColosseum: Generating a Lost Colosseum
 			// ProfanedGarden: Constructing a temple for an ancient goddess
 		}

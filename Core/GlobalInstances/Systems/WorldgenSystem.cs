@@ -16,7 +16,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Prov Arena", ProfanedGarden.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Desert Digout Area", LostColosseumEntrance.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Hiding eggs", EggShrineGeneration.Generate));
-                tasks.Insert(++finalCleanupIndex, new PassLegacy("Placing tablet", TabletPedestalGeneration.Generate));
                 tasks.Insert(++finalCleanupIndex, new PassLegacy("Growing garden", BlossomGarden.Generate));
             }
         }

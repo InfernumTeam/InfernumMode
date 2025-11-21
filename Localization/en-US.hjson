@@ -838,15 +838,6 @@ Mods: {
 				Tooltip: Summons a small hat girl that gives you advice about bosses that you fight
 			}
 
-			DisenchantedTablet: {
-				DisplayName: Disenchanted Tablet
-				Tooltip:
-					'''
-					Contains a complex network of intricately woven memories, locked away
-					Can be enchanted at a tablet altar, located somewhere on the surface
-					'''
-			}
-
 			NightmareCatcher: {
 				DisplayName: Nightmare Catcher
 				Tooltip:
@@ -903,11 +894,6 @@ Mods: {
 			ProvidenceSpawnerItem: {
 				DisplayName: Providence Shrine (DEBUG)
 				Tooltip: Summons Providence when right clicked with a Profaned Core
-			}
-
-			TabletPedestal: {
-				DisplayName: Tablet Pedestal
-				Tooltip: Can be used to enchant a particular disenchanted tablet
 			}
 
 			AEWRelic: {
@@ -2406,7 +2392,6 @@ Mods: {
 			BrimstoneCrescentStaffProj.DisplayName: Brimstone Crescent Staff
 			BrimstoneForcefieldExplosion.DisplayName: Brimstone Explosion
 			CherryBlossomPetal.DisplayName: Cherry Blossom Petal
-			DisenchantedTabletProj.DisplayName: Disenchanted Tablet
 			GuardiansSummonerProjectile.DisplayName: Guardians Summoner Projectile
 			HydrothermalSmoke.DisplayName: Steam
 			PortalLensFlare.DisplayName: Lens Flare
@@ -2585,7 +2570,6 @@ Mods: {
 		WorldGen: {
 			BlossomGarden: Growing a garden
 			EggShrine: Hiding eggs
-			TabletPedestal: Placing a tablet
 			LostColosseum: Generating a Lost Colosseum
 			ProfanedGarden: Constructing a temple for an ancient goddess
 		}

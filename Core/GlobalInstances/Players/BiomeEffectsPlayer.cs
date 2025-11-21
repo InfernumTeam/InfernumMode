@@ -4,6 +4,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.PrimordialWyrm;
 using CalamityMod.Systems;
 using InfernumMode.Assets.Effects;
+using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.Content.Biomes;
 using InfernumMode.Content.Subworlds;
 using InfernumMode.Content.WorldGeneration;
@@ -140,7 +141,17 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (SubworldSystem.IsActive<LostColosseum>())
                 Player.Calamity().noStupidNaturalARSpawns = true;
 
-            LostColosseumTeleportInterpolant = Clamp(LostColosseumTeleportInterpolant - 0.008f, 0f, 1f);
+            float equalizer = 0.0005f;
+            if (LostColosseumTeleportInterpolant < 0f)
+            {
+                equalizer -= equalizer * 2;
+                if (LostColosseumTeleportInterpolant - equalizer > 0f)
+                    LostColosseumTeleportInterpolant = 0f;
+            }
+            else if (LostColosseumTeleportInterpolant > 0f && LostColosseumTeleportInterpolant - equalizer < 0f) LostColosseumTeleportInterpolant = 0f;
+
+            if (LostColosseumTeleportInterpolant != 0f)
+                LostColosseumTeleportInterpolant = Clamp(LostColosseumTeleportInterpolant - equalizer, -2f, 1f);
         }
 
         // Ensure that the profaned temple title card animation state is saved after the player leaves the world.
@@ -244,7 +255,7 @@ namespace InfernumMode.Core.GlobalInstances.Players
             if (SubworldSystem.IsActive<LostColosseum>())
             {
                 // Only mark this if no other players are alive.
-                if (!Main.player.Any(player => !player.dead && player.active))
+                if (!Main.player.Any(player => !player.dead && player.active) && !NPC.AnyNPCs(ModContent.NPCType<BereftVassal>()))
                     LostColosseum.HasBereftVassalAppeared = false;
 
                 Main.spawnTileX = LostColosseum.CampfirePosition.X;

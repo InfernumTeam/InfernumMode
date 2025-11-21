@@ -256,7 +256,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
-                if (player.dead || !player.active || !npc.WithinRange(player.Center, 10000f))
+                if (player.dead || !player.active || !npc.WithinRange(player.Center, 40000f))
                     continue;
 
                 // Disable obnoxious water mechanics so that the player can fight the boss without interruption.

@@ -40,8 +40,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
                         Vector2 cinderVelocity = (TwoPi * i / 10f).ToRotationVector2() * Main.rand.NextFloat(7f, 16f) + Main.rand.NextVector2Circular(4f, 4f);
                         Utilities.NewProjectileBetter(Projectile.Center + cinderVelocity * 2f, cinderVelocity, ModContent.ProjectileType<MoonLordExplosionCinder>(), 0, 0f);
                     }
-                    Projectile.localAI[0] = 1f;
                 }
+                Projectile.localAI[0] = 1f;
             }
             Projectile.scale = Projectile.timeLeft / 40f;
         }

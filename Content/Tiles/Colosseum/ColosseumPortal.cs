@@ -117,19 +117,25 @@ namespace InfernumMode.Content.Tiles.Colosseum
             bool insidePortal = Distance(Main.LocalPlayer.Center.X, i * 16f) <= 108f && Main.LocalPlayer.Center.Y >= j * 16f - 250f;
             ref float teleportInterpolant = ref Main.LocalPlayer.Infernum_Biome().lostColosseumTeleportInterpolant;
             Tile t = Framing.GetTileSafely(i, j);
-            if (!insidePortal || !WorldSaveSystem.HasOpenedLostColosseumPortal || t.TileFrameX != 36 || t.TileFrameY != 18)
-                return;
-
-            if (teleportInterpolant <= 1f)
+            if (!insidePortal)
             {
-                if (closer)
-                    teleportInterpolant += 0.028f;
+                teleportInterpolant = MathHelper.Max(teleportInterpolant - 0.04f, 0f);
                 return;
             }
+            if (!WorldSaveSystem.HasOpenedLostColosseumPortal || t.TileFrameX != 36 || t.TileFrameY != 18)
+                return;
+
+            if (closer && !Main.gamePaused && !Main.GlobalTimerPaused)
+                teleportInterpolant += 0.04f;
+
+            if (teleportInterpolant <= 1f)
+                return;
 
             teleportInterpolant = 0f;
             if (SubworldSystem.IsActive<LostColosseum>())
+            {
                 SubworldSystem.Exit();
+            }
             else
             {
                 // Don't allow the player to use the portal if Infernum is not active.

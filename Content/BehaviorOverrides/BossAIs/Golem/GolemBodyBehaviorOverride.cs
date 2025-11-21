@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Items.Tools;
 using CalamityMod.Items.Weapons.Ranged;
@@ -253,6 +254,10 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             ref NPC leftFist = ref Main.npc[(int)LeftFistNPC];
             ref NPC rightFist = ref Main.npc[(int)RightFistNPC];
             ref Player target = ref Main.player[npc.target];
+            
+            // Fix Miracle Blight crash
+            freeHead.buffImmune[ModContent.BuffType<MiracleBlight>()] = true;
+            attachedHead.buffImmune[ModContent.BuffType<MiracleBlight>()] = true;
 
             // Reset head DR.
             if (freeHead.active)

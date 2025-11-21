@@ -325,6 +325,16 @@ Mods: {
 					// Tooltip: Wall of Flesh horizontal movement speed multiplier
 				}
 
+				OldNightProv: {
+					// Label: Old-School Night Providence
+					// Tooltip: Changes Providence's speed and acceleration multiplier while enraged from 1.35x to 1.35x^2 (1.8225x)
+				}
+
+				MasterModePatch: {
+					// Label: Master Mode Patch
+					// Tooltip: Enables use of Master, For the worthy, and zenith seed alongside Infernum, Lost Colosseum works properly with this patch.
+				}
+
 				Headers: {
 					// BaseInfernum: Base Infernum Config
 					// Patch: Prisma Patch Config
@@ -345,6 +355,11 @@ Mods: {
 				[c/B32E81:对于那些追求比死亡模式更高难度人而言，这是一个独特的挑战。]
 				[c/B32E81:该模式无法在大师模式下或For the Worthy种子中运行。]
 				'''
+			/* ShortDescriptionPatched:
+				'''
+				[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]
+				[c/B3FF81:Master Mode Patch Enabled!]
+				''' */
 			ExpandedDescription:
 				'''
 				 [c/B32E81:大部分敌人变得不同，拥有更具挑战的AI。]
@@ -2548,6 +2563,7 @@ Mods: {
 
 		UI: {
 			NotExpertWarning: "[c/ff00000:只能在专家模式下启用炼狱模式]"
+			// MasterModePatched: "[c/B3FF81:Master Mode Patched]"
 			AchievementsHeader: 死亡祈愿
 			AchievementsLabelText: 下一个
 			InfernumIconText: 炼狱模式已启用

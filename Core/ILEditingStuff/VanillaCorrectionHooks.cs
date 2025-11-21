@@ -668,7 +668,7 @@ namespace InfernumMode.Core.ILEditingStuff
 
             // Pop original value off.
             c.Emit(OpCodes.Pop);
-            c.EmitDelegate(() => DifficultyManagementSystem.DisableDifficultyModes ? "Mods.InfernumMode.UI.NotExpertWarning" : "UI.WorldDescriptionMaster");
+            c.EmitDelegate(() => !InfernumConfig.Instance.MasterModePatch ? "Mods.InfernumMode.UI.NotExpertWarning" : "Mods.InfernumMode.UI.MasterModePatched");
         }
     }
 

@@ -19,6 +19,7 @@ using InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.Content.Cutscenes;
 using InfernumMode.Content.Projectiles.Pets;
 using InfernumMode.Content.Projectiles.Wayfinder;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances;
 using InfernumMode.Core.GlobalInstances.Players;
 using InfernumMode.Core.GlobalInstances.Systems;
@@ -2527,6 +2528,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 maxFlySpeed *= 1.35f;
                 acceleration *= 1.35f;
+                if (InfernumConfig.Instance.OldNightProv)
+                {
+                    maxFlySpeed *= 1.35f;
+                    acceleration *= 1.35f;
+                }
             }
 
             // Don't stray too far from the target.

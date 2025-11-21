@@ -38,11 +38,18 @@ namespace InfernumMode.Core
         [BackgroundColor(64, 171, 229, 192)]
         public bool SuperScaler { get; set; }
 
-        [Range(0, 1)]
+        [Range(0, 2)]
         [BackgroundColor(64, 171, 229, 192)]
-        [DefaultValue(0.8f)]
+        [DefaultValue(1f)]
         public float WallSpeed { get; set; }
 
+        [DefaultValue(false)]
+        [BackgroundColor(64, 171, 229, 192)]
+        public bool OldNightProv { get; set; }
+
+        [DefaultValue(false)]
+        [BackgroundColor(64, 171, 229, 192)]
+        public bool MasterModePatch { get; set; }
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => false;
     }
 }

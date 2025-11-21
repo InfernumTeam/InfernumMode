@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Systems;
 using CalamityMod.World;
 using InfernumMode.Assets.Sounds;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.Netcode;
 using InfernumMode.Core.Netcode.Packets;
@@ -47,7 +48,8 @@ namespace InfernumMode.Content.UI
         {
             DifficultyScale = 99999999f;
             Name = Language.GetText("Mods.InfernumMode.DifficultyUI.Name");
-            ShortDescription = Language.GetText("Mods.InfernumMode.DifficultyUI.ShortDescription");
+            if (InfernumConfig.Instance.MasterModePatch) ShortDescription = Language.GetText("Mods.InfernumMode.DifficultyUI.ShortDescriptionPatched");
+            else ShortDescription = Language.GetText("Mods.InfernumMode.DifficultyUI.ShortDescription");
 
             ActivationTextKey = "Mods.InfernumMode.DifficultyUI.InfernumText";
             DeactivationTextKey = "Mods.InfernumMode.DifficultyUI.InfernumText2";

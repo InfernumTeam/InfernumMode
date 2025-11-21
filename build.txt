@@ -1,5 +1,5 @@
 author = Lucille Karma, Imogen, PrismaAce
-version = 498.0
+version = 498.20
 displayName = Calamity Mod Infernum Mode (Prisma Patch)
 modReferences = CalamityMod, SubworldLibrary, Luminance
 hideCode = false

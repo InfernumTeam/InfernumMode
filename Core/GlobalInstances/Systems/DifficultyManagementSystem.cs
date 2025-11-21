@@ -33,7 +33,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 CalamityWorld.death = true;
 
             // Disable Infernum interactions with FTW/Master/GFB because they're just not good and are undeserving of the work it'd take to make Infernum a meaningful experience alongside them.
-            bool stupidDifficultyIsActive = Main.masterMode || Main.getGoodWorld || Main.zenithWorld;
+            bool stupidDifficultyIsActive = (Main.masterMode || Main.getGoodWorld || Main.zenithWorld) && !InfernumConfig.Instance.MasterModePatch;
             if (WorldSaveSystem.InfernumModeEnabled && stupidDifficultyIsActive && DisableDifficultyModes)
             {
                 LumUtils.BroadcastLocalizedText("Mods.InfernumMode.Status.InfernumDisallowedInWeirdDifficulties", Color.Red);

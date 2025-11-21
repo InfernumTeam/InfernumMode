@@ -325,6 +325,16 @@ Mods: {
 					// Tooltip: Wall of Flesh horizontal movement speed multiplier
 				}
 
+				OldNightProv: {
+					// Label: Old-School Night Providence
+					// Tooltip: Changes Providence's speed and acceleration multiplier while enraged from 1.35x to 1.35x^2 (1.8225x)
+				}
+
+				MasterModePatch: {
+					// Label: Master Mode Patch
+					// Tooltip: Enables use of Master, For the worthy, and zenith seed alongside Infernum, Lost Colosseum works properly with this patch.
+				}
+
 				Headers: {
 					// BaseInfernum: Base Infernum Config
 					// Patch: Prisma Patch Config
@@ -345,6 +355,11 @@ Mods: {
 				[c/B32E81:Отдельное испытание для тех, кто ищет что-то отличное, при этом более требовательное, чем режим Смерти]
 				[c/B32E81:Этот режим не работает с режимом Мастера или сидом For the Worthy.]
 				'''
+			/* ShortDescriptionPatched:
+				'''
+				[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]
+				[c/B3FF81:Master Mode Patch Enabled!]
+				''' */
 			ExpandedDescription:
 				'''
 				 [c/B32E81:Много важных врагов будут отличаться и иметь более испытывающий ИИ.]
@@ -2565,6 +2580,7 @@ Mods: {
 
 		UI: {
 			NotExpertWarning: "[c/ff00000:РЕЖИМ ИНФЕРНУМ ДОСТУПЕН ТОЛЬКО В РЕЖИМЕ ЭКСПЕРТ]"
+			// MasterModePatched: "[c/B3FF81:Master Mode Patched]"
 			AchievementsHeader: Смертные желания
 			AchievementsLabelText: Следующий
 			InfernumIconText: Включен режим Инфернум

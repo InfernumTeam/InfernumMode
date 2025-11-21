@@ -325,6 +325,16 @@ Mods: {
 					Tooltip: Wall of Flesh horizontal movement speed multiplier
 				}
 
+				OldNightProv: {
+					Label: Old-School Night Providence
+					Tooltip: Changes Providence's speed and acceleration multiplier while enraged from 1.35x to 1.35x^2 (1.8225x)
+				}
+
+				MasterModePatch: {
+					Label: Master Mode Patch
+					Tooltip: Enables use of Master, For the worthy, and zenith seed alongside Infernum, Lost Colosseum works properly with this patch.
+				}
+
 				Headers: {
 					BaseInfernum: Base Infernum Config
 					Patch: Prisma Patch Config
@@ -344,6 +354,11 @@ Mods: {
 				'''
 				[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]
 				[c/B32E81:This mode does not work with Master or the For the Worthy seed.]
+				'''
+			ShortDescriptionPatched:
+				'''
+				[c/B32E81:A distinct challenge for those who seek something vastly different yet also more demanding than Death mode.]
+				[c/B3FF81:Master Mode Patch Enabled!]
 				'''
 			ExpandedDescription:
 				'''
@@ -2553,6 +2568,7 @@ Mods: {
 
 		UI: {
 			NotExpertWarning: "[c/ff00000:INFERNUM MODE CAN ONLY BE ENABLED IN EXPERT MODE]"
+			MasterModePatched: "[c/B3FF81:Master Mode Patched]"
 			AchievementsHeader: Death Wishes
 			AchievementsLabelText: Next
 			InfernumIconText: Infernum Mode is enabled

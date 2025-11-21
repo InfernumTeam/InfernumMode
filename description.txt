@@ -6,3 +6,7 @@ The primary focus of the mod is expansive reworking of boss AIs.
 Some bosses gain extra phases for maximum "It's not over yet!" energy.
 
 Please report any bugs/issues via the Bug-Reports forum on the discord server.
+
+-- Prisma Patch --
+Added Super Scaler (60x HP)
+Added Wall of Flesh Move Speed Scaler (0-10x)

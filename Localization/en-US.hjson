@@ -314,6 +314,21 @@ Mods: {
 					Label: Ceaseless Void Camera
 					Tooltip: Determines whether Ceaseless Void changes the behavior of the camera during the fight.
 				}
+
+				SuperScaler: {
+					Label: Super Scaler
+					Tooltip: Bosses have 60x HP, regular enemies have 2.5x HP
+				}
+
+				WallSpeed: {
+					Label: Wall of Flesh Movement Speed
+					Tooltip: Wall of Flesh horizontal movement speed multiplier
+				}
+
+				Headers: {
+					BaseInfernum: Base Infernum Config
+					Patch: Prisma Patch Config
+				}
 			}
 		}
 
@@ -647,7 +662,7 @@ Mods: {
 				'''
 			WoFIntroScreen.TextToDisplay:
 				'''
-				Hungering Conglomeration
+				The Reason This World Fucking Sucks
 				The Wall of Flesh
 				'''
 

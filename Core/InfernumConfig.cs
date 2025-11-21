@@ -12,6 +12,7 @@ namespace InfernumMode.Core
 
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
+        [Header("BaseInfernum")]
         [BackgroundColor(224, 127, 180, 192)]
         [DefaultValue(true)]
         public bool BossIntroductionAnimationsAreAllowed { get; set; }
@@ -31,6 +32,16 @@ namespace InfernumMode.Core
         [BackgroundColor(224, 127, 180, 192)]
         [DefaultValue(true)]
         public bool CameraAnimations { get; set; }
+
+        [Header("Patch")]
+        [DefaultValue(true)]
+        [BackgroundColor(64, 171, 229, 192)]
+        public bool SuperScaler { get; set; }
+
+        [Range(0, 1)]
+        [BackgroundColor(64, 171, 229, 192)]
+        [DefaultValue(0.8f)]
+        public float WallSpeed { get; set; }
 
         public override bool AcceptClientChanges(ModConfig pendingConfig, int whoAmI, ref NetworkText message) => false;
     }

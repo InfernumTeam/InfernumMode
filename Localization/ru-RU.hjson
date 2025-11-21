@@ -314,6 +314,21 @@ Mods: {
 					Label: Камеры Нескончаемой пустоты
 					Tooltip: Определяет, будет ли Нескончаемая пустота менять поведение камеры во время битвы.
 				}
+
+				SuperScaler: {
+					// Label: Super Scaler
+					// Tooltip: Bosses have 60x HP, regular enemies have 2.5x HP
+				}
+
+				WallSpeed: {
+					// Label: Wall of Flesh Movement Speed
+					// Tooltip: Wall of Flesh horizontal movement speed multiplier
+				}
+
+				Headers: {
+					// BaseInfernum: Base Infernum Config
+					// Patch: Prisma Patch Config
+				}
 			}
 		}
 

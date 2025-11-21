@@ -1,6 +1,6 @@
-author = Lucille Karma, Imogen
-version = 2.0.1.19
-displayName = Calamity Mod Infernum Mode
+author = Lucille Karma, Imogen, PrismaAce
+version = 498.0
+displayName = Calamity Mod Infernum Mode (Prisma Patch)
 modReferences = CalamityMod, SubworldLibrary, Luminance
 hideCode = false
 hideResources = false

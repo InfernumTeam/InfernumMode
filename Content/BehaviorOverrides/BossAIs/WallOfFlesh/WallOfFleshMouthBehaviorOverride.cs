@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CalamityMod;
 using CalamityMod.Events;
+using InfernumMode.Core;
 using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -23,6 +24,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         public static int FleshTentacleDamage => 105;
 
         public static int FireBeamDamage => 185;
+		
+		private static float SpeedMultiplier => InfernumConfig.Instance.WallSpeed;
 
         public override float[] PhaseLifeRatioThresholds =>
         [
@@ -227,7 +230,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
         {
             float verticalDestination = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2 - npc.height / 2;
-            float horizontalSpeed = Lerp(4.1f, 7.2f, 1f - lifeRatio);
+            float horizontalSpeed = Lerp(4.1f*SpeedMultiplier, 7.2f*SpeedMultiplier, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
 

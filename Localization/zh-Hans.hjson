@@ -1594,6 +1594,7 @@ Mods: {
 				BossChecklistIntegration: {
 					SpawnInfo: 在沙漠中心的基座上使用[i:CalamityMod/SandstormsCore]。
 					EntryName: 无邦封臣
+					// DespawnMessage: Argus, the Bereft Vassal continues his wait.
 				}
 			}
 

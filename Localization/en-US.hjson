@@ -1599,6 +1599,7 @@ Mods: {
 				BossChecklistIntegration: {
 					SpawnInfo: Use a [i:CalamityMod/SandstormsCore] at the pedestal in the heart of the desert.
 					EntryName: Bereft Vassal
+					DespawnMessage: Argus, the Bereft Vassal continues his wait.
 				}
 			}
 

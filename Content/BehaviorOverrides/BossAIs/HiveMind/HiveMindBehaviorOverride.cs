@@ -940,7 +940,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
 
             for (int i = 1; i < npc.oldPos.Length; i++)
             {
-                if (npc.Infernum().ExtraAI[10] == 0f || !CalamityConfig.Instance.Afterimages)
+                if (npc.Infernum().ExtraAI[10] == 0f || !CalamityClientConfig.Instance.Afterimages)
                     break;
 
                 float scale = npc.scale * Lerp(0.9f, 0.45f, i / (float)npc.oldPos.Length);

@@ -59,9 +59,9 @@ namespace InfernumMode.Core.Balancing
         public static readonly Func<bool> InfernumHardmodeCondition = () => InfernumMode.CanUseCustomAIs && Main.hardMode && !BossRushEvent.BossRushActive;
 
         // This is a lot, I do not enjoy the fact calamity does this.
-        public static Func<bool> InfernumFirstMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() == 0 && CalamityConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive;
+        public static Func<bool> InfernumFirstMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() == 0 && CalamityServerConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive;
 
-        public static Func<bool> InfernumSecondMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() == 1 && CalamityConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive;
+        public static Func<bool> InfernumSecondMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() == 1 && CalamityServerConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive;
 
         public static Func<bool> InfernumFinalMechCondition => () => InfernumMode.CanUseCustomAIs && GetMechsDowned() >= 2 && !InfernumFirstMechCondition() && !BossRushEvent.BossRushActive;
 

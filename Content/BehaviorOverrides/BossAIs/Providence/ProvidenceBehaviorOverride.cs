@@ -2296,7 +2296,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             if (vfxDelayCountdown > 0f)
             {
                 vfxDelayCountdown--;
-                if (vfxDelayCountdown <= 0f && (CalamityConfig.Instance.ScreenshakePower > 0f) && !attackIsAboutToEnd && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
+                if (vfxDelayCountdown <= 0f && (CalamityClientConfig.Instance.ScreenshakePower > 0f) && !attackIsAboutToEnd && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
                 {
                     Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
                     ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 30);
@@ -2476,7 +2476,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
                     vfxDelayCountdown--;
                     if (vfxDelayCountdown <= 0f && Utilities.AnyProjectiles(ModContent.ProjectileType<HolyMagicLaserbeam>()))
                     {
-                        if (CalamityConfig.Instance.ScreenshakePower > 0f)
+                        if (CalamityClientConfig.Instance.ScreenshakePower > 0f)
                         {
                             Main.LocalPlayer.Infernum_Camera().CurrentScreenShakePower = 15f;
                             ScreenEffectSystem.SetFlashEffect(npc.Center, 3f, 30);

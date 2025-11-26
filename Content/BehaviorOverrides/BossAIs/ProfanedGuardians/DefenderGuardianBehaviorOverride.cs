@@ -174,7 +174,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                         DoPhaseTransitionEffects(commander, 1);
 
-                        if ((CalamityConfig.Instance.ScreenshakePower > 0f))
+                        if ((CalamityClientConfig.Instance.ScreenshakePower > 0f))
                         {
                             target.Infernum_Camera().CurrentScreenShakePower = 20f;
                             ScreenEffectSystem.SetBlurEffect(npc.Center, 2f, 60);

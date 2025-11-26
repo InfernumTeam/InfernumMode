@@ -127,7 +127,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CloudElemental
             {
                 for (int i = 1; i < Projectile.oldPos.Length; i++)
                 {
-                    if (!CalamityConfig.Instance.Afterimages)
+                    if (!CalamityClientConfig.Instance.Afterimages)
                         break;
 
                     float scale = Projectile.scale * Lerp(0.9f, 0.45f, i / (float)Projectile.oldPos.Length);

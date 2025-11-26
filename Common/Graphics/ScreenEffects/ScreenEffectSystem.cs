@@ -38,7 +38,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         /// <param name="lifetime">How long the effect should last</param>
         public static void SetBlurEffect(Vector2 position, float intensity, int lifetime)
         {
-            if (!(CalamityConfig.Instance.ScreenshakePower > 0f) || Main.netMode == NetmodeID.MultiplayerClient)
+            if (!(CalamityClientConfig.Instance.ScreenshakePower > 0f) || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             BlurPosition = position;
@@ -72,7 +72,7 @@ namespace InfernumMode.Common.Graphics.ScreenEffects
         /// <param name="lifetime">How long the effect should last</param>
         public static void SetFlashEffect(Vector2 position, float intensity, int lifetime)
         {
-            if (!(CalamityConfig.Instance.ScreenshakePower > 0f) || Main.netMode == NetmodeID.MultiplayerClient)
+            if (!(CalamityClientConfig.Instance.ScreenshakePower > 0f) || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             FlashPosition = position;

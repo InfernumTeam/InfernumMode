@@ -162,7 +162,7 @@ namespace InfernumMode.Core.GlobalInstances
                 npc.Calamity().AITimer = npc.Calamity().KillTime;
 
             // If any boss NPC is active, apply Zen to nearby players to reduce the spawn rate.
-            if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
+            if (Main.netMode != NetmodeID.Server && CalamityServerConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>() || npc.type == ModContent.NPCType<ThiccWaifu>()))
             {
                 if (!Main.LocalPlayer.dead && Main.LocalPlayer.active && npc.WithinRange(Main.LocalPlayer.Center, 6400f))
                     Main.LocalPlayer.AddBuff(ModContent.BuffType<BossEffects>(), 2);

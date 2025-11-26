@@ -429,7 +429,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 }
 
                 // And ofc some lovely screenshake.
-                if ((CalamityConfig.Instance.ScreenshakePower > 0f))
+                if ((CalamityClientConfig.Instance.ScreenshakePower > 0f))
                     Owner.Infernum_Camera().CurrentScreenShakePower = 2f;
 
                 // Update the current state, timer, and sync.

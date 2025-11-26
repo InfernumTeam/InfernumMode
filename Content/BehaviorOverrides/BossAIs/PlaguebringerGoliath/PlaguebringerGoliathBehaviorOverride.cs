@@ -1021,7 +1021,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Rectangle frame = new(npc.frame.X, npc.frame.Y, texture.Width / 2, texture.Height / frameCount);
             Vector2 origin = frame.Size() / 2f;
 
-            if (CalamityConfig.Instance.Afterimages)
+            if (CalamityClientConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {

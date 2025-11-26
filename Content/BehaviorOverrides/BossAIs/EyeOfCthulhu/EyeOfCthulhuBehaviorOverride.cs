@@ -815,7 +815,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             Color color = lightColor;
             Color afterimageEndColor = Color.White;
-            if (CalamityConfig.Instance.Afterimages && drawAfterimages)
+            if (CalamityClientConfig.Instance.Afterimages && drawAfterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {

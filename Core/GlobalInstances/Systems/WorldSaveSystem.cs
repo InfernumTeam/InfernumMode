@@ -138,7 +138,13 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             set;
         }
 
-        // Use a backing field, for ToastyQoL support.
+        private static bool downedDreadnautilus;
+
+        public static bool DownedDreadnautilus
+        {
+            get => downedDreadnautilus;
+            set => downedDreadnautilus = value;
+        }
         private static bool downedBereftVassal;
 
         public static bool DownedBereftVassal
@@ -230,6 +236,8 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 downed.Add("InPostAEWUpdateWorld");
             if (HasOpenedLostColosseumPortal)
                 downed.Add("HasOpenedLostColosseumPortal");
+            if (DownedDreadnautilus)
+                downed.Add("DownedDreadnautilus");
             if (DownedBereftVassal)
                 downed.Add("DownedBereftVassal");
             if (DisplayedEmodeWarningText)
@@ -284,6 +292,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             HasSepulcherAnimationBeenPlayed = downed.Contains("HasSepulcherAnimationBeenPlayed");
             InPostAEWUpdateWorld = downed.Contains("InPostAEWUpdateWorld");
             HasOpenedLostColosseumPortal = downed.Contains("HasOpenedLostColosseumPortal");
+            DownedDreadnautilus = downed.Contains("DownedDreadnautilus");
             DownedBereftVassal = downed.Contains("DownedBereftVassal");
             DisplayedEmodeWarningText = downed.Contains("DisplayedEmodeWarningText");
             PerformedLacewingAnimation = downed.Contains("PerformedLacewingAnimation");

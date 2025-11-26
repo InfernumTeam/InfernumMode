@@ -1632,6 +1632,14 @@ Mods: {
 			CataclysmShadow.DisplayName: Забытая тень Катаклизма
 			CatastropheShadow.DisplayName: Забытая тень Катастрофа
 
+			Dreadnautilus: {
+				BossChecklistIntegration: {
+					// SpawnInfo: Use a [i:InfernumMode/RedBait] or rarely fish it up during a Blood Moon
+					// EntryName: Dreadnautilus
+					// DespawnMessage: The Dreadnautilus returned to the bloody waters.
+				}
+			}
+
 			PrimordialWyrm: {
 				BossChecklistIntegration: {
 					// SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use a [i:InfernumMode/EvokingSearune].

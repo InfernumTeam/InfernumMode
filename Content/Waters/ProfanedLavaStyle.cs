@@ -1,32 +1,37 @@
-﻿using CalamityMod.Waters;
+﻿using CalamityMod.Systems;
+using CalamityMod.Waters;
 using InfernumMode.Core;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Graphics;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Waters
 {
     public class ProfanedLavaflow : ModWaterfallStyle { }
 
-    public class ProfanedLavaStyle : CustomLavaStyle
+    public class ProfanedLavaStyle : ModLavaStyle
     {
-        public override string LavaTexturePath => "InfernumMode/Content/Waters/ProfanedLava";
+        public override string Texture => "InfernumMode/Content/Waters/ProfanedLava";
 
-        public override string BlockTexturePath => LavaTexturePath + "_Block";
+        public override string BlockTexture => Texture + "_Block";
 
-        public override string SlopeTexturePath => LavaTexturePath + "_Slope";
+        public override string SlopeTexture => Texture + "_Slope";
 
-        public override bool ChooseLavaStyle() => (Main.LocalPlayer.Infernum_Biome().ZoneProfaned || Main.LocalPlayer.Infernum_Biome().ProfanedLavaFountain) && !InfernumConfig.Instance.ReducedGraphicsConfig;
+        public override bool IsLavaActive() => (Main.LocalPlayer.Infernum_Biome().ZoneProfaned || Main.LocalPlayer.Infernum_Biome().ProfanedLavaFountain) && !InfernumConfig.Instance.ReducedGraphicsConfig;
 
-        public override int ChooseWaterfallStyle() => ModContent.Find<ModWaterfallStyle>("InfernumMode/ProfanedLavaflow").Slot;
+        public override string WaterfallTexture => "InfernumMode/Content/Waters/ProfanedLavaflow";
 
         public override int GetSplashDust() => 0;
 
         public override int GetDropletGore() => 0;
 
-        public override void SelectLightColor(ref Color initialLightColor)
+        public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
-            initialLightColor = Color.White;
+            var w = Color.White;
+            r = w.R;
+            g = w.G;
+            b = w.B;
         }
     }
 }

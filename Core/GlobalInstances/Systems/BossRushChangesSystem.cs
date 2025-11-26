@@ -232,7 +232,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
                 }, permittedNPCs: [ NPCID.CultistBossClone, NPCID.CultistDragonHead, NPCID.CultistDragonBody1, NPCID.CultistDragonBody2, NPCID.CultistDragonBody3, NPCID.CultistDragonBody4,
                     NPCID.CultistDragonTail, NPCID.AncientCultistSquidhead, NPCID.AncientLight, NPCID.AncientDoom ]),
 
-                new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: [ModContent.NPCType<SkeletronPrime2>(), NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe]),
+                new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: [NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe]),
 
                 new Boss(ModContent.NPCType<OldDuke>(), spawnContext: type =>
                 {

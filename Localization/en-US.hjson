@@ -838,15 +838,6 @@ Mods: {
 				Tooltip: Summons a small hat girl that gives you advice about bosses that you fight
 			}
 
-			DisenchantedTablet: {
-				DisplayName: Disenchanted Tablet
-				Tooltip:
-					'''
-					Contains a complex network of intricately woven memories, locked away
-					Can be enchanted at a tablet altar, located somewhere on the surface
-					'''
-			}
-
 			NightmareCatcher: {
 				DisplayName: Nightmare Catcher
 				Tooltip:
@@ -903,11 +894,6 @@ Mods: {
 			ProvidenceSpawnerItem: {
 				DisplayName: Providence Shrine (DEBUG)
 				Tooltip: Summons Providence when right clicked with a Profaned Core
-			}
-
-			TabletPedestal: {
-				DisplayName: Tablet Pedestal
-				Tooltip: Can be used to enchant a particular disenchanted tablet
 			}
 
 			AEWRelic: {
@@ -1599,6 +1585,7 @@ Mods: {
 				BossChecklistIntegration: {
 					SpawnInfo: Use a [i:CalamityMod/SandstormsCore] at the pedestal in the heart of the desert.
 					EntryName: Bereft Vassal
+					DespawnMessage: Argus, the Bereft Vassal continues his wait.
 				}
 			}
 
@@ -1619,6 +1606,22 @@ Mods: {
 			CalamitasShadowClone.DisplayName: Forgotten Shadow of Calamitas
 			CataclysmShadow.DisplayName: Forgotten Shadow of Cataclysm
 			CatastropheShadow.DisplayName: Forgotten Shadow of Catastrophe
+
+			Dreadnautilus: {
+				BossChecklistIntegration: {
+					SpawnInfo: Use a [i:InfernumMode/RedBait] or rarely fish it up during a Blood Moon
+					EntryName: Dreadnautilus
+					DespawnMessage: The Dreadnautilus returned to the bloody waters.
+				}
+			}
+
+			PrimordialWyrm: {
+				BossChecklistIntegration: {
+					SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use a [i:InfernumMode/EvokingSearune].
+					EntryName: Primordial Wyrm
+					DespawnMessage: The Terminus remains guarded by the Wyrm.
+				}
+			}
 		}
 
 		PetDialog: {
@@ -2399,7 +2402,6 @@ Mods: {
 			BrimstoneCrescentStaffProj.DisplayName: Brimstone Crescent Staff
 			BrimstoneForcefieldExplosion.DisplayName: Brimstone Explosion
 			CherryBlossomPetal.DisplayName: Cherry Blossom Petal
-			DisenchantedTabletProj.DisplayName: Disenchanted Tablet
 			GuardiansSummonerProjectile.DisplayName: Guardians Summoner Projectile
 			HydrothermalSmoke.DisplayName: Steam
 			PortalLensFlare.DisplayName: Lens Flare
@@ -2578,7 +2580,6 @@ Mods: {
 		WorldGen: {
 			BlossomGarden: Growing a garden
 			EggShrine: Hiding eggs
-			TabletPedestal: Placing a tablet
 			LostColosseum: Generating a Lost Colosseum
 			ProfanedGarden: Constructing a temple for an ancient goddess
 		}

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using CalamityMod.Items.Placeables.Furniture.DevPaintings;
+using CalamityMod;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.PrimordialWyrm;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark;
-using InfernumMode.Content.Items.LoreItems;
-using InfernumMode.Content.Items.Misc;
-using InfernumMode.Content.Items.Placeables;
+using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -43,57 +43,85 @@ namespace InfernumMode.Core.CrossCompatibility
         /// </summary>
         public Dictionary<string, float> BossChecklistValues = new()
         {
+            // Directly before Queen Slime
+            {"Dreadnautilus", 7.9f },
             // A little bit after Astrum Deus.
-            {"BereftVassal", 17.75f}
+            {"BereftVassal", 17.75f },
+            // After Yharon
+            {"PrimordialWyrm", 22.5f }
         };
         public override void PostSetupContent()
         {
-            ModLoader.TryGetMod("BossChecklist", out BossChecklist);
-
             // Stop here if Boss Checklist is not enabled.
-            if (BossChecklist is null)
+            if (!ModLoader.TryGetMod("BossChecklist", out BossChecklist))
                 return;
 
-            void Add(string type, string bossName, List<int> npcIDs, Func<bool> downed, Func<bool> available, List<int> collectibles, List<int> spawnItems, string portrait = null)
+            void Add(string type, string bossName, Func<bool> downed, List<int> npcIDs, Dictionary<string, object> Dict)
             {
-                BossChecklist.Call(
+                if ((string)BossChecklist.Call
+                (
                     $"Log{type}",
                     Mod,
                     bossName,
                     BossChecklistValues[bossName],
                     downed,
                     npcIDs,
-                    new Dictionary<string, object>()
-                    {
-                            { "spawnItems", spawnItems },
-                            // { "collectibles", collectibles }, // it's fetched from npc loot? TODO: refactor method calls below
-                            { "availability", available },
-                            { "despawnMessage", Language.GetText($"Mods.{Name}.NPCs.{bossName}.BossChecklistIntegration.DespawnMessage") },
-                            {
-                                "customPortrait",
-                                portrait == null ? null : new Action<SpriteBatch, Rectangle, Color>((spriteBatch, rect, color) =>
-                                {
-                                    Texture2D tex = Mod.Assets.Request<Texture2D>(portrait, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                                    Rectangle sourceRect = tex.Bounds;
-                                    float scale = Math.Min(1f, (float)rect.Width / sourceRect.Width);
-                                    spriteBatch.Draw(tex, rect.Center.ToVector2(), sourceRect, color, 0f, sourceRect.Size() / 2, scale, SpriteEffects.None, 0);
-                                })
-                            }
-                    }
-                );
+                    Dict // displayName, spawnInfo, collectibles (doesn't work?), limbs, availability, spawnItems, customPortrait, despawnMessage, overrideHeadTextures
+                ) == "Success")
+                {
+
+                }
+                else
+                {
+                    InfernumMode.Instance.Logger.Warn($"Failed to add {Mod.Name} Boss Checklist entry");
+                }
             }
-            Add("Boss",
-                nameof(BereftVassal),
-                [ModContent.NPCType<BereftVassal>(), ModContent.NPCType<GreatSandShark>()],
-                () => WorldSaveSystem.DownedBereftVassal,
-                () => NPC.downedAncientCultist,
-                [
-                    ModContent.ItemType<BereftVassalTrophy>(),
-                    ModContent.ItemType<KnowledgeBereftVassal>(),
-                    ModContent.ItemType<WaterglassToken>(),
-                    ModContent.ItemType<ThankYouPainting>(),
-                ],
-                [ModContent.ItemType<SandstormsCore>()]
+            Add(type: "Boss",
+                bossName: "Dreadnautilus",
+                npcIDs: [NPCID.BloodNautilus],
+                downed: () => WorldSaveSystem.DownedDreadnautilus,
+                Dict: new()
+                {
+                    { "displayName", Lang.GetNPCName(NPCID.BloodNautilus) },
+                    { "spawnInfo", Language.GetText($"Mods.{Mod.Name}.NPCs.Dreadnautilus.BossChecklistIntegration.SpawnInfo") },
+                    { "availability", () => InfernumMode.CanUseCustomAIs && Main.hardMode },
+                    { "spawnItems", ModContent.ItemType<RedBait>() },
+                    { "despawnMessage", Language.GetText($"Mods.{Mod.Name}.NPCs.Dreadnautilus.BossChecklistIntegration.DespawnMessage") },
+                    { "overrideHeadTextures", $"{Mod.Name}/Content/BehaviorOverrides/BossAIs/Dreadnautilus/DreadnautilusMapIcon" }
+                }
+            );
+            Add(type: "Boss",
+                bossName: nameof(BereftVassal),
+                npcIDs: [ModContent.NPCType<BereftVassal>(), ModContent.NPCType<GreatSandShark>()],
+                downed: () => WorldSaveSystem.DownedBereftVassal,
+                Dict: new()
+                {
+                    { "spawnInfo", Language.GetText($"Mods.{Mod.Name}.NPCs.BereftVassal.BossChecklistIntegration.SpawnInfo") },
+                    { "availability", () => InfernumMode.CanUseCustomAIs && NPC.downedAncientCultist },
+                    { "spawnItems", ModContent.ItemType<SandstormsCore>() },
+                    { "despawnMessage", Language.GetText($"Mods.{Mod.Name}.NPCs.BereftVassal.BossChecklistIntegration.DespawnMessage") },
+                }
+            );
+            Add(type: "Boss",
+                bossName: nameof(CalamityMod.NPCs.PrimordialWyrm),
+                npcIDs: [ModContent.NPCType<PrimordialWyrmHead>()],
+                downed: () => DownedBossSystem.downedPrimordialWyrm,
+                Dict: new()
+                {
+                    { "spawnInfo", Language.GetText($"Mods.{Mod.Name}.NPCs.PrimordialWyrm.BossChecklistIntegration.SpawnInfo") },
+                    { "availability", () => InfernumMode.CanUseCustomAIs && Main.hardMode },
+                    { "spawnItems", ModContent.ItemType<EvokingSearune>() },
+                    { "despawnMessage", Language.GetText($"Mods.{Mod.Name}.NPCs.PrimordialWyrm.BossChecklistIntegration.DespawnMessage") },
+                    {
+                        "customPortrait", new Action<SpriteBatch, Rectangle, Color>((spriteBatch, rect, color) =>
+                        {
+                            Texture2D tex = Mod.Assets.Request<Texture2D>("Assets/BossTextures/PrimordialWyrm/PrimordialWyrm_BossChecklist", AssetRequestMode.ImmediateLoad).Value;
+                            Rectangle sourceRect = tex.Bounds;
+                            float scale = Math.Min(1f, (float)rect.Width / sourceRect.Width);
+                            spriteBatch.Draw(tex, rect.Center.ToVector2(), sourceRect, color, 0f, sourceRect.Size() / 2, scale, SpriteEffects.None, 0);
+                        })
+                    },
+                }
             );
         }
 

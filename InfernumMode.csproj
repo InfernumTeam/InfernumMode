@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Import tModLoader mod properties -->
+	<Import Project="..\tModLoader.targets" />
+
+	<!-- General -->
+	<PropertyGroup>
+    <AssemblyName>InfernumMode</AssemblyName>
+	  <LangVersion>preview</LangVersion>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<!-- References -->
+	<ItemGroup>
+    <Reference Include="CalamityMod">
+      <HintPath>CalamityMod.dll</HintPath>
+    </Reference>
+    <Reference Include="Luminance">
+      <HintPath>Luminance.dll</HintPath>
+    </Reference>
+    <Reference Include="SubworldLibrary">
+      <HintPath>SubworldLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

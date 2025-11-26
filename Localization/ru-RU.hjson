@@ -839,15 +839,6 @@ Mods: {
 				Tooltip: Призывает маленькую шляподевочку, которая даёт советы о боссах, с которыми вы сражаетесь
 			}
 
-			DisenchantedTablet: {
-				DisplayName: Расколдованная табличка
-				Tooltip:
-					'''
-					Содержит сложную сеть из спутанных воспоминаний, сокрытых внутри
-					Может быть заколдована на алтаре, расположенном где-то на поверхности
-					'''
-			}
-
 			NightmareCatcher: {
 				DisplayName: Ловец кошмаров
 				Tooltip:
@@ -904,11 +895,6 @@ Mods: {
 			ProvidenceSpawnerItem: {
 				DisplayName: Святыня Провиденс (DEBUG)
 				Tooltip: Призывает Провиденс при нажатии ПКМ с осквернённым ядром
-			}
-
-			TabletPedestal: {
-				DisplayName: Пьедестал для таблички
-				Tooltip: Может быть использован для того, чтобы заколдовать одну расколдованную табличку
 			}
 
 			AEWRelic: {
@@ -1611,6 +1597,7 @@ Mods: {
 				BossChecklistIntegration: {
 					SpawnInfo: Используй [i:CalamityMod/SandstormsCore] на пьедестале в сердце пустыни.
 					EntryName: Обездоленный вассал
+					// DespawnMessage: Argus, the Bereft Vassal continues his wait.
 				}
 			}
 
@@ -1631,6 +1618,22 @@ Mods: {
 			CalamitasShadowClone.DisplayName: Забытая тень Каламитас
 			CataclysmShadow.DisplayName: Забытая тень Катаклизма
 			CatastropheShadow.DisplayName: Забытая тень Катастрофа
+
+			Dreadnautilus: {
+				BossChecklistIntegration: {
+					// SpawnInfo: Use a [i:InfernumMode/RedBait] or rarely fish it up during a Blood Moon
+					// EntryName: Dreadnautilus
+					// DespawnMessage: The Dreadnautilus returned to the bloody waters.
+				}
+			}
+
+			PrimordialWyrm: {
+				BossChecklistIntegration: {
+					// SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use a [i:InfernumMode/EvokingSearune].
+					// EntryName: Primordial Wyrm
+					// DespawnMessage: The Terminus remains guarded by the Wyrm.
+				}
+			}
 		}
 
 		PetDialog: {
@@ -2411,7 +2414,6 @@ Mods: {
 			BrimstoneCrescentStaffProj.DisplayName: Посох серного полумесяца
 			BrimstoneForcefieldExplosion.DisplayName: Серный взрыв
 			CherryBlossomPetal.DisplayName: Лепесток цветка вишни
-			DisenchantedTabletProj.DisplayName: Расколдованная табличка
 			GuardiansSummonerProjectile.DisplayName: Снаряд Призывателя Стражей
 			HydrothermalSmoke.DisplayName: Пар
 			PortalLensFlare.DisplayName: Отблеск линзы
@@ -2590,7 +2592,6 @@ Mods: {
 		WorldGen: {
 			BlossomGarden: Выращивание сада...
 			EggShrine: Сокрытие яйца...
-			TabletPedestal: Установка таблички...
 			LostColosseum: Генерация затерянного колизея...
 			ProfanedGarden: Постройка храма для древней богини...
 		}

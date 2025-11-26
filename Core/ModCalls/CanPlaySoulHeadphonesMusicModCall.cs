@@ -22,6 +22,7 @@ namespace InfernumMode.Core.ModCalls.InfernumCalls
         {
             return (string)argsWithoutCommand[0] switch
             {
+                "Dreadnautilus" => WorldSaveSystem.DownedDreadnautilus,
                 "BereftVassal" => WorldSaveSystem.DownedBereftVassal,
                 "ExoMechs" => DownedBossSystem.downedExoMechs,
                 _ => false,

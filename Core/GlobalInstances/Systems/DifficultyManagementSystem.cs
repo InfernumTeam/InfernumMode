@@ -44,7 +44,7 @@ namespace InfernumMode.Core.GlobalInstances.Systems
 
             // Ensure that Infernum is always active in the Lost Colosseum.
             // This is necessary because difficulty states do not automatically translate over to subworlds.
-            if (!stupidDifficultyIsActive && SubworldSystem.IsActive<LostColosseum>())
+            if ((!stupidDifficultyIsActive || !DisableDifficultyModes) && SubworldSystem.IsActive<LostColosseum>())
                 WorldSaveSystem.InfernumModeEnabled = true;
 
             // Create some warning text about Eternity Mode if the player enables Infernum with it enabled.

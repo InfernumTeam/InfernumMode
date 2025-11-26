@@ -590,9 +590,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         {
             // Hideous code from vanilla. Don't mind it too much.
             Texture2D coreTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D coreOutlineTexture = TextureAssets.Extra[16].Value;
-            Texture2D forearmTexture = TextureAssets.Extra[14].Value;
-            Texture2D bodyTexture = TextureAssets.Extra[13].Value;
+            Texture2D coreOutlineTexture = TextureAssets.Extra[ExtrasID.MoonLordCoreMoss].Value;
+            Texture2D forearmTexture = TextureAssets.Extra[ExtrasID.MoonLordBackarm].Value;
+            Texture2D bodyTexture = TextureAssets.Extra[ExtrasID.MoonLordRibs].Value;
             Vector2 leftHalfOrigin = new(bodyTexture.Width, 278f);
             Vector2 rightHalfOrigin = new(0f, 278f);
             Vector2 center = npc.Center;

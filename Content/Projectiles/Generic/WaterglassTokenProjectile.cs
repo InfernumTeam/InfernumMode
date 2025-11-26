@@ -60,7 +60,9 @@ namespace InfernumMode.Content.Projectiles.Generic
             if (Main.myPlayer == Projectile.owner)
             {
                 if (SubworldSystem.IsActive<LostColosseum>())
+                {
                     SubworldSystem.Exit();
+                }
                 else
                 {
                     Main.LocalPlayer.Infernum_Biome().PositionBeforeEnteringSubworld = Main.LocalPlayer.Center;

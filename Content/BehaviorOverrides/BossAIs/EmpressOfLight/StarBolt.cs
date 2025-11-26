@@ -143,22 +143,21 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Projectile.velocity.Length() < 4.5f || Time < FireDelay || InfernumConfig.Instance.ReducedGraphicsConfig)
-                return false;
+            if (Projectile.velocity.Length() < 4.5f || Time < FireDelay || !InfernumConfig.Instance.ReducedGraphicsConfig)
+            {// Initialize the telegraph drawer.
+                TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
 
-            // Initialize the telegraph drawer.
-            TrailDrawer ??= new(WidthFunction, ColorFunction, specialShader: InfernumEffectsRegistry.PrismaticRayVertexShader);
+                // Prepare trail data.
+                InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.2f);
+                InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
+                Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
 
-            // Prepare trail data.
-            InfernumEffectsRegistry.PrismaticRayVertexShader.UseOpacity(0.2f);
-            InfernumEffectsRegistry.PrismaticRayVertexShader.UseImage1("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = InfernumTextureRegistry.StreakSolid.Value;
+                // Draw the afterimage trail.
+                Rectangle cutoffRegion = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
+                Main.spriteBatch.EnforceCutoffRegion(cutoffRegion, Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
 
-            // Draw the afterimage trail.
-            Rectangle cutoffRegion = new(-50, -50, Main.screenWidth + 100, Main.screenHeight + 100);
-            Main.spriteBatch.EnforceCutoffRegion(cutoffRegion, Main.GameViewMatrix.TransformationMatrix, SpriteSortMode.Immediate, BlendState.Additive);
-
-            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 11);
+                TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f + Projectile.velocity.SafeNormalize(Vector2.Zero) * 6f - Main.screenPosition, 11);
+            }
 
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 

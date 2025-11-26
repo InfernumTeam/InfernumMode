@@ -162,7 +162,7 @@ namespace InfernumMode.Content.UI
                             { Language.GetTextValue("NPCName.MoonLordCore"), Language.GetTextValue("Enemies.MoonLord") },
                             {
                                 CalamityUtils.GetTextValue("NPCs.ProfanedGuardianCommander.DisplayName"),
-                                CalamityUtils.GetTextValue("NPCs.ProfanedGuardianCommander.BossChecklistIntegration.EntryName")
+                                CalamityUtils.GetTextValue("BossChecklistIntegration.ProfanedGuardians.EntryName")
                             }
                         };
                         

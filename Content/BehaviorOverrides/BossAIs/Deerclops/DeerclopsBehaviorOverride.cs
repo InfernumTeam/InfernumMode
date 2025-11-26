@@ -892,7 +892,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
                         continue;
 
                     Vector2 particleSpawnPosition = new(npc.Center.X + Main.rand.NextFloatDirection() * 100f, dragPortalCenterY - Main.rand.NextFloat(10f));
-                    Dust magic = Dust.NewDustPerfect(particleSpawnPosition, 264);
+                    Dust magic = Dust.NewDustPerfect(particleSpawnPosition, DustID.PortalBoltTrail);
                     magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 5f);
                     magic.color = Color.Lerp(Color.Lime, Color.Gray, Main.rand.NextFloat(0.3f, 0.8f));
                     magic.noLight = true;

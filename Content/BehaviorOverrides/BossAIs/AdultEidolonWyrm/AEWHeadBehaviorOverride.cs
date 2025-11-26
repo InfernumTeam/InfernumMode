@@ -1411,7 +1411,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (Main.netMode != NetmodeID.MultiplayerClient && target.WithinRange(npc.Center, 60f))
                 {
                     giveLoot();
-                    Item.NewItem(npc.GetSource_Death(), npc.Center, ModContent.ItemType<Terminus>());
+                    //Item.NewItem(npc.GetSource_Death(), npc.Center, ModContent.ItemType<Terminus>());
                     npc.active = false;
                 }
             }

@@ -43,6 +43,7 @@ using InfernumMode.Content.Items.Relics;
 using InfernumMode.Content.Items.SummonItems;
 using InfernumMode.Content.Items.Weapons.Magic;
 using InfernumMode.Content.Items.Weapons.Melee;
+using InfernumMode.Core.GlobalInstances.Systems;
 using InfernumMode.Core.OverridingSystem;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -247,10 +248,11 @@ namespace InfernumMode.Core.GlobalInstances
 
             if (npc.type == ModContent.NPCType<PrimordialWyrmHead>())
             {
-                npcLoot.Add(ModContent.ItemType<EvokingSearune>());
-                npcLoot.Add(ModContent.ItemType<IllusionersReverie>());
-                npcLoot.Add(ModContent.ItemType<EyeOfMadness>());
-                npcLoot.Add(ModContent.ItemType<AEWRelic>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<EvokingSearune>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<IllusionersReverie>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<EyeOfMadness>());
+                npcLoot.AddIf(() => InfernumMode.CanUseCustomAIs, ModContent.ItemType<AEWRelic>());
+                npcLoot.AddIf(() => WorldSaveSystem.InPostAEWUpdateWorld, ModContent.ItemType<Terminus>());
             }
 
             bool isExoMech = npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<AresBody>();

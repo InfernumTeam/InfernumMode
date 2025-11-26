@@ -14,6 +14,10 @@ namespace InfernumMode.Core.GlobalInstances
 
         public static event HitEffectsDelegate HitEffectsEvent;
 
+        public delegate void ModifyHitByProjectileDelegate(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers);
+
+        public static event ModifyHitByProjectileDelegate ModifyHitByProjectileEvent;
+
         public delegate void OnKillDelegate(NPC npc);
 
         public static event OnKillDelegate OnKillEvent;
@@ -21,9 +25,5 @@ namespace InfernumMode.Core.GlobalInstances
         public delegate bool StrikeNPCDelegate(NPC npc, ref NPC.HitModifiers modifiers);
 
         public static event StrikeNPCDelegate StrikeNPCEvent;
-
-        public delegate void ModifyHitByProjectileDelegate(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers);
-
-        public static event ModifyHitByProjectileDelegate ModifyHitByProjectileEvent;
     }
 }

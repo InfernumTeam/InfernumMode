@@ -1617,8 +1617,9 @@ Mods: {
 
 			PrimordialWyrm: {
 				BossChecklistIntegration: {
-					// SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use [i:InfernumMode/EvokingSearune].
+					// SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use a [i:InfernumMode/EvokingSearune].
 					// EntryName: Primordial Wyrm
+					// DespawnMessage: The Terminus remains guarded by the Wyrm.
 				}
 			}
 		}

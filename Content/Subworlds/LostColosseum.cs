@@ -248,11 +248,12 @@ namespace InfernumMode.Content.Subworlds
                 }
             }
             TagCompound downedInf = [];
+            downedInf.Add("DownedDreadnautilus", WorldSaveSystem.DownedDreadnautilus);
             downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
             SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
             SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
         }
-
+#pragma warning disable CS9336 // "Pattern is redundant"
         public override void ReadCopiedMainWorldData()
         {
             if (InfernumMode.CalamityMod != null)
@@ -270,6 +271,7 @@ namespace InfernumMode.Content.Subworlds
                         DownedBossCalList?[i]?.SetValue(null, downed?.GetBool(DownedBossCalList?[i]?.Name));
                 }
             }
+            WorldSaveSystem.DownedDreadnautilus = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedDreadnautilus");
             WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
             base.ReadCopiedMainWorldData();
         }
@@ -295,6 +297,7 @@ namespace InfernumMode.Content.Subworlds
                 }
             }
             TagCompound downedInf = [];
+            downedInf.Add("DownedDreadnautilus", WorldSaveSystem.DownedDreadnautilus);
             downedInf.Add("DownedBereftVassal", WorldSaveSystem.DownedBereftVassal);
             SubworldSystem.CopyWorldData("DownedInfBosses_Inf", downedInf);
             SubworldSystem.CopyWorldData("DownedCalBosses_Inf", downedCal);
@@ -333,9 +336,11 @@ namespace InfernumMode.Content.Subworlds
                         DownedBossCalList?[i]?.SetValue(null, downed?.GetBool(DownedBossCalList?[i]?.Name));
                 }
             }
+            WorldSaveSystem.DownedDreadnautilus = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedDreadnautilus");
             WorldSaveSystem.DownedBereftVassal = SubworldSystem.ReadCopiedWorldData<TagCompound>("DownedInfBosses_Inf").GetBool("DownedBereftVassal");
             base.ReadCopiedSubworldData();
         }
+#pragma warning restore CS9336
         public override void OnExit()
         {
             // Portal cooldown

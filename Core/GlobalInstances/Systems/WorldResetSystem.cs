@@ -10,38 +10,45 @@ namespace InfernumMode.Core.GlobalInstances.Systems
         // TODO: Look into this.
         public override void OnWorldLoad()
         {
-            WorldSaveSystem.InfernumModeEnabled = false;
-            WorldSaveSystem.AbyssLayer1ForestSeed = 0;
-            WorldSaveSystem.AbyssLayer3CavernSeed = 0;
-            //WorldSaveSystem.BlossomGardenCenter = Point.Zero;
-            WorldSaveSystem.DisplayedEmodeWarningText = false;
-            WorldSaveSystem.DownedBereftVassal = false;
-            //WorldSaveSystem.EidolistWorshipPedestalCenter = Point.Zero;
-            //WorldSaveSystem.ForbiddenArchiveCenter = Point.Zero;
-            WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = false;
-            WorldSaveSystem.HasBeatenInfernumProvRegularly = false;
-            WorldSaveSystem.HasDefeatedEidolists = false;
-            WorldSaveSystem.HasGeneratedColosseumEntrance = true;
-            WorldSaveSystem.HasGeneratedProfanedShrine = true;
-            WorldSaveSystem.HasOpenedLostColosseumPortal = false;
-            WorldSaveSystem.HasProvidenceDoorShattered = false;
-            WorldSaveSystem.HasSepulcherAnimationBeenPlayed = false;
-            WorldSaveSystem.LostColosseumPortalAnimationTimer = WorldSaveSystem.LostColosseumPortalAnimationTimer;
-            WorldSaveSystem.MetCalamitasAtCrags = false;
-            WorldSaveSystem.MetSignusAtProfanedGarden = false;
-            WorldSaveSystem.PerformedLacewingAnimation = false;
-            //WorldSaveSystem.ProvidenceArena = Rectangle.Empty;
-            //WorldSaveSystem.ProvidenceDoorXPosition = 0;
-            //WorldSaveSystem.SquidDenCenter = Point.Zero;
-            WorldSaveSystem.WayfinderGateLocation = Vector2.Zero;
-            WorldSaveSystem.HasSeenDoGCutscene = false;
-            WorldSaveSystem.HasSeenPostMechsCutscene = false;
+            ResetEverything();
         }
 
         public override void OnWorldUnload()
         {
-            WorldSaveSystem.InfernumModeEnabled = false;
+            ResetEverything();
             CreditManager.StopAbruptly();
+        }
+
+        internal static void ResetEverything()
+        {
+            WorldSaveSystem.InfernumModeEnabled = false;
+            WorldSaveSystem.HasGeneratedProfanedShrine = false;
+            WorldSaveSystem.HasGeneratedColosseumEntrance = false;
+            WorldSaveSystem.HasBeatenInfernumProvRegularly = false;
+            WorldSaveSystem.HasBeatenInfernumNightProvBeforeDay = false;
+            WorldSaveSystem.HasProvidenceDoorShattered = false;
+            WorldSaveSystem.HasSepulcherAnimationBeenPlayed = false;
+            WorldSaveSystem.InPostAEWUpdateWorld = false;
+            WorldSaveSystem.HasOpenedLostColosseumPortal = false;
+            WorldSaveSystem.DownedDreadnautilus = false;
+            WorldSaveSystem.DownedBereftVassal = false;
+            WorldSaveSystem.DisplayedEmodeWarningText = false;
+            WorldSaveSystem.PerformedLacewingAnimation = false;
+            WorldSaveSystem.MetSignusAtProfanedGarden = false;
+            WorldSaveSystem.MetCalamitasAtCrags = false;
+            WorldSaveSystem.HasSeenDoGCutscene = false;
+            WorldSaveSystem.HasSeenPostMechsCutscene = false;
+            //WorldSaveSystem.ProvidenceArena = Rectangle.Empty;
+            //WorldSaveSystem.ProvidenceDoorXPosition = 0;
+            WorldSaveSystem.AbyssLayer1ForestSeed = 0;
+            WorldSaveSystem.AbyssLayer3CavernSeed = 0;
+            //WorldSaveSystem.SquidDenCenter = Point.Zero;
+            //WorldSaveSystem.EidolistWorshipPedestalCenter = Point.Zero;
+            //WorldSaveSystem.ForbiddenArchiveCenter = Point.Zero;
+            //WorldSaveSystem.BlossomGardenCenter = Point.Zero;
+            WorldSaveSystem.HasDefeatedEidolists = false;
+            WorldSaveSystem.LostColosseumPortalAnimationTimer = WorldSaveSystem.LostColosseumPortalAnimationTimer;
+            WorldSaveSystem.WayfinderGateLocation = Vector2.Zero;
         }
     }
 }

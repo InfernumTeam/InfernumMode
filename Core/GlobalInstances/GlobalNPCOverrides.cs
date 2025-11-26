@@ -222,7 +222,7 @@ namespace InfernumMode.Core.GlobalInstances
                 else if (npc.type == NPCID.TheDestroyer && NPC.downedMechBoss2 && NPC.downedMechBoss3)
                     CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
                 // If Twins were just killed, and the other two are dead.
-                else if ((npc.type == NPCID.Retinazer || npc.type == NPCID.Spazmatism) && NPC.downedMechBoss1 && NPC.downedMechBoss3)
+                else if (((npc.type == NPCID.Retinazer && !NPC.AnyNPCs(NPCID.Spazmatism)) || (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer))) && NPC.downedMechBoss1 && NPC.downedMechBoss3)
                     CutsceneManager.QueueCutscene(ModContent.GetInstance<DraedonPostMechsCutscene>());
             }
         }

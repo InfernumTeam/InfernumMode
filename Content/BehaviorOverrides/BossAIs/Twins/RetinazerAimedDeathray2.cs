@@ -58,7 +58,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Twins
 
         public override void AttachToSomething()
         {
-            if (!Main.npc.IndexInRange((int)Projectile.ai[1]) || !Main.npc[(int)Projectile.ai[1]].active)
+            if (!Main.npc.IndexInRange((int)Projectile.ai[1]) || !Main.npc[(int)Projectile.ai[1]].active || TwinsAttackSynchronizer.CurrentAttackState == TwinsAttackSynchronizer.TwinsAttackState.DeathAnimation)
                 Projectile.Kill();
 
             Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + PiOver2).ToRotationVector2();

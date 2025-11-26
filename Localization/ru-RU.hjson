@@ -1611,6 +1611,7 @@ Mods: {
 				BossChecklistIntegration: {
 					SpawnInfo: Используй [i:CalamityMod/SandstormsCore] на пьедестале в сердце пустыни.
 					EntryName: Обездоленный вассал
+					// DespawnMessage: Argus, the Bereft Vassal continues his wait.
 				}
 			}
 
@@ -1632,10 +1633,19 @@ Mods: {
 			CataclysmShadow.DisplayName: Забытая тень Катаклизма
 			CatastropheShadow.DisplayName: Забытая тень Катастрофа
 
+			Dreadnautilus: {
+				BossChecklistIntegration: {
+					// SpawnInfo: Use a [i:InfernumMode/RedBait] or rarely fish it up during a Blood Moon
+					// EntryName: Dreadnautilus
+					// DespawnMessage: The Dreadnautilus returned to the bloody waters.
+				}
+			}
+
 			PrimordialWyrm: {
 				BossChecklistIntegration: {
-					// SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use [i:InfernumMode/EvokingSearune].
+					// SpawnInfo: Mine the Terminus tile at the bottom of Abyss or use a [i:InfernumMode/EvokingSearune].
 					// EntryName: Primordial Wyrm
+					// DespawnMessage: The Terminus remains guarded by the Wyrm.
 				}
 			}
 		}

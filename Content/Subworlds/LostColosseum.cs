@@ -39,7 +39,7 @@ namespace InfernumMode.Content.Subworlds
 
             protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
             {
-                progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.TabletPedestal");
+                progress.Message = Language.GetTextValue("Mods.InfernumMode.WorldGen.LostColosseum");
                 Main.worldSurface = Main.maxTilesY - 25;
                 Main.rockLayer = Main.maxTilesY - 30;
 

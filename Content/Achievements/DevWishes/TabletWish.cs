@@ -1,6 +1,7 @@
 ﻿using CalamityMod.NPCs.AquaticScourge;
 using InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.Content.Items.Misc;
+using InfernumMode.Content.Items.Pets;
 using InfernumMode.Core.GlobalInstances.Systems;
 using Terraria;
 using Terraria.ModLoader;
@@ -28,7 +29,7 @@ namespace InfernumMode.Content.Achievements.DevWishes
 
         public override void OnCompletion(Player player)
         {
-            WishCompletionEffects(player, ModContent.ItemType<DisenchantedTablet>());
+            WishCompletionEffects(player, ModContent.ItemType<RisingWarriorsSoulstone>());
         }
 
         public override void SaveProgress(TagCompound tag)

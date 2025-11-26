@@ -1064,7 +1064,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 color = lightColor;
 
             // Draw necessary afterimages.
-            if (CalamityConfig.Instance.Afterimages)
+            if (CalamityClientConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < afterimageCount; i += 2)
                 {
@@ -1110,7 +1110,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.OldDuke
                 rotationalOffsetOutwardness = 20f;
             }
 
-            if (CalamityConfig.Instance.Afterimages)
+            if (CalamityClientConfig.Instance.Afterimages)
             {
                 for (int i = 0; i < rotationalOffsetImageCount; i++)
                 {

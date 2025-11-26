@@ -94,7 +94,7 @@ namespace InfernumMode.Content.BossIntroScreens
         public virtual void Draw(SpriteBatch sb)
         {
             bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossEffects>());
-            if (!CalamityConfig.Instance.BossZen || !CaresAboutBossEffectCondition)
+            if (!CalamityServerConfig.Instance.BossZen || !CaresAboutBossEffectCondition)
                 notInvolvedWithBoss = false;
 
             if (AnimationTimer >= AnimationTime - 1f)

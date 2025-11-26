@@ -330,7 +330,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.GiantClam
             Texture2D npcTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SunkenSea/GiantClam").Value;
             Texture2D glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SunkenSea/GiantClamGlow").Value;
 
-            if ((GiantClamAttackState)(int)npc.Infernum().ExtraAI[0] == GiantClamAttackState.TeleportSlam && npc.velocity.Length() > 1f && CalamityConfig.Instance.Afterimages)
+            if ((GiantClamAttackState)(int)npc.Infernum().ExtraAI[0] == GiantClamAttackState.TeleportSlam && npc.velocity.Length() > 1f && CalamityClientConfig.Instance.Afterimages)
             {
                 for (int i = 0; i < 4; i++)
                 {

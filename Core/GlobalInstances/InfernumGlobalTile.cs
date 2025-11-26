@@ -123,5 +123,15 @@ namespace InfernumMode.Core.GlobalInstances
             if (tombstonesShouldSpontaneouslyCombust && type is TileID.Tombstones)
                 WorldGen.KillTile(i, j);
         }
+
+        public override bool CanDrop(int i, int j, int type)
+        {
+            bool value = base.CanDrop(i, j, type);
+            if (WorldSaveSystem.InPostAEWUpdateWorld && type == LumenylCrystalID && !CalamityMod.DownedBossSystem.downedLeviathan)
+            {
+                value = false;
+            }
+            return value;
+        }
     }
 }

@@ -79,7 +79,7 @@ namespace InfernumMode.Core.CrossCompatibility
             Add(type: "Boss",
                 bossName: "Dreadnautilus",
                 npcIDs: [NPCID.BloodNautilus],
-                downed: () => WorldSaveSystem.DownedDreadnautilus,
+                downed: () => DownedBossSystem.downedDreadnautilus,
                 Dict: new()
                 {
                     { "displayName", Lang.GetNPCName(NPCID.BloodNautilus) },

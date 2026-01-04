@@ -933,7 +933,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         CloudParticle fireCloud = new(teleportPosition, Main.rand.NextVector2Circular(12f, 12f), fireColor * 0.85f, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
                         GeneralParticleHandler.SpawnParticle(fireCloud);
 
-                        Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-96f, 96f), 75);
+                        Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-96f, 96f), DustID.CursedTorch);
                         fire.velocity = -Vector2.UnitY.RotateRandom(0.6f) * Main.rand.NextFloat(1f, 10f);
                         fire.scale *= 1.66f;
                         fire.noGravity = true;
@@ -1255,7 +1255,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                         Vector2 fireSpawnPosition = npc.Center + angle.ToRotationVector2() * Main.rand.NextFloat(720f, 900f);
                         Vector2 fireVelocity = (angle - Pi).ToRotationVector2() * (29f + 11f * intensity);
 
-                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6, fireVelocity);
+                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.Torch, fireVelocity);
                         fire.scale = 0.9f;
                         fire.fadeIn = 1.15f + intensity * 0.3f;
                         fire.noGravity = true;

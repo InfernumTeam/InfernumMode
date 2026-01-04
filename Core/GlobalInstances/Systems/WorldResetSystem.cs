@@ -30,7 +30,6 @@ namespace InfernumMode.Core.GlobalInstances.Systems
             WorldSaveSystem.HasSepulcherAnimationBeenPlayed = false;
             WorldSaveSystem.InPostAEWUpdateWorld = false;
             WorldSaveSystem.HasOpenedLostColosseumPortal = false;
-            WorldSaveSystem.DownedDreadnautilus = false;
             WorldSaveSystem.DownedBereftVassal = false;
             WorldSaveSystem.DisplayedEmodeWarningText = false;
             WorldSaveSystem.PerformedLacewingAnimation = false;

@@ -562,7 +562,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackTimer >= shootDelay)
             {
                 // Release energy particles at the hand position.
-                Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, 264);
+                Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, DustID.PortalBoltTrail);
                 brimstoneMagic.velocity = Vector2.UnitY.RotatedByRandom(0.14f) * Main.rand.NextFloat(-3.5f, -3f) + npc.velocity;
                 brimstoneMagic.scale = Main.rand.NextFloat(1.25f, 1.35f);
                 brimstoneMagic.noGravity = true;
@@ -702,7 +702,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 condemnationTip = condemnationRef.ModProjectile<CondemnationProj>().TipPosition;
                 for (int i = 0; i < 36; i++)
                 {
-                    Dust chargeMagic = Dust.NewDustPerfect(condemnationTip, 267);
+                    Dust chargeMagic = Dust.NewDustPerfect(condemnationTip, DustID.RainbowMk2);
                     chargeMagic.velocity = (TwoPi * i / 36f).ToRotationVector2() * 5f + npc.velocity;
                     chargeMagic.scale = Main.rand.NextFloat(1f, 1.5f);
                     chargeMagic.color = Color.Violet;
@@ -969,7 +969,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 for (int i = 0; i < 25; i++)
                 {
-                    Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, 264);
+                    Dust brimstoneMagic = Dust.NewDustPerfect(handPosition, DustID.PortalBoltTrail);
                     brimstoneMagic.velocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.31f) * Main.rand.NextFloat(3f, 8f) + npc.velocity;
                     brimstoneMagic.scale = Main.rand.NextFloat(1.25f, 1.35f);
                     brimstoneMagic.noGravity = true;
@@ -1087,7 +1087,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                     for (int j = 0; j < 150; j++)
                     {
                         Vector2 dustSpawnPosition = Vector2.Lerp(handPosition, target.Center + shootOffset, j / 149f);
-                        Dust fire = Dust.NewDustPerfect(dustSpawnPosition, 267);
+                        Dust fire = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2);
                         fire.velocity = Vector2.Zero;
                         fire.scale = 1.1f;
                         fire.alpha = 128;
@@ -1325,7 +1325,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.velocity *= 0.925f;
 
                 // Create some magic at the position of SCal's hands.
-                Dust darkMagic = Dust.NewDustPerfect(handPosition, 267);
+                Dust darkMagic = Dust.NewDustPerfect(handPosition, DustID.RainbowMk2);
                 darkMagic.color = Color.Lerp(Color.Red, Color.Violet, Main.rand.NextFloat(0.81f));
                 darkMagic.noGravity = true;
 
@@ -1450,7 +1450,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
                 for (int i = 0; i < 15; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(handPosition, 267);
+                    Dust magic = Dust.NewDustPerfect(handPosition, DustID.RainbowMk2);
                     magic.color = Color.Lerp(Color.Red, Color.Purple, Main.rand.NextFloat());
                     magic.velocity = Main.rand.NextVector2Circular(5f, 5f);
                     magic.scale = Main.rand.NextFloat(1f, 1.25f);

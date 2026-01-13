@@ -780,7 +780,7 @@ Mods: {
 				DisplayName: Посох серного полумесяца
 				Tooltip:
 					'''
-					Используйте посох, чтобы создать сильное силовое поле вокруг вас, увеличивающее сопротивление урону на на 60%
+					Используйте посох, чтобы создать сильное силовое поле вокруг вас, увеличивающее сопротивление урону на 60%
 					Удары, нанесённые по вам, пока силовое поле активно, вызывают яростный взрыв, который наносит урон врагам поблизости
 					Пока поле активно, а также в течение 15 секунд после его деактивации, наносимый урон будет уменьшен на 60%
 					Силовое поле ломается после 3 ударов. После этого, его нельзя будет создать вновь на протяжении 45 секунд
@@ -1379,7 +1379,7 @@ Mods: {
 			}
 
 			IllusionersReverie: {
-				DisplayName: Грёзы иллюзионера
+				DisplayName: Грёзы иллюзиониста
 				Tooltip:
 					'''
 					Выпускает ваши теневые иллюзии, атакующие врагов поблизости перед тем, как рассеяться в облака тёмной магии
@@ -1651,7 +1651,7 @@ Mods: {
 			AsterPassive5: Ну же! Давай сделаем что-нибудь ВЕСЁЛОЕ!
 			AsterPassive6: Что у нас не повестке дня, компадре?
 			AsterPassive7: Блеск блеск!
-			AsterBossSpawn1: Хех, это закончится быстро.
+			AsterBossSpawn1: Хе-хе, это закончится быстро.
 			AsterBossSpawn2: Не умри в этот раз, хорошо?
 			AsterBossSpawn3: Уже вернулся?
 			AsterBossSpawn4: Если ты проиграешь в этот раз, я съем всю твою мебель. Это угроза.
@@ -1659,7 +1659,7 @@ Mods: {
 			AsterBossSpawn6: Если умрёшь намеренно, я дам тебе двадцатку.
 			AsterBossSpawn7: Кех, это будет легко!
 			AsterBossSpawn8: Вперёд. Заставь меня гордиться.
-			AsterBossSpawn9: Покажи как это делается, большая шишка.
+			AsterBossSpawn9: Покажи, как это делается, большая шишка.
 			AsterBossSpawn10: Помни, страта бога падения ВСЕГДА доступна как вариант!
 			AsterPet1: Ну эй...
 			AsterPet2: ЧТУФ?
@@ -1798,14 +1798,14 @@ Mods: {
 			PlanteraFinalPhaseTip: Плантера не щадит никого и ничего, смотри в оба!
 			PlanteraJokeTip1: Немного постыдно, умереть от цветка.
 			PlanteraJokeTip2: Да, Плантера пока побеждает. Ты уверен, что у тебя нет аллергии на пыльцу?
-			PolterghastTip1: Какой-нибудь дэш точно поможет с вращающимися кольцами, он даст тебе возможность быстро добраться до прохода!
+			PolterghastTip1: Какой-нибудь рывок точно поможет с вращающимися кольцами, он даст тебе возможность быстро добраться до прохода!
 			PolterghastTip2: Если одна из ног Полтергаста стала красной, быстро отойди; она замахнётся на тебя и выпустит разгоняющиеся снаряды!
 			PolterghastDesperationPhaseTip: Духи Полтергаста освобождены! Но видеть нас они не особо рады...
 			ProvidenceDawnWarningTip: Смотри, чтобы солнце не взошло, когда будешь сражаться с Провиденс опять!
 			ProvidenceDuskWarningTip: Смотри, чтобы солнце не село, когда будешь сражаться с Провиденс опять!
 			PrimeTip1: Его руки целятся туда, куда ты идёшь, попытайся сменить направление движения в самый последний момент…
 			PrimeTeslaTip: Эти голубые мины сейчас превратятся в газ; ложись!
-			PrimeJokeTip1: Знаешь, твои движения — это просто скелет, ничего полноценного. Тебе б мяса какого-нибудь налепить на него..
+			PrimeJokeTip1: Знаешь, твои движения — это просто скелет, ничего полноценного. Тебе б мяса какого-нибудь налепить на него...
 			ProfanedRoDTip: Осквернённая магия блокирует твой жезл раздора!
 			ProfanedDefenderTip: Оооо, а вот теперь она разозлилась! Не расслабляйся!
 			ProfanedFlappyBirdTip: Они отсиживаются где-то справа, но если доберёшься до них, то сможешь прорвать их защиту!
@@ -1822,7 +1822,7 @@ Mods: {
 			QueenBeeJokeTip1: Трудись хоть как пчела, но всё равно тебя ждёт смерть! Досадно!
 			QueenBeeJokeTip2: Уф, тебя не ужалили?..
 			QueenSlimeTip1: Если чувствуешь, что не можешь бежать, то не беги! Это определённо поможет
-			QueenSlimeBladeBeamTip: А ЭТО ещё что?! Уходи от этого подальше! Я не хочу быть испелелённым!
+			QueenSlimeBladeBeamTip: А ЭТО ещё что?! Уходи от этого подальше! Я не хочу быть испепелённым!
 			QueenSlimeCrystalTip: Эти кристаллы располагаются на равном расстоянии... ты можешь уворачиваться от них одинаково каждый раз!
 			RavagerTip1: Некоторые атаки разрушителя награждают, если быть близко. Попытайся не убегать!
 			RavagerTip2: Следи за этими сгустками-пятнами, тебе навряд ли сильно хочется играть в "пол — это лава"!
@@ -1854,7 +1854,7 @@ Mods: {
 			YharonSpeedTip: Постарайся запомнить, когда Ярон начинает свои гипер-рывки, иначе он застанет тебя врасплох!
 			YharonFlashbangTip: Не давай вспышкам побеспокоить тебя! Смотри в оба глаза за тем, где находятся угольки!
 			YharonCarpetBombTip: Лучше будет находиться ближе к краю арены во время этой ковровой бомбардировки пламенем, Так ты точно не попадёшь под обстрел!
-			YharonJokeTip1: AND IF I SHOULD DIE BEFORE YOU CONTINUE, YOU SHALL HAV-... Паажи, ты умер? Да ну, я ж тут так отжигал!
+			YharonJokeTip1: AND IF I SHOULD DIE BEFORE YOU CONTINUE, YOU SHALL HAV-... Стой, ты умер? Да ну, я ж тут так отжигал!
 		}
 
 		Projectiles: {
@@ -1876,8 +1876,8 @@ Mods: {
 			AbyssalSoul.DisplayName: Дух бездны
 			AbyssalSoulTelegraph.DisplayName: Телеграф Бездны
 			AEWIllusionTelegraphLine.DisplayName: Телеграф
-			AEWNightmareWyrm.DisplayName: Эйдолонский змий
-			AEWSplitForm.DisplayName: Эйдолонский змий
+			AEWNightmareWyrm.DisplayName: Эйдолонский змей
+			AEWSplitForm.DisplayName: Эйдолонский змей
 			AEWTelegraphLine.DisplayName: Телеграф
 			CircleCenterTelegraph.DisplayName: Телеграф
 			ConvergingLumenylCrystal.DisplayName: Божественный люменил
@@ -1916,7 +1916,7 @@ Mods: {
 			AstralSparkle.DisplayName: Астральный блеск
 			AstralTelegraphLine.DisplayName: Телеграф
 			AstralVortex.DisplayName: Поглощённый вихрь
-			DarkGodLaser.DisplayName: Антиматериальный луч смерти
+			DarkGodLaser.DisplayName: Анти-материальный луч смерти
 			DarkStar.DisplayName: Тёмная звезда
 			InfectionGlob.DisplayName: Капля инфекции
 			MassiveInfectedStar.DisplayName: Поглощённая звезда
@@ -2424,7 +2424,7 @@ Mods: {
 			HyperplaneMatrixProjectile.DisplayName: Матрица Гиперплоскости
 			AridBattlecryProjectile.DisplayName: Осушающий боевой клич
 			EyeOfMadnessProj.DisplayName: Глаз безумия
-			IllusionersReverieProj.DisplayName: Грёзы иллюзионера
+			IllusionersReverieProj.DisplayName: Грёзы иллюзиониста
 			KevinProjectile.DisplayName: Kevin
 			LingeringSandSkull.DisplayName: Песочный череп
 			MiniSandShark.DisplayName: Мини песочная акула

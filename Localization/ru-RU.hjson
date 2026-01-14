@@ -1193,7 +1193,7 @@ Mods: {
 			}
 
 			SupremeCalamitasRelic: {
-				DisplayName: Инфернальная реликвия Каламитас, высшей ведьмы
+				DisplayName: Инфернальная реликвия Каламитас, величайшей ведьмы
 				Tooltip: GetsChanged
 
 				PersonalMessage: {

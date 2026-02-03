@@ -29,10 +29,6 @@ namespace InfernumMode.Assets.Fonts
 
         public override void Load()
         {
-            BossIntroScreensFont = new LocalizedSpriteFont(BossHealthBarManager.HPBarFont)
-                .WithLanguage(GameCulture.CultureName.Chinese, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFont", AssetRequestMode.ImmediateLoad).Value)
-                .WithLanguage(GameCulture.CultureName.Russian, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFontRussian", AssetRequestMode.ImmediateLoad).Value);
-
             HPBarFont = new LocalizedSpriteFont(ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/HPBarFont", AssetRequestMode.ImmediateLoad).Value, GameCulture.CultureName.German,
                 GameCulture.CultureName.Italian, GameCulture.CultureName.French, GameCulture.CultureName.Spanish, GameCulture.CultureName.Russian, GameCulture.CultureName.Chinese,
                 GameCulture.CultureName.Portuguese, GameCulture.CultureName.Polish);
@@ -40,6 +36,13 @@ namespace InfernumMode.Assets.Fonts
             ProfanedTextFont = new LocalizedSpriteFont(ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedText", AssetRequestMode.ImmediateLoad).Value)
                 .WithLanguage(GameCulture.CultureName.Russian, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedTextRussian", AssetRequestMode.ImmediateLoad).Value)
                 .WithLanguage(GameCulture.CultureName.Chinese, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/ProfanedTextChinese", AssetRequestMode.ImmediateLoad).Value);
+        }
+
+        public override void SetStaticDefaults()
+        {
+            BossIntroScreensFont = new LocalizedSpriteFont(BossHealthBarManager.HPBarFont)
+                .WithLanguage(GameCulture.CultureName.Chinese, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFont", AssetRequestMode.ImmediateLoad).Value)
+                .WithLanguage(GameCulture.CultureName.Russian, ModContent.Request<DynamicSpriteFont>("InfernumMode/Assets/Fonts/BossIntroScreensFontRussian", AssetRequestMode.ImmediateLoad).Value);
         }
 
         public override void Unload()

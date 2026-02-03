@@ -2307,7 +2307,7 @@ Mods: {
 			NonHomingSkull.DisplayName: Череп
 			ShadowflameFireball.DisplayName: Бомба теневого пламени
 			SpinningFireball.DisplayName: Шар теневого пламени
-			DeceleratingCrimulanGlob.DisplayName: Нестабильная багротановая капля
+			DeceleratingCrimulanGlob.DisplayName: Нестабильная багрянцевая капля
 			DeceleratingEbonianGlob.DisplayName: Нестабильная эбонитовая капля
 			GroundSlimeGlob.DisplayName: Нестабильная капля слизи
 			HomingWeaverSpark.DisplayName: Искра
@@ -2542,7 +2542,7 @@ Mods: {
 			GolemArena.MapEntry: Арена
 			MoonlordArena.MapEntry: Арена
 			SeaShell.MapEntry: Морская раковина
-			// ArenaTile.MapEntry: Arena Tile
+			ArenaTile.MapEntry: Арена
 		}
 
 		UI: {

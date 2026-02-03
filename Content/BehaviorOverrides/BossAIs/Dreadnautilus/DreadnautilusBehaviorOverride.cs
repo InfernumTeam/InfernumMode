@@ -94,9 +94,9 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
         /*private void SetDowned(NPC nPC)
         {
-            if (nPC.type == NPCID.BloodNautilus && !WorldSaveSystem.DownedDreadnautilus)
+            if (nPC.type == NPCID.BloodNautilus && !DownedBossSystem.downedDreadnautilus)
             {
-                WorldSaveSystem.DownedDreadnautilus = true;
+                DownedBossSystem.downedDreadnautilus = true;
             }
         }*/
 

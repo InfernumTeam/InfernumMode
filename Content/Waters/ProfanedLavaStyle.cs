@@ -26,12 +26,11 @@ namespace InfernumMode.Content.Waters
 
         public override int GetDropletGore() => 0;
 
-        public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+        public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) => r = g = b = 0;
+
+        public override void DrawColor(int x, int y, ref VertexColors liquidColor, bool isSlope)
         {
-            var w = Color.White;
-            r = w.R;
-            g = w.G;
-            b = w.B;
+            liquidColor = new(Color.White);
         }
     }
 }

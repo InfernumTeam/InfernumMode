@@ -227,7 +227,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     Tile tile = Framing.GetTileSafely(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if (tile.WallType > 0 && !WorldGen.SolidTile(tile) || BossRushEvent.BossRushActive)
+                    if (tile.WallType > WallID.None && !WorldGen.SolidTile(tile) || BossRushEvent.BossRushActive)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.
@@ -495,7 +495,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             if (attackTimer < tentacleSpawnDelay + tentacleSummonTime + 115f && attackTimer > 25f && tentacleAngle > freeAreaAngle)
             {
                 Vector2 dustSpawnOffset = (freeAreaAngle + Main.rand.NextFloatDirection() * 0.14f).ToRotationVector2() * Main.rand.NextFloat(140f);
-                Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 267);
+                Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, DustID.RainbowMk2);
                 telegraphPuff.velocity = dustSpawnOffset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(4f);
                 telegraphPuff.color = Color.Lime;
                 telegraphPuff.scale = 1.2f;
@@ -504,7 +504,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
             if (attackTimer < tentacleSpawnDelay + tentacleSummonTime + 265f && attackTimer > 25f && tentacleAngle > freeAreaAngle2 && inPhase3)
             {
                 Vector2 dustSpawnOffset = (freeAreaAngle2 + Main.rand.NextFloatDirection() * 0.14f).ToRotationVector2() * Main.rand.NextFloat(90f);
-                Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 267);
+                Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, DustID.RainbowMk2);
                 telegraphPuff.velocity = dustSpawnOffset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(4f);
                 telegraphPuff.color = Color.HotPink;
                 telegraphPuff.scale = 1.2f;
@@ -578,7 +578,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Plantera
                     Tile tile = Framing.GetTileSafely(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if (tile.WallType > 0 && !WorldGen.SolidTile(tile) || BossRushEvent.BossRushActive)
+                    if (tile.WallType > WallID.None && !WorldGen.SolidTile(tile) || BossRushEvent.BossRushActive)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.

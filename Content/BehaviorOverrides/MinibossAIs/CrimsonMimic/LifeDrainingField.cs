@@ -53,7 +53,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CrimsonMimic
             for (int i = 0; i < 60; i++)
             {
                 Vector2 dustSpawnOffset = (TwoPi * i / 60f).ToRotationVector2() * Radius;
-                Dust blood = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, 267);
+                Dust blood = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, DustID.RainbowMk2);
                 blood.color = Color.Lerp(Color.Red, Color.IndianRed, Main.rand.NextFloat(0.2f, 0.65f));
                 blood.velocity = Projectile.velocity + Vector2.UnitY * Main.rand.NextFloatDirection() * 2.5f;
                 blood.scale = 0.6f;

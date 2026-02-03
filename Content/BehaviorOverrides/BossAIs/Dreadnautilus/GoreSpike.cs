@@ -43,7 +43,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
         {
             for (int i = 0; i < 6; i++)
             {
-                Dust boneDust = Dust.NewDustPerfect(Projectile.Center, 26);
+                Dust boneDust = Dust.NewDustPerfect(Projectile.Center, DustID.Bone);
                 boneDust.velocity = Main.rand.NextVector2Circular(3f, 3f);
                 boneDust.scale = Main.rand.NextFloat(1f, 1.5f);
             }

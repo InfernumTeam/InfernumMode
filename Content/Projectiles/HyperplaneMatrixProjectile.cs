@@ -324,7 +324,7 @@ namespace InfernumMode.Content.Projectiles
             // Randomly release small electric sparks.
             if (Main.rand.NextBool(4))
             {
-                Dust spark = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f), 264);
+                Dust spark = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f), DustID.PortalBoltTrail);
                 spark.color = Color.Cyan;
                 spark.velocity = Main.rand.NextVector2Unit() * Main.rand.NextVector2Unit(1f, 4f);
                 spark.scale = Main.rand.NextFloat(0.9f, 1.2f);

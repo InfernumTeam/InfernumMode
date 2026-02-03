@@ -461,7 +461,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.StormWeaver
                 // Create some mouth dust.
                 for (int i = 0; i < 20; i++)
                 {
-                    Dust electricity = Dust.NewDustPerfect(npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 30f, 229);
+                    Dust electricity = Dust.NewDustPerfect(npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 30f, DustID.Vortex);
                     electricity.velocity = Main.rand.NextVector2Circular(5f, 5f) + npc.velocity;
                     electricity.scale = 1.9f;
                     electricity.noGravity = true;

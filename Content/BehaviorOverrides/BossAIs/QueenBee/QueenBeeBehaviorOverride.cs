@@ -542,7 +542,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenBee
                     for (int i = 0; i < 30; i++)
                     {
                         Vector2 honeyDustVelocity = (TwoPi * i / 30f).ToRotationVector2() * 5f;
-                        Dust honey = Dust.NewDustPerfect(npc.Center, 153);
+                        Dust honey = Dust.NewDustPerfect(npc.Center, DustID.Honey2);
                         honey.scale = Main.rand.NextFloat(1f, 1.85f);
                         honey.velocity = honeyDustVelocity;
                         honey.noGravity = true;

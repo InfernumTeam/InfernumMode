@@ -68,7 +68,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             Main.spriteBatch.Draw(texture7, drawPosition, null, lightColor, 0f, new(265f, 354f), scale * scaleFactor1 * new Vector2(0.6f, 0.45f), SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(texture7, drawPosition, null, coloredLight, 0f, new(265f, 354f), scale * scaleFactor2 * new Vector2(0.6f, 0.45f), SpriteEffects.None, 0f);
 
-            Texture2D lightTexture = TextureAssets.Extra[59].Value;
+            Texture2D lightTexture = TextureAssets.Extra[ExtrasID.PortalGateHalo].Value;
             Main.spriteBatch.Draw(lightTexture, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1 * new Vector2(1f, 0.3f), SpriteEffects.None, 0f);
             Main.spriteBatch.ResetBlendState();
 

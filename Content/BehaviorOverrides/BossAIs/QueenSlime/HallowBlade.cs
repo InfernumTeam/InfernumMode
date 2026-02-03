@@ -108,7 +108,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                     Projectile.velocity = Projectile.ai[0].ToRotationVector2() * FlySpeedFactor * 16f;
                     if (Main.rand.NextBool(3))
                     {
-                        Dust magic = Dust.NewDustPerfect(Projectile.Center, 267);
+                        Dust magic = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                         magic.fadeIn = 1f;
                         magic.noGravity = true;
                         magic.alpha = 100;

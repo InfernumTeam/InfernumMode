@@ -83,7 +83,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AquaticScourge
             Projectile.scale = Projectile.Opacity;
 
             // Release positive golden/cyan particles.
-            Dust positiveParticle = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(220f, 220f) * Projectile.scale, 261);
+            Dust positiveParticle = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(220f, 220f) * Projectile.scale, DustID.AncientLight);
             positiveParticle.color = Main.rand.NextBool() ? Color.Gold : Color.Cyan;
             positiveParticle.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.5f, 3f);
             positiveParticle.scale = 1.5f;

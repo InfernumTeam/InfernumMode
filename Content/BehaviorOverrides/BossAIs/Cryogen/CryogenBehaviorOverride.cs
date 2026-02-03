@@ -921,7 +921,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
         {
             for (int i = 0; i < count; i++)
             {
-                Dust ice = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(62f, 62f), 261);
+                Dust ice = Dust.NewDustPerfect(position + Main.rand.NextVector2Circular(62f, 62f), DustID.AncientLight);
                 ice.color = Color.Lerp(Color.White, Color.Cyan, Main.rand.NextFloat(0.15f, 0.7f));
                 ice.velocity = Main.rand.NextVector2Circular(speed, speed) - Vector2.UnitY * 1.6f;
                 ice.scale = Main.rand.NextFloat(1.2f, 1.6f);

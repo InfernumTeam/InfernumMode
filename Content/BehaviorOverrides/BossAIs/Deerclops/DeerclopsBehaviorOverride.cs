@@ -1263,7 +1263,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Deerclops
             // Draw the shadow form as necessary on top of everything else.
             if (shadowFormInterpolant > 0f)
             {
-                Texture2D eyeTexture = TextureAssets.Extra[245].Value;
+                Texture2D eyeTexture = TextureAssets.Extra[ExtrasID.DeerclopsEye].Value;
                 float scale = Utils.Remap(shadowFormInterpolant, 0f, 0.5555f, 0f, 1f, true);
                 Color eyeColor = new Color(255, 30, 30, 66) * npc.Opacity * scale * 0.25f;
                 for (int j = 0; j < shadowBackglowCount; j++)

@@ -26,7 +26,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             for (int i = 0; i < 2; i++)
             {
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(35f, 35f), 89);
+                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(35f, 35f), DustID.GemEmerald);
                 dust.velocity = Main.rand.NextVector2Circular(6f, 6f);
                 dust.scale = Main.rand.NextFloat(0.5f, 0.7f);
                 dust.noGravity = true;

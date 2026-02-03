@@ -28,7 +28,7 @@ namespace InfernumMode.Content.Tiles.Abyss
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
             TileObjectData.addTile(Type);
 
-            DustType = 1;
+            DustType = DustID.Stone;
 
             AddMapEntry(new Color(168, 188, 192));
 

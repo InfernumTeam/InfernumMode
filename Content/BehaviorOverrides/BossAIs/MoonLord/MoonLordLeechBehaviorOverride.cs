@@ -86,8 +86,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreDraw(Projectile projectile, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D leechEndTexture = TextureAssets.Projectile[ProjectileID.MoonLeech].Value;
-            Texture2D bodyTexture = TextureAssets.Extra[23].Value;
-            Texture2D penultimateBodyTexture = TextureAssets.Extra[24].Value;
+            Texture2D bodyTexture = TextureAssets.Extra[ExtrasID.MoonLeechBody].Value;
+            Texture2D penultimateBodyTexture = TextureAssets.Extra[ExtrasID.MoonLeechTail].Value;
             Vector2 mouthOffset = Main.npc[(int)Math.Abs(projectile.ai[0]) - 1].Center - projectile.Center + Vector2.UnitY * 216f;
             float remainingDistance = mouthOffset.Length();
             Vector2 directionToMouth = mouthOffset.SafeNormalize(Vector2.UnitY);

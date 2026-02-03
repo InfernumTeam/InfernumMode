@@ -22,7 +22,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
         {
             Projectile.width = 40;
             Projectile.height = 40;
-            Projectile.aiStyle = 1;
+            Projectile.aiStyle = ProjAIStyleID.Arrow;
             Projectile.hostile = true;
             Projectile.alpha = 255;
             Projectile.ignoreWater = true;
@@ -133,7 +133,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Yharon
                     Vector2 spinningpoint = Vector2.UnitX * -Projectile.width / 2f;
                     spinningpoint += -Vector2.UnitY.RotatedBy((float)l * (float)Math.PI / 6f) * new Vector2(8f, 16f);
                     spinningpoint = spinningpoint.RotatedBy(Projectile.rotation - (float)Math.PI / 2f);
-                    int num8 = Dust.NewDust(Projectile.Center, 0, 0, 6, 0f, 0f, 160);
+                    int num8 = Dust.NewDust(Projectile.Center, 0, 0, DustID.Torch, 0f, 0f, 160);
                     Main.dust[num8].scale = 1.1f;
                     Main.dust[num8].noGravity = true;
                     Main.dust[num8].position = Projectile.Center + spinningpoint;

@@ -66,7 +66,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 }
                 else
                 {
-                    Dust magic = Dust.NewDustPerfect(Projectile.Center, 267, magicVelocity, 0, magicColor, Main.rand.NextFloat(1f, 1.4f));
+                    Dust magic = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2, magicVelocity, 0, magicColor, Main.rand.NextFloat(1f, 1.4f));
                     magic.noGravity = true;
                 }
             }

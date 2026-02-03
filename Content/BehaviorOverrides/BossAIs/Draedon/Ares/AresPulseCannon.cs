@@ -176,8 +176,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < 4; i++)
                 {
                     Vector2 offset = Main.rand.NextVector2Circular(30f, 30f);
-                    Dust.NewDustPerfect(endOfCannon + offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
-                    Dust.NewDustPerfect(endOfCannon - offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
+                    Dust.NewDustPerfect(endOfCannon + offset, DustID.BoneTorch, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
+                    Dust.NewDustPerfect(endOfCannon - offset, DustID.BoneTorch, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
                 }
             }
 

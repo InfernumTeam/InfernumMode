@@ -100,7 +100,7 @@ namespace InfernumMode.Content.Projectiles.Melee
                 // Create a bunch of electricity.
                 for (int i = 0; i < 20; i++)
                 {
-                    Dust electricity = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(10f, 10f), 226);
+                    Dust electricity = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(10f, 10f), DustID.Electric);
                     electricity.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.34f) * Main.rand.NextFloat(3f, 14f);
                     electricity.noGravity = true;
                 }

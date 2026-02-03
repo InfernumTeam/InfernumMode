@@ -117,7 +117,7 @@ namespace InfernumMode.Content.Tiles.Profaned
                 {
                     Vector2 crystalShardSpawnPosition = bottom - Vector2.UnitY * k + Main.rand.NextVector2Circular(8f, 8f);
                     Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
-                    Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, 255, shardVelocity);
+                    Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, DustID.CrystalPulse2, shardVelocity);
                     shard.noGravity = Main.rand.NextBool();
                     shard.scale = Main.rand.NextFloat(1.3f, 1.925f);
                     shard.velocity.Y -= 5f;

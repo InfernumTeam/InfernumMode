@@ -31,7 +31,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SlimeGod
             NPC.defense = 11;
             NPC.lifeMax = 320;
             NPC.knockBackResist = 0f;
-            AnimationType = 121;
+            AnimationType = NPCID.Slimer;
             NPC.alpha = 35;
             NPC.lavaImmune = true;
             NPC.noGravity = false;

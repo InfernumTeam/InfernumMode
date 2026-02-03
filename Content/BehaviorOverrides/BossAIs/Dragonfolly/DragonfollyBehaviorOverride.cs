@@ -740,7 +740,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
                         float lifePersistance = Main.rand.NextFloat(1.5f, 2f);
                         for (int i = 0; i < 60; i++)
                         {
-                            Dust energy = Dust.NewDustPerfect(npc.Center, 267);
+                            Dust energy = Dust.NewDustPerfect(npc.Center, DustID.RainbowMk2);
                             energy.velocity = (TwoPi * i / 60f).ToRotationVector2() * speed;
                             energy.noGravity = true;
                             energy.color = Main.hslToRgb(Main.rand.NextFloat(0f, 0.08f), 0.85f, 0.6f);

@@ -131,7 +131,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Providence
             {
                 Vector2 crystalShardSpawnPosition = Projectile.Center + Projectile.velocity * k + Main.rand.NextVector2Circular(6f, 6f);
                 Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
-                Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, 255, shardVelocity);
+                Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, DustID.CrystalPulse2, shardVelocity);
                 shard.noGravity = Main.rand.NextBool();
                 shard.scale = Main.rand.NextFloat(1.3f, 1.925f);
                 shard.velocity.Y -= 5f;

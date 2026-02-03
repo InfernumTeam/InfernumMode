@@ -58,7 +58,7 @@ namespace InfernumMode.Content.Projectiles.Generic
                             dustSpawnOffset *= Utils.GetLerpValue(210f, 180f, Time, true) * new Vector2(40f, 50f);
                             dustSpawnOffset.Y += verticalOffset;
 
-                            Dust fire = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, 6, Vector2.Zero, 0, Color.White * 0.1f, 1.1f);
+                            Dust fire = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, DustID.Torch, Vector2.Zero, 0, Color.White * 0.1f, 1.1f);
                             fire.velocity.Y = Main.rand.NextFloat(2f);
                             fire.fadeIn = 0.6f;
                             fire.noGravity = true;
@@ -110,7 +110,7 @@ namespace InfernumMode.Content.Projectiles.Generic
             // Emit fire.
             for (int i = 0; i < 32; i++)
             {
-                Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 25f), 6, Vector2.Zero, 0, Color.White * 0.1f, 1.1f);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 25f), DustID.Torch, Vector2.Zero, 0, Color.White * 0.1f, 1.1f);
                 fire.velocity.Y = Main.rand.NextFloat(2f);
                 fire.fadeIn = 0.6f;
                 fire.scale = 1.5f;

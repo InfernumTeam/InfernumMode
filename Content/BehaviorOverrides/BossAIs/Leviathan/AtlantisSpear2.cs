@@ -18,7 +18,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Leviathan
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 52;
-            Projectile.aiStyle = 4;
+            Projectile.aiStyle = ProjAIStyleID.Vilethorn;
             Projectile.friendly = false;
             Projectile.hostile = true;
             Projectile.alpha = 255;

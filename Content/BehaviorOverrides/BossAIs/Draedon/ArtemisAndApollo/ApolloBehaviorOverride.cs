@@ -1671,7 +1671,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                         else
                         {
                             Vector2 fireSpawnPosition = npc.Center + currentDirection.RotatedByRandom(PiOver2) * 100f;
-                            Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6);
+                            Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.Torch);
                             fire.velocity = (energyOrb.Center - fire.position) * 0.1f;
                             fire.scale = 2f;
                             fire.noGravity = true;

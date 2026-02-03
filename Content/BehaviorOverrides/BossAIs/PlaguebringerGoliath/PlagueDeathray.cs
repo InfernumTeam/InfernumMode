@@ -18,8 +18,8 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override Color LaserOverlayColor => new(79, 150, 21, 50);
         public override Color LightCastColor => Color.Green;
         public override Texture2D LaserBeginTexture => TextureAssets.Projectile[Projectile.type].Value;
-        public override Texture2D LaserMiddleTexture => TextureAssets.Extra[21].Value;
-        public override Texture2D LaserEndTexture => TextureAssets.Extra[22].Value;
+        public override Texture2D LaserMiddleTexture => TextureAssets.Extra[ExtrasID.PhantasmalDeathrayBody].Value;
+        public override Texture2D LaserEndTexture => TextureAssets.Extra[ExtrasID.PhantasmalDeathrayEnd].Value;
         public override float MaxLaserLength => 20f;
         public override float MaxScale => 0.2f;
         // public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Ray");

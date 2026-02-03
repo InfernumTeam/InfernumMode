@@ -324,7 +324,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                 {
                     Vector2 fireSpawnPosition = mouthPosition + new Vector2(Main.rand.NextFloat(10f) * npc.spriteDirection, Main.rand.NextFloat(-6f, 0f));
                     Vector2 fireVelocity = npc.SafeDirectionTo(fireSpawnPosition).RotatedByRandom(0.48f) * Main.rand.NextFloat(1.8f, 4.5f);
-                    Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 75, fireVelocity);
+                    Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.CursedTorch, fireVelocity);
                     fire.scale = Main.rand.NextFloat(1f, 1.5f);
                     fire.noGravity = true;
                 }
@@ -371,7 +371,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.CorruptionMimic
                     for (int j = 0; j < 80; j++)
                     {
                         Vector2 dustSpawnPosition = npc.Center + (offsetAngle + aimDirection).ToRotationVector2() * j * 24f;
-                        Dust telegraph = Dust.NewDustPerfect(dustSpawnPosition, 267, Vector2.Zero);
+                        Dust telegraph = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2, Vector2.Zero);
                         telegraph.color = Color.Lerp(Color.Purple, Color.Gray, 0.45f);
                         telegraph.scale = 1.75f;
                         telegraph.noGravity = true;

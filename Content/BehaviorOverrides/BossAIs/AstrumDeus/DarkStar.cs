@@ -134,7 +134,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.AstrumDeus
             float scaleFactor = Utils.GetLerpValue(0f, 15f, Time, true) + Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true) * 2f;
             if (projectileToConnectTo != null)
             {
-                Texture2D lineTexture = TextureAssets.Extra[47].Value;
+                Texture2D lineTexture = TextureAssets.Extra[ExtrasID.StardustTowerMark].Value;
                 Vector2 start = Projectile.Center;
                 Vector2 end = projectileToConnectTo.Center;
                 Vector2 scale = new(scaleFactor * 1.5f, (start - end).Length() / lineTexture.Height);

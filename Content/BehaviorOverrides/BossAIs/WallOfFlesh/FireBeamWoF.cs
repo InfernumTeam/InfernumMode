@@ -64,7 +64,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.WallOfFlesh
         {
             for (int i = 0; i < 6; i++)
             {
-                Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(50f, 50f), 222);
+                Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(50f, 50f), DustID.FireworkFountain_Yellow);
                 fire.velocity = -Vector2.UnitY * Main.rand.NextFloat(1.5f, 3.25f);
                 fire.velocity *= Main.rand.NextBool(2).ToDirectionInt();
                 fire.scale = 1f + fire.velocity.Length() * 0.1f;

@@ -39,7 +39,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             Projectile.scale = Sin(Pi * Projectile.timeLeft / 45f);
             for (int i = 0; i < 16; i++)
             {
-                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 60, Main.rand.NextVector2Circular(3f, 3f));
+                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, DustID.RedTorch, Main.rand.NextVector2Circular(3f, 3f));
                 redLightning.velocity *= Main.rand.NextFloat(1f, 1.9f);
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
                 redLightning.color = Color.Lerp(Color.White, Color.Red, Main.rand.NextFloat(0.5f, 1f));

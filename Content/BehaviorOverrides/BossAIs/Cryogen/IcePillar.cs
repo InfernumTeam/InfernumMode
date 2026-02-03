@@ -154,7 +154,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cryogen
                 Vector2 crystalShardSpawnPosition = Projectile.Center - aimDirection * offset + Main.rand.NextVector2Circular(6f, 6f);
                 Vector2 shardVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3.6f, 13.6f);
 
-                Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, 68, shardVelocity);
+                Dust shard = Dust.NewDustPerfect(crystalShardSpawnPosition, DustID.BlueCrystalShard, shardVelocity);
                 shard.noGravity = Main.rand.NextBool();
                 shard.scale = Main.rand.NextFloat(0.9f, 1.4f);
                 shard.velocity.Y -= 5f;

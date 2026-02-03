@@ -105,7 +105,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.HallowedMimic
                     for (int j = 0; j < 80; j++)
                     {
                         Vector2 dustSpawnPosition = npc.Center + (offsetAngle + aimDirection).ToRotationVector2() * j * 24f;
-                        Dust telegraph = Dust.NewDustPerfect(dustSpawnPosition, 267, Vector2.Zero);
+                        Dust telegraph = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2, Vector2.Zero);
                         telegraph.color = Color.Lerp(Color.Purple, Color.DeepPink, 0.5f);
                         telegraph.scale = 1.8f;
                         telegraph.noGravity = true;

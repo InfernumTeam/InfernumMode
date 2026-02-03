@@ -153,7 +153,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                     Vector2 dustSpawnPosition = Projectile.Center + Projectile.rotation.ToRotationVector2() * Main.rand.NextFloat(TelegraphLength * 0.9f);
                     dustSpawnPosition += (Projectile.rotation + Main.rand.NextBool().ToDirectionInt() * PiOver2).ToRotationVector2() * 30f;
 
-                    Dust rainbowSparkle = Dust.NewDustPerfect(dustSpawnPosition, 267);
+                    Dust rainbowSparkle = Dust.NewDustPerfect(dustSpawnPosition, DustID.RainbowMk2);
                     rainbowSparkle.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
                     rainbowSparkle.color.A /= 3;
                     rainbowSparkle.velocity = Projectile.rotation.ToRotationVector2() * Main.rand.NextFloat(4f);

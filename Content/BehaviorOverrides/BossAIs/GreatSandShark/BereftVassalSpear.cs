@@ -79,12 +79,12 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.GreatSandShark
                     // Release sand and electricity dust.
                     for (int i = 0; i < 20; i++)
                     {
-                        Dust electricity = Dust.NewDustPerfect(Projectile.Center, 226);
+                        Dust electricity = Dust.NewDustPerfect(Projectile.Center, DustID.Electric);
                         electricity.velocity = Main.rand.NextVector2Circular(7.2f, 7.2f);
                         electricity.scale = Main.rand.NextFloat(0.9f, 1.5f);
                         electricity.noGravity = true;
 
-                        Dust sand = Dust.NewDustPerfect(dustDevil.Center, 32);
+                        Dust sand = Dust.NewDustPerfect(dustDevil.Center, DustID.Sand);
                         sand.velocity = Main.rand.NextVector2Circular(14f, 14f) - Vector2.UnitY * 6f;
                         sand.scale = Main.rand.NextFloat(0.9f, 1.5f);
                         sand.noGravity = true;

@@ -924,7 +924,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.HiveMind
             CloudParticle noxiousCloud = new(teleportPosition, Main.rand.NextVector2Circular(6f, 6f), fireColor * cloudOpacity, Color.DarkGray, 120, Main.rand.NextFloat(2f, 2.4f));
             GeneralParticleHandler.SpawnParticle(noxiousCloud);
 
-            Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), 75);
+            Dust fire = Dust.NewDustPerfect(teleportPosition + Main.rand.NextVector2Square(-50f, 50f), DustID.CursedTorch);
             fire.velocity = -Vector2.UnitY.RotateRandom(0.5f) * Main.rand.NextFloat(1f, 5f);
             fire.scale *= 1.66f;
             fire.noGravity = true;

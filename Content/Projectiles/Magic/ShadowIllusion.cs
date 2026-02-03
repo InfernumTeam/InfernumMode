@@ -88,7 +88,7 @@ namespace InfernumMode.Content.Projectiles.Magic
 
                 Color shadowMistColor = Color.Lerp(Color.Purple, Color.Red, Main.rand.NextFloat(0.72f));
                 Vector2 particleSpawnCenter = Projectile.Center + new Vector2(Main.rand.NextFloatDirection() * 15f, Main.rand.NextFloatDirection() * 26f);
-                Dust shadow = Dust.NewDustPerfect(particleSpawnCenter, 261);
+                Dust shadow = Dust.NewDustPerfect(particleSpawnCenter, DustID.AncientLight);
                 shadow.color = shadowMistColor;
                 shadow.velocity = -Vector2.UnitY.RotatedByRandom(0.19f) * Main.rand.NextFloat(2f, 5.6f);
                 shadow.scale = 0.8f;

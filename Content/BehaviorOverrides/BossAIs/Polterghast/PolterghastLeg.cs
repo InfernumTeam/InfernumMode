@@ -180,7 +180,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 if (farFromOtherLimbs)
                     continue;
 
-                if (WorldGen.SolidTile(limbTilePosition.X, limbTilePosition.Y) || (tries >= 17500 && Main.tile[limbTilePosition.X, limbTilePosition.Y].WallType > 0))
+                if (WorldGen.SolidTile(limbTilePosition.X, limbTilePosition.Y) || (tries >= 17500 && Main.tile[limbTilePosition.X, limbTilePosition.Y].WallType > WallID.None))
                 {
                     IdealPosition = endPosition;
                     NPC.netUpdate = true;

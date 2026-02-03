@@ -61,7 +61,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Golem
             {
                 if (Main.rand.NextBool(4))
                 {
-                    Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 6f), 6);
+                    Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 6f), DustID.Torch);
                     fire.velocity = Vector2.UnitY.RotatedByRandom(0.64f) * Main.rand.NextFloat(2f, 6f) * SpikeDirection;
                     fire.noGravity = true;
                     fire.scale *= 1.1f;

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
@@ -41,7 +42,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(102f, 102f), 264);
+                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(102f, 102f), DustID.PortalBoltTrail);
                     magic.color = Color.Cyan;
                     magic.velocity = (Projectile.Center - magic.position) * 0.05f;
                     magic.noGravity = true;

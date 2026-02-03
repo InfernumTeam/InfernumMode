@@ -520,7 +520,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Perforators
                             Vector2 dustSpawnPosition = baseSpawnPosition + Main.rand.NextVector2Circular(9f, 9f);
                             Vector2 dustVelocity = (npc.Center - dustSpawnPosition) * 0.07f;
 
-                            Dust blood = Dust.NewDustPerfect(dustSpawnPosition, 5);
+                            Dust blood = Dust.NewDustPerfect(dustSpawnPosition, DustID.Blood);
                             blood.scale = Main.rand.NextFloat(2.6f, 3f);
                             blood.velocity = dustVelocity;
                             blood.noGravity = true;

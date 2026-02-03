@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.Projectiles.Rogue
@@ -131,7 +132,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
                     {
                         Vector2 magicOffset = (TwoPi * i / 36f).ToRotationVector2() * (270f - Abs(Cos(Pi * 6f * i / 20f)) * 100f) + Main.rand.NextVector2Circular(15f, 15f);
 
-                        Dust magic = Dust.NewDustPerfect(Projectile.Center + magicOffset, 267);
+                        Dust magic = Dust.NewDustPerfect(Projectile.Center + magicOffset, DustID.RainbowMk2);
                         magic.color = Color.Lerp(Color.Fuchsia, Color.DeepSkyBlue, Main.rand.NextFloat());
                         magic.velocity = (Projectile.Center - magic.position) * 0.092f;
                         magic.scale = Main.rand.NextFloat(1.1f, 1.8f);
@@ -146,7 +147,7 @@ namespace InfernumMode.Content.Projectiles.Rogue
             {
                 if (Main.rand.NextFloat() <= Pow(chargeUpInterpolant, 2.4f))
                 {
-                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f) * SummoningCircleScale, 267);
+                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(100f, 100f) * SummoningCircleScale, DustID.RainbowMk2);
                     magic.color = Color.Lerp(Color.Fuchsia, Color.DeepSkyBlue, Main.rand.NextFloat());
                     magic.velocity = Projectile.SafeDirectionTo(magic.position).RotatedBy(PiOver2) * -Main.rand.NextFloat(1f, 3f);
                     magic.scale = Main.rand.NextFloat(0.9f, 1.05f);

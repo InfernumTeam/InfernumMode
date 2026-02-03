@@ -2,6 +2,7 @@
 using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
@@ -54,7 +55,7 @@ namespace InfernumMode.Content.BehaviorOverrides.AbyssAIs
             // Randomly emit ice particles.
             if (Main.rand.NextBool(6) && lifetimeInterpolant < 0.6f)
             {
-                Dust ice = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), 80);
+                Dust ice = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), DustID.Ice);
                 ice.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.6f) * 4f + Main.rand.NextVector2Circular(2f, 2f);
                 ice.noGravity = true;
             }

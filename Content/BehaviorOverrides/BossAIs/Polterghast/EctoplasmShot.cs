@@ -75,7 +75,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 Color dustColor = Color.Lerp(Color.Cyan, Color.Pink, Main.rand.NextFloat());
                 dustColor = Color.Lerp(dustColor, Color.White, 0.7f);
 
-                Dust ectoplasm = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f) + Projectile.velocity, 267, Projectile.velocity * -2.6f + Main.rand.NextVector2Circular(0.6f, 0.6f), 0, dustColor);
+                Dust ectoplasm = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f) + Projectile.velocity, DustID.RainbowMk2, Projectile.velocity * -2.6f + Main.rand.NextVector2Circular(0.6f, 0.6f), 0, dustColor);
                 ectoplasm.scale = 0.3f;
                 ectoplasm.fadeIn = Main.rand.NextFloat() * 1.2f;
                 ectoplasm.noGravity = true;

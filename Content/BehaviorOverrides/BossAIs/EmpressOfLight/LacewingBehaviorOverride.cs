@@ -84,7 +84,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 int centerY = (int)npc.Center.Y / 16;
                 for (int i = centerY; i < centerY + 3; i++)
                 {
-                    if ((Main.tile[centerX, i].HasUnactuatedTile && Main.tileSolid[Main.tile[centerX, i].TileType]) || Main.tile[centerX, i].LiquidType > 0)
+                    if ((Main.tile[centerX, i].HasUnactuatedTile && Main.tileSolid[Main.tile[centerX, i].TileType]) || Main.tile[centerX, i].LiquidType > LiquidID.Water)
                     {
                         speedY *= -1f;
                         if (npc.velocity.Y > 0f)

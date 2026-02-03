@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Emit idle dust.
             for (int i = 0; i < 2; i++)
             {
-                Dust hellfire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(7f, 7f), 267);
+                Dust hellfire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(7f, 7f), DustID.RainbowMk2);
                 hellfire.velocity = Main.rand.NextVector2Circular(2f, 2f) - Projectile.velocity.SafeNormalize(Vector2.Zero) * 1.6f;
                 hellfire.scale = Main.rand.NextFloat(0.7f, 0.8f);
                 hellfire.color = Color.Lerp(Color.OrangeRed, Color.Red, Main.rand.NextFloat());

@@ -61,7 +61,7 @@ namespace InfernumMode.Content.Projectiles.Ranged
             SoundEngine.PlaySound(SoundID.Item27, Projectile.Center);
             for (int i = 0; i < 40; i++)
             {
-                Dust glass = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), 13);
+                Dust glass = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f), DustID.Glass);
                 glass.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(0.5f) * 6f + Main.rand.NextVector2Circular(4f, 4f);
                 glass.noGravity = Main.rand.NextBool();
             }

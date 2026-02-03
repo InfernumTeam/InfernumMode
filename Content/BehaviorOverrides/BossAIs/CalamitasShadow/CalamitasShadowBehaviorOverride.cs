@@ -304,7 +304,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 // Create magic on the shadow's hand.
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
                 Vector2 armEnd = armStart + (armRotation + PiOver2).ToRotationVector2() * npc.scale * ArmLength;
-                Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
+                Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), DustID.RainbowMk2);
                 magic.color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                 magic.noGravity = true;
                 magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
@@ -954,7 +954,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
                     if (!readyToBlowUpFireOrb)
                     {
-                        Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
+                        Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), DustID.RainbowMk2);
                         magic.color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                         magic.noGravity = true;
                         magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);
@@ -1694,7 +1694,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
                 // Create magic on the shadow's hand.
                 Vector2 armStart = npc.Center + new Vector2(npc.spriteDirection * 9.6f, -2f);
                 Vector2 armEnd = armStart + (armRotation + PiOver2).ToRotationVector2() * npc.scale * ArmLength;
-                Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), 267);
+                Dust magic = Dust.NewDustPerfect(armEnd + Main.rand.NextVector2Circular(3f, 3f), DustID.RainbowMk2);
                 magic.color = LumUtils.MulticolorLerp(Main.rand.NextFloat(), Color.MediumPurple, Color.Red, Color.Orange, Color.Red);
                 magic.noGravity = true;
                 magic.velocity = -Vector2.UnitY.RotatedByRandom(0.22f) * Main.rand.NextFloat(0.4f, 18f);

@@ -193,7 +193,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 if (i > 8 && Main.rand.NextBool(50) && NPC.Opacity * AttackerGuardian.Opacity == 1f && !ShouldBeInvisible)
                 {
-                    Dust fire = Dust.NewDustPerfect(currentPoint, 244);
+                    Dust fire = Dust.NewDustPerfect(currentPoint, DustID.CopperCoin);
                     fire.color = Color.Yellow;
                     fire.velocity = Vector2.UnitY * -Main.rand.NextFloat(1f, 1.2f);
                     fire.velocity += NPC.velocity * new Vector2(1f, 0.3f);

@@ -386,8 +386,8 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Betsy
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D wingsTexture = TextureAssets.Extra[81].Value;
-            Texture2D armsTexture = TextureAssets.Extra[82].Value;
+            Texture2D wingsTexture = TextureAssets.Extra[ExtrasID.DD2BetsyWingFront].Value;
+            Texture2D armsTexture = TextureAssets.Extra[ExtrasID.DD2BetsyWingBack].Value;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             int wingArmFrame = (int)(npc.localAI[1] / 4f) % 9;

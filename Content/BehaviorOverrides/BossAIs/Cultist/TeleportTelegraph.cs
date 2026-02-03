@@ -77,7 +77,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Cultist
 
             for (int i = 0; i < 20; i++)
             {
-                Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 267);
+                Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), DustID.RainbowMk2);
                 magic.color = Color.SkyBlue;
                 magic.scale = 1.1f;
                 magic.fadeIn = 0.6f;

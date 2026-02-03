@@ -40,7 +40,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
             {
                 for (int i = 0; i < 36; i++)
                 {
-                    Dust gleamingBurst = Dust.NewDustPerfect(Projectile.Center, 264);
+                    Dust gleamingBurst = Dust.NewDustPerfect(Projectile.Center, DustID.PortalBoltTrail);
                     gleamingBurst.velocity = (TwoPi * i / 36f).ToRotationVector2() * 2.5f;
                     gleamingBurst.color = Color.HotPink;
                     gleamingBurst.noLight = true;
@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
                 Projectile.localAI[0] = 1f;
             }
 
-            Dust gleamingPink = Dust.NewDustPerfect(Projectile.Center, 255);
+            Dust gleamingPink = Dust.NewDustPerfect(Projectile.Center, DustID.CrystalPulse2);
             gleamingPink.color = Color.HotPink;
             gleamingPink.velocity = Vector2.Zero;
             gleamingPink.noGravity = true;
@@ -59,7 +59,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.QueenSlime
 
             for (int direction = -1; direction <= 1; direction += 2)
             {
-                gleamingPink = Dust.NewDustPerfect(Projectile.Center, 255);
+                gleamingPink = Dust.NewDustPerfect(Projectile.Center, DustID.CrystalPulse2);
                 gleamingPink.color = Color.HotPink;
                 gleamingPink.velocity = -Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(Pi + direction * 0.53f).RotatedByRandom(0.06f) * Main.rand.NextFloat(0.9f, 1.1f) * 3f;
                 gleamingPink.noGravity = true;

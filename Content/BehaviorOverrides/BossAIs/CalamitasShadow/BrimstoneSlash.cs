@@ -52,7 +52,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.CalamitasShadow
 
             // Emit small magic particles.
             Vector2 magicSpawnPosition = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation + PiOver2) * Main.rand.NextFloat(4f, 45f) * Main.rand.NextFromList(-1f, 1f);
-            Dust magic = Dust.NewDustPerfect(magicSpawnPosition, 261);
+            Dust magic = Dust.NewDustPerfect(magicSpawnPosition, DustID.AncientLight);
             magic.position += Main.rand.NextVector2Circular(10f, 10f);
             magic.velocity = Projectile.velocity * Main.rand.NextFloat(-0.3f, 0.08f);
             magic.color = Color.Lerp(Color.Red, Color.Cyan, Main.rand.NextFloat());

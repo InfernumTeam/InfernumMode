@@ -780,7 +780,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[ExtrasID.MoonLordEye].Value;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition - (npc.rotation + PiOver2).ToRotationVector2() * npc.spriteDirection * 32f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipVertically : SpriteEffects.FlipHorizontally;
             Color color = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.3f));

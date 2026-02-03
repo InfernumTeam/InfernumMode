@@ -269,7 +269,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                                 SoundEngine.PlaySound(CommonCalamitySounds.ELRFireSound, target.Center);
                                 for (int i = 0; i < 36; i++)
                                 {
-                                    Dust laser = Dust.NewDustPerfect(npc.Center, 182);
+                                    Dust laser = Dust.NewDustPerfect(npc.Center, DustID.TheDestroyer);
                                     laser.velocity = (TwoPi * i / 36f).ToRotationVector2() * 6f;
                                     laser.scale = 1.1f;
                                     laser.noGravity = true;
@@ -417,7 +417,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ComboAttacks
                     for (int i = 0; i < 1f + chargeupPower * 3f; i++)
                     {
                         Vector2 laserDustSpawnPosition = npc.Center + Vector2.UnitY * 26f + Main.rand.NextVector2CircularEdge(20f, 20f);
-                        Dust laser = Dust.NewDustPerfect(laserDustSpawnPosition, 182);
+                        Dust laser = Dust.NewDustPerfect(laserDustSpawnPosition, DustID.TheDestroyer);
                         laser.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 3.5f) * Lerp(0.35f, 1f, chargeupPower);
                         laser.scale = Lerp(0.8f, 1.5f, chargeupPower) * Main.rand.NextFloat(0.75f, 1f);
                         laser.noGravity = true;

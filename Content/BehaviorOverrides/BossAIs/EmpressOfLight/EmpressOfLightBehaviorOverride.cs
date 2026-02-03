@@ -492,7 +492,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 fingerCenter = npc.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 70f, -60f).RotatedBy(npc.rotation) + npc.velocity;
 
             // Make the pointer finger release a lot of rainbow dust.
-            Dust rainbow = Dust.NewDustPerfect(fingerCenter, 267);
+            Dust rainbow = Dust.NewDustPerfect(fingerCenter, DustID.RainbowMk2);
             rainbow.velocity = -Vector2.UnitY.RotatedBy(npc.spriteDirection * npc.rotation).RotatedByRandom(0.5f) * 0.96f;
             rainbow.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
             rainbow.scale = 2f;
@@ -1085,7 +1085,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.EmpressOfLight
                 for (int j = 0; j < magicDustCount; j++)
                 {
                     float magicHue = (attackTimer / 45f + Main.rand.NextFloat(0.2f)) % 1f;
-                    Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
+                    Dust rainbowMagic = Dust.NewDustPerfect(handPosition, DustID.RainbowMk2);
                     rainbowMagic.color = Main.hslToRgb(magicHue, 1f, 0.5f);
                     rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
                     rainbowMagic.scale *= 0.9f;

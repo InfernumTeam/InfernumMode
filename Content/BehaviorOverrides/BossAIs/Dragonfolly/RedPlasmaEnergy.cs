@@ -96,7 +96,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dragonfolly
             }
 
             // Idly emit red electric dust.
-            Dust redElectricity = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(5f, 5f), 267);
+            Dust redElectricity = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(5f, 5f), DustID.RainbowMk2);
             redElectricity.velocity = NPC.velocity + Main.rand.NextVector2Circular(1.8f, 1.8f);
             redElectricity.color = Color.Lerp(Color.White, Color.Red, Main.rand.NextFloat(0.4f, 1f));
             redElectricity.scale = Main.rand.NextFloat(0.8f, 1.2f);

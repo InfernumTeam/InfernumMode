@@ -454,7 +454,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 int dustCount = 250;
                 for (int i = 0; i < 40; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(polterghast.Center + Main.rand.NextVector2Circular(50f, 50f), 264);
+                    Dust magic = Dust.NewDustPerfect(polterghast.Center + Main.rand.NextVector2Circular(50f, 50f), DustID.PortalBoltTrail);
                     magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(2f, 4f);
                     magic.color = Color.Blue;
                     magic.scale = 1.3f;
@@ -470,7 +470,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
                 {
                     Vector2 dustDrawPosition = Vector2.Lerp(polterghast.Center, teleportCenter, i / (float)dustCount);
 
-                    Dust magic = Dust.NewDustPerfect(dustDrawPosition, 267);
+                    Dust magic = Dust.NewDustPerfect(dustDrawPosition, DustID.RainbowMk2);
                     magic.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.2f, 0.235f);
                     magic.color = Color.LightCyan;
                     magic.color.A = 0;
@@ -1049,7 +1049,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Polterghast
             {
                 Vector2 spawnOffsetDirection = Main.rand.NextVector2Unit();
 
-                Dust ectoplasm = Dust.NewDustPerfect(npc.Center + spawnOffsetDirection * Main.rand.NextFloat(120f) * npc.scale, 264);
+                Dust ectoplasm = Dust.NewDustPerfect(npc.Center + spawnOffsetDirection * Main.rand.NextFloat(120f) * npc.scale, DustID.PortalBoltTrail);
                 ectoplasm.velocity = -Vector2.UnitY * Lerp(1f, 2.4f, Utils.GetLerpValue(0f, 100f, npc.Distance(ectoplasm.position), true));
                 ectoplasm.color = Color.Lerp(Color.Cyan, Color.Red, Main.rand.NextFloat(0.6f));
                 ectoplasm.scale = 1.45f;

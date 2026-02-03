@@ -51,7 +51,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.Ares
             // Release electric sparks.
             if (Main.rand.NextFloat() < Pow(Projectile.Opacity, 2f) * 0.05f)
             {
-                Dust spark = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(60f, 60f), 226);
+                Dust spark = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(60f, 60f), DustID.Electric);
                 spark.velocity = Main.rand.NextVector2Circular(7f, 7f);
                 spark.fadeIn = 0.7f;
                 spark.scale *= 1.2f;

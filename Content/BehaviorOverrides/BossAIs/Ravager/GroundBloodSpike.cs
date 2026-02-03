@@ -48,13 +48,13 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Ravager
                 Projectile.frame = Main.rand.Next(maxValue);
                 for (int i = 0; i < 5; i++)
                 {
-                    Dust bloodDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 5, Projectile.velocity * Main.rand.NextFloat(0.15f, 0.525f));
+                    Dust bloodDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), DustID.Blood, Projectile.velocity * Main.rand.NextFloat(0.15f, 0.525f));
                     bloodDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
                     bloodDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
                 }
                 for (int j = 0; j < 5; j++)
                 {
-                    Dust bloodDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), 5, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity * Main.rand.NextFloat(0.15f, 0.375f));
+                    Dust bloodDust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), DustID.Blood, Main.rand.NextVector2Circular(2f, 2f) + Projectile.velocity * Main.rand.NextFloat(0.15f, 0.375f));
                     bloodDust.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
                     bloodDust.scale = 0.8f + Main.rand.NextFloat() * 0.5f;
                     bloodDust.fadeIn = 1f;

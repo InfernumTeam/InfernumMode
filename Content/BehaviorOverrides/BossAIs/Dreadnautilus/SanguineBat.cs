@@ -86,7 +86,7 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Dreadnautilus
 
             for (int i = 0; i < 12; i++)
             {
-                Dust blood = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust blood = Dust.NewDustPerfect(Projectile.Center, DustID.RainbowMk2);
                 blood.velocity = Main.rand.NextVector2Circular(4f, 4f);
                 blood.scale = Main.rand.NextFloat(1f, 1.5f);
                 blood.color = Color.Red;

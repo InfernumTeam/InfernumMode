@@ -50,7 +50,7 @@ namespace InfernumMode.Content.BehaviorOverrides.MinibossAIs.Ogre
 
             for (int i = 0; i < 30; i++)
             {
-                Dust dust = Dust.NewDustPerfect(Projectile.Center, 6);
+                Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.Torch);
                 dust.velocity = Main.rand.NextVector2Circular(8f, 8f);
                 dust.noGravity = true;
             }

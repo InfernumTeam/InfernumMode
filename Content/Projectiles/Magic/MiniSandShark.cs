@@ -86,7 +86,7 @@ namespace InfernumMode.Content.Projectiles.Magic
             // Create a bunch of sand.
             for (int i = 0; i < 30; i++)
             {
-                Dust sand = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 32);
+                Dust sand = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), DustID.Sand);
                 sand.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.61f) * Main.rand.NextFloat(3f, 8f);
                 sand.noGravity = Main.rand.NextBool();
             }

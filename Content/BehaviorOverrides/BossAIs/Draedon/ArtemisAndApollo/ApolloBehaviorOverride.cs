@@ -397,11 +397,11 @@ namespace InfernumMode.Content.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApoll
                 }
             }
 
-            //if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
-                //SoundEngine.PlaySound(Gatling, npc.Center);
+            if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.GatlingLaserFireStart, npc.Center);
 
-            //if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
-                //SoundEngine.PlaySound(, npc.Center);
+            if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
+                SoundEngine.PlaySound(InfernumSoundRegistry.GatlingLaserFireEnd, npc.Center);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float frame, ref float chargeInterpolant, ref float deathAnimationTimer)
